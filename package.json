@@ -1,0 +1,9 @@
+{
+  "name": "@types/factorio",
+  "version": "0.0.1",
+  "description": "Typescript declarations for the factorio mod API",
+  "main": "index.d.ts",
+  "repository": "https://github.com/sguest/factorio-types.git",
+  "author": "Spencer Guest",
+  "license": "MIT"
+}
