@@ -8,6 +8,15 @@
         "quotemark": [true, "single"],
         "variable-name": false,
         "member-ordering": false,
+        "typedef": [ true,
+            "call-signature",
+            "arrow-call-signature",
+            "parameter",
+            "arrow-parameter",
+            "property-declaration",
+            "variable-declaration",
+            "member-variable-declaration"
+        ],
         "no-empty-interface": false
     }
 }

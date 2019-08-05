@@ -221,14 +221,23 @@ interface LuaFlowStatistics {
     readonly force: LuaForce
 }
 
-// ----
-
 interface LuaBootstrap {
+    on_init(this: void, f: (() => any | null)): void
+    on_load(this: void, f: (() => any | null)): void
+    on_configuration_changed(this: void, f: (() => any | null)): void
     on_event(
         this: void,
         event: defines.events | defines.events[] | string,
         callback: (this: void, event: event) => void): void
+    on_nth_tick(this: void, tick: number | number[] | null, f: (event: NthTickEvent) => void): void
+    generate_event_name(this: void): number
+    get_event_handler(this: void, event: number): () => any
+    raise_event(this: void, event: number, table: object): void
+    get_event_order(this: void): string
+    readonly mod_name: string
 }
+
+// ----
 
 interface LuaEntity {
 }

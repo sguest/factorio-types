@@ -243,3 +243,8 @@ interface DifficultySettings {
     technology_price_multiplier: number
     research_queue_setting: 'after-victory' | 'always' | 'never'
 }
+
+interface NthTickEvent {
+    tick: number
+    nth_tick: number
+}
