@@ -7,7 +7,9 @@
   "author": "Spencer Guest",
   "license": "MIT",
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.d.ts'"
+    "lint": "tslint -c tslint.json 'src/**/*.d.ts'",
+    "build": "tsc -p tsconfig.json",
+    "validate": "yarn run build && yarn run lint"
   },
   "devDependencies": {
     "tslint": "^5.18.0",
