@@ -9,3 +9,7 @@ interface dataCollection {
     armor: { [key: string]: LuaItemPrototype }
     recipe: { [key: string]: LuaRecipePrototype }
 }
+
+interface MapSettings {
+    
+}

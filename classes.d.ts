@@ -72,22 +72,148 @@ interface LuaGameScript {
             volume_modifier?: number,
         }): boolean
     is_valid_sound_path(this: void, soundPath: SoundPath): boolean
-    kick_player(this: void, playerSpecification: PlayerSpecification, reason?: string): void
-    connected_players: LuaPlayer[]
+    kick_player(this: void, playerSpecification: PlayerSpecification, reason?: LocalisedString): void
+    ban_player(this: void, playerSpecification: PlayerSpecification, reason?: LocalisedString): void
+    unban_player(this: void, playerSpecification: PlayerSpecification): void
+    purge_player(this: void, playerSpecification: PlayerSpecification): void
+    mute_player(this: void, playerSpecification: PlayerSpecification): void
+    unmute_player(this: void, playerSpecification: PlayerSpecification): void
+    count_pipe_groups(this: void): void
+    is_multiplater(this: void): boolean
+    get_active_entities_count(this: void, surface?: SurfaceSpecification): number
+    get_map_exchange_string(this: void): string
+    parse_map_exchange_string(this: void, map_exchange_string: string): MapExchangeStringData
+    get_train_stops(this: void,
+        opts?: {
+            name?: string | string[],
+            surface?: SurfaceSpecification,
+            force?: ForceSpecification,
+        }): LuaEntity[]
+    get_player(this: void, player: number | string): LuaPlayer
+    get_surface(this: void, surface: number | string): LuaSurface
+    create_profiler(this: void): LuaProfiler
+    evaluate_expression(this: void, expression: string, variables: {[key: string]: number}): number
+    get_filtered_entity_prototypes(this: void, filters: LuaEntityPrototypeFilter[]): {[key: string]: LuaEntityPrototype }
+    get_filtered_item_prototypes(this: void, filters: LuaItemPrototypeFilter[]): {[key: string]: LuaItemPrototype }
+    get_filtered_equipment_prototypes(this: void, filters: LuaEquipmentPrototypeFilter[]): {[key: string]: LuaEquipmentPrototype }
+    get_filtered_mod_setting_prototypes(this: void, filters: LuaModSettingPrototypeFilter[]): {[key: string]: LuaModSettingPrototype }
+    get_filtered_achievement_prototypes(this: void, filters: LuaAchievementPrototypeFilter[]): {[key: string]: LuaAchievementPrototype }
+    readonly player: LuaPlayer | null
+    readonly players: {[key: string]: LuaPlayer }
+    readonly map_settings: MapSettings
+    readonly difficulty_settings: DifficultySettings
+    readonly difficulty: defines.difficulty
+    readonly forces: {[key: string]: LuaForce }
+    readonly entity_prototypes: {[key: string]: LuaEntityPrototype }
+    readonly item_prototypes: {[key: string]: LuaItemPrototype }
+    readonly fluid_prototypes: {[key: string]: LuaFluidPrototype }
+    readonly tile_prototypes: {[key: string]: LuaTilePrototype }
+    readonly equipment_prototypes: {[key: string]: LuaEquipmentPrototype }
+    readonly damage_prototypes: {[key: string]: LuaDamagePrototype }
+    readonly virtual_signal_prototypes: {[key: string]: LuaVirtualSignalPrototype }
+    readonly equipment_grid_prototypes: {[key: string]: LuaEquipmentGridPrototype }
+    readonly recipe_prototypes: {[key: string]: LuaRecipePrototype }
+    readonly technology_prototypes: {[key: string]: LuaTechnologyPrototype }
+    readonly decorative_prototypes: {[key: string]: LuaDecorativePrototype }
+    readonly autoplace_control_prototypes: {[key: string]: LuaAutoplaceControlPrototype }
+    readonly noise_layer_prototypes: {[key: string]: LuaNoiseLayerPrototype }
+    readonly mod_setting_prototypes: {[key: string]: LuaModSettingPrototype }
+    readonly custom_input_prototypes: {[key: string]: LuaCustomInputPrototype }
+    readonly ammo_category_prototypes: {[key: string]: LuaAmmoCategoryPrototype }
+    readonly named_noise_prototypes: {[key: string]: LuaNamedNoisePrototype }
+    readonly item_subgroup_prototypes: {[key: string]: LuaGroup }
+    readonly item_group_prototypes: {[key: string]: LuaGroup }
+    readonly fuel_category_prototypes: {[key: string]: LuaFuelCategoryPrototype }
+    readonly resource_category_prototypes: {[key: string]: LuaResourceCategoryPrototype }
+    readonly achievement_prototypes: {[key: string]: LuaAchievementPrototype }
+    readonly module_category_prototypes: {[key: string]: LuaModuleCategoryPrototype }
+    readonly equipment_category_prototypes: {[key: string]: LuaEquipmentCategoryPrototype }
+    readonly trivial_smoke_prototypes: {[key: string]: LuaTrivialSmokePrototype }
+    readonly shortcut_prototypes: {[key: string]: LuaShortcutPrototype }
+    readonly recipe_category_prototypes: {[key: string]: LuaRecipeCategoryPrototype }
+    readonly styles: {[key: string]: string }
+    readonly tick: number
+    readonly ticks_played: number
+    tick_paused: boolean
+    ticks_to_run: number
+    readonly finished: boolean
+    speed: number
+    readonly surfaces: {[key: string]: LuaSurface }
+    readonly active_mods: {[key: string]: string }
+    readonly connected_players: LuaPlayer[]
+    readonly permissions: LuaPermissionGroups
+    readonly backer_names: {[key: number]: string}
+    readonly default_map_gen_settings: MapGenSettings
+    enemy_has_vision_on_land_mines: boolean
+    autosave_enabled: boolean
+    draw_resource_selection: boolean
+    pollution_statistics: LuaFlowStatistics
 }
 
 interface LuaRandomGenerator {
     (this: void, lower?: number, upper?: number): number
     re_seed(this: void, seed: number): void
-    valid: boolean
+    readonly valid: boolean
     help(): string
 }
+
+interface LuaProfiler {
+    reset(this: void): void
+    stop(this: void): void
+    restart(this: void): void
+    divide(this: void, number: number): void
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaPermissionGroups {
+    create_group(this: void, name: string): LuaPermissionGroup
+    get_group(this: void, name: string): LuaPermissionGroup
+    readonly groups: LuaPermissionGroup[]
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaPermissionGroup {
+    add_player(this: void, player: PlayerSpecification): boolean
+    remove_player(this: void, player: PlayerSpecification): boolean
+    allows_action(this: void, action: defines.input_action): boolean
+    set_allows_action(this: void, action: defines.input_action, allow: boolean): boolean
+    destroy(this: void): boolean
+    name: string
+    readonly players: LuaPlayer[]
+    readonly group_id: number
+}
+
+interface LuaFlowStatistics {
+    get_input_count(this: void, name: string): number
+    set_input_count(this: void, name: string, count: number): void
+    get_output_count(this: void, name: string): number
+    set_output_count(this: void, name: string, count: number): void
+    get_flow_count(this: void,
+        table: {
+            name: string,
+            input: number,
+            precision_index: defines.flow_precision_index,
+            count?: boolean,
+        }): number
+    on_flow(this: void, name: string, count: number): void
+    clear(this: void): void
+    readonly input_counts: {[key: string]: number[] }
+    readonly output_counts: {[key: string]: number[] }
+    readonly force: LuaForce
+}
+
+//----
 
 interface LuaBootstrap {
     on_event(this: void, event: defines.events | defines.events[] | string, callback: (this: void, event: event) => void): void
 }
 
 interface LuaEntity {
+}
+
+interface LuaEntityPrototype {
 }
 
 interface LuaControl {
@@ -134,4 +260,70 @@ interface LuaTechnology {
 }
 
 interface LuaTechnologyPrototype {
+}
+
+interface LuaEquipmentPrototype {
+}
+
+interface LuaModSettingPrototype {
+}
+
+interface LuaAchievementPrototype {
+}
+
+interface LuaFluidPrototype {
+}
+
+interface LuaTilePrototype {
+}
+
+interface LuaDamagePrototype {
+}
+
+interface LuaVirtualSignalPrototype {
+}
+
+interface LuaEquipmentGridPrototype {
+}
+
+interface LuaDecorativePrototype {
+}
+
+interface LuaAutoplaceControlPrototype {
+}
+
+interface LuaNoiseLayerPrototype {
+}
+
+interface LuaCustomInputPrototype {
+}
+
+interface LuaAmmoCategoryPrototype {
+}
+
+interface LuaNamedNoisePrototype {
+}
+
+interface LuaGroup {
+}
+
+interface LuaFuelCategoryPrototype {
+}
+
+interface LuaResourceCategoryPrototype {
+}
+
+interface LuaModuleCategoryPrototype {
+}
+
+interface LuaEquipmentCategoryPrototype {
+}
+
+interface LuaTrivialSmokePrototype {
+}
+
+interface LuaShortcutPrototype {
+}
+
+interface LuaRecipeCategoryPrototype {
 }
