@@ -237,18 +237,114 @@ interface LuaBootstrap {
     readonly mod_name: string
 }
 
+interface LuaControl {
+    get_inventory(this: void, inventory: defines.inventory): LuaInventory | null
+    get_main_inventory(this: void): LuaInventory | null
+    can_insert_items(this: void, items: ItemStackSpecification): boolean
+    insert(this: void, items: ItemStackSpecification): number
+    set_gui_arrow(this: void, table: GuiArrowSpecification): void
+    clear_gui_arrow(this: void): void
+    has_items_inside(this: void): boolean
+    can_reach_entity(this: void, entity: LuaEntity): boolean
+    clear_items_inside(this: void): void
+    remove_item(this: void, items: ItemStackSpecification): number
+    teleport(this: void, position: Position | number, surface?: SurfaceSpecification | number): boolean
+    update_selected_entity_position(this: void, position: Position): void
+    clear_selected_entity(this: void): void
+    disable_flashlight(this: void): void
+    enable_flashlight(this: void): void
+    get_craftable_count(this: void, recipe: string | LuaRecipe): number
+    begin_crafting(
+        this: void,
+        table: {
+            count: number,
+            recipe: string | LuaRecipe,
+            silent?: boolean,
+        },
+    ): number
+    cancel_crafting(
+        this: void,
+        options: {
+            index: number,
+            count: number,
+        },
+    ): void
+    mine_entity(this: void, entity: LuaEntity, force?: boolean): boolean
+    mine_tile(this: void, tile: LuaTile): boolean
+    is_player(this: void): boolean
+    open_technology_gui(this: void, technology?: TechnologySpecification): void
+    readonly surface: LuaSurface
+    readonly position: Position
+    readonly vehicle: LuaEntity
+    force: ForceSpecification
+    selected: LuaEntity | null
+    opened: LuaEntity |
+        LuaItemStack |
+        LuaEquipment |
+        LuaEquipmentGrid |
+        LuaPlayer |
+        LuaGuiElement |
+        defines.gui_type |
+        null
+    readonly crafting_queue_size: number
+    walking_state: { walking: boolean, direction: defines.direction }
+    riding_state: RidingState
+    mining_state: { mining: boolean, position?: Position }
+    shooting_state: { state: defines.shooting, position: Position }
+    picking_state: boolean
+    repair_state: { repairing: boolean, position: Position }
+    readonly cursor_stack: LuaItemStack
+    cursor_ghost: ItemPrototypeSpecification
+    driving: boolean
+    readonly crafting_queue: Array<{ index: number, recipe: string, count: number }>
+    readonly following_robots: LuaEntity[]
+    cheat_mode: boolean
+    character_crafting_speed_modifier: number
+    character_mining_speed_modifier: number
+    character_additional_mining_categories: string[]
+    character_running_speed_modifier: number
+    character_build_distance_bonus: number
+    character_item_drop_distance_bonus: number
+    character_reach_distance_bonus: number
+    character_resource_reach_distance_bonus: number
+    character_item_pickup_distance_bonus: number
+    character_loot_pickup_distance_bonus: number
+    character_inventory_slots_bonus: number
+    character_logistic_slot_count_bonus: number
+    characer_trash_slot_count_bonus: number
+    character_maximum_following_robot_count_bonus: number
+    character_health_bonus: number
+    auto_trash_filters: {[key: string]: number }
+    opened_gui_type: defines.gui_type
+    readonly build_distance: number
+    readonly drop_item_distance: number
+    readonly reach_distance: number
+    readonly item_pickup_distance: number
+    readonly loot_pickup_distance: number
+    readonly resource_reach_distance: number
+    readonly in_combat: boolean
+    readonly character_running_speed: number
+    readonly character_mining_progress: number
+}
+
+interface LuaTile {
+    collides_with(this: void, layer: CollisionMaskLayer): boolean
+    order_deconstruction(this: void, force: ForceSpecification, player: PlayerSpecification): LuaEntity | null
+    cancel_deconstruction(this: void, force: ForceSpecification, player: PlayerSpecification): void
+    readonly name: string
+    readonly prototype: LuaTilePrototype
+    readonly position: Position
+    readonly hidden_tile: string
+    readonly valid: boolean
+    help(this: void): string
+}
+
 // ----
 
-interface LuaEntity {
+interface LuaEntity extends LuaControl {
 }
 
 interface LuaEntityPrototype {
-}
-
-interface LuaControl {
-    get_inventory(this: void, inventory: defines.inventory): LuaInventory | null
-    surface: LuaSurface
-    position: Position
 }
 
 interface LuaPlayer extends LuaControl {
@@ -279,6 +375,9 @@ interface LuaItemPrototype {
     resistances: Resistance[]
 }
 
+interface LuaRecipe {
+}
+
 interface LuaRecipePrototype {
     enabled: boolean
     name: string
@@ -290,6 +389,9 @@ interface LuaTechnology {
 }
 
 interface LuaTechnologyPrototype {
+}
+
+interface LuaEquipment {
 }
 
 interface LuaEquipmentPrototype {
@@ -311,6 +413,9 @@ interface LuaDamagePrototype {
 }
 
 interface LuaVirtualSignalPrototype {
+}
+
+interface LuaEquipmentGrid {
 }
 
 interface LuaEquipmentGridPrototype {
@@ -356,4 +461,10 @@ interface LuaShortcutPrototype {
 }
 
 interface LuaRecipeCategoryPrototype {
+}
+
+interface LuaItemStack {
+}
+
+interface LuaGuiElement {
 }

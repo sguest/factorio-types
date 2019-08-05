@@ -39,6 +39,50 @@ declare namespace defines {
         one_thousand_hours,
     }
 
+    enum gui_type {
+        none,
+        entity,
+        research,
+        controller,
+        production,
+        item,
+        bonus,
+        trains,
+        achievement,
+        blueprint_library,
+        equipment,
+        logistic,
+        other_player,
+        kills,
+        permissions,
+        tutorials,
+        custom,
+        server_management,
+        player_management,
+        tile,
+    }
+
+    namespace riding {
+        enum acceleration {
+            nothing,
+            acceleration,
+            braking,
+            reversing,
+        }
+
+        enum direction {
+            left,
+            straight,
+            right,
+        }
+    }
+
+    enum shooting {
+        not_shooting,
+        shooting_enemies,
+        shooting_selected,
+    }
+
 // ----
 
     enum events {

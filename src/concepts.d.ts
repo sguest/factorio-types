@@ -8,6 +8,19 @@ type SurfaceSpecification = number | string | LuaSurface;
 
 type TechnologySpecification = string | LuaTechnology | LuaTechnologyPrototype;
 
+type ItemStackSpecification = SimpleItemStack | LuaItemStack;
+
+type ItemPrototypeSpecification = LuaItemStack | LuaItemPrototype | string;
+
+type SimpleItemStack = string | {
+    name: string,
+    count?: number,
+    health?: number,
+    durability?: number,
+    ammo?: number,
+    tags?: string[],
+};
+
 type LocalisedString = string[] | string;
 
 type MapGenSize = number | 'none' |
@@ -247,4 +260,9 @@ interface DifficultySettings {
 interface NthTickEvent {
     tick: number
     nth_tick: number
+}
+
+interface RidingState {
+    acceleration: defines.riding.acceleration
+    direction: defines.riding.direction
 }
