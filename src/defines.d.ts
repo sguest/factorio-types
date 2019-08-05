@@ -13,7 +13,7 @@ declare namespace defines {
     enum difficulty {
         easy,
         normal,
-        hard
+        hard,
     }
 
     namespace difficulty_settings {
@@ -39,7 +39,7 @@ declare namespace defines {
         one_thousand_hours,
     }
 
-//----
+// ----
 
     enum events {
         on_tick,

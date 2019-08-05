@@ -1,31 +1,31 @@
-type Position = { x: number, y: number} | number[]
+type Position = { x: number, y: number} | number[];
 
-type ForceSpecification = string | LuaForce
+type ForceSpecification = string | LuaForce;
 
-type PlayerSpecification = number | string | LuaPlayer
+type PlayerSpecification = number | string | LuaPlayer;
 
-type SurfaceSpecification = number | string | LuaSurface
+type SurfaceSpecification = number | string | LuaSurface;
 
-type TechnologySpecification = string | LuaTechnology | LuaTechnologyPrototype
+type TechnologySpecification = string | LuaTechnology | LuaTechnologyPrototype;
 
-type LocalisedString = string[] | string
+type LocalisedString = string[] | string;
 
 type MapGenSize = number | 'none' |
     'very-low' | 'very-small' | 'very-poor' |
     'low' | 'small' | 'poor' |
     'normal' | 'medium' | 'regular' |
-    'high' | 'big' | 'good' | 
-    'very-high' | 'very-big' | 'very-good'
+    'high' | 'big' | 'good' |
+    'very-high' | 'very-big' | 'very-good';
 
-type  SoundPath = string
+type  SoundPath = string;
 
 type CollisionMaskLayer = 'ground-tile' | 'water-tile' | 'resource-layer' | 'doodad-layer' |
     'floor-layer' | 'item-layer' | 'ghost-layer' | 'object-layer' | 'player-layer' | 'train-layer' |
-    'layer-11' | 'layer-12' | 'layer-13' | 'layer-14' | 'layer-15' | 'not-setup'
+    'layer-11' | 'layer-12' | 'layer-13' | 'layer-14' | 'layer-15' | 'not-setup';
 
 type CollisionMask = {
     [key in CollisionMaskLayer]: boolean
-}
+};
 
 type EntityPrototypeFlagValue = 'not-rotatable' | 'placeable-neutral' | 'placeable-player' | 'placeable-enemy' |
     'placeable-off-grid' | 'player-creation' | 'building-direction-8-way' | 'filtered-directions' |
@@ -33,18 +33,18 @@ type EntityPrototypeFlagValue = 'not-rotatable' | 'placeable-neutral' | 'placeab
     'not-deconstructable' | 'not-blueprintable' | 'hide-from-bonus-gui' | 'hide-alt-info' |
     'fast-replaceable-no-cross-type-while-moving' | 'no-gap-fill-while-building' | 'not-flammable' |
     'no-automated-item-removal' | 'no-automated-item-insertion' | 'no-copy-paste' | 'not-selectable-in-game' |
-    'not-upgradable'
+    'not-upgradable';
 
 type EntityPrototypeFlags = {
     [key in EntityPrototypeFlagValue]: true
-}
+};
 
 type ItemPrototypeFlagValue = 'hidden' | 'hide-from-bonus-gui' | 'hide-from-fuel-tooltip' | 'not-stackable' |
-    'can-extend-inventory' | 'primary-place-result' | 'mod-openable' | 'only-in-cursor'
+    'can-extend-inventory' | 'primary-place-result' | 'mod-openable' | 'only-in-cursor';
 
 type ItemPrototypeFlags = {
     [key in ItemPrototypeFlagValue]: true
-}
+};
 
 interface Icon {
     icon: string
@@ -107,7 +107,7 @@ interface MapGenSettings {
         size: MapGenSize,
         richness: MapGenSize,
     }},
-    default_enable_all_autoplace_controls:boolean,
+    default_enable_all_autoplace_controls: boolean,
     autoplace_settings: { [key: string]: AutoplaceSettings },
     cliff_settings: CliffPlacementSettings,
     seed: number,

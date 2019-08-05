@@ -2,8 +2,16 @@
   "name": "@types/factorio",
   "version": "0.0.1",
   "description": "Typescript declarations for the factorio mod API",
-  "main": "index.d.ts",
+  "main": "src/index.d.ts",
   "repository": "https://github.com/sguest/factorio-types.git",
   "author": "Spencer Guest",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.d.ts'"
+  },
+  "devDependencies": {
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
+  },
+  "files": ["**/*.d.ts"]
 }
