@@ -215,6 +215,49 @@ declare namespace defines {
 // ----
 
     namespace control_behavior {
+        namespace logistic_container {
+            enum circuit_mode_of_operation {
+                send_contents,
+                request_contents,
+            }
+        }
+
+        namespace roboport {
+            enum circuit_mode_of_operation {
+                read_logistics,
+                read_robot_stats,
+            }
+        }
+
+        namespace inserter {
+            enum circuit_mode_of_operation {
+                none,
+                enable_disable,
+                set_filters,
+                read_hand_contents,
+                set_stack_size,
+            }
+
+            enum hand_read_mode {
+                hold,
+                pulse,
+            }
+        }
+
+        namespace mining_drill {
+            enum resource_read_mode {
+                this_miner,
+                entire_patch,
+            }
+        }
+
+        namespace transport_belt {
+            enum content_read_mode {
+                pulse,
+                hold,
+            }
+        }
+
         enum type {
 
         }

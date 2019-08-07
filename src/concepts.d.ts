@@ -505,3 +505,38 @@ interface CircuitCondition {
     second_signal?: SignalID
     constant?: number
 }
+
+interface ConstantCombinatorParameters {
+    signal: SignalID,
+    count: number,
+    index: number,
+}
+
+interface CircuitConditionSpecification {
+    condition: CircuitCondition
+    fulfilled?: boolean
+}
+
+interface ProgrammableSpeakerCircuitParameters {
+    signal_value_is_pitch: boolean
+    instrument_id: number
+    node_id: number
+}
+
+interface ArithmeticCombinatorParameters {
+    first_signal?: SignalID
+    second_signal?: SignalID
+    first_constant?: number
+    second_constant?: number
+    operation?:  '*' | '/' | '+' | '-' | '%' | '^' | '<<' | '>>' | 'AND' | 'OR' | 'XOR'
+    output_signal?: SignalID
+}
+
+interface DeciderCombinatorParameters {
+    first_signal?: SignalID
+    second_signal?: SignalID
+    constant?: number
+    comparator?: '<' | '>' | '=' | '≥' | '≤' | '≠'
+    output_signal?: SignalID
+    copy_count_from_input?: boolean
+}

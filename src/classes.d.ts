@@ -366,6 +366,154 @@ interface LuaControlBehavior {
     readonly entity: LuaEntity
 }
 
+interface LuaAccumulatorControlBehavior extends LuaControlBehavior {
+    output_signal: SignalID
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaCombinatorControlBehavior extends LuaControlBehavior {
+    get_signal_last_tick(this: void, signal: SignalID): number | null
+    readonly signals_last_tick: Signal[]
+}
+
+interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
+    set_signal(this: void, index: number, signal: Signal): void
+    get_signal(this: void, index: number): Signal
+    parameters: ConstantCombinatorParameters | null
+    enabled: boolean
+    readonly signals_count: number
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaContainerControlBehavior extends LuaControlBehavior {
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
+    readonly disabled: boolean
+    circuit_condition: CircuitConditionSpecification | null
+    logistic_condition: CircuitConditionSpecification | null
+    connect_to_logistic_network: boolean
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaLogisticContainerControlBehavior extends LuaControlBehavior {
+    circuit_mode_of_operation: defines.control_behavior.logistic_container.circuit_mode_of_operation
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaProgrammableSpeakerControlBehavior extends LuaControlBehavior {
+    circuit_parameters: ProgrammableSpeakerCircuitParameters
+    circuit_condition: CircuitConditionSpecification
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaRailChainSignalControlBehavior extends LuaControlBehavior {
+    red_signal: SignalID
+    orange_signal: SignalID
+    green_signal: SignalID
+    blue_signal: SignalID
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaRailSignalControlBehavior extends LuaControlBehavior {
+    red_signal: SignalID
+    orange_signal: SignalID
+    green_signal: SignalID
+    close_signal: boolean
+    read_signal: boolean
+    circuit_condition: CircuitConditionSpecification
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaRoboportControlBehavior extends LuaControlBehavior {
+    mode_of_operation: defines.control_behavior.roboport.circuit_mode_of_operation
+    available_logistic_output_signal: SignalID
+    total_logistic_output_signal: SignalID
+    available_construction_output_signal: SignalID
+    total_construction_output_signal: SignalID
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaStorageTankControlBehavior extends LuaControlBehavior {
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaWallControlBehavior extends LuaControlBehavior {
+    circuit_condition: CircuitConditionSpecification
+    open_gate: boolean
+    read_sensor: boolean
+    output_signal: SignalID
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaArithmeticCombinatorControlBehavior extends LuaCombinatorControlBehavior {
+    parameters: ArithmeticCombinatorParameters | null
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaDeciderCombinatorControlBehavior extends LuaCombinatorControlBehavior {
+    parameters: DeciderCombinatorParameters | null
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaInserterControlBehavior extends LuaGenericOnOffControlBehavior {
+    circuit_read_hand_contents: boolean
+    circuit_mode_of_operation: defines.control_behavior.inserter.circuit_mode_of_operation
+    circuit_hand_read_mode: defines.control_behavior.inserter.hand_read_mode
+    circuit_set_stack_size: boolean
+    circuit_stack_control_signal: SignalID
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaLampControlBehavior extends LuaGenericOnOffControlBehavior {
+    use_colors: boolean
+    color: Color | null
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaMiningDrillControlBehavior extends LuaGenericOnOffControlBehavior {
+    circuit_enable_disable: boolean
+    circuit_read_resources: boolean
+    resource_read_mode: defines.control_behavior.mining_drill.resource_read_mode
+    readonly resource_read_targets: LuaEntity[]
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaTrainStopControlBehavior extends LuaGenericOnOffControlBehavior {
+    send_to_train: boolean
+    read_from_train: boolean
+    read_stopped_train: boolean
+    enable_disable: boolean
+    stopped_train_signal: SignalID
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaTransportBeltControlBehavior extends LuaGenericOnOffControlBehavior {
+    enable_disable: boolean
+    read_contents: boolean
+    read_contents_mode: defines.control_behavior.transport_belt.content_read_mode
+    readonly valid: boolean
+    help(this: void): string
+}
+
 interface LuaCircuitNetwork {
     get_signal(this: void, signal: SignalID): number
     readonly entity: LuaEntity
