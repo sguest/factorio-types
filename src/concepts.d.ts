@@ -12,6 +12,8 @@ type ItemStackSpecification = SimpleItemStack | LuaItemStack;
 
 type ItemPrototypeSpecification = LuaItemStack | LuaItemPrototype | string;
 
+type EntityPrototypeSpecification = LuaEntity | LuaEntityPrototype | string;
+
 type SimpleItemStack = string | {
     name: string,
     count?: number,
@@ -265,4 +267,214 @@ interface NthTickEvent {
 interface RidingState {
     acceleration: defines.riding.acceleration
     direction: defines.riding.direction
+}
+
+interface Command {
+    type: defines.command
+}
+
+interface AttackCommand extends Command {
+    type: defines.command.attack
+    target: LuaEntity
+    distraction?: defines.distraction
+}
+
+interface GoToLocationCommand extends Command {
+    type: defines.command.go_to_location
+    destination?: Position
+    destination_entity?: LuaEntity
+    distraction?: defines.distraction
+    pathfind_flags?: PathFindFlags
+    radius?: number
+}
+
+interface CompoundCommand extends Command {
+    type: defines.command.compound
+    structure_type: defines.compound_command
+    commands: Command[]
+}
+
+interface GroupCommand extends Command {
+    type: defines.command.group
+    group: LuaUnitGroup
+    distraction?: defines.distraction
+    use_group_distraction?: boolean
+}
+
+interface AttackAreaCommand extends Command {
+    type: defines.command.attack_area
+    destination: Position
+    radius: number
+    distraction?: defines.distraction
+}
+
+interface WanderCommand extends Command {
+    type: defines.command.wander
+    distraction?: defines.distraction
+    radius?: number
+    wander_in_group?: boolean
+    ticks_to_wait?: number
+}
+
+interface StopCommand extends Command {
+    type: defines.command.stop
+    distraction?: defines.distraction
+    ticks_to_wait?: number
+}
+
+interface FleeCommand extends Command {
+    type: defines.command.flee
+    from: LuaEntity
+    distraction?: defines.distraction
+}
+
+interface BuildBaseCommand extends Command {
+    type: defines.command.build_base
+    destination: Position
+    distraction?: defines.distraction
+    ignore_planner?: boolean
+}
+
+interface PathFindFlags {
+    allow_destroy_friendly_entities?: boolean
+    cache?: boolean
+    prefer_straight_paths?: boolean
+    low_priority?: boolean
+}
+
+interface Offer {
+    price: Ingredient[]
+    offer: Modifier
+}
+
+interface Modifier {
+    type: 'inserter-stack-size-bonus' | 'stack-inserter-capacity-bonus' | 'laboratory-speed' |
+        'character-logistic-slots' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' |
+        'worker-robot-speed' | 'worker-robot-storage' | 'ghost-time-to-live' | 'turret-attack' |
+        'ammo-damage' | 'give-item' | 'gun-speed' | 'unlock-recipe' | 'character-crafting-speed' |
+        'character-mining-speed' | 'character-running-speed' | 'character-build-distance' |
+        'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' |
+        'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' |
+        'deconstruction-time-to-live' | 'character-health-bonus' | 'auto-character-logistic-trash-slots' |
+        'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'zoom-to-world-enabled' |
+        'zoom-to-world-ghost-building-enabled' | 'zoom-to-world-blueprint-enabled' |
+        'zoom-to-world-deconstruction-planner-enabled' | 'zoom-to-world-selection-tool-enabled' |
+        'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'nothing'
+}
+
+interface GunSpeedModifier extends Modifier {
+    type: 'gun-speed'
+    ammo_category: string
+    modifier: number
+}
+
+interface GiveItemModifier extends Modifier {
+    type: 'give-item'
+    item: string
+    count?: number
+}
+
+interface TurretAttackModifier extends Modifier {
+    type: 'turret-attack'
+    turret_id: string
+    modifier: number
+}
+
+interface UnlockRecipeModifier extends Modifier {
+    type: 'unlock-recipe'
+    recipe: string
+}
+
+interface NothingModifier extends Modifier {
+    type: 'nothing'
+    effect_description: LocalisedString
+}
+
+interface OtherModifier extends Modifier {
+    type: 'inserter-stack-size-bonus' | 'stack-inserter-capacity-bonus' | 'laboratory-speed' |
+        'character-logistic-slots' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' |
+        'worker-robot-speed' | 'worker-robot-storage' | 'ghost-time-to-live' |
+        'ammo-damage' | 'character-crafting-speed' |
+        'character-mining-speed' | 'character-running-speed' | 'character-build-distance' |
+        'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' |
+        'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' |
+        'deconstruction-time-to-live' | 'character-health-bonus' | 'auto-character-logistic-trash-slots' |
+        'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'zoom-to-world-enabled' |
+        'zoom-to-world-ghost-building-enabled' | 'zoom-to-world-blueprint-enabled' |
+        'zoom-to-world-deconstruction-planner-enabled' | 'zoom-to-world-selection-tool-enabled' |
+        'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range'
+    modifier: number
+}
+
+interface InfinityContainerFilter {
+    name: string
+    count?: number
+    mode?: 'at-least' | 'at-most' | 'exactly'
+    index: number
+}
+
+interface InfinityPipeFilter {
+    name: string
+    percentage?: number
+    temperature?: number
+    mode?: 'at-least' | 'at-most' | 'exactly'
+}
+
+interface HeatSetting {
+    temperature?: number
+    mode?: 'at-least' | 'at-most' | 'exactly'
+}
+
+interface Signal {
+    signal: SignalID
+    count: number
+}
+
+interface SignalID {
+    type: 'item' | 'fluid' | 'virtual'
+    name?: string
+}
+
+interface LogisticFilter {
+    index: number
+    name: string
+    count: number
+}
+
+interface Fluid {
+    name: string
+    amount: number
+    temperature?: number
+}
+
+interface BeamTarget {
+    entity?: LuaEntity
+    position?: Position
+}
+
+interface BoundingBox {
+    left_top: Position
+    right_bottom: Position
+    orientation: number
+}
+
+interface ProgrammableSpeakerParameters {
+    playback_volume: number
+    playback_globally: boolean
+    allow_polyphony: boolean
+}
+
+interface ProgrammableSpeakerAlertParameters {
+    show_alert: boolean
+    show_on_map: boolean
+    icon_signal_id: SignalID
+    alert_message: string
+}
+
+interface Effects {
+    [key: string]: EffectValue
+}
+
+interface EffectValue {
+    bonus: number
 }

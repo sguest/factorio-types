@@ -339,9 +339,404 @@ interface LuaTile {
     help(this: void): string
 }
 
-// ----
+interface LuaTransportLine {
+    clear(this: void): void
+    get_item_count(this: void, item?: string): number
+    remove_item(this: void, items: ItemStackSpecification): number
+    can_insert_at(this: void, position: number): boolean
+    insert_at(this: void, position: number, items: ItemStackSpecification): boolean
+    insert_at_back(this: void, items: ItemStackSpecification): boolean
+    get_contents(this: void): {[key: string]: number }
+    line_equals(this: void, other: LuaTransportLine): boolean
+    // operator # missing
+    readonly owner: LuaEntity
+    readonly output_lines: LuaTransportLine[] | null
+    readonly input_lines: LuaTransportLine[] | null
+    [key: number]: LuaItemStack
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaControlBehavior {
+    get_circuit_network(
+        this: void,
+        wire: defines.wire_type,
+        circuit_connector: defines.circuit_connector_id): LuaCircuitNetwork | null
+    readonly type: defines.control_behavior.type
+    readonly entity: LuaEntity
+}
+
+interface LuaCircuitNetwork {
+    get_signal(this: void, signal: SignalID): number
+    readonly entity: LuaEntity
+    readonly wire_type: defines.wire_type
+    readonly circuit_connector_id: defines.circuit_connector_id
+    readonly signals: Signal[]
+    readonly network_id: number
+    readonly connected_circuit_count: number
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaLogisticPoint {
+    readonly owner: LuaEntity
+    readonly logistic_network: LuaLogisticNetwork
+    readonly logistic_member_index: number
+    readonly filters: LogisticFilter[]
+    readonly mode: defines.logistic_mode
+    readonly force: LuaForce
+    readonly targeted_items_pickup: {[key: string]: number }
+    readonly targeted_items_deliver: {[key: string]: number }
+    readonly exact: boolean
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaFluidBox {
+    get_prototype(this: void, index: number): LuaFluidPrototype
+    get_capacity(this: void, index: number): number
+    get_connections(this: void, index: number): LuaFluidBox[]
+    get_filter(this: void, index: number): {
+        name: string,
+        minimum_temperature: number,
+        maximum_temperature: number | null,
+    }
+    set_filter(
+        this: void,
+        index: number,
+        table: {
+            name: string,
+            minimum_temperature?: number,
+            maximum_temperature?: number,
+            force?: boolean,
+        }): boolean
+    get_flow(this: void, index: number): number
+    get_locked_fluid(this: void, index: number): string | null
+    // missing operator #
+    readonly owner: LuaEntity
+    readonly [key: number]: Fluid | null
+    readonly valid: boolean
+    help(): string
+}
+
+interface LuaBurner {
+    readonly owner: LuaEntity | LuaEquipment
+    readonly inventory: LuaInventory
+    readonly burnt_result_inventory: LuaInventory
+    heat: number
+    readonly heat_capacity: number
+    remaining_burning_fuel: number
+    currently_burning: LuaItemPrototype
+    readonly fuel_categories: {[key: string]: boolean }
+    readonly valid: boolean
+    help(): string
+}
+
+interface LuaAiSettings {
+    allow_destroy_when_commands_fail: boolean
+    allow_try_return_to_spawner: boolean
+    do_separation: boolean
+    path_resolution_modifier: number
+    readonly valid: boolean
+    help(): string
+}
 
 interface LuaEntity extends LuaControl {
+    get_output_inventory(this: void): LuaInventory
+    get_module_inventory(this: void): LuaInventory | null
+    get_fuel_inventory(this: void): LuaInventory | null
+    get_burnt_result_inventory(this: void): LuaInventory | null
+    damage(this: void, damage: number, force: ForceSpecification, type?: string): number
+    can_be_destroyed(this: void): boolean
+    destory(this: void, opts: { do_cliff_correction?: boolean, raise_destory?: boolean}): boolean
+    set_command(this: void, command: Command): void
+    has_command(this: void): boolean
+    die(this: void, force: ForceSpecification | null, cause?: LuaEntity): boolean
+    has_flag(this: void, flag: string): boolean
+    ghost_has_flag(this: void, flag: string): boolean
+    add_market_item(this: void, offer: Offer): void
+    remove_market_offer(this: void, offer: number): boolean
+    get_market_items(this: void): Offer[]
+    clear_market_items(this: void): void
+    connect_neighbour(
+        this: void,
+        target: LuaEntity | {
+            wire: defines.wire_type,
+            target_entity: LuaEntity,
+            source_circuit_id?: number,
+            target_circuit_id?: number,
+        }): boolean
+    disconnect_neighbour(
+        this: void,
+        target?: defines.wire_type | LuaEntity | {
+            write: defines.wire_type,
+            target_entity: LuaEntity,
+            source_circuit_id?: number,
+            target_circuit_id?: number,
+        },
+    ): void
+    order_deconstruction(this: void, force: ForceSpecification, player: PlayerSpecification): boolean
+    cancel_deconstruction(this: void, force: ForceSpecification, player: PlayerSpecification): boolean
+    to_be_deconstructed(this: void, force: ForceSpecification): boolean
+    order_upgrade(
+        this: void,
+        table: {
+            force: ForceSpecification,
+            target: EntityPrototypeSpecification,
+            player?: PlayerSpecification,
+        }): boolean
+    cancel_upgrade(this: void, force: ForceSpecification, player: PlayerSpecification): boolean
+    to_be_upgraded(this: void): boolean
+    get_request_slot(this: void, slot: number): SimpleItemStack | null
+    set_request_slot(this: void, request: ItemStackSpecification, slot: number): void
+    clear_request_slot(this: void, slot: number): void
+    is_crafting(this: void): boolean
+    is_opened(this: void): boolean
+    is_opening(this: void): boolean
+    is_closed(this: void): boolean
+    request_to_open(this: void, force: ForceSpecification, extra_time?: number): void
+    request_to_close(this: void, force: ForceSpecification): void
+    get_transport_line(this: void, index: number): LuaTransportLine
+    get_max_transport_line(this: void): number
+    launch_rocket(this: void): boolean
+    revive(
+        this: void,
+        opts: { return_item_request_proxy?: boolean, raise_revive?: boolean}): {[key: string]: number} | null
+    silent_revive(
+        this: void,
+        opts: { return_item_request_proxy?: boolean, raise_revive?: boolean}): {[key: string]: number} | null
+    get_connected_rail(
+        this: void,
+        table: {
+            rail_direction: defines.rail_direction,
+            rail_connection_direction: defines.rail_connection_direction,
+        },
+    ): LuaEntity
+    get_connected_rails(this: void): LuaEntity[]
+    get_rail_segment_entity(this: void, direction: defines.rail_direction, in_else_out: boolean): LuaEntity
+    get_rail_segment_end(this: void, direction: defines.rail_direction): LuaEntity
+    get_rail_segment_length(this: void): number
+    get_rail_segment_overlaps(this: void): LuaEntity[]
+    get_filter(this: void, uint: number): string | null
+    set_filter(this: void, index: number, filter: string): void
+    get_infinity_container_filter(this: void, index: number): InfinityContainerFilter
+    set_infinity_container_filter(this: void, index: number, filter: InfinityContainerFilter | null): void
+    get_infinity_pipe_filter(this: void): InfinityPipeFilter
+    set_infinity_pipe_filter(this: void, filter: InfinityPipeFilter | null): void
+    get_heat_setting(this: void): HeatSetting
+    set_heat_setting(this: void, filter: HeatSetting): void
+    get_control_behavior(this: void): LuaControlBehavior | null
+    get_or_create_control_behavior(this: void): LuaControlBehavior | null
+    get_circuit_network(
+        this: void,
+        wire: defines.wire_type,
+        circuit_connector?: defines.circuit_connector_id): LuaCircuitNetwork | null
+    get_merged_signals(this: void, circuit_connector?: defines.circuit_connector_id): Signal[] | null
+    supports_backer_name(this: void): boolean
+    copy_settings(this: void, entity: LuaEntity): {[key: string]: number }
+    get_logistic_point(this: void, index?: defines.logistic_member_index): LuaLogisticPoint | LuaLogisticPoint[]
+    play_note(this: void, instrument: number, note: number): boolean
+    connect_rolling_stock(this: void, direction: defines.rail_direction): boolean
+    disconnect_rolling_stock(this: void, direction: defines.rail_direction): boolean
+    update_connections(this: void): void
+    get_recipe(this: void): LuaRecipe | null
+    set_recipe(this: void, recipe: string | LuaRecipe | null): {[key: string]: number }
+    rotate(
+        this: void,
+        options: {
+            reverse?: boolean,
+            by_player?: LuaPlayer,
+            spill_items?: boolean,
+            enable_looted?: boolean,
+            force?: LuaForce | string,
+        }): boolean
+    get_driver(this: void): LuaEntity | LuaPlayer | null
+    set_driver(this: void, driver: LuaEntity | LuaPlayer | null): void
+    get_passenger(this: void): LuaEntity | LuaPlayer | null
+    set_passenger(this: void, passenger: LuaEntity | LuaPlayer): void
+    is_connected_to_electric_network(this: void): boolean
+    get_train_stop_trains(this: void): LuaTrain[]
+    get_stopped_train(this: void): LuaTrain
+    clone(
+        this: void,
+        table: {
+            position: Position,
+            surface?: LuaSurface,
+            force?: ForceSpecification,
+        },
+    ): LuaEntity
+    get_fluid_count(this: void, fluid?: string): number
+    get_fluid_contents(this: void): {[key: string]: number }
+    remove_fluid(
+        this: void,
+        table: {
+            name: string,
+            amount: number,
+            minimum_temperature?: number,
+            maximum_temperature?: number,
+            temperature?: number,
+        },
+    ): number
+    insert_fluid(this: void, fluid: Fluid): number
+    clear_fluid_inside(this: void): void
+    get_beam_source(this: void): BeamTarget
+    set_beam_target(this: void, target: LuaEntity | Position): void
+    get_radius(this: void): number
+    get_health_ratio(this: void): number
+    create_build_effect_smoke(this: void): void
+    release_from_spawner(this: void): void
+    toggle_equipment_movement_bonus(this: void): void
+    can_shoot(this: void, target: LuaEntity, position: Position): boolean
+    start_fading_out(this: void): void
+    readonly name: string
+    readonly ghost_name: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly ghost_localised_name: LocalisedString
+    readonly ghost_localised_description: LocalisedString
+    readonly type: string
+    readonly ghost_type: string
+    active: boolean
+    destructible: boolean
+    minable: boolean
+    rotatable: boolean
+    operable: boolean
+    health: number
+    direction: defines.direction
+    readonly supports_direction: boolean
+    orientation: number
+    readonly cliff_orientation: string
+    amount: number
+    initial_amount: number | null
+    effectivity_modifier: number
+    consumption_modifier: number
+    friction_modifier: number
+    speed: number
+    stack: LuaItemStack
+    prototype: LuaEntityPrototype
+    ghost_prototype: LuaEntityPrototype | LuaTilePrototype
+    drop_position: Position
+    pickup_position: Position
+    drop_target: LuaEntity | null
+    pickup_target: LuaEntity
+    selected_gun_index: number | null
+    energy: number
+    temperature: number | null
+    readonly previous_recipe: LuaRecipe | null
+    readonly held_stack: LuaItemStack
+    readonly held_stack_position: Position
+    readonly train: LuaTrain
+    readonly neighbours: {[key: string]: LuaEntity[] | LuaEntity[][] | LuaEntity }
+    readonly belt_neighbours: {[key: string]: LuaEntity[] }
+    fluidbox: LuaFluidBox
+    backer_name: string | null
+    time_to_live: number
+    color: Color
+    text: LocalisedString
+    readonly signal_state: defines.signal_state
+    readonly chain_signal_state: defines.chain_signal_state
+    to_be_looted: boolean
+    readonly crafting_speed: number
+    crafting_progress: number
+    bonus_progress: number
+    readonly belt_to_ground_type: 'input' | 'output'
+    loader_type: 'input' | 'output'
+    rocket_parts: number
+    readonly logistic_network: LuaLogisticNetwork
+    readonly logistic_cell: LuaLogisticCell
+    item_requests: {[key: string]: number }
+    readonly player: LuaPlayer | null
+    readonly unit_group: LuaUnitGroup
+    damage_dealt: number
+    kills: number
+    last_user: LuaPlayer
+    electric_buffer_size: number | null
+    readonly electric_input_flow_limit: number | null
+    readonly electric_output_flow_limit: number | null
+    readonly electric_drain: number | null
+    readonly electric_emissions: number | null
+    readonly unit_number: number | null
+    readonly ghost_unit_number: number | null
+    mining_progress: number | null
+    bonus_mining_progress: number | null
+    power_production: number
+    power_usage: number
+    readonly bounding_box: BoundingBox
+    readonly secondary_bounding_box: BoundingBox | null
+    readonly selection_box: BoundingBox
+    readonly secondary_selection_box: BoundingBox | null
+    readonly mining_target: LuaEntity | null
+    readonly circuit_connected_entities: { red: LuaEntity[], green: LuaEntity[] }
+    readonly circuit_connection_definitions: Array<{
+        wire: defines.wire_type.green | defines.wire_type.red,
+        target_entity: LuaEntity,
+        source_circuit_id: number,
+        target_circuit_id: number,
+    }>
+    readonly request_slot_count: number
+    readonly filter_slot_count: number
+    readonly loader_container: LuaEntity
+    readonly grid: LuaEquipmentGrid | null
+    graphics_variation: number | null
+    tree_color_index: number
+    readonly tree_color_index_max: number
+    tree_stage_index: number
+    readonly tree_stage_index_max: number
+    readonly burner: LuaBurner | null
+    shooting_target: LuaEntity | null
+    readonly proxy_target: LuaEntity | null
+    readonly stickers: LuaEntity[]
+    readonly sticked_to: LuaEntity
+    parameters: ProgrammableSpeakerParameters
+    alert_parameters: ProgrammableSpeakerAlertParameters
+    readonly electric_network_statistics: LuaFlowStatistics
+    inserter_stack_size_override: number
+    products_finished: number
+    readonly spawner: LuaEntity | null
+    readonly units: LuaEntity[]
+    power_switch_state: boolean
+    relative_turret_orientation: number | null
+    readonly effects: Effects | null
+    infinity_container_filters: InfinityContainerFilter[]
+    remove_unfiltered_items: boolean
+    character_corpse_player_index: number
+    character_corpse_tick_of_death: number
+    character_corpse_cause_of_death: LocalisedString
+    associated_player: LuaPlayer | null
+    readonly tick_of_last_attack: number
+    readonly tick_of_last_damage: number
+    splitter_filter: LuaItemPrototype | null
+    inserter_filter_mode: 'blacklist' | 'whitelist' | null
+    splitter_input_priority: 'left' | 'none' | 'right'
+    splitter_output_priority: 'left' | 'none' | 'right'
+    readonly armed: boolean
+    recipe_locked: boolean
+    readonly connected_rail: LuaEntity | null
+    readonly trains_in_block: number
+    timeout: number
+    readonly neighbour_bonus: number
+    readonly ai_settings: LuaAiSettings
+    highlight_box_type: string
+    highlight_box_blink_interval: number
+    readonly status: defines.entity_status | null
+    enable_logistics_while_moving: boolean
+    render_player: LuaPlayer | null
+    render_to_forces: ForceSpecification[] | null
+    readonly pump_rail_target: LuaEntity | null
+    readonly moving: boolean
+    readonly electric_network_id: number | null
+    allow_dispatching_robots: boolean
+    auto_launch: boolean
+    readonly energy_generated_last_tick: number
+    storage_filter: LuaItemPrototype
+    request_from_buffers: boolean
+    readonly valid: boolean
+    help(): string
+}
+
+// ----
+
+interface LuaTrain {
 }
 
 interface LuaEntityPrototype {
@@ -467,4 +862,13 @@ interface LuaItemStack {
 }
 
 interface LuaGuiElement {
+}
+
+interface LuaUnitGroup {
+}
+
+interface LuaLogisticNetwork {
+}
+
+interface LuaLogisticCell {
 }
