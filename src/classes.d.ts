@@ -416,7 +416,7 @@ interface LuaFluidBox {
     readonly owner: LuaEntity
     readonly [key: number]: Fluid | null
     readonly valid: boolean
-    help(): string
+    help(this: void): string
 }
 
 interface LuaBurner {
@@ -429,7 +429,7 @@ interface LuaBurner {
     currently_burning: LuaItemPrototype
     readonly fuel_categories: {[key: string]: boolean }
     readonly valid: boolean
-    help(): string
+    help(this: void): string
 }
 
 interface LuaAiSettings {
@@ -438,7 +438,7 @@ interface LuaAiSettings {
     do_separation: boolean
     path_resolution_modifier: number
     readonly valid: boolean
-    help(): string
+    help(this: void): string
 }
 
 interface LuaEntity extends LuaControl {
@@ -731,13 +731,66 @@ interface LuaEntity extends LuaControl {
     storage_filter: LuaItemPrototype
     request_from_buffers: boolean
     readonly valid: boolean
-    help(): string
+    help(this: void): string
+}
+
+interface LuaTrain {
+    get_item_count(this: void, item?: string): number
+    get_contents(this: void): {[key: string]: number }
+    remove_item(this: void, stack: ItemStackSpecification): number
+    insert(this: void, stack: ItemStackSpecification): void
+    clear_items_inside(this: void): void
+    recalculate_path(this: void, force?: boolean): boolean
+    get_fluid_count(this: void, fluid?: string): number
+    get_fluid_contents(this: void): {[key: string]: number }
+    remove_fluid(this: void, fluid: Fluid): number
+    insert_fluid(this: void, fluid: Fluid): number
+    clear_fluids_inside(this: void): void
+    go_to_station(index: number): void
+    get_rails(): LuaEntity[]
+    manual_mode: boolean
+    speed: number
+    readonly max_forward_speed: number
+    readonly max_backward_speed: number
+    readonly weight: number
+    readonly carriages: LuaEntity[]
+    readonly locomotives: {[key in 'front_movers' | 'back_movers']: LuaEntity[] }
+    readonly cargo_wagons: LuaEntity[]
+    readonly fluid_wagons: LuaEntity[]
+    schedule: TrainSchedule | null
+    readonly state: defines.train_state
+    readonly front_rail: LuaEntity | null
+    readonly back_rail: LuaEntity | null
+    readonly rail_direction_from_front_rail: defines.rail_direction
+    readonly rail_direction_from_back_rail: defines.rail_direction
+    readonly front_stock: LuaEntity | null
+    readonly back_stock: LuaEntity | null
+    readonly station: LuaEntity | null
+    readonly has_path: boolean
+    readonly path_end_rail: LuaEntity | null
+    readonly path_end_stop: LuaEntity | null
+    readonly id: number
+    readonly passengers: LuaPlayer[]
+    readonly riding_state: RidingState
+    readonly killed_players: {[key: number]: number}
+    readonly kill_count: number
+    readonly path: LuaRailPath | null
+    readonly signal: LuaEntity | null
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaRailPath {
+    readonly size: number
+    readonly current: number
+    readonly total_distance: number
+    readonly travelled_distance: number
+    readonly rails: {[key: number]: LuaEntity }
+    readonly valid: boolean
+    help(this: void): string
 }
 
 // ----
-
-interface LuaTrain {
-}
 
 interface LuaEntityPrototype {
 }

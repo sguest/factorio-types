@@ -199,6 +199,19 @@ declare namespace defines {
         waiting_to_launch_rocket,
     }
 
+    enum train_state {
+        on_the_path,
+        path_lost,
+        no_schedule,
+        no_path,
+        arrive_signal,
+        wait_signal,
+        arrive_station,
+        wait_station,
+        manual_control_stop,
+        manual_control,
+    }
+
 // ----
 
     namespace control_behavior {

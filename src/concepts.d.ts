@@ -478,3 +478,30 @@ interface Effects {
 interface EffectValue {
     bonus: number
 }
+
+interface TrainSchedule {
+    current: number
+    records: TrainScheduleRecord[]
+}
+
+interface TrainScheduleRecord {
+    station?: string
+    rail?: LuaEntity
+    wait_conditions: WaitCondition[]
+    temporary?: true
+}
+
+interface WaitCondition {
+    type: 'time' | 'inactivity' | 'full' | 'empty' | 'item_count' | 'circuit' |
+        'robots_inactive' | 'fluid_count' | 'passenger_present' | 'passenger_not_present'
+    compare_type: 'and' | 'or'
+    ticks?: number
+    condition?: CircuitCondition
+}
+
+interface CircuitCondition {
+    comparator?: '<' | '>' | '=' | '≥' | '≤' | '≠'
+    first_signal?: SignalID
+    second_signal?: SignalID
+    constant?: number
+}
