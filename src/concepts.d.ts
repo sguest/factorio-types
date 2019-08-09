@@ -14,6 +14,8 @@ type ItemPrototypeSpecification = LuaItemStack | LuaItemPrototype | string;
 
 type EntityPrototypeSpecification = LuaEntity | LuaEntityPrototype | string;
 
+type Vector = number[];
+
 type SimpleItemStack = string | {
     name: string,
     count?: number,
@@ -61,6 +63,13 @@ type ItemPrototypeFlags = {
     [key in ItemPrototypeFlagValue]: true
 };
 
+type Resistances = {
+    [type in damageType]: {
+        decrease: number,
+        percent: number,
+    }
+};
+
 interface Icon {
     icon: string
     tint: Color
@@ -71,12 +80,6 @@ interface Color {
     g?: number
     b?: number
     a?: number
-}
-
-interface Resistance {
-    type: damageType
-    decrease: number
-    percent: number
 }
 
 interface Ingredient {
@@ -528,7 +531,7 @@ interface ArithmeticCombinatorParameters {
     second_signal?: SignalID
     first_constant?: number
     second_constant?: number
-    operation?:  '*' | '/' | '+' | '-' | '%' | '^' | '<<' | '>>' | 'AND' | 'OR' | 'XOR'
+    operation?: '*' | '/' | '+' | '-' | '%' | '^' | '<<' | '>>' | 'AND' | 'OR' | 'XOR'
     output_signal?: SignalID
 }
 
@@ -539,4 +542,96 @@ interface DeciderCombinatorParameters {
     comparator?: '<' | '>' | '=' | '≥' | '≤' | '≠'
     output_signal?: SignalID
     copy_count_from_input?: boolean
+}
+
+interface Product {
+    type: 'item' | 'fluid'
+    name: string
+    amount?: number
+    temperature?: number
+    amount_min?: number
+    amount_max?: number
+    probability?: number
+    catalyst_amount?: number
+}
+
+interface Trigger {
+    [key: number]: TriggerItem
+}
+
+interface TriggerItem {
+    type: 'direct' | 'area' | 'line' | 'cluster'
+    action_delivery?: TriggerDelivery[]
+    source_effects: TriggerEffectItem[]
+    entity_flags?: EntityPrototypeFlags
+    collision_mask: CollisionMask
+    force: 'all' | 'enemy' | 'ally'
+    repeat_count: number
+}
+
+interface TriggerDelivery {
+    type: 'instant' | 'projectile' | 'flame-thrower' | 'beam' | 'stream'
+    source_effect: TriggerEffectItem[]
+    target_effect: TriggerEffectItem[]
+}
+
+interface TriggerEffectItem {
+    type: 'damage' | 'create-entity' | 'create-explosion' | 'create-fire' |
+        'create-smoke' | 'create-particle' | 'create-sticker' | 'nested-result' | 'play-sound'
+    repeat_count: number
+    affects_target: boolean
+}
+
+interface LootItem {
+    item: string
+    probability: number
+    count_min: number
+    count_max: number
+}
+
+interface AutoplaceSpecification {
+    probability_expression: NoiseExpression
+    richness_expression: NoiseExpression
+    sharpness: number
+    max_probability: number
+    placement_density: number
+    richness_base: number
+    richness_multiplier: number
+    order: string
+    peaks?: Array<{
+        influence: number,
+        max_influence: number,
+        min_influence: number,
+        richness_influence: number,
+        noisePersistence: number,
+        noise_layer?: string,
+        noise_octaves_difference: number,
+        d_optimal: number,
+        d_range: number,
+        d_top_property_limit: number,
+        d_max_range: number,
+    }>
+    control?: string
+    tile_restriction?: Array<{
+        first?: string,
+        second?: string,
+    }>
+    size_control_multiplier: number
+    force: string
+    random_probability_penalty: number
+}
+
+interface NoiseExpression {
+    type: string
+}
+
+interface ProgrammableSpeakerInstrument {
+    name: string
+    notes: string[]
+}
+
+interface FluidBoxConnection {
+    max_underground_distance?: number
+    type: 'input' | 'output' | 'input-output'
+    positions: Vector[]
 }

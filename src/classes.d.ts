@@ -938,9 +938,285 @@ interface LuaRailPath {
     help(this: void): string
 }
 
+interface LuaBurnerPrototype {
+    readonly emissions: number
+    readonly render_no_network_icon: boolean
+    readonly render_no_power_icon: boolean
+    readonly effectivity: number
+    readonly fuel_inventory_size: number
+    readonly burnt_inventory_size: number
+    readonly smoke: Array<{
+        name: string,
+        frequency: number,
+        offset: number,
+        position?: Vector,
+        north_position?: Vector,
+        east_position?: Vector,
+        south_position?: Vector,
+        west_position?: Vector,
+        deviation?: Position,
+        starting_frame_speed: number,
+        starting_frame_speed_deviation: number
+        starting_frame: number,
+        starting_frame_deviation: number,
+        slow_down_factor: number,
+        height: number,
+        height_deviation: number,
+        starting_vertical_speed: number,
+        starting_vertical_speed_deviation: number,
+        vertical_speed_slowdown: number,
+    }>
+    readonly light_flicker: {
+        minimum_intensity: number,
+        maximum_intensity: number,
+        derivation_change_frequency: number,
+        derivation_change_deviation: number,
+        border_fix_speed: number,
+        minimum_light_size: number,
+        light_intensity_to_size_coefficient: number,
+        color: Color,
+    }
+    readonly fuel_categories: {[key: string]: boolean}
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaElectricEnergySourcePrototype {
+    readonly buffer_capacity: number
+    readonly usage_priority: string
+    readonly input_flow_limit: number
+    readonly output_flow_limit: number
+    readonly drain: number
+    readonly emissions: number
+    readonly render_no_network_icon: boolean
+    readonly render_no_power_icon: boolean
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaFluidBoxPrototype {
+    readonly entity: LuaEntityPrototype
+    readonly index: number
+    readonly pipe_connections: FluidBoxConnection[]
+    readonly production_type: 'input' | 'output' | 'input-output' | 'none'
+    readonly base_area: number
+    readonly base_level: number
+    readonly height: number
+    readonly volume: number
+    readonly filter: LuaFluidPrototype | null
+    readonly minimum_temperature: number | null
+    readonly maximum_temperature: number | null
+    readonly secondary_draw_orders: number[]
+    readonly render_layer: string
+    readonly valid: boolean
+    help(this: void): string
+}
+
 // ----
 
 interface LuaEntityPrototype {
+    has_flag(this: void, flag: EntityPrototypeFlagValue): boolean
+    get_inventory_size(this: void, index: defines.inventory): number
+    readonly type: string
+    readonly name: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly max_health: number
+    readonly infinite_resource: boolean | null
+    readonly minimum_resource_amount: number | null
+    readonly normal_resource_amount: number | null
+    readonly infinite_resource_depletion_amount: number | null
+    readonly resource_category: 'basic_solid' | 'basic_fluid' | null
+    readonly category: 'basic_solid' | 'basic_fluid' | null // prototype stage
+    readonly mineable_properties: {
+        mineable: boolean,
+        mining_time: number,
+        mining_particle?: string,
+        products?: Product[]
+        fluid_amount?: number
+        required_fluid?: string
+        mining_trigger?: Trigger,
+    }
+    readonly items_to_place_this: SimpleItemStack[] | null
+    readonly collision_box: BoundingBox
+    readonly secondary_collision_box: BoundingBox | null
+    readonly map_generator_bounding_box: BoundingBox
+    readonly selection_box: BoundingBox
+    readonly drawing_box: BoundingBox
+    readonly sticker_box: BoundingBox
+    readonly collision_mask: CollisionMask
+    readonly order: string
+    readonly group: LuaGroup
+    readonly healing_per_tick: number
+    readonly emissions_per_second: number
+    readonly corpses: {[key: string]: LuaEntityPrototype }
+    readonly selectable_in_game: boolean
+    readonly selection_priority: number
+    readonly weight: number | null
+    readonly resistances: Resistances
+    readonly fast_replaceable_group: string | null
+    readonly next_upgrade: LuaEntityPrototype | null
+    readonly loot: LootItem[] | null
+    readonly repair_speed_modifier: number
+    readonly turret_range: number
+    readonly autoplace_specification: AutoplaceSpecification
+    readonly belt_speed: number | null
+    readonly result_units: Array<{
+        unit: string,
+        spawn_points: Array<{
+            evolution_factor: number,
+            weight: number,
+        }>,
+    }>
+    readonly attack_result: Trigger | null
+    readonly final_attack_result: Trigger | null
+    readonly attack_parameters: {
+        range: number,
+        min_range: number,
+        turn_range: number,
+        fire_penalty: number,
+        min_attack_distance: number,
+        damage_modifier: number,
+        ammo_consumption_modifier: number,
+        cooldown: number,
+        warmup: number,
+        movement_slow_down_factor: number,
+        movement_slow_down_cooldown: number,
+    } | null
+    readonly spawn_cooldown: {
+        min: number,
+        max: number,
+    } | null
+    readonly mining_drill_radius: number | null
+    readonly mining_speed: number | null
+    readonly logistic_mode: string | null
+    readonly max_underground_distance: number | null
+    readonly flags: EntityPrototypeFlags
+    readonly remains_when_mined: LuaEntityPrototype[]
+    readonly allow_copy_paste: boolean
+    readonly shooting_cursor_size: number
+    // documentation doesn't specify what the table should contain
+    readonly created_smoke: {} | null
+    readonly created_effect: Trigger | null
+    readonly map_color: Color | null
+    readonly friendly_map_color: Color
+    readonly enemy_map_color: Color
+    readonly build_base_evolution_requirement: number
+    readonly instruments: ProgrammableSpeakerInstrument | null
+    readonly max_polyphony: number | null
+    readonly module_inventory_size: number | null
+    readonly ingredient_count: number | null
+    readonly crafting_speed: number | null
+    readonly crafting_categories: {[key: string]: boolean }
+    readonly resource_categories: {[key: string]: boolean } | null
+    readonly supply_area_distance: number | null
+    readonly max_wire_distance: number
+    readonly max_circuit_wire_distance: number
+    readonly energy_usage: number | null
+    readonly max_energy_usage: number
+    readonly effectivity: number | null
+    readonly consumption: number | null
+    readonly friction_force: number | null
+    readonly braking_force: number | null
+    readonly tank_driving: boolean | null
+    readonly rotation_speed: number | null
+    readonly turret_rotation_speed: number | null
+    readonly guns: {[key: string]: LuaItemPrototype } | null
+    readonly speed: number | null
+    readonly speed_multiplier_when_out_of_energy: number | null
+    readonly max_payload_size: number | null
+    readonly draw_cargo: boolean | null
+    readonly energy_per_move: number | null
+    readonly energy_per_tick: number | null
+    readonly max_energy: number | null
+    readonly min_to_charge: number | null
+    readonly max_to_charge: number | null
+    readonly burner_prototype: LuaBurnerPrototype | null
+    readonly electric_energy_source_prototype: LuaElectricEnergySourcePrototype | null
+    readonly building_grid_bit_shift: number
+    readonly fluid_usage_per_tick: number | null
+    readonly maximum_temperature: number | null
+    readonly target_temperature: number | null
+    readonly fluid: LuaFluidPrototype | null
+    readonly fluid_capacity: number
+    readonly pumping_speed: number | null
+    readonly stack: boolean
+    readonly allow_custom_vectors: boolean
+    readonly inserter_extension_speed: number | null
+    readonly inserter_rotation_speed: number | null
+    readonly count_as_rock_for_filtered_deconstruction: boolean
+    readonly filter_count: number | null
+    readonly production: number | null
+    readonly time_to_live: number
+    readonly distribution_effectivity: number | null
+    readonly explosion_beam: number | null
+    readonly explosion_rotate: number | null
+    readonly tree_color_count: number | null
+    readonly alert_when_damaged: boolean | null
+    readonly alert_when_attacking: boolean | null
+    readonly color: Color | null
+    readonly collision_mask_collides_with_itself: boolean
+    readonly collision_mask_collides_with_tiles_only: boolean
+    readonly collision_mask_considers_tile_transitions: boolean
+    readonly allowed_effects: {[key: string]: boolean} | null
+    readonly rocket_parts_required: number | null
+    readonly fixed_recipe: string | null
+    readonly construction_radius: number | null
+    readonly logistic_radius: number | null
+    readonly energy_per_hit_point: number | null
+    readonly create_ghost_on_death: boolean
+    readonly timeout: number
+    readonly fluidbox_prototypes: LuaFluidBoxPrototype[]
+    readonly neighbour_bonus: number
+    readonly neighbour_collision_increase: number
+    readonly container_distance: number
+    readonly belt_distance: number
+    readonly belt_length: number
+    readonly is_building: boolean
+    readonly automated_ammo_count: number | null
+    readonly max_speed: number | null
+    readonly darkness_for_all_lamps_on: number | null
+    readonly darkness_for_all_lamps_off: number | null
+    readonly always_on: boolean | null
+    readonly min_darkness_to_spawn: number
+    readonly max_darkness_to_spawn: number
+    readonly radius: number
+    readonly cliff_explosive_prototype: string | null
+    readonly has_belt_immunity: boolean | null
+    readonly vision_distance: number | null
+    readonly pollution_to_join_attack: number | null
+    readonly min_pursue_time: number | null
+    readonly max_pursue_distance: number | null
+    readonly radar_range: number | null
+    readonly move_while_shooting: boolean | null
+    readonly can_open_gates: boolean | null
+    readonly affected_by_tiles: boolean | null
+    readonly distraction_cooldown: number | null
+    readonly spawning_time_modifier: number | null
+    readonly alert_icon_shift: Vector
+    readonly lab_inputs: string[] | null
+    readonly researching_speed: number | null
+    readonly item_slot_count: number | null
+    readonly base_productivity: number | null
+    readonly allow_access_to_all_forces: boolean
+    readonly supports_direction: boolean
+    readonly running_speed: number
+    readonly maximum_corner_sliding_distance: number
+    readonly build_distance: number
+    readonly drop_item_distance: number
+    readonly reach_distance: number
+    readonly reach_resource_distance: number
+    readonly item_pickup_distance: number
+    readonly loot_pickup_distance: number
+    readonly enter_vehicle_distance: number
+    readonly ticks_to_keep_gun: number
+    readonly ticks_to_keep_aiming_direction: number
+    readonly ticks_to_stay_in_combat: number
+    readonly respawn_time: number
+    readonly damage_hit_tint: Color
+    readonly character_corpse: LuaEntityPrototype
+    readonly valid: boolean
+    help(this: void): string
 }
 
 interface LuaPlayer extends LuaControl {
@@ -968,7 +1244,7 @@ interface LuaItemPrototype {
     name: string
     icons: Icon[]
     icon: string
-    resistances: Resistance[]
+    resistances: Resistances
 }
 
 interface LuaRecipe {
