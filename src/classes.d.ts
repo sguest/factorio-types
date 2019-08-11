@@ -736,6 +736,7 @@ interface LuaEntity extends LuaControl {
     toggle_equipment_movement_bonus(this: void): void
     can_shoot(this: void, target: LuaEntity, position: Position): boolean
     start_fading_out(this: void): void
+    get_upgrade_target(this: void): LuaEntityPrototype
     readonly name: string
     readonly ghost_name: string
     readonly localised_name: LocalisedString
