@@ -576,10 +576,10 @@ interface TriggerDelivery {
 }
 
 interface TriggerEffectItem {
-    type: 'damage' | 'create-entity' | 'create-explosion' | 'create-fire' |
+    type?: 'damage' | 'create-entity' | 'create-explosion' | 'create-fire' |
         'create-smoke' | 'create-particle' | 'create-sticker' | 'nested-result' | 'play-sound'
-    repeat_count: number
-    affects_target: boolean
+    repeat_count?: number
+    affects_target?: boolean
 }
 
 interface LootItem {

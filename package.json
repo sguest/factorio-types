@@ -12,8 +12,11 @@
     "validate": "yarn run build && yarn run lint"
   },
   "devDependencies": {
+    "node-html-parser": "^1.1.16",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3"
   },
-  "files": ["**/*.d.ts"]
+  "files": [
+    "**/*.d.ts"
+  ]
 }
