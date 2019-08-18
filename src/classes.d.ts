@@ -1179,6 +1179,7 @@ interface LuaEntityPrototype {
     readonly base_productivity: number | null
     readonly allow_access_to_all_forces: boolean
     readonly supports_direction: boolean
+    readonly terrain_friction_modifier: number
     readonly running_speed: number
     readonly maximum_corner_sliding_distance: number
     readonly build_distance: number
