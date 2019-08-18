@@ -20,6 +20,10 @@ type SpritePath = string;
 
 type MapSettings = PrototypeMapSettings;
 
+type ChunkPosition = Position;
+
+type TilePosition = Position;
+
 type SimpleItemStack = string | {
     name: string,
     count?: number,
@@ -66,6 +70,8 @@ type ItemPrototypeFlagValue = 'hidden' | 'hide-from-bonus-gui' | 'hide-from-fuel
 type ItemPrototypeFlags = {
     [key in ItemPrototypeFlagValue]: true
 };
+
+type CursorBoxRenderType = 'electricity' | 'copy' | 'not-allowed' | 'pair' | 'logistics' | 'train-visualisation';
 
 type Resistances = {
     [type in damageType]: {
@@ -668,4 +674,137 @@ interface MapViewSettings {
     'show-player-names'?: boolean
     'show-networkless-logistic-members'?: boolean
     'show-non-standard-map-info'?: boolean
+}
+
+interface Filter {
+    index: number
+    name: string
+}
+
+interface CreateEntityParams {
+    name: string
+    position: Position
+    direction?: defines.direction
+    force?: ForceSpecification
+    target?: LuaEntity
+    source?: LuaEntity
+    fast_replace?: boolean
+    player?: PlayerSpecification
+    spill?: boolean
+    raise_built?: boolean
+    create_build_effect_smoke?: boolean
+}
+
+interface CreateAssemblingMachineEntityParams extends CreateEntityParams {
+    recipe?: string
+}
+
+interface CreateBeamEntityParams extends CreateEntityParams {
+    target_position?: Position
+    source_position?: Position
+    max_length?: number
+    duration?: number
+    source_offset?: Vector
+}
+
+interface CreateContainerEntityParams extends CreateEntityParams {
+    bar?: number
+}
+
+interface CreateFlyingTextEntityParams extends CreateEntityParams {
+    text: LocalisedString
+    color?: Color
+    render_player_index?: number
+}
+
+interface CreateGhostEntityParams extends CreateEntityParams {
+    inner_name?: string
+    expires?: boolean
+}
+
+interface CreateFireEntityParams extends CreateEntityParams {
+    initial_ground_flame_count: number
+}
+
+interface CreateInserterEntityParams extends CreateEntityParams {
+    conditions: {
+        circuit?: CircuitCondition,
+        logistics?: CircuitCondition,
+    },
+    filters: Filter[]
+}
+
+interface CreateItemEntityParams extends CreateEntityParams {
+    stack: SimpleItemStack
+}
+
+interface CreateItemRequestProxyEntityParams extends CreateEntityParams {
+    target: LuaEntity
+    modules: {[key: string]: number }
+}
+
+interface CreateLocomotiveEntityParams extends CreateEntityParams {
+    snap_to_train_stop?: boolean
+}
+
+interface CreateLogisticContainerEntityParams extends CreateEntityParams {
+    request_filters?: Filter[]
+}
+
+interface CreateParticleEntityParams extends CreateEntityParams {
+    movement: Vector
+    height: number
+    vertical_speed: number
+    frame_speed: number
+}
+
+interface CreateProjectileEntityParams extends CreateEntityParams {
+    speed: number
+    max_range: number
+}
+
+interface CreateResourceEntityParams extends CreateEntityParams {
+    amount: number
+    enable_tree_removal?: boolean
+    enable_cliff_removal?: boolean
+}
+
+interface CreateUndergroundBeltEntityParams extends CreateEntityParams {
+    type?: 'output' | 'input'
+}
+
+interface CreateProgrammableSpeakerEntityParams extends CreateEntityParams {
+    parameters?: ProgrammableSpeakerParameters
+    alert_parameters?: ProgrammableSpeakerAlertParameters
+}
+
+interface CreateCharacterCorpseEntityParams extends CreateEntityParams {
+    inventory_size?: number
+    player_index?: number
+}
+
+interface CreateHighlightBoxEntityParams extends CreateEntityParams {
+    bounding_box?: BoundingBox
+    box_type?: CursorBoxRenderType
+    render_player_index?: number
+    blink_interval?: number
+    time_to_live?: number
+}
+
+interface CreateSimpleEntityWithOwnerParams extends CreateEntityParams {
+    render_player_index?: number
+}
+
+interface ScriptArea {
+    area: BoundingBox
+    name: string
+    color: Color
+    id: number
+}
+
+interface ScriptPosition {
+    position: Position
+    name: string
+    color: Color
+    id: number
 }

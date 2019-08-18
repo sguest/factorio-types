@@ -234,10 +234,26 @@ declare namespace defines {
         fluid_mixing,
     }
 
-    enum  render_mode {
+    enum render_mode {
         game,
         chart,
         chart_zoomed_in,
+    }
+
+    enum build_check_type {
+        script,
+        manual,
+        ghost_place,
+        ghost_revive,
+    }
+
+    enum chunk_generated_status {
+        nothing,
+        custom_tiles,
+        basic_tiles,
+        corrected_tiles,
+        tiles,
+        entities,
     }
 
 // ----

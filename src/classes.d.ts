@@ -1389,16 +1389,326 @@ interface LuaPlayer extends LuaControl {
     help(this: void): string
 }
 
+interface LuaChunkIterator {
+    [key: number]: ChunkPosition
+    readonly valid: boolean
+    help(this: void): string
+}
+
 // ----
 
 interface LuaSurface {
-    create_entity(
+    get_pollution(this: void, position: Position): number
+    can_place_entity(
         this: void,
-        values: {
+        table: {
             name: string,
             position: Position,
+            direction: defines.direction,
+            force?: ForceSpecification,
+            build_check_type?: defines.build_check_type,
+            forced?: boolean,
+        },
+    ): boolean
+    can_fast_replace(
+        this: void,
+        table: {
+            name: string,
+            position: Position,
+            direction?: defines.direction,
+            force?: ForceSpecification,
+        },
+    ): boolean
+    find_entity(this: void, entity: string, position: Position): LuaEntity | null
+    find_entities(this: void, area: BoundingBox): LuaEntity[]
+    find_entities_filtered(
+        this: void,
+        table: {
+            area?: BoundingBox,
+            position?: Position,
+            radius?: number,
+            name?: string | string[],
+            type?: string | string[],
+            ghost_name?: string | string[],
+            ghost_type?: string | string[],
+            direction?: defines.direction | defines.direction[],
+            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
+            force?: ForceSpecification | ForceSpecification[],
+            limit?: number,
+            invert?: boolean,
+        }): LuaEntity[]
+    find_tiles_filtered(
+        this: void,
+        table: {
+            area?: BoundingBox,
+            position?: Position,
+            radius?: number,
+            name?: string | string[],
+            limit?: number,
+            has_hidden_tile?: boolean,
+            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
+        }): LuaTile[]
+    count_entities_filtered(
+        this: void,
+        table: {
+            area?: BoundingBox,
+            position?: Position,
+            radius?: number,
+            name?: string | string[],
+            type?: string | string[],
+            ghost_name?: string | string[],
+            ghost_type?: string | string[],
+            direction?: defines.direction | defines.direction[],
+            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
+            force?: ForceSpecification | ForceSpecification[],
+            limit?: number,
+            invert?: boolean,
+        }): number
+    count_tiles_filtered(
+        this: void,
+        table: {
+            area?: BoundingBox,
+            position?: Position,
+            radius?: number,
+            name?: string | string[],
+            limit?: number,
+            has_hidden_tile?: boolean,
+            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
+        }): number
+    find_non_colliding_position(
+        this: void,
+        table: {
+            name: string,
+            center: Position,
+            precision: number,
+            force_to_tile_center?: boolean,
+        },
+    ): Position
+    find_non_colliding_position_in_box(
+        this: void,
+        table: {
+            name: string,
+            search_space: BoundingBox,
+            precision: number,
+            force_to_tile_center?: boolean,
+        },
+    ): Position
+    spill_item_stack(
+        this: void,
+        table: {
+            position: Position,
+            items: ItemStackSpecification,
+            enable_looted?: boolean,
+            force?: LuaForce | string,
+            allow_belts?: boolean,
+        },
+    ): void
+    find_enemy_units(this: void, center: Position, radius: number, force?: LuaForce | string): LuaEntity[]
+    find_units(
+        this: void,
+        table: {
+            area: BoundingBox,
+            force: LuaForce | string,
+            condition: ForceCondition,
+        },
+    ): LuaEntity[]
+    find_nearest_enemy(
+        this: void,
+        table: {
+            position: Position,
+            max_distance: number,
+            force?: ForceSpecification,
+        },
+    ): LuaEntity
+    set_multi_command(
+        this: void,
+        table: {
+            command: Command,
+            unit_count: number,
+            force?: ForceSpecification,
+            unit_search_distance?: number,
+        },
+    ): number
+    create_entity(this: void, values: CreateEntityParams): LuaEntity | null
+    create_trivial_smoke(this: void, table: {name: string, position: Position}): void
+    create_unit_group(this: void, table: {position: Position, force?: ForceSpecification}): LuaUnitGroup
+    build_enemy_base(this: void, position: Position, unit_count: number, force?: ForceSpecification): void
+    get_tile(this: void, x: number, y: number): LuaTile
+    set_tiles(this: void, tiles: Array<{name: string, position: Position}>, correct_tiles?: boolean): void
+    pollute(this: void, source: Position, amount: number): void
+    get_chunks(this: void): LuaChunkIterator
+    is_chunk_generated(this: void, position: ChunkPosition): boolean
+    request_to_generate_chunks(this: void, position: Position, radius: number): void
+    force_generate_chunk_requests(this: void): void
+    set_chunk_generated_status(this: void, position: ChunkPosition, status: defines.chunk_generated_status): void
+    find_logistic_network_by_position(
+        this: void,
+        position: Position,
+        force: ForceSpecification,
+    ): LuaLogisticNetwork | null
+    find_logistic_networks_by_construction_area(
+        this: void,
+        position: Position,
+        force: ForceSpecification,
+    ): LuaLogisticNetwork[]
+    deconstruct_area(
+        this: void,
+        table: {
+            area: BoundingBox,
             force: ForceSpecification,
-        }): LuaEntity
+            player?: PlayerSpecification,
+            skip_fog_of_war?: boolean,
+            item?: LuaItemStack,
+        },
+    ): void
+    cancel_deconstruct_area(
+        this: void,
+        table: {
+            area: BoundingBox,
+            force: ForceSpecification,
+            player?: PlayerSpecification,
+            skip_fog_of_war?: boolean,
+            item?: LuaItemStack,
+        },
+    ): void
+    upgrade_area(
+        this: void,
+        table: {
+            area: BoundingBox,
+            force: ForceSpecification,
+            player?: PlayerSpecification,
+            skip_fog_of_war?: boolean,
+            item?: LuaItemStack,
+        },
+    ): void
+    cancel_upgrade_area(
+        this: void,
+        table: {
+            area: BoundingBox,
+            force: ForceSpecification,
+            player?: PlayerSpecification,
+            skip_fog_of_war?: boolean,
+            item?: LuaItemStack,
+        },
+    ): void
+    get_hidden_tile(this: void, position: TilePosition): string
+    set_hidden_tile(this: void, position: Position, tile: string | LuaTilePrototype): void
+    get_connected_tiles(this: void, position: Position, tiles: string[]): Position[]
+    delete_chunk(this: void, position: ChunkPosition): void
+    regenerate_entity(this: void, entities?: string | string[], chunks?: ChunkPosition[]): void
+    regenerate_decorative(this: void, decoratives?: string | string[], chunks?: ChunkPosition[]): void
+    print(this: void, message: LocalisedString, color?: Color): void
+    destroy_decoratives(
+        this: void,
+        table: {
+            area?: BoundingBox,
+            position?: TilePosition,
+            name?: string | string[] | LuaDecorativePrototype | LuaDecorativePrototype[],
+            limit?: number,
+            invert?: boolean,
+        },
+    ): void
+    create_decoratives(
+        this: void,
+        table: {
+            check_collision?: boolean,
+            decoratives: Array<{
+                name: string,
+                position: Position,
+                amount: number,
+            }>,
+        },
+    ): void
+    find_decoratives_filtered(
+        this: void,
+        table: {
+            area?: BoundingBox,
+            position?: TilePosition,
+            name?: string | string[] | LuaDecorativePrototype | LuaDecorativePrototype[],
+            limit?: number,
+            invert?: boolean,
+        },
+    ): Array<{position: TilePosition, decorative: LuaDecorativePrototype, amount: number}>
+    get_trains(this: void, force?: ForceSpecification): LuaTrain[]
+    clear_pollution(this: void): void
+    play_sound(this: void, table: {path: SoundPath, position?: Position, volume_modifier?: number}): boolean
+    get_resource_counts(this: void): {[key: string]: number }
+    get_random_chunk(this: void): ChunkPosition
+    clone_area(
+        this: void,
+        table: {
+            source_area: BoundingBox,
+            destination_area: BoundingBox,
+            destination_surface?: SurfaceSpecification,
+            destination_force?: LuaForce | string,
+            clone_tiles?: boolean,
+            clone_entities?: boolean,
+            clone_decoratives?: boolean,
+            clear_destination?: boolean,
+            expand_map?: boolean,
+        },
+    ): void
+    clone_entities(
+        this: void,
+        table: {
+            entities: LuaEntity[],
+            destination_offset: Vector,
+            destination_surface?: SurfaceSpecification,
+            destination_force?: ForceSpecification,
+            snap_to_grid?: boolean,
+        },
+    ): void
+    clear(this: void, ignore_characters?: boolean): void
+    request_path(
+        this: void,
+        table: {
+            bounding_box: BoundingBox,
+            collision_mask: CollisionMask | string[],
+            start: Position,
+            goal: Position,
+            force: LuaForce | string,
+            radius?: number,
+            pathfind_flags?: PathFindFlags,
+            can_open_gates?: boolean,
+            path_resolution_modifier?: number,
+            entity_to_ignore?: LuaEntity,
+        },
+    ): number
+    get_script_areas(this: void, name?: string): ScriptArea[]
+    get_script_positions(this: void, name?: string): ScriptPosition[]
+    get_map_exchange_string(this: void): string
+    get_starting_area_radius(this: void): number
+    get_closest(this: void, position: Position, entities: LuaEntity[]): LuaEntity
+    get_train_stops(this: void, opts: {name?: string | string[], force?: ForceSpecification}): LuaEntity[]
+    get_total_pollution(this: void): number
+    entity_prototype_collides(
+        this: void,
+        prototype: EntityPrototypeSpecification,
+        position: Position,
+        use_map_generation_bounding_box: boolean,
+        direction?: defines.direction): void
+    decorative_prototype_collides(this: void, prototype: string, position: Position): void
+    calculate_tile_properties(this: void, property_names: string[], positions: Position[]): {[key: string]: number}
+    name: string
+    readonly index: number
+    map_gen_settings: MapGenSettings
+    always_day: boolean
+    daytime: number
+    readonly darkness: number
+    wind_speed: number
+    wind_orientation: number
+    wind_orientation_change: number
+    peaceful_mode: boolean
+    freeze_daytime: boolean
+    ticks_per_day: number
+    dusk: number
+    dawn: number
+    evening: number
+    morning: number
+    solar_power_multiplier: number
+    min_brightness: number
+    readonly valid: boolean
+    help(this: void): string
 }
 
 interface LuaInventory {
