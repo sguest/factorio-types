@@ -1395,8 +1395,6 @@ interface LuaChunkIterator {
     help(this: void): string
 }
 
-// ----
-
 interface LuaSurface {
     get_pollution(this: void, position: Position): number
     can_place_entity(
@@ -1712,8 +1710,34 @@ interface LuaSurface {
 }
 
 interface LuaInventory {
+    clear(this: void): void
+    can_insert(this: void, items: ItemStackSpecification): boolean
+    insert(this: void, items: ItemStackSpecification): number
+    remove(this: void, items: ItemStackSpecification): number
     get_item_count(this: void, name?: string): number
+    is_empty(this: void): boolean
+    get_contents(this: void): {[key: string]: number }
+    hasbar(this: void): boolean
+    getbar(this: void): number
+    setbar(this: void, bar?: number): void
+    supports_filters(this: void): boolean
+    is_filtered(this: void): boolean
+    can_set_filter(this: void, index: number, filter: string): boolean
+    get_filter(this: void, index: number): string
+    set_filter(this: void, index: number, filter: string): boolean
+    find_item_stack(this: void, item: string): LuaItemStack | null
+    sort_and_merge(this: void): void
+    // operator # missing
+    readonly index: number
+    readonly entity_owner: LuaEntity | null
+    readonly player_owner: LuaPlayer | null
+    readonly equipment_owner: LuaEntity | null
+    readonly [key: number]: LuaItemStack
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaForce {
 }
