@@ -1350,3 +1350,15 @@ interface LuaLogisticNetwork {
 
 interface LuaLogisticCell {
 }
+
+interface LuaRemote {
+}
+
+interface LuaCommandProcessor {
+}
+
+interface LuaRCON {
+}
+
+interface LuaRendering {
+}

@@ -5,3 +5,4 @@
 /// <reference path="./src/events.d.ts" />
 /// <reference path="./src/prototypes.d.ts" />
 /// <reference path="./src/datatypes.d.ts" />
+/// <reference path="./src/serpent.d.ts" />

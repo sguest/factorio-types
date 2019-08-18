@@ -1,8 +1,3 @@
-declare const data: {
-    raw: dataCollection,
-    extend(values: any[]): void,
-};
-
 type Energy = string;
 type ItemStackIndex = number;
 type FileName = string;
