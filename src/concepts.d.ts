@@ -16,6 +16,8 @@ type EntityPrototypeSpecification = LuaEntity | LuaEntityPrototype | string;
 
 type Vector = number[];
 
+type SpritePath = string;
+
 type MapSettings = PrototypeMapSettings;
 
 type SimpleItemStack = string | {
@@ -636,4 +638,34 @@ interface FluidBoxConnection {
     max_underground_distance?: number
     type: 'input' | 'output' | 'input-output'
     positions: Vector[]
+}
+
+interface GameViewSettings {
+    show_controller_gui: boolean
+    snow_minimap: boolean
+    show_research_info: boolean
+    show_entity_info: boolean
+    show_alert_gui: boolean
+    update_entity_selection: boolean
+    show_rail_block_visualisation: boolean
+    show_side_menu: boolean
+    show_map_view_options: boolean
+    show_quickbar: boolean
+    show_shortcut_bar: boolean
+}
+
+interface DisplayResolution {
+    width: number
+    height: number
+}
+
+interface MapViewSettings {
+    'show-logistic-network'?: boolean
+    'show-electric-network'?: boolean
+    'show-turret-range'?: boolean
+    'show-pollution'?: boolean
+    'show-train-station-names'?: boolean
+    'show-player-names'?: boolean
+    'show-networkless-logistic-members'?: boolean
+    'show-non-standard-map-info'?: boolean
 }

@@ -946,27 +946,7 @@ interface LuaBurnerPrototype {
     readonly effectivity: number
     readonly fuel_inventory_size: number
     readonly burnt_inventory_size: number
-    readonly smoke: Array<{
-        name: string,
-        frequency: number,
-        offset: number,
-        position?: Vector,
-        north_position?: Vector,
-        east_position?: Vector,
-        south_position?: Vector,
-        west_position?: Vector,
-        deviation?: Position,
-        starting_frame_speed: number,
-        starting_frame_speed_deviation: number
-        starting_frame: number,
-        starting_frame_deviation: number,
-        slow_down_factor: number,
-        height: number,
-        height_deviation: number,
-        starting_vertical_speed: number,
-        starting_vertical_speed_deviation: number,
-        vertical_speed_slowdown: number,
-    }>
+    readonly smoke: SmokeSource[]
     readonly light_flicker: {
         minimum_intensity: number,
         maximum_intensity: number,
@@ -1012,8 +992,6 @@ interface LuaFluidBoxPrototype {
     readonly valid: boolean
     help(this: void): string
 }
-
-// ----
 
 interface LuaEntityPrototype {
     has_flag(this: void, flag: EntityPrototypeFlagValue): boolean
@@ -1220,9 +1198,197 @@ interface LuaEntityPrototype {
     help(this: void): string
 }
 
-interface LuaPlayer extends LuaControl {
-    character?: LuaEntity
+interface LuaGui {
+    is_valid_sprite_path(this: void, sprite_path: SpritePath): boolean
+    readonly player: LuaPlayer
+    readonly children: {[key: string]: LuaGuiElement }
+    readonly top: LuaGuiElement
+    readonly left: LuaGuiElement
+    readonly center: LuaGuiElement
+    readonly goal: LuaGuiElement
+    readonly screen: LuaGuiElement
+    readonly valid: boolean
+    help(this: void): string
 }
+
+interface LuaPlayer extends LuaControl {
+    set_ending_screen_data(this: void, message: LocalisedString, file?: string): void
+    print(this: void, message: LocalisedString, color?: Color): void
+    clear_console(this: void): void
+    get_goal_description(this: void): LocalisedString
+    set_goal_description(this: void, text?: LocalisedString, only_update?: boolean): void
+    set_controller(
+        this: void,
+        table: {
+            type: defines.controllers,
+            character?: LuaEntity,
+            waypoints?: Array<{
+                position?: Position,
+                target?: LuaEntity | LuaUnitGroup,
+                transition_time: number,
+                time_to_wait: number,
+                zoom?: number,
+                chart_mode_cutoff?: number,
+            }>,
+            final_transition_time?: number,
+        },
+    ): void
+    disable_recipe_groups(this: void): void
+    enable_recipe_groups(this: void): void
+    disable_recipe_subgroups(this: void): void
+    enable_recipe_subgroups(this: void): void
+    print_entity_statistics(this: void, entities?: string[]): void
+    print_robot_jobs(this: void): void
+    print_lua_object_statistics(this: void): void
+    unlock_achievement(this: void, name: string): void
+    clean_cursor(this: void): boolean
+    create_character(this: void, character?: string): boolean
+    add_alert(this: void, entity: LuaEntity, type: defines.alert_type): void
+    add_custom_alert(
+        this: void,
+        entity: LuaEntity,
+        icon: SignalID,
+        message: LocalisedString,
+        show_on_map: boolean): void
+    remove_alert(
+        this: void,
+        table: {
+            entity?: LuaEntity,
+            prototype?: LuaEntityPrototype,
+            position?: Position,
+            type?: defines.alert_type,
+            surface?: SurfaceSpecification,
+            icon?: SignalID,
+            message?: LocalisedString,
+    }): void
+    get_alerts(
+        this: void,
+        table: {
+            entity?: LuaEntity,
+            prototype?: LuaEntityPrototype,
+            position?: Position,
+            type?: defines.alert_type,
+            surface?: SurfaceSpecification,
+        },
+    ): {
+        [key: number]: {
+            [key in defines.alert_type]: Array<{
+                target?: LuaEntity,
+                prototype?: LuaEntityPrototype,
+                position?: Position,
+                tick: number,
+                icon?: SignalID,
+                message?: LocalisedString,
+            }>
+        },
+    }
+    mute_alert(this: void, alert_type: defines.alert_type): boolean
+    unmute_alert(this: void, alert_type: defines.alert_type): boolean
+    is_alert_muted(this: void, alert_type: defines.alert_type): boolean
+    enable_alert(this: void, alert_type: defines.alert_type): boolean
+    disable_alert(this: void, alert_type: defines.alert_type): boolean
+    is_alert_enabled(this: void, alert_type: defines.alert_type): boolean
+    pipette_entity(this: void, entity: string | LuaEntity | LuaEntityPrototype): boolean
+    can_place_entity(
+        this: void,
+        table: {
+            name: string,
+            position: Position,
+            direction?: defines.direction,
+        }): boolean
+    can_build_from_cursor(
+        this: void,
+        table: {
+            position: Position,
+            direction: defines.direction,
+            alt?: boolean,
+            terrain_building_size?: number,
+            skip_fog_of_war?: boolean,
+        }): boolean
+    build_from_cursor(
+        this: void,
+        table: {
+            position: Position,
+            direction: defines.direction,
+            alt?: boolean,
+            terrain_building_size?: number,
+            skip_fog_of_war?: boolean,
+        }): boolean
+    use_from_cursor(this: void, position: Position): void
+    play_sound(
+        this: void,
+        table: {
+            path: SoundPath,
+            position?: Position,
+            volume_modifier?: number,
+        }): boolean
+    get_associated_characters(this: void): LuaEntity[]
+    associate_character(this: void, character: LuaEntity): void
+    disassociate_character(this: void, character: LuaEntity): void
+    create_local_flying_text(
+        this: void,
+        table: {
+            text: LocalisedString,
+            position: Position,
+            color?: Color,
+            time_to_live?: number,
+            speed?: number,
+        }): void
+    get_quick_bar_slot(this: void, index: number): LuaItemPrototype
+    set_quick_bar_slot(this: void, index: number, filter: string | LuaItemPrototype | LuaItemStack | null): void
+    get_active_quick_bar_page(this: void, index: number): number
+    set_active_quick_bar_page(this: void, screen_index: number, page_index: number): void
+    jump_to_cutscene_waypoint(this: void, waypoint_index: number): void
+    exit_cutscene(this: void): void
+    open_map(this: void, position: Position, scale?: number): void
+    zoom_to_world(this: void, position: Position, scale?: number): void
+    close_map(this: void): void
+    is_shortcut_toggled(this: void, prototype_name: string): boolean
+    is_shortcut_available(this: void, prototype_name: string): boolean
+    set_shortcut_toggled(this: void, prototype_name: string, toggled: boolean): void
+    set_shortcut_available(this: void, prototype_name: string, available: boolean): void
+    connect_to_server(
+        this: void,
+        table: {
+            address: string,
+            name?: LocalisedString,
+            description?: LocalisedString,
+            password?: string,
+        },
+    ): void
+    character: LuaEntity | null
+    readonly index: number
+    readonly gui: LuaGui
+    readonly opened_self: boolean
+    readonly controller_type: defines.controllers
+    game_view_settings: GameViewSettings
+    minimap_enabled: boolean
+    color: Color
+    chat_color: Color
+    name: string
+    tag: string
+    readonly connected: boolean
+    admin: boolean
+    readonly entity_copy_source: LuaEntity | null
+    readonly afk_time: number
+    readonly online_time: number
+    readonly last_online: number
+    permission_group: LuaPermissionGroup
+    // Documentation doesn't say what the type of this property is
+    readonly mod_settings: {}
+    ticks_to_respawn: number | null
+    readonly display_resolution: DisplayResolution
+    readonly display_scale: number
+    readonly blueprint_to_setup: LuaItemStack
+    readonly render_mode: defines.render_mode
+    readonly spectator: boolean
+    zoom: number
+    map_view_settings: MapViewSettings
+    readonly valid: boolean
+    help(this: void): string
+}
+
+// ----
 
 interface LuaSurface {
     create_entity(

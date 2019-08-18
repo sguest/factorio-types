@@ -212,6 +212,34 @@ declare namespace defines {
         manual_control,
     }
 
+    enum controllers {
+        ghost,
+        character,
+        god,
+        editor,
+        cutscene,
+        spectator,
+    }
+
+    enum alert_type {
+        entity_destroyed,
+        entity_under_attack,
+        not_enough_construction_robots,
+        no_material_for_construction,
+        not_enough_repair_packs,
+        turret_fire,
+        custom,
+        no_storage,
+        train_out_of_fuel,
+        fluid_mixing,
+    }
+
+    enum  render_mode {
+        game,
+        chart,
+        chart_zoomed_in,
+    }
+
 // ----
 
     namespace control_behavior {
