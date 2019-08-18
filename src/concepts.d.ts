@@ -16,6 +16,8 @@ type EntityPrototypeSpecification = LuaEntity | LuaEntityPrototype | string;
 
 type Vector = number[];
 
+type MapSettings = PrototypeMapSettings;
+
 type SimpleItemStack = string | {
     name: string,
     count?: number,

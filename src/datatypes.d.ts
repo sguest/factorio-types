@@ -1,3 +1,8 @@
+declare const data: {
+    raw: dataCollection,
+    extend(values: any[]): void,
+};
+
 type Energy = string;
 type ItemStackIndex = number;
 type FileName = string;
@@ -12,6 +17,8 @@ type TriggerTargetMask = string[];
 // The documentation in some places just says "Table", with extra info only available in the specific prototype doc
 // can eventually fix these on a per-case basis
 type Table = any;
+
+type damageType = 'physical' | 'impact' | 'poison' | 'explosion' | 'fire' | 'laser' | 'acid' | 'electric';
 
 type ElectricUsagePriority = 'primary-input' | 'primary-output' |
     'secondary-input' | 'secondary-output' | 'tertiary' | 'solar' | 'lamp';

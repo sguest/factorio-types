@@ -27,6 +27,7 @@ function handleFile() {
         if(firstCell.classNames[0] === 'prototype-toc-section-title') {
             currentPrototype = {
                 name: firstCell.childNodes[0].text,
+                dataName: firstCell.childNodes[2].text,
                 props: [],
             };
 
@@ -44,7 +45,19 @@ function handleFile() {
         }
     }
 
-    let output = '';
+    let output = 'interface dataCollection {\n';
+
+    for(let prototype of prototypes) {
+        if(prototype.dataName !== 'abstract') {
+            let line = `    '${prototype.dataName}': { [key: string]: ${prototype.name.replace('\/', '')} }\n`
+            if(line.length > 120) {
+                line = line.replace(' {', '\n        {');
+            }
+            output += line;
+        }
+    }
+
+    output += '}\n\n'
 
     for(let prototype of prototypes) {
         output += `interface ${prototype.name.replace('\/', '')}`;
