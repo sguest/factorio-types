@@ -1737,10 +1737,154 @@ interface LuaInventory {
     help(this: void): string
 }
 
-// ----
+interface LuaCustomChartTag {
+    destroy(this: void): void
+    icon: SignalID
+    last_user: LuaPlayer
+    readonly position: Position
+    text: string
+    readonly tag_number: number
+    readonly force: LuaForce
+    readonly surface: LuaSurface
+    readonly valid: boolean
+    help(this: void): string
+}
 
 interface LuaForce {
+    get_entity_count(this: void, name: string): number
+    disable_research(this: void): void
+    disable_all_prototypes(this: void): void
+    enable_all_prototypes(this: void): void
+    reset_recipes(this: void): void
+    enable_all_recipes(this: void): void
+    enable_all_technologies(this: void): void
+    research_all_technologies(this: void, include_disabled_prototypes: boolean): void
+    reset_technologies(this: void): void
+    reset(this: void): void
+    reset_technology_effects(this: void): void
+    chart(this: void, surface: SurfaceSpecification, area: BoundingBox): void
+    clear_chart(this: void, surface: SurfaceSpecification): void
+    rechart(this: void): void
+    chart_all(this: void, surface?: SurfaceSpecification): void
+    is_chunk_charted(this: void, surface: SurfaceSpecification, position: ChunkPosition): boolean
+    is_chunk_visible(this: void, surface: SurfaceSpecification, position: ChunkPosition): boolean
+    cancel_charting(this: void, surface?: SurfaceSpecification): void
+    get_ammo_damage_modifier(this: void, ammo: string): number
+    set_ammo_damage_modifier(this: void, ammo: string, modifier: number): void
+    get_gun_speed_modifier(this: void, ammo: string): number
+    set_gun_speed_modifier(this: void, ammo: string, modifier: number): void
+    get_turret_attack_modifier(this: void, turret: string): number
+    set_turret_attack_modifier(this: void, turret: string, modifier: number): void
+    set_cease_fire(this: void, other: ForceSpecification, cease_fire: boolean): void
+    get_cease_fire(this: void, other: ForceSpecification): boolean
+    set_friend(this: void, other: ForceSpecification, cease_fire: boolean): void
+    get_friend(this: void, other: ForceSpecification): boolean
+    is_pathfinder_busy(this: void): boolean
+    kill_all_units(this: void): void
+    find_logistic_network_by_position(
+        this: void,
+        position: Position,
+        surface: SurfaceSpecification,
+    ): LuaLogisticNetwork | null
+    set_spawn_position(this: void, position: Position, surface: SurfaceSpecification): void
+    get_spawn_position(this: void, surface: SurfaceSpecification): Position
+    unchart_chunk(this: void, position: ChunkPosition, surface: SurfaceSpecification): void
+    get_item_launched(this: void, item: string): number
+    set_item_launched(this: void, item: string, count: number): void
+    print(this: void, message: LocalisedString, color?: Color): void
+    get_trains(this: void, surface?: SurfaceSpecification): LuaTrain[]
+    add_chart_tag(
+        this: void,
+        surface: SurfaceSpecification,
+        tag: {
+            icon?: SignalID,
+            position: Position,
+            text?: string,
+            last_user?: PlayerSpecification,
+        },
+    ): LuaCustomChartTag
+    find_chart_tags(this: void, surface: SurfaceSpecification, area?: BoundingBox): LuaCustomChartTag[]
+    get_saved_technology_progress(this: void, technology: TechnologySpecification): number
+    set_saved_technology_progress(this: void, technology: TechnologySpecification, progress: number | null): void
+    reset_evolution(this: void): void
+    play_sound(
+        this: void,
+        table: {
+            path: SoundPath,
+            position?: Position,
+            volume_modifier?: number,
+        },
+    ): boolean
+    get_train_stops(this: void, opts?: {name?: string | string[], surface?: SurfaceSpecification}): LuaEntity[]
+    get_hand_crafting_disabled_for_recipe(recipe: string | LuaRecipe): boolean
+    set_hand_crafting_disabled_for_recipe(recipe: string | LuaRecipe, hand_crafting_disabled: boolean): void
+    add_research(this: void, technology: TechnologySpecification): boolean
+    cancel_current_research(this: void): void
+    readonly name: string
+    readonly technologies: {[key: string]: LuaTechnology }
+    readonly recipes: {[key: string]: LuaRecipe }
+    manual_mining_speed_modifier: number
+    manual_crafting_speed_modifier: number
+    laboratory_speed_modifier: number
+    laboratory_productivity_bonus: number
+    worker_robots_speed_modifier: number
+    worker_robots_batter_modifier: number
+    worker_robots_storage_bonus: number
+    readonly current_research: LuaTechnology
+    research_progress: number
+    previous_research: number
+    inserter_stack_size_bonus: number
+    stack_inserter_capacity_bonus: number
+    character_logistic_slot_count: number
+    character_trash_slot_count: number
+    maximum_following_robot_count: number
+    following_robots_lifetime_modifier: number
+    ghost_time_to_live: number
+    readonly players: LuaPlayer[]
+    ai_controllable: boolean
+    readonly logistics_networks: {[key: string]: LuaLogisticNetwork[]}
+    readonly item_production_statistics: LuaFlowStatistics
+    readonly fluid_production_statistics: LuaFlowStatistics
+    readonly kill_count_statistics: LuaFlowStatistics
+    readonly entity_build_count_statistics: LuaFlowStatistics
+    character_running_speed_modifier: number
+    artillery_range_modifier: number
+    character_build_distance_bonus: number
+    character_item_drop_distance_bonus: number
+    character_reach_distance_bonus: number
+    character_resource_reach_distance_bonus: number
+    character_item_pickup_distance_bonus: number
+    character_loot_pickup_distance_bonus: number
+    character_inventory_slots_bonus: number
+    deconstruction_time_to_live: number
+    character_health_bonus: number
+    max_successful_attempts_per_tick_per_construction_queue: number
+    max_failed_attempts_per_tick_per_construction_queue: number
+    auto_character_trash_slots: number
+    zoom_to_world_enabled: boolean
+    zoom_to_world_ghost_building_enabled: boolean
+    zoom_to_world_blueprint_enabled: boolean
+    zoom_to_world_deconstruction_planner_enabled: boolean
+    zoom_to_world_selection_tool_enabled: boolean
+    rockets_launched: number
+    readonly items_launched: {[key: string]: number }
+    readonly connected_players: LuaPlayer[]
+    mining_drill_productivity_bonus: number
+    train_braking_force_bonus: number
+    evolution_factor: number
+    evolution_factor_by_pollution: number
+    evolution_factor_by_time: number
+    evolution_factor_by_killing_spawners: number
+    friendly_fire: boolean
+    share_chart: boolean
+    research_queue_enabled: boolean
+    readonly index: number
+    research_queue: TechnologySpecification[]
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaItemPrototype {
     name: string
