@@ -808,3 +808,15 @@ interface ScriptPosition {
     color: Color
     id: number
 }
+
+interface PlaceAsTileResult {
+    result: LuaTilePrototype
+    condition_size: number
+    condition: object // table structure not specified in docs
+}
+
+type selectionModeFlagType = 'blueprint' | 'deconstruct' | 'cancel-deconstruct' | 'items' | 'trees' |
+    'buildable-type' | 'nothing' | 'items-to-place' | 'any-entity' | 'any-tile' | 'same-force' | 'not-same-force' |
+    'friend' | 'enemy' | 'upgrade' | 'cancel-upgrade' | 'entity-with-health' | 'entity-with-force' |
+    'entity-with-owner';
+type SelectionModeFlags = {[key in selectionModeFlagType]: true };

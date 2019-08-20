@@ -1884,14 +1884,87 @@ interface LuaForce {
     help(this: void): string
 }
 
-// ----
-
 interface LuaItemPrototype {
-    name: string
-    icons: Icon[]
-    icon: string
-    resistances: Resistances
+    has_flag(this: void, flag: 'hidden' | 'hide-from-bonus-gui' | 'hide-from-fuel-tooltip'): boolean
+    get_ammo_type(this: void, ammo_source_type?: 'default' | 'turret' | 'player' | 'vehicle'): AmmoType
+    readonly type: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly order: string
+    readonly place_result: LuaEntityPrototype
+    readonly place_as_equipment_result: LuaEquipmentPrototype
+    readonly place_as_tile_result: PlaceAsTileResult
+    readonly stackable: boolean
+    readonly default_request_amount: number
+    readonly stack_size: number
+    readonly wire_count: number
+    readonly fuel_category: string
+    readonly burnt_result: LuaItemPrototype
+    readonly fuel_value: number
+    readonly fuel_acceleration_multiplier: number
+    readonly fuel_top_speed_modifier: number
+    readonly fuel_emissions_multiplier: number
+    readonly subgroup: LuaGroup
+    readonly group: LuaGroup
+    readonly flags: {[key in 'hidden']: true}
+    readonly rocket_launch_products: Product[]
+    readonly can_be_mod_opened: boolean
+    readonly magazine_size: number
+    readonly reload_time: number
+    readonly equipment_grid: LuaEquipmentGridPrototype
+    readonly resistances: Resistances
+    readonly inventory_size_bonus: number
+    readonly capsule_action: CapsuleAction
+    readonly robot_action: Trigger
+    readonly attack_paramters: AttackParameters
+    readonly inventory_size: number
+    readonly item_filters: {[key: string]: LuaItemPrototype }
+    readonly item_group_filters: {[key: string]: LuaGroup }
+    readonly item_subgroup_filters: {[key: string]: LuaGroup }
+    readonly filter_mode: string
+    readonly insertion_priority_mode: string
+    readonly localised_filter_message: LocalisedString
+    readonly extend_inventory_by_default: boolean
+    readonly default_label_color: Color | null
+    readonly draw_label_for_cursor_render: boolean
+    readonly speed: number | null
+    readonly module_effects: Effects | null
+    readonly category: string
+    readonly tier: number
+    readonly limitations: string[]
+    readonly limitation_message_key: string
+    readonly straight_rail: LuaEntityPrototype
+    readonly curved_rail: LuaEntityPrototype
+    readonly repair_result: Trigger | null
+    readonly selection_border_color: Color
+    readonly alt_selection_border_color: Color
+    readonly selection_mode_flags: SelectionModeFlags
+    readonly alt_selection_mode_flags: SelectionModeFlags
+    readonly selection_cursor_box_type: string
+    readonly alt_selection_cursor_box_type: string
+    readonly always_include_tiles: boolean
+    readonly show_in_library: boolean | null
+    readonly entity_filter_mode: string | null
+    readonly alt_entity_filter_mode: string | null
+    readonly tile_filter_mode: string
+    readonly alt_tile_filter_mode: string
+    readonly entity_filters: {[key: string]: LuaEntityPrototype }
+    readonly alt_entity_filters: {[key: string]: LuaEntityPrototype }
+    readonly entity_type_filters: {[key: string]: boolean}
+    readonly alt_entity_type_filters: {[key: string]: boolean}
+    readonly tile_filters: {[key: string]: LuaTilePrototype}
+    readonly alt_tile_filters: {[key: string]: LuaTilePrototype}
+    readonly entity_filter_slots: number
+    readonly tile_filter_slots: number
+    readonly durability_description_key: string
+    readonly durability: number | null
+    readonly infinite: boolean | null
+    readonly mapper_count: number | null
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaRecipe {
 }
