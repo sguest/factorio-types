@@ -1964,10 +1964,28 @@ interface LuaItemPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaRecipe {
+    reload(this: void): void
+    readonly name: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly prototype: LuaRecipePrototype
+    readonly enabled: boolean
+    readonly category: string
+    readonly ingredients: Ingredient[]
+    readonly products: Product[]
+    readonly hidden: boolean
+    readonly hidden_from_flow_stats: boolean
+    readonly energy: number
+    readonly order: string
+    readonly group: LuaGroup
+    readonly subgroup: LuaGroup
+    readonly force: LuaForce
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaRecipePrototype {
     enabled: boolean
