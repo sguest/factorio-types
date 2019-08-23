@@ -2013,10 +2013,30 @@ interface LuaRecipePrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaTechnology {
+    reload(this: void): void
+    readonly force: LuaForce
+    readonly name: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly prototype: LuaTechnologyPrototype
+    readonly enabled: boolean
+    readonly visible_when_disabled: boolean
+    readonly upgrade: boolean
+    researched: boolean
+    readonly prerequisites: {[key: string]: LuaTechnology }
+    readonly research_unit_ingredients: Ingredient[]
+    readonly effects: Modifier[]
+    readonly research_unit_count: number
+    readonly research_unit_energy: number
+    readonly order: string
+    level: number
+    readonly research_unit_count_formula: string | null
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaTechnologyPrototype {
 }
