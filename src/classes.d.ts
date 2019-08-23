@@ -1985,14 +1985,35 @@ interface LuaRecipe {
     help(this: void): string
 }
 
-// ----
-
 interface LuaRecipePrototype {
-    enabled: boolean
-    name: string
-    result: string
-    ingredients: Ingredient[]
+    readonly enabled: boolean
+    readonly name: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly category: string
+    readonly ingredients: Ingredient[]
+    readonly products: Product[]
+    readonly main_product: Product | null
+    readonly hidden: boolean
+    readonly hidden_from_flow_stats: boolean
+    readonly always_show_made_in: boolean
+    readonly energy: number
+    readonly order: string
+    readonly group: LuaGroup
+    readonly subgroup: LuaGroup
+    readonly request_paste_multiplier: number
+    readonly overload_multiplier: number
+    readonly allow_as_intermediate: boolean
+    readonly allow_intermediates: boolean
+    readonly show_amount_in_title: boolean
+    readonly always_show_products: boolean
+    readonly emissions_multiplier: number
+    readonly allow_decomposition: boolean
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaTechnology {
 }
