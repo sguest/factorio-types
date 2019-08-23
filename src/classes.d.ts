@@ -2036,10 +2036,28 @@ interface LuaTechnology {
     help(this: void): string
 }
 
-// ----
-
 interface LuaTechnologyPrototype {
+    readonly name: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly enabled: boolean
+    readonly hidden: boolean
+    readonly visible_when_disabled: boolean
+    readonly upgrade: boolean
+    readonly prerequisites: {[key: string]: LuaTechnologyPrototype }
+    readonly research_unit_ingredients: Ingredient[]
+    readonly effects: Modifier[]
+    readonly research_unit_count: number
+    readonly research_unit_energy: number
+    readonly order: string
+    readonly level: number
+    readonly max_level: number
+    readonly research_unit_count_formula: string | null
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaEquipment {
 }
