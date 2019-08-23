@@ -2078,10 +2078,49 @@ interface LuaEquipment {
     help(this: void): string
 }
 
-// ----
-
 interface LuaEquipmentPrototype {
+    readonly name: string
+    readonly type: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly shape: {
+        width: number,
+        height: number,
+        points?: Array<{x: number, y: number}>,
+    }
+    readonly take_result: LuaItemPrototype | null
+    readonly energy_production: number
+    readonly shield: number
+    readonly energy_per_shield: number
+    readonly logistic_parameters: {
+        spawn_and_station_height: number,
+        charge_approach_distance: number,
+        logistic_radius: number,
+        construction_radius: number,
+        charging_station_count: number,
+        charging_distance: number,
+        charging_station_shift: Vector,
+        charging_energy: number,
+        charging_threshold_distance: number,
+        robot_vertical_acceleration: number,
+        stationing_offset: Vector,
+        robot_limit: number,
+        logistics_connection_distance: number,
+    }
+    readonly energy_consumption: number
+    readonly movement_bonus: number
+    readonly night_vision_tint: Color
+    readonly energy_source: LuaElectricEnergySourcePrototype
+    readonly equipment_categories: string[]
+    readonly burner_prototype: LuaBurnerPrototype
+    readonly electric_energy_source_prototype: LuaElectricEnergySourcePrototype
+    readonly background_color: Color
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaModSettingPrototype {
 }
