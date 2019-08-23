@@ -2057,10 +2057,28 @@ interface LuaTechnologyPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaEquipment {
+    readonly name: string
+    readonly type: string
+    readonly position: Position
+    readonly shape: {
+        width: number,
+        height: number,
+    }
+    shield: number
+    readonly max_shield: number
+    readonly max_solar_power: number
+    readonly movement_bonus: number
+    readonly generator_power: number
+    energy: number
+    readonly max_energy: number
+    readonly prototype: LuaEquipmentPrototype
+    readonly burner: LuaBurner | null
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaEquipmentPrototype {
 }
