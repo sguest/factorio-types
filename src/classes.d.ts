@@ -2120,10 +2120,24 @@ interface LuaEquipmentPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaModSettingPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly mod: string
+    readonly setting_type: string
+    readonly default_value: boolean | number | string
+    readonly minimum_value: number | null
+    readonly maximum_value: number | null
+    readonly allowed_values: string[] | number[] | null
+    readonly allow_blank: boolean | null
+    readonly auto_trim: boolean | null
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaAchievementPrototype {
 }
