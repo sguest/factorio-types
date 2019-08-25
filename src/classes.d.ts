@@ -2207,10 +2207,18 @@ interface LuaDamagePrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaVirtualSignalPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly special: boolean
+    readonly subgroup: LuaGroup
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaEquipmentGrid {
 }
