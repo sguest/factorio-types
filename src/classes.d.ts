@@ -2168,10 +2168,36 @@ interface LuaFluidPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaTilePrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly collision_mask: {[key: string]: true }
+    readonly layer: number
+    readonly autoplace_specification: AutoplaceSpecification
+    readonly walking_speed_modifier: number
+    readonly vehicle_friction_modifier: number
+    readonly map_color: Color
+    readonly decorative_removal_probability: number
+    readonly automatic_neighbors: boolean
+    readonly allow_neighbors: {[key: string]: LuaTilePrototype }
+    readonly needs_correction: boolean
+    readonly mineable_properties: {
+        minable: boolean,
+        miningtime: number,
+        miningparticle?: string,
+        products: Product[],
+    }
+    readonly next_direction: LuaTilePrototype | null
+    readonly items_to_place_this: SimpleItemStack[]
+    readonly can_be_part_of_blueprint: boolean
+    readonly emissions_per_second: number
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaDamagePrototype {
 }
