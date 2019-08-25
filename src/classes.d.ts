@@ -2197,10 +2197,17 @@ interface LuaTilePrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaDamagePrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly hidden: boolean
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaVirtualSignalPrototype {
 }
