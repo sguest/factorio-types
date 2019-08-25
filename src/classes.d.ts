@@ -2218,10 +2218,33 @@ interface LuaVirtualSignalPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaEquipmentGrid {
+    take(
+        this: void,
+        table: {position?: Position, equipment?: LuaEquipment}): SimpleItemStack | null
+    take_all(this: void): {[key: string]: number }
+    clear(this: void): void
+    put(this: void, table: {name: string, position?: Position}): LuaEquipment | null
+    can_move(this: void, table: {equipment: LuaEquipment, position: Position}): boolean
+    move(this: void, table: {equipment: LuaEquipment, position: Position}): boolean
+    get(this: void, position: Position): LuaEquipment | null
+    get_contents(this: void): {[key: string]: number }
+    readonly prototype: LuaEquipmentGridPrototype
+    readonly width: number
+    readonly height: number
+    readonly equipment: LuaEquipment[]
+    readonly generator_energy: number
+    readonly max_solar_energy: number
+    readonly available_in_batteries: number
+    readonly battery_capacity: number
+    readonly shield: number
+    readonly max_shield: number
+    readonly inhibit_movement_bonus: boolean
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaEquipmentGridPrototype {
 }
