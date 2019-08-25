@@ -2148,10 +2148,27 @@ interface LuaAchievementPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaFluidPrototype {
+    readonly name: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly default_temperature: number
+    readonly max_temperature: number
+    readonly head_capacity: number
+    readonly order: string
+    readonly group: LuaGroup
+    readonly subgroup: LuaGroup
+    readonly base_color: Color
+    readonly flow_color: Color
+    readonly gas_temperature: number
+    readonly emissions_multiplier: number
+    readonly fuel_value: number
+    readonly hidden: boolean
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaTilePrototype {
 }
