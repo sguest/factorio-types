@@ -2244,10 +2244,20 @@ interface LuaEquipmentGrid {
     help(this: void): string
 }
 
-// ----
-
 interface LuaEquipmentGridPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly equipment_categories: string[]
+    readonly width: number
+    readonly height: number
+    readonly locked: boolean
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaDecorativePrototype {
 }
