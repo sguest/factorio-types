@@ -2395,10 +2395,21 @@ interface LuaTrivialSmokePrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaShortcutPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly action: string
+    readonly item_to_create: LuaItemPrototype
+    readonly technology_to_unlock: LuaTechnologyPrototype
+    readonly toggleable: boolean
+    readonly associated_control_input: string
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaRecipeCategoryPrototype {
 }
