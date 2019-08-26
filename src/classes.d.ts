@@ -2336,10 +2336,16 @@ interface LuaGroup {
     help(this: void): string
 }
 
-// ----
-
 interface LuaFuelCategoryPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaResourceCategoryPrototype {
 }
