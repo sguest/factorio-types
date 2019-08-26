@@ -2257,10 +2257,18 @@ interface LuaEquipmentGridPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaDecorativePrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly collision_box: BoundingBox
+    readonly autoplace_specification: AutoplaceSpecification
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaAutoplaceControlPrototype {
 }
