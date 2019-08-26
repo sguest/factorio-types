@@ -2268,10 +2268,19 @@ interface LuaDecorativePrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaAutoplaceControlPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly richness: boolean
+    readonly control_order: string
+    readonly category: string
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaNoiseLayerPrototype {
 }
