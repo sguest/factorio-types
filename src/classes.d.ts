@@ -2363,10 +2363,16 @@ interface LuaModuleCategoryPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaEquipmentCategoryPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaTrivialSmokePrototype {
 }
