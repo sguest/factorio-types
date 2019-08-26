@@ -2303,10 +2303,17 @@ interface LuaCustomInputPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaAmmoCategoryPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly bonus_gui_order: string
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaNamedNoisePrototype {
 }
