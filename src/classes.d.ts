@@ -136,7 +136,7 @@ interface LuaGameScript {
     readonly mod_setting_prototypes: {[key: string]: LuaModSettingPrototype }
     readonly custom_input_prototypes: {[key: string]: LuaCustomInputPrototype }
     readonly ammo_category_prototypes: {[key: string]: LuaAmmoCategoryPrototype }
-    readonly named_noise_prototypes: {[key: string]: LuaNamedNoisePrototype }
+    readonly named_noise_prototypes: {[key: string]: LuaNamedNoiseExpression }
     readonly item_subgroup_prototypes: {[key: string]: LuaGroup }
     readonly item_group_prototypes: {[key: string]: LuaGroup }
     readonly fuel_category_prototypes: {[key: string]: LuaFuelCategoryPrototype }
@@ -2313,10 +2313,18 @@ interface LuaAmmoCategoryPrototype {
     help(this: void): string
 }
 
-// ----
-
-interface LuaNamedNoisePrototype {
+interface LuaNamedNoiseExpression {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly intended_property: string
+    readonly expression: NoiseExpression
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaGroup {
 }
