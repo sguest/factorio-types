@@ -2289,10 +2289,21 @@ interface LuaNoiseLayerPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaCustomInputPrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly key_sequence: string
+    readonly alternative_key_sequence: string
+    readonly linked_game_control: string
+    readonly consuming: 'none' | 'game-only'
+    readonly enabled: boolean
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaAmmoCategoryPrototype {
 }
