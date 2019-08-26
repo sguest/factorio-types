@@ -2324,10 +2324,19 @@ interface LuaNamedNoiseExpression {
     help(this: void): string
 }
 
-// ----
-
 interface LuaGroup {
+    readonly name: string
+    readonly localised_name: LocalisedString
+    readonly type: string
+    readonly group: LuaGroup | null
+    readonly subgroups: LuaGroup[]
+    readonly order_in_recipe: string
+    readonly order: string
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaFuelCategoryPrototype {
 }
