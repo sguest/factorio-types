@@ -2372,10 +2372,30 @@ interface LuaEquipmentCategoryPrototype {
     help(this: void): string
 }
 
-// ----
-
 interface LuaTrivialSmokePrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly color: Color
+    readonly start_scale: number
+    readonly end_scale: number
+    readonly movement_slow_down_factor: number
+    readonly duration: number
+    readonly spread_duration: number
+    readonly fade_away_duration: number
+    readonly fade_in_duration: number
+    readonly glow_fade_away_duration: number
+    readonly cyclic: boolean
+    readonly affected_by_wind: boolean
+    readonly show_when_smoke_off: boolean
+    readonly glow_animation: boolean
+    readonly render_layer: RenderLayer
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaShortcutPrototype {
 }
