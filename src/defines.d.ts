@@ -256,6 +256,25 @@ declare namespace defines {
         entities,
     }
 
+    namespace deconstruction_item {
+        enum entity_filter_mode {
+            whitelist,
+            blacklist,
+        }
+
+        enum tile_filter_mode {
+            whitelist,
+            blacklist,
+        }
+
+        enum tile_selection_mode {
+            normal,
+            always,
+            never,
+            only,
+        }
+    }
+
 // ----
 
     namespace control_behavior {

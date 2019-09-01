@@ -820,3 +820,8 @@ type selectionModeFlagType = 'blueprint' | 'deconstruct' | 'cancel-deconstruct' 
     'friend' | 'enemy' | 'upgrade' | 'cancel-upgrade' | 'entity-with-health' | 'entity-with-force' |
     'entity-with-owner';
 type SelectionModeFlags = {[key in selectionModeFlagType]: true };
+
+interface UpgradeFilter {
+    type: 'item' | 'entity'
+    name?: string
+}

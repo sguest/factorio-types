@@ -2418,10 +2418,133 @@ interface LuaRecipeCategoryPrototype {
     help(this: void): string
 }
 
-// ----
+interface BlueprintEntity {
+    entity_number: number
+    name: string
+    position: Position
+    direction?: defines.direction
+    // includes other entity-specific fields
+}
 
 interface LuaItemStack {
+    is_blueprint_setup(this: void): boolean
+    get_blueprint_entities(this: void): BlueprintEntity[]
+    set_blueprint_entities(this: void, entities: BlueprintEntity[]): void
+    add_ammo(this: void, amount: number): void
+    drain_ammo(this: void, amount: number): void
+    add_durability(this: void, amount: number): void
+    drain_durability(this: void, amount: number): void
+    can_set_stack(this: void, stack?: ItemStackSpecification): boolean
+    set_stack(this: void, stack?: ItemStackSpecification): boolean
+    transfer_stack(this: void, stack: ItemStackSpecification): boolean
+    export_stack(this: void): string
+    import_stack(this: void, data: string): number
+    swap_stack(this: void, stack: LuaItemStack): boolean
+    clear(this: void): void
+    get_blueprint_tiles(this: void): Array<{position: Position, name: string}>
+    set_blueprint_tiles(this: void, tiles: Array<{position: Position, name: string}>): void
+    get_inventory(this: void, inventory: defines.inventory): LuaInventory | null
+    build_blueprint(
+        this: void,
+        table: {
+            surface: SurfaceSpecification,
+            force: ForceSpecification,
+            position: Position,
+            force_build?: boolean,
+            direction?: defines.direction,
+            skip_fog_of_war?: boolean,
+            by_player?: PlayerSpecification,
+        },
+    ): LuaEntity[]
+    deconstruct_area(
+        this: void,
+        table: {
+            surface: SurfaceSpecification,
+            force: ForceSpecification,
+            area: BoundingBox,
+            skip_fog_of_war?: boolean,
+            by_player?: PlayerSpecification,
+        },
+    ): void
+    cancel_deconstruct_area(
+        this: void,
+        table: {
+            surface: SurfaceSpecification,
+            force: ForceSpecification,
+            area: BoundingBox,
+            skip_fog_of_war?: boolean,
+            by_player?: PlayerSpecification,
+        },
+    ): void
+    create_blueprint(
+        this: void,
+        table: {
+            surface: SurfaceSpecification,
+            force: ForceSpecification,
+            area: BoundingBox,
+            always_include_tiles?: boolean,
+        },
+    ): void
+    get_tag(this: void, tag_name: string): any
+    set_tag(this: void, tag_name: string, tag: any): any
+    remove_tag(this: void, tag: string): boolean
+    clear_blueprint(this: void): void
+    get_entity_filter(this: void, index: number): string
+    set_entity_filter(this: void, index: number, filter: string | LuaEntityPrototype | LuaEntity | null): boolean
+    get_tile_filter(this: void, index: number): string
+    set_tile_filter(this: void, index: number, filter: string | LuaEntityPrototype | LuaEntity | null): boolean
+    clear_deconstruction_item(this: void): void
+    clear_upgrade_item(this: void): void
+    get_mapper(this: void, index: number, type: 'from' | 'to'): UpgradeFilter
+    set_mapper(this: void, index: number, type: 'from' | 'to', filter: UpgradeFilter | null): void
+    readonly valid_for_read: boolean
+    readonly prototype: LuaItemPrototype
+    readonly name: string
+    readonly type: string
+    readonly count: number
+    readonly grid: LuaEquipmentGrid
+    health: number
+    durability: number | null
+    ammo: number
+    blueprint_icons: Array<{signal: SignalID, index: number }>
+    label: string
+    label_color: Color
+    allow_manual_label_change: boolean
+    readonly cost_to_build: {[key: string]: number }
+    extends_inventory: boolean
+    prioritize_insertion_mode: string
+    readonly default_icons: Array<{name: string, index: number}>
+    tags: {[key: string]: any }
+    custom_description: LocalisedString
+    entity_filters: string[]
+    tile_filters: string[]
+    entity_filter_mode: defines.deconstruction_item.entity_filter_mode
+    tile_filter_mode: defines.deconstruction_item.tile_filter_mode
+    tile_selection_mode: defines.deconstruction_item.tile_selection_mode
+    trees_and_rocks_only: boolean
+    readonly entity_filter_count: number
+    readonly tile_filter_count: number
+    readonly active_index: number
+    readonly item_number: number | null
+    readonly is_blueprint: boolean
+    readonly is_blueprint_book: boolean
+    readonly is_module: boolean
+    readonly is_tool: boolean
+    readonly is_mining_tool: boolean
+    readonly is_armor: boolean
+    readonly is_repair_tool: boolean
+    readonly is_item_with_label: boolean
+    readonly is_item_with_inventory: boolean
+    readonly is_item_with_entity_data: boolean
+    readonly is_selection_tool: boolean
+    readonly is_item_with_tags: boolean
+    readonly is_deconstruction_item: boolean
+    readonly is_upgrade_item: boolean
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaGuiElement {
 }
