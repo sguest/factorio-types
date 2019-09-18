@@ -67,7 +67,7 @@ interface LuaGameScript {
     disable_tutorial_triggers(this: void): void
     direction_to_string(this: void, direction: defines.direction): void
     print(this: void, message: LocalisedString, color: Color): void
-    create_random_generator(this: void, seed: number): LuaRandomGenerator
+    create_random_generator(this: void, seed?: number): LuaRandomGenerator
     check_prototype_translations(this: void): void
     play_sound(
         this: void,
