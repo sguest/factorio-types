@@ -2544,9 +2544,318 @@ interface LuaItemStack {
     help(this: void): string
 }
 
-// ----
+type GuiElementType = 'button' | 'sprite-button' | 'checkbox' | 'flow' | 'frame' |
+    'label' | 'line' | 'progressbar' | 'table' | 'textfield' | 'radiobutton' | 'sprite' |
+    'scroll-pane' | 'drop-down' | 'list-box' | 'camera' | 'choose-elem-button' | 'text-box' |
+    'slider' | 'minimap' | 'entity-preview' | 'empty-widget' | 'tabbed-pane' | 'tab' | 'switch';
+
+interface GuiElementData {
+    type: GuiElementType
+    name: string
+    caption?: LocalisedString
+    tooltip?: LocalisedString
+    enabled?: boolean
+    ignored_by_interaction?: boolean
+    style?: string
+}
+
+interface ButtonGuiElementData extends GuiElementData {
+    type: 'button'
+    mouse_button_filter?: MouseButtonFlags
+}
+
+interface FlowGuiElementData extends GuiElementData {
+    type: 'flow'
+    direction: 'horizontal' | 'vertical'
+}
+
+interface FrameGuiElementData extends GuiElementData {
+    type: 'frame'
+    direction: 'horizontal' | 'vertical'
+}
+
+interface TableGuiElementData extends GuiElementData {
+    type: 'table'
+    column_count: number
+    draw_vertical_lines?: boolean
+    draw_horizontal_lines?: boolean
+    draw_horizontal_line_after_header?: boolean
+    vertical_centering?: boolean
+}
+
+interface TextFieldGuiElementData extends GuiElementData {
+    type: 'textfield'
+    text?: string
+    numeric?: boolean
+    allow_decimal?: boolean
+    allow_negative?: boolean
+    is_password?: boolean
+    lose_focus_on_confirm?: boolean
+    clear_and_focus_on_right_click?: boolean
+}
+
+interface ProgressBarGuiElementData extends GuiElementData {
+    type: 'progressbar'
+    value?: number
+}
+
+interface CheckBoxGuiElementData extends GuiElementData {
+    type: 'checkbox'
+    state: boolean
+}
+
+interface RadioButtonGuiElementData extends GuiElementData {
+    type: 'radiobutton'
+    state: boolean
+}
+
+interface SpriteButtonGuiElementData extends GuiElementData {
+    type: 'sprite-button'
+    sprite?: SpritePath
+    hovered_sprite?: SpritePath
+    clicked_sprite?: SpritePath
+    number?: number
+    show_percent_for_small_numbers?: boolean
+    mouse_button_filter?: MouseButtonFlags
+}
+
+interface SpriteGuiElementData extends GuiElementData {
+    type: 'sprite'
+    sprite?: SpritePath
+}
+
+interface ScrollPaneGuiElementData extends GuiElementData {
+    type: 'scroll-pane'
+    horizontal_scroll_policy?: 'auto' | 'never' | 'always' | 'auto-and-reserve-space'
+    vertical_scroll_policy?: 'auto' | 'never' | 'always' | 'auto-and-reserve-space'
+}
+
+interface DropDownGuiElementData extends GuiElementData {
+    type: 'drop-down'
+    items?: LocalisedString[]
+    selected_index?: number
+}
+
+interface LineGuiElementData extends GuiElementData {
+    type: 'line'
+    direction: string
+}
+
+interface ListBoxGuiElementData extends GuiElementData {
+    type: 'list-box'
+    items?: LocalisedString[]
+    selected_index?: number
+}
+
+interface CameraGuiElementData extends GuiElementData {
+    type: 'camera'
+    position: Position
+    surface_index?: number
+    zoom?: number
+}
+
+interface ChooseElemButtonGuiElementData extends GuiElementData {
+    type: 'choose-elem-button'
+    elem_type: 'item' | 'tile' | 'entity' | 'signal' | 'fluid' | 'recipe' | 'decorative' | 'item-group' |
+        'achievement' | 'equipment' | 'technology'
+}
+
+interface ItemChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'item'
+    item?: string
+}
+
+interface TileChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'tile'
+    tile?: string
+}
+
+interface EntityChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'entity'
+    entity?: string
+}
+
+interface SignalChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'signal'
+    signal?: SignalID
+}
+
+interface FluidChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'fluid'
+    fluid?: string
+}
+
+interface RecipeChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'recipe'
+    recipe?: string
+}
+
+interface DecorativeChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'decorative'
+    decorative?: string
+}
+
+interface ItemGroupChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'item-group'
+    'item-group'?: string
+}
+
+interface AchievementChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'achievement'
+    achievement?: string
+}
+
+interface EquipmentChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'equipment'
+    equipment?: string
+}
+
+interface TechnologyChooseElemButtonGuiElementData extends ChooseElemButtonGuiElementData {
+    elem_type: 'item'
+    technology?: string
+}
+
+interface TextBoxGuiElementData extends GuiElementData {
+    type: 'text-box'
+    text?: string
+    clear_and_focus_on_right_click?: boolean
+}
+
+interface SliderGuiElementData extends GuiElementData {
+    type: 'slider'
+    minimum_value?: number
+    maximum_value?: number
+    value?: number
+    value_step?: number
+    discrete_slider?: boolean
+    discrete_values?: boolean
+}
+
+interface MinimapGuiElementData extends GuiElementData {
+    type: 'minimap'
+    position?: Position
+    surface_index?: number
+    chart_player_index?: number
+    force?: string
+    zoom?: number
+}
+
+interface TabGuiElementData extends GuiElementData {
+    type: 'tab'
+    badge_text?: LocalisedString
+}
+
+interface SwitchGuiElementData extends GuiElementData {
+    type: 'switch'
+    switch_state?: 'left' | 'right' | 'none'
+    allow_none_state?: boolean
+    left_label_caption?: LocalisedString
+    left_label_tooltip?: LocalisedString
+    right_label_caption?: LocalisedString
+    right_label_tooltip?: LocalisedString
+}
 
 interface LuaGuiElement {
+    // Need this to support accessing child GUI elements.
+    // This really should be LuaGuiElement instead of any, but typescript won't let us do that
+    [key: string]: any
+    add(this: void, data: GuiElementData): LuaGuiElement
+    clear(this: void): void
+    destroy(this: void): void
+    get_mod(this: void): string | null
+    clear_items(this: void): void
+    get_item(this: void, index: number): LocalisedString
+    set_item(this: void, index: number, LocalisedString: LocalisedString): void
+    add_item(this: void, LocalisedString: LocalisedString, index?: number): void
+    remove_item(this: void, index: number): void
+    get_slider_minimum(this: void): number
+    get_slider_maximum(this: void): number
+    set_slider_minimum_maximum(this: void, minimum: number, maximum: number): void
+    get_slider_value_step(this: void): number
+    get_slider_discrete_slider(this: void): boolean
+    get_slider_discrete_values(this: void): boolean
+    set_slider_value_step(this: void, value: number): void
+    set_slider_discrete_values(this: void, value: boolean): void
+    focus(this: void): void
+    scroll_to_top(this: void): void
+    scroll_to_right(this: void): void
+    scroll_to_element(this: void, element: LuaGuiElement, scroll_mode?: 'in-view' | 'top-third'): void
+    select_all(this: void): void
+    select(this: void, start: number, end: number): void
+    add_tab(this: void, tab: LuaGuiElement, content: LuaGuiElement): void
+    remove_tab(this: void, tab: LuaGuiElement | null): void
+    force_auto_center(this: void): void
+    readonly index: number
+    readonly gui: LuaGui
+    readonly parent: LuaGuiElement | null
+    readonly name: string
+    caption: LocalisedString
+    value: number
+    readonly direction: 'horizontal' | 'vertical'
+    style: LuaStyle | string
+    visible: boolean
+    text: string
+    children_names: string[]
+    state: boolean
+    readonly player_index: number
+    sprite: SpritePath
+    resize_to_sprite: boolean
+    hovered_sprite: SpritePath
+    clicked_sprite: SpritePath
+    tooltip: LocalisedString
+    hoizontal_scroll_policy: 'auto' | 'never' | 'always' | 'auto-and-reserve-space'
+    vertical_scroll_policy: 'auto' | 'never' | 'always' | 'auto-and-reserve-space'
+    readonly type: string
+    readonly children: LuaGuiElement[]
+    readonly items: LocalisedString[]
+    selected_index: number
+    number: number
+    show_percent_for_small_numbers: boolean
+    location: GuiLocation
+    auto_center: boolean
+    position: Position
+    surface_index: number
+    zoom: number
+    minimap_player_index: number
+    force: string
+    readonly elem_type: string
+    elem_value: string | SignalID
+    selectable: boolean
+    word_wrap: boolean
+    read_only: boolean
+    enabled: boolean
+    ignored_by_interaction: boolean
+    locked: boolean
+    draw_vertical_lines: boolean
+    draw_horizontal_lines: boolean
+    draw_horizontal_line_after_headers: boolean
+    readonly column_count: number
+    vertical_centering: boolean
+    slider_value: number
+    mouse_button_filter: MouseButtonFlags
+    numeric: boolean
+    allow_decimal: boolean
+    allow_negative: boolean
+    is_password: boolean
+    lose_focus_on_confirm: boolean
+    clear_and_focus_on_right_click: boolean
+    drag_target: LuaGuiElement
+    selected_tab_index: number
+    readonly tabs: Array<{ tab: LuaGuiElement, content: LuaGuiElement}>
+    entity: LuaEntity
+    switch_state: string
+    allow_none_state: boolean
+    left_label_caption: LocalisedString
+    left_label_tooltip: LocalisedString
+    right_label_caption: LocalisedString
+    right_label_tooltip: LocalisedString
+    readonly valid: boolean
+    help(this: void): string
+}
+
+// ----
+
+interface LuaStyle {
 }
 
 interface LuaUnitGroup {

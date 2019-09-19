@@ -24,6 +24,8 @@ type ChunkPosition = Position;
 
 type TilePosition = Position;
 
+type GuiLocation = Position;
+
 type SimpleItemStack = string | {
     name: string,
     count?: number,
@@ -825,3 +827,10 @@ interface UpgradeFilter {
     type: 'item' | 'entity'
     name?: string
 }
+
+type MouseButtonFlagKey = 'left' | 'right' | 'left-and-right' | 'middle' | 'button-4' | 'button-5' |
+    'button-6' | 'button-7' | 'button-8' | 'button-9';
+
+type MouseButtonFlags = MouseButtonFlagKey[] | {
+    [key in MouseButtonFlagKey]: true
+};
