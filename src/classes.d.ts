@@ -2853,10 +2853,76 @@ interface LuaGuiElement {
     help(this: void): string
 }
 
-// ----
-
 interface LuaStyle {
+    readonly gui: LuaGui
+    readonly name: string
+    minimal_width: number
+    maximal_width: number
+    minimal_height: number
+    maximal_height: number
+    natural_width: number
+    natural_height: number
+    top_padding: number
+    right_padding: number
+    bottom_padding: number
+    left_padding: number
+    top_margin: number
+    right_margin: number
+    bottom_margin: number
+    left_margin: number
+    horizontal_align: 'left' | 'center' | 'right'
+    vertical_align: 'top' | 'center' | 'bottom'
+    font_color: Color
+    font: string
+    top_cell_padding: number
+    right_cell_padding: number
+    bottom_cell_padding: number
+    left_cell_padding: number
+    horizontally_stretchable: boolean
+    vertically_stretchable: boolean
+    horizontally_squashable: boolean
+    vertically_squashable: boolean
+    hovered_font_color: Color
+    clicked_font_color: Color
+    disabled_font_color: Color
+    pie_progress_color: Color
+    clicked_vertical_offset: number
+    selected_font_color: Color
+    selected_hovered_font_color: Color
+    selected_clicked_font_color: Color
+    strikethrough_color: Color
+    horizontal_spacing: number
+    vertical_spacing: number
+    use_header_filler: boolean
+    color: Color
+    column_alignments: Alignment[]
+    single_line: boolean
+    extra_padding_when_activated: number
+    extra_top_margin_when_activated: number
+    extra_bottom_margin_when_activated: number
+    extra_left_margin_when_activated: number
+    extra_right_margin_when_activated: number
+    stretch_image_to_widget_size: boolean
+    badge_font: string
+    badge_horizontal_spacing: number
+    default_badge_font_color: Color
+    selected_badge_font_color: Color
+    disabled_badge_font_color: Color
+    // writeonly
+    width: number
+    // writeonly
+    height: number
+    // writeonly
+    padding: number
+    // writeonly
+    margin: number
+    // writeonly
+    cell_padding: number
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaUnitGroup {
 }

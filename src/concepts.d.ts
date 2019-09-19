@@ -834,3 +834,6 @@ type MouseButtonFlagKey = 'left' | 'right' | 'left-and-right' | 'middle' | 'butt
 type MouseButtonFlags = MouseButtonFlagKey[] | {
     [key in MouseButtonFlagKey]: true
 };
+
+type Alignment = 'top-left' | 'middle-left' | 'left' | 'bottom-left' | 'top-center' | 'middle-center' |
+    'center' | 'bottom-center' | 'top-right' | 'middle-right' | 'right' | 'bottom-right';
