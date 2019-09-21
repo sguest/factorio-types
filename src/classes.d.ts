@@ -3009,10 +3009,14 @@ interface LuaLogisticCell {
     help(this: void): string
 }
 
-// ----
-
 interface LuaRemote {
+    add_interface(this: void, name: string, functions: {[key: string]: () => any }): void
+    remove_interface(this: void, name: string): boolean
+    call(this: void, interface: string, fn: string, ...args: string[]): any
+    readonly interfaces: {[key: string]: {[key: string]: boolean }}
 }
+
+// ----
 
 interface LuaCommandProcessor {
 }
