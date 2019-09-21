@@ -3038,6 +3038,13 @@ interface LuaSettings {
     readonly player: {[key: string]: ModSetting }
 }
 
+interface LuaCustomTable {
+    [key: string]: any
+    readonly '#': number
+    readonly valid: boolean
+    help(this: void): string
+}
+
 // ----
 
 interface LuaRendering {
