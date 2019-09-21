@@ -3016,10 +3016,18 @@ interface LuaRemote {
     readonly interfaces: {[key: string]: {[key: string]: boolean }}
 }
 
-// ----
-
 interface LuaCommandProcessor {
+    add_command(
+        this: void,
+        name: string,
+        help: LocalisedString,
+        fn: (name: string, tick: number, player_index: number, parameter?: string) => any): void
+    remove_command(this: void, name: string): boolean
+    readonly commands: {[key: string]: LocalisedString }
+    readonly game_commands: {[key: string]: LocalisedString }
 }
+
+// ----
 
 interface LuaRCON {
 }
