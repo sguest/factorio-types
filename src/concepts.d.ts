@@ -837,3 +837,7 @@ type MouseButtonFlags = MouseButtonFlagKey[] | {
 
 type Alignment = 'top-left' | 'middle-left' | 'left' | 'bottom-left' | 'top-center' | 'middle-center' |
     'center' | 'bottom-center' | 'top-right' | 'middle-right' | 'right' | 'bottom-right';
+
+interface ModSetting {
+    value: number | string | boolean
+}

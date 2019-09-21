@@ -3031,6 +3031,13 @@ interface LuaRCON {
     print(this: void, message: LocalisedString): void
 }
 
+interface LuaSettings {
+    get_player_settings(this: void, player: LuaPlayer): {[key: string]: ModSetting }
+    readonly startup: {[key: string]: ModSetting }
+    readonly global: {[key: string]: ModSetting }
+    readonly player: {[key: string]: ModSetting }
+}
+
 // ----
 
 interface LuaRendering {
