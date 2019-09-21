@@ -2986,10 +2986,30 @@ interface LuaLogisticNetwork {
     help(this: void): string
 }
 
-// ----
-
 interface LuaLogisticCell {
+    is_in_logistic_range(this: void, position: Position): boolean
+    is_in_construction_range(this: void, position: Position): boolean
+    is_neighbour_with_other(this: void, other: LuaLogisticCell): boolean
+    readonly logistic_radius: number
+    readonly logistics_connection_distance: number
+    readonly construction_radius: number
+    readonly stationed_logistic_robot_count: number
+    readonly stationed_construction_robot_count: number
+    readonly mobile: boolean
+    readonly transmitting: boolean
+    readonly charge_approach_distance: number
+    readonly carging_robot_count: number
+    readonly to_charge_robot_count: number
+    readonly owner: LuaEntity
+    readonly logistic_network: LuaLogisticNetwork
+    readonly neighbours: LuaLogisticCell[]
+    readonly charging_robots: LuaEntity[]
+    readonly to_charge_robots: LuaEntity[]
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaRemote {
 }
