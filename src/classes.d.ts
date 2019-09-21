@@ -2922,10 +2922,23 @@ interface LuaStyle {
     help(this: void): string
 }
 
-// ----
-
 interface LuaUnitGroup {
+    add_member(this: void, unit: LuaEntity): void
+    set_command(this: void, command: Command): void
+    set_autonomous(this: void): void
+    start_moving(this: void): void
+    destroy(this: void): void
+    readonly members: LuaEntity[]
+    readonly position: Position
+    readonly state: defines.group_state
+    readonly force: LuaForce
+    readonly surface: LuaSurface
+    readonly group_number: number
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaLogisticNetwork {
 }

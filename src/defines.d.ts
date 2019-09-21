@@ -275,6 +275,16 @@ declare namespace defines {
         }
     }
 
+    enum group_state {
+        gathering,
+        moving,
+        attacking_distraction,
+        attacking_target,
+        finished,
+        pathfinding,
+        wander_in_group,
+    }
+
 // ----
 
     namespace control_behavior {
