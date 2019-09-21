@@ -2938,10 +2938,55 @@ interface LuaUnitGroup {
     help(this: void): string
 }
 
-// ----
-
 interface LuaLogisticNetwork {
+    get_item_count(this: void, item?: string, member?: 'storage' | 'providers'): number
+    get_contents(this: void): {[key: string]: number }
+    remove_item(
+        this: void,
+        item: ItemStackSpecification, members?: 'storage' | 'passive-provider' | 'buffer' | 'active-provider',
+    ): number
+    insert(this: void, item: ItemStackSpecification, members?: 'storage' | 'storage-empty'): number
+    find_cell_closest_to(this: void, position: Position): LuaLogisticCell | null
+    select_pickup_point(
+        this: void,
+        table: {
+            name: string,
+            position?: Position,
+            include_buffers?: boolean,
+            members?: 'storage' | 'passive-provider' | 'buffer' | 'active-provider',
+        }): LuaLogisticPoint | null
+    select_drop_point?(
+        this: void,
+        table: {
+            stack: ItemStackSpecification,
+            members?: 'storage' | 'storage-empty' | 'storage-empty-slot' | 'requester',
+        }): LuaLogisticPoint | null
+    readonly force: LuaForce
+    readonly available_logistic_robots: number
+    readonly all_logistic_robots: number
+    readonly available_construction_robots: number
+    readonly all_construction_robots: number
+    readonly robot_limit: number
+    readonly cells: LuaLogisticCell[]
+    readonly providers: LuaEntity[]
+    readonly empty_providers: LuaEntity[]
+    readonly requesters: LuaEntity[]
+    readonly storages: LuaEntity[]
+    readonly logistic_memebers: LuaEntity[]
+    readonly provider_points: LuaLogisticPoint[]
+    readonly passive_provider_points: LuaLogisticPoint[]
+    readonly active_provider_points: LuaLogisticPoint[]
+    readonly empty_provider_points: LuaLogisticPoint[]
+    readonly requester_points: LuaLogisticPoint[]
+    readonly storage_points: LuaLogisticPoint[]
+    readonly robots: LuaEntity[]
+    readonly construction_robots: LuaEntity[]
+    readonly logistic_robots: LuaEntity[]
+    readonly valid: boolean
+    help(this: void): string
 }
+
+// ----
 
 interface LuaLogisticCell {
 }
