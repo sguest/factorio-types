@@ -3027,10 +3027,11 @@ interface LuaCommandProcessor {
     readonly game_commands: {[key: string]: LocalisedString }
 }
 
-// ----
-
 interface LuaRCON {
+    print(this: void, message: LocalisedString): void
 }
+
+// ----
 
 interface LuaRendering {
 }
