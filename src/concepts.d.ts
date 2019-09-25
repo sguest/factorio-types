@@ -841,3 +841,9 @@ type Alignment = 'top-left' | 'middle-left' | 'left' | 'bottom-left' | 'top-cent
 interface ModSetting {
     value: number | string | boolean
 }
+
+interface ScriptRenderTarget {
+    entity?: LuaEntity
+    entity_offset?: Vector
+    position?: Position
+}

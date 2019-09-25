@@ -3051,7 +3051,289 @@ interface LuaLazyLoadedValue {
     help(this: void): string
 }
 
-// ----
-
 interface LuaRendering {
+    draw_line(
+        this: void,
+        table: {
+            color: Color,
+            width: number,
+            gap_length?: number,
+            dash_length?: number,
+            from: Position | LuaEntity,
+            from_offset?: Vector,
+            to: Position | LuaEntity,
+            to_offset?: Vector,
+            surface: SurfaceSpecification,
+            time_to_live?: number
+            forces?: ForceSpecification[]
+            players?: PlayerSpecification[]
+            visible?: boolean
+            draw_on_ground?: boolean
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    draw_text(
+        this: void,
+        table: {
+            text: LocalisedString,
+            surface: SurfaceSpecification,
+            target: Position | LuaEntity,
+            target_offset?: Vector,
+            color: Color,
+            scale?: number,
+            font?: string,
+            time_to_live?: number,
+            forces?: ForceSpecification[],
+            players?: PlayerSpecification[],
+            visible?: boolean,
+            draw_on_ground?: boolean,
+            orientation?: number,
+            alignment?: 'left' | 'right' | 'center',
+            scale_with_zoom?: boolean,
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    draw_circle(
+        this: void,
+        table: {
+            color: Color,
+            radius: number,
+            width?: number,
+            filled: boolean,
+            target: Position | LuaEntity,
+            target_offset?: Vector,
+            surface: SurfaceSpecification,
+            time_to_live?: number,
+            forces?: ForceSpecification[],
+            players?: PlayerSpecification[],
+            visible?: boolean,
+            draw_on_ground?: boolean,
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    draw_rectangle(
+        this: void,
+        table: {
+            color: Color,
+            width?: number,
+            filled: boolean,
+            left_top: Position | LuaEntity,
+            left_top_offset?: Vector,
+            right_bottom: Position | LuaEntity,
+            right_bottom_offset?: Vector,
+            surface: SurfaceSpecification,
+            time_to_live?: number,
+            forces: ForceSpecification[],
+            players?: PlayerSpecification,
+            visible?: boolean,
+            draw_on_ground?: boolean,
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    draw_arc(
+        this: void,
+        table: {
+            color: Color,
+            max_radius: number,
+            min_radius: number,
+            start_angle: number,
+            angle: number,
+            target: Position | LuaEntity,
+            target_offset?: Vector,
+            surface: SurfaceSpecification,
+            time_to_live?: number,
+            forces?: ForceSpecification[],
+            players?: PlayerSpecification[],
+            visible?: boolean,
+            draw_on_ground?: boolean,
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    draw_polygon(
+        this: void,
+        table: {
+            color: Color,
+            vertices: Array<{target: Position | LuaEntity, target_offset?: Vector}>,
+            target: Position | LuaEntity,
+            target_offset?: Vector,
+            orientation?: number,
+            orientation_target?: Position | LuaEntity,
+            orentation_target_offset?: Vector,
+            surface: SurfaceSpecification,
+            time_to_live?: number,
+            forces?: ForceSpecification[],
+            players?: PlayerSpecification[],
+            visible?: boolean,
+            draw_on_ground?: boolean,
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    draw_sprite(
+        this: void,
+        table: {
+            sprite: SpritePath,
+            orientation?: number,
+            x_scale?: number,
+            y_scale?: number,
+            tint?: Color,
+            render_layer?: RenderLayer,
+            orientation_target?: Position | LuaEntity,
+            orientation_target_offset?: Vector,
+            oriented_offset?: Vector,
+            target: Position | LuaEntity,
+            target_offset?: Vector,
+            surface: SurfaceSpecification,
+            time_to_live?: number,
+            forces?: ForceSpecification[],
+            players?: PlayerSpecification[],
+            visible?: boolean,
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    draw_light(
+        this: void,
+        table: {
+            sprite: SpritePath,
+            orientation?: number,
+            scale?: number,
+            intensity?: number,
+            minimum_darkness?: number,
+            oriented?: boolean,
+            color?: Color,
+            target: Position | LuaEntity,
+            target_offset?: number,
+            surface: SurfaceSpecification,
+            time_to_live?: number,
+            forces?: ForceSpecification[],
+            players?: PlayerSpecification[],
+            visible?: boolean,
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    draw_animation(
+        this: void,
+        table: {
+            animation: string,
+            oreintation?: number,
+            x_scale?: number,
+            y_scale?: number,
+            tint?: Color,
+            render_layer?: RenderLayer,
+            animation_speed?: number,
+            animation_offset?: number,
+            orientation_target?: Position | LuaEntity,
+            orientation_target_offset?: Vector,
+            oriented_offset?: Vector,
+            target: Position | LuaEntity,
+            target_offset?: Vector,
+            surface: SurfaceSpecification,
+            time_to_live?: number,
+            forces?: ForceSpecification[],
+            players?: PlayerSpecification[],
+            visible?: boolean,
+            only_in_alt_mode?: boolean,
+        },
+    ): number
+    destroy(this: void, id: number): void
+    is_font_valid(this: void, font_name: string): boolean
+    is_valid(this: void, id: number): boolean
+    get_all_ids(this: void, mod_name?: string): number[]
+    clear(this: void, mod_name?: string): void
+    get_type(this: void, id: number):
+        'text' | 'line' | 'circle' | 'rectangle' | 'arc' | 'polygon' | 'sprite' | 'light' | 'animation'
+    get_surface(this: void, id: number): LuaSurface
+    get_time_to_live(this: void, id: number): number
+    set_time_to_live(this: void, id: number, time_to_live: number): void
+    get_forces(this: void, id: number): LuaForce[] | null
+    set_forces(this: void, id: number, forces: ForceSpecification[]): void
+    get_players(this: void, id: number): LuaPlayer[] | null
+    set_players(this: void, id: number, players: PlayerSpecification[]): void
+    get_visible(this: void, id: number): boolean
+    set_visible(this: void, id: number, visible: boolean): void
+    get_draw_on_ground(this: void, id: number): boolean
+    set_draw_on_ground(this: void, id: number, draw_on_ground: boolean): void
+    get_only_in_alt_mode(this: void, id: number): boolean
+    set_only_in_alt_mode(this: void, id: number, onld_in_alt_mode: boolean): void
+    get_color(this: void, id: number): Color | null
+    set_color(this: void, id: number, color: Color): void
+    get_width(this: void, id: number): number | null
+    set_width(this: void, id: number, width: number): void
+    get_from(this: void, id: number): number | null
+    set_from(this: void, id: number, from_offset: number): void
+    get_to(this: void, id: number): number | null
+    set_to(this: void, id: number, to_offset: number): void
+    get_dash_length(this: void, id: number): number | null
+    set_dash_length(this: void, id: number, dash_length: number): void
+    get_gap_length(this: void, id: number): number | null
+    set_gap_length(this: void, id: number, gap_length: number): void
+    set_dashes(this: void, id: number, dash_length: number, gap_length: number): void
+    get_target(this: void, id: number): ScriptRenderTarget | null
+    set_target(this: void, id: number, target: Position | LuaEntity, target_offset?: Vector): void
+    get_orientation(this: void, id: number): number | null
+    set_orientation(this: void, id: number, orientation: number): void
+    get_scale(this: void, id: number): number | null
+    set_scale(this: void, id: number, scale: number): void
+    get_text(this: void, id: number): LocalisedString | null
+    set_text(this: void, id: number, text: LocalisedString): void
+    get_font(this: void, id: number): string | null
+    set_font(this: void, id: number, font: string): void
+    get_alignment(this: void, id: number): string | null
+    set_alignment(this: void, id: number, alignment: 'left' | 'right' | 'center'): void
+    get_scale_with_zoom(this: void, id: number): boolean | null
+    set_scale_with_zoom(this: void, id: number, scale_with_zoom: boolean): void
+    get_filled(this: void, id: number): boolean | null
+    set_filled(this: void, id: number, filled: boolean): void
+    get_radius(this: void, id: number): number | null
+    set_radius(this: void, id: number, radius: number): void
+    get_left_top(this: void, id: number): ScriptRenderTarget | null
+    set_left_top(this: void, id: number, left_top: Position | LuaEntity, left_top_offset?: Vector): void
+    get_right_bottom(this: void, id: number): ScriptRenderTarget | null
+    set_right_bottom(this: void, id: number, right_bottom: Position | LuaEntity, right_bottom_offset?: Vector): void
+    set_corners(
+        this: void,
+        id: number,
+        left_top: Position | LuaEntity,
+        left_top_offset: Vector,
+        right_bottom: Position | LuaEntity,
+        right_bottom_offset: Vector,
+    ): void
+    get_max_radius(this: void, id: number): number | null
+    set_max_radius(this: void, id: number, max_radius: number): void
+    get_min_radius(this: void, id: number): number | null
+    set_min_radius(this: void, id: number, min_radius: number): void
+    get_start_angle(this: void, id: number): number | null
+    set_start_angle(this: void, id: number, start_angle: number): void
+    get_angle(this: void, id: number): number | null
+    set_angle(this: void, id: number, angle: number): void
+    get_vertices(this: void, id: number): ScriptRenderTarget[] | null
+    set_vertices(this: void, id: number, vertices: ScriptRenderTarget[]): void
+    get_sprite(this: void, id: number): SpritePath | null
+    set_sprite(this: void, id: number, sprite: SpritePath): void
+    get_x_scale(this: void, id: number): number | null
+    set_x_scale(this: void, id: number, x_scale: number): void
+    get_y_scale(this: void, id: number): number | null
+    set_y_scale(this: void, id: number, y_scale: number): void
+    get_render_layer(this: void, id: number): RenderLayer | null
+    set_render_layer(this: void, id: number, render_layer: RenderLayer): void
+    get_orientation_target(this: void, id: number): ScriptRenderTarget | null
+    set_orientation_target(
+        this: void,
+        id: number,
+        orientation_target: Position | LuaEntity,
+        orientation_target_offset: Vector,
+    ): void
+    get_oriented_offset(this: void, id: number): Vector | null
+    set_oriented_offset(this: void, id: number, oriented_offset: Vector): void
+    get_intensity(this: void, id: number): number | null
+    set_intensity(this: void, id: number, intensity: number): void
+    get_minimum_darkness(this: void, id: number): number | null
+    set_minimum_darkness(this: void, id: number, minimum_darkness: number): void
+    get_oriented(this: void, id: number): boolean | null
+    set_oriented(this: void, id: number, oriented: boolean): void
+    get_animation(this: void, id: number): string | null
+    set_animation(this: void, id: number, animation: string): void
+    get_animation_speed(this: void, id: number): number | null
+    set_animation_speed(this: void, id: number, animation_speed: number): void
+    get_animation_offset(this: void, id: number): number | null
+    set_animation_offset(this: void, id: number, animation_offset: number): void
 }
