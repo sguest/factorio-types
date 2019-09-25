@@ -285,7 +285,23 @@ declare namespace defines {
         wander_in_group,
     }
 
-// ----
+    enum behavior_result {
+        in_progress,
+        fail,
+        success,
+        deleted,
+    }
+
+    enum circuit_condition_index {
+        inserter_circuit,
+        inserter_logistic,
+        lamp,
+        arithmetic_combinator,
+        decider_combinator,
+        constant_combinator,
+        offshore_pump,
+        pump,
+    }
 
     namespace control_behavior {
         namespace logistic_container {
@@ -317,6 +333,21 @@ declare namespace defines {
             }
         }
 
+        namespace lamp {
+            enum circuit_mode_of_operation {
+                use_colors,
+            }
+        }
+
+        namespace train_stop {
+            enum circuit_mode_of_operation {
+                enable_disable,
+                send_to_train,
+                read_from_train,
+                read_stopped_train,
+            }
+        }
+
         namespace mining_drill {
             enum resource_read_mode {
                 this_miner,
@@ -332,7 +363,24 @@ declare namespace defines {
         }
 
         enum type {
-
+            container,
+            generic_on_off,
+            inserter,
+            lamp,
+            logistic_container,
+            roboport,
+            storage_tank,
+            train_stop,
+            decider_combinator,
+            arithmetic_combinator,
+            constant_combinator,
+            transport_belt,
+            accumulator,
+            rail_signal,
+            rail_chain_signal,
+            wall,
+            mining_drill,
+            programmable_speaker,
         }
     }
 
@@ -483,6 +531,8 @@ declare namespace defines {
         script_raised_destroy,
         script_raised_revive,
     }
+
+// ----
 
     enum inventory {
         character_armor,
