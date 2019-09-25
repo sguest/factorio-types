@@ -847,3 +847,7 @@ interface ScriptRenderTarget {
     entity_offset?: Vector
     position?: Position
 }
+
+interface Tags {
+    [key: string]: string | boolean | number | object
+}
