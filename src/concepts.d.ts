@@ -851,3 +851,8 @@ interface ScriptRenderTarget {
 interface Tags {
     [key: string]: string | boolean | number | object
 }
+
+interface OldTileAndPosition {
+    old_tile: LuaTilePrototype
+    position: TilePosition
+}
