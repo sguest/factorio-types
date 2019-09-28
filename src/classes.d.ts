@@ -3045,8 +3045,8 @@ interface LuaCustomTable {
     help(this: void): string
 }
 
-interface LuaLazyLoadedValue {
-    get(this: void): any
+interface LuaLazyLoadedValue<T> {
+    get(this: void): T
     readonly valid: boolean
     help(this: void): string
 }

@@ -478,3 +478,321 @@ interface on_player_promoted extends event {
 interface on_player_removed extends event {
     player_index: number
 }
+
+interface on_player_removed_equipment extends event {
+    player_index: number
+    grid: LuaEquipmentGrid
+    equipment: string
+    count: number
+}
+
+interface on_player_repaired_entity extends event {
+    player_index: number
+    entity: LuaEntity
+}
+
+interface on_player_respawned extends event {
+    player_index: number
+    player_port?: LuaEntity
+}
+
+interface on_player_rotated_entity extends event {
+    entity: LuaEntity
+    previous_direction: defines.direction
+    player_index: number
+}
+
+interface on_player_selected_area extends event {
+    player_index: number
+    area: BoundingBox
+    item: string
+    entities: LuaEntity[]
+    tiles: LuaTile[]
+}
+
+interface on_player_setup_blueprint extends event {
+    player_index: number
+    area: BoundingBox
+    item: string
+    alt: boolean
+    mapping: LuaLazyLoadedValue<{[key: number]: LuaEntity}>
+}
+
+interface on_player_toggled_alt_mode extends event {
+    player_index: number
+}
+
+interface on_player_toggled_map_editor extends event {
+    player_index: number
+}
+
+interface on_player_trash_inventory_changed extends event {
+    player_index: number
+}
+
+interface on_player_unbanned extends event {
+    player_index?: number
+    player_name: string
+    by_player?: number
+    reason?: string
+}
+
+interface on_player_unmuted extends event {
+    player_index: number
+}
+
+interface on_player_used_capsule extends event {
+    player_index: number
+    item: LuaItemPrototype
+    position: Position
+}
+
+interface on_post_entity_died extends event {
+    ghost?: LuaEntity
+    force?: LuaForce
+    position: Position
+    prototype: LuaEntityPrototype
+    corpses: LuaEntity[]
+    surface_index: number
+}
+
+interface on_pre_chunk_deleted extends event {
+    surface_index: number
+    positions: ChunkPosition[]
+}
+
+interface on_pre_entity_settings_pasted extends event {
+    player_index: number
+    source: LuaEntity
+    destination: LuaEntity
+}
+
+interface on_pre_ghost_deconstructed extends event {
+    player_index?: number
+    ghost: LuaEntity
+}
+
+interface on_pre_player_crafted_item extends event {
+    player_index: number
+    recipe: LuaRecipe
+    items: LuaInventory
+}
+
+interface on_pre_player_died extends event {
+    player_index: number
+    cause?: LuaEntity
+}
+
+interface on_pre_player_left_game extends event {
+    player_index: number
+}
+
+interface on_pre_player_mined_item extends event {
+    entity: LuaEntity
+    player_index: number
+}
+
+interface on_pre_player_removed extends event {
+    player_index: number
+}
+
+interface on_pre_robot_exploded_cliff extends event {
+    robot: LuaEntity
+    cliff: LuaEntity
+    item: LuaItemPrototype
+}
+
+interface on_pre_surface_cleared extends event {
+    surface_index: number
+}
+
+interface on_pre_surface_deleted extends event {
+    surface_index: number
+}
+
+interface on_put_item extends event {
+    position: Position
+    player_index: number
+    shift_building: boolean
+    built_by_moving: boolean
+    direction: defines.direction
+}
+
+interface on_research_finished extends event {
+    research: LuaTechnology
+    by_script: boolean
+}
+
+interface on_research_started extends event {
+    research: LuaTechnology
+    last_research?: LuaTechnology
+}
+
+interface on_resource_depleted extends event {
+    entity: LuaEntity
+}
+
+interface on_robot_built_entity extends event {
+    robot: LuaEntity
+    created_entity: LuaEntity
+    stack: LuaItemStack
+    tags?: Tags
+}
+
+interface on_robot_built_tile extends event {
+    robot: LuaEntity
+    tiles: OldTileAndPosition[]
+    tile: LuaTilePrototype
+    item: LuaItemPrototype
+    stack: LuaItemStack
+    surface_index: number
+}
+
+interface on_robot_exploded_cliff extends event {
+    robot: LuaEntity
+    item: LuaItemPrototype
+}
+
+interface on_robot_mined extends event {
+    robot: LuaEntity
+    item_stack: SimpleItemStack
+}
+
+interface on_robot_mined_entity extends event {
+    robot: LuaEntity
+    entity: LuaEntity
+    buffer: LuaInventory
+}
+
+interface on_robot_mined_tile extends event {
+    robot: LuaEntity
+    tiles: OldTileAndPosition[]
+    surface_index: number
+}
+
+interface on_robot_pre_mined extends event {
+    robot: LuaEntity
+    entity: LuaEntity
+}
+
+interface on_rocket_launch_ordered extends event {
+    rocket: LuaEntity
+    rocket_silo: LuaEntity
+    player_index?: number
+}
+
+interface on_rocket_launched extends event {
+    rocket: LuaEntity
+    rocket_silo: LuaEntity
+    player_index?: number
+}
+
+interface on_runtime_mod_setting_changed extends event {
+    player_index: number
+    setting: string
+    setting_type: 'runtime-per-user' | 'runtime-global'
+}
+
+interface on_script_path_request_finished extends event {
+    path: Array<{position: Position, needs_destroy_to_reach: boolean}> | null
+    id: number
+    try_again_later: boolean
+}
+
+interface on_sector_scanned extends event {
+    radar: LuaEntity
+    chunk_position: ChunkPosition
+    area: BoundingBox
+}
+
+interface on_selected_entity_changed extends event {
+    player_index: number
+    last_entity?: LuaEntity
+}
+
+interface on_string_translated extends event {
+    player_index: number
+    localised_string: LocalisedString
+    result: string
+    translated: boolean
+}
+
+interface on_surface_cleared extends event {
+    surface_index: number
+}
+
+interface on_surface_created extends event {
+    surface_index: number
+}
+
+interface on_surface_deleted extends event {
+    surface_index: number
+}
+
+interface on_surface_imported extends event {
+    surface_index: number
+    original_name: string
+}
+
+interface on_surface_renamed extends event {
+    surface_index: number
+    old_name: string
+    new_name: string
+}
+
+interface on_technology_effect_reset extends event {
+    force: LuaForce
+}
+
+interface on_train_state_changed extends event {
+    train: LuaTrain
+    old_state: defines.train_state
+}
+
+interface on_train_created extends event {
+    train: LuaTrain
+    old_train_id_1?: number
+    old_train_id_2?: number
+}
+
+interface on_train_schedule_changed extends event {
+    train: LuaTrain
+    player_index?: number
+}
+
+interface on_trigger_created_entity extends event {
+    entity: LuaEntity
+    source?: LuaEntity
+}
+
+interface on_trigger_fired_artillery extends event {
+    entity: LuaEntity
+    source?: LuaEntity
+}
+
+interface on_unit_added_to_group extends event {
+    unit: LuaEntity
+    group: LuaUnitGroup
+}
+
+interface on_unit_group_created extends event {
+    group: LuaUnitGroup
+}
+
+interface on_unit_removed_from_group extends event {
+    unit: LuaEntity
+    group: LuaUnitGroup
+}
+
+interface script_raised_built extends event {
+    entity: LuaEntity
+}
+
+interface script_raised_destroy extends event {
+    entity: LuaEntity
+}
+
+interface script_raised_revive extends event {
+    entity: LuaEntity
+    tags?: Tags
+}
