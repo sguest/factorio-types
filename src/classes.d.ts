@@ -229,7 +229,7 @@ interface LuaBootstrap {
         this: void,
         event: defines.events | defines.events[] | string,
         callback: (this: void, event: event) => void): void
-    on_nth_tick(this: void, tick: number | number[] | null, f: (event: NthTickEvent) => void): void
+    on_nth_tick(this: void, tick: number | number[] | null, f: (this: void, event: NthTickEvent) => void): void
     generate_event_name(this: void): number
     get_event_handler(this: void, event: number): () => any
     raise_event(this: void, event: number, table: object): void
