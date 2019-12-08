@@ -596,7 +596,7 @@ interface LuaEntity extends LuaControl {
     get_burnt_result_inventory(this: void): LuaInventory | null
     damage(this: void, damage: number, force: ForceSpecification, type?: string): number
     can_be_destroyed(this: void): boolean
-    destory(this: void, opts: { do_cliff_correction?: boolean, raise_destory?: boolean}): boolean
+    destroy(this: void, opts: { do_cliff_correction?: boolean, raise_destroy?: boolean}): boolean
     set_command(this: void, command: Command): void
     has_command(this: void): boolean
     die(this: void, force: ForceSpecification | null, cause?: LuaEntity): boolean
