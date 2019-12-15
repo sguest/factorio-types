@@ -218,6 +218,7 @@ interface PrototypeAmmoItem extends PrototypeItem {
 interface PrototypeAmmoTurret extends PrototypeTurret {
     automated_ammo_count: ItemCountType
     inventory_size: ItemStackIndex
+    entity_info_icon_shift: Vector
 }
 
 interface PrototypeAnimation {
