@@ -554,6 +554,7 @@ interface on_post_entity_died extends event {
     prototype: LuaEntityPrototype
     corpses: LuaEntity[]
     surface_index: number
+    unit_number?: number
 }
 
 interface on_pre_chunk_deleted extends event {

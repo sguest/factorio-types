@@ -1199,6 +1199,11 @@ interface LuaEntityPrototype {
     readonly respawn_time: number
     readonly damage_hit_tint: Color
     readonly character_corpse: LuaEntityPrototype
+    readonly call_for_help_radius: number
+    readonly max_count_of_owned_units: number
+    readonly max_friends_around_to_spawn: number
+    readonly spawning_radius: number
+    readonly spawning_spacing: number
     readonly valid: boolean
     help(this: void): string
 }
@@ -1886,6 +1891,7 @@ interface LuaForce {
     research_queue_enabled: boolean
     readonly index: number
     research_queue: TechnologySpecification[]
+    readonly research_enabled: boolean
     readonly valid: boolean
     help(this: void): string
 }
@@ -2923,9 +2929,9 @@ interface LuaStyle {
     // writeonly
     height: number
     // writeonly
-    padding: number
+    padding: number | number[]
     // writeonly
-    margin: number
+    margin: number | number[]
     // writeonly
     cell_padding: number
     readonly valid: boolean
