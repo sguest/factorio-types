@@ -881,6 +881,7 @@ interface LuaEntity extends LuaControl {
     readonly energy_generated_last_tick: number
     storage_filter: LuaItemPrototype
     request_from_buffers: boolean
+    driver_is_gunner: boolean
     readonly valid: boolean
     help(this: void): string
 }
