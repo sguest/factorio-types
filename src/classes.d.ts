@@ -793,7 +793,7 @@ interface LuaEntity extends LuaControl {
     readonly belt_to_ground_type: 'input' | 'output'
     loader_type: 'input' | 'output'
     rocket_parts: number
-    readonly logistic_network: LuaLogisticNetwork
+    logistic_network: LuaLogisticNetwork
     readonly logistic_cell: LuaLogisticCell
     item_requests: {[key: string]: number }
     readonly player: LuaPlayer | null
@@ -1205,6 +1205,8 @@ interface LuaEntityPrototype {
     readonly max_friends_around_to_spawn: number
     readonly spawning_radius: number
     readonly spawning_spacing: number
+    readonly max_distance_of_sector_revealed: number
+    readonly max_distance_of_nearby_sector_revealed: number
     readonly valid: boolean
     help(this: void): string
 }
