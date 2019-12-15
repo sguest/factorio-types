@@ -10,7 +10,7 @@ declare const remote: LuaRemote;
 
 declare const commands: LuaCommandProcessor;
 
-declare const settings: LuaAiSettings;
+declare const settings: LuaSettings;
 
 declare const rcon: LuaRCON;
 
