@@ -54,6 +54,12 @@ type CollisionMask = {
     [key in CollisionMaskLayer]: boolean
 };
 
+type CollisionMaskWithFlags = CollisionMask & {
+    'not-colliding-with-itself': boolean,
+    'consider-tile-transitions': boolean,
+    'colliding-with-tiles-only': boolean,
+}
+
 type EntityPrototypeFlagValue = 'not-rotatable' | 'placeable-neutral' | 'placeable-player' | 'placeable-enemy' |
     'placeable-off-grid' | 'player-creation' | 'building-direction-8-way' | 'filtered-directions' |
     'fast-replaceable-no-build-while-moving' | 'breaths-air' | 'not-repaiable' | 'not-on-map' |

@@ -39,6 +39,7 @@ interface LuaGameScript {
             show_entity_info?: boolean,
             anti_alias?: boolean,
             quality?: number,
+            allow_in_replay?: boolean,
         }): void
     set_wait_for_screenshots_to_finish(this: void): void
     take_technology_screenshot(
@@ -679,6 +680,7 @@ interface LuaEntity extends LuaControl {
         this: void,
         wire: defines.wire_type,
         circuit_connector?: defines.circuit_connector_id): LuaCircuitNetwork | null
+    get_merged_signal(this: void, signal: SignalID, circuit_connector?: defines.circuit_connector_id) : number
     get_merged_signals(this: void, circuit_connector?: defines.circuit_connector_id): Signal[] | null
     supports_backer_name(this: void): boolean
     copy_settings(this: void, entity: LuaEntity): {[key: string]: number }
@@ -1024,6 +1026,7 @@ interface LuaEntityPrototype {
     readonly drawing_box: BoundingBox
     readonly sticker_box: BoundingBox
     readonly collision_mask: CollisionMask
+    readonly collision_mask_with_flags: CollisionMaskWithFlags
     readonly order: string
     readonly group: LuaGroup
     readonly healing_per_tick: number
@@ -1073,6 +1076,7 @@ interface LuaEntityPrototype {
     readonly flags: EntityPrototypeFlags
     readonly remains_when_mined: LuaEntityPrototype[]
     readonly allow_copy_paste: boolean
+    readonly allow_burner_leech: boolean
     readonly shooting_cursor_size: number
     // documentation doesn't specify what the table should contain
     readonly created_smoke: {} | null
@@ -1357,6 +1361,7 @@ interface LuaPlayer extends LuaControl {
             password?: string,
         },
     ): void
+    request_translation(this: void, localised_string: LocalisedString): boolean
     character: LuaEntity | null
     readonly index: number
     readonly gui: LuaGui
@@ -1432,6 +1437,7 @@ interface LuaSurface {
             direction?: defines.direction | defines.direction[],
             collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
             force?: ForceSpecification | ForceSpecification[],
+            to_be_upgraded?: boolean,
             limit?: number,
             invert?: boolean,
         }): LuaEntity[]
@@ -2174,6 +2180,7 @@ interface LuaTilePrototype {
     readonly localised_name: LocalisedString
     readonly localised_description: LocalisedString
     readonly collision_mask: {[key: string]: true }
+    readonly collision_mask_with_flags: CollisionMaskWithFlags
     readonly layer: number
     readonly autoplace_specification: AutoplaceSpecification
     readonly walking_speed_modifier: number
@@ -2263,6 +2270,8 @@ interface LuaDecorativePrototype {
     readonly localised_name: LocalisedString
     readonly localised_description: LocalisedString
     readonly collision_box: BoundingBox
+    readonly collision_mask: CollisionMask
+    readonly collision_mask_with_flags: CollisionMaskWithFlags
     readonly autoplace_specification: AutoplaceSpecification
     readonly valid: boolean
     help(this: void): string
@@ -2908,6 +2917,7 @@ interface LuaStyle {
     default_badge_font_color: Color
     selected_badge_font_color: Color
     disabled_badge_font_color: Color
+    rich_text_setting: defines.rich_text_setting
     // writeonly
     width: number
     // writeonly
