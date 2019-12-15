@@ -882,6 +882,8 @@ interface LuaEntity extends LuaControl {
     storage_filter: LuaItemPrototype
     request_from_buffers: boolean
     driver_is_gunner: boolean
+    readonly command: Command | null
+    readonly distraction_command: Command | null
     readonly valid: boolean
     help(this: void): string
 }
@@ -2953,6 +2955,8 @@ interface LuaUnitGroup {
     readonly force: LuaForce
     readonly surface: LuaSurface
     readonly group_number: number
+    readonly command: Command | null
+    readonly distraction_command: Command | null
     readonly valid: boolean
     help(this: void): string
 }

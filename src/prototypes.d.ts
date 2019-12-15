@@ -1815,7 +1815,7 @@ interface PrototypeRollingStock extends PrototypeVehicle {
     max_speed: number
     pictures: RotatedSprite
     vertical_selection_shift: number
-    wheels: RotatedSprite
+    wheels?: RotatedSprite
     allow_manual_color?: boolean
     allow_robot_dispatch_in_automatic_mode?: boolean
     back_light?: LightDefinition
