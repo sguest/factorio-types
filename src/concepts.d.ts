@@ -100,6 +100,8 @@ interface Color {
     a?: number
 }
 
+type ColorModifier = Color;
+
 interface Ingredient {
     type?: 'item' | 'fluid'
     name: string

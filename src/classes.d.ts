@@ -740,6 +740,7 @@ interface LuaEntity extends LuaControl {
     can_shoot(this: void, target: LuaEntity, position: Position): boolean
     start_fading_out(this: void): void
     get_upgrade_target(this: void): LuaEntityPrototype
+    get_damage_to_be_taken(this: void): number
     readonly name: string
     readonly ghost_name: string
     readonly localised_name: LocalisedString
@@ -1727,6 +1728,7 @@ interface LuaSurface {
     morning: number
     solar_power_multiplier: number
     min_brightness: number
+    brightness_visual_weights: ColorModifier
     readonly valid: boolean
     help(this: void): string
 }
