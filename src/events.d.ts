@@ -815,3 +815,32 @@ interface script_raised_revive extends event {
     entity: LuaEntity
     tags?: Tags
 }
+
+type EventFilters = EventFilter[];
+
+interface EventFilter {
+    filter: string
+    mode?: 'or' | 'and'
+    invert?: boolean
+}
+
+interface StandardEntityEventFilter extends EventFilter {
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' |
+        'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' |
+        'circuit-network-connectable'
+}
+
+interface StandardEntityEventFilterTyped extends EventFilter {
+    filter: 'type' | 'ghost_type'
+    type: string
+}
+
+interface StandardEntityEventFilterNamed extends EventFilter {
+    filter: 'name' | 'ghost_name'
+    name: string
+}
+
+interface StandardEntityEventFilterForce extends EventFilter {
+    filter: 'force'
+    force: string
+}

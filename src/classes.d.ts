@@ -236,7 +236,12 @@ interface LuaBootstrap {
     get_event_handler(this: void, event: number): () => any
     raise_event(this: void, event: number, table: object): void
     get_event_order(this: void): string
+    set_event_filter(this: void, event: number, filters?: EventFilters | null): void
+    get_event_filter(this: void, event: number): EventFilters | null
     readonly mod_name: string
+    readonly active_mods: {[key: string]: string}
+    readonly is_game_in_debug_mode: boolean
+    readonly object_name: string
 }
 
 interface LuaControl {
@@ -1554,7 +1559,17 @@ interface LuaSurface {
     create_entity(this: void, values: CreateEntityParams): LuaEntity | null
     create_trivial_smoke(this: void, table: {name: string, position: Position}): void
     create_unit_group(this: void, table: {position: Position, force?: ForceSpecification}): LuaUnitGroup
-    create_particle(this: void, table: {name: string, position: Position, movement: Vector, height: number, vertical_speed: number, frame_speed: number}): void
+    create_particle(
+        this: void,
+        table: {
+            name: string,
+            position: Position,
+            movement: Vector,
+            height: number,
+            vertical_speed: number,
+            frame_speed: number,
+        },
+    ): void
     build_enemy_base(this: void, position: Position, unit_count: number, force?: ForceSpecification): void
     get_tile(this: void, x: number, y: number): LuaTile
     set_tiles(this: void, tiles: Array<{name: string, position: Position}>, correct_tiles?: boolean): void
