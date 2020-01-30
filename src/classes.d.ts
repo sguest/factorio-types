@@ -1132,6 +1132,8 @@ interface LuaEntityPrototype {
     readonly allow_custom_vectors: boolean
     readonly inserter_extension_speed: number | null
     readonly inserter_rotation_speed: number | null
+    readonly inserter_pickup_position: Vector | null
+    readonly inserter_drop_position: Vector | null
     readonly count_as_rock_for_filtered_deconstruction: boolean
     readonly filter_count: number | null
     readonly production: number | null
@@ -1552,6 +1554,7 @@ interface LuaSurface {
     create_entity(this: void, values: CreateEntityParams): LuaEntity | null
     create_trivial_smoke(this: void, table: {name: string, position: Position}): void
     create_unit_group(this: void, table: {position: Position, force?: ForceSpecification}): LuaUnitGroup
+    create_particle(this: void, table: {name: string, position: Position, movement: Vector, height: number, vertical_speed: number, frame_speed: number}): void
     build_enemy_base(this: void, position: Position, unit_count: number, force?: ForceSpecification): void
     get_tile(this: void, x: number, y: number): LuaTile
     set_tiles(this: void, tiles: Array<{name: string, position: Position}>, correct_tiles?: boolean): void
