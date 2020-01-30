@@ -148,6 +148,7 @@ interface LuaGameScript {
     readonly trivial_smoke_prototypes: {[key: string]: LuaTrivialSmokePrototype }
     readonly shortcut_prototypes: {[key: string]: LuaShortcutPrototype }
     readonly recipe_category_prototypes: {[key: string]: LuaRecipeCategoryPrototype }
+    readonly particle_prototypes: {[key: string]: LuaParticlePrototype }
     readonly styles: {[key: string]: string }
     readonly tick: number
     readonly ticks_played: number
@@ -595,7 +596,7 @@ interface LuaEntity extends LuaControl {
     get_module_inventory(this: void): LuaInventory | null
     get_fuel_inventory(this: void): LuaInventory | null
     get_burnt_result_inventory(this: void): LuaInventory | null
-    damage(this: void, damage: number, force: ForceSpecification, type?: string): number
+    damage(this: void, damage: number, force: ForceSpecification, type?: string, dealer?: LuaEntity): number
     can_be_destroyed(this: void): boolean
     destroy(this: void, opts: { do_cliff_correction?: boolean, raise_destroy?: boolean}): boolean
     set_command(this: void, command: Command): void
@@ -680,7 +681,7 @@ interface LuaEntity extends LuaControl {
         this: void,
         wire: defines.wire_type,
         circuit_connector?: defines.circuit_connector_id): LuaCircuitNetwork | null
-    get_merged_signal(this: void, signal: SignalID, circuit_connector?: defines.circuit_connector_id) : number
+    get_merged_signal(this: void, signal: SignalID, circuit_connector?: defines.circuit_connector_id): number
     get_merged_signals(this: void, circuit_connector?: defines.circuit_connector_id): Signal[] | null
     supports_backer_name(this: void): boolean
     copy_settings(this: void, entity: LuaEntity): {[key: string]: number }
@@ -1372,6 +1373,8 @@ interface LuaPlayer extends LuaControl {
         },
     ): void
     request_translation(this: void, localised_string: LocalisedString): boolean
+    get_infinity_inventory_filter(this: void, index: number): InfinityInventoryFilter
+    set_infinity_inventory_filter(this: void, index: number, filter: InfinityInventoryFilter): void
     character: LuaEntity | null
     readonly index: number
     readonly gui: LuaGui
@@ -1400,6 +1403,8 @@ interface LuaPlayer extends LuaControl {
     readonly spectator: boolean
     zoom: number
     map_view_settings: MapViewSettings
+    remove_unfiltered_items: boolean
+    infinity_inventory_filters: InfinityInventoryFilter[]
     readonly valid: boolean
     help(this: void): string
 }
@@ -1703,6 +1708,7 @@ interface LuaSurface {
         direction?: defines.direction): void
     decorative_prototype_collides(this: void, prototype: string, position: Position): void
     calculate_tile_properties(this: void, property_names: string[], positions: Position[]): {[key: string]: number}
+    get_entities_with_force(this: void, position: ChunkPosition, force: LuaForce | string): LuaEntity[]
     name: string
     readonly index: number
     map_gen_settings: MapGenSettings
@@ -1733,9 +1739,9 @@ interface LuaInventory {
     get_item_count(this: void, name?: string): number
     is_empty(this: void): boolean
     get_contents(this: void): {[key: string]: number }
-    hasbar(this: void): boolean
-    getbar(this: void): number
-    setbar(this: void, bar?: number): void
+    supports_bar(this: void): boolean
+    get_bar(this: void): number
+    set_bar(this: void, bar?: number): void
     supports_filters(this: void): boolean
     is_filtered(this: void): boolean
     can_set_filter(this: void, index: number, filter: string): boolean
@@ -2133,6 +2139,7 @@ interface LuaEquipmentPrototype {
     readonly burner_prototype: LuaBurnerPrototype
     readonly electric_energy_source_prototype: LuaElectricEnergySourcePrototype
     readonly background_color: Color
+    readonly attack_parameters: AttackParameters
     readonly valid: boolean
     help(this: void): string
 }
@@ -2805,6 +2812,7 @@ interface LuaGuiElement {
     add_tab(this: void, tab: LuaGuiElement, content: LuaGuiElement): void
     remove_tab(this: void, tab: LuaGuiElement | null): void
     force_auto_center(this: void): void
+    scroll_to_item(this: void, index: number, scroll_mode?: 'in-view' | 'top-third'): void
     readonly index: number
     readonly gui: LuaGui
     readonly parent: LuaGuiElement | null
@@ -3264,6 +3272,7 @@ interface LuaRendering {
     clear(this: void, mod_name?: string): void
     get_type(this: void, id: number):
         'text' | 'line' | 'circle' | 'rectangle' | 'arc' | 'polygon' | 'sprite' | 'light' | 'animation'
+    bring_to_front(this: void, id: number): void
     get_surface(this: void, id: number): LuaSurface
     get_time_to_live(this: void, id: number): number
     set_time_to_live(this: void, id: number, time_to_live: number): void
@@ -3359,4 +3368,22 @@ interface LuaRendering {
     set_animation_speed(this: void, id: number, animation_speed: number): void
     get_animation_offset(this: void, id: number): number | null
     set_animation_offset(this: void, id: number, animation_offset: number): void
+}
+
+interface LuaParticlePrototype {
+    readonly name: string
+    readonly order: string
+    readonly localised_name: LocalisedString
+    readonly localised_description: LocalisedString
+    readonly regular_trigger_effect: TriggerEffectItem
+    readonly ended_in_water_trigger_effect: TriggerEffectItem
+    readonly render_layer: RenderLayer
+    readonly render_layer_when_on_ground: RenderLayer
+    readonly life_time: number
+    readonly regular_trigger_effect_frequency: number
+    readonly movement_modifier_when_on_ground: number
+    readonly movement_modifier: number
+    readonly mining_particle_frame_speed: number
+    readonly valid: boolean
+    help(this: void): string
 }

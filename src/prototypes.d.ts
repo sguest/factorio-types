@@ -1,3 +1,6 @@
+// This file is out of date as of 0.18.0 because the prototype reference page has not been updated
+// https://wiki.factorio.com/Prototype_definitions
+
 interface dataCollection {
     'accumulator': { [key: string]: PrototypeAccumulator }
     'achievement': { [key: string]: PrototypeAchievement }

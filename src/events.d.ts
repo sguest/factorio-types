@@ -27,6 +27,11 @@ interface on_biter_base_built extends event {
     entity: LuaEntity
 }
 
+interface on_build_base_arrived extends event {
+    unit: LuaEntity | null
+    group: LuaUnitGroup | null
+}
+
 interface on_built_entity extends event {
     created_entity: LuaEntity
     player_index: number
@@ -700,6 +705,15 @@ interface on_script_path_request_finished extends event {
     try_again_later: boolean
 }
 
+interface on_script_trigger_effect extends event {
+    effect_id: string
+    surface_index: number
+    source_position?: Position
+    source_entity?: LuaEntity
+    target_position?: Position
+    target_entity?: LuaEntity
+}
+
 interface on_sector_scanned extends event {
     radar: LuaEntity
     chunk_position: ChunkPosition
@@ -777,6 +791,10 @@ interface on_unit_added_to_group extends event {
 }
 
 interface on_unit_group_created extends event {
+    group: LuaUnitGroup
+}
+
+interface on_unit_group_finished_gathering extends event {
     group: LuaUnitGroup
 }
 

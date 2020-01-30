@@ -58,7 +58,7 @@ type CollisionMaskWithFlags = CollisionMask & {
     'not-colliding-with-itself': boolean,
     'consider-tile-transitions': boolean,
     'colliding-with-tiles-only': boolean,
-}
+};
 
 type EntityPrototypeFlagValue = 'not-rotatable' | 'placeable-neutral' | 'placeable-player' | 'placeable-enemy' |
     'placeable-off-grid' | 'player-creation' | 'building-direction-8-way' | 'filtered-directions' |
@@ -428,6 +428,13 @@ interface OtherModifier extends Modifier {
 }
 
 interface InfinityContainerFilter {
+    name: string
+    count?: number
+    mode?: 'at-least' | 'at-most' | 'exactly'
+    index: number
+}
+
+interface InfinityInventoryFilter {
     name: string
     count?: number
     mode?: 'at-least' | 'at-most' | 'exactly'
