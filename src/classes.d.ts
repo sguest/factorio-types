@@ -3397,6 +3397,7 @@ interface LuaParticlePrototype {
     readonly localised_description: LocalisedString
     readonly regular_trigger_effect: TriggerEffectItem
     readonly ended_in_water_trigger_effect: TriggerEffectItem
+    readonly ended_on_ground_trigger_effect: TriggerEffectItem
     readonly render_layer: RenderLayer
     readonly render_layer_when_on_ground: RenderLayer
     readonly life_time: number
