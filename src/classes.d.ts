@@ -116,6 +116,8 @@ interface LuaGameScript {
         this: void,
         filters: LuaAchievementPrototypeFilter[]): {[key: string]: LuaAchievementPrototype }
     reset_time_played(this: void): void
+    encode_string(this: void, string: string): string | null
+    decode_string(this: void, string: string): string | null
     readonly player: LuaPlayer | null
     readonly players: {[key: string]: LuaPlayer }
     readonly map_settings: MapSettings
@@ -988,6 +990,38 @@ interface LuaElectricEnergySourcePrototype {
     help(this: void): string
 }
 
+interface LuaHeatEnergySourcePrototype {
+    readonly emissions: number
+    readonly render_no_network_icon: boolean
+    readonly render_no_power_icon: boolean
+    readonly max_temperature: number
+    readonly default_temperature: number
+    readonly specific_heat: number
+    readonly max_transfer: number
+    readonly min_temperature_gradient: number
+    readonly min_working_temperature: number
+    readonly minimum_glow_temperature: number
+    readonly connections: Connection[]
+    readonly valid: boolean
+    help(this: void): string
+}
+
+interface LuaFluidEnergySourcePrototype {
+    readonly emissions: number
+    readonly render_no_network_icon: number
+    readonly render_no_power_icon: boolean
+    readonly effectivity: number
+    readonly burns_fluid: boolean
+    readonly scale_fluid_usage: boolean
+    readonly fluid_usage_per_tick: number
+    readonly smoke: SmokeSource[]
+    readonly maximum_temperature: number
+    // Type is a guess, not specified in docs
+    readonly fluid_box: FluidBox
+    readonly valid: boolean
+    help(this: void): string
+}
+
 interface LuaFluidBoxPrototype {
     readonly entity: LuaEntityPrototype
     readonly index: number
@@ -1127,6 +1161,9 @@ interface LuaEntityPrototype {
     readonly max_to_charge: number | null
     readonly burner_prototype: LuaBurnerPrototype | null
     readonly electric_energy_source_prototype: LuaElectricEnergySourcePrototype | null
+    readonly head_energy_source_prototype: LuaHeatEnergySourcePrototype | null
+    readonly fluid_energy_source_prototype: LuaFluidEnergySourcePrototype | null
+    readonly void_energy_source_prototype: LuaFluidEnergySourcePrototype | null
     readonly building_grid_bit_shift: number
     readonly fluid_usage_per_tick: number | null
     readonly maximum_temperature: number | null
@@ -1393,7 +1430,7 @@ interface LuaPlayer extends LuaControl {
     minimap_enabled: boolean
     color: Color
     chat_color: Color
-    name: string
+    readonly name: string
     tag: string
     readonly connected: boolean
     admin: boolean
@@ -1769,6 +1806,10 @@ interface LuaInventory {
     get_filter(this: void, index: number): string
     set_filter(this: void, index: number, filter: string): boolean
     find_item_stack(this: void, item: string): LuaItemStack | null
+    find_empty_stack(this: void, item: string): LuaItemStack | null
+    count_empty_stacks(this: void, include_filtered?: boolean): number
+    // docs have this as a void, but should probably be number?
+    get_insertable_count(this: void, item: string): void
     sort_and_merge(this: void): void
     // operator # missing
     readonly index: number
@@ -2502,6 +2543,7 @@ interface LuaItemStack {
             direction?: defines.direction,
             skip_fog_of_war?: boolean,
             by_player?: PlayerSpecification,
+            raise_build?: boolean,
         },
     ): LuaEntity[]
     deconstruct_area(

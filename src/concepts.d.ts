@@ -663,6 +663,10 @@ interface FluidBoxConnection {
     positions: Vector[]
 }
 
+// Not sure what this is, referenced in documentation for LuaHeatEnergySourcePrototype
+interface Connection {
+}
+
 interface GameViewSettings {
     show_controller_gui: boolean
     snow_minimap: boolean

@@ -515,6 +515,10 @@ interface on_player_selected_area extends event {
     tiles: LuaTile[]
 }
 
+interface on_player_set_quick_bar_slot extends event {
+    player_index: number
+}
+
 interface on_player_setup_blueprint extends event {
     player_index: number
     area: BoundingBox
@@ -599,6 +603,10 @@ interface on_pre_player_mined_item extends event {
 }
 
 interface on_pre_player_removed extends event {
+    player_index: number
+}
+
+interface on_pre_player_toggled_map_editor extends event {
     player_index: number
 }
 
