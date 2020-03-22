@@ -115,6 +115,7 @@ interface LuaGameScript {
     get_filtered_achievement_prototypes(
         this: void,
         filters: LuaAchievementPrototypeFilter[]): {[key: string]: LuaAchievementPrototype }
+    reset_time_played(this: void): void
     readonly player: LuaPlayer | null
     readonly players: {[key: string]: LuaPlayer }
     readonly map_settings: MapSettings
