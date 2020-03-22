@@ -2993,7 +2993,10 @@ interface LuaStyle {
     color: Color
     column_alignments: Alignment[]
     single_line: boolean
-    extra_padding_when_activated: number
+    extra_top_padding_when_activated: number
+    extra_bottom_padding_when_activated: number
+    extra_left_padding_when_activated: number
+    extra_right_padding_when_activated: number
     extra_top_margin_when_activated: number
     extra_bottom_margin_when_activated: number
     extra_left_margin_when_activated: number
