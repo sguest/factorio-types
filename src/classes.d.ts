@@ -78,6 +78,7 @@ interface LuaGameScript {
             volume_modifier?: number,
         }): boolean
     is_valid_sound_path(this: void, soundPath: SoundPath): boolean
+    is_valid_sprite_path(this: void, sprite_path: string): boolean
     kick_player(this: void, playerSpecification: PlayerSpecification, reason?: LocalisedString): void
     ban_player(this: void, playerSpecification: PlayerSpecification, reason?: LocalisedString): void
     unban_player(this: void, playerSpecification: PlayerSpecification): void
@@ -345,6 +346,7 @@ interface LuaTile {
     readonly prototype: LuaTilePrototype
     readonly position: Position
     readonly hidden_tile: string
+    readonly surface: LuaSurface
     readonly valid: boolean
     help(this: void): string
 }
@@ -635,7 +637,7 @@ interface LuaEntity extends LuaControl {
     ): void
     order_deconstruction(this: void, force: ForceSpecification, player: PlayerSpecification): boolean
     cancel_deconstruction(this: void, force: ForceSpecification, player: PlayerSpecification): boolean
-    to_be_deconstructed(this: void, force: ForceSpecification): boolean
+    to_be_deconstructed(this: void): boolean
     order_upgrade(
         this: void,
         table: {

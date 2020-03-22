@@ -81,6 +81,8 @@ type ItemPrototypeFlags = {
 
 type CursorBoxRenderType = 'electricity' | 'copy' | 'not-allowed' | 'pair' | 'logistics' | 'train-visualisation';
 
+type ComparatorString = '<' | '>' | '=' | '≥' | '≤' | '≠';
+
 type Resistances = {
     [type in damageType]: {
         decrease: number,
@@ -530,7 +532,7 @@ interface WaitCondition {
 }
 
 interface CircuitCondition {
-    comparator?: '<' | '>' | '=' | '≥' | '≤' | '≠'
+    comparator?: ComparatorString
     first_signal?: SignalID
     second_signal?: SignalID
     constant?: number
@@ -566,7 +568,7 @@ interface DeciderCombinatorParameters {
     first_signal?: SignalID
     second_signal?: SignalID
     constant?: number
-    comparator?: '<' | '>' | '=' | '≥' | '≤' | '≠'
+    comparator?: ComparatorString
     output_signal?: SignalID
     copy_count_from_input?: boolean
 }

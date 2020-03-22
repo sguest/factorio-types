@@ -852,3 +852,14 @@ interface StandardEntityEventFilterForce extends EventFilter {
     filter: 'force'
     force: string
 }
+
+interface StandardEntityEventFilterDamageAmount extends EventFilter {
+    filter: 'original-damage-amount' | 'final-damage-amount'
+    comparison: ComparatorString
+    value: number
+}
+
+interface StandardEntityEventFilterDamageType extends EventFilter {
+    filter: 'damage-type'
+    type: string
+}
