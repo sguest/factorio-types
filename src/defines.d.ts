@@ -53,7 +53,6 @@ declare namespace defines {
         equipment,
         logistic,
         other_player,
-        kills,
         permissions,
         tutorials,
         custom,
