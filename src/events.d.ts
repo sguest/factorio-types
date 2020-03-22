@@ -306,6 +306,7 @@ interface on_picked_up_item extends event {
 
 interface on_player_alt_selected_area extends event {
     player_index: number
+    surface: LuaSurface
     area: BoundingBox
     item: string
     entities: LuaEntity[]
@@ -509,6 +510,7 @@ interface on_player_rotated_entity extends event {
 
 interface on_player_selected_area extends event {
     player_index: number
+    surface: LuaSurface
     area: BoundingBox
     item: string
     entities: LuaEntity[]

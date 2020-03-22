@@ -1181,6 +1181,7 @@ interface LuaEntityPrototype {
     readonly inserter_rotation_speed: number | null
     readonly inserter_pickup_position: Vector | null
     readonly inserter_drop_position: Vector | null
+    readonly inserter_chases_belt_items: boolean | null
     readonly count_as_rock_for_filtered_deconstruction: boolean
     readonly filter_count: number | null
     readonly production: number | null
@@ -1571,7 +1572,7 @@ interface LuaSurface {
             force?: LuaForce | string,
             allow_belts?: boolean,
         },
-    ): void
+    ): LuaEntity[]
     find_enemy_units(this: void, center: Position, radius: number, force?: LuaForce | string): LuaEntity[]
     find_units(
         this: void,
