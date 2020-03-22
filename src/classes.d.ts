@@ -40,6 +40,8 @@ interface LuaGameScript {
             anti_alias?: boolean,
             quality?: number,
             allow_in_replay?: boolean,
+            daytime?: number,
+            water_tick?: number,
         }): void
     set_wait_for_screenshots_to_finish(this: void): void
     take_technology_screenshot(
