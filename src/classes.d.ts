@@ -266,6 +266,8 @@ interface LuaControl {
     clear_selected_entity(this: void): void
     disable_flashlight(this: void): void
     enable_flashlight(this: void): void
+    // void according to docs, should probably be boolean?
+    is_flashlight_enabled(this: void): void
     get_craftable_count(this: void, recipe: string | LuaRecipe): number
     begin_crafting(
         this: void,
@@ -777,6 +779,7 @@ interface LuaEntity extends LuaControl {
     consumption_modifier: number
     friction_modifier: number
     speed: number
+    readonly effective_speed: number
     stack: LuaItemStack
     prototype: LuaEntityPrototype
     ghost_prototype: LuaEntityPrototype | LuaTilePrototype

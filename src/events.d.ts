@@ -9,6 +9,7 @@ interface on_tick extends event {
 interface on_ai_command_completed extends event {
     unit_number: number
     result: defines.behavior_result
+    was_distracted: boolean
 }
 
 interface on_area_cloned extends event {
