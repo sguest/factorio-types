@@ -321,7 +321,7 @@ interface SignalIDConnector {
 
 interface IconData {
     icon: FileName
-    icon_size: SpriteSizeType
+    icon_size?: SpriteSizeType
     tint?: Color
     shift?: Vector
     scale?: number
