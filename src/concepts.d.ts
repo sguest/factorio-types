@@ -234,6 +234,101 @@ interface LuaItemPrototypeFilterFuelCategory {
     'fuel-category': string
 }
 
+interface LuaTilePrototypeFilter {
+    filter: 'minable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'collision-mask' |
+        'walking-speed-modifier' | 'vehicle-friction-modifier' | 'decorative-removal-probability' |
+        'emisssions'
+    mode?: 'or' | 'and'
+    invert?: boolean
+}
+
+interface LuaTilePrototypeFilterCollisionMask extends LuaTilePrototypeFilter {
+    filter: 'collision-mask'
+    mask: CollisionMask | CollisionMaskWithFlags
+    mask_mode: 'collides' | 'layers-equals'
+}
+
+interface LuaTilePrototypeFilterWithValue extends LuaTilePrototypeFilter {
+    filter: 'walking-speed-modifier' | 'vehicle-friction-modifier' | 'decorative-removal-probability' |
+        'emisssions'
+    comparison: ComparatorString
+    value: number
+}
+
+interface LuaDecorativePrototypeFilter {
+    filter: 'decal' | 'autoplace' | 'collision-mask'
+    mode?: 'or' | 'and'
+    invert?: boolean
+}
+
+interface LuaDecorativePrototypeFilterCollisionMask extends LuaDecorativePrototypeFilter {
+    filter: 'collision-mask'
+    mask: CollisionMask | CollisionMaskWithFlags
+    mask_mode: 'collides' | 'layers-equals'
+}
+
+interface LuaFluidPrototypeFilter {
+    filter: 'hidden' | 'subgroup' | 'default-temperature' | 'max-temperature' | 'heat-capacity' |
+        'fuel-value' | 'emissions-multiplier' | 'gas-temperature'
+    mode?: 'or' | 'and'
+    invert?: boolean
+}
+
+interface LuaFluidPrototypeFilterSubgroup extends LuaFluidPrototypeFilter {
+    filter: 'subgroup'
+    subgroup: string
+}
+
+interface LuaFluidPrototypeFilterWithValue extends LuaFluidPrototypeFilter {
+    filter: 'default-temperature' | 'max-temperature' | 'heat-capacity' |
+        'fuel-value' | 'emissions-multiplier' | 'gas-temperature'
+    comparison: ComparatorString
+    value: number
+}
+
+interface LuaRecipePrototypeFilter {
+    filter: 'enabled' | 'hidden' | 'hidden-from-flow-stats' | 'hidden-from-player-crafting' |
+        'allow-as-intermediate' | 'allow-intermediates' | 'allow-decomposition' | 'always-show-made-in' |
+        'always-show-products' | 'show-amount-in-title' | 'has-ingredients' | 'has-products' | 'subgroup' |
+        'category' | 'energy' | 'emissions-multiplier' | 'request-paste-multiplier' | 'overload-multiplier'
+    mode?: 'or' | 'and'
+    invert?: boolean
+}
+
+interface LuaRecipePrototypeFilterSubgroup extends LuaRecipePrototypeFilter {
+    filter: 'subgroup'
+    subgroup: string
+}
+
+interface LuaRecipePrototypeFilterCategory extends LuaRecipePrototypeFilter {
+    filter: 'category'
+    category: string
+}
+
+interface LuaRecipePrototypeFilterValue extends LuaRecipePrototypeFilter {
+    filter: 'energy' | 'emissions-multiplier' | 'request-paste-multiplier' | 'overload-multiplier'
+    comparison: ComparatorString
+    value: number
+}
+
+interface LuaTechnologyPrototypeFilter {
+    filter: 'enabled' | 'hidden' | 'upgrade' | 'visible-when-disabled' | 'has-effects' | 'has-prerequisites' |
+        'research-unit-ingredient' | 'level' | 'max-level' | 'time'
+    mode?: 'or' | 'and'
+    invert?: boolean
+}
+
+interface LuaTechnologyPrototypeFilterResearchUnitIngredient extends LuaTechnologyPrototypeFilter {
+    filter: 'research-unit-ingredient'
+    ingredient: string
+}
+
+interface LuaTechnologyPrototypeFilterValue extends LuaTechnologyPrototypeFilter {
+    filter: 'level' | 'max-level' | 'time'
+    comparison: ComparatorString
+    value: number
+}
+
 interface LuaEquipmentPrototypeFilter {
     filter: 'type'
     mode?: 'or' | 'and'

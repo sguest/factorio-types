@@ -118,6 +118,21 @@ interface LuaGameScript {
     get_filtered_achievement_prototypes(
         this: void,
         filters: LuaAchievementPrototypeFilter[]): {[key: string]: LuaAchievementPrototype }
+    get_filtered_tile_prototypes(
+        this: void,
+        filters: LuaTilePrototypeFilter[]): {[key: string]: LuaTilePrototype }
+    get_filtered_decorative_prototypes(
+        this: void,
+        filters: LuaDecorativePrototypeFilter[]): {[key: string]: LuaDecorativePrototype }
+    get_filtered_fluid_prototypes(
+        this: void,
+        filters: LuaFluidPrototypeFilter[]): {[key: string]: LuaFluidPrototype }
+    get_filtered_recipe_prototypes(
+        this: void,
+        filters: LuaRecipePrototypeFilter[]): {[key: string]: LuaRecipePrototype }
+    get_filtered_technology_prototypes(
+        this: void,
+        filters: LuaTechnologyPrototypeFilter[]): {[key: string]: LuaTechnologyPrototype }
     create_inventory(this: void, size: number): LuaInventory
     get_script_inventories(this: void, mod?: string): {[key: string]: LuaInventory[]}
     reset_time_played(this: void): void
@@ -173,7 +188,7 @@ interface LuaGameScript {
     enemy_has_vision_on_land_mines: boolean
     autosave_enabled: boolean
     draw_resource_selection: boolean
-    pollution_statistics: LuaFlowStatistics
+    readonly pollution_statistics: LuaFlowStatistics
     readonly max_force_distraction_distance: number
     readonly max_force_distraction_chunk_distance: number
     readonly max_electric_pole_supply_area_distance: number
