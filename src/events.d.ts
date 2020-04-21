@@ -130,6 +130,7 @@ interface on_entity_damaged extends event {
     damage_type: LuaDamagePrototype
     original_damage_amount: number
     final_damage_amount: number
+    final_health: number
     cause?: LuaEntity
     force?: LuaForce
 }
@@ -865,4 +866,9 @@ interface StandardEntityEventFilterDamageAmount extends EventFilter {
 interface StandardEntityEventFilterDamageType extends EventFilter {
     filter: 'damage-type'
     type: string
+}
+
+interface StandardEntityEventFilterFinalHealth extends EventFilter {
+    filter: 'final-health'
+    type: number
 }

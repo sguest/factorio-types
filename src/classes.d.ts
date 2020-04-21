@@ -118,6 +118,8 @@ interface LuaGameScript {
     get_filtered_achievement_prototypes(
         this: void,
         filters: LuaAchievementPrototypeFilter[]): {[key: string]: LuaAchievementPrototype }
+    create_inventory(this: void, size: number): LuaInventory
+    get_script_inventories(this: void, mod?: string): {[key: string]: LuaInventory[]}
     reset_time_played(this: void): void
     encode_string(this: void, string: string): string | null
     decode_string(this: void, string: string): string | null
@@ -172,6 +174,15 @@ interface LuaGameScript {
     autosave_enabled: boolean
     draw_resource_selection: boolean
     pollution_statistics: LuaFlowStatistics
+    readonly max_force_distraction_distance: number
+    readonly max_force_distraction_chunk_distance: number
+    readonly max_electric_pole_supply_area_distance: number
+    readonly max_electric_pole_connection_distance: number
+    readonly max_beacon_supply_area_distance: number
+    readonly max_gate_activation_distance: number
+    readonly max_inserter_reach_distance: number
+    readonly max_pipe_to_ground_distance: number
+    readonly max_underground_belt_distance: number
 }
 
 interface LuaRandomGenerator {
@@ -756,6 +767,7 @@ interface LuaEntity extends LuaControl {
     start_fading_out(this: void): void
     get_upgrade_target(this: void): LuaEntityPrototype
     get_damage_to_be_taken(this: void): number
+    deplete(this: void): void
     readonly name: string
     readonly ghost_name: string
     readonly localised_name: LocalisedString
@@ -808,6 +820,10 @@ interface LuaEntity extends LuaControl {
     readonly crafting_speed: number
     crafting_progress: number
     bonus_progress: number
+    readonly productivity_bonus: number
+    readonly pollution_bonus: number
+    readonly speed_bonus: number
+    readonly consumption_bonus: number
     readonly belt_to_ground_type: 'input' | 'output'
     loader_type: 'input' | 'output'
     rocket_parts: number
@@ -1265,6 +1281,10 @@ interface LuaEntityPrototype {
     readonly spawning_spacing: number
     readonly max_distance_of_sector_revealed: number
     readonly max_distance_of_nearby_sector_revealed: number
+    readonly adjacent_tile_collision_box: CollisionMask
+    readonly adjacent_tile_collision_mask: CollisionMask
+    readonly adjacent_tile_collision_test: CollisionMask
+    readonly center_collision_mask: CollisionMask
     readonly valid: boolean
     help(this: void): string
 }
@@ -1820,11 +1840,14 @@ interface LuaInventory {
     // docs have this as a void, but should probably be number?
     get_insertable_count(this: void, item: string): void
     sort_and_merge(this: void): void
+    resize(this: void, size: number): void
+    destory(this: void): void
     // operator # missing
     readonly index: number
     readonly entity_owner: LuaEntity | null
     readonly player_owner: LuaPlayer | null
     readonly equipment_owner: LuaEntity | null
+    readonly mod_owner: string | null
     readonly [key: number]: LuaItemStack
     readonly valid: boolean
     help(this: void): string
