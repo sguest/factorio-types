@@ -310,13 +310,6 @@ declare namespace defines {
             }
         }
 
-        namespace roboport {
-            enum circuit_mode_of_operation {
-                read_logistics,
-                read_robot_stats,
-            }
-        }
-
         namespace inserter {
             enum circuit_mode_of_operation {
                 none,

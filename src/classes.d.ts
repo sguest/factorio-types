@@ -451,7 +451,8 @@ interface LuaRailSignalControlBehavior extends LuaControlBehavior {
 }
 
 interface LuaRoboportControlBehavior extends LuaControlBehavior {
-    mode_of_operation: defines.control_behavior.roboport.circuit_mode_of_operation
+    read_logistics: boolean,
+    read_robot_stats: boolean,
     available_logistic_output_signal: SignalID
     total_logistic_output_signal: SignalID
     available_construction_output_signal: SignalID
@@ -2210,6 +2211,7 @@ interface LuaEquipmentPrototype {
     readonly electric_energy_source_prototype: LuaElectricEnergySourcePrototype
     readonly background_color: Color
     readonly attack_parameters: AttackParameters
+    readonly automatic: boolean
     readonly valid: boolean
     help(this: void): string
 }
@@ -2581,6 +2583,10 @@ interface LuaItemStack {
             force: ForceSpecification,
             area: BoundingBox,
             always_include_tiles?: boolean,
+            include_enemies?: boolean,
+            include_modules?: boolean,
+            include_station_names?: boolean,
+            include_trains?: boolean,
         },
     ): void
     get_tag(this: void, tag_name: string): any
