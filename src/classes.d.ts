@@ -2626,6 +2626,7 @@ interface LuaItemStack {
             include_modules?: boolean,
             include_station_names?: boolean,
             include_trains?: boolean,
+            include_fuel?: boolean,
         },
     ): void
     get_tag(this: void, tag_name: string): any

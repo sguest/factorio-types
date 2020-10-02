@@ -887,6 +887,7 @@ interface CreateResourceEntityParams extends CreateEntityParams {
     amount: number
     enable_tree_removal?: boolean
     enable_cliff_removal?: boolean
+    snap_to_tile_center?: boolean
 }
 
 interface CreateUndergroundBeltEntityParams extends CreateEntityParams {
