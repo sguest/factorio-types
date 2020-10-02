@@ -849,6 +849,11 @@ interface script_raised_revive extends event {
     tags?: Tags
 }
 
+interface script_raised_set_tiles extends event {
+    surface_index: number
+    tiles: Array<{name: string, position: Position}>
+}
+
 type EventFilters = EventFilter[];
 
 interface EventFilter {

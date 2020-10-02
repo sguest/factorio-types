@@ -725,7 +725,7 @@ interface LuaEntity extends LuaControl {
     get_merged_signal(this: void, signal: SignalID, circuit_connector?: defines.circuit_connector_id): number
     get_merged_signals(this: void, circuit_connector?: defines.circuit_connector_id): Signal[] | null
     supports_backer_name(this: void): boolean
-    copy_settings(this: void, entity: LuaEntity): {[key: string]: number }
+    copy_settings(this: void, entity: LuaEntity, by_player?: LuaPlayer): {[key: string]: number }
     get_logistic_point(this: void, index?: defines.logistic_member_index): LuaLogisticPoint | LuaLogisticPoint[]
     play_note(this: void, instrument: number, note: number): boolean
     connect_rolling_stock(this: void, direction: defines.rail_direction): boolean
@@ -2371,10 +2371,10 @@ interface LuaVirtualSignalPrototype {
 interface LuaEquipmentGrid {
     take(
         this: void,
-        table: {position?: Position, equipment?: LuaEquipment}): SimpleItemStack | null
+        table: {position?: Position, equipment?: LuaEquipment, by_player?: LuaPlayer}): SimpleItemStack | null
     take_all(this: void): {[key: string]: number }
     clear(this: void): void
-    put(this: void, table: {name: string, position?: Position}): LuaEquipment | null
+    put(this: void, table: {name: string, position?: Position, by_player?: LuaPlayer}): LuaEquipment | null
     can_move(this: void, table: {equipment: LuaEquipment, position: Position}): boolean
     move(this: void, table: {equipment: LuaEquipment, position: Position}): boolean
     get(this: void, position: Position): LuaEquipment | null
