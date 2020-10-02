@@ -2267,6 +2267,7 @@ interface LuaModSettingPrototype {
     readonly allowed_values: string[] | number[] | null
     readonly allow_blank: boolean | null
     readonly auto_trim: boolean | null
+    readonly hidden: boolean
     readonly valid: boolean
     help(this: void): string
 }
@@ -2956,6 +2957,7 @@ interface LuaGuiElement {
     show_percent_for_small_numbers: boolean
     location: GuiLocation
     auto_center: boolean
+    badge_text: LocalisedString
     position: Position
     surface_index: number
     zoom: number

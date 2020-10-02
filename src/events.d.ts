@@ -620,6 +620,14 @@ interface on_pre_robot_exploded_cliff extends event {
     item: LuaItemPrototype
 }
 
+interface on_pre_script_inventory_resized extends event {
+    player_index?: number
+    mod: string
+    inventory: LuaInventory
+    old_size: number
+    new_size: number
+}
+
 interface on_pre_surface_cleared extends event {
     surface_index: number
 }
@@ -709,6 +717,15 @@ interface on_runtime_mod_setting_changed extends event {
     player_index: number
     setting: string
     setting_type: 'runtime-per-user' | 'runtime-global'
+}
+
+interface on_script_inventory_resized extends event {
+    player_index?: number
+    mod: string
+    inventory: LuaInventory
+    old_size: number
+    new_size: number
+    overflow_inventory: LuaInventory
 }
 
 interface on_script_path_request_finished extends event {

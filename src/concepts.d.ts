@@ -457,9 +457,11 @@ interface BuildBaseCommand extends Command {
 
 interface PathFindFlags {
     allow_destroy_friendly_entities?: boolean
+    allow_paths_through_own_entitites?: boolean
     cache?: boolean
     prefer_straight_paths?: boolean
     low_priority?: boolean
+    no_break?: boolean
 }
 
 interface Offer {
