@@ -1306,6 +1306,7 @@ interface LuaEntityPrototype {
     readonly adjacent_tile_collision_mask: CollisionMask
     readonly adjacent_tile_collision_test: CollisionMask
     readonly center_collision_mask: CollisionMask
+    readonly grid_prototype: LuaEquipmentGridPrototype
     readonly valid: boolean
     help(this: void): string
 }
