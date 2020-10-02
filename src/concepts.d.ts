@@ -180,13 +180,15 @@ interface MapExchangeStringData {
     map_gen_settings: MapGenSettings
 }
 
+// Should have 'place-result', 'burnt-result', 'place-as-tile', 'placed-as-equipment-result'
+// added in 0.18.25 but documentation is unclear on these
 interface LuaEntityPrototypeFilter {
     filter: 'flying-robot' | 'robot-with-logistics-interface' | 'rail' | 'particle' | 'ghost' |
         'explosion' | 'vehicle' | 'crafting-machine' | 'rolling-stock' | 'turret' |
         'transport-belt-connectable' | 'wall-connectable' | 'buildable' | 'placeable-in-editor' |
         'clonable' | 'selectable' | 'hidden' | 'entity-with-health' | 'building' | 'fast-replaceable' |
         'uses-direction' | 'minable' | 'circuit-connectable' | 'autoplace' | 'blueprintable' |
-        'type' | 'collision-mask' | 'flag'
+        'type' | 'collision-mask' | 'flag' | 'crafting-category' | 'name'
     mode?: 'or' | 'and'
     invert?: boolean
 }
@@ -206,10 +208,20 @@ interface LuaEntityPrototypeFilterFlag extends LuaEntityPrototypeFilter {
     flag: EntityPrototypeFlagValue
 }
 
+interface LuaEntityPrototypeFilterCrafyingCategory extends LuaEntityPrototypeFilter {
+    filter: 'crafting-category'
+    crafting_category: string
+}
+
+interface LuaEntityPrototypeFilterName extends LuaEntityPrototypeFilter {
+    filter: 'name'
+    name: string | string[]
+}
+
 interface LuaItemPrototypeFilter {
     filter: 'tool' | 'mergeable' | 'item-with-inventory' | 'selection-tool' | 'item-with-label' |
         'fuel' | 'place-as-tile' | 'place-result' | 'placed-as-equipment-result' | 'burnt-result' |
-        'type' | 'flag' | 'subgroup' | 'fuel-category'
+        'type' | 'flag' | 'subgroup' | 'fuel-category' | 'name'
     mode?: 'or' | 'and'
     invert?: boolean
 }
@@ -232,6 +244,11 @@ interface LuaItemPrototypeFilterSubgroup {
 interface LuaItemPrototypeFilterFuelCategory {
     filter: 'fuel-category'
     'fuel-category': string
+}
+
+interface LuaItemPrototypeFilterName extends LuaItemPrototypeFilter {
+    filter: 'name'
+    name: string | string[]
 }
 
 interface LuaTilePrototypeFilter {
@@ -269,7 +286,7 @@ interface LuaDecorativePrototypeFilterCollisionMask extends LuaDecorativePrototy
 
 interface LuaFluidPrototypeFilter {
     filter: 'hidden' | 'subgroup' | 'default-temperature' | 'max-temperature' | 'heat-capacity' |
-        'fuel-value' | 'emissions-multiplier' | 'gas-temperature'
+        'fuel-value' | 'emissions-multiplier' | 'gas-temperature' | 'name'
     mode?: 'or' | 'and'
     invert?: boolean
 }
@@ -286,11 +303,17 @@ interface LuaFluidPrototypeFilterWithValue extends LuaFluidPrototypeFilter {
     value: number
 }
 
+interface LuaFluidPrototypeFilterName extends LuaFluidPrototypeFilter {
+    filter: 'name'
+    name: string | string[]
+}
+
 interface LuaRecipePrototypeFilter {
     filter: 'enabled' | 'hidden' | 'hidden-from-flow-stats' | 'hidden-from-player-crafting' |
         'allow-as-intermediate' | 'allow-intermediates' | 'allow-decomposition' | 'always-show-made-in' |
         'always-show-products' | 'show-amount-in-title' | 'has-ingredients' | 'has-products' | 'subgroup' |
-        'category' | 'energy' | 'emissions-multiplier' | 'request-paste-multiplier' | 'overload-multiplier'
+        'category' | 'energy' | 'emissions-multiplier' | 'request-paste-multiplier' | 'overload-multiplier' |
+        'has-ingredient-item' | 'has-ingredient-fluid' | 'has-product-item' | 'has-product-fluid'
     mode?: 'or' | 'and'
     invert?: boolean
 }
@@ -311,6 +334,15 @@ interface LuaRecipePrototypeFilterValue extends LuaRecipePrototypeFilter {
     value: number
 }
 
+interface LuaRecipePrototypeFilterItemSubFilter extends LuaRecipePrototypeFilter {
+    filter: 'has-ingredient-item' | 'has-product-item'
+    elem_filters?: LuaItemPrototypeFilter
+}
+
+interface LuaRecipePrototypeFilterFluidSubFilter extends LuaRecipePrototypeFilter {
+    filter: 'has-ingredient-fluid' | 'has-product-fluid'
+    elem_filters?: LuaFluidPrototypeFilter
+}
 interface LuaTechnologyPrototypeFilter {
     filter: 'enabled' | 'hidden' | 'upgrade' | 'visible-when-disabled' | 'has-effects' | 'has-prerequisites' |
         'research-unit-ingredient' | 'level' | 'max-level' | 'time'

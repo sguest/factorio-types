@@ -176,6 +176,10 @@ interface on_force_friends_changed extends event {
     added: boolean
 }
 
+interface on_force_reset extends event {
+    force: LuaForce
+}
+
 interface on_forces_merged extends event {
     source_name: string
     source_index: number

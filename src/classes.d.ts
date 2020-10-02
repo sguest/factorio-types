@@ -1654,7 +1654,13 @@ interface LuaSurface {
     ): void
     build_enemy_base(this: void, position: Position, unit_count: number, force?: ForceSpecification): void
     get_tile(this: void, x: number, y: number): LuaTile
-    set_tiles(this: void, tiles: Array<{name: string, position: Position}>, correct_tiles?: boolean): void
+    set_tiles(
+        this: void,
+        tiles: Array<{name: string, position: Position}>,
+        correct_tiles?: boolean,
+        remove_colliding_entities?: boolean | 'abort_on_collision',
+        remove_colliding_decoratives?: boolean,
+    ): void
     pollute(this: void, source: Position, amount: number): void
     get_chunks(this: void): LuaChunkIterator
     is_chunk_generated(this: void, position: ChunkPosition): boolean
@@ -1795,7 +1801,15 @@ interface LuaSurface {
         },
     ): number
     get_script_areas(this: void, name?: string): ScriptArea[]
+    get_script_area(this: void, key?: string | number): ScriptArea
+    edit_script_area(this: void, id: number, area: ScriptArea): void
+    add_script_area(this: void, area: ScriptArea): number
+    remove_script_area(this: void, id: number): boolean
     get_script_positions(this: void, name?: string): ScriptPosition[]
+    get_script_position(this: void, key?: string | number): ScriptPosition
+    edit_script_position(this: void, id: number, area: ScriptPosition): void
+    add_script_position(this: void, area: ScriptPosition): number
+    remove_script_position(this: void, id: number): boolean
     get_map_exchange_string(this: void): string
     get_starting_area_radius(this: void): number
     get_closest(this: void, position: Position, entities: LuaEntity[]): LuaEntity
@@ -2966,6 +2980,10 @@ interface LuaGuiElement {
     force: string
     readonly elem_type: string
     elem_value: string | SignalID
+    elem_filters: LuaItemPrototypeFilter | LuaTilePrototypeFilter |
+        LuaEntityPrototypeFilter | LuaFluidPrototypeFilter | LuaRecipePrototypeFilter |
+        LuaDecorativePrototypeFilter | LuaAchievementPrototypeFilter | LuaEquipmentPrototypeFilter |
+        LuaTechnologyPrototypeFilter
     selectable: boolean
     word_wrap: boolean
     read_only: boolean
