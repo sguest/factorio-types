@@ -783,6 +783,12 @@ interface LuaEntity extends LuaControl {
     get_upgrade_target(this: void): LuaEntityPrototype
     get_damage_to_be_taken(this: void): number
     deplete(this: void): void
+    mine(this: void, options: {
+        inventory?: LuaInventory,
+        force?: boolean,
+        raise_destroyed?: boolean,
+        ignore_minable?: boolean,
+    }): boolean
     readonly name: string
     readonly ghost_name: string
     readonly localised_name: LocalisedString
@@ -1828,6 +1834,7 @@ interface LuaSurface {
     readonly index: number
     map_gen_settings: MapGenSettings
     always_day: boolean
+    generate_with_lab_tiles: boolean
     daytime: number
     readonly darkness: number
     wind_speed: number
