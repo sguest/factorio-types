@@ -12,6 +12,8 @@ type ItemStackSpecification = SimpleItemStack | LuaItemStack;
 
 type ItemPrototypeSpecification = LuaItemStack | LuaItemPrototype | string;
 
+type FluidSpecification = Fluid | LuaFluidPrototype | string;
+
 type EntityPrototypeSpecification = LuaEntity | LuaEntityPrototype | string;
 
 type Vector = number[];

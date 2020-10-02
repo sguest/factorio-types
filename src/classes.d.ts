@@ -604,6 +604,7 @@ interface LuaFluidBox {
         }): boolean
     get_flow(this: void, index: number): number
     get_locked_fluid(this: void, index: number): string | null
+    flush(this: void, index: number, fluid?: FluidSpecification): {[key: string]: number}
     // missing operator #
     readonly owner: LuaEntity
     readonly [key: number]: Fluid | null
@@ -1500,6 +1501,7 @@ interface LuaPlayer extends LuaControl {
     readonly blueprint_to_setup: LuaItemStack
     readonly render_mode: defines.render_mode
     readonly spectator: boolean
+    readonly auto_sort_main_inventory: boolean
     zoom: number
     map_view_settings: MapViewSettings
     remove_unfiltered_items: boolean
