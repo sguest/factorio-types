@@ -135,6 +135,11 @@ interface on_entity_damaged extends event {
     force?: LuaForce
 }
 
+interface on_entity_destroyed extends event {
+    registration_number: number
+    unit_number?: number
+}
+
 interface on_entity_died extends event {
     entity: LuaEntity
     cause?: LuaEntity

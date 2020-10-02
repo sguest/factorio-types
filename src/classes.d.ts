@@ -264,6 +264,7 @@ interface LuaBootstrap {
         event: defines.events | defines.events[] | string,
         callback: (this: void, event: T) => void): void
     on_nth_tick(this: void, tick: number | number[] | null, f: (this: void, event: NthTickEvent) => void): void
+    register_on_entity_destroyed(entity: LuaEntity): number
     generate_event_name(this: void): number
     get_event_handler(this: void, event: number): () => any
     raise_event(this: void, event: number, table: object): void
@@ -1477,6 +1478,7 @@ interface LuaPlayer extends LuaControl {
     readonly gui: LuaGui
     readonly opened_self: boolean
     readonly controller_type: defines.controllers
+    readonly stashed_controller_type: defines.controllers | null
     game_view_settings: GameViewSettings
     minimap_enabled: boolean
     color: Color
@@ -1851,6 +1853,7 @@ interface LuaSurface {
     solar_power_multiplier: number
     min_brightness: number
     brightness_visual_weights: ColorModifier
+    show_clouds: boolean
     readonly valid: boolean
     help(this: void): string
 }
