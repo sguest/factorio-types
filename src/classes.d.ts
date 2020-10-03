@@ -1503,6 +1503,7 @@ interface LuaPlayer extends LuaControl {
     readonly render_mode: defines.render_mode
     readonly spectator: boolean
     readonly auto_sort_main_inventory: boolean
+    hand_location: ItemStackLocation
     zoom: number
     map_view_settings: MapViewSettings
     remove_unfiltered_items: boolean

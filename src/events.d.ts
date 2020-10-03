@@ -439,6 +439,14 @@ interface on_player_fast_transferred extends event {
     from_player: boolean
 }
 
+interface on_player_flushed_fluid extends event {
+    player_index: number
+    fluid: string
+    amount: number
+    entity: LuaEntity
+    only_this_entity: boolean
+}
+
 interface on_player_gun_inventory_changed extends event {
     player_index: number
 }

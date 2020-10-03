@@ -1009,3 +1009,8 @@ interface OldTileAndPosition {
     old_tile: LuaTilePrototype
     position: TilePosition
 }
+
+interface ItemStackLocation {
+    inventory: defines.inventory
+    slot: number
+}
