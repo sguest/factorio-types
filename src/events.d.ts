@@ -310,6 +310,31 @@ interface on_mod_item_opened extends event {
     item: LuaItemPrototype
 }
 
+interface on_permission_group_added extends event {
+    player_index: number
+    group: LuaPermissionGroup
+}
+
+interface on_permission_group_deleted extends event {
+    player_index: number
+    group_name: string
+    id: number
+}
+
+interface on_permission_group_edited extends event {
+    player_index: number
+    group: LuaPermissionGroup
+    type: string
+    action: defines.input_action
+    other_player_index: number
+    old_name: string
+    new_name: string
+}
+
+interface on_permission_string_imported extends event {
+    player_index: number
+}
+
 interface on_picked_up_item extends event {
     item_stack: SimpleItemStack
     player_index: number
@@ -607,6 +632,15 @@ interface on_pre_entity_settings_pasted extends event {
 interface on_pre_ghost_deconstructed extends event {
     player_index?: number
     ghost: LuaEntity
+}
+
+interface on_pre_permission_group_deleted extends event {
+    player_index: number
+    group: LuaPermissionGroup
+}
+
+interface on_pre_permission_string_imported extends event {
+    player_index: number
 }
 
 interface on_pre_player_crafted_item extends event {
