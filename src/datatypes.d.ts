@@ -160,9 +160,9 @@ interface Sprite {
     filename?: FileName
     layers?: Sprite[]
     hr_version?: Sprite
-    slice?: SpriteSizeType
-    slice_x?: SpriteSizeType
-    slice_y?: SpriteSizeType
+    dice?: SpriteSizeType
+    dice_x?: SpriteSizeType
+    dice_y?: SpriteSizeType
     priority?: AnimationPriority
     flags?: SpriteFlags
     size?: SpriteSizeType | SpriteSizeType[]
