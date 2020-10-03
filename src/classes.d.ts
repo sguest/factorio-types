@@ -1263,6 +1263,7 @@ interface LuaEntityPrototype {
     readonly max_darkness_to_spawn: number
     readonly radius: number
     readonly cliff_explosive_prototype: string | null
+    readonly rocket_entity_prototype: LuaEntityPrototype | null
     readonly has_belt_immunity: boolean | null
     readonly vision_distance: number | null
     readonly pollution_to_join_attack: number | null
