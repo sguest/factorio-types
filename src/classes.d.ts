@@ -1309,6 +1309,7 @@ interface LuaEntityPrototype {
     readonly adjacent_tile_collision_test: CollisionMask
     readonly center_collision_mask: CollisionMask
     readonly grid_prototype: LuaEquipmentGridPrototype
+    readonly remove_decoratives: 'true' | 'false' | 'automatic'
     readonly valid: boolean
     help(this: void): string
 }
@@ -2168,6 +2169,7 @@ interface LuaRecipePrototype {
     readonly always_show_products: boolean
     readonly emissions_multiplier: number
     readonly allow_decomposition: boolean
+    readonly unlock_results: boolean
     readonly valid: boolean
     help(this: void): string
 }

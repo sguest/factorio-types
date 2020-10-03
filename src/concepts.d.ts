@@ -75,7 +75,7 @@ type EntityPrototypeFlags = {
 };
 
 type ItemPrototypeFlagValue = 'hidden' | 'hide-from-bonus-gui' | 'hide-from-fuel-tooltip' | 'not-stackable' |
-    'can-extend-inventory' | 'primary-place-result' | 'mod-openable' | 'only-in-cursor';
+    'can-extend-inventory' | 'primary-place-result' | 'mod-openable' | 'only-in-cursor' | 'always-show';
 
 type ItemPrototypeFlags = {
     [key in ItemPrototypeFlagValue]: true

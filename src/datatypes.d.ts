@@ -192,6 +192,7 @@ interface RotatedSprite extends Sprite {
     line_length?: number
     allow_low_quality_rotation?: boolean
     lines_per_file?: number
+    counterclockwise?: boolean
 }
 
 interface SpriteNWaySheet {
