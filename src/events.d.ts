@@ -373,6 +373,12 @@ interface on_player_cheat_mode_enabled extends event {
     player_index: number
 }
 
+interface on_player_clicked_gps_tag extends event {
+    player_index: number
+    position: Position
+    surface: string
+}
+
 interface on_player_configured_blueprint extends event {
     player_index: number
 }
