@@ -110,6 +110,10 @@ interface on_console_command extends event {
     parameters: string
 }
 
+interface on_cutscene_cancelled extends event {
+    player_index: number
+}
+
 interface on_cutscene_waypoint_reached extends event {
     player_index: number
     waypoint_index: number
@@ -408,6 +412,11 @@ interface on_player_configured_blueprint extends event {
     player_index: number
 }
 
+interface on_player_configured_spider_remote extends event {
+    player_index: number
+    vehicle: LuaEntity
+}
+
 interface on_player_crafted_item extends event {
     item_stack: LuaItemStack
     player_index: number
@@ -606,6 +615,13 @@ interface on_player_used_capsule extends event {
     player_index: number
     item: LuaItemPrototype
     position: Position
+}
+
+interface on_player_used_spider_remote extends event {
+    player_index: number
+    vehicle: LuaEntity
+    position: Position
+    success: boolean
 }
 
 interface on_post_entity_died extends event {

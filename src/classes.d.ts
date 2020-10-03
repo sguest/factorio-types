@@ -791,6 +791,7 @@ interface LuaEntity extends LuaControl {
         raise_destroyed?: boolean,
         ignore_minable?: boolean,
     }): boolean
+    spawn_decorations(this: void): void
     readonly name: string
     readonly ghost_name: string
     readonly localised_name: LocalisedString
@@ -939,8 +940,14 @@ interface LuaEntity extends LuaControl {
     storage_filter: LuaItemPrototype
     request_from_buffers: boolean
     driver_is_gunner: boolean
+    vehicle_automatic_targeting_parameters: VehicleAutomaticTargetingParameters
     readonly command: Command | null
     readonly distraction_command: Command | null
+    time_to_next_effect: number
+    autopilot_destination: Position
+    readonly is_entity_with_force: boolean
+    readonly is_entity_with_owner: boolean
+    readonly is_entity_with_health: boolean
     readonly valid: boolean
     help(this: void): string
 }
@@ -2701,6 +2708,8 @@ interface LuaItemStack {
     readonly tile_filter_count: number
     readonly active_index: number
     readonly item_number: number | null
+    // Guessing at the return value of LuaEntity, not specified in docs
+    connected_entity: LuaEntity | null
     readonly is_blueprint: boolean
     readonly is_blueprint_book: boolean
     readonly is_module: boolean

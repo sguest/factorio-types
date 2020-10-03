@@ -1014,3 +1014,8 @@ interface ItemStackLocation {
     inventory: defines.inventory
     slot: number
 }
+
+interface VehicleAutomaticTargetingParameters {
+    auto_target_without_gunner: boolean
+    auto_target_with_gunner: boolean
+}
