@@ -971,6 +971,7 @@ interface LuaEntity extends LuaControl {
     readonly is_entity_with_health: boolean
     combat_robot_owner: LuaEntity | null
     link_id: number
+    follow_target: LuaEntity
     readonly valid: boolean
     help(this: void): string
 }
@@ -1271,6 +1272,14 @@ interface LuaEntityPrototype {
     readonly collision_mask_considers_tile_transitions: boolean
     readonly allowed_effects: {[key: string]: boolean} | null
     readonly rocket_parts_required: number | null
+    readonly rocket_rising_delay: number | null
+    readonly launch_wait_time: number | null
+    readonly light_blinking_speed: number | null
+    readonly door_opening_speed: number | null
+    readonly rising_speed: number | null
+    readonly enging_starting_speed: number | null
+    readonly flying_speed: number | null
+    readonly flying_acceleration: number | null
     readonly fixed_recipe: string | null
     readonly construction_radius: number | null
     readonly logistic_radius: number | null
