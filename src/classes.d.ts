@@ -803,6 +803,9 @@ interface LuaEntity extends LuaControl {
     is_registered_for_deconstruction(this: void): boolean
     is_registered_for_upgrade(this: void): boolean
     is_registered_for_repair(this: void): boolean
+    add_autopilot_destination(this: void, position: Position): void
+    connect_linked_belts(this: void, neighbour: LuaEntity | null): void
+    disconnect_linked_belts(this: void): void
     set_personal_logistic_slot(this: void, slot_index: number, value: PersonalLogisticParameters): boolean
     set_vehicle_logistic_slot(this: void, slot_index: number, value: PersonalLogisticParameters): boolean
     get_personal_logistic_slot(this: void, slot_index: number): PersonalLogisticParameters
@@ -963,7 +966,8 @@ interface LuaEntity extends LuaControl {
     readonly command: Command | null
     readonly distraction_command: Command | null
     time_to_next_effect: number
-    autopilot_destination: Position
+    autopilot_destination: Position | null
+    readonly autopilot_destinations: Position[]
     readonly trains_count: number
     trains_limit: number
     readonly is_entity_with_force: boolean
@@ -973,6 +977,8 @@ interface LuaEntity extends LuaControl {
     link_id: number
     follow_target: LuaEntity | null
     follow_offset: Position | null
+    linked_belt_type: 'input' | 'output'
+    readonly linked_belt_neighbour: LuaEntity | null
     readonly valid: boolean
     help(this: void): string
 }
@@ -1323,6 +1329,7 @@ interface LuaEntityPrototype {
     readonly allow_access_to_all_forces: boolean
     readonly supports_direction: boolean
     readonly terrain_friction_modifier: number
+    readonly allow_passengers: boolean
     readonly running_speed: number
     readonly maximum_corner_sliding_distance: number
     readonly build_distance: number

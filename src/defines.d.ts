@@ -329,7 +329,9 @@ declare namespace defines {
     enum build_check_type {
         script,
         manual,
-        ghost_place,
+        manual_ghost,
+        script_ghost,
+        blueprint_ghost,
         ghost_revive,
     }
 
