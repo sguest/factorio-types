@@ -357,7 +357,6 @@ interface LuaControl {
     characer_trash_slot_count_bonus: number
     character_maximum_following_robot_count_bonus: number
     character_health_bonus: number
-    auto_trash_filters: {[key: string]: number }
     opened_gui_type: defines.gui_type
     readonly build_distance: number
     readonly drop_item_distance: number
@@ -800,6 +799,12 @@ interface LuaEntity extends LuaControl {
     spawn_decorations(this: void): void
     can_wires_reach(this: void, entity: LuaEntity): boolean
     get_connected_rolling_stock(this: void, direction: defines.direction): LuaEntity
+    set_personal_logistic_slot(this: void, slot_index: number, value: PersonalLogisticParameters): boolean
+    set_vehicle_logistic_slot(this: void, slot_index: number, value: PersonalLogisticParameters): boolean
+    get_personal_logistic_slot(this: void, slot_index: number): PersonalLogisticParameters
+    get_vehicle_logistic_slot(this: void, slot_index: number): PersonalLogisticParameters
+    clear_personal_logistic_slot(this: void, slot_index: number): void
+    clear_vehicle_logistic_slot(this: void, slot_index: number): void
     readonly name: string
     readonly ghost_name: string
     readonly localised_name: LocalisedString

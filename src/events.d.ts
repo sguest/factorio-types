@@ -720,9 +720,11 @@ interface on_pre_surface_deleted extends event {
 interface on_pre_build extends event {
     position: Position
     player_index: number
-    shift_building: boolean
-    built_by_moving: boolean
+    shift_build: boolean
+    created_by_moving: boolean
     direction: defines.direction
+    flip_horizontal: boolean
+    flip_vertical: boolean
 }
 
 interface on_research_finished extends event {

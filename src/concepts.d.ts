@@ -1027,3 +1027,9 @@ interface VehicleAutomaticTargetingParameters {
     auto_target_without_gunner: boolean
     auto_target_with_gunner: boolean
 }
+
+interface PersonalLogisticParameters {
+    name?: string
+    min?: number
+    max?: number
+}
