@@ -107,6 +107,20 @@ declare namespace defines {
         by_damage,
     }
 
+    enum disconnect_reason {
+        quit,
+        dropped,
+        reconnect,
+        wrong_input,
+        desync_limit_reached,
+        cannot_keep_up,
+        afk,
+        kicked,
+        kicked_and_deleted,
+        banned,
+        switching_servers,
+    }
+
     enum wire_type {
         red = 0,
         green = 1,

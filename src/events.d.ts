@@ -503,6 +503,7 @@ interface on_player_kicked extends event {
 
 interface on_player_left_game extends event {
     player_index: number
+    reason: defines.disconnect_reason
 }
 
 interface on_player_main_inventory_changed extends event {
@@ -680,6 +681,7 @@ interface on_pre_player_died extends event {
 
 interface on_pre_player_left_game extends event {
     player_index: number
+    reason: defines.disconnect_reason
 }
 
 interface on_pre_player_mined_item extends event {

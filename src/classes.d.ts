@@ -799,6 +799,10 @@ interface LuaEntity extends LuaControl {
     spawn_decorations(this: void): void
     can_wires_reach(this: void, entity: LuaEntity): boolean
     get_connected_rolling_stock(this: void, direction: defines.direction): LuaEntity
+    is_registered_for_construction(this: void): boolean
+    is_registered_for_deconstruction(this: void): boolean
+    is_registered_for_upgrade(this: void): boolean
+    is_registered_for_repair(this: void): boolean
     set_personal_logistic_slot(this: void, slot_index: number, value: PersonalLogisticParameters): boolean
     set_vehicle_logistic_slot(this: void, slot_index: number, value: PersonalLogisticParameters): boolean
     get_personal_logistic_slot(this: void, slot_index: number): PersonalLogisticParameters
