@@ -971,7 +971,8 @@ interface LuaEntity extends LuaControl {
     readonly is_entity_with_health: boolean
     combat_robot_owner: LuaEntity | null
     link_id: number
-    follow_target: LuaEntity
+    follow_target: LuaEntity | null
+    follow_offset: Position | null
     readonly valid: boolean
     help(this: void): string
 }
