@@ -223,7 +223,7 @@ interface LuaEntityPrototypeFilterName extends LuaEntityPrototypeFilter {
 interface LuaItemPrototypeFilter {
     filter: 'tool' | 'mergeable' | 'item-with-inventory' | 'selection-tool' | 'item-with-label' |
         'fuel' | 'place-as-tile' | 'place-result' | 'placed-as-equipment-result' | 'burnt-result' |
-        'type' | 'flag' | 'subgroup' | 'fuel-category' | 'name'
+        'type' | 'flag' | 'subgroup' | 'fuel-category' | 'name' | 'has-rocket-launch-products'
     mode?: 'or' | 'and'
     invert?: boolean
 }
@@ -1008,6 +1008,14 @@ interface Tags {
 interface OldTileAndPosition {
     old_tile: LuaTilePrototype
     position: TilePosition
+}
+
+interface GuiAnchor {
+    gui: defines.relative_gui_type
+    position: defines.relative_gui_position
+    type?: string
+    name?: string
+    names?: string[]
 }
 
 interface ItemStackLocation {

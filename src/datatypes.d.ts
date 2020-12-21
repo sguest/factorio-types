@@ -13,6 +13,9 @@ type TriggerTargetMask = string[];
 // can eventually fix these on a per-case basis
 type Table = any;
 
+// Copy of all prototype data
+type MapGenPreset = any;
+
 type damageType = 'physical' | 'impact' | 'poison' | 'explosion' | 'fire' | 'laser' | 'acid' | 'electric';
 
 type ElectricUsagePriority = 'primary-input' | 'primary-output' |

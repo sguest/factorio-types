@@ -172,6 +172,7 @@ interface LuaGameScript {
     readonly shortcut_prototypes: {[key: string]: LuaShortcutPrototype }
     readonly recipe_category_prototypes: {[key: string]: LuaRecipeCategoryPrototype }
     readonly particle_prototypes: {[key: string]: LuaParticlePrototype }
+    readonly map_gen_presets: {[key: string]: MapGenPreset }
     readonly styles: {[key: string]: string }
     readonly tick: number
     readonly ticks_played: number
@@ -273,7 +274,6 @@ interface LuaBootstrap {
     get_event_filter(this: void, event: number): EventFilters | null
     readonly mod_name: string
     readonly active_mods: {[key: string]: string}
-    readonly is_game_in_debug_mode: boolean
     readonly object_name: string
 }
 
@@ -329,6 +329,7 @@ interface LuaControl {
         defines.gui_type |
         null
     readonly crafting_queue_size: number
+    readonly crafting_queue_progress: number
     walking_state: { walking: boolean, direction: defines.direction }
     riding_state: RidingState
     mining_state: { mining: boolean, position?: Position }
@@ -371,6 +372,7 @@ interface LuaControl {
 
 interface LuaTile {
     collides_with(this: void, layer: CollisionMaskLayer): boolean
+    to_be_deconstructed(this: void): boolean
     order_deconstruction(this: void, force: ForceSpecification, player: PlayerSpecification): LuaEntity | null
     cancel_deconstruction(this: void, force: ForceSpecification, player: PlayerSpecification): void
     readonly name: string
@@ -544,8 +546,12 @@ interface LuaTrainStopControlBehavior extends LuaGenericOnOffControlBehavior {
     send_to_train: boolean
     read_from_train: boolean
     read_stopped_train: boolean
+    set_trains_limit: boolean
+    read_trains_count: boolean
     enable_disable: boolean
     stopped_train_signal: SignalID
+    trains_count_signal: SignalID
+    trains_limit_signal: SignalID
     readonly valid: boolean
     help(this: void): string
 }
@@ -792,6 +798,8 @@ interface LuaEntity extends LuaControl {
         ignore_minable?: boolean,
     }): boolean
     spawn_decorations(this: void): void
+    can_wires_reach(this: void, entity: LuaEntity): boolean
+    get_connected_rolling_stock(this: void, direction: defines.direction): LuaEntity
     readonly name: string
     readonly ghost_name: string
     readonly localised_name: LocalisedString
@@ -891,6 +899,8 @@ interface LuaEntity extends LuaControl {
     readonly tree_color_index_max: number
     tree_stage_index: number
     readonly tree_stage_index_max: number
+    tree_gray_stage_index: number
+    readonly tree_gray_stage_index_max: number
     readonly burner: LuaBurner | null
     shooting_target: LuaEntity | null
     readonly proxy_target: LuaEntity | null
@@ -945,9 +955,13 @@ interface LuaEntity extends LuaControl {
     readonly distraction_command: Command | null
     time_to_next_effect: number
     autopilot_destination: Position
+    readonly trains_count: number
+    trains_limit: number
     readonly is_entity_with_force: boolean
     readonly is_entity_with_owner: boolean
     readonly is_entity_with_health: boolean
+    combat_robot_owner: LuaEntity | null
+    link_id: number
     readonly valid: boolean
     help(this: void): string
 }
@@ -1196,6 +1210,7 @@ interface LuaEntityPrototype {
     readonly max_circuit_wire_distance: number
     readonly energy_usage: number | null
     readonly max_energy_usage: number
+    readonly max_energy_production: number
     readonly effectivity: number | null
     readonly consumption: number | null
     readonly friction_force: number | null
@@ -1234,7 +1249,6 @@ interface LuaEntityPrototype {
     readonly inserter_chases_belt_items: boolean | null
     readonly count_as_rock_for_filtered_deconstruction: boolean
     readonly filter_count: number | null
-    readonly production: number | null
     readonly time_to_live: number
     readonly distribution_effectivity: number | null
     readonly explosion_beam: number | null
@@ -1331,6 +1345,7 @@ interface LuaGui {
     readonly center: LuaGuiElement
     readonly goal: LuaGuiElement
     readonly screen: LuaGuiElement
+    readonly relative: LuaGuiElement
     readonly valid: boolean
     help(this: void): string
 }
@@ -1365,7 +1380,7 @@ interface LuaPlayer extends LuaControl {
     print_robot_jobs(this: void): void
     print_lua_object_statistics(this: void): void
     unlock_achievement(this: void, name: string): void
-    clean_cursor(this: void): boolean
+    clear_cursor(this: void): boolean
     create_character(this: void, character?: string): boolean
     add_alert(this: void, entity: LuaEntity, type: defines.alert_type): void
     add_custom_alert(
@@ -1453,7 +1468,8 @@ interface LuaPlayer extends LuaControl {
         this: void,
         table: {
             text: LocalisedString,
-            position: Position,
+            position?: Position,
+            create_at_cursor?: boolean,
             color?: Color,
             time_to_live?: number,
             speed?: number,
@@ -1483,7 +1499,10 @@ interface LuaPlayer extends LuaControl {
     request_translation(this: void, localised_string: LocalisedString): boolean
     get_infinity_inventory_filter(this: void, index: number): InfinityInventoryFilter
     set_infinity_inventory_filter(this: void, index: number, filter: InfinityInventoryFilter): void
+    clear_recipe_notifications(this: void): void
+    add_recipe_notification(this: void, string: string): void
     character: LuaEntity | null
+    readonly cutscene_character: LuaEntity
     readonly index: number
     readonly gui: LuaGui
     readonly opened_self: boolean
@@ -1988,6 +2007,7 @@ interface LuaForce {
     set_hand_crafting_disabled_for_recipe(recipe: string | LuaRecipe, hand_crafting_disabled: boolean): void
     add_research(this: void, technology: TechnologySpecification): boolean
     cancel_current_research(this: void): void
+    get_linked_inventory(this: void, prototype: EntityPrototypeSpecification, link_id: number): LuaInventory | null
     readonly name: string
     readonly technologies: {[key: string]: LuaTechnology }
     readonly recipes: {[key: string]: LuaRecipe }
@@ -2706,7 +2726,7 @@ interface LuaItemStack {
     trees_and_rocks_only: boolean
     readonly entity_filter_count: number
     readonly tile_filter_count: number
-    readonly active_index: number
+    readonly active_index: number | null
     readonly item_number: number | null
     // Guessing at the return value of LuaEntity, not specified in docs
     connected_entity: LuaEntity | null
@@ -2741,6 +2761,7 @@ interface GuiElementData {
     enabled?: boolean
     ignored_by_interaction?: boolean
     style?: string
+    index?: number
 }
 
 interface ButtonGuiElementData extends GuiElementData {
@@ -2947,6 +2968,7 @@ interface LuaGuiElement {
     clear(this: void): void
     destroy(this: void): void
     get_mod(this: void): string | null
+    get_index_in_parent(this: void): number
     clear_items(this: void): void
     get_item(this: void, index: number): LocalisedString
     set_item(this: void, index: number, LocalisedString: LocalisedString): void
@@ -2970,10 +2992,11 @@ interface LuaGuiElement {
     remove_tab(this: void, tab: LuaGuiElement | null): void
     force_auto_center(this: void): void
     scroll_to_item(this: void, index: number, scroll_mode?: 'in-view' | 'top-third'): void
+    bring_to_front(this: void): void
     readonly index: number
     readonly gui: LuaGui
     readonly parent: LuaGuiElement | null
-    readonly name: string
+    name: string
     caption: LocalisedString
     value: number
     readonly direction: 'horizontal' | 'vertical'
@@ -3033,6 +3056,8 @@ interface LuaGuiElement {
     selected_tab_index: number
     readonly tabs: Array<{ tab: LuaGuiElement, content: LuaGuiElement}>
     entity: LuaEntity
+    anchor: GuiAnchor
+    tags: Tags
     switch_state: string
     allow_none_state: boolean
     left_label_caption: LocalisedString
@@ -3107,11 +3132,17 @@ interface LuaStyle {
     // writeonly
     height: number
     // writeonly
+    size: number | number[]
+    // writeonly
     padding: number | number[]
     // writeonly
     margin: number | number[]
     // writeonly
     cell_padding: number
+    // writeonly
+    extra_padding_when_activated: number | number[]
+    // writeonly
+    extra_margin_when_activated: number | number[]
     readonly valid: boolean
     help(this: void): string
 }

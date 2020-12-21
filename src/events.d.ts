@@ -6,6 +6,12 @@ interface event {
 interface on_tick extends event {
 }
 
+interface custom_input_event extends event {
+    player_index: number
+    input_name: string
+    cursor_position: Position
+}
+
 interface on_ai_command_completed extends event {
     unit_number: number
     result: defines.behavior_result
@@ -590,6 +596,7 @@ interface on_player_setup_blueprint extends event {
 
 interface on_player_toggled_alt_mode extends event {
     player_index: number
+    alt_mode: boolean
 }
 
 interface on_player_toggled_map_editor extends event {
@@ -663,6 +670,7 @@ interface on_pre_player_crafted_item extends event {
     player_index: number
     recipe: LuaRecipe
     items: LuaInventory
+    queued_count: number
 }
 
 interface on_pre_player_died extends event {
@@ -709,7 +717,7 @@ interface on_pre_surface_deleted extends event {
     surface_index: number
 }
 
-interface on_put_item extends event {
+interface on_pre_build extends event {
     position: Position
     player_index: number
     shift_building: boolean
@@ -825,6 +833,10 @@ interface on_sector_scanned extends event {
 interface on_selected_entity_changed extends event {
     player_index: number
     last_entity?: LuaEntity
+}
+
+interface on_spider_command_completed extends event {
+    vehicle: LuaEntity
 }
 
 interface on_string_translated extends event {
