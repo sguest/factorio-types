@@ -1,5 +1,5 @@
 {
-  "name": "@types/factorio",
+  "name": "factorio-types",
   "version": "0.0.1",
   "description": "Typescript declarations for the factorio mod API",
   "main": "index.d.ts",
