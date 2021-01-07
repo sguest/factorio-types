@@ -85,6 +85,8 @@ type CursorBoxRenderType = 'electricity' | 'copy' | 'not-allowed' | 'pair' | 'lo
 
 type ComparatorString = '<' | '>' | '=' | '≥' | '≤' | '≠';
 
+type SoundType = 'game-effect' | 'gui-effect' | 'ambient' | 'environment' | 'walking' | 'alert' | 'wind';
+
 type Resistances = {
     [type in damageType]: {
         decrease: number,
@@ -847,6 +849,8 @@ interface CreateEntityParams {
     spill?: boolean
     raise_built?: boolean
     create_build_effect_smoke?: boolean
+    spawn_decorations?: boolean
+    item?: LuaItemStack
 }
 
 interface CreateAssemblingMachineEntityParams extends CreateEntityParams {

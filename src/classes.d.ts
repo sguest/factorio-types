@@ -171,6 +171,7 @@ interface LuaGameScript {
     readonly trivial_smoke_prototypes: {[key: string]: LuaTrivialSmokePrototype }
     readonly shortcut_prototypes: {[key: string]: LuaShortcutPrototype }
     readonly recipe_category_prototypes: {[key: string]: LuaRecipeCategoryPrototype }
+    readonly font_prototypes: {[key: string]: LuaFontPrototype }
     readonly particle_prototypes: {[key: string]: LuaParticlePrototype }
     readonly map_gen_presets: {[key: string]: MapGenPreset }
     readonly styles: {[key: string]: string }
@@ -199,6 +200,19 @@ interface LuaGameScript {
     readonly max_inserter_reach_distance: number
     readonly max_pipe_to_ground_distance: number
     readonly max_underground_belt_distance: number
+}
+
+interface LuaFontPrototype {
+    readonly name: string
+    readonly from: string
+    readonly size: number
+    readonly spacing: number
+    readonly border: boolean
+    readonly filtered: boolean
+    readonly border_color: Color
+    readonly valid: boolean
+    readonly object_name: string
+    help(this: void): string
 }
 
 interface LuaRandomGenerator {
@@ -762,6 +776,7 @@ interface LuaEntity extends LuaControl {
             position: Position,
             surface?: LuaSurface,
             force?: ForceSpecification,
+            create_build_effect_smoke?: boolean,
         },
     ): LuaEntity
     get_fluid_count(this: void, fluid?: string): number
@@ -927,6 +942,7 @@ interface LuaEntity extends LuaControl {
     readonly units: LuaEntity[]
     power_switch_state: boolean
     relative_turret_orientation: number | null
+    torso_orentiation: number
     readonly effects: Effects | null
     infinity_container_filters: InfinityContainerFilter[]
     remove_unfiltered_items: boolean
@@ -1486,6 +1502,7 @@ interface LuaPlayer extends LuaControl {
             path: SoundPath,
             position?: Position,
             volume_modifier?: number,
+            override_sound_type?: SoundType,
         }): boolean
     get_associated_characters(this: void): LuaEntity[]
     associate_character(this: void, character: LuaEntity): void
@@ -1838,6 +1855,25 @@ interface LuaSurface {
             clone_decoratives?: boolean,
             clear_destination?: boolean,
             expand_map?: boolean,
+            create_build_effect_smoke?: boolean,
+        },
+    ): void
+    clone_brush(
+        this: void,
+        table: {
+            source_offset: TilePosition,
+            destination_offset: TilePosition,
+            source_positions: TilePosition[],
+            destination_surface?: SurfaceSpecification,
+            destination_force?: LuaForce | string,
+            clone_tiles?: boolean,
+            clone_entities?: boolean,
+            clone_decoratives?: boolean,
+            clear_destination_entities?: boolean,
+            clear_destination_decoratives?: boolean,
+            expand_map?: boolean,
+            manual_collision_mode?: boolean,
+            create_build_effect_smoke?: boolean,
         },
     ): void
     clone_entities(
@@ -1848,6 +1884,7 @@ interface LuaSurface {
             destination_surface?: SurfaceSpecification,
             destination_force?: ForceSpecification,
             snap_to_grid?: boolean,
+            create_build_effect_smoke?: boolean,
         },
     ): void
     clear(this: void, ignore_characters?: boolean): void
@@ -2218,6 +2255,7 @@ interface LuaRecipePrototype {
     readonly subgroup: LuaGroup
     readonly request_paste_multiplier: number
     readonly overload_multiplier: number
+    readonly allow_inserter_overload: number
     readonly allow_as_intermediate: boolean
     readonly allow_intermediates: boolean
     readonly show_amount_in_title: boolean
@@ -2725,6 +2763,7 @@ interface LuaItemStack {
     clear_upgrade_item(this: void): void
     get_mapper(this: void, index: number, type: 'from' | 'to'): UpgradeFilter
     set_mapper(this: void, index: number, type: 'from' | 'to', filter: UpgradeFilter | null): void
+    create_grid(this: void): LuaEquipmentGrid
     readonly valid_for_read: boolean
     readonly prototype: LuaItemPrototype
     readonly name: string

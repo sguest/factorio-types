@@ -296,6 +296,7 @@ declare namespace defines {
         wait_station,
         manual_control_stop,
         manual_control,
+        destination_full,
     }
 
     enum controllers {
