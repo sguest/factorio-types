@@ -306,6 +306,7 @@ interface on_marked_for_upgrade extends event {
     entity: LuaEntity
     target: LuaEntityPrototype
     player_index?: number
+    direction?: defines.direction
 }
 
 interface on_market_item_purchased extends event {

@@ -696,6 +696,7 @@ interface LuaEntity extends LuaControl {
             force: ForceSpecification,
             target: EntityPrototypeSpecification,
             player?: PlayerSpecification,
+            direction?: defines.direction,
         }): boolean
     cancel_upgrade(this: void, force: ForceSpecification, player: PlayerSpecification): boolean
     to_be_upgraded(this: void): boolean
@@ -803,6 +804,7 @@ interface LuaEntity extends LuaControl {
     can_shoot(this: void, target: LuaEntity, position: Position): boolean
     start_fading_out(this: void): void
     get_upgrade_target(this: void): LuaEntityPrototype
+    get_upgrade_direction(this: void): defines.direction | null
     get_damage_to_be_taken(this: void): number
     deplete(this: void): void
     mine(this: void, options: {
@@ -870,6 +872,7 @@ interface LuaEntity extends LuaControl {
     readonly belt_neighbours: {[key: string]: LuaEntity[] }
     fluidbox: LuaFluidBox
     backer_name: string | null
+    entity_label: string | null
     time_to_live: number
     color: Color
     text: LocalisedString
