@@ -490,6 +490,7 @@ declare namespace defines {
         on_entity_cloned,
         on_entity_damaged,
         on_entity_died,
+        on_entity_logistic_slot_changed,
         on_entity_renamed,
         on_entity_settings_pasted,
         on_entity_spawned,

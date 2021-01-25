@@ -157,6 +157,12 @@ interface on_entity_died extends event {
     force?: LuaForce
 }
 
+interface on_entity_logistic_slot_changed extends event {
+    player_index?: number
+    entity: LuaEntity
+    slot_index: number
+}
+
 interface on_entity_renamed extends event {
     player_index?: number
     by_script: boolean
