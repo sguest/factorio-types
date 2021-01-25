@@ -988,7 +988,7 @@ interface LuaEntity extends LuaControl {
     autopilot_destination: Position | null
     readonly autopilot_destinations: Position[]
     readonly trains_count: number
-    trains_limit: number
+    trains_limit: number | null
     readonly is_entity_with_force: boolean
     readonly is_entity_with_owner: boolean
     readonly is_entity_with_health: boolean
