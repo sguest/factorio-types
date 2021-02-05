@@ -741,6 +741,11 @@ interface on_research_finished extends event {
     by_script: boolean
 }
 
+interface on_research_reversed extends event {
+    research: LuaTechnology
+    by_script: boolean
+}
+
 interface on_research_started extends event {
     research: LuaTechnology
     last_research?: LuaTechnology

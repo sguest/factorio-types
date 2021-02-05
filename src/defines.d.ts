@@ -583,6 +583,7 @@ declare namespace defines {
         on_pre_surface_deleted,
         on_pre_build,
         on_research_finished,
+        on_research_reversed,
         on_research_started,
         on_resource_depleted,
         on_robot_built_entity,
