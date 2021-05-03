@@ -582,12 +582,12 @@ interface InfinityPipeFilter {
     name: string
     percentage?: number
     temperature?: number
-    mode?: 'at-least' | 'at-most' | 'exactly'
+    mode?: 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove'
 }
 
 interface HeatSetting {
     temperature?: number
-    mode?: 'at-least' | 'at-most' | 'exactly'
+    mode?: 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove'
 }
 
 interface Signal {

@@ -1349,6 +1349,7 @@ interface LuaEntityPrototype {
     readonly supports_direction: boolean
     readonly terrain_friction_modifier: number
     readonly allow_passengers: boolean
+    readonly related_underground_belt: LuaEntityPrototype
     readonly running_speed: number
     readonly maximum_corner_sliding_distance: number
     readonly build_distance: number
