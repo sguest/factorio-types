@@ -1251,6 +1251,7 @@ interface LuaEntityPrototype {
     readonly consumption: number | null
     readonly friction_force: number | null
     readonly braking_force: number | null
+    readonly air_resistance: number | null
     readonly tank_driving: boolean | null
     readonly rotation_speed: number | null
     readonly turret_rotation_speed: number | null
