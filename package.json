@@ -8,11 +8,15 @@
   "license": "MIT",
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.d.ts'",
-    "build": "tsc -p tsconfig.json",
-    "validate": "yarn run build && yarn run lint"
+    "old-build": "tsc -p tsconfig.json",
+    "validate": "yarn run build && yarn run lint",
+    "build": "ts-node json_parser/parser.ts",
+    "rebuild": "ts-node json_parser/parser.ts -clean"
   },
   "devDependencies": {
+    "@types/node": "^15.12.2",
     "node-html-parser": "^1.1.16",
+    "ts-node": "^10.0.0",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3"
   },
