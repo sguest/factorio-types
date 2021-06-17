@@ -46,7 +46,7 @@ function fixName(name: string) {
     return name;
 }
 
-function writeDocs(itemData: FactorioClass | Method, indent: string) {
+function writeDocs(itemData: FactorioClass | Method | Attribute, indent: string) {
     let output = '';
     if(itemData.description) {
         output += `${indent} * ${formatLinks(formatDocLines(itemData.description, indent))}\n`;
@@ -124,6 +124,16 @@ function parseType(type: FactorioType | undefined): string {
             case 'function':
                 // The json spec doesn't appear to have enough info to identify the return type of the function, so we're stuck with `any`
                 return `(${type.parameters.map((paramType, index) => `arg${index}: ${paramType}`).join(', ')}) => any`;
+            case 'table':
+                // todo: variant parameters
+                let paramStrings = type.parameters.map(p => {
+                    let str = p.name;
+                    if(p.optional) {
+                        str += '?';
+                    }
+                    return str + `: ${parseType(p.type)}`;
+                })
+                return '{ ' + paramStrings.join(', ') + ' }';
         }
 
         throw new Error('unrecognized complex type ' + type['complex_type']);
@@ -185,8 +195,22 @@ function writeMethod(method: Method) {
     return output;
 }
 
+function writeAttribute(attribute: Attribute): string {
+    if(attribute.subclasses) {
+        let notes = attribute.notes || [];
+        notes.push('Applies to subclasses: ' + attribute.subclasses.join(','));
+        attribute.notes = notes;
+    }
+    let output = writeDocs(attribute, '    ');
+    output += '    ';
+    // Just assuming attribute can be read, typescript doesn't support write-only
+    if(!attribute.write) {
+        output += 'readonly ';
+    }
+    return output + `${attribute.name}: ${parseType(attribute.type)}\n\n`;
+}
+
 /*
-    attributes :: array[Attribute]: The attributes that are part of the class.
     operators :: array[Operator]: A list of operators on the class. They are called call, index, or length and have the format of either a Method or an Attribute.
 */
 function writeClasses(classDataList: FactorioClass[], apiVersion: string) {
@@ -206,6 +230,10 @@ function writeClasses(classDataList: FactorioClass[], apiVersion: string) {
 
         if(classData.methods) {
             classData.methods.forEach(m => output += writeMethod(m));
+        }
+
+        if(classData.attributes) {
+            classData.attributes.forEach(a => output += writeAttribute(a));
         }
 
         output += '}\n\n';

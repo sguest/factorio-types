@@ -64,3 +64,5 @@ typings/
 .next
 
 json_parser/runtime-api.json
+
+json_parser/classes.d.ts

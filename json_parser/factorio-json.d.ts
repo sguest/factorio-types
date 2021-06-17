@@ -144,7 +144,7 @@ interface LuaLazyLoadedValueType {
 
 interface TableType {
     complex_type: 'table';
-    parameters: FactorioType[];
+    parameters: Parameter[];
     variant_parameter_groups?: ParameterGroup[];
     variant_parameter_description?: string;
 }
