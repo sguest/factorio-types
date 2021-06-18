@@ -1,6 +1,9 @@
 prototype_parser/prototype_overview.html
 prototype_parser/prototypes.d.ts
 
+json_parser/runtime-api.json
+dist/
+
 # Logs
 logs
 *.log
@@ -62,7 +65,3 @@ typings/
 
 # next.js build output
 .next
-
-json_parser/runtime-api.json
-
-json_parser/classes.d.ts

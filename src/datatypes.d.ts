@@ -2,16 +2,10 @@ type Energy = string;
 type ItemStackIndex = number;
 type FileName = string;
 type SpriteSizeType = number;
-type RealOrientation = number;
 type Order = string;
 type ItemCountType = number;
 type Vector3D = number[];
 type MaterialAmountType = number;
-type TriggerTargetMask = string[];
-
-// The documentation in some places just says "Table", with extra info only available in the specific prototype doc
-// can eventually fix these on a per-case basis
-type Table = any;
 
 // Copy of all prototype data
 type MapGenPreset = any;
@@ -26,15 +20,6 @@ type SpriteFlags = Array<'no-crop' | 'not-compressed' | 'always-compressed' | 'm
     'no-scale' | 'mask' | 'icon' | 'gui' | 'light' | 'terrain' | 'shadow' | 'smoke' | 'decal' |
     'low-object' | 'trilinear-filtering' | 'compressed'>;
 
-type RenderLayer = 'water-tile' | 'ground-tile' | 'tile-transition' | 'decals' | 'lower-radius-visualization' |
-    'radius-visualization' | 'transport-belt-integration' | 'resource' | 'building-smoke' | 'decorative' |
-    'ground-patch' | 'ground-patch-higher' | 'ground-patch-higher2' | 'remnants' | 'floor' | 'transport-belt' |
-    'transport-belt-endings' | 'corpse' | 'floor-mechanics' | 'item' | 'lower-object' |
-    'transport-belt-circuit-connector' | 'lower-object-above-shadow' | 'object' | 'higher-object-under' |
-    'higher-object-above' | 'item-in-inserter-hand' | 'wires' | 'wires-above' | 'entity-info-icon' |
-    'entity-info-icon-above' | 'explosion' | 'projectile' | 'smoke' | 'air-object' | 'air-entity-info-icon' |
-    'light-effect' | 'selection-box' | 'collision-selection-box' | 'arrow' | 'cursor';
-
 type EffectTypeLimitation = Array<'speed' | 'productivity' | 'consumption' | 'pollution'>;
 
 type AnimationPriority = 'extra-high-no-scale' | 'extra-high' | 'high' | 'medium' | 'low' | 'very-low';
@@ -42,8 +27,6 @@ type AnimationPriority = 'extra-high-no-scale' | 'extra-high' | 'high' | 'medium
 type AnimationBlendMode = 'normal' | 'additive' | 'additive-soft' | 'multiplicative' | 'overwrite';
 
 type ConsumingType = 'none' | 'game-only';
-
-type ForceCondition = 'all' | 'enemy' | 'ally' | 'friend' | 'not-friend' | 'same' | 'not-same';
 
 type RotatedAnimationVariations = AnimationVariations | AnimationVariations[];
 
@@ -392,17 +375,6 @@ interface StreamAttackParameters extends AttackParameters {
     }>
 }
 
-interface AmmoType {
-    category: string
-    action?: Trigger
-    clamp_position?: boolean
-    energy_consumption?: Energy
-    range_modifer?: number
-    cooldown_modifier?: number
-    consumption_modifier?: number
-    target_type?: 'entity' | 'position' | 'direction'
-}
-
 type Sound = SoundSingleton | SoundVariation[];
 
 interface SoundSingleton {
@@ -435,18 +407,6 @@ interface RotatedAnimation extends Animation {
     middle_orientation?: RealOrientation
     orientation_range?: number
     apply_projection?: boolean
-}
-
-interface CircularParticleCreationSpecification {
-    name: string
-    starting_frame_speed: number
-    direction?: number
-    direction_deviation?: number
-    speed?: number
-    speed_deviation?: number
-    starting_frame_speed_deviation?: number
-    center?: Vector
-    creation_distance?: number
 }
 
 interface Animation4Way {
@@ -647,11 +607,6 @@ interface WorkingVisualisation {
     east_position?: Vector
 }
 
-type UnitSpawnDefinition = Array<string | SpawnPoint[]> | {
-    unit: string
-    spawn_points: SpawnPoint[],
-};
-
 type SpawnPoint = number[] | {
     evolution_factor: number
     spawn_weight: number,
@@ -723,13 +678,6 @@ interface AttackReactionItem {
     action?: Trigger
     reaction_modifier?: number
     damage_type?: damageType
-}
-
-interface Loot {
-    item: string
-    probability?: number
-    count_min?: number
-    count_max?: number
 }
 
 interface EquipmentShape {

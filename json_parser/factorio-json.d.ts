@@ -48,8 +48,7 @@ interface BuiltinType {
     description: string;
 }
 
-interface Concept {
-    category: 'table' | 'table_or_array' | 'enum' | 'flag' | 'union' | 'filter' | 'struct' | 'concept';
+interface BaseConcept {
     name: string;
     order: number;
     description: string;
@@ -58,29 +57,29 @@ interface Concept {
     see_also?: string[];
 }
 
-interface TableConcept extends Concept {
+interface TableConcept extends BaseConcept {
     category: 'table';
     parameters: Parameter[];
     variant_parameter_groups?: ParameterGroup[];
     variant_parameter_description?: string;
 }
 
-interface TableOrArrayConcept extends Concept {
+interface TableOrArrayConcept extends BaseConcept {
     category: 'table_or_array';
     parameters: Parameter[];
 }
 
-interface EnumConcept extends Concept {
+interface EnumConcept extends BaseConcept {
     category: 'enum';
     options: BasicMember[];
 }
 
-interface FlagConcept extends Concept {
-    cateogry: 'flag';
+interface FlagConcept extends BaseConcept {
+    category: 'flag';
     options: BasicMember[];
 }
 
-interface UnionConcept extends Concept {
+interface UnionConcept extends BaseConcept {
     category: 'union';
     options: Array<{
         type: FactorioType,
@@ -89,17 +88,23 @@ interface UnionConcept extends Concept {
     }>;
 }
 
-interface FilterConcept extends Concept {
+interface FilterConcept extends BaseConcept {
     category: 'filter';
     parameters: Parameter[];
     variant_parameter_groups?: ParameterGroup[];
     variant_parameter_description?: string;
 }
 
-interface StructConcept extends Concept {
+interface StructConcept extends BaseConcept {
     category: 'struct';
     attributes: Attribute[];
 }
+
+interface UntypedConcept extends BaseConcept {
+    category: 'concept';
+}
+
+type Concept = TableConcept | TableOrArrayConcept | EnumConcept | FlagConcept | UnionConcept | FilterConcept | StructConcept | UntypedConcept;
 
 interface GlobalObject {
     name: string;

@@ -5,7 +5,6 @@
         "strict": true,
     },
     "include": [
-        "index.d.ts",
-        "src/**/*.d.ts",
+        "dist/*.d.ts",
     ]
 }
