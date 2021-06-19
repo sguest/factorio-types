@@ -315,66 +315,6 @@ interface IconData {
     icon_mipmaps?: number
 }
 
-interface BaseAttackParameters {
-    range: number
-    cooldown: number
-    min_range?: number
-    turn_range?: number
-    fire_penalty?: number
-    min_attack_distance?: number
-    damage_modifier?: number
-    ammo_consumption_modifier?: number
-    cooldown_deviation?: number
-    warmup?: number
-    lead_target_for_projectile_speed?: number
-    movement_slow_down_factor?: number
-    ammo_type?: AmmoType
-    ammo_category?: string
-    sound?: Sound
-    animation?: RotatedAnimation
-    cyclic_sound?: {
-        begin_sound: Sound,
-        middle_sound: Sound,
-        end_sound: Sound,
-    }
-    use_shooter_direction: boolean
-}
-
-interface AttackParameters extends BaseAttackParameters {
-    type: 'projectile' | 'beam' | 'stream'
-}
-
-interface ProjectileAttackParameters extends AttackParameters {
-    type: 'projectile'
-    projectile_center?: Vector
-    projectile_creation_distance?: number
-    shell_particle?: CircularParticleCreationSpecification
-    projectile_creation_parameters?: Array<Array<RealOrientation | Vector>>
-}
-
-interface BeamAttackParameters extends AttackParameters {
-    type: 'beam'
-    source_direction_count?: number
-    source_offset?: Vector
-}
-
-interface StreamAttackParameters extends AttackParameters {
-    type: 'stream'
-    fluid_consumtion?: number
-    gun_barrel_length?: number
-    projectile_creation_parameters?: Array<Array<RealOrientation | Vector>>
-    gun_center_shift?: Vector | {
-        north: Vector,
-        east: Vector,
-        south: Vector,
-        west: Vector,
-    }
-    fluids?: Array<{
-        type: string,
-        damage_modifier?: number,
-    }>
-}
-
 type Sound = SoundSingleton | SoundVariation[];
 
 interface SoundSingleton {

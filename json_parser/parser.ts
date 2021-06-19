@@ -147,7 +147,11 @@ function parseType(type: FactorioType | undefined): string {
                 // The json spec doesn't appear to have enough info to identify the return type of the function, so we're stuck with `any`
                 return `(${type.parameters.map((paramType, index) => `arg${index}: ${paramType}`).join(', ')}) => any`;
             case 'table':
-                // todo: variant parameters
+                if(type.variant_parameter_groups) {
+                    // The docs say this can exist, but currently the json data doesn't have any instance of it
+                    // I'm not sure exactly what this would look like, so for now throw in case it's ever introduced
+                    throw new Error('Found table type with variant parameters');
+                }
                 let paramStrings = type.parameters.map(p => {
                     let str = p.name;
                     if(p.optional) {
@@ -280,7 +284,9 @@ function extractTypeNames(description: string): string[] {
 }
 
 function formatTypeName(rawName: string) {
-    return rawName.replace(/(?:^|[-_])(.)/g, (s, g1) => g1.toUpperCase());
+    let pieces = rawName.split('.');
+    let piece = pieces[pieces.length - 1];
+    return piece.replace(/(?:^|[-_ ])(.)/g, (_, g1) => g1.toUpperCase());
 }
 
 function parameterToAttribute(parameter: Parameter): Attribute {
@@ -294,7 +300,7 @@ function parameterToAttribute(parameter: Parameter): Attribute {
     }
 }
 
-function parseVariantTypes(classes: FactorioClass[]) {
+function parseVariantClasses(classes: FactorioClass[]) {
     let variantClasses: FactorioClass[] = [];
     let variantUnions: string[] = [];
     for(let classData of classes) {
@@ -331,7 +337,7 @@ function parseVariantTypes(classes: FactorioClass[]) {
                                                 notes: [`Applies to variant case \`${group.name}\``],
                                                 base_classes: [variantBaseName],
                                             };
-                                            variantClass.attributes.push({
+                                            variantClass.attributes.unshift({
                                                 name: variantParamName,
                                                 order: -1,
                                                 description: param.description,
@@ -404,7 +410,7 @@ function parseVariantTypes(classes: FactorioClass[]) {
 function writeClasses(classDataList: FactorioClass[], apiVersion: string) {
     let output = `// Factorio class definitions for API version ${apiVersion}\n\n`;
     
-    let variantInfo = parseVariantTypes(classDataList);
+    let variantInfo = parseVariantClasses(classDataList);
     classDataList.push(...variantInfo.variantClasses);
 
     for(let classData of classDataList)
@@ -606,9 +612,104 @@ function writeCustomConcept(concept: UntypedConcept) {
     }
 }
 
+function parseVariantConcepts(concepts: Concept[]) {
+    let variantConcepts: Concept[] = [];
+    for(let concept of concepts) {
+        if(concept.category === 'table' || concept.category === 'filter') {
+            if(concept.variant_parameter_groups && concept.variant_parameter_groups.length) {
+                let variantsCreated = false;
+                if(concept.variant_parameter_description) {
+                    let notes = concept.notes || [];
+                    notes.push(concept.variant_parameter_description);
+                    concept.notes = notes;
+                    let variantPropertyNameList = extractTypeNames(concept.variant_parameter_description);
+                    if(variantPropertyNameList.length === 1) {
+                        let variantPropertyName = variantPropertyNameList[0];
+                        for(let parameter of concept.parameters) {
+                            if(parameter.name === variantPropertyName) {
+                                let variantOptions = extractTypeNames(parameter.description);
+                                if(variantOptions.length) {
+                                    variantsCreated = true;
+                                    let unionNames: string[] = [];
+                                    let baseName = 'Base' + concept.name
+                                    variantConcepts.push({
+                                        category: 'table',
+                                        name: baseName,
+                                        order: 0,
+                                        description: '',
+                                        parameters: concept.parameters.filter(p => p.name !== variantPropertyName),
+                                    });
+                                    for(let group of concept.variant_parameter_groups) {
+                                        let newConcept: TableConcept = {
+                                            category: 'table',
+                                            name: `${concept.name}${formatTypeName(group.name)} extends ${baseName}`,
+                                            order: 0,
+                                            description: '',
+                                            parameters: group.parameters,
+                                        };
+                                        newConcept.parameters.unshift({
+                                            name: variantPropertyName,
+                                            order: -1,
+                                            description: parameter.description,
+                                            type: `'${group.name}'`,
+                                            optional: parameter.optional,
+                                        });
+                                        variantConcepts.push(newConcept);
+                                        variantOptions.splice(variantOptions.indexOf(group.name), 1);
+                                        unionNames.push(concept.name + formatTypeName(group.name));
+                                    }
+                                    if(variantOptions.length) {
+                                        variantConcepts.push({
+                                            category: 'table',
+                                            name: `Default${concept.name} extends ${baseName}`,
+                                            order: 0,
+                                            description: '',
+                                            parameters: [{
+                                                name: variantPropertyName,
+                                                order: -1,
+                                                description: parameter.description,
+                                                type: variantOptions.map(o => `'${o}'`).join(' | '),
+                                                optional: parameter.optional,
+                                            }],
+                                        });
+                                        unionNames.push('Default' + concept.name);
+                                    }
+                                    // Dirty type hacks to "convert" the base concept to a union type
+                                    // The parser will ignore the old table properties, we want to preserve description, notes, etc
+                                    (concept as any).category = 'union';
+                                    (concept as any as UnionConcept).options = unionNames.map(s => ({
+                                        type: s,
+                                        description: '',
+                                        order: 0,
+                                    }));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if(!variantsCreated) {
+                    for(let group of concept.variant_parameter_groups) {
+                        variantConcepts.push({
+                            category: 'table',
+                            name: `${concept.name}${formatTypeName(group.name)} extends ${concept.name}`,
+                            order: 0,
+                            description: '',
+                            parameters: group.parameters,
+                            notes: [`Applies to \`${group.name}\` variant case`],
+                        });
+                    }
+                }
+            }
+        }
+    }
+    return variantConcepts;
+}
+
 function writeConcepts(concepts: Concept[], apiVersion: string) {
     var output = `// Factorio global object definitions for API version ${apiVersion}\n\n`;
 
+    concepts.push(...parseVariantConcepts(concepts));
     for(let concept of concepts) {
         if(concept.category === 'union') {
             let notes = concept.notes || [];
@@ -625,7 +726,6 @@ function writeConcepts(concepts: Concept[], apiVersion: string) {
             case 'table':
             case 'table_or_array':
             case 'filter':
-                // todo: variant parameters for table and filter
                 output += `interface ${concept.name} {\n`
                 for(let parameter of concept.parameters) {
                     output += writeDocs(parameter, '    ');
