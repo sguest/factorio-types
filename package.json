@@ -1,8 +1,8 @@
 {
   "name": "factorio-types",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Typescript declarations for the factorio mod API",
-  "main": "dist/index.d.ts",
+  "main": "index.d.ts",
   "repository": "https://github.com/sguest/factorio-types.git",
   "author": "Spencer Guest",
   "license": "MIT",
@@ -20,6 +20,7 @@
     "typescript": "^3.5.3"
   },
   "files": [
+    "index.d.ts",
     "dist/**/*.d.ts"
   ]
 }
