@@ -1,4 +1,5 @@
 /// <reference path="./factorio-json.d.ts" />
+/// <reference path="../node_modules/@types/node/index.d.ts" />
 
 import * as http from 'https';
 import * as fs from 'fs';
@@ -588,7 +589,8 @@ function writeCustomConcept(concept: UntypedConcept) {
         case 'MapGenSize':
             return "type MapGenSize = number | 'none' | 'very-low' | 'very-small' | 'very-poor' | 'low' | 'small' | 'poor' | 'normal' | 'medium' | 'regular' | 'high' | 'big' | 'good' | 'very-high' | 'very-big' | 'very-good'\n\n";
         case 'MapSettings':
-            return 'type MapSettings = PrototypeMapSettings\n\n';
+            // Reference to prototype data, not currently supported in typings
+            return 'type MapSettings = any\n\n';
         case 'MouseButtonFlags':
             output = 'type MouseButtonFlags = MouseButtonFlagKey[] | {[key in MouseButtonFlagKey]: true}\n\n';
             output += "type MouseButtonFlagKey = 'left' | 'right' | 'left-and-right' | 'middle' | 'button-4' | 'button-5' | 'button-6' | 'button-7' | 'button-8' | 'button-9'\n\n";

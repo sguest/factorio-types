@@ -4,6 +4,4 @@
 /// <reference path="./concepts.d.ts" />
 /// <reference path="./defines.d.ts" />
 /// <reference path="./events.d.ts" />
-/// <reference path="./prototypes.d.ts" />
-/// <reference path="./datatypes.d.ts" />
 /// <reference path="./serpent.d.ts" />

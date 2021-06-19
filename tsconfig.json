@@ -3,6 +3,7 @@
         "target": "esnext",
         "lib": ["esnext"],
         "strict": true,
+        "types": [],
     },
     "include": [
         "dist/*.d.ts",

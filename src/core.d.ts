@@ -3,7 +3,8 @@ declare const table: {
 };
 
 declare const data: {
-    raw: dataCollection,
+    // data-phase type info not currently supported because API docs are long-since not updated
+    raw: any,
     extend(values: any[]): void,
 };
 
@@ -22,3 +23,6 @@ type Table = any;
 // The docs and json definition make reference to these types but have no information as to what they are
 type BlueprintCircuitConnection = any;
 type BlueprintControlBehavior = any;
+
+// This is a copy from the data stage, which this package doesn't have type info for currently
+type MapGenPreset = any;
