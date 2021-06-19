@@ -165,11 +165,6 @@ function parseType(type: FactorioType | undefined): string {
     }
 }
 
-/*
-    variant_parameter_groups :: array[ParameterGroup] (optional): The optional parameters that depend on one of the main parameters. Only applies if takes_table is true.
-    variant_parameter_description :: string (optional): The text description of the optional parameter groups.
-*/
-
 function writeMethod(method: Method) {
     if(method.subclasses) {
         let notes = method.notes || [];
@@ -268,8 +263,149 @@ function writeOperator(operator: Method | Attribute): string {
     return writeAttribute(operator);
 }
 
+function extractTypeNames(description: string): string[] {
+    let regex = /`(?:\\?"|')?([^'"`]*)(?:\\?"|')?`/g;
+    let names: string[] = [];
+
+    var result = regex.exec(description);
+    while(result)
+    {
+        if(result && result.length >= 2) {
+            names.push(result[1]);
+        }
+        result = regex.exec(description);
+    }
+
+    return names;
+}
+
+function formatTypeName(rawName: string) {
+    return rawName.replace(/(?:^|[-_])(.)/g, (s, g1) => g1.toUpperCase());
+}
+
+function parameterToAttribute(parameter: Parameter): Attribute {
+    return {
+        name: `'${parameter.name}'`,
+        order: parameter.order,
+        description: parameter.description,
+        type: parameter.type,
+        read: true,
+        write: true
+    }
+}
+
+function parseVariantTypes(classes: FactorioClass[]) {
+    let variantClasses: FactorioClass[] = [];
+    let variantUnions: string[] = [];
+    for(let classData of classes) {
+        if(classData.methods) {
+            for(let method of classData.methods) {
+                if(method.variant_parameter_groups && method.variant_parameter_groups.length) {
+                    let variantRootName = formatTypeName(classData.name) + formatTypeName(method.name) + 'Params';
+                    let variantsCreated = false;
+                    if(method.variant_parameter_description) {
+                        let variantMarkerTypes = extractTypeNames(method.variant_parameter_description);
+                        if(variantMarkerTypes.length === 1) {
+                            let variantParamName = variantMarkerTypes[0];
+                            for(let param of method.parameters) {
+                                if(param.name === variantParamName) {
+                                    let variantOptions = extractTypeNames(param.description);
+                                    if(variantOptions.length >= 1) {
+                                        variantsCreated = true;
+                                        let variantBaseName = 'Base' + variantRootName;
+                                        variantClasses.push({
+                                            name: variantBaseName,
+                                            order: 0,
+                                            description: '',
+                                            attributes: method.parameters.filter(p => p.name !== variantParamName).map(parameterToAttribute),
+                                        });
+
+                                        let unionTypeNames: string[] = [];
+
+                                        for(let group of method.variant_parameter_groups) {
+                                            let variantClass = {
+                                                name: variantRootName + formatTypeName(group.name),
+                                                order: 0,
+                                                description: group.description,
+                                                attributes: group.parameters.map(parameterToAttribute),
+                                                notes: [`Applies to variant case \`${group.name}\``],
+                                                base_classes: [variantBaseName],
+                                            };
+                                            variantClass.attributes.push({
+                                                name: variantParamName,
+                                                order: -1,
+                                                description: param.description,
+                                                type: `'${group.name}'`,
+                                                read: true,
+                                                write: true,
+                                            })
+                                            variantClasses.push(variantClass);
+                                            variantOptions.splice(variantOptions.indexOf(group.name), 1);
+                                            unionTypeNames.push(variantClass.name);
+                                        }
+
+                                        if(variantOptions.length) {
+                                            variantClasses.push({
+                                                name: 'Default' + variantRootName,
+                                                order: 0,
+                                                description: '',
+                                                attributes: [{
+                                                    name: variantParamName,
+                                                    order: -1,
+                                                    description: param.description,
+                                                    type: variantOptions.map(o => `'${o}'`).join(' | '),
+                                                    read: true,
+                                                    write: true,
+                                                }],
+                                                base_classes: [variantBaseName],
+                                            });
+                                            unionTypeNames.push('Default' + variantRootName);
+                                        }
+
+                                        variantUnions.push(`type ${variantRootName} = ${unionTypeNames.join(' | ')}`);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(!variantsCreated) {
+                        variantClasses.push({
+                            name: variantRootName,
+                            order: 0,
+                            description: '',
+                            attributes: method.parameters.map(parameterToAttribute),
+                            notes: method.variant_parameter_description ? [method.variant_parameter_description] : [],
+                        });
+                        for(let group of method.variant_parameter_groups) {
+                            variantClasses.push({
+                                name: variantRootName + formatTypeName(group.name),
+                                order: 0,
+                                description: group.description,
+                                attributes: group.parameters.map(parameterToAttribute),
+                                notes: [`Applies to variant case \`${group.name}\``],
+                                base_classes: [variantRootName],
+                            })
+                        }
+                    }
+                    method.parameters = [{
+                        name: 'table',
+                        order: 0,
+                        description: '',
+                        type: variantRootName,
+                        optional: method.table_is_optional || false,
+                    }]
+                }
+            }
+        }
+    }
+    return { variantClasses, variantUnions };
+}
+
 function writeClasses(classDataList: FactorioClass[], apiVersion: string) {
     let output = `// Factorio class definitions for API version ${apiVersion}\n\n`;
+    
+    let variantInfo = parseVariantTypes(classDataList);
+    classDataList.push(...variantInfo.variantClasses);
 
     for(let classData of classDataList)
     {
@@ -306,6 +442,10 @@ function writeClasses(classDataList: FactorioClass[], apiVersion: string) {
         }
 
         output += '}\n\n';
+    }
+
+    for(let union of variantInfo.variantUnions) {
+        output += union + '\n\n';
     }
 
     fs.writeFileSync(__dirname + '/../dist/classes.d.ts', output);
@@ -370,10 +510,6 @@ function writeEvents(eventDataList: FactorioEvent[], apiVersion: string) {
     fs.writeFileSync(__dirname + '/../dist/events.d.ts', output);
 }
 
-/*
-    values :: array[BasicMember] (optional): The members of the define.
-    subkeys :: array[Define] (optional): A list of sub-defines.
-*/
 function writeDefine(define: Define, indent: string) {
     if(define.values && define.values.length && define.subkeys && define.subkeys.length) {
         // I don't think this exists so not handling it, but throw in case it ever gets added
@@ -419,7 +555,7 @@ function writeDefines(defines: Define[], apiVersion: string) {
     fs.writeFileSync(__dirname + '/../dist/defines.d.ts', output);
 }
 
-// This are just text descriptions, no real way to handle them other than manually.
+// These are just text descriptions, no real way to handle them other than manually.
 function writeCustomConcept(concept: UntypedConcept) {
     let output = '';
     switch(concept.name) {
