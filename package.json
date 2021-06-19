@@ -7,8 +7,7 @@
   "author": "Spencer Guest",
   "license": "MIT",
   "scripts": {
-    "lint": "tslint -c tslint.json 'dist/**/*.d.ts'",
-    "validate": "tsc -p tsconfig.json && yarn run lint",
+    "validate": "tsc -p tsconfig.json",
     "copy-source": "cpy src/*.d.ts dist",
     "build": "ts-node json_parser/parser.ts && yarn run copy-source",
     "rebuild": "ts-node json_parser/parser.ts -clean && yarn run copy-source"
@@ -18,7 +17,6 @@
     "cpy-cli": "^3.1.1",
     "node-html-parser": "^1.1.16",
     "ts-node": "^10.0.0",
-    "tslint": "^5.18.0",
     "typescript": "^3.5.3"
   },
   "files": [
