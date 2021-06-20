@@ -33,11 +33,20 @@ function handleFile() {
     var apiVersion = apiData['application_version'];
 
     fs.mkdirSync(__dirname + '/../dist', {recursive: true});
-    writeClasses(apiData.classes, apiVersion);
-    writeEvents(apiData.events, apiVersion);
-    writeDefines(apiData.defines, apiVersion);
-    writeConcepts(apiData.concepts, apiVersion);
-    writeGlobalObjects(apiData.global_objects, apiVersion);
+    writeClasses(apiData, apiVersion);
+    writeEvents(apiData, apiVersion);
+    writeDefines(apiData, apiVersion);
+    writeConcepts(apiData, apiVersion);
+    writeGlobalObjects(apiData, apiVersion);
+}
+
+function writeHeaders(apiData: ApiData) {
+    let output = '// Factorio API reference https://lua-api.factorio.com/latest/index.html\n';
+    output += '// Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json\n';
+    output += '// Definition source https://github.com/sguest/factorio-types\n';
+    output += `// Factorio version ${apiData.application_version}\n`;
+    output += `// API version ${apiData.api_version}\n\n`;
+    return output;
 }
 
 function formatLinks(text: string) {
@@ -423,9 +432,11 @@ function parseVariantClasses(classes: FactorioClass[]) {
     return { variantClasses, variantUnions };
 }
 
-function writeClasses(classDataList: FactorioClass[], apiVersion: string) {
-    let output = `// Factorio class definitions for API version ${apiVersion}\n\n`;
-    
+function writeClasses(apiData: ApiData, apiVersion: string) {
+    let output = '// Factorio class definitions\n';
+    output += writeHeaders(apiData);
+
+    let classDataList = apiData.classes;
     let variantInfo = parseVariantClasses(classDataList);
     classDataList.push(...variantInfo.variantClasses);
 
@@ -511,9 +522,11 @@ function writeEvent(eventData: FactorioEvent, isBase: boolean = false): string {
     return output;
 }
 
-function writeEvents(eventDataList: FactorioEvent[], apiVersion: string) {
-    var output = `// Factorio event definitions for API version ${apiVersion}\n\n`;
+function writeEvents(apiData: ApiData, apiVersion: string) {
+    var output = '// Factorio event definitions\n';
+    output += writeHeaders(apiData);
 
+    let eventDataList = apiData.events;
     output += writeEvent({
         name: 'event',
         order: 0,
@@ -577,10 +590,13 @@ function writeDefine(define: Define, indent: string) {
     return output;
 }
 
-function writeDefines(defines: Define[], apiVersion: string) {
-    var output = `// Factorio defines for API version ${apiVersion}\n\ndeclare namespace defines {\n`;
+function writeDefines(apiData: ApiData, apiVersion: string) {
+    var output = '// Factorio defines\n';
+    output += writeHeaders(apiData);
 
-    for(let define of defines)
+    output += 'declare namespace defines {\n'
+
+    for(let define of apiData.defines)
     {
         output += writeDefine(define, '    ');
     }
@@ -736,9 +752,11 @@ function parseVariantConcepts(concepts: Concept[]) {
     return variantConcepts;
 }
 
-function writeConcepts(concepts: Concept[], apiVersion: string) {
-    var output = `// Factorio global object definitions for API version ${apiVersion}\n\n`;
+function writeConcepts(apiData: ApiData, apiVersion: string) {
+    var output ='// Factorio concept definitions\n';
+    output += writeHeaders(apiData);
 
+    let concepts = apiData.concepts;
     concepts.push(...parseVariantConcepts(concepts));
     for(let concept of concepts) {
         if(concept.category === 'union') {
@@ -799,10 +817,11 @@ function writeConcepts(concepts: Concept[], apiVersion: string) {
     fs.writeFileSync(__dirname + '/../dist/concepts.d.ts', output);
 }
 
-function writeGlobalObjects(globals: GlobalObject[], apiVersion: string) {
-    var output = `// Factorio global object definitions for API version ${apiVersion}\n\n`;
+function writeGlobalObjects(apiData: ApiData, apiVersion: string) {
+    var output = '// Factorio global object definitions\n';
+    output += writeHeaders(apiData);
 
-    for(let globalObject of globals) {
+    for(let globalObject of apiData.global_objects) {
         if(globalObject.description) {
             output += writeDocs(globalObject, '');
         }

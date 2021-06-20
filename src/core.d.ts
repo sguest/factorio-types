@@ -1,3 +1,8 @@
+// Misc type definitions for Factorio API
+// Factorio API reference https://lua-api.factorio.com/latest/index.html
+// Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
+// Definition source https://github.com/sguest/factorio-types
+
 declare const table: {
     deepcopy<T>(this: void, value: T): T,
 };

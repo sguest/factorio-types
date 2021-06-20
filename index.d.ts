@@ -1,3 +1,8 @@
+// Type definitions for Factorio modding API
+// Factorio API reference https://lua-api.factorio.com/latest/index.html
+// Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
+// Definition source https://github.com/sguest/factorio-types
+
 /// <reference path="./dist/core.d.ts" />
 /// <reference path="./dist/global.d.ts" />
 /// <reference path="./dist/classes.d.ts" />
