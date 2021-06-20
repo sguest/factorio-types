@@ -4,6 +4,10 @@
 import * as http from 'https';
 import * as fs from 'fs';
 
+interface AttributeWithOptional extends Attribute {
+    optional: boolean;
+}
+
 const fileName = __dirname + '/runtime-api.json';
 
 let arg = process.argv[2];
@@ -145,8 +149,12 @@ function parseType(type: FactorioType | undefined): string {
                 }
                 return `{[key: ${keyType}]: ${parseType(type.value)}}`;
             case 'function':
+                let value = '(this: void';
+                if(type.parameters.length) {
+                    value += ', ';
+                }
                 // The json spec doesn't appear to have enough info to identify the return type of the function, so we're stuck with `any`
-                return `(${type.parameters.map((paramType, index) => `arg${index}: ${paramType}`).join(', ')}) => any`;
+                return value + `${type.parameters.map((paramType, index) => `arg${index}: ${paramType}`).join(', ')}) => any`;
             case 'table':
                 if(type.variant_parameter_groups) {
                     // The docs say this can exist, but currently the json data doesn't have any instance of it
@@ -220,7 +228,7 @@ function writeMethod(method: Method) {
     return output;
 }
 
-function writeAttribute(attribute: Attribute): string {
+function writeAttribute(attribute: Attribute | AttributeWithOptional): string {
     if(attribute.subclasses) {
         let notes = attribute.notes || [];
         notes.push('Applies to subclasses: ' + attribute.subclasses.join(','));
@@ -232,7 +240,11 @@ function writeAttribute(attribute: Attribute): string {
     if(!attribute.write) {
         output += 'readonly ';
     }
-    return output + `${attribute.name}: ${parseType(attribute.type)}\n\n`;
+    output += attribute.name;
+    if('optional' in attribute && attribute.optional) {
+        output += '?'
+    }
+    return output + `: ${parseType(attribute.type)}\n\n`;
 }
 
 function writeOperator(operator: Method | Attribute): string {
@@ -290,14 +302,15 @@ function formatTypeName(rawName: string) {
     return piece.replace(/(?:^|[-_ ])(.)/g, (_, g1) => g1.toUpperCase());
 }
 
-function parameterToAttribute(parameter: Parameter): Attribute {
+function parameterToAttribute(parameter: Parameter): AttributeWithOptional {
     return {
         name: `'${parameter.name}'`,
         order: parameter.order,
         description: parameter.description,
         type: parameter.type,
         read: true,
-        write: true
+        write: true,
+        optional: parameter.optional,
     }
 }
 
@@ -345,6 +358,7 @@ function parseVariantClasses(classes: FactorioClass[]) {
                                                 type: `'${group.name}'`,
                                                 read: true,
                                                 write: true,
+                                                optional: false,
                                             })
                                             variantClasses.push(variantClass);
                                             variantOptions.splice(variantOptions.indexOf(group.name), 1);
@@ -400,7 +414,8 @@ function parseVariantClasses(classes: FactorioClass[]) {
                         description: '',
                         type: variantRootName,
                         optional: method.table_is_optional || false,
-                    }]
+                    }];
+                    method.takes_table = false;
                 }
             }
         }
@@ -416,12 +431,25 @@ function writeClasses(classDataList: FactorioClass[], apiVersion: string) {
 
     for(let classData of classDataList)
     {
-        // Special handling for this type that *really* should be a generic
+        // Special handling for types that *really* should be generics
         if(classData.name === 'LuaLazyLoadedValue') {
             classData.name = 'LuaLazyLoadedValue<T>';
             for(let method of classData.methods!) {
                 if(method.name === 'get') {
                     method.return_type = 'T';
+                }
+            }
+        }
+
+        if(classData.name === 'LuaBootstrap') {
+            for(let method of classData.methods!) {
+                if(method.name === 'on_event') {
+                    method.name = 'on_event<T extends event>'
+                    for(let parameter of method.parameters) {
+                        if(parameter.name === 'f') {
+                            (parameter.type as FunctionType).parameters = ['T'];
+                        }
+                    }
                 }
             }
         }
