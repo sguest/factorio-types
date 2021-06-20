@@ -3,9 +3,9 @@
         "target": "esnext",
         "lib": ["esnext"],
         "strict": true,
+        "types": [],
     },
     "include": [
-        "index.d.ts",
-        "src/**/*.d.ts",
+        "dist/*.d.ts",
     ]
 }

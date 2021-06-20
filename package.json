@@ -1,22 +1,26 @@
 {
   "name": "factorio-types",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Typescript declarations for the factorio mod API",
   "main": "index.d.ts",
   "repository": "https://github.com/sguest/factorio-types.git",
   "author": "Spencer Guest",
   "license": "MIT",
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.d.ts'",
-    "build": "tsc -p tsconfig.json",
-    "validate": "yarn run build && yarn run lint"
+    "validate": "tsc -p tsconfig.json",
+    "copy-source": "cpy src/*.d.ts dist",
+    "build": "ts-node json_parser/parser.ts && yarn run copy-source",
+    "rebuild": "ts-node json_parser/parser.ts -clean && yarn run copy-source"
   },
   "devDependencies": {
+    "@types/node": "^15.12.2",
+    "cpy-cli": "^3.1.1",
     "node-html-parser": "^1.1.16",
-    "tslint": "^5.18.0",
+    "ts-node": "^10.0.0",
     "typescript": "^3.5.3"
   },
   "files": [
-    "**/*.d.ts"
+    "index.d.ts",
+    "dist/**/*.d.ts"
   ]
 }

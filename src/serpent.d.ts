@@ -1,3 +1,8 @@
+// Type definitions for Serpent interface - for use with Factorio API
+// Factorio API reference https://lua-api.factorio.com/latest/index.html
+// Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
+// Definition source https://github.com/sguest/factorio-types
+
 interface Serpent {
     dump(this: void, a: object, options: SerpentOptions): string
     line(this: void, a: object, options: SerpentOptions): string
