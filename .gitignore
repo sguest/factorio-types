@@ -2,7 +2,8 @@ prototype_parser/prototype_overview.html
 prototype_parser/prototypes.d.ts
 
 json_parser/runtime-api.json
-dist/
+dist/core.d.ts
+dist/serpent.d.ts
 
 # Logs
 logs
