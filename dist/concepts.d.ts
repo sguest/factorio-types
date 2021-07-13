@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.35
+// Factorio version 1.1.36
 // API version 1
 
 /**
@@ -236,29 +236,21 @@ interface AutoplaceSpecification {
 }
 
 /**
- * @param d_max_range - `d` is the dimension name.
- * @param d_optimal - `d` is the dimension name; this attribute may occur multiple times, once for each dimension, every time with a different prefix.
- * @param d_range - `d` is the dimension name.
- * @param d_top_property_limit - `d` is the dimension name.
  * @param noise_layer - Prototype name of the noise layer.
  */
 interface AutoplaceSpecificationPeak {
-    /**
-     * `d` is the dimension name.
-     */
-    'd_max_range': number
-    /**
-     * `d` is the dimension name; this attribute may occur multiple times, once for each dimension, every time with a different prefix.
-     */
-    'd_optimal': number
-    /**
-     * `d` is the dimension name.
-     */
-    'd_range': number
-    /**
-     * `d` is the dimension name.
-     */
-    'd_top_property_limit': number
+    'aux_max_range': number
+    'aux_optimal': number
+    'aux_range': number
+    'aux_top_property_limit': number
+    'distance_max_range': number
+    'distance_optimal': number
+    'distance_range': number
+    'distance_top_property_limit': number
+    'elevation_max_range': number
+    'elevation_optimal': number
+    'elevation_range': number
+    'elevation_top_property_limit': number
     'influence': number
     'max_influence': number
     'min_influence': number
@@ -269,6 +261,22 @@ interface AutoplaceSpecificationPeak {
     'noise_layer'?: string
     'noise_octaves_difference': number
     'richness_influence': number
+    'starting_area_weight_max_range': number
+    'starting_area_weight_optimal': number
+    'starting_area_weight_range': number
+    'starting_area_weight_top_property_limit': number
+    'temperature_max_range': number
+    'temperature_optimal': number
+    'temperature_range': number
+    'temperature_top_property_limit': number
+    'tier_from_start_max_range': number
+    'tier_from_start_optimal': number
+    'tier_from_start_range': number
+    'tier_from_start_top_property_limit': number
+    'water_max_range': number
+    'water_optimal': number
+    'water_range': number
+    'water_top_property_limit': number
 }
 
 /**
@@ -527,6 +535,11 @@ interface CircularParticleCreationSpecification {
     'vertical_speed_deviation': number
 }
 
+/**
+ * An array with the following members:
+ * - A {@link RealOrientation | RealOrientation}
+ * - A {@link Vector | Vector}
+ */
 type CircularProjectileCreationSpecification = [RealOrientation, Vector]
 
 declare enum CliffOrientation {
@@ -584,12 +597,30 @@ type CollisionMask = {[key in CollisionMaskLayer]: boolean}
 
 /**
  * A {@link string | string} specifying a collision mask layer.
+ * Possible values for the string are:
+ * - `"ground-tile"`
+ * - `"water-tile"`
+ * - `"resource-layer"`
+ * - `"doodad-layer"`
+ * - `"floor-layer"`
+ * - `"item-layer"`
+ * - `"ghost-layer"`
+ * - `"object-layer"`
+ * - `"player-layer"`
+ * - `"train-layer"`
+ * - `"rail-layer"`
+ * - `"transport-belt-layer"`
+ * - `"not-setup"`
  * Additionally the values `"layer-13"` through `"layer-55"`. These layers are currently unused by the game but may change. If a mod is going to use one of the unused layers it's recommended to start at the higher layers because the base game will take from the lower ones.
  */
 type CollisionMaskLayer = 'ground-tile' | 'water-tile' | 'resource-layer' | 'doodad-layer' | 'floor-layer' | 'item-layer' | 'ghost-layer' | 'object-layer' | 'player-layer' | 'train-layer' | 'rail-layer' | 'transport-belt-layer' | 'not-setup' | 'layer-13' | 'layer-14' | 'layer-15' | 'layer-16' | 'layer-17' | 'layer-18' | 'layer-19' | 'layer-20' | 'layer-21' | 'layer-22' | 'layer-23' | 'layer-24' | 'layer-25' | 'layer-26' | 'layer-27' | 'layer-28' | 'layer-29' | 'layer-30' | 'layer-31' | 'layer-32' | 'layer-33' | 'layer-34' | 'layer-35' | 'layer-36' | 'layer-37' | 'layer-38' | 'layer-39' | 'layer-40' | 'layer-41' | 'layer-42' | 'layer-43' | 'layer-44' | 'layer-45' | 'layer-46' | 'layer-47' | 'layer-48' | 'layer-49' | 'layer-50' | 'layer-51' | 'layer-52' | 'layer-53' | 'layer-54' | 'layer-55'
 
 /**
  * A {@link CollisionMask | CollisionMask} but also includes any flags this mask has.
+ * Flags such as:
+ * - `"not-colliding-with-itself"`
+ * - `"consider-tile-transitions"`
+ * - `"colliding-with-tiles-only"`
  */
 type CollisionMaskWithFlags = CollisionMask & {[key:string]: true}
 
@@ -999,6 +1030,27 @@ interface EventData {
 
 /**
  * Used to filter out irrelevant event callbacks in a performant way.
+ * Available filters:
+ * - {@link LuaEntityClonedEventFilter | LuaEntityClonedEventFilter}
+ * - {@link LuaEntityDamagedEventFilter | LuaEntityDamagedEventFilter}
+ * - {@link LuaPlayerMinedEntityEventFilter | LuaPlayerMinedEntityEventFilter}
+ * - {@link LuaPreRobotMinedEntityEventFilter | LuaPreRobotMinedEntityEventFilter}
+ * - {@link LuaRobotBuiltEntityEventFilter | LuaRobotBuiltEntityEventFilter}
+ * - {@link LuaPostEntityDiedEventFilter | LuaPostEntityDiedEventFilter}
+ * - {@link LuaEntityDiedEventFilter | LuaEntityDiedEventFilter}
+ * - {@link LuaScriptRaisedReviveEventFilter | LuaScriptRaisedReviveEventFilter}
+ * - {@link LuaPrePlayerMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter}
+ * - {@link LuaEntityMarkedForDeconstructionEventFilter | LuaEntityMarkedForDeconstructionEventFilter}
+ * - {@link LuaPreGhostDeconstructedEventFilter | LuaPreGhostDeconstructedEventFilter}
+ * - {@link LuaEntityDeconstructionCancelledEventFilter | LuaEntityDeconstructionCancelledEventFilter}
+ * - {@link LuaEntityMarkedForUpgradeEventFilter | LuaEntityMarkedForUpgradeEventFilter}
+ * - {@link LuaSectorScannedEventFilter | LuaSectorScannedEventFilter}
+ * - {@link LuaRobotMinedEntityEventFilter | LuaRobotMinedEntityEventFilter}
+ * - {@link LuaScriptRaisedDestroyEventFilter | LuaScriptRaisedDestroyEventFilter}
+ * - {@link LuaUpgradeCancelledEventFilter | LuaUpgradeCancelledEventFilter}
+ * - {@link LuaScriptRaisedBuiltEventFilter | LuaScriptRaisedBuiltEventFilter}
+ * - {@link LuaPlayerBuiltEntityEventFilter | LuaPlayerBuiltEntityEventFilter}
+ * - {@link LuaPlayerRepairedEntityEventFilter | LuaPlayerRepairedEntityEventFilter}
  * @remarks
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  *
@@ -1729,7 +1781,19 @@ interface MapExchangeStringData {
  * @param default_enable_all_autoplace_controls - Whether undefined `autoplace_controls` should fall back to the default controls or not. Defaults to `true`.
  * @param height - Height in tiles. If `0`, the map has infinite height.
  * @param peaceful_mode - Whether peaceful mode is enabled for this map.
- * @param property_expression_names - Overrides for tile property value generators. Values either name a NamedNoiseExpression or can be literal numbers, stored as strings (e.g. `"5"`). All other controls can be overridden by a property expression names. Notable properties:  Climate controls ('Moisture' and 'Terrain type' at the bottom of the Terrain tab in the map generator GUI) don't have their own dedicated structures in MapGenSettings. Instead, their values are stored as property expression overrides with long names:  All other MapGenSettings feed into named noise expressions, and therefore placement can be overridden by including the name of a property in this dictionary. The probability and richness functions for placing specific tiles, entities, and decoratives can be overridden by including an entry named `{tile|entity|decorative}:(prototype name):{probability|richness}`.
+ * @param property_expression_names - Overrides for tile property value generators. Values either name a NamedNoiseExpression or can be literal numbers, stored as strings (e.g. `"5"`). All other controls can be overridden by a property expression names. Notable properties: 
+- `moisture` - a value between 0 and 1 that determines whether a tile becomes sandy (low moisture) or grassy (high moisture).
+- `aux` - a value between 0 and 1 that determines whether low-moisture tiles become sand or red desert.
+- `temperature` - provides a value (vaguely representing degrees Celsius, varying between -20 and 50) that is used (together with moisture and aux) as part of tree and decorative placement.
+- `elevation` - tiles values less than zero become water. Cliffs are placed along certain contours according to [CliffPlacementSettings](CliffPlacementSettings).
+- `cliffiness` - determines whether (when >0.5) or not (when <0.5) a cliff will be placed at an otherwise suitable (according to [CliffPlacementSettings](CliffPlacementSettings)) location.
+- `enemy-base-intensity` - a number that is referenced by both `enemy-base-frequency` and `enemy-base-radius`. i.e. if this is overridden, enemy base frequency and size will both be affected and do something reasonable. By default, this expression returns a value proportional to distance from any starting point, clamped at about 7.
+- `enemy-base-frequency` - a number representing average number of enemy bases per tile for a region, by default in terms of `enemy-base-intensity`.
+- `enemy-base-radius` - a number representing the radius of an enemy base, if one were to be placed on the given tile, by default proportional to a constant plus `enemy-base-intensity`. Climate controls ('Moisture' and 'Terrain type' at the bottom of the Terrain tab in the map generator GUI) don't have their own dedicated structures in MapGenSettings. Instead, their values are stored as property expression overrides with long names: 
+- `control-setting:moisture:frequency:multiplier` - frequency (inverse of scale) multiplier for moisture noise. Default is 1.
+- `control-setting:moisture:bias` - global bias for moisture (which normally varies between 0 and 1). Default is 0.
+- `control-setting:aux:frequency:multiplier` - frequency (inverse of scale) multiplier for aux (called 'terrain type' in the GUI) noise. Default is 1.
+- `control-setting:aux:bias` - global bias for aux/terrain type (which normally varies between 0 and 1). Default is 0. All other MapGenSettings feed into named noise expressions, and therefore placement can be overridden by including the name of a property in this dictionary. The probability and richness functions for placing specific tiles, entities, and decoratives can be overridden by including an entry named `{tile|entity|decorative}:(prototype name):{probability|richness}`.
  * @param seed - The random seed used to generated this map.
  * @param starting_area - Size of the starting area.
  * @param starting_points - Positions of the starting areas.
@@ -1781,7 +1845,19 @@ interface MapGenSettings {
      */
     'peaceful_mode': boolean
     /**
-     * Overrides for tile property value generators. Values either name a NamedNoiseExpression or can be literal numbers, stored as strings (e.g. `"5"`). All other controls can be overridden by a property expression names. Notable properties:  Climate controls ('Moisture' and 'Terrain type' at the bottom of the Terrain tab in the map generator GUI) don't have their own dedicated structures in MapGenSettings. Instead, their values are stored as property expression overrides with long names:  All other MapGenSettings feed into named noise expressions, and therefore placement can be overridden by including the name of a property in this dictionary. The probability and richness functions for placing specific tiles, entities, and decoratives can be overridden by including an entry named `{tile|entity|decorative}:(prototype name):{probability|richness}`.
+     * Overrides for tile property value generators. Values either name a NamedNoiseExpression or can be literal numbers, stored as strings (e.g. `"5"`). All other controls can be overridden by a property expression names. Notable properties: 
+     * - `moisture` - a value between 0 and 1 that determines whether a tile becomes sandy (low moisture) or grassy (high moisture).
+     * - `aux` - a value between 0 and 1 that determines whether low-moisture tiles become sand or red desert.
+     * - `temperature` - provides a value (vaguely representing degrees Celsius, varying between -20 and 50) that is used (together with moisture and aux) as part of tree and decorative placement.
+     * - `elevation` - tiles values less than zero become water. Cliffs are placed along certain contours according to {@link CliffPlacementSettings | CliffPlacementSettings}.
+     * - `cliffiness` - determines whether (when >0.5) or not (when <0.5) a cliff will be placed at an otherwise suitable (according to {@link CliffPlacementSettings | CliffPlacementSettings}) location.
+     * - `enemy-base-intensity` - a number that is referenced by both `enemy-base-frequency` and `enemy-base-radius`. i.e. if this is overridden, enemy base frequency and size will both be affected and do something reasonable. By default, this expression returns a value proportional to distance from any starting point, clamped at about 7.
+     * - `enemy-base-frequency` - a number representing average number of enemy bases per tile for a region, by default in terms of `enemy-base-intensity`.
+     * - `enemy-base-radius` - a number representing the radius of an enemy base, if one were to be placed on the given tile, by default proportional to a constant plus `enemy-base-intensity`. Climate controls ('Moisture' and 'Terrain type' at the bottom of the Terrain tab in the map generator GUI) don't have their own dedicated structures in MapGenSettings. Instead, their values are stored as property expression overrides with long names: 
+     * - `control-setting:moisture:frequency:multiplier` - frequency (inverse of scale) multiplier for moisture noise. Default is 1.
+     * - `control-setting:moisture:bias` - global bias for moisture (which normally varies between 0 and 1). Default is 0.
+     * - `control-setting:aux:frequency:multiplier` - frequency (inverse of scale) multiplier for aux (called 'terrain type' in the GUI) noise. Default is 1.
+     * - `control-setting:aux:bias` - global bias for aux/terrain type (which normally varies between 0 and 1). Default is 0. All other MapGenSettings feed into named noise expressions, and therefore placement can be overridden by including the name of a property in this dictionary. The probability and richness functions for placing specific tiles, entities, and decoratives can be overridden by including an entry named `{tile|entity|decorative}:(prototype name):{probability|richness}`.
      */
     'property_expression_names': {[key: string]: string}
     /**
@@ -1813,6 +1889,12 @@ interface MapGenSettings {
 /**
  * A floating point number specifying an amount.
  * For backwards compatibility, MapGenSizes can also be specified as one of the following strings, which will be converted to a number (when queried, a number will always be returned):
+ * - `"none"` - equivalent to `0`
+ * - `"very-low"`, `"very-small"`, `"very-poor"` - equivalent to `1/2`
+ * - `"low"`, `"small"`, `"poor"` - equivalent to `1/sqrt(2)`
+ * - `"normal"`, `"medium"`, `"regular"` - equivalent to `1`
+ * - `"high"`, `"big"`, `"good"` - equivalent to `sqrt(2)`
+ * - `"very-high"`, `"very-big"`, `"very-good"` - equivalent to `2`
  * @remarks
  * The map generation algorithm officially supports the range of values the in-game map generation screen shows (specifically `0` and values from `1/6` to `6`). Values outside this range are not guaranteed to work as expected.
  *
@@ -1914,6 +1996,16 @@ interface ModuleEffects {
  * This is a set of flags given as a dictionary{@link [string | string} &rarr; {@link boolean | boolean}]. When a flag is set, it is present in the dictionary with the value `true`. Unset flags aren't present in the dictionary at all.
  * To write to this, use an array{@link [string | string}] of the mouse buttons that should be possible to use with on button.
  * When setting flags, the flag `"left-and-right"` can also be set which will set `"left"` and `"right"` true.
+ * Possible flags when reading are:
+ * - `"left"`
+ * - `"right"`
+ * - `"middle"`
+ * - `"button-4"`
+ * - `"button-5"`
+ * - `"button-6"`
+ * - `"button-7"`
+ * - `"button-8"`
+ * - `"button-9"`
  */
 type MouseButtonFlags = MouseButtonFlagKey[] | {[key in MouseButtonFlagKey]: true}
 
@@ -1967,36 +2059,36 @@ interface OldTileAndPosition {
 }
 
 /**
- * @param allow_destroy_friendly_entities - Allows pathing through friendly entities. Default false.
- * @param allow_paths_through_own_entities - Allows the pathfinder to path through entities of the same force. Default false.
- * @param cache - Enables path caching. This can be more efficient, but can fail to respond to changes in the environment. Default true.
- * @param low_priority - Sets lower priority on the path request, might mean it takes longer to find a path, at the expense of speeding up others. Default false.
- * @param no_break - The pathfinder won't break in the middle of processing this pathfind, no matter how much work is needed. Default false.
- * @param prefer_straight_paths - Tries to path in straight lines. Default false.
+ * @param allow_destroy_friendly_entities - Allows pathing through friendly entities. Defaults to `false`.
+ * @param allow_paths_through_own_entities - Allows the pathfinder to path through entities of the same force. Defaults to `false`.
+ * @param cache - Enables path caching. This can be more efficient, but might fail to respond to changes in the environment. Defaults to `true`.
+ * @param low_priority - Sets lower priority on the path request, meaning it might take longer to find a path at the expense of speeding up others. Defaults to `false`.
+ * @param no_break - Makes the pathfinder not break in the middle of processing this pathfind, no matter how much work is needed. Defaults to `false`.
+ * @param prefer_straight_paths - Makes the pathfinder try to path in straight lines. Defaults to `false`.
  */
 interface PathfinderFlags {
     /**
-     * Allows pathing through friendly entities. Default false.
+     * Allows pathing through friendly entities. Defaults to `false`.
      */
     'allow_destroy_friendly_entities'?: boolean
     /**
-     * Allows the pathfinder to path through entities of the same force. Default false.
+     * Allows the pathfinder to path through entities of the same force. Defaults to `false`.
      */
     'allow_paths_through_own_entities'?: boolean
     /**
-     * Enables path caching. This can be more efficient, but can fail to respond to changes in the environment. Default true.
+     * Enables path caching. This can be more efficient, but might fail to respond to changes in the environment. Defaults to `true`.
      */
     'cache'?: boolean
     /**
-     * Sets lower priority on the path request, might mean it takes longer to find a path, at the expense of speeding up others. Default false.
+     * Sets lower priority on the path request, meaning it might take longer to find a path at the expense of speeding up others. Defaults to `false`.
      */
     'low_priority'?: boolean
     /**
-     * The pathfinder won't break in the middle of processing this pathfind, no matter how much work is needed. Default false.
+     * Makes the pathfinder not break in the middle of processing this pathfind, no matter how much work is needed. Defaults to `false`.
      */
     'no_break'?: boolean
     /**
-     * Tries to path in straight lines. Default false.
+     * Makes the pathfinder try to path in straight lines. Defaults to `false`.
      */
     'prefer_straight_paths'?: boolean
 }
@@ -2145,6 +2237,49 @@ type RecipePrototypeFilter = RecipePrototypeFilterCategory | RecipePrototypeFilt
 
 /**
  * A value between 0 and 255 inclusive represented by one of the following named {@link string | string} or string version of the value (for example `"27"` and `"decals"` are both valid). Higher values are rendered on top of lower values.
+ * - `"water-tile"`: 15
+ * - `"ground-tile"`: 25
+ * - `"tile-transition"`: 26
+ * - `"decals"`: 27
+ * - `"lower-radius-visualization"`: 29
+ * - `"radius-visualization"`: 30
+ * - `"transport-belt-integration"`: 65
+ * - `"resource"`:66
+ * - `"building-smoke"`:67
+ * - `"decorative"`: 92
+ * - `"ground-patch"`: 93
+ * - `"ground-patch-higher"`: 94
+ * - `"ground-patch-higher2"`: 95
+ * - `"remnants"`: 112
+ * - `"floor"`: 113
+ * - `"transport-belt"`: 114
+ * - `"transport-belt-endings"`: 115
+ * - `"floor-mechanics-under-corpse"`: 120
+ * - `"corpse"`: 121
+ * - `"floor-mechanics"`: 122
+ * - `"item"`: 123
+ * - `"lower-object"`: 124
+ * - `"transport-belt-circuit-connector"`: 126
+ * - `"lower-object-above-shadow"`: 127
+ * - `"object"`: 129
+ * - `"higher-object-under"`: 131
+ * - `"higher-object-above"`: 132
+ * - `"item-in-inserter-hand"`: 134
+ * - `"wires"`: 135
+ * - `"wires-above"`: 136
+ * - `"entity-info-icon"`: 138
+ * - `"entity-info-icon-above"`: 139
+ * - `"explosion"`: 142
+ * - `"projectile"`: 143
+ * - `"smoke"`: 144
+ * - `"air-object"`: 145
+ * - `"air-entity-info-icon"`: 147
+ * - `"light-effect"`: 148
+ * - `"selection-box"`: 187
+ * - `"higher-selection-box"`: 188
+ * - `"collision-selection-box"`: 189
+ * - `"arrow"`: 190
+ * - `"cursor"`: 210
  */
 type RenderLayer = 'water-tile' |  '15' | 'ground-tile' | '25' | 'tile-transition' | '26' | 'decals' | '27' | 'lower-radius-visualization' | '29' | 'radius-visualization' | '30' | 'transport-belt-integration' | '65' | 'resource' | '6' | 'building-smoke' | '7' | 'decorative' | '92' | 'ground-patch' | '93' | 'ground-patch-higher' | '94' | 'ground-patch-higher2' | '95' | 'remnants' | '112' | 'floor' | '113' | 'transport-belt' | '114' | 'transport-belt-endings' | '115' | 'floor-mechanics-under-corpse' | '120' | 'corpse' | '121' | 'floor-mechanics' | '122' | 'item' | '123' | 'lower-object' | '124' | 'transport-belt-circuit-connector' | '126' | 'lower-object-above-shadow' | '127' | 'object' | '129' | 'higher-object-under' | '131' | 'higher-object-above' | '132' | 'item-in-inserter-hand' | '134' | 'wires' | '135' | 'wires-above' | '136' | 'entity-info-icon' | '138' | 'entity-info-icon-above' | '139' | 'explosion' | '142' | 'projectile' | '143' | 'smoke' | '144' | 'air-object' | '145' | 'air-entity-info-icon' | '147' | 'light-effect' | '148' | 'selection-box' | '187' | 'higher-selection-box' | '188' | 'collision-selection-box' | '189' | 'arrow' | '190' | 'cursor' | '210'
 
@@ -2327,6 +2462,25 @@ interface SmokeSource {
 
 /**
  * A sound defined by a {@link string | string}. It can be either the name of a {@link sound prototype | https://wiki.factorio.com/Prototype/Sound} defined in the data stage or a path in the form `"type/name"`. The latter option can be sorted into three categories.
+ * The utility and ambient types each contain general use sound prototypes defined by the game itself.
+ * - `"utility"` - Uses the {@link UtilitySounds | https://wiki.factorio.com/Prototype/UtilitySounds} prototype. Example: `"utility/wire_connect_pole"`
+ * - `"ambient"` - Uses {@link AmbientSound | https://wiki.factorio.com/Prototype/AmbientSound} prototypes. Example: `"ambient/resource-deficiency"`
+ * The following types can be combined with any tile name as long as its prototype defines the
+ *     corresponding sound.
+ * - `"tile-walking"` - Uses {@link Tile::walking_sound | https://wiki.factorio.com/Prototype/Tile#walking_sound}. Example: `"tile-walking/concrete"`
+ * - `"tile-mined"` - Uses {@link Tile::mined_sound | https://wiki.factorio.com/Prototype/Tile#mined_sound}
+ * - `"tile-build-small"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}. Example: `"tile-build-small/concrete"`
+ * - `"tile-build-medium"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}
+ * - `"tile-build-large"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}
+ * The following types can be combined with any entity name as long as its prototype defines the
+ *     corresponding sound.
+ * - `"entity-build"` - Uses {@link Entity::build_sound | https://wiki.factorio.com/Prototype/Entity#build_sound}. Example: `"entity-build/wooden-chest"`
+ * - `"entity-mined"` - Uses {@link Entity::mined_sound | https://wiki.factorio.com/Prototype/Entity#mined_sound}
+ * - `"entity-mining"` - Uses {@link Entity::mining_sound | https://wiki.factorio.com/Prototype/Entity#mining_sound}
+ * - `"entity-vehicle_impact"` - Uses {@link Entity::vehicle_impact_sound | https://wiki.factorio.com/Prototype/Entity#vehicle_impact_sound}
+ * - `"entity-rotated"` - Uses {@link Entity::rotated_sound | https://wiki.factorio.com/Prototype/Entity#rotated_sound}
+ * - `"entity-open"` - Uses {@link Entity::open_sound | https://wiki.factorio.com/Prototype/Entity#open_sound}
+ * - `"entity-close"` - Uses {@link Entity::close_sound | https://wiki.factorio.com/Prototype/Entity#close_sound}
  */
 type SoundPath = string
 
@@ -2357,6 +2511,19 @@ interface SpawnPointDefinition {
 
 /**
  * It is specified by {@link string | string}. It can be either the name of a {@link sprite prototype | https://wiki.factorio.com/Prototype/Sprite} defined in the data stage or a path in form "type/name".
+ * The supported types are:
+ * - `"item"` - for example "item/iron-plate" is the icon sprite of iron plate
+ * - `"entity"` - for example "entity/small-biter" is the icon sprite of the small biter
+ * - `"technology"`
+ * - `"recipe"`
+ * - `"item-group"`
+ * - `"fluid"`
+ * - `"tile"`
+ * - `"virtual-signal"`
+ * - `"achievement"`
+ * - `"equipment"`
+ * - `"file"` - path to an image file located inside the current scenario. This file is not preloaded so it will be slower; for frequently used sprites, it is better to define sprite prototype and use it instead.
+ * - `"utility"` - sprite defined in the utility-sprites object, these are the pictures used by the game internally for the UI.
  */
 type SpritePath = string
 
@@ -2894,23 +3061,31 @@ interface CommandFlee extends Command {
  * @remarks
  * Applies to `defines.command.go_to_location` variant case
  *
+ * @param destination - The position to path to. Either this or `destination_entity` need to be specified. If both are, `destination_entity` is used.
+ * @param destination_entity - The entity to path to. Either this or `destination` need to be specified. If both are, `destination_entity` is used.
  * @param distraction - Defaults to `defines.distraction.by_enemy`.
- * @param pathfind_flags - Flags to affect the pathfinder.
- * @param radius - Distance from the exact target that the unit will consider itself "arrived" at. Default is 3.
+ * @param pathfind_flags - Flags that affect pathfinder behavior.
+ * @param radius - How close the pathfinder needs to get to its destination (in tiles). Defaults to `3`.
  */
 interface CommandGoToLocation extends Command {
+    /**
+     * The position to path to. Either this or `destination_entity` need to be specified. If both are, `destination_entity` is used.
+     */
     'destination'?: Position
+    /**
+     * The entity to path to. Either this or `destination` need to be specified. If both are, `destination_entity` is used.
+     */
     'destination_entity'?: LuaEntity
     /**
      * Defaults to `defines.distraction.by_enemy`.
      */
     'distraction'?: defines.distraction
     /**
-     * Flags to affect the pathfinder.
+     * Flags that affect pathfinder behavior.
      */
     'pathfind_flags'?: PathfinderFlags
     /**
-     * Distance from the exact target that the unit will consider itself "arrived" at. Default is 3.
+     * How close the pathfinder needs to get to its destination (in tiles). Defaults to `3`.
      */
     'radius'?: number
 }

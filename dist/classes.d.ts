@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.35
+// Factorio version 1.1.36
 // API version 1
 
 /**
@@ -297,6 +297,10 @@ interface LuaBootstrap {
 
     /**
      * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session. It gives the mod the opportunity to do some very specific actions, should it need to. Doing anything other than these three will lead to desyncs, which breaks multiplayer and replay functionality. Access to {@link LuaGameScript | LuaGameScript} and {@link LuaRendering | LuaRendering} is not available. The `global` table can be accessed and is safe to read from, but not write to.
+     * The only legitimate uses of this event are these three:
+     * - Re-setup {@link metatables | https://www.lua.org/pil/13.html} as they are not persisted through save-load.
+     * - Re-setup conditional event handlers.
+     * - Create local references to data stored in the {@link global | Global.html} table.
      * For all other purposes, {@link LuaBootstrap::on_init | LuaBootstrap::on_init}, {@link LuaBootstrap::on_configuration_changed | LuaBootstrap::on_configuration_changed} or migration scripts should be used instead.
      * @param f - The handler for this event. Passing `nil` will unregister it.
      */
@@ -334,6 +338,15 @@ interface LuaBootstrap {
 
     /**
      * Raise an event. Only events generated with {@link LuaBootstrap::generate_event_name | LuaBootstrap::generate_event_name} and the following can be raised:
+     * - {@link on_console_chat | on_console_chat}
+     * - {@link on_player_crafted_item | on_player_crafted_item}
+     * - {@link on_player_fast_transferred | on_player_fast_transferred}
+     * - {@link on_biter_base_built | on_biter_base_built}
+     * - {@link on_market_item_purchased | on_market_item_purchased}
+     * - {@link script_raised_built | script_raised_built}
+     * - {@link script_raised_destroy | script_raised_destroy}
+     * - {@link script_raised_revive | script_raised_revive}
+     * - {@link script_raised_set_tiles | script_raised_set_tiles}
      * @param data - Table with extra data that will be passed to the event handler.
      * @param event - ID of the event to raise.
      * @example
@@ -1893,6 +1906,8 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Connect two devices with a circuit wire or copper cable. Depending on which type of connection should be made, there are different procedures:
+     * - To connect two electric poles, `target` must be a {@link LuaEntity | LuaEntity} that specifies another electric pole. This will connect them with copper cable.
+     * - To connect two devices with circuit wire, `target` must be a table of type {@link WireConnectionDefinition | WireConnectionDefinition}.
      * @param target - The target with which to establish a connection.
      * @returns Whether the connection was successfully formed.
      */
@@ -1991,6 +2006,10 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Disconnect circuit wires or copper cables between devices. Depending on which type of connection should be cut, there are different procedures:
+     * - To remove all copper cables, leave the `target` parameter blank: `pole.disconnect_neighbour()`.
+     * - To remove all wires of a specific color, set `target` to {@link defines.wire_type.red | defines.wire_type.red} or {@link defines.wire_type.green | defines.wire_type.green}.
+     * - To remove a specific copper cable between two electric poles, `target` must be a {@link LuaEntity | LuaEntity} that specifies the other pole: `pole1.disconnect_neighbour(pole2)`.
+     * - To remove a specific circuit wire, `target` must be a table of type {@link WireConnectionDefinition | WireConnectionDefinition}.
      * @param target - The target with which to cut a connection.
      */
     disconnect_neighbour(this: void,
@@ -3457,6 +3476,12 @@ interface LuaEntity extends LuaControl {
      */
     readonly neighbour_bonus: number
 
+    /**
+     * - When called on an electric pole, this is a dictionary of all connections, indexed by the strings `"copper"`, `"red"`, and `"green"`.
+     * - When called on a pipe-connectable entity, this is an array of entity arrays of all entities a given fluidbox is connected to.
+     * - When called on an underground transport belt, this is the other end of the underground belt connection, or `nil` if none.
+     * - When called on a wall-connectable entity or reactor, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
+     */
     readonly neighbours: {[key: string]: LuaEntity[]} | Array<LuaEntity[]> | LuaEntity
 
     /**
@@ -3786,6 +3811,8 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The ticks left before a ghost, combat robot, highlight box or smoke with trigger is destroyed.
+     * - for ghosts set to uint32 max (4,294,967,295) to never expire.
+     * - for ghosts Cannot be set higher than {@link LuaForce::ghost_time_to_live | LuaForce::ghost_time_to_live} of the entity's force.
      */
     time_to_live: number
 
@@ -3933,7 +3960,29 @@ interface LuaEntityPrototype {
 
     /**
      * Does this prototype have a flag enabled?
-     * @param flag - The flag to check. Must be one of
+     * @param flag - The flag to check. Must be one of 
+- `"not-rotatable"`
+- `"placeable-neutral"`
+- `"placeable-player"`
+- `"placeable-enemy"`
+- `"placeable-off-grid"`
+- `"player-creation"`
+- `"building-direction-8-way"`
+- `"filter-directions"`
+- `"fast-replaceable-no-build-while-moving"`
+- `"breaths-air"`
+- `"not-repairable"`
+- `"not-on-map"`
+- `"not-deconstructable"`
+- `"not-blueprintable"`
+- `"hide-from-bonus-gui"`
+- `"hide-alt-info"`
+- `"fast-replaceable-no-cross-type-while-moving"`
+- `"no-gap-fill-while-building"`
+- `"not-flammable"`
+- `"no-automated-item-removal"`
+- `"no-automated-item-insertion"`
+- `"not-upgradable"`
      */
     has_flag(this: void,
         flag: string): boolean
@@ -5478,6 +5527,10 @@ interface LuaEquipmentPrototype {
 
 /**
  * Encapsulates statistic data for different parts of the game. In the context of flow statistics, `input` and `output` describe on which side of the associated GUI the values are shown. Input values are shown on the left side, output values on the right side.
+ * Examples:
+ * - The item production GUI shows "consumption" on the right, thus `output` describes the item consumption numbers. The same goes for fluid consumption.
+ * - The kills gui shows "losses" on the right, so `output` describes how many of the force's entities were killed by enemies.
+ * - The electric network GUI shows "power consumption" on the left side, so in this case `input` describes the power consumption numbers.
  */
 interface LuaFlowStatistics {
     /**
@@ -7746,6 +7799,31 @@ interface LuaGui {
 /**
  * An element of a custom GUI. This type is used to represent any kind of a GUI element - labels, buttons and frames are all instances of this type. Just like {@link LuaEntity | LuaEntity}, different kinds of elements support different attributes; attempting to access an attribute on an element that doesn't support it (for instance, trying to access the `column_count` of a `textfield`) will result in a runtime error.
  * The following types of GUI element are supported:
+ * - `"button"`: A clickable element. Relevant event: {@link on_gui_click | on_gui_click}
+ * - `"sprite-button"`: A `button` that displays a sprite rather than text. Relevant event: {@link on_gui_click | on_gui_click}
+ * - `"checkbox"`: A clickable element with a check mark that can be turned off or on. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
+ * - `"flow"`: An invisible container that lays out its children either horizontally or vertically.
+ * - `"frame"`: A non-transparent box that contains other elements. It can have a title (set via the `caption` attribute). Just like a `flow`, it lays out its children either horizontally or vertically. Relevant event: {@link on_gui_location_changed | on_gui_location_changed}
+ * - `"label"`: A piece of text.
+ * - `"line"`: A horizontal or vertical separation line.
+ * - `"progressbar"`: A partially filled bar that can be used to indicate progress.
+ * - `"table"`: An invisible container that lays out its children in a specific number of columns. The width of each column is determined by the widest element it contains.
+ * - `"textfield"`: A single-line box the user can type into. Relevant events: {@link on_gui_text_changed | on_gui_text_changed}, {@link on_gui_confirmed | on_gui_confirmed}
+ * - `"radiobutton"`: A clickable element that is functionally identical to a `checkbox`, but has a circular appearance. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
+ * - `"sprite"`: An element that shows an image.
+ * - `"scroll-pane"`: An invisible element that is similar to a `flow`, but has the ability to show and use scroll bars.
+ * - `"drop-down"`: A drop-down containing strings of text. Relevant event: {@link on_gui_selection_state_changed | on_gui_selection_state_changed}
+ * - `"list-box"`: A list of strings, only one of which can be selected at a time. Shows a scroll bar if necessary. Relevant event: {@link on_gui_selection_state_changed | on_gui_selection_state_changed}
+ * - `"camera"`: A camera that shows the game at the given position on the given surface. It can visually track an {@link entity | LuaGuiElement::entity} that is set after the element has been created.
+ * - `"choose-elem-button"`: A button that lets the player pick from a certain kind of prototype, with optional filtering. Relevant event: {@link on_gui_elem_changed | on_gui_elem_changed}
+ * - `"text-box"`: A multi-line `textfield`. Relevant event: {@link on_gui_text_changed | on_gui_text_changed}
+ * - `"slider"`: A horizontal number line which can be used to choose a number. Relevant event: {@link on_gui_value_changed | on_gui_value_changed}
+ * - `"minimap"`: A minimap preview, similar to the normal player minimap. It can visually track an {@link entity | LuaGuiElement::entity} that is set after the element has been created.
+ * - `"entity-preview"`: A preview of an entity. The {@link entity | LuaGuiElement::entity} has to be set after the element has been created.
+ * - `"empty-widget"`: An empty element that just exists. The root GUI elements `screen` and `relative` are `empty-widget`s.
+ * - `"tabbed-pane"`: A collection of `tab`s and their contents. Relevant event: {@link on_gui_selected_tab_changed | on_gui_selected_tab_changed}
+ * - `"tab"`: A tab for use in a `tabbed-pane`.
+ * - `"switch"`: A switch with three possible states. Can have labels attached to either side. Relevant event: {@link on_gui_switch_state_changed | on_gui_switch_state_changed}
  * Each GUI element allows access to its children by having them as attributes. Thus, one can use the `parent.child` syntax to refer to children. Lua also supports the `parent["child"]` syntax to refer to the same element. This can be used in cases where the child has a name that isn't a valid Lua identifier.
  * @example
  * This will add a label called `greeting` to the top flow. Immediately after, it will change its text to illustrate accessing child elements. 
@@ -8175,6 +8253,18 @@ interface LuaGuiElement {
 
     /**
      * The elem filters of this choose-elem-button or `nil` if there are no filters.
+     * The compatible type of filter is determined by elem_type:
+     * - Type `"item"` - {@link ItemPrototypeFilter | ItemPrototypeFilter}
+     * - Type `"tile"` - {@link TilePrototypeFilter | TilePrototypeFilter}
+     * - Type `"entity"` - {@link EntityPrototypeFilter | EntityPrototypeFilter}
+     * - Type `"signal"` - Does not support filters
+     * - Type `"fluid"` - {@link FluidPrototypeFilter | FluidPrototypeFilter}
+     * - Type `"recipe"` - {@link RecipePrototypeFilter | RecipePrototypeFilter}
+     * - Type `"decorative"` - {@link DecorativePrototypeFilter | DecorativePrototypeFilter}
+     * - Type `"item-group"` - Does not support filters
+     * - Type `"achievement"` - {@link AchievementPrototypeFilter | AchievementPrototypeFilter}
+     * - Type `"equipment"` - {@link EquipmentPrototypeFilter | EquipmentPrototypeFilter}
+     * - Type `"technology"` - {@link TechnologyPrototypeFilter | TechnologyPrototypeFilter}
      * @remarks
      * Writing to this field does not change or clear the currently selected element.
      * Applies to subclasses: choose-elem-button
@@ -10028,6 +10118,18 @@ interface LuaItemStack {
 
     /**
      * The unique identifier for this item if it has one, `nil` otherwise. Note that this ID stays the same no matter where the item is moved to.
+     * Only these types of items have unique IDs:
+     * - `"armor"`
+     * - `"spidertron-remote"`
+     * - `"selection-tool"`
+     * - `"copy-paste-tool"`
+     * - `"upgrade-item"`
+     * - `"deconstruction-item"`
+     * - `"blueprint"`
+     * - `"blueprint-book"`
+     * - `"item-with-entity-data"`
+     * - `"item-with-inventory"`
+     * - `"item-with-tags"`
      */
     readonly item_number: number
 
@@ -11118,6 +11220,11 @@ interface LuaPlayer extends LuaControl {
     clear_recipe_notifications(this: void): void
 
     /**
+     * Clears the players selection tool selection position.
+     */
+    clear_selection(this: void): void
+
+    /**
      * Queues request to switch to the normal game view from the map or zoom to world view. Render mode change requests are processed before rendering of the next frame.
      */
     close_map(this: void): void
@@ -11502,6 +11609,15 @@ interface LuaPlayer extends LuaControl {
     set_shortcut_toggled(this: void,
         prototype_name: string,
         toggled: boolean): void
+
+    /**
+     * Starts selection with selection tool from the specified position. Does nothing if the players cursor is not a selection tool.
+     * @param position - The position to start selection from.
+     * @param selection_mode - The type of selection to start. Can be `select`, `alternative-select`, `reverse-select`.
+     */
+    start_selection(this: void,
+        position: Position,
+        selection_mode: string): void
 
     /**
      * Toggles this player into or out of the map editor. Does nothing if this player isn't an admin or if the player doesn't have permission to use the map editor.
@@ -14207,7 +14323,8 @@ interface LuaSurface {
      * @param table.build_check_type - Which type of check should be carried out.
      * @param table.direction - Direction of the placed entity.
      * @param table.force - The force that would place the entity. If not specified, the enemy force is assumed.
-     * @param table.forced - This parameter is only used if `build_check_type` is either `manual_ghost`, `script_ghost` or `blueprint_ghost`. If `forced` is `true`, entities that can be marked for deconstruction are ignored.
+     * @param table.forced - If `true`, entities that can be marked for deconstruction are ignored. Only used if `build_check_type` is either `manual_ghost`, `script_ghost` or `blueprint_ghost`.
+     * @param table.inner_name - The prototype name of the entity contained in the ghost. Only used if `name` is `entity-ghost`.
      * @param table.name - Name of the entity prototype to check.
      * @param table.position - Where the entity would be placed.
      */
@@ -14218,7 +14335,8 @@ interface LuaSurface {
             direction?: defines.direction,
             force?: ForceIdentification,
             build_check_type?: defines.build_check_type,
-            forced?: boolean
+            forced?: boolean,
+            inner_name?: string
         }): boolean
 
     /**
@@ -14994,12 +15112,18 @@ interface LuaSurface {
         id: number): boolean
 
     /**
-     * Starts a path find request without actually ordering a unit to move. Result is ultimately returned asynchronously via {@link on_script_path_request_finished | on_script_path_request_finished}.
-     * @param table.can_open_gates - If the path request can open gates. Default false.
-     * @param table.entity_to_ignore - If given, the pathfind will ignore collisions with this entity.
-     * @param table.path_resolution_modifier - The resolution modifier of the pathing. Defaults to 0.
-     * @param table.pathfind_flags - Flags to affect the pathfinder.
-     * @param table.radius - How close we need to get to the goal. Default 1.
+     * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities. If you want to command actual units to move, use the {@link LuaEntity::set_command | LuaEntity::set_command} functionality instead.
+     * The resulting path is ultimately returned asynchronously via {@link on_script_path_request_finished | on_script_path_request_finished}.
+     * @param table.bounding_box - The dimensions of the object that's supposed to travel the path.
+     * @param table.can_open_gates - Whether the path request can open gates. Defaults to `false`.
+     * @param table.collision_mask - The list of masks the `bounding_box` collides with.
+     * @param table.entity_to_ignore - Makes the pathfinder ignore collisions with this entity if it is given.
+     * @param table.force - The force for which to generate the path, determining which gates can be opened for example.
+     * @param table.goal - The position to find a path to.
+     * @param table.path_resolution_modifier - Defines how coarse the pathfinder's grid is. Smaller values mean a coarser grid (negative numbers allowed). Defaults to `0`.
+     * @param table.pathfind_flags - Flags that affect pathfinder behavior.
+     * @param table.radius - How close the pathfinder needs to get to its `goal` (in tiles). Defaults to `1`.
+     * @param table.start - The position from which to start pathfinding.
      * @returns A unique handle to identify this call when [on_script_path_request_finished](on_script_path_request_finished) fires.
      */
     request_path(this: void,
@@ -15008,7 +15132,7 @@ interface LuaSurface {
             collision_mask: CollisionMask | string[],
             start: Position,
             goal: Position,
-            force: LuaForce | string,
+            force: ForceIdentification,
             radius?: number,
             pathfind_flags?: PathfinderFlags,
             can_open_gates?: boolean,

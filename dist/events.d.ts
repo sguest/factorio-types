@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.35
+// Factorio version 1.1.36
 // API version 1
 
 /**
@@ -20,6 +20,27 @@ interface event  {
      * Tick the event was generated.
      */
     tick: number
+}
+/**
+ * Called when a {@link CustomInput | https://wiki.factorio.com/Prototype/CustomInput} is activated.
+ */
+interface CustomInputEvent extends event  {
+    /**
+     * The mouse cursor position when the custom input was activated.
+     */
+    cursor_position: Position
+    /**
+     * The prototype name of the custom input that was activated.
+     */
+    input_name: string
+    /**
+     * The player that activated the custom input.
+     */
+    player_index: number
+    /**
+     * Information about the prototype that is selected when the custom input is used. `nil` if none is selected.
+     */
+    selected_prototype?: SelectedPrototypeData
 }
 /**
  * Called when a unit/group completes a command.
@@ -210,7 +231,10 @@ interface on_combat_robot_expired extends event  {
     robot: LuaEntity
 }
 /**
- * Called when someone talks in-game either a player or through the server interface.
+ * Called when a message is sent to the in-game console, either by a player or through the server interface.
+ * @remarks
+ * This event only fires for plain messages, not for any commands (including `/shout` or `/whisper`).
+ *
  */
 interface on_console_chat extends event  {
     /**
