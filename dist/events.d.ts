@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.36
+// Factorio version 1.1.37
 // API version 1
 
 /**
@@ -440,6 +440,9 @@ interface on_force_cease_fire_changed extends event  {
 }
 /**
  * Called when a new force is created using `game.create_force()`
+ * @remarks
+ * This is not called when the default forces (`'player'`, `'enemy'`, `'neutral'`) are created as they will always exist.
+ *
  */
 interface on_force_created extends event  {
     /**
@@ -2101,7 +2104,7 @@ interface on_script_trigger_effect extends event  {
     target_position?: Position
 }
 /**
- * Called when the radar finishes scanning a sector. Can be filtered for the radar using {@link LuaSectorScannedEventFilter | LuaSectorScannedEventFilter}.
+ * Called when an entity of type `radar` finishes scanning a sector. Can be filtered for the radar using {@link LuaSectorScannedEventFilter | LuaSectorScannedEventFilter}.
  */
 interface on_sector_scanned extends event  {
     /**
@@ -2280,6 +2283,12 @@ interface on_unit_group_finished_gathering extends event  {
 interface on_unit_removed_from_group extends event  {
     group: LuaUnitGroup
     unit: LuaEntity
+}
+/**
+ * Called when a worker (construction or logistic) robot expires through a lack of energy.
+ */
+interface on_worker_robot_expired extends event  {
+    robot: LuaEntity
 }
 /**
  * A static event mods can use to tell other mods they built something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_built | LuaBootstrap::raise_script_built}, or when `raise_built` is passed to {@link LuaSurface::create_entity | LuaSurface::create_entity}. Can be filtered using {@link LuaScriptRaisedBuiltEventFilter | LuaScriptRaisedBuiltEventFilter}.

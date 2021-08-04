@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.36
+// Factorio version 1.1.37
 // API version 1
 
 /**
@@ -397,6 +397,8 @@ interface BlueprintSignalIcon {
  * ```
  * {left_top = {-2, -3}, right_bottom = {5, 8}}
  * ```
+ *
+ * @example
  * Shorthand: 
  * ```
  * {{-2, -3}, {5, 8}}
@@ -1801,7 +1803,7 @@ interface MapExchangeStringData {
  * @param water - The equivalent to 'water coverage' in the map generator GUI. Specifically, when this value is non-zero, `water_level = 10 * log2` (the value of this field), and the elevation generator subtracts water level from elevation before adding starting lakes. If water is set to 'none', elevation is clamped to a small positive value before adding starting lakes. This behavior can be overridden with alternate elevation generators (see `property_expression_names`, below).
  * @param width - Width in tiles. If `0`, the map has infinite width.
  * @example
- * Assuming a NamedNoiseExpression with the name "my-alternate-grass1-probability" is defined, 
+ * Assuming a NamedNoiseExpression with the name "my-alternate-grass1-probability" is defined 
  * ```
  * local surface = game.player.surface
  * local mgs = surface.map_gen_settings
@@ -2149,6 +2151,8 @@ type PlayerIdentification = number | string | LuaPlayer
  * {x = 50, y = 20}
  * {y = 20, x = 50}
  * ```
+ *
+ * @example
  * Shorthand: 
  * ```
  * {10, 20}

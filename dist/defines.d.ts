@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.36
+// Factorio version 1.1.37
 // API version 1
 
 declare namespace defines {
@@ -661,6 +661,7 @@ declare namespace defines {
         on_unit_group_created,
         on_unit_group_finished_gathering,
         on_unit_removed_from_group,
+        on_worker_robot_expired,
         script_raised_built,
         script_raised_destroy,
         script_raised_revive,

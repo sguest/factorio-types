@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.36
+// Factorio version 1.1.37
 // API version 1
 
 /**
@@ -267,6 +267,8 @@ interface LuaBootstrap {
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
+     *
+     * @example
      * Register for the [on_built_entity](on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
      * script.on_event(defines.events.on_built_entity,
@@ -462,10 +464,14 @@ interface LuaBootstrap {
      * ```
      * script.set_event_filter(defines.events.on_marked_for_deconstruction, {{filter = "ghost", invert = true}})
      * ```
+     *
+     * @example
      * Limit the [on_built_entity](on_built_entity) event to only be received when either a `unit` or a `unit-spawner` is built. 
      * ```
      * script.set_event_filter(defines.events.on_built_entity, {{filter = "type", type = "unit"}, {filter = "type", type = "unit-spawner"}})
      * ```
+     *
+     * @example
      * Limit the [on_entity_damaged](on_entity_damaged) event to only be received when a `rail` is damaged by an `acid` attack. 
      * ```
      * script.set_event_filter(defines.events.on_entity_damaged, {{filter = "rail"}, {filter = "damage-type", type = "acid", mode = "and"}})
@@ -910,7 +916,7 @@ interface LuaControl {
 
     /**
      * @remarks
-     * This will silently fail if personal logistics are not researched.
+     * This will silently fail if personal logistics are not researched yet.
      *
      * @param slot_index - The slot to clear.
      */
@@ -978,9 +984,9 @@ interface LuaControl {
     get_main_inventory(this: void): LuaInventory | null
 
     /**
-     * Sets the personal request and trash to the given values.
+     * Gets the parameters of a personal logistic request and auto-trash slot.
      * @remarks
-     * This will silently return an empty value (.name will be nil) if personal logistics aren't researched yet.
+     * This will silently return an empty value (`name` will be `nil`) if personal logistics are not researched yet.
      *
      * @param slot_index - The slot to get.
      */
@@ -988,9 +994,9 @@ interface LuaControl {
         slot_index: number): PersonalLogisticParameters
 
     /**
-     * Sets the vehicle logistic request and trash to the given values.
+     * Gets the parameters of a vehicle logistic request and auto-trash slot.
      * @remarks
-     * This will silently return an empty value (.name will be nil) if the vehicle does not use logistics.
+     * This will silently return an empty value (`name` will be `nil`) if the vehicle does not use logistics.
      *
      * @param slot_index - The slot to get.
      */
@@ -1014,6 +1020,11 @@ interface LuaControl {
      * Returns whether the player is holding a blueprint, it takes into account a blueprint as an item as well as blueprint from the blueprint record from the blueprint library. Note that the is_cursor_blueprint and get_cursor_blueprint_entities refer to the currently selected blueprint, so it returns blueprint related information also when holding a blueprint book with a blueprint being selected in it.
      */
     is_cursor_blueprint(this: void): boolean
+
+    /**
+     * Returns whether the player is holding something in the cursor. It takes into account items from the blueprint library, as well as items and ghost cursor.
+     */
+    is_cursor_empty(this: void): boolean
 
     /**
      * Is the flashlight enabled.
@@ -1065,24 +1076,26 @@ interface LuaControl {
         table: LuaControlSetGuiArrowParams): void
 
     /**
-     * Sets the personal request and trash to the given values.
+     * Sets a personal logistic request and auto-trash slot to the given value.
      * @remarks
-     * This will silently fail if personal logistics are not researched.
+     * This will silently fail if personal logistics are not researched yet.
      *
-     * @param slot_index - The slot to set/
-     * @returns If the slot was set.
+     * @param slot_index - The slot to set.
+     * @param value - The logistic request parameters.
+     * @returns Whether the slot was set successfully.
      */
     set_personal_logistic_slot(this: void,
         slot_index: number,
         value: PersonalLogisticParameters): boolean
 
     /**
-     * Sets the vehicle logistic request and trash to the given values.
+     * Sets a vehicle logistic request and auto-trash slot to the given value.
      * @remarks
-     * This will silently fail if the spider does not use logistics.
+     * This will silently fail if the vehicle does not use logistics.
      *
-     * @param slot_index - The slot to set/
-     * @returns If the slot was set.
+     * @param slot_index - The slot to set.
+     * @param value - The logistic request parameters.
+     * @returns Whether the slot was set successfully.
      */
     set_vehicle_logistic_slot(this: void,
         slot_index: number,
@@ -1441,6 +1454,9 @@ interface LuaCustomChartTag {
      */
     readonly force: LuaForce
 
+    /**
+     * This tag's icon, if it has one. Writing `nil` removes it.
+     */
     icon: SignalID
 
     /**
@@ -1566,7 +1582,7 @@ interface LuaCustomInputPrototype {
  * Lazily evaluated table. For performance reasons, we sometimes return a custom table-like type instead of a native Lua table. This custom type lazily constructs the necessary Lua wrappers of the corresponding C++ objects, therefore preventing their unnecessary construction in some cases.
  * There are some notable consequences to the usage of a custom table type rather than the native Lua table type: Iterating a custom table is only possible using the `pairs` Lua function; `ipairs` won't work. Another key difference is that custom tables cannot be serialised into a game save file -- if saving the game would require serialisation of a custom table, an error will be displayed and the game will not be saved.
  * @example
- * In previous versions of Factorio, this would create a [LuaPlayer](LuaPlayer) instance for every player in the game, even though only one such wrapper is needed. In the current version, accessing [game.players](LuaGameScript::players) by itself does not create any [LuaPlayer](LuaPlayer) instances; they are created lazily when accessed. Therefore, this example only constructs one [LuaPlayer](LuaPlayer) instance, no matter how many elements there are in `game.players`.
+ * In previous versions of Factorio, this would create a [LuaPlayer](LuaPlayer) instance for every player in the game, even though only one such wrapper is needed. In the current version, accessing [game.players](LuaGameScript::players) by itself does not create any [LuaPlayer](LuaPlayer) instances; they are created lazily when accessed. Therefore, this example only constructs one [LuaPlayer](LuaPlayer) instance, no matter how many elements there are in `game.players`. 
  * ```
  * game.players["Oxyd"].character.die()
  * ```
@@ -1576,6 +1592,8 @@ interface LuaCustomInputPrototype {
  * ```
  * for _, p in pairs(game.players) do game.player.print(p.name); end
  * ```
+ *
+ * @example
  * The following will produce no output because `ipairs` is not supported with custom tables. 
  * ```
  * for _, p in ipairs(game.players) do game.player.print(p.name); end  -- incorrect; use pairs instead
@@ -2402,12 +2420,12 @@ interface LuaEntity extends LuaControl {
     is_connected_to_electric_network(this: void): boolean
 
     /**
+     * Returns whether a craft is currently in process. It does not indicate whether progress is currently being made, but whether any crafting action has made progress in this machine.
      * @remarks
      * Applies to subclasses: CraftingMachine
      *
-     * @returns `true` if this machine is currently crafting.
      */
-    is_crafting(this: void): boolean
+    is_crafting(this: void): void
 
     /**
      * @remarks
@@ -3268,9 +3286,9 @@ interface LuaEntity extends LuaControl {
     readonly grid: LuaEquipmentGrid
 
     /**
-     * Health of the entity. Setting health to less than 0 will set health to 0, entities with 0 health can not be attacked. Setting health to higher than max health will set health to max health.
+     * The current health of the entity, or `nil` if it doesn't have health. Health is automatically clamped to be between `0` and max health (inclusive). Entities with a health of `0` can not be attacked.
      * @remarks
-     * If used on an entity that doesn't support health, this field will be `nil`.
+     * To get the maximum possible health of this entity, see {@link LuaEntityPrototype::max_health | LuaEntityPrototype::max_health} on its prototype.
      *
      */
     health: number
@@ -3369,7 +3387,7 @@ interface LuaEntity extends LuaControl {
     kills: number
 
     /**
-     * The player who built the entity
+     * The last player that changed any setting on this entity. This includes building the entity, changing its color, or configuring its circuit network. Can be `nil` if the last user is not part of the save anymore. Mods can overwrite it if desired.
      * @remarks
      * Applies to subclasses: EntityWithOwner
      *
@@ -4572,7 +4590,7 @@ interface LuaEntityPrototype {
     readonly localised_name: LocalisedString
 
     /**
-     * The logistic mode of this logistic container or `nil` if this isn't a logistic container prototype.
+     * The logistic mode of this logistic container or `nil` if this isn't a logistic container prototype. One of `"requester"`, `"active-provider"`, `"passive-provider"`, `"buffer"`, `"storage"`, `"none"`.
      */
     readonly logistic_mode: string
 
@@ -6012,8 +6030,7 @@ interface LuaForce {
      * @example
      * Charts a 2048x2048 rectangle centered around the origin. 
      * ```
-     * game.player.force.chart(game.player.surface,
-     *                         {{x = -1024, y = -1024}, {x = 1024, y = 1024}})
+     * game.player.force.chart(game.player.surface, {{x = -1024, y = -1024}, {x = 1024, y = 1024}})
      * ```
      *
      */
@@ -7650,7 +7667,7 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
      * `condition` may be `nil` in order to clear the logistic condition.
      *
      * @example
-     * Tell an entity to be active (e.g. a lamp to be lit) when the logistics network it's connected to has more than 4 chain signals. 
+     * Tell an entity to be active (e.g. a lamp to be lit) when the logistics network it's connected to has more than four chain signals. 
      * ```
      * a_behavior.logistic_condition = {condition={comparator=">",
      *                                             first_signal={type="item", name="rail-chain-signal"},
@@ -8282,7 +8299,7 @@ interface LuaGuiElement {
      * ```
      *
      * @example
-     * Lastly, these filters can be combined at will, taking care to specify how they should be combined (either `"and"` or `"or"`). The following will filter for any `"entities"` that are `"furnaces"` and that are not `"hidden"`. 
+     * Lastly, these filters can be combined at will, taking care to specify how they should be combined (either `"and"` or `"or"`. The following will filter for any `"entities"` that are `"furnaces"` and that are not `"hidden"`. 
      * ```
      * button.elem_filters = {{filter = "type", type = "furnace"}, {filter = "hidden", invert = true, mode = "and"}}
      * ```
@@ -12161,13 +12178,13 @@ interface LuaRecipe {
      * @example
      * What the "steel-chest" recipe would return 
      * ```
-     * { {type="item", name="steel-plate", amount=8} }
+     * {{type="item", name="steel-plate", amount=8}}
      * ```
      *
      * @example
      * What the "advanced-oil-processing" recipe would return 
      * ```
-     * { {type="fluid", name="crude-oil", amount=10}, {type="fluid", name="water", amount=5} }
+     * {{type="fluid", name="crude-oil", amount=10}, {type="fluid", name="water", amount=5}}
      * ```
      *
      */
@@ -15292,12 +15309,7 @@ interface LuaSurface {
     readonly index: number
 
     /**
-     * The generation settings for the surface.
-     * can be used to adjust the surface after changing generation settings.
-     * @remarks
-     * When changing settings runtime the game will not retroactively change anything.
-     * {@link LuaSurface::regenerate_entity | LuaSurface::regenerate_entity}, {@link LuaSurface::regenerate_decorative | LuaSurface::regenerate_decorative}, and {@link LuaSurface::delete_chunk | LuaSurface::delete_chunk}
-     *
+     * The generation settings for this surface. These can be modified to after surface generation, but note that this will not retroactively update the surface. To manually adjust it, {@link LuaSurface::regenerate_entity | LuaSurface::regenerate_entity}, {@link LuaSurface::regenerate_decorative | LuaSurface::regenerate_decorative} and {@link LuaSurface::delete_chunk | LuaSurface::delete_chunk} can be used.
      */
     map_gen_settings: MapGenSettings
 
