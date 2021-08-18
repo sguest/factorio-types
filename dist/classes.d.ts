@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.37
+// Factorio version 1.1.38
 // API version 1
 
 /**
@@ -2647,6 +2647,15 @@ interface LuaEntity extends LuaControl {
         command: Command): void
 
     /**
+     * Give the entity a distraction command.
+     * @remarks
+     * Applies to subclasses: Unit
+     *
+     */
+    set_distraction_command(this: void,
+        command: Command): void
+
+    /**
      * Sets the driver of this vehicle.
      * @remarks
      * This differs over {@link LuaEntity::set_passenger | LuaEntity::set_passenger} in that the passenger can't drive the vehicle.
@@ -3642,12 +3651,12 @@ interface LuaEntity extends LuaControl {
     remove_unfiltered_items: boolean
 
     /**
-     * The player that this simple-entity-with-owner, simple-entity-with-force, flying-text or highlight-box is visible to or `nil`. Set to `nil` to clear.
+     * The player that this `simple-entity-with-owner`, `simple-entity-with-force`, `flying-text`, or `highlight-box` is visible to. `nil` means it is rendered for every player.
      */
     render_player: LuaPlayer
 
     /**
-     * The forces that this simple-entity-with-owner, simple-entity-with-force or flying-text is visible to or `nil`. Set to `nil` to clear.
+     * The forces that this `simple-entity-with-owner`, `simple-entity-with-force`, or `flying-text` is visible to. `nil` or an empty array means it is rendered for every force.
      * @remarks
      * Reading will always give an array of {@link LuaForce | LuaForce}
      *
@@ -5889,16 +5898,25 @@ interface LuaFluidPrototype {
     readonly base_color: Color
 
     /**
-     * Default temperature of the fluid.
+     * Default temperature of this fluid.
      */
     readonly default_temperature: number
 
+    /**
+     * A multiplier on the amount of emissions produced when this fluid is burnt in a generator. A value above `1.0` increases emissions and vice versa. The multiplier can't be negative.
+     */
     readonly emissions_multiplier: number
 
     readonly flow_color: Color
 
+    /**
+     * The amount of energy in Joules one unit of this fluid will produce when burnt in a generator. A value of `0` means this fluid can't be used for energy generation. The value can't be negative.
+     */
     readonly fuel_value: number
 
+    /**
+     * The temperature above which this fluid will be shown as gaseous inside tanks and pipes.
+     */
     readonly gas_temperature: number
 
     /**
@@ -5907,10 +5925,13 @@ interface LuaFluidPrototype {
     readonly group: LuaGroup
 
     /**
-     * How much energy the fluid will generate at max temperature assuming 100% efficiency steam engine.
+     * The amount of energy in Joules required to heat one unit of this fluid by 1°C.
      */
     readonly heat_capacity: number
 
+    /**
+     * Whether this fluid is hidden from the fluid and signal selectors.
+     */
     readonly hidden: boolean
 
     readonly localised_description: LocalisedString
@@ -5918,7 +5939,7 @@ interface LuaFluidPrototype {
     readonly localised_name: LocalisedString
 
     /**
-     * Maximum temperature the fluid can reach.
+     * Maximum temperature this fluid can reach.
      */
     readonly max_temperature: number
 
@@ -6105,7 +6126,7 @@ interface LuaForce {
         ammo: string): number
 
     /**
-     * Will this force attack members of another force?
+     * Is `other` force in this force's cease fire list?
      */
     get_cease_fire(this: void,
         other: ForceIdentification): boolean
@@ -6122,7 +6143,7 @@ interface LuaForce {
         name: string): number
 
     /**
-     * Is this force a friend?
+     * Is `other` force in this force's friends list.
      */
     get_friend(this: void,
         other: ForceIdentification): boolean
@@ -6207,6 +6228,18 @@ interface LuaForce {
         position: ChunkPosition): boolean
 
     /**
+     * Is this force an enemy? This differs from `get_cease_fire` in that it is always false for neutral force. This is equivalent to checking the `enemy` ForceCondition.
+     */
+    is_enemy(this: void,
+        other: ForceIdentification): boolean
+
+    /**
+     * Is this force a friend? This differs from `get_friend` in that it is always true for neutral force. This is equivalent to checking the `friend` ForceCondition.
+     */
+    is_friend(this: void,
+        other: ForceIdentification): boolean
+
+    /**
      * Is pathfinder busy? When the pathfinder is busy, it won't accept any more pathfinding requests.
      */
     is_pathfinder_busy(this: void): boolean
@@ -6286,15 +6319,14 @@ interface LuaForce {
         modifier: number): void
 
     /**
-     * Stop attacking members of a given force.
-     * @param cease_fire - When `true`, this force won't attack `other`; otherwise it will.
+     * Add `other` force to this force's cease fire list. Forces on the cease fire list won't be targeted for attack.
      */
     set_cease_fire(this: void,
         other: ForceIdentification,
         cease_fire: boolean): void
 
     /**
-     * Friends have unrestricted access to buildings and turrets won't fire at them.
+     * Add `other` force to this force's friends list. Friends have unrestricted access to buildings and turrets won't fire at them.
      */
     set_friend(this: void,
         other: ForceIdentification,
@@ -9377,7 +9409,7 @@ interface LuaItemPrototype {
     readonly place_as_equipment_result: LuaEquipmentPrototype
 
     /**
-     * The place as tile result if one is defined else `nil`.
+     * The place-as-tile result if one is defined, else `nil`.
      */
     readonly place_as_tile_result: PlaceAsTileResult
 
@@ -14829,6 +14861,20 @@ interface LuaSurface {
         }): LuaEntity | null
 
     /**
+     * Find the enemy entity-with-owner closest to the given position.
+     * @param table.force - The force the result will be an enemy of. Uses the player force if not specified.
+     * @param table.max_distance - Radius of the circular search area.
+     * @param table.position - Center of the search area.
+     * @returns The nearest enemy entity-with-owner or `nil` if no enemy could be found within the given area.
+     */
+    find_nearest_enemy_entity_with_owner(this: void,
+        table: {
+            position: Position,
+            max_distance: number,
+            force?: ForceIdentification
+        }): LuaEntity | null
+
+    /**
      * Find a non-colliding position within a given radius.
      * @remarks
      * Special care needs to be taken when using a radius of `0`. The game will not stop searching until it finds a suitable position, so it is important to make sure such a position exists. One particular case where it would not be able to find a solution is running it before any chunks have been generated.
@@ -16342,6 +16388,13 @@ interface LuaUnitGroup {
      * @see {@link LuaEntity::set_command}
      */
     set_command(this: void,
+        command: Command): void
+
+    /**
+     * Give this group a distraction command.
+     * @see {@link LuaEntity::set_command}
+     */
+    set_distraction_command(this: void,
         command: Command): void
 
     /**
