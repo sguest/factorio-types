@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.38
+// Factorio version 1.1.39
 // API version 1
 
 /**
@@ -500,8 +500,8 @@ interface CircuitConditionDefinition {
  * @param wire - Wire color, either [defines.wire_type.red](defines.wire_type.red) or [defines.wire_type.green](defines.wire_type.green).
  */
 interface CircuitConnectionDefinition {
-    'source_circuit_id': number
-    'target_circuit_id': number
+    'source_circuit_id': defines.circuit_connector_id
+    'target_circuit_id': defines.circuit_connector_id
     'target_entity': LuaEntity
     /**
      * Wire color, either {@link defines.wire_type.red | defines.wire_type.red} or {@link defines.wire_type.green | defines.wire_type.green}.
@@ -1781,7 +1781,7 @@ interface MapExchangeStringData {
  * @param autoplace_settings - Each setting in this dictionary maps the string type to the settings for that type. Valid types are `"entity"`, `"tile"` and `"decorative"`.
  * @param cliff_settings - Map generation settings for entities of the type "cliff".
  * @param default_enable_all_autoplace_controls - Whether undefined `autoplace_controls` should fall back to the default controls or not. Defaults to `true`.
- * @param height - Height in tiles. If `0`, the map has infinite height.
+ * @param height - Height in tiles. If `0`, the map has 'infinite' height, with the actual limitation being one million tiles in each direction from the center.
  * @param peaceful_mode - Whether peaceful mode is enabled for this map.
  * @param property_expression_names - Overrides for tile property value generators. Values either name a NamedNoiseExpression or can be literal numbers, stored as strings (e.g. `"5"`). All other controls can be overridden by a property expression names. Notable properties: 
 - `moisture` - a value between 0 and 1 that determines whether a tile becomes sandy (low moisture) or grassy (high moisture).
@@ -1801,7 +1801,7 @@ interface MapExchangeStringData {
  * @param starting_points - Positions of the starting areas.
  * @param terrain_segmentation - The inverse of 'water scale' in the map generator GUI. Lower `terrain_segmentation` increases the scale of elevation features (lakes, continents, etc). This behavior can be overridden with alternate elevation generators (see `property_expression_names`, below).
  * @param water - The equivalent to 'water coverage' in the map generator GUI. Specifically, when this value is non-zero, `water_level = 10 * log2` (the value of this field), and the elevation generator subtracts water level from elevation before adding starting lakes. If water is set to 'none', elevation is clamped to a small positive value before adding starting lakes. This behavior can be overridden with alternate elevation generators (see `property_expression_names`, below).
- * @param width - Width in tiles. If `0`, the map has infinite width.
+ * @param width - Width in tiles. If `0`, the map has 'infinite' width, with the actual limitation being one million tiles in each direction from the center.
  * @example
  * Assuming a NamedNoiseExpression with the name "my-alternate-grass1-probability" is defined 
  * ```
@@ -1839,7 +1839,7 @@ interface MapGenSettings {
      */
     'default_enable_all_autoplace_controls': boolean
     /**
-     * Height in tiles. If `0`, the map has infinite height.
+     * Height in tiles. If `0`, the map has 'infinite' height, with the actual limitation being one million tiles in each direction from the center.
      */
     'height': number
     /**
@@ -1883,7 +1883,7 @@ interface MapGenSettings {
      */
     'water': MapGenSize
     /**
-     * Width in tiles. If `0`, the map has infinite width.
+     * Width in tiles. If `0`, the map has 'infinite' width, with the actual limitation being one million tiles in each direction from the center.
      */
     'width': number
 }
@@ -2645,7 +2645,7 @@ interface TrainScheduleRecord {
      * Only present when the station is temporary, the value is then always `true`.
      */
     'temporary'?: boolean
-    'wait_conditions': WaitCondition[]
+    'wait_conditions'?: WaitCondition[]
 }
 
 /**
@@ -2778,34 +2778,34 @@ interface WaitCondition {
 }
 
 /**
- * @param source_circuit_id - Mandatory if the source entity has more than one circuit connector and using circuit wire.
- * @param source_wire_id - Mandatory if the source entity has more than one circuit connector and using circuit wire.
- * @param target_circuit_id - Mandatory if the target entity has more than one circuit connector and using circuit wire.
+ * @param source_circuit_id - Mandatory if the source entity has more than one circuit connection using circuit wire.
+ * @param source_wire_id - Mandatory if the source entity has more than one wire connection using copper wire.
+ * @param target_circuit_id - Mandatory if the target entity has more than one circuit connection using circuit wire.
  * @param target_entity - The entity to (dis)connect the source entity with.
- * @param target_wire_id - Mandatory if the target entity has more than one circuit connector and using circuit wire.
+ * @param target_wire_id - Mandatory if the target entity has more than one wire connection using copper wire.
  * @param wire - Wire color, either [defines.wire_type.red](defines.wire_type.red) or [defines.wire_type.green](defines.wire_type.green).
  */
 interface WireConnectionDefinition {
     /**
-     * Mandatory if the source entity has more than one circuit connector and using circuit wire.
+     * Mandatory if the source entity has more than one circuit connection using circuit wire.
      */
-    'source_circuit_id'?: number
+    'source_circuit_id'?: defines.circuit_connector_id
     /**
-     * Mandatory if the source entity has more than one circuit connector and using circuit wire.
+     * Mandatory if the source entity has more than one wire connection using copper wire.
      */
-    'source_wire_id'?: number
+    'source_wire_id'?: defines.circuit_connector_id
     /**
-     * Mandatory if the target entity has more than one circuit connector and using circuit wire.
+     * Mandatory if the target entity has more than one circuit connection using circuit wire.
      */
-    'target_circuit_id'?: number
+    'target_circuit_id'?: defines.circuit_connector_id
     /**
      * The entity to (dis)connect the source entity with.
      */
     'target_entity': LuaEntity
     /**
-     * Mandatory if the target entity has more than one circuit connector and using circuit wire.
+     * Mandatory if the target entity has more than one wire connection using copper wire.
      */
-    'target_wire_id'?: number
+    'target_wire_id'?: defines.circuit_connector_id
     /**
      * Wire color, either {@link defines.wire_type.red | defines.wire_type.red} or {@link defines.wire_type.green | defines.wire_type.green}.
      */

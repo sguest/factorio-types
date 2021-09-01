@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.38
+// Factorio version 1.1.39
 // API version 1
 
 declare namespace defines {
@@ -524,6 +524,8 @@ declare namespace defines {
         on_entity_renamed,
         on_entity_settings_pasted,
         on_entity_spawned,
+        on_equipment_inserted,
+        on_equipment_removed,
         on_force_cease_fire_changed,
         on_force_created,
         on_force_friends_changed,

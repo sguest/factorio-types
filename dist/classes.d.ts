@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.38
+// Factorio version 1.1.39
 // API version 1
 
 /**
@@ -4876,7 +4876,7 @@ interface LuaEntityPrototype {
     readonly resistances: {[key: string]: Resistance}
 
     /**
-     * The resource categories this mining drill supports or `nil` if not a mining dill.
+     * The resource categories this character or mining drill supports, or `nil` if not a character or mining dill.
      * @remarks
      * The value in the dictionary is meaningless and exists just to allow the dictionary type for easy lookup.
      *
@@ -10073,7 +10073,7 @@ interface LuaItemStack {
     entity_filter_mode: defines.deconstruction_item.entity_filter_mode
 
     /**
-     * The entity filters for this deconstruction item.
+     * The entity filters for this deconstruction item. The attribute is a sparse array with the keys representing the index of the filter. All strings in this array must be entity prototype names that don't have the `"not-deconstructable"` flag set and are either a `cliff` or marked as `minable`.
      */
     entity_filters: string[]
 
@@ -10245,7 +10245,7 @@ interface LuaItemStack {
     tile_filter_mode: defines.deconstruction_item.tile_filter_mode
 
     /**
-     * The tile filters for this deconstruction item.
+     * The tile filters for this deconstruction item. The attribute is a sparse array with the keys representing the index of the filter. All strings in this array must be tile prototype names.
      */
     tile_filters: string[]
 

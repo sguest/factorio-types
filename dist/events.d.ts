@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.38
+// Factorio version 1.1.39
 // API version 1
 
 /**
@@ -422,6 +422,36 @@ interface on_entity_spawned extends event  {
     spawner: LuaEntity
 }
 /**
+ * Called after equipment is inserted into an equipment grid.
+ */
+interface on_equipment_inserted extends event  {
+    /**
+     * The equipment inserted.
+     */
+    equipment: LuaEquipment
+    /**
+     * The equipment grid inserted into.
+     */
+    grid: LuaEquipmentGrid
+}
+/**
+ * Called after equipment is removed from an equipment grid.
+ */
+interface on_equipment_removed extends event  {
+    /**
+     * The count of equipment removed.
+     */
+    count: number
+    /**
+     * The equipment removed.
+     */
+    equipment: string
+    /**
+     * The equipment grid removed from.
+     */
+    grid: LuaEquipmentGrid
+}
+/**
  * Called when the a forces cease fire values change.
  */
 interface on_force_cease_fire_changed extends event  {
@@ -507,7 +537,7 @@ interface on_forces_merging extends event  {
     source: LuaForce
 }
 /**
- * Called when a game is created from a scenario.
+ * Called when a game is created from a scenario. This is fired for every mod, even when the scenario's save data already includes it. In those cases however, {@link LuaBootstrap::on_init | LuaBootstrap::on_init} is not fired.
  */
 interface on_game_created_from_scenario extends event  {
 }
