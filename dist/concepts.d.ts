@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.39
+// Factorio version 1.1.40
 // API version 1
 
 /**
@@ -941,7 +941,7 @@ interface DecorativeResult {
 }
 
 /**
- * Technology and recipe difficulty settings.
+ * Technology and recipe difficulty settings. Updating any of the attributes will immediately take effect in the game engine.
  * @param research_queue_setting - Either `"after-victory"`, `"always"` or `"never"`. Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See [LuaForce](LuaForce) for that.
  * @param technology_price_multiplier - A value in range [0.001, 1000].
  */
@@ -961,6 +961,119 @@ interface DifficultySettings {
 interface DisplayResolution {
     'height': number
     'width': number
+}
+
+/**
+ * These values represent a percentual increase in evolution. This means a value of `0.1` would increase evolution by 10%.
+ * @param destroy_factor - The amount evolution progresses for every destroyed spawner. Defaults to `0.002`.
+ * @param enabled - Whether enemy evolution is enabled at all.
+ * @param pollution_factor - The amount evolution progresses for every unit of pollution. Defaults to `0.0000009`.
+ * @param time_factor - The amount evolution naturally progresses by every second. Defaults to `0.000004`.
+ */
+interface EnemyEvolutionMapSettings {
+    /**
+     * The amount evolution progresses for every destroyed spawner. Defaults to `0.002`.
+     */
+    'destroy_factor': number
+    /**
+     * Whether enemy evolution is enabled at all.
+     */
+    'enabled': boolean
+    /**
+     * The amount evolution progresses for every unit of pollution. Defaults to `0.0000009`.
+     */
+    'pollution_factor': number
+    /**
+     * The amount evolution naturally progresses by every second. Defaults to `0.000004`.
+     */
+    'time_factor': number
+}
+
+/**
+ * Candidate chunks are given scores to determine which one of them should be expanded into. This score takes into account various settings noted below. The iteration is over a square region centered around the chunk for which the calculation is done, and includes the central chunk as well. Distances are calculated as {@link Manhattan distance | https://en.wikipedia.org/wiki/Taxicab_geometry}.
+ * The pseudocode algorithm to determine a chunk's score is as follows:
+ * ```
+ * player = 0
+ * for neighbour in all chunks within enemy_building_influence_radius from chunk:
+ *   player += number of player buildings on neighbour
+ *           * building_coefficient
+ *           * neighbouring_chunk_coefficient^distance(chunk, neighbour)
+ * 
+ * base = 0
+ * for neighbour in all chunk within friendly_base_influence_radius from chunk:
+ *   base += num of enemy bases on neighbour
+ *           * other_base_coefficient
+ *           * neighbouring_base_chunk_coefficient^distance(chunk, neighbour)
+ * 
+ * score(chunk) = 1 / (1 + player + base)
+ * ```
+ * @param building_coefficient - Defaults to `0.1`.
+ * @param enabled - Whether enemy expansion is enabled at all.
+ * @param enemy_building_influence_radius - Defaults to `2`.
+ * @param friendly_base_influence_radius - Defaults to `2`.
+ * @param max_colliding_tiles_coefficient - A chunk has to have at most this high of a percentage of unbuildable tiles for it to be considered a candidate to avoid chunks full of water as candidates. Defaults to `0.9`, or 90%.
+ * @param max_expansion_cooldown - The maximum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `60*3,600=216,000` ticks.
+ * @param max_expansion_distance - Distance in chunks from the furthest base around to prevent expansions from reaching too far into the player's territory. Defaults to `7`.
+ * @param min_expansion_cooldown - The minimum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `4*3,600=14,400` ticks.
+ * @param neighbouring_base_chunk_coefficient - Defaults to `0.4`.
+ * @param neighbouring_chunk_coefficient - Defaults to `0.5`.
+ * @param other_base_coefficient - Defaults to `2.0`.
+ * @param settler_group_max_size - The maximum size of a biter group that goes to build a new base. This is multiplied by the evolution factor. Defaults to `20`.
+ * @param settler_group_min_size - The minimum size of a biter group that goes to build a new base. This is multiplied by the evolution factor. Defaults to `5`.
+ */
+interface EnemyExpansionMapSettings {
+    /**
+     * Defaults to `0.1`.
+     */
+    'building_coefficient': number
+    /**
+     * Whether enemy expansion is enabled at all.
+     */
+    'enabled': boolean
+    /**
+     * Defaults to `2`.
+     */
+    'enemy_building_influence_radius': number
+    /**
+     * Defaults to `2`.
+     */
+    'friendly_base_influence_radius': number
+    /**
+     * A chunk has to have at most this high of a percentage of unbuildable tiles for it to be considered a candidate to avoid chunks full of water as candidates. Defaults to `0.9`, or 90%.
+     */
+    'max_colliding_tiles_coefficient': number
+    /**
+     * The maximum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `60*3,600=216,000` ticks.
+     */
+    'max_expansion_cooldown': number
+    /**
+     * Distance in chunks from the furthest base around to prevent expansions from reaching too far into the player's territory. Defaults to `7`.
+     */
+    'max_expansion_distance': number
+    /**
+     * The minimum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `4*3,600=14,400` ticks.
+     */
+    'min_expansion_cooldown': number
+    /**
+     * Defaults to `0.4`.
+     */
+    'neighbouring_base_chunk_coefficient': number
+    /**
+     * Defaults to `0.5`.
+     */
+    'neighbouring_chunk_coefficient': number
+    /**
+     * Defaults to `2.0`.
+     */
+    'other_base_coefficient': number
+    /**
+     * The maximum size of a biter group that goes to build a new base. This is multiplied by the evolution factor. Defaults to `20`.
+     */
+    'settler_group_max_size': number
+    /**
+     * The minimum size of a biter group that goes to build a new base. This is multiplied by the evolution factor. Defaults to `5`.
+     */
+    'settler_group_min_size': number
 }
 
 /**
@@ -1904,7 +2017,8 @@ interface MapGenSettings {
 type MapGenSize = number | 'none' | 'very-low' | 'very-small' | 'very-poor' | 'low' | 'small' | 'poor' | 'normal' | 'medium' | 'regular' | 'high' | 'big' | 'good' | 'very-high' | 'very-big' | 'very-good'
 
 /**
- * Various game-related settings. See `data/base/prototypes/map-settings.lua` for a description of all attributes. Updating any of the attributes will immediately take effect in the game engine.
+ * Various game-related settings. Updating any of the attributes will immediately take effect in the game engine.
+ * @param max_failed_behavior_count - If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
  * @example
  * Increase the number of short paths the pathfinder can cache. 
  * ```
@@ -1912,7 +2026,18 @@ type MapGenSize = number | 'none' | 'very-low' | 'very-small' | 'very-poor' | 'l
  * ```
  *
  */
-type MapSettings = any
+interface MapSettings {
+    'enemy_evolution': EnemyEvolutionMapSettings
+    'enemy_expansion': EnemyExpansionMapSettings
+    /**
+     * If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
+     */
+    'max_failed_behavior_count': number
+    'path_finder': PathFinderMapSettings
+    'pollution': PollutionMapSettings
+    'steering': SteeringMapSettings
+    'unit_group': UnitGroupMapSettings
+}
 
 /**
  * What is shown in the map view. If a field is not given, that setting will not be changed.
@@ -2061,6 +2186,176 @@ interface OldTileAndPosition {
 }
 
 /**
+ * @param cache_accept_path_end_distance_ratio - When looking for a path from cache, make sure it doesn't end too far from the requested end in relative terms. This is typically more lenient than the start ratio since the end target could be moving. Defaults to `0.15`.
+ * @param cache_accept_path_start_distance_ratio - When looking for a path from cache, make sure it doesn't start too far from the requested start in relative terms. Defaults to `0.2`.
+ * @param cache_max_connect_to_cache_steps_multiplier - When looking for a connection to a cached path, search at most for this number of steps times the original estimate. Defaults to `100`.
+ * @param cache_path_end_distance_rating_multiplier - When assigning a rating to the best path, this multiplier times end distances is considered. This value is typically higher than the start multiplier as this results in better end path quality. Defaults to `20`.
+ * @param cache_path_start_distance_rating_multiplier - When assigning a rating to the best path, this multiplier times start distances is considered. Defaults to `10`.
+ * @param direct_distance_to_consider_short_request - The maximum direct distance in tiles before a request is no longer considered short. Defaults to `100`.
+ * @param enemy_with_different_destination_collision_penalty - A penalty that is applied for another unit that is too close and either not moving or has a different goal. Defaults to `30`.
+ * @param extended_collision_penalty - The collision penalty for collisions in the extended bounding box but outside the entity's actual bounding box. Defaults to `3`.
+ * @param fwd2bwd_ratio - Determines whether forwards (`>1`), backwards (`<-1`), or symmetrical (`1`) search is preferred. Defaults to `5`.
+ * @param general_entity_collision_penalty - The general collision penalty with other units. Defaults to `10`.
+ * @param general_entity_subsequent_collision_penalty - The collision penalty for positions that require the destruction of an entity to get to. Defaults to `3`.
+ * @param goal_pressure_ratio - When looking at which node to check next, their heuristic value is multiplied by this ratio. The higher it is, the more the search is directed straight at the goal. Defaults to `2`.
+ * @param ignore_moving_enemy_collision_distance - The distance in tiles after which other moving units are not considered for pathfinding. Defaults to `5`.
+ * @param long_cache_min_cacheable_distance - The minimal distance to the goal in tiles required to be searched in the long path cache. Defaults to `30`.
+ * @param long_cache_size - Number of elements in the long cache. Defaults to `25`.
+ * @param max_clients_to_accept_any_new_request - The amount of path finder requests accepted per tick regardless of the requested path's length. Defaults to `10`.
+ * @param max_clients_to_accept_short_new_request - When the `max_clients_to_accept_any_new_request` amount is exhausted, only path finder requests with a short estimate will be accepted until this amount (per tick) is reached. Defaults to `100`.
+ * @param max_steps_worked_per_tick - The maximum number of nodes that are expanded per tick. Defaults to `1,000`.
+ * @param max_work_done_per_tick - The maximum amount of work each pathfinding job is allowed to do per tick. Defaults to `8,000`.
+ * @param min_steps_to_check_path_find_termination - The minimum amount of steps that are guaranteed to be performed for every request. Defaults to `2000`.
+ * @param negative_cache_accept_path_end_distance_ratio - Same principle as `cache_accept_path_end_distance_ratio`, but used for negative cache queries. Defaults to `0.3`.
+ * @param negative_cache_accept_path_start_distance_ratio - Same principle as `cache_accept_path_start_distance_ratio`, but used for negative cache queries. Defaults to `0.3`.
+ * @param negative_path_cache_delay_interval - The delay in ticks between decrementing the score of all paths in the negative cache by one. Defaults to `20`.
+ * @param overload_levels - The thresholds of waiting clients after each of which the per-tick work limit will be increased by the corresponding value in `overload_multipliers`. This is to avoid clients having to wait too long. Must have the same number of elements as `overload_multipliers`. Defaults to `{0, 100, 500}`.
+ * @param overload_multipliers - The multipliers to the amount of per-tick work applied after the corresponding thresholds in `overload_levels` have been reached. Must have the same number of elements as `overload_multipliers`. Defaults to `{2, 3, 4}`.
+ * @param short_cache_min_algo_steps_to_cache - The minimal number of nodes required to be searched in the short path cache. Defaults to `50`.
+ * @param short_cache_min_cacheable_distance - The minimal distance to the goal in tiles required to be searched in the short path cache. Defaults to `10`.
+ * @param short_cache_size - Number of elements in the short cache. Defaults to `5`.
+ * @param short_request_max_steps - The maximum amount of nodes a short request will traverse before being rescheduled as a long request. Defaults to `1000`.
+ * @param short_request_ratio - The amount of steps that are allocated to short requests each tick, as a percentage of all available steps. Defaults to `0.5`, or 50%.
+ * @param stale_enemy_with_same_destination_collision_penalty - A penalty that is applied for another unit that is on the way to the goal. This is mainly relevant for situations where a group of units has arrived at the target they are supposed to attack, making units further back circle around to reach the target. Defaults to `30`.
+ * @param start_to_goal_cost_multiplier_to_terminate_path_find - If the actual amount of steps is higher than the initial estimate by this factor, pathfinding is terminated. Defaults to `2000.0`.
+ * @param use_path_cache - Whether to cache paths at all. Defaults to `true`.
+ */
+interface PathFinderMapSettings {
+    /**
+     * When looking for a path from cache, make sure it doesn't end too far from the requested end in relative terms. This is typically more lenient than the start ratio since the end target could be moving. Defaults to `0.15`.
+     */
+    'cache_accept_path_end_distance_ratio': number
+    /**
+     * When looking for a path from cache, make sure it doesn't start too far from the requested start in relative terms. Defaults to `0.2`.
+     */
+    'cache_accept_path_start_distance_ratio': number
+    /**
+     * When looking for a connection to a cached path, search at most for this number of steps times the original estimate. Defaults to `100`.
+     */
+    'cache_max_connect_to_cache_steps_multiplier': number
+    /**
+     * When assigning a rating to the best path, this multiplier times end distances is considered. This value is typically higher than the start multiplier as this results in better end path quality. Defaults to `20`.
+     */
+    'cache_path_end_distance_rating_multiplier': number
+    /**
+     * When assigning a rating to the best path, this multiplier times start distances is considered. Defaults to `10`.
+     */
+    'cache_path_start_distance_rating_multiplier': number
+    /**
+     * The maximum direct distance in tiles before a request is no longer considered short. Defaults to `100`.
+     */
+    'direct_distance_to_consider_short_request': number
+    /**
+     * A penalty that is applied for another unit that is too close and either not moving or has a different goal. Defaults to `30`.
+     */
+    'enemy_with_different_destination_collision_penalty': number
+    /**
+     * The collision penalty for collisions in the extended bounding box but outside the entity's actual bounding box. Defaults to `3`.
+     */
+    'extended_collision_penalty': number
+    /**
+     * Determines whether forwards (`>1`), backwards (`<-1`), or symmetrical (`1`) search is preferred. Defaults to `5`.
+     */
+    'fwd2bwd_ratio': number
+    /**
+     * The general collision penalty with other units. Defaults to `10`.
+     */
+    'general_entity_collision_penalty': number
+    /**
+     * The collision penalty for positions that require the destruction of an entity to get to. Defaults to `3`.
+     */
+    'general_entity_subsequent_collision_penalty': number
+    /**
+     * When looking at which node to check next, their heuristic value is multiplied by this ratio. The higher it is, the more the search is directed straight at the goal. Defaults to `2`.
+     */
+    'goal_pressure_ratio': number
+    /**
+     * The distance in tiles after which other moving units are not considered for pathfinding. Defaults to `5`.
+     */
+    'ignore_moving_enemy_collision_distance': number
+    /**
+     * The minimal distance to the goal in tiles required to be searched in the long path cache. Defaults to `30`.
+     */
+    'long_cache_min_cacheable_distance': number
+    /**
+     * Number of elements in the long cache. Defaults to `25`.
+     */
+    'long_cache_size': number
+    /**
+     * The amount of path finder requests accepted per tick regardless of the requested path's length. Defaults to `10`.
+     */
+    'max_clients_to_accept_any_new_request': number
+    /**
+     * When the `max_clients_to_accept_any_new_request` amount is exhausted, only path finder requests with a short estimate will be accepted until this amount (per tick) is reached. Defaults to `100`.
+     */
+    'max_clients_to_accept_short_new_request': number
+    /**
+     * The maximum number of nodes that are expanded per tick. Defaults to `1,000`.
+     */
+    'max_steps_worked_per_tick': number
+    /**
+     * The maximum amount of work each pathfinding job is allowed to do per tick. Defaults to `8,000`.
+     */
+    'max_work_done_per_tick': number
+    /**
+     * The minimum amount of steps that are guaranteed to be performed for every request. Defaults to `2000`.
+     */
+    'min_steps_to_check_path_find_termination': number
+    /**
+     * Same principle as `cache_accept_path_end_distance_ratio`, but used for negative cache queries. Defaults to `0.3`.
+     */
+    'negative_cache_accept_path_end_distance_ratio': number
+    /**
+     * Same principle as `cache_accept_path_start_distance_ratio`, but used for negative cache queries. Defaults to `0.3`.
+     */
+    'negative_cache_accept_path_start_distance_ratio': number
+    /**
+     * The delay in ticks between decrementing the score of all paths in the negative cache by one. Defaults to `20`.
+     */
+    'negative_path_cache_delay_interval': number
+    /**
+     * The thresholds of waiting clients after each of which the per-tick work limit will be increased by the corresponding value in `overload_multipliers`. This is to avoid clients having to wait too long. Must have the same number of elements as `overload_multipliers`. Defaults to `{0, 100, 500}`.
+     */
+    'overload_levels': number[]
+    /**
+     * The multipliers to the amount of per-tick work applied after the corresponding thresholds in `overload_levels` have been reached. Must have the same number of elements as `overload_multipliers`. Defaults to `{2, 3, 4}`.
+     */
+    'overload_multipliers': number[]
+    /**
+     * The minimal number of nodes required to be searched in the short path cache. Defaults to `50`.
+     */
+    'short_cache_min_algo_steps_to_cache': number
+    /**
+     * The minimal distance to the goal in tiles required to be searched in the short path cache. Defaults to `10`.
+     */
+    'short_cache_min_cacheable_distance': number
+    /**
+     * Number of elements in the short cache. Defaults to `5`.
+     */
+    'short_cache_size': number
+    /**
+     * The maximum amount of nodes a short request will traverse before being rescheduled as a long request. Defaults to `1000`.
+     */
+    'short_request_max_steps': number
+    /**
+     * The amount of steps that are allocated to short requests each tick, as a percentage of all available steps. Defaults to `0.5`, or 50%.
+     */
+    'short_request_ratio': number
+    /**
+     * A penalty that is applied for another unit that is on the way to the goal. This is mainly relevant for situations where a group of units has arrived at the target they are supposed to attack, making units further back circle around to reach the target. Defaults to `30`.
+     */
+    'stale_enemy_with_same_destination_collision_penalty': number
+    /**
+     * If the actual amount of steps is higher than the initial estimate by this factor, pathfinding is terminated. Defaults to `2000.0`.
+     */
+    'start_to_goal_cost_multiplier_to_terminate_path_find': number
+    /**
+     * Whether to cache paths at all. Defaults to `true`.
+     */
+    'use_path_cache': boolean
+}
+
+/**
  * @param allow_destroy_friendly_entities - Allows pathing through friendly entities. Defaults to `false`.
  * @param allow_paths_through_own_entities - Allows the pathfinder to path through entities of the same force. Defaults to `false`.
  * @param cache - Enables path caching. This can be more efficient, but might fail to respond to changes in the environment. Defaults to `true`.
@@ -2142,6 +2437,72 @@ interface PlaceAsTileResult {
  *
  */
 type PlayerIdentification = number | string | LuaPlayer
+
+/**
+ * These values are for the time frame of one second (60 ticks).
+ * @param aeging - The amount of pollution eaten by a chunk's tiles as a percentage of 1. Defaults to `1`.
+ * @param diffusion_ratio - The amount that is diffused to a neighboring chunk (possibly repeated for other directions as well). Defaults to `0.02`.
+ * @param enabled - Whether pollution is enabled at all.
+ * @param enemy_attack_pollution_consumption_modifier - Defaults to `1`.
+ * @param expected_max_per_chunk - Any amount of pollution larger than this value is visualized as this value instead. Defaults to `150`.
+ * @param max_pollution_to_restore_trees - Defaults to `20`.
+ * @param min_pollution_to_damage_trees - Defaults to `60`.
+ * @param min_to_diffuse - The amount of PUs that need to be in a chunk for it to start diffusing. Defaults to `15`.
+ * @param min_to_show_per_chunk - Any amount of pollution smaller than this value (but bigger than zero) is visualized as this value instead. Defaults to `50`.
+ * @param pollution_per_tree_damage - Defaults to `50`.
+ * @param pollution_restored_per_tree_damage - Defaults to `10`.
+ * @param pollution_with_max_forest_damage - Defaults to `150`.
+ */
+interface PollutionMapSettings {
+    /**
+     * The amount of pollution eaten by a chunk's tiles as a percentage of 1. Defaults to `1`.
+     */
+    'aeging': number
+    /**
+     * The amount that is diffused to a neighboring chunk (possibly repeated for other directions as well). Defaults to `0.02`.
+     */
+    'diffusion_ratio': number
+    /**
+     * Whether pollution is enabled at all.
+     */
+    'enabled': boolean
+    /**
+     * Defaults to `1`.
+     */
+    'enemy_attack_pollution_consumption_modifier': number
+    /**
+     * Any amount of pollution larger than this value is visualized as this value instead. Defaults to `150`.
+     */
+    'expected_max_per_chunk': number
+    /**
+     * Defaults to `20`.
+     */
+    'max_pollution_to_restore_trees': number
+    /**
+     * Defaults to `60`.
+     */
+    'min_pollution_to_damage_trees': number
+    /**
+     * The amount of PUs that need to be in a chunk for it to start diffusing. Defaults to `15`.
+     */
+    'min_to_diffuse': number
+    /**
+     * Any amount of pollution smaller than this value (but bigger than zero) is visualized as this value instead. Defaults to `50`.
+     */
+    'min_to_show_per_chunk': number
+    /**
+     * Defaults to `50`.
+     */
+    'pollution_per_tree_damage': number
+    /**
+     * Defaults to `10`.
+     */
+    'pollution_restored_per_tree_damage': number
+    /**
+     * Defaults to `150`.
+     */
+    'pollution_with_max_forest_damage': number
+}
 
 /**
  * Coordinates of a tile in a map. Positions may be specified either as a dictionary with `x`, `y` as keys, or simply as an array with two elements.
@@ -2532,6 +2893,28 @@ interface SpawnPointDefinition {
 type SpritePath = string
 
 /**
+ * @param force_unit_fuzzy_goto_behavior - Used to make steering look better for aesthetic purposes.
+ * @param radius - Does not include the radius of the unit.
+ */
+interface SteeringMapSetting {
+    /**
+     * Used to make steering look better for aesthetic purposes.
+     */
+    'force_unit_fuzzy_goto_behavior': boolean
+    /**
+     * Does not include the radius of the unit.
+     */
+    'radius': number
+    'separation_factor': number
+    'separation_force': number
+}
+
+interface SteeringMapSettings {
+    'default': SteeringMapSetting
+    'moving': SteeringMapSetting
+}
+
+/**
  * @remarks
  * For type number - It will be the index of the surface. `nauvis` has index `1`, the first surface-created surface will have index `2` and so on.
  * For type string - It will be the surface name. E.g. `"nauvis"`.
@@ -2706,6 +3089,72 @@ interface TriggerItem {
  * This is a set of trigger target masks given as a dictionary{@link [string | string} &rarr; {@link boolean | boolean}].
  */
 type TriggerTargetMask = {[key: string]: boolean}
+
+/**
+ * @param max_gathering_unit_groups - The maximum number of automatically created unit groups gathering for attack at any time. Defaults to `30`.
+ * @param max_group_gathering_time - The maximum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `10*3,600=36,000` ticks.
+ * @param max_group_member_fallback_factor - When a member of a group falls back more than this factor times the group radius, the group will slow down to its `max_group_slowdown_factor` speed to let them catch up. Defaults to `3`.
+ * @param max_group_radius - The maximum group radius in tiles. The actual radius is adjusted based on the number of members. Defaults to `30.0`.
+ * @param max_group_slowdown_factor - The minimum speed as a percentage of its maximum speed that a group will slow down to so members that fell behind can catch up. Defaults to `0.3`, or 30%.
+ * @param max_member_slowdown_when_ahead - The minimum speed a percentage of its regular speed that a group member can slow down to when ahead of the group. Defaults to `0.6`, or 60%.
+ * @param max_member_speedup_when_behind - The maximum speed a percentage of its regular speed that a group member can speed up to when catching up with the group. Defaults to `1.4`, or 140%.
+ * @param max_unit_group_size - The maximum number of members for an attack unit group. This only affects automatically created unit groups, manual groups created through the API are unaffected. Defaults to `200`.
+ * @param max_wait_time_for_late_members - After gathering has finished, the group is allowed to wait this long in ticks for delayed members. New members are not accepted anymore however. Defaults to `2*3,600=7,200` ticks.
+ * @param member_disown_distance - When a member of a group falls back more than this factor times the group radius, it will be dropped from the group. Defaults to `10`.
+ * @param min_group_gathering_time - The minimum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `3,600` ticks.
+ * @param min_group_radius - The minimum group radius in tiles. The actual radius is adjusted based on the number of members. Defaults to `5.0`.
+ */
+interface UnitGroupMapSettings {
+    /**
+     * The maximum number of automatically created unit groups gathering for attack at any time. Defaults to `30`.
+     */
+    'max_gathering_unit_groups': number
+    /**
+     * The maximum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `10*3,600=36,000` ticks.
+     */
+    'max_group_gathering_time': number
+    /**
+     * When a member of a group falls back more than this factor times the group radius, the group will slow down to its `max_group_slowdown_factor` speed to let them catch up. Defaults to `3`.
+     */
+    'max_group_member_fallback_factor': number
+    /**
+     * The maximum group radius in tiles. The actual radius is adjusted based on the number of members. Defaults to `30.0`.
+     */
+    'max_group_radius': number
+    /**
+     * The minimum speed as a percentage of its maximum speed that a group will slow down to so members that fell behind can catch up. Defaults to `0.3`, or 30%.
+     */
+    'max_group_slowdown_factor': number
+    /**
+     * The minimum speed a percentage of its regular speed that a group member can slow down to when ahead of the group. Defaults to `0.6`, or 60%.
+     */
+    'max_member_slowdown_when_ahead': number
+    /**
+     * The maximum speed a percentage of its regular speed that a group member can speed up to when catching up with the group. Defaults to `1.4`, or 140%.
+     */
+    'max_member_speedup_when_behind': number
+    /**
+     * The maximum number of members for an attack unit group. This only affects automatically created unit groups, manual groups created through the API are unaffected. Defaults to `200`.
+     */
+    'max_unit_group_size': number
+    /**
+     * After gathering has finished, the group is allowed to wait this long in ticks for delayed members. New members are not accepted anymore however. Defaults to `2*3,600=7,200` ticks.
+     */
+    'max_wait_time_for_late_members': number
+    /**
+     * When a member of a group falls back more than this factor times the group radius, it will be dropped from the group. Defaults to `10`.
+     */
+    'member_disown_distance': number
+    /**
+     * The minimum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `3,600` ticks.
+     */
+    'min_group_gathering_time': number
+    /**
+     * The minimum group radius in tiles. The actual radius is adjusted based on the number of members. Defaults to `5.0`.
+     */
+    'min_group_radius': number
+    'tick_tolerance_when_member_arrives': number
+}
 
 /**
  * @param spawn_points - The points at which to spawn the unit.

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.39
+// Factorio version 1.1.40
 // API version 1
 
 /**
@@ -5197,7 +5197,7 @@ interface LuaEquipment {
 }
 
 /**
- * Prototype of a equipment category.
+ * Prototype of an equipment category.
  */
 interface LuaEquipmentCategoryPrototype {
     /**
@@ -7507,6 +7507,12 @@ interface LuaGameScript {
      */
     readonly map_gen_presets: {[key: string]: MapGenPreset}
 
+    /**
+     * The currently active set of map settings. Even though this property is marked as read-only, the members of the dictionary that is returned can be modified mid-game.
+     * @remarks
+     * This does not contain difficulty settings, use {@link LuaGameScript::difficulty_settings | LuaGameScript::difficulty_settings} instead.
+     *
+     */
     readonly map_settings: MapSettings
 
     readonly max_beacon_supply_area_distance: number
@@ -11759,11 +11765,17 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * The display resolution for this player.
+     * @remarks
+     * During {@link on_player_created | on_player_created}, this attribute will always return a resolution of `{width=1920, height=1080}`. To get the actual resolution, listen to the {@link on_player_display_resolution_changed | on_player_display_resolution_changed} event raised shortly afterwards.
+     *
      */
     readonly display_resolution: DisplayResolution
 
     /**
      * The display scale for this player.
+     * @remarks
+     * During {@link on_player_created | on_player_created}, this attribute will always return a scale of `1`. To get the actual scale, listen to the {@link on_player_display_scale_changed | on_player_display_scale_changed} event raised shortly afterwards.
+     *
      */
     readonly display_scale: number
 

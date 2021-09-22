@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.39
+// Factorio version 1.1.40
 // API version 1
 
 /**
@@ -275,6 +275,9 @@ interface on_cutscene_cancelled extends event  {
 /**
  * Called when a cutscene is playing, each time it reaches a waypoint in that cutscene.
  * This refers to an index in the table previously passed to set_controller which started the cutscene.
+ * @remarks
+ * Due to implementation omission, waypoint_index is 0-based.
+ *
  */
 interface on_cutscene_waypoint_reached extends event  {
     /**
