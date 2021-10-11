@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.40
+// Factorio version 1.1.42
 // API version 1
 
 /**
@@ -1327,9 +1327,10 @@ interface LuaControl {
     mining_state: { mining: boolean, position?: Position }
 
     /**
-     * The GUI target the player currently has open; `nil` if none.
+     * The GUI the player currently has open, or `nil` if no GUI is open. Writing to it fires the {@link on_gui_opened | on_gui_opened} event.
+     * This is the GUI that will asked to close (by firing the {@link on_gui_closed | on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is not `nil`, and a new GUI is written to it, the existing one will be asked to close.
      * @remarks
-     * Write supports any of the types. Read will return the entity, equipment, equipment-grid, player, element or nil.
+     * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element` or `nil`.
      *
      */
     opened: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | defines.gui_type
@@ -2085,7 +2086,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Get the rails that this signal is connected to.
      * @remarks
-     * Applies to subclasses: RailSignal
+     * Applies to subclasses: RailSignal,RailChainSignal
      *
      */
     get_connected_rails(this: void): LuaEntity[]
@@ -2723,7 +2724,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Sets the current recipe in this assembly machine.
      * @remarks
-     * Applies to subclasses: CraftingMachine
+     * Applies to subclasses: AssemblingMachine
      *
      * @param recipe - The new recipe or `nil` to clear the recipe.
      * @returns Any items removed from this entity as a result of setting the recipe.
@@ -3723,7 +3724,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The state of this rail signal.
      * @remarks
-     * Applies to subclasses: RailSignal
+     * Applies to subclasses: RailSignal,RailChainSignal
      *
      */
     readonly signal_state: defines.signal_state
@@ -7262,24 +7263,26 @@ interface LuaGameScript {
         data: Table): string
 
     /**
-     * Take a screenshot and save it to a file.
+     * Take a screenshot and save it to a file. The filename should include a file extension indicating the desired image format. Supports `.png`, `.jpg` / `.jpeg`, `.tga` and `.bmp`.
      * @remarks
      * If Factorio is running headless, this function will do nothing.
      *
-     * @param table.allow_in_replay - If true, the screenshot will be saved even during replay playback, otherwise this function call does nothing in replays.
-     * @param table.anti_alias - Render in double resolution and scale down (including GUI)?
+     * @param table.allow_in_replay - Whether to save the screenshot even during replay playback. Defaults to `false`.
+     * @param table.anti_alias - Whether to render in double resolution and downscale the result (including GUI). Defaults to `false`.
      * @param table.by_player - If defined, the screenshot will only be taken for this player.
-     * @param table.daytime - Overrides current surface daytime for duration of screenshot rendering.
-     * @param table.force_render - Screenshot requests are processed in between update and render. The game may skip rendering (drop frames) if previous frame has not finished rendering or the game simulation starts to fall under 60 updates per second. If force_render is set to true, the game won't drop frames and process the screenshot request at the end of the update in which the request was created. This is not honored on multiplayer clients that are catching up to server.
-     * @param table.path - Path to save the screenshot in
-     * @param table.position - If defined, the screenshot will be centered on this position.
-     * @param table.quality - The render quality if using jpg format (0-100 inclusive).
-     * @param table.resolution - Maximum allowed resolution is 16384x16384 (resp. 8192x8192 when anti_alias is true), but maximum recommended resolution is 4096x4096 (resp. 2048x2048).
-     * @param table.show_cursor_building_preview - When true, and player is specified, building preview for item in player's cursor will be rendered also.
-     * @param table.show_entity_info - Include entity info (alt-mode)?
-     * @param table.show_gui - Include game GUI in the screenshot?
+     * @param table.daytime - Overrides the current surface daytime for the duration of screenshot rendering.
+     * @param table.force_render - Screenshot requests are processed in between game update and render. The game may skip rendering (ie. drop frames) if the previous frame has not finished rendering or the game simulation starts to fall below 60 updates per second. If `force_render` is set to `true`, the game won't drop frames and process the screenshot request at the end of the update in which the request was created. This is not honored on multiplayer clients that are catching up to server. Defaults to `false`.
+     * @param table.path - The sub-path in `"script-output"` to save the screenshot to. Defaults to `"screenshot.png"`.
+     * @param table.player - The player to focus on. Defaults to the local player.
+     * @param table.position - If defined, the screenshot will be centered on this position. Otherwise, the screenshot will center on `player`.
+     * @param table.quality - The `.jpg` render quality as a percentage (from 0% to 100% inclusive), if used. A lower value means a more compressed image. Defaults to `80`.
+     * @param table.resolution - The maximum allowed resolution is 16384x16384 (8192x8192 when `anti_alias` is `true`), but the maximum recommended resolution is 4096x4096 (resp. 2048x2048).
+     * @param table.show_cursor_building_preview - When `true` and when `player` is specified, the building preview for the item in the player's cursor will also be rendered. Defaults to `false`.
+     * @param table.show_entity_info - Whether to include entity info ("Alt mode") or not. Defaults to `false`.
+     * @param table.show_gui - Whether to include GUIs in the screenshot or not. Defaults to `false`.
      * @param table.surface - If defined, the screenshot will be taken on this surface.
-     * @param table.water_tick - Overrides tick of water animation (if animated water is enabled).
+     * @param table.water_tick - Overrides the tick of water animation, if animated water is enabled.
+     * @param table.zoom - The map zoom to take the screenshot at. Defaults to `1`.
      */
     take_screenshot(this: void,
         table: {
@@ -7302,10 +7305,11 @@ interface LuaGameScript {
         }): void
 
     /**
-     * @param table.by_player - If defined, the screenshot will only be taken for this player.
-     * @param table.force - The force to use. If not given the `"player`" force is used.
-     * @param table.path - Path to save the screenshot in.
-     * @param table.quality - The render quality if using jpg format (0-100 inclusive).
+     * Take a screenshot of the technology screen and save it to a file. The filename should include a file extension indicating the desired image format. Supports `.png`, `.jpg` / `.jpeg`, `.tga` and `.bmp`.
+     * @param table.by_player - If given, the screenshot will only be taken for this player.
+     * @param table.force - The force whose technology to screenshot. If not given, the `"player`" force is used.
+     * @param table.path - The sub-path in `"script-output"` to save the screenshot to. Defaults to `"technology-screenshot.png"`.
+     * @param table.quality - The `.jpg` render quality as a percentage (from 0% to 100% inclusive), if used. A lower value means a more compressed image. Defaults to `80`.
      * @param table.selected_technology - The technology to highlight.
      * @param table.skip_disabled - If `true`, disabled technologies will be skipped. Their successors will be attached to the disabled technology's parents. Defaults to `false`.
      */
@@ -8438,7 +8442,7 @@ interface LuaGuiElement {
     left_label_tooltip: LocalisedString
 
     /**
-     * The location of this widget when stored in {@link LuaGui::screen | LuaGui::screen} or `nil` if not not set or not in {@link LuaGui::screen | LuaGui::screen}.
+     * The location of this widget when stored in {@link LuaGui::screen | LuaGui::screen}, or `nil` if not set or not in {@link LuaGui::screen | LuaGui::screen}.
      */
     location: GuiLocation
 
@@ -11825,7 +11829,7 @@ interface LuaPlayer extends LuaControl {
     /**
      * Gets the current per-player settings for the this player, indexed by prototype name. Returns the same structure as {@link LuaSettings::get_player_settings | LuaSettings::get_player_settings}.
      * @remarks
-     * This can become invalid if during operation this player becomes invalid.
+     * This table will become invalid if its associated player does.
      *
      */
     readonly mod_settings: {[key: string]: ModSetting}
@@ -13818,7 +13822,7 @@ interface LuaSettings {
     /**
      * Gets the current per-player settings for the given player, indexed by prototype name. Returns the same structure as {@link LuaPlayer::mod_settings | LuaPlayer::mod_settings}.
      * @remarks
-     * This can become invalid if during operation if the given player becomes invalid.
+     * This table will become invalid if its associated player does.
      *
      */
     get_player_settings(this: void,
@@ -14530,7 +14534,7 @@ interface LuaSurface {
 
     /**
      * Count entities of given type or name in a given area. Works just like {@link LuaSurface::find_entities_filtered | LuaSurface::find_entities_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of entities.
-     * If no area or position are given, then the entire surface is searched. If position is given, returns entities colliding with that position (i.e the given position is within the entity's collision box). If position and radius are given, returns entities in that radius of the position. If area is specified, returns entities colliding with that area.
+     * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns entities in the radius of the position. If `area` is specified, this returns entities colliding with that area.
      * @param table.invert - If the filters should be inverted. These filters are: name, type, ghost_name, ghost_type, direction, collision_mask, force.
      * @param table.radius - If given with position, will count all entities within the radius of the position.
      */
@@ -14554,7 +14558,7 @@ interface LuaSurface {
 
     /**
      * Count tiles of a given name in a given area. Works just like {@link LuaSurface::find_tiles_filtered | LuaSurface::find_tiles_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of tiles.
-     * If no area or position and radius is given, then the entire surface is searched. If position and radius are given, only tiles within the radius of the position are included.
+     * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
      * @param table.position - Ignored if not given with radius.
      * @param table.radius - If given with position, will return all entities within the radius of the position.
      */
@@ -14791,9 +14795,9 @@ interface LuaSurface {
         area?: BoundingBox): LuaEntity[]
 
     /**
-     * Find entities of given type or name in a given area.
-     * If no filters (`name`, `type`, `force`, etc.) are given, returns all entities in the search area. If multiple filters are specified, returns only entities matching all given filters.
-     * If no area or position are given, then the entire surface is searched. If position is given, returns entities colliding with that position (i.e the given position is within the entity's collision box). If position and radius are given, returns entities in that radius of the position. If area is specified, returns entities colliding with that area.
+     * Find all entities of the given type or name in the given area.
+     * If no filters (`name`, `type`, `force`, etc.) are given, this returns all entities in the search area. If multiple filters are specified, only entities matching all given filters are returned.
+     * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns the entities within the radius of the position. If `area` is specified, this returns the entities colliding with that area.
      * @param table.invert - If the filters should be inverted. These filters are: name, type, ghost_name, ghost_type, direction, collision_mask, force.
      * @param table.position - Has precedence over area field.
      * @param table.radius - If given with position, will return all entities within the radius of the position.
@@ -14920,9 +14924,9 @@ interface LuaSurface {
         force_to_tile_center?: boolean): Position
 
     /**
-     * Find tiles of a given name in a given area.
-     * If no filters are given returns all tiles in the search area.
-     * If no area or position and radius is given, then the entire surface is searched. If position and radius are given, only tiles within the radius of the position are included.
+     * Find all tiles of the given name in the given area.
+     * If no filters are given, this returns all tiles in the search area.
+     * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
      * @param table.position - Ignored if not given with radius.
      * @param table.radius - If given with position, will return all entities within the radius of the position.
      */
