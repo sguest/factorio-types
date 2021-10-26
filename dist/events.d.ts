@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.42
+// Factorio version 1.1.43
 // API version 1
 
 /**
@@ -541,6 +541,9 @@ interface on_forces_merging extends event  {
 }
 /**
  * Called when a game is created from a scenario. This is fired for every mod, even when the scenario's save data already includes it. In those cases however, {@link LuaBootstrap::on_init | LuaBootstrap::on_init} is not fired.
+ * @remarks
+ * This event is not fired when the scenario is loaded via the map editor.
+ *
  */
 interface on_game_created_from_scenario extends event  {
 }

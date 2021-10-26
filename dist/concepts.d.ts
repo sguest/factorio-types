@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.42
+// Factorio version 1.1.43
 // API version 1
 
 /**
@@ -1093,7 +1093,7 @@ type EntityPrototypeFlags = {
     [key in EntityPrototypeFlagsKey]: true
 }
 
-type EntityPrototypeFlagsKey = 'breaths-air' | 'building-direction-8-way' | 'fast-replaceable-no-build-while-moving' | 'fast-replaceable-no-cross-type-while-moving' | 'filter-directions' | 'hidden' | 'hide-alt-info' | 'no-automated-item-insertion' | 'no-automated-item-removal' | 'no-copy-paste' | 'no-gap-fill-while-building' | 'not-blueprintable' | 'not-deconstructable' | 'not-flammable' | 'not-on-map' | 'not-repairable' | 'not-rotatable' | 'not-selectable-in-game' | 'not-upgradable' | 'placeable-enemy' | 'placeable-neutral' | 'placeable-off-grid' | 'placeable-player' | 'player-creation'
+type EntityPrototypeFlagsKey = 'breaths-air' | 'building-direction-8-way' | 'fast-replaceable-no-build-while-moving' | 'fast-replaceable-no-cross-type-while-moving' | 'filter-directions' | 'hidden' | 'hide-alt-info' | 'no-automated-item-insertion' | 'no-automated-item-removal' | 'no-copy-paste' | 'no-gap-fill-while-building' | 'not-blueprintable' | 'not-deconstructable' | 'not-flammable' | 'not-in-kill-statistics' | 'not-on-map' | 'not-repairable' | 'not-rotatable' | 'not-selectable-in-game' | 'not-upgradable' | 'placeable-enemy' | 'placeable-neutral' | 'placeable-off-grid' | 'placeable-player' | 'player-creation'
 
 /**
  * @remarks
@@ -1540,7 +1540,7 @@ type ItemPrototypeFlags = {
     [key in ItemPrototypeFlagsKey]: true
 }
 
-type ItemPrototypeFlagsKey = 'always-show' | 'can-extend-inventory' | 'draw-logistic-overlay' | 'hidden' | 'hide-from-bonus-gui' | 'hide-from-fuel-tooltip' | 'mod-openable' | 'not-stackable' | 'only-in-cursor' | 'primary-place-result'
+type ItemPrototypeFlagsKey = 'always-show' | 'can-extend-inventory' | 'draw-logistic-overlay' | 'hidden' | 'hide-from-bonus-gui' | 'hide-from-fuel-tooltip' | 'mod-openable' | 'not-stackable' | 'only-in-cursor' | 'primary-place-result' | 'spawnable'
 
 /**
  * @remarks
@@ -2849,6 +2849,9 @@ interface SmokeSource {
  */
 type SoundPath = string
 
+/**
+ * Defines which slider in the game's sound settings affects the volume of this sound. Furthermore, some sound types are mixed differently than others, e.g. zoom level effects are applied.
+ */
 declare enum SoundType {
     'alert',
     'ambient',
@@ -3012,6 +3015,7 @@ interface TrainSchedule {
 
 /**
  * @param rail - Rail to path to. Ignored if `station` is present.
+ * @param rail_direction - When a train is allowed to reach rail target from any direction it will be `nil`. If rail has to be reached from specific direction, this value allows to choose the direction. This value corresponds to [LuaEntity::connected_rail_direction](LuaEntity::connected_rail_direction) of a TrainStop.
  * @param station - Name of the station.
  * @param temporary - Only present when the station is temporary, the value is then always `true`.
  */
@@ -3020,6 +3024,10 @@ interface TrainScheduleRecord {
      * Rail to path to. Ignored if `station` is present.
      */
     'rail'?: LuaEntity
+    /**
+     * When a train is allowed to reach rail target from any direction it will be `nil`. If rail has to be reached from specific direction, this value allows to choose the direction. This value corresponds to {@link LuaEntity::connected_rail_direction | LuaEntity::connected_rail_direction} of a TrainStop.
+     */
+    'rail_direction'?: defines.rail_direction
     /**
      * Name of the station.
      */

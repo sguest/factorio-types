@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.42
+// Factorio version 1.1.43
 // API version 1
 
 /**
@@ -2134,12 +2134,18 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Get amounts of all fluids in this entity.
+     * @remarks
+     * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | LuaEntity::fluidbox} should be used instead.
+     *
      * @returns The amounts, indexed by fluid names.
      */
     get_fluid_contents(this: void): {[key: string]: number}
 
     /**
      * Get the amount of all or some fluid in this entity.
+     * @remarks
+     * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | LuaEntity::fluidbox} should be used instead.
+     *
      * @param fluid - Prototype name of the fluid to count. If not specified, count all fluids.
      */
     get_fluid_count(this: void,
@@ -2339,7 +2345,7 @@ interface LuaEntity extends LuaControl {
      * @remarks
      * Applies to subclasses: TransportBeltConnectable
      *
-     * @param index - Index of the requested transport line.
+     * @param index - Index of the requested transport line. Transport lines are 1-indexed.
      */
     get_transport_line(this: void,
         index: number): LuaTransportLine
@@ -2357,11 +2363,11 @@ interface LuaEntity extends LuaControl {
     get_upgrade_target(this: void): LuaEntityPrototype
 
     /**
-     * Same as {@link LuaEntity::has_flag | LuaEntity::has_flag} but targets the inner entity on a entity ghost.
+     * Same as {@link LuaEntity::has_flag | LuaEntity::has_flag}, but targets the inner entity on a entity ghost.
      * @remarks
      * Applies to subclasses: EntityGhost
      *
-     * @param flag - The flag to test
+     * @param flag - The flag to test. See [EntityPrototypeFlags](EntityPrototypeFlags) for a list of flags.
      * @returns `true` if the entity has the given flag set.
      */
     ghost_has_flag(this: void,
@@ -2376,12 +2382,12 @@ interface LuaEntity extends LuaControl {
     has_command(this: void): boolean
 
     /**
-     * Test whether this entity's prototype has a flag set.
+     * Test whether this entity's prototype has a certain flag set.
      * @remarks
      * `entity.has_flag(f)` is a shortcut for `entity.prototype.has_flag(f)`.
      *
-     * @param flag - The flag to test
-     * @returns `true` if the entity has the given flag set.
+     * @param flag - The flag to test. See [EntityPrototypeFlags](EntityPrototypeFlags) for a list of flags.
+     * @returns `true` if this entity has the given flag set.
      */
     has_flag(this: void,
         flag: string): boolean
@@ -3006,6 +3012,14 @@ interface LuaEntity extends LuaControl {
     readonly connected_rail: LuaEntity
 
     /**
+     * Rail direction to which this train stop is binding. This returns a value even when no rails are present.
+     * @remarks
+     * Applies to subclasses: TrainStop
+     *
+     */
+    readonly connected_rail_direction: defines.rail_direction
+
+    /**
      * The consumption bonus of this entity.
      */
     readonly consumption_bonus: number
@@ -3094,9 +3108,9 @@ interface LuaEntity extends LuaControl {
     drop_position: Position
 
     /**
-     * The entity this entity is putting its stuff to or `nil` if there is no such entity.
+     * The entity this entity is putting its items to, or `nil` if there is no such entity. If there are multiple possible entities at the drop-off point, writing to this attribute allows a mod to choose which one to drop off items to. The entity needs to collide with the tile box under the drop-off position.
      * @remarks
-     * Meaningful only for entities that put stuff somewhere, such as mining drills or inserters.
+     * Meaningful only for entities that put items somewhere, such as mining drills or inserters. Returns `nil` for any other entity.
      *
      */
     drop_target: LuaEntity
@@ -3544,7 +3558,7 @@ interface LuaEntity extends LuaControl {
     pickup_position: Position
 
     /**
-     * The entity the inserter will attempt to pick up from. For example, this can be a transport belt or a storage chest.
+     * The entity this inserter will attempt to pick up items from, or `nil` if there is no such entity. If there are multiple possible entities at the pick-up point, writing to this attribute allows a mod to choose which one to pick up items from. The entity needs to collide with the tile box under the pick-up position.
      * @remarks
      * Applies to subclasses: Inserter
      *
@@ -3987,30 +4001,9 @@ interface LuaEntityPrototype {
         index: defines.inventory): number
 
     /**
-     * Does this prototype have a flag enabled?
-     * @param flag - The flag to check. Must be one of 
-- `"not-rotatable"`
-- `"placeable-neutral"`
-- `"placeable-player"`
-- `"placeable-enemy"`
-- `"placeable-off-grid"`
-- `"player-creation"`
-- `"building-direction-8-way"`
-- `"filter-directions"`
-- `"fast-replaceable-no-build-while-moving"`
-- `"breaths-air"`
-- `"not-repairable"`
-- `"not-on-map"`
-- `"not-deconstructable"`
-- `"not-blueprintable"`
-- `"hide-from-bonus-gui"`
-- `"hide-alt-info"`
-- `"fast-replaceable-no-cross-type-while-moving"`
-- `"no-gap-fill-while-building"`
-- `"not-flammable"`
-- `"no-automated-item-removal"`
-- `"no-automated-item-insertion"`
-- `"not-upgradable"`
+     * Test whether this entity prototype has a certain flag set.
+     * @param flag - The flag to test. See [EntityPrototypeFlags](EntityPrototypeFlags) for a list of flags.
+     * @returns `true` if this prototype has the given flag set.
      */
     has_flag(this: void,
         flag: string): boolean
@@ -4434,7 +4427,7 @@ interface LuaEntityPrototype {
     readonly fixed_recipe: string
 
     /**
-     * The entity prototype flags for this entity.
+     * The flags for this entity prototype.
      */
     readonly flags: EntityPrototypeFlags
 
@@ -9050,9 +9043,9 @@ interface LuaItemPrototype {
         ammo_source_type?: string): AmmoType
 
     /**
-     * Does this prototype have a flag enabled?
-     * Any other value will cause an error.
-     * @param flag - The flag to check. Can be one of [ItemPrototypeFlags](ItemPrototypeFlags)
+     * Test whether this item prototype has a certain flag set.
+     * @param flag - The flag to test. See [ItemPrototypeFlags](ItemPrototypeFlags) for a list of flags.
+     * @returns `true` if this prototype has the given flag set.
      */
     has_flag(this: void,
         flag: string): boolean
@@ -9262,7 +9255,7 @@ interface LuaItemPrototype {
     readonly filter_mode: string
 
     /**
-     * The item prototype flags for this item prototype.
+     * The flags for this item prototype.
      */
     readonly flags: ItemPrototypeFlags
 
