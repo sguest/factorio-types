@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.43
+// Factorio version 1.1.46
 // API version 1
 
 /**
@@ -1017,7 +1017,10 @@ interface LuaControl {
         items: ItemStackIdentification): number
 
     /**
-     * Returns whether the player is holding a blueprint, it takes into account a blueprint as an item as well as blueprint from the blueprint record from the blueprint library. Note that the is_cursor_blueprint and get_cursor_blueprint_entities refer to the currently selected blueprint, so it returns blueprint related information also when holding a blueprint book with a blueprint being selected in it.
+     * Returns whether the player is holding a blueprint. This takes both blueprint items as well as blueprint records from the blueprint library into account.
+     * @remarks
+     * Both this method and {@link LuaControl::get_blueprint_entities | LuaControl::get_blueprint_entities} refer to the currently selected blueprint, meaning a blueprint book with a selected blueprint will return the information as well.
+     *
      */
     is_cursor_blueprint(this: void): boolean
 
@@ -8175,6 +8178,15 @@ interface LuaGuiElement {
      */
     set_slider_value_step(this: void,
         value: number): void
+
+    /**
+     * Swaps the children at the given indices in this element.
+     * @param index_1 - The index of the first child.
+     * @param index_2 - The index of the second child.
+     */
+    swap_children(this: void,
+        index_1: number,
+        index_2: number): void
 
     /**
      * Whether this textfield (when in numeric mode) allows decimal numbers.
@@ -15979,7 +15991,7 @@ interface LuaTrain {
 
     /**
      * The players killed by this train.
-     * The keys are the player indexes, the values are how often this train killed that player.
+     * The keys are the player indices, the values are how often this train killed that player.
      */
     readonly killed_players: {[key: number]: number}
 
