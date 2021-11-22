@@ -1271,7 +1271,7 @@ interface LuaControl {
      * ```
      *
      */
-    readonly cursor_stack: LuaItemStack
+    readonly cursor_stack?: LuaItemStack
 
     /**
      * `true` if the player is in a vehicle. Writing to this attribute puts the player in or out of a vehicle.
@@ -1326,12 +1326,12 @@ interface LuaControl {
      * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element` or `nil`.
      *
      */
-    opened: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | defines.gui_type
+    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | defines.gui_type
 
     /**
      * Returns the {@link defines.gui_type | defines.gui_type} or `nil`.
      */
-    readonly opened_gui_type: defines.gui_type
+    readonly opened_gui_type?: defines.gui_type
 
     /**
      * Current item-picking state.
@@ -1534,7 +1534,7 @@ interface LuaCustomInputPrototype {
     /**
      * The item that gets spawned when this custom input is fired or `nil`.
      */
-    readonly item_to_spawn: LuaItemPrototype
+    readonly item_to_spawn?: LuaItemPrototype
 
     /**
      * The default key sequence for this custom input.
@@ -1544,7 +1544,7 @@ interface LuaCustomInputPrototype {
     /**
      * The linked game control name or `nil`.
      */
-    readonly linked_game_control: string
+    readonly linked_game_control?: string
 
     readonly localised_description: LocalisedString
 
@@ -2854,7 +2854,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Character
      *
      */
-    associated_player: LuaPlayer
+    associated_player?: LuaPlayer
 
     /**
      * Whether this rocket silo automatically launches the rocket when cargo is inserted.
@@ -2870,7 +2870,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: SpiderVehicle
      *
      */
-    autopilot_destination: Position
+    autopilot_destination?: Position
 
     /**
      * The queued destination positions of spidertron's autopilot.
@@ -2886,7 +2886,7 @@ interface LuaEntity extends LuaControl {
      * While train stops get the name of a backer when placed down, players can rename them if they want to. In this case, `backer_name` returns the player-given name of the entity.
      *
      */
-    backer_name: string
+    backer_name?: string
 
     /**
      * The belt connectable neighbours of this belt connectable entity. Only entities that input to or are outputs of this entity. Does not contain the other end of an underground belt, see {@link LuaEntity::neighbours | LuaEntity::neighbours} for that. This is a dictionary with `"inputs"`, `"outputs"` entries that are arrays of transport belt connectable entities, or empty tables if no entities.
@@ -2907,7 +2907,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The bonus mining progress for this mining drill or `nil` if this isn't a mining drill. Read yields a number in range [0, mining_target.prototype.mineable_properties.mining_time]
      */
-    bonus_mining_progress: number
+    bonus_mining_progress?: number
 
     /**
      * The current productivity bonus progress, as a number in range [0, 1].
@@ -2925,7 +2925,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The burner energy source for this entity or `nil` if there isn't one.
      */
-    readonly burner: LuaBurner
+    readonly burner?: LuaBurner
 
     /**
      * The state of this chain signal.
@@ -2981,7 +2981,7 @@ interface LuaEntity extends LuaControl {
      * Car color is overridden by the color of the current driver/passenger, if there is one.
      *
      */
-    color: Color
+    color?: Color
 
     /**
      * The owner of this combat robot if any.
@@ -2994,7 +2994,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Unit
      *
      */
-    readonly command: Command
+    readonly command?: Command
 
     /**
      * The rail entity this train stop is connected to or `nil` if there is none.
@@ -3002,7 +3002,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: TrainStop
      *
      */
-    readonly connected_rail: LuaEntity
+    readonly connected_rail?: LuaEntity
 
     /**
      * Rail direction to which this train stop is binding. This returns a value even when no rails are present.
@@ -3085,7 +3085,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Unit
      *
      */
-    readonly distraction_command: Command
+    readonly distraction_command?: Command
 
     /**
      * Whether the driver of this car or spidertron is the gunner, if false, the passenger is the gunner.
@@ -3106,7 +3106,7 @@ interface LuaEntity extends LuaControl {
      * Meaningful only for entities that put items somewhere, such as mining drills or inserters. Returns `nil` for any other entity.
      *
      */
-    drop_target: LuaEntity
+    drop_target?: LuaEntity
 
     /**
      * The current speed of this unit in tiles per tick, taking into account any walking speed modifier given by the tile the unit is standing on.
@@ -3127,7 +3127,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The effects being applied to this entity or `nil`. For beacons this is the effect the beacon is broadcasting.
      */
-    readonly effects: ModuleEffects
+    readonly effects?: ModuleEffects
 
     /**
      * The buffer size for the electric energy source or nil if the entity doesn't have an electric energy source.
@@ -3155,7 +3155,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Returns the id of the electric network that this entity is connected to or `nil`.
      */
-    readonly electric_network_id: number
+    readonly electric_network_id?: number
 
     /**
      * The electric network statistics for this electric pole.
@@ -3203,7 +3203,7 @@ interface LuaEntity extends LuaControl {
      * only usable on entities that have labels (currently only spider-vehicles).
      *
      */
-    entity_label: string
+    entity_label?: string
 
     /**
      * The number of filter slots this inserter, loader, or logistic storage container has. 0 if not one of those entities.
@@ -3295,12 +3295,12 @@ interface LuaEntity extends LuaControl {
     /**
      * The graphics variation for this entity or `nil` if this entity doesn't use graphics variations.
      */
-    graphics_variation: number
+    graphics_variation?: number
 
     /**
      * The equipment grid or `nil` if this entity doesn't have an equipment grid.
      */
-    readonly grid: LuaEquipmentGrid
+    readonly grid?: LuaEquipmentGrid
 
     /**
      * The current health of the entity, or `nil` if it doesn't have health. Health is automatically clamped to be between `0` and max health (inclusive). Entities with a health of `0` can not be attacked.
@@ -3308,7 +3308,7 @@ interface LuaEntity extends LuaControl {
      * To get the maximum possible health of this entity, see {@link LuaEntityPrototype::max_health | LuaEntityPrototype::max_health} on its prototype.
      *
      */
-    health: number
+    health?: number
 
     /**
      * The item stack currently held in an inserter's hand.
@@ -3365,7 +3365,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Inserter
      *
      */
-    inserter_filter_mode: string
+    inserter_filter_mode?: string
 
     /**
      * Sets the stack size limit on this inserter. If the stack size is > than the force stack size limit the value is ignored.
@@ -3480,7 +3480,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The mining progress for this mining drill or `nil` if this isn't a mining drill. Is a number in range [0, mining_target.prototype.mineable_properties.mining_time]
      */
-    mining_progress: number
+    mining_progress?: number
 
     /**
      * The mining target or `nil` if none
@@ -3488,7 +3488,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: MiningDrill
      *
      */
-    readonly mining_target: LuaEntity
+    readonly mining_target?: LuaEntity
 
     /**
      * Returns true if this unit is moving.
@@ -3517,7 +3517,7 @@ interface LuaEntity extends LuaControl {
      * - When called on an underground transport belt, this is the other end of the underground belt connection, or `nil` if none.
      * - When called on a wall-connectable entity or reactor, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
      */
-    readonly neighbours: {[key: string]: LuaEntity[]} | Array<LuaEntity[]> | LuaEntity
+    readonly neighbours?: {[key: string]: LuaEntity[]} | Array<LuaEntity[]> | LuaEntity
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -3556,7 +3556,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Inserter
      *
      */
-    pickup_target: LuaEntity
+    pickup_target?: LuaEntity
 
     /**
      * The player connected to this character or `nil` if none.
@@ -3564,7 +3564,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Character
      *
      */
-    readonly player: LuaPlayer
+    readonly player?: LuaPlayer
 
     /**
      * The pollution bonus of this entity.
@@ -3624,7 +3624,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The target entity for this item-request-proxy or `nil`
      */
-    readonly proxy_target: LuaEntity
+    readonly proxy_target?: LuaEntity
 
     /**
      * The rail target of this pump or `nil`.
@@ -3632,7 +3632,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Pump
      *
      */
-    readonly pump_rail_target: LuaEntity
+    readonly pump_rail_target?: LuaEntity
 
     /**
      * When locked; the recipe in this assembling machine can't be changed by the player.
@@ -3648,7 +3648,7 @@ interface LuaEntity extends LuaControl {
      * Writing does nothing if the vehicle doesn't have a turret.
      *
      */
-    relative_turret_orientation: RealOrientation
+    relative_turret_orientation?: RealOrientation
 
     /**
      * If items not included in this infinity container filters should be removed from the container.
@@ -3703,12 +3703,12 @@ interface LuaEntity extends LuaControl {
     /**
      * The secondary bounding box of this entity or `nil` if it doesn't have one.
      */
-    readonly secondary_bounding_box: BoundingBox
+    readonly secondary_bounding_box?: BoundingBox
 
     /**
      * The secondary selection box of this entity or `nil` if it doesn't have one.
      */
-    readonly secondary_selection_box: BoundingBox
+    readonly secondary_selection_box?: BoundingBox
 
     /**
      * Index of the currently selected weapon slot of this character, car, or spidertron, or `nil` if the car/spidertron doesn't have guns.
@@ -3716,7 +3716,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Character,Car
      *
      */
-    selected_gun_index: number
+    selected_gun_index?: number
 
     /**
      * {@link LuaEntityPrototype::selection_box | LuaEntityPrototype::selection_box} around entity's given position and respecting the current entity orientation.
@@ -3726,7 +3726,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The shooting target for this turret or `nil`.
      */
-    shooting_target: LuaEntity
+    shooting_target?: LuaEntity
 
     /**
      * The state of this rail signal.
@@ -3739,7 +3739,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The spawner associated with this unit entity or `nil` if the unit has no associated spawner.
      */
-    readonly spawner: LuaEntity
+    readonly spawner?: LuaEntity
 
     /**
      * The current speed of this car in tiles per tick, rolling stock, projectile or spider vehicle, or current max speed of the unit. Only the speed of units, cars, and projectiles are writable.
@@ -3760,7 +3760,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Splitter
      *
      */
-    splitter_filter: LuaItemPrototype
+    splitter_filter?: LuaItemPrototype
 
     /**
      * The input priority for this splitter : "left", "none", or "right".
@@ -3788,7 +3788,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The status of this entity or `nil` if no status.
      */
-    readonly status: defines.entity_status
+    readonly status?: defines.entity_status
 
     /**
      * The entity this sticker is sticked to.
@@ -3798,7 +3798,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The sticker entities attached to this entity or `nil` if none.
      */
-    readonly stickers: LuaEntity[]
+    readonly stickers?: LuaEntity[]
 
     /**
      * The storage filter for this logistic storage container.
@@ -3813,12 +3813,12 @@ interface LuaEntity extends LuaControl {
     /**
      * The tags associated with this entity ghost or `nil` if not an entity ghost.
      */
-    tags: Tags
+    tags?: Tags
 
     /**
      * The temperature of this entities heat energy source if this entity uses a heat energy source or `nil`.
      */
-    temperature: number
+    temperature?: number
 
     /**
      * The text of this flying-text entity.
@@ -3956,7 +3956,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Unit
      *
      */
-    readonly unit_group: LuaUnitGroup
+    readonly unit_group?: LuaUnitGroup
 
     /**
      * The unit number or nil if the entity doesn't have one. This is universally unique for every entity that has one, for the lifetime of a whole game.
@@ -4038,12 +4038,12 @@ interface LuaEntityPrototype {
     /**
      * Whether this unit prototype is affected by tile walking speed modifiers or `nil`.
      */
-    readonly affected_by_tiles: boolean
+    readonly affected_by_tiles?: boolean
 
     /**
      * The air resistance of this rolling stock prototype or `nil` if not a rolling stock prototype.
      */
-    readonly air_resistance: number
+    readonly air_resistance?: number
 
     /**
      * The alert icon shift of this entity prototype.
@@ -4053,12 +4053,12 @@ interface LuaEntityPrototype {
     /**
      * Does this turret prototype alert when attacking? or `nil` if not turret prototype.
      */
-    readonly alert_when_attacking: boolean
+    readonly alert_when_attacking?: boolean
 
     /**
      * Does this entity with health prototype alert when damaged? or `nil` if not entity with health prototype.
      */
-    readonly alert_when_damaged: boolean
+    readonly alert_when_damaged?: boolean
 
     /**
      * If this market allows access to all forces or just friendly ones.
@@ -4088,17 +4088,17 @@ interface LuaEntityPrototype {
     /**
      * The allowed module effects for this entity or `nil`.
      */
-    readonly allowed_effects: {[key: string]: boolean}
+    readonly allowed_effects?: {[key: string]: boolean}
 
     /**
      * Whether the lamp is always on (except when out of power or turned off by the circuit network) or `nil`.
      */
-    readonly always_on: boolean
+    readonly always_on?: boolean
 
     /**
      * The attack parameters for this entity or `nil` if the entity doesn't use attack parameters.
      */
-    readonly attack_parameters: AttackParameters
+    readonly attack_parameters?: AttackParameters
 
     /**
      * The attack result of this entity if the entity has one, else `nil`.
@@ -4108,7 +4108,7 @@ interface LuaEntityPrototype {
     /**
      * The amount of ammo that inserters automatically insert into this ammo-turret or artillery-turret or `nil`.
      */
-    readonly automated_ammo_count: number
+    readonly automated_ammo_count?: number
 
     /**
      * Autoplace specification for this entity prototype. `nil` if none.
@@ -4118,7 +4118,7 @@ interface LuaEntityPrototype {
     /**
      * The base productivity of this crafting machine, lab, or mining drill, or `nil`.
      */
-    readonly base_productivity: number
+    readonly base_productivity?: number
 
     /**
      * @remarks
@@ -4137,12 +4137,12 @@ interface LuaEntityPrototype {
     /**
      * The speed of this transport belt or `nil` if this isn't a transport belt related prototype.
      */
-    readonly belt_speed: number
+    readonly belt_speed?: number
 
     /**
      * The braking force of this vehicle prototype or `nil` if not a vehicle prototype.
      */
-    readonly braking_force: number
+    readonly braking_force?: number
 
     /**
      * The evolution requirement to build this entity as a base when expanding enemy bases.
@@ -4164,14 +4164,14 @@ interface LuaEntityPrototype {
     /**
      * The burner energy source prototype this entity uses or `nil`.
      */
-    readonly burner_prototype: LuaBurnerPrototype
+    readonly burner_prototype?: LuaBurnerPrototype
 
     readonly call_for_help_radius: number
 
     /**
      * Whether this unit prototype can open gates or `nil`.
      */
-    readonly can_open_gates: boolean
+    readonly can_open_gates?: boolean
 
     /**
      * The collision mask used only for collision test with tile directly at offshore pump position.
@@ -4191,7 +4191,7 @@ interface LuaEntityPrototype {
     /**
      * The item prototype name used to destroy this cliff or `nil`.
      */
-    readonly cliff_explosive_prototype: string
+    readonly cliff_explosive_prototype?: string
 
     /**
      * The bounding box used for collision checking.
@@ -4223,17 +4223,17 @@ interface LuaEntityPrototype {
     /**
      * The color of the prototype, or `nil` if the prototype doesn't have color.
      */
-    readonly color: Color
+    readonly color?: Color
 
     /**
      * The construction radius for this roboport prototype or `nil`.
      */
-    readonly construction_radius: number
+    readonly construction_radius?: number
 
     /**
      * The energy consumption of this car prototype or `nil` if not a car prototype.
      */
-    readonly consumption: number
+    readonly consumption?: number
 
     /**
      * @remarks
@@ -4263,7 +4263,7 @@ interface LuaEntityPrototype {
     /**
      * The crafting speed of this crafting-machine or `nil`.
      */
-    readonly crafting_speed: number
+    readonly crafting_speed?: number
 
     /**
      * If this prototype will attempt to create a ghost of itself on death.
@@ -4276,12 +4276,12 @@ interface LuaEntityPrototype {
     /**
      * The trigger run when this entity is created or `nil`.
      */
-    readonly created_effect: TriggerItem[]
+    readonly created_effect?: TriggerItem[]
 
     /**
      * The smoke trigger run when this entity is built or `nil`.
      */
-    readonly created_smoke: { initial_height: number, max_radius?: number, offset_deviation: BoundingBox, offsets: Vector[], smoke_name: string, speed: Vector, speed_from_center: number, speed_from_center_deviation: number, speed_multiplier: number, speed_multiplier_deviation: number, starting_frame: number, starting_frame_deviation: number, starting_frame_speed: number, starting_frame_speed_deviation: number }
+    readonly created_smoke?: { initial_height: number, max_radius?: number, offset_deviation: BoundingBox, offsets: Vector[], smoke_name: string, speed: Vector, speed_from_center: number, speed_from_center_deviation: number, speed_multiplier: number, speed_multiplier_deviation: number, starting_frame: number, starting_frame_deviation: number, starting_frame_speed: number, starting_frame_speed_deviation: number }
 
     /**
      * @remarks
@@ -4293,12 +4293,12 @@ interface LuaEntityPrototype {
     /**
      * Value between 0 and 1 darkness where all lamps of this lamp prototype are off or `nil`.
      */
-    readonly darkness_for_all_lamps_off: number
+    readonly darkness_for_all_lamps_off?: number
 
     /**
      * Value between 0 and 1 darkness where all lamps of this lamp prototype are on or `nil`.
      */
-    readonly darkness_for_all_lamps_on: number
+    readonly darkness_for_all_lamps_on?: number
 
     /**
      * The hardcoded default collision mask (with flags) for this entity prototype type.
@@ -4308,22 +4308,22 @@ interface LuaEntityPrototype {
     /**
      * The distraction cooldown of this unit prototype or `nil`.
      */
-    readonly distraction_cooldown: number
+    readonly distraction_cooldown?: number
 
     /**
      * The distribution effectivity for this beacon prototype or `nil` if not a beacon prototype.
      */
-    readonly distribution_effectivity: number
+    readonly distribution_effectivity?: number
 
     /**
      * The door opening speed for this rocket silo prototype or `nil`.
      */
-    readonly door_opening_speed: number
+    readonly door_opening_speed?: number
 
     /**
      * Whether this logistics or construction robot renders its cargo when flying or `nil`.
      */
-    readonly draw_cargo: boolean
+    readonly draw_cargo?: boolean
 
     /**
      * The bounding box used for drawing the entity icon.
@@ -4340,12 +4340,12 @@ interface LuaEntityPrototype {
     /**
      * The effectivity of this car prototype, generator prototype or `nil`.
      */
-    readonly effectivity: number
+    readonly effectivity?: number
 
     /**
      * The electric energy source prototype this entity uses or `nil`.
      */
-    readonly electric_energy_source_prototype: LuaElectricEnergySourcePrototype
+    readonly electric_energy_source_prototype?: LuaElectricEnergySourcePrototype
 
     /**
      * Amount of pollution emissions per second this entity will create.
@@ -4360,27 +4360,27 @@ interface LuaEntityPrototype {
     /**
      * The energy used per hitpoint taken for this vehicle during collisions or `nil`.
      */
-    readonly energy_per_hit_point: number
+    readonly energy_per_hit_point?: number
 
     /**
      * The energy consumed per tile moved for this flying robot or `nil`.
      */
-    readonly energy_per_move: number
+    readonly energy_per_move?: number
 
     /**
      * The energy consumed per tick for this flying robot or `nil`.
      */
-    readonly energy_per_tick: number
+    readonly energy_per_tick?: number
 
     /**
      * The direct energy usage of this entity or `nil` if this entity doesn't have a direct energy usage.
      */
-    readonly energy_usage: number
+    readonly energy_usage?: number
 
     /**
      * The engine starting speed for this rocket silo rocket prototype or `nil`.
      */
-    readonly engine_starting_speed: number
+    readonly engine_starting_speed?: number
 
     /**
      * @remarks
@@ -4392,12 +4392,12 @@ interface LuaEntityPrototype {
     /**
      * Does this explosion have a beam or `nil` if not an explosion prototype.
      */
-    readonly explosion_beam: number
+    readonly explosion_beam?: number
 
     /**
      * Does this explosion rotate or `nil` if not an explosion prototype.
      */
-    readonly explosion_rotate: number
+    readonly explosion_rotate?: number
 
     /**
      * The group of mutually fast-replaceable entities. Possibly `nil`.
@@ -4407,7 +4407,7 @@ interface LuaEntityPrototype {
     /**
      * The filter count of this inserter, loader, or logistic chest or `nil`. For logistic containers, `nil` means no limit.
      */
-    readonly filter_count: number
+    readonly filter_count?: number
 
     /**
      * The final attack result for projectiles `nil` if not a projectile
@@ -4417,7 +4417,7 @@ interface LuaEntityPrototype {
     /**
      * The fixed recipe name for this assembling machine prototype or `nil`.
      */
-    readonly fixed_recipe: string
+    readonly fixed_recipe?: string
 
     /**
      * The flags for this entity prototype.
@@ -4427,7 +4427,7 @@ interface LuaEntityPrototype {
     /**
      * The fluid this offshore pump produces or `nil`.
      */
-    readonly fluid: LuaFluidPrototype
+    readonly fluid?: LuaFluidPrototype
 
     /**
      * The fluid capacity of this entity or 0 if this entity doesn't support fluids.
@@ -4440,12 +4440,12 @@ interface LuaEntityPrototype {
     /**
      * The fluid energy source prototype this entity uses or `nil`.
      */
-    readonly fluid_energy_source_prototype: LuaFluidEnergySourcePrototype
+    readonly fluid_energy_source_prototype?: LuaFluidEnergySourcePrototype
 
     /**
      * The fluid usage of this generator prototype or `nil`.
      */
-    readonly fluid_usage_per_tick: number
+    readonly fluid_usage_per_tick?: number
 
     /**
      * The fluidbox prototypes for this entity.
@@ -4455,17 +4455,17 @@ interface LuaEntityPrototype {
     /**
      * The flying acceleration for this rocket silo rocket prototype or `nil`.
      */
-    readonly flying_acceleration: number
+    readonly flying_acceleration?: number
 
     /**
      * The flying speed for this rocket silo rocket prototype or `nil`.
      */
-    readonly flying_speed: number
+    readonly flying_speed?: number
 
     /**
      * The friction of this vehicle prototype or `nil` if not a vehicle prototype.
      */
-    readonly friction_force: number
+    readonly friction_force?: number
 
     /**
      * The friendly map color used when charting this entity.
@@ -4475,7 +4475,7 @@ interface LuaEntityPrototype {
     /**
      * The equipment grid prototype for this entity or `nil`.
      */
-    readonly grid_prototype: LuaEquipmentGridPrototype
+    readonly grid_prototype?: LuaEquipmentGridPrototype
 
     /**
      * Group of this entity.
@@ -4485,7 +4485,7 @@ interface LuaEntityPrototype {
     /**
      * The guns this prototype uses or `nil`.
      */
-    readonly guns: {[key: string]: LuaItemPrototype}
+    readonly guns?: {[key: string]: LuaItemPrototype}
 
     /**
      * Whether this unit, car, or character prototype has belt immunity, `nil` if not car, unit, or character prototype.
@@ -4500,7 +4500,7 @@ interface LuaEntityPrototype {
     /**
      * The heat energy source prototype this entity uses or `nil`.
      */
-    readonly heat_energy_source_prototype: LuaHeatEnergySourcePrototype
+    readonly heat_energy_source_prototype?: LuaHeatEnergySourcePrototype
 
     /**
      * Every time this infinite resource 'ticks' down it is reduced by this amount. `nil` when not a resource. Meaningless if this isn't an infinite type resource.
@@ -4515,32 +4515,32 @@ interface LuaEntityPrototype {
     /**
      * The max number of ingredients this crafting-machine prototype supports or `nil` if this isn't a crafting-machine prototype.
      */
-    readonly ingredient_count: number
+    readonly ingredient_count?: number
 
     /**
      * True if this inserter chases items on belts for pickup or `nil`.
      */
-    readonly inserter_chases_belt_items: boolean
+    readonly inserter_chases_belt_items?: boolean
 
     /**
      * The drop position for this inserter or `nil`.
      */
-    readonly inserter_drop_position: Vector
+    readonly inserter_drop_position?: Vector
 
     /**
      * The extension speed of this inserter or `nil`.
      */
-    readonly inserter_extension_speed: number
+    readonly inserter_extension_speed?: number
 
     /**
      * The pickup position for this inserter or `nil`.
      */
-    readonly inserter_pickup_position: Vector
+    readonly inserter_pickup_position?: Vector
 
     /**
      * The rotation speed of this inserter or `nil`.
      */
-    readonly inserter_rotation_speed: number
+    readonly inserter_rotation_speed?: number
 
     /**
      * Gets the current stack size bonus of this entity, returns nil if not an inserter.
@@ -4550,7 +4550,7 @@ interface LuaEntityPrototype {
     /**
      * The instruments for this programmable speaker or `nil`.
      */
-    readonly instruments: ProgrammableSpeakerInstrument[]
+    readonly instruments?: ProgrammableSpeakerInstrument[]
 
     readonly is_building: boolean
 
@@ -4564,27 +4564,27 @@ interface LuaEntityPrototype {
     /**
      * The item slot count of this constant combinator prototype or `nil`.
      */
-    readonly item_slot_count: number
+    readonly item_slot_count?: number
 
     /**
      * Items that, when placed, will produce this entity. It is an array of items, or `nil` if no items place this entity. Construction bots will always choose the first item in this list to build this entity.
      */
-    readonly items_to_place_this: SimpleItemStack[]
+    readonly items_to_place_this?: SimpleItemStack[]
 
     /**
      * The item prototype names that are the inputs of this lab prototype or `nil`.
      */
-    readonly lab_inputs: string[]
+    readonly lab_inputs?: string[]
 
     /**
      * The rocket launch delay for this rocket silo prototype or `nil`.
      */
-    readonly launch_wait_time: number
+    readonly launch_wait_time?: number
 
     /**
      * The light blinking speed for this rocket silo prototype or `nil`.
      */
-    readonly light_blinking_speed: number
+    readonly light_blinking_speed?: number
 
     readonly localised_description: LocalisedString
 
@@ -4593,12 +4593,12 @@ interface LuaEntityPrototype {
     /**
      * The logistic mode of this logistic container or `nil` if this isn't a logistic container prototype. One of `"requester"`, `"active-provider"`, `"passive-provider"`, `"buffer"`, `"storage"`, `"none"`.
      */
-    readonly logistic_mode: string
+    readonly logistic_mode?: string
 
     /**
      * The logistic radius for this roboport prototype or `nil`.
      */
-    readonly logistic_radius: number
+    readonly logistic_radius?: number
 
     /**
      * Loot that will be dropped when this entity is killed. `nil` if there is no loot.
@@ -4615,7 +4615,7 @@ interface LuaEntityPrototype {
     /**
      * The map color used when charting this entity if a friendly or enemy color isn't defined or `nil`.
      */
-    readonly map_color: Color
+    readonly map_color?: Color
 
     /**
      * The bounding box used for map generator collision checking.
@@ -4650,7 +4650,7 @@ interface LuaEntityPrototype {
     /**
      * The max energy for this flying robot or `nil`.
      */
-    readonly max_energy: number
+    readonly max_energy?: number
 
     /**
      * The theoretical maximum energy production for this this entity.
@@ -4675,32 +4675,32 @@ interface LuaEntityPrototype {
     /**
      * The max payload size of this logistics or construction robot or `nil`.
      */
-    readonly max_payload_size: number
+    readonly max_payload_size?: number
 
     /**
      * The maximum polyphony for this programmable speaker or `nil`.
      */
-    readonly max_polyphony: number
+    readonly max_polyphony?: number
 
     /**
      * The maximum pursue distance of this unit prototype or `nil`.
      */
-    readonly max_pursue_distance: number
+    readonly max_pursue_distance?: number
 
     /**
      * The max speed of this projectile prototype or flying robot prototype or `nil`.
      */
-    readonly max_speed: number
+    readonly max_speed?: number
 
     /**
      * The maximum energy for this flying robot above which it won't try to recharge when stationing or `nil`.
      */
-    readonly max_to_charge: number
+    readonly max_to_charge?: number
 
     /**
      * The max underground distance for underground belts and underground pipes or `nil` if this isn't one of those prototypes.
      */
-    readonly max_underground_distance: number
+    readonly max_underground_distance?: number
 
     /**
      * The maximum wire distance for this entity. 0 when the entity doesn't support wires.
@@ -4717,7 +4717,7 @@ interface LuaEntityPrototype {
     /**
      * The maximum fluid temperature of this generator prototype or `nil`.
      */
-    readonly maximum_temperature: number
+    readonly maximum_temperature?: number
 
     /**
      * The minimum darkness at which this unit spawner can spawn entities.
@@ -4727,12 +4727,12 @@ interface LuaEntityPrototype {
     /**
      * The minimum pursue time of this unit prototype or `nil`.
      */
-    readonly min_pursue_time: number
+    readonly min_pursue_time?: number
 
     /**
      * The minimum energy for this flying robot before it tries to recharge or `nil`.
      */
-    readonly min_to_charge: number
+    readonly min_to_charge?: number
 
     /**
      * Whether this entity is minable and what can be obtained by mining it.
@@ -4747,22 +4747,22 @@ interface LuaEntityPrototype {
     /**
      * The mining radius of this mining drill prototype or `nil` if this isn't a mining drill prototype.
      */
-    readonly mining_drill_radius: number
+    readonly mining_drill_radius?: number
 
     /**
      * The mining speed of this mining drill/character prototype or `nil`.
      */
-    readonly mining_speed: number
+    readonly mining_speed?: number
 
     /**
      * The module inventory size or `nil` if this entity doesn't support modules.
      */
-    readonly module_inventory_size: number
+    readonly module_inventory_size?: number
 
     /**
      * Whether this unit prototype can move while shooting or `nil`.
      */
-    readonly move_while_shooting: boolean
+    readonly move_while_shooting?: boolean
 
     /**
      * Name of this prototype.
@@ -4787,7 +4787,7 @@ interface LuaEntityPrototype {
     /**
      * The next upgrade for this entity or `nil`.
      */
-    readonly next_upgrade: LuaEntityPrototype
+    readonly next_upgrade?: LuaEntityPrototype
 
     /**
      * The normal amount for this resource. `nil` when not a resource.
@@ -4812,12 +4812,12 @@ interface LuaEntityPrototype {
     /**
      * The pumping speed of this offshore pump, normal pump, or `nil`.
      */
-    readonly pumping_speed: number
+    readonly pumping_speed?: number
 
     /**
      * The radar range of this unit prototype or `nil`.
      */
-    readonly radar_range: number
+    readonly radar_range?: number
 
     /**
      * The radius of this entity prototype.
@@ -4860,7 +4860,7 @@ interface LuaEntityPrototype {
     /**
      * The base researching speed of this lab prototype or `nil`.
      */
-    readonly researching_speed: number
+    readonly researching_speed?: number
 
     /**
      * List of resistances towards each damage type. It is a dictionary indexed by damage type names (see `data/base/prototypes/damage-type.lua`).
@@ -4873,7 +4873,7 @@ interface LuaEntityPrototype {
      * The value in the dictionary is meaningless and exists just to allow the dictionary type for easy lookup.
      *
      */
-    readonly resource_categories: {[key: string]: boolean}
+    readonly resource_categories?: {[key: string]: boolean}
 
     /**
      * Name of the category of this resource or `nil` when not a resource.
@@ -4881,7 +4881,7 @@ interface LuaEntityPrototype {
      * During data stage this property is named "category".
      *
      */
-    readonly resource_category: string
+    readonly resource_category?: string
 
     /**
      * @remarks
@@ -4898,27 +4898,27 @@ interface LuaEntityPrototype {
     /**
      * The rising speed for this rocket silo rocket prototype or `nil`.
      */
-    readonly rising_speed: number
+    readonly rising_speed?: number
 
     /**
      * The rocket entity prototype associated with this rocket silo prototype or `nil`.
      */
-    readonly rocket_entity_prototype: LuaEntityPrototype
+    readonly rocket_entity_prototype?: LuaEntityPrototype
 
     /**
      * The rocket parts required for this rocket silo prototype or `nil`.
      */
-    readonly rocket_parts_required: number
+    readonly rocket_parts_required?: number
 
     /**
      * The rocket rising delay for this rocket silo prototype or `nil`.
      */
-    readonly rocket_rising_delay: number
+    readonly rocket_rising_delay?: number
 
     /**
      * The rotation speed of this car prototype or `nil` if not a car prototype.
      */
-    readonly rotation_speed: number
+    readonly rotation_speed?: number
 
     /**
      * Gets the current movement speed of this character, including effects from exoskeletons, tiles, stickers and shooting.
@@ -4931,7 +4931,7 @@ interface LuaEntityPrototype {
     /**
      * The secondary bounding box used for collision checking, or `nil` if it doesn't have one. This is only used in rails and rail remnants.
      */
-    readonly secondary_collision_box: BoundingBox
+    readonly secondary_collision_box?: BoundingBox
 
     /**
      * Is this entity selectable?
@@ -4956,7 +4956,7 @@ interface LuaEntityPrototype {
     /**
      * The spawning cooldown for this enemy spawner prototype or `nil`.
      */
-    readonly spawn_cooldown: { max: number, min: number }
+    readonly spawn_cooldown?: { max: number, min: number }
 
     /**
      * How far from the spawner can the units be spawned.
@@ -4971,7 +4971,7 @@ interface LuaEntityPrototype {
     /**
      * The spawning time modifier of this unit prototype or `nil`.
      */
-    readonly spawning_time_modifier: number
+    readonly spawning_time_modifier?: number
 
     /**
      * The default speed of this flying robot, rolling stock or unit, `nil` if not one of these.
@@ -4984,7 +4984,7 @@ interface LuaEntityPrototype {
     /**
      * The speed multiplier when this flying robot is out of energy or `nil`.
      */
-    readonly speed_multiplier_when_out_of_energy: number
+    readonly speed_multiplier_when_out_of_energy?: number
 
     /**
      * If this inserter is a stack-type.
@@ -5004,7 +5004,7 @@ interface LuaEntityPrototype {
     /**
      * The supply area of this electric pole, beacon, or `nil` if this is neither.
      */
-    readonly supply_area_distance: number
+    readonly supply_area_distance?: number
 
     /**
      * If this entity prototype could possibly ever be rotated.
@@ -5014,12 +5014,12 @@ interface LuaEntityPrototype {
     /**
      * If this car prototype uses tank controls to drive or `nil` if this is not a car prototype.
      */
-    readonly tank_driving: boolean
+    readonly tank_driving?: boolean
 
     /**
      * The target temperature of this boiler prototype or `nil`.
      */
-    readonly target_temperature: number
+    readonly target_temperature?: number
 
     /**
      * The terrain friction modifier for this vehicle.
@@ -5065,12 +5065,12 @@ interface LuaEntityPrototype {
     /**
      * The range of this turret or `nil` if this isn't a turret related prototype.
      */
-    readonly turret_range: number
+    readonly turret_range?: number
 
     /**
      * The turret rotation speed of this car prototype or `nil` if not a car prototype.
      */
-    readonly turret_rotation_speed: number
+    readonly turret_rotation_speed?: number
 
     /**
      * Type of this prototype.
@@ -5085,17 +5085,17 @@ interface LuaEntityPrototype {
     /**
      * The vision distance of this unit prototype or `nil`.
      */
-    readonly vision_distance: number
+    readonly vision_distance?: number
 
     /**
      * The void energy source prototype this entity uses or `nil`.
      */
-    readonly void_energy_source_prototype: LuaVoidEnergySourcePrototype
+    readonly void_energy_source_prototype?: LuaVoidEnergySourcePrototype
 
     /**
      * The weight of this vehicle prototype or `nil` if not a vehicle prototype.
      */
-    readonly weight: number
+    readonly weight?: number
 
 }
 
@@ -5114,7 +5114,7 @@ interface LuaEquipment {
     /**
      * The burner energy source for this equipment or `nil` if there isn't one.
      */
-    readonly burner: LuaBurner
+    readonly burner?: LuaBurner
 
     /**
      * Current available energy.
@@ -5438,7 +5438,7 @@ interface LuaEquipmentPrototype {
     /**
      * The equipment attack parameters or `nil`.
      */
-    readonly attack_parameters: AttackParameters
+    readonly attack_parameters?: AttackParameters
 
     /**
      * Is this active defense equipment automatic. Returns false if not active defense equipment.
@@ -5453,12 +5453,12 @@ interface LuaEquipmentPrototype {
     /**
      * The burner energy source prototype this equipment uses or `nil`.
      */
-    readonly burner_prototype: LuaBurnerPrototype
+    readonly burner_prototype?: LuaBurnerPrototype
 
     /**
      * The electric energy source prototype this equipment uses or `nil`.
      */
-    readonly electric_energy_source_prototype: LuaElectricEnergySourcePrototype
+    readonly electric_energy_source_prototype?: LuaElectricEnergySourcePrototype
 
     readonly energy_consumption: number
 
@@ -5621,7 +5621,7 @@ interface LuaFlowStatistics {
     /**
      * The force these statistics belong to or `nil` for pollution statistics.
      */
-    readonly force: LuaForce
+    readonly force?: LuaForce
 
     /**
      * List of input counts indexed by prototype name. Represents the data that is shown on the left side of the GUI for the given statistics.
@@ -5778,7 +5778,7 @@ interface LuaFluidBoxPrototype {
     /**
      * The filter or `nil` if no filter is set.
      */
-    readonly filter: LuaFluidPrototype
+    readonly filter?: LuaFluidPrototype
 
     readonly height: number
 
@@ -5790,12 +5790,12 @@ interface LuaFluidBoxPrototype {
     /**
      * The maximum temperature or `nil` if none is set.
      */
-    readonly maximum_temperature: number
+    readonly maximum_temperature?: number
 
     /**
      * The minimum temperature or `nil` if none is set.
      */
-    readonly minimum_temperature: number
+    readonly minimum_temperature?: number
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -5978,7 +5978,7 @@ interface LuaFontPrototype {
     /**
      * The border color or `nil` if not set.
      */
-    readonly border_color: Color
+    readonly border_color?: Color
 
     readonly filtered: boolean
 
@@ -6438,7 +6438,7 @@ interface LuaForce {
     /**
      * The current technology in research, or `nil` if no research is currently ongoing.
      */
-    readonly current_research: LuaTechnology
+    readonly current_research?: LuaTechnology
 
     /**
      * The time, in ticks, before a deconstruction order is removed.
@@ -6602,7 +6602,7 @@ interface LuaForce {
      * This only allows mods to queue research that this force is able to research in the first place. As an example, an already researched technology or one whose prerequisites are not fulfilled will not be queued, but dropped silently instead.
      *
      */
-    research_queue: TechnologyIdentification[]
+    research_queue?: TechnologyIdentification[]
 
     /**
      * Whether the research queue is available for this force.
@@ -8349,7 +8349,7 @@ interface LuaGuiElement {
      * ```
      *
      */
-    elem_filters: ItemPrototypeFilter | TilePrototypeFilter | EntityPrototypeFilter | FluidPrototypeFilter | RecipePrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | TechnologyPrototypeFilter[]
+    elem_filters?: ItemPrototypeFilter | TilePrototypeFilter | EntityPrototypeFilter | FluidPrototypeFilter | RecipePrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | TechnologyPrototypeFilter[]
 
     /**
      * The elem type of this choose-elem-button.
@@ -8366,7 +8366,7 @@ interface LuaGuiElement {
      * Applies to subclasses: choose-elem-button
      *
      */
-    elem_value: string | SignalID
+    elem_value?: string | SignalID
 
     /**
      * Whether this GUI element is enabled. Disabled GUI elements don't trigger events when clicked.
@@ -8376,12 +8376,12 @@ interface LuaGuiElement {
     /**
      * The entity associated with this entity-preview, camera, minimap or `nil` if no entity is associated.
      */
-    entity: LuaEntity
+    entity?: LuaEntity
 
     /**
      * The force this minimap is using or `nil` if no force is set.
      */
-    force: string
+    force?: string
 
     /**
      * The GUI this element is a child of.
@@ -8446,7 +8446,7 @@ interface LuaGuiElement {
     /**
      * The location of this widget when stored in {@link LuaGui::screen | LuaGui::screen}, or `nil` if not set or not in {@link LuaGui::screen | LuaGui::screen}.
      */
-    location: GuiLocation
+    location?: GuiLocation
 
     /**
      * Whether this choose-elem-button can be changed by the player.
@@ -8568,7 +8568,7 @@ interface LuaGuiElement {
      * Applies to subclasses: tabbed-pane
      *
      */
-    selected_tab_index: number
+    selected_tab_index?: number
 
     /**
      * Related to the number to be shown in the bottom right corner of this sprite-button. When set to `true`, numbers that are non-zero and smaller than one are shown as a percentage rather than the value. For example, `0.5` will be shown as `50%` instead.
@@ -8976,22 +8976,22 @@ interface LuaInventory {
     /**
      * The entity that owns this inventory or `nil` if this isn't owned by an entity.
      */
-    readonly entity_owner: LuaEntity
+    readonly entity_owner?: LuaEntity
 
     /**
      * The equipment that owns this inventory or `nil` if this isn't owned by an equipment.
      */
-    readonly equipment_owner: LuaEquipment
+    readonly equipment_owner?: LuaEquipment
 
     /**
      * The inventory index this inventory uses, or `nil` if the inventory doesn't have an index.
      */
-    readonly index: defines.inventory
+    readonly index?: defines.inventory
 
     /**
      * The mod that owns this inventory or `nil` if this isn't owned by a mod.
      */
-    readonly mod_owner: string
+    readonly mod_owner?: string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -9001,7 +9001,7 @@ interface LuaInventory {
     /**
      * The player that owns this inventory or `nil` if this isn't owned by a player.
      */
-    readonly player_owner: LuaPlayer
+    readonly player_owner?: LuaPlayer
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -9139,12 +9139,12 @@ interface LuaItemPrototype {
     /**
      * The gun attack parameters or `nil` if not a gun item prototype.
      */
-    readonly attack_parameters: AttackParameters
+    readonly attack_parameters?: AttackParameters
 
     /**
      * The result of burning this item as fuel or `nil`.
      */
-    readonly burnt_result: LuaItemPrototype
+    readonly burnt_result?: LuaItemPrototype
 
     /**
      * If this item can be mod-opened.
@@ -9154,7 +9154,7 @@ interface LuaItemPrototype {
     /**
      * The capsule action for this capsule item prototype or `nil` if this isn't a capsule item prototype.
      */
-    readonly capsule_action: CapsuleAction
+    readonly capsule_action?: CapsuleAction
 
     /**
      * The name of a {@link LuaModuleCategoryPrototype | LuaModuleCategoryPrototype}. Used when upgrading modules: Ctrl + click modules into an entity and it will replace lower tier modules of the same category with higher tier modules.
@@ -9199,7 +9199,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: ToolItem
      *
      */
-    readonly durability: number
+    readonly durability?: number
 
     /**
      * The durability message key used when displaying the durability of this tool.
@@ -9223,7 +9223,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: DeconstructionItem
      *
      */
-    readonly entity_filter_slots: number
+    readonly entity_filter_slots?: number
 
     /**
      * The entity filters used by this selection tool indexed by entity name.
@@ -9245,7 +9245,7 @@ interface LuaItemPrototype {
     /**
      * The prototype of this armor equipment grid or `nil` if none or this is not an armor item.
      */
-    readonly equipment_grid: LuaEquipmentGridPrototype
+    readonly equipment_grid?: LuaEquipmentGridPrototype
 
     /**
      * If this item with inventory extends the inventory it resides in by default.
@@ -9276,7 +9276,7 @@ interface LuaItemPrototype {
     /**
      * The fuel category or `nil`.
      */
-    readonly fuel_category: string
+    readonly fuel_category?: string
 
     /**
      * The emissions multiplier if this is used as fuel.
@@ -9418,7 +9418,7 @@ interface LuaItemPrototype {
     /**
      * Prototype of the equipment that will be created by placing this item in an equipment grid or `nil` if there is no equipment defined.
      */
-    readonly place_as_equipment_result: LuaEquipmentPrototype
+    readonly place_as_equipment_result?: LuaEquipmentPrototype
 
     /**
      * The place-as-tile result if one is defined, else `nil`.
@@ -9428,12 +9428,12 @@ interface LuaItemPrototype {
     /**
      * Prototype of the entity that will be created by placing this item, or `nil` if there is no such entity.
      */
-    readonly place_result: LuaEntityPrototype
+    readonly place_result?: LuaEntityPrototype
 
     /**
      * Amount of extra time (in ticks) it takes to reload the weapon after depleting the magazine or `nil` if this is not an ammo item.
      */
-    readonly reload_time: number
+    readonly reload_time?: number
 
     /**
      * The repair result of this repair tool prototype or `nil` if this isn't a repair tool prototype.
@@ -9441,7 +9441,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: RepairTool
      *
      */
-    readonly repair_result: TriggerItem[]
+    readonly repair_result?: TriggerItem[]
 
     /**
      * Resistances of this armour item, indexed by damage type name. `nil` if not an armor or the armor has no resistances.
@@ -9526,7 +9526,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: DeconstructionItem
      *
      */
-    readonly tile_filter_slots: number
+    readonly tile_filter_slots?: number
 
     /**
      * The tile filters used by this selection tool indexed by tile name.
@@ -10099,7 +10099,7 @@ interface LuaItemStack {
     /**
      * The equipment grid of this item or `nil` if this item doesn't have a grid.
      */
-    readonly grid: LuaEquipmentGrid
+    readonly grid?: LuaEquipmentGrid
 
     /**
      * How much health the item has, as a number in range [0, 1].
@@ -10305,7 +10305,7 @@ interface LuaLampControlBehavior extends LuaGenericOnOffControlBehavior {
     /**
      * The color the lamp is showing or `nil` if not using any color.
      */
-    readonly color: Color
+    readonly color?: Color
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -10401,7 +10401,7 @@ interface LuaLogisticCell {
     /**
      * The network that owns this cell or `nil`.
      */
-    readonly logistic_network: LuaLogisticNetwork
+    readonly logistic_network?: LuaLogisticNetwork
 
     /**
      * Logistic radius of this cell.
@@ -10708,7 +10708,7 @@ interface LuaLogisticPoint {
      * The returned array will always have an entry for each filter and will be indexed in sequence when not nil.
      *
      */
-    readonly filters: LogisticFilter[]
+    readonly filters?: LogisticFilter[]
 
     /**
      * The force of this logistic point.
@@ -10810,17 +10810,17 @@ interface LuaModSettingPrototype {
     /**
      * If this string setting allows blank values or `nil` if not a string setting.
      */
-    readonly allow_blank: boolean
+    readonly allow_blank?: boolean
 
     /**
      * The allowed values for this setting or `nil` if this setting doesn't use the a fixed set of values.
      */
-    readonly allowed_values: string[] | number[]
+    readonly allowed_values?: string[] | number[]
 
     /**
      * If this string setting auto-trims values or `nil` if not a string setting.
      */
-    readonly auto_trim: boolean
+    readonly auto_trim?: boolean
 
     /**
      * The default value of this setting.
@@ -10839,12 +10839,12 @@ interface LuaModSettingPrototype {
     /**
      * The maximum value for this setting or `nil` if this setting type doesn't support a maximum.
      */
-    readonly maximum_value: number
+    readonly maximum_value?: number
 
     /**
      * The minimum value for this setting or `nil` if this setting type doesn't support a minimum.
      */
-    readonly minimum_value: number
+    readonly minimum_value?: number
 
     /**
      * The mod that owns this setting.
@@ -11741,7 +11741,7 @@ interface LuaPlayer extends LuaControl {
      * Will also return `nil` when the player is disconnected (see {@link LuaPlayer::connected | LuaPlayer::connected}).
      *
      */
-    character: LuaEntity
+    character?: LuaEntity
 
     /**
      * The color used when this player talks in game.
@@ -11858,7 +11858,7 @@ interface LuaPlayer extends LuaControl {
     /**
      * The permission group this player is part of or `nil` if not part of any group.
      */
-    permission_group: LuaPermissionGroup
+    permission_group?: LuaPermissionGroup
 
     /**
      * If items not included in this map editor infinity inventory filters should be removed.
@@ -11886,7 +11886,7 @@ interface LuaPlayer extends LuaControl {
      * This is mainly useful when a player is in the map editor.
      *
      */
-    readonly stashed_controller_type: defines.controllers
+    readonly stashed_controller_type?: defines.controllers
 
     /**
      * The tag that is shown after the player in chat and on the map.
@@ -11900,7 +11900,7 @@ interface LuaPlayer extends LuaControl {
      * Set to any positive value to trigger the respawn state for this player.
      *
      */
-    ticks_to_respawn: number
+    ticks_to_respawn?: number
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -15733,7 +15733,7 @@ interface LuaTile {
     /**
      * The name of the {@link LuaTilePrototype | LuaTilePrototype} hidden under this tile or `nil` if there is no hidden tile. During normal gameplay, only {@link non-mineable | LuaTilePrototype::mineable_properties} tiles can become hidden. This can however be circumvented with {@link LuaSurface::set_hidden_tile | LuaSurface::set_hidden_tile}.
      */
-    readonly hidden_tile: string
+    readonly hidden_tile?: string
 
     /**
      * Prototype name of this tile. E.g. `"sand-3"` or `"grass-2"`.
@@ -15832,7 +15832,7 @@ interface LuaTilePrototype {
     /**
      * The next direction of this tile or `nil` - used when a tile has multiple directions (such as hazard concrete)
      */
-    readonly next_direction: LuaTilePrototype
+    readonly next_direction?: LuaTilePrototype
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -15955,7 +15955,7 @@ interface LuaTrain {
     /**
      * The back stock of this train or `nil`.
      */
-    readonly back_stock: LuaEntity
+    readonly back_stock?: LuaEntity
 
     /**
      * The cargo carriages the train contains.
@@ -15980,7 +15980,7 @@ interface LuaTrain {
     /**
      * The front stock of this train or `nil`.
      */
-    readonly front_stock: LuaEntity
+    readonly front_stock?: LuaEntity
 
     /**
      * If this train has a path.
@@ -16039,17 +16039,17 @@ interface LuaTrain {
     /**
      * The path this train is using or `nil` if none.
      */
-    readonly path: LuaRailPath
+    readonly path?: LuaRailPath
 
     /**
      * The destination rail this train is currently pathing to or `nil`.
      */
-    readonly path_end_rail: LuaEntity
+    readonly path_end_rail?: LuaEntity
 
     /**
      * The destination train stop this train is currently pathing to or `nil`.
      */
-    readonly path_end_stop: LuaEntity
+    readonly path_end_stop?: LuaEntity
 
     readonly rail_direction_from_back_rail: defines.rail_direction
 
@@ -16066,12 +16066,12 @@ interface LuaTrain {
      * The schedule can't be changed by modifying the returned table. Instead, changes must be made by assigning a new table to this attribute.
      *
      */
-    schedule: TrainSchedule
+    schedule?: TrainSchedule
 
     /**
      * The signal this train is arriving or waiting at or `nil` if none.
      */
-    readonly signal: LuaEntity
+    readonly signal?: LuaEntity
 
     /**
      * Current speed.
@@ -16089,7 +16089,7 @@ interface LuaTrain {
     /**
      * The train stop this train is stopped at or `nil`.
      */
-    readonly station: LuaEntity
+    readonly station?: LuaEntity
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -16434,12 +16434,12 @@ interface LuaUnitGroup {
     /**
      * The command given to this group or `nil` is the group has no command.
      */
-    readonly command: Command
+    readonly command?: Command
 
     /**
      * The distraction command given to this group or `nil` is the group currently isn't distracted.
      */
-    readonly distraction_command: Command
+    readonly distraction_command?: Command
 
     /**
      * The force of this unit group.

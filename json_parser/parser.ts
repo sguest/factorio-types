@@ -229,7 +229,7 @@ function writeMethod(method: Method) {
     }
 
     let returnType = parseType(method.return_type);
-    if(/or `?nil/.test(method.return_description || '')) {
+    if(/(or|returns) `?nil/i.test(method.return_description || '')) {
         returnType += ' | null';
     }
     output += `): ${returnType}\n\n`;
@@ -250,7 +250,7 @@ function writeAttribute(attribute: Attribute | AttributeWithOptional): string {
         output += 'readonly ';
     }
     output += attribute.name;
-    if('optional' in attribute && attribute.optional) {
+    if(('optional' in attribute && attribute.optional) || /(or|returns) ?`nil/i.test(attribute.description)) {
         output += '?'
     }
     return output + `: ${parseType(attribute.type)}\n\n`;
