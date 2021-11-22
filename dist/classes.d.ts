@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.46
+// Factorio version 1.1.47
 // API version 1
 
 /**
@@ -985,23 +985,19 @@ interface LuaControl {
 
     /**
      * Gets the parameters of a personal logistic request and auto-trash slot.
-     * @remarks
-     * This will silently return an empty value (`name` will be `nil`) if personal logistics are not researched yet.
-     *
      * @param slot_index - The slot to get.
+     * @returns The logistic parameters. If personal logistics are not researched yet, their `name` will be `nil`.
      */
     get_personal_logistic_slot(this: void,
-        slot_index: number): PersonalLogisticParameters
+        slot_index: number): LogisticParameters
 
     /**
      * Gets the parameters of a vehicle logistic request and auto-trash slot.
-     * @remarks
-     * This will silently return an empty value (`name` will be `nil`) if the vehicle does not use logistics.
-     *
      * @param slot_index - The slot to get.
+     * @returns The logistic parameters. If the vehicle does not use logistics, their `name` will be `nil`.
      */
     get_vehicle_logistic_slot(this: void,
-        slot_index: number): PersonalLogisticParameters
+        slot_index: number): LogisticParameters
 
     /**
      * Does this entity have any item inside it?
@@ -1080,29 +1076,23 @@ interface LuaControl {
 
     /**
      * Sets a personal logistic request and auto-trash slot to the given value.
-     * @remarks
-     * This will silently fail if personal logistics are not researched yet.
-     *
      * @param slot_index - The slot to set.
      * @param value - The logistic request parameters.
-     * @returns Whether the slot was set successfully.
+     * @returns Whether the slot was set successfully. `false` if personal logistics are not researched yet.
      */
     set_personal_logistic_slot(this: void,
         slot_index: number,
-        value: PersonalLogisticParameters): boolean
+        value: LogisticParameters): boolean
 
     /**
      * Sets a vehicle logistic request and auto-trash slot to the given value.
-     * @remarks
-     * This will silently fail if the vehicle does not use logistics.
-     *
      * @param slot_index - The slot to set.
      * @param value - The logistic request parameters.
-     * @returns Whether the slot was set successfully.
+     * @returns Whether the slot was set successfully. `false` if the vehicle does not use logistics.
      */
     set_vehicle_logistic_slot(this: void,
         slot_index: number,
-        value: PersonalLogisticParameters): boolean
+        value: LogisticParameters): boolean
 
     /**
      * Teleport the entity to a given position, possibly on another surface.
@@ -4553,6 +4543,11 @@ interface LuaEntityPrototype {
     readonly inserter_rotation_speed: number
 
     /**
+     * Gets the current stack size bonus of this entity, returns nil if not an inserter.
+     */
+    readonly inserter_stack_size_bonus: number
+
+    /**
      * The instruments for this programmable speaker or `nil`.
      */
     readonly instruments: ProgrammableSpeakerInstrument[]
@@ -5846,6 +5841,8 @@ interface LuaFluidEnergySourcePrototype {
     help(this: void): string
 
     readonly burns_fluid: boolean
+
+    readonly destroy_non_fuel_fluid: boolean
 
     readonly effectivity: number
 
@@ -9585,7 +9582,6 @@ interface LuaItemStack {
         amount: number): void
 
     /**
-     * Build this blueprint
      * @remarks
      * Built entities can be come invalid between the building of the blueprint and the function returning if by_player or raise_built is used and one of those events invalidates the entity.
      *
@@ -9736,7 +9732,7 @@ interface LuaItemStack {
         amount: number): void
 
     /**
-     * Export a supported item (blueprint, blueprint-book, deconstruction-planner, upgrade-planner, item-with-tags) to a string
+     * Export a supported item (blueprint, blueprint-book, deconstruction-planner, upgrade-planner, item-with-tags) to a string.
      * @returns The exported string
      */
     export_stack(this: void): string
@@ -9839,7 +9835,7 @@ interface LuaItemStack {
     help(this: void): string
 
     /**
-     * Import a supported item (blueprint, blueprint-book, deconstruction-planner, upgrade-planner, item-with-tags) from a string
+     * Import a supported item (blueprint, blueprint-book, deconstruction-planner, upgrade-planner, item-with-tags) from a string.
      * @param data - The string to import
      * @returns 0 if the import succeeded with no errors. -1 if the import succeeded with errors. 1 if the import failed.
      */
@@ -11873,6 +11869,11 @@ interface LuaPlayer extends LuaControl {
      * The render mode of the player, like map or zoom to world. The render mode can be set using {@link LuaPlayer::open_map | LuaPlayer::open_map}, {@link LuaPlayer::zoom_to_world | LuaPlayer::zoom_to_world} and {@link LuaPlayer::close_map | LuaPlayer::close_map}.
      */
     readonly render_mode: defines.render_mode
+
+    /**
+     * If `true`, circle and name of given player is rendered on the map/chart.
+     */
+    show_on_map: boolean
 
     /**
      * If `true`, zoom-to-world noise effect will be disabled and environmental sounds will be based on zoom-to-world view instead of position of player's character.
@@ -13945,6 +13946,13 @@ interface LuaStyle {
      *
      */
     badge_horizontal_spacing: number
+
+    /**
+     * @remarks
+     * Applies to subclasses: LuaProgressBarStyle
+     *
+     */
+    bar_width: number
 
     /**
      * Space between the table cell contents bottom and border.

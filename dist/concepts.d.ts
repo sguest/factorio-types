@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.46
+// Factorio version 1.1.47
 // API version 1
 
 /**
@@ -1601,9 +1601,9 @@ interface ItemStackLocation {
  * Localised strings are a way to support translation of in-game text. It is an array where the first element is the key and the remaining elements are parameters that will be substituted for placeholders in the template designated by the key.
  * The key identifies the string template. For example, `"gui-alert-tooltip.attack"` (for the template `"__1__
  *     objects are being damaged"`; see the file `data/core/locale/en.cfg`).
- * The template can contain placeholders such as `__1__` or `__2__`. These will be replaced by the respective parameter in the LocalisedString. The parameters themselves can be other localised strings, which will be processed recursively in the same fashion. Localised strings cannot be recursed deeper than 20 levels and cannot have more than 20 parameters.
+ * The template can contain placeholders such as `__1__` or `__2__`. These will be replaced by the respective parameter in the LocalisedString. The parameters themselves can be other localised strings, which will be processed recursively in the same fashion. Localised strings can not be recursed deeper than 20 levels and can not have more than 20 parameters.
  * As a special case, when the key is just the empty string, all the parameters will be concatenated (after processing, if any are localised strings). If there is only one parameter, it will be used as is.
- * Furthermore, when an API function expects a localised string, it will also accept a regular string (i.e. not a table) which will not be translated, or number which will be converted to its textual representation.
+ * Furthermore, when an API function expects a localised string, it will also accept a regular string (i.e. not a table) which will not be translated, as well as a number or boolean, which will be converted to their textual representation.
  * @example
  * In the English translation, this will print `"No ammo"`; in the Czech translation, it will print `"Bez munice"`: 
  * ```
@@ -1649,6 +1649,18 @@ interface LogisticFilter {
      * The item name for this filter.
      */
     'name': string
+}
+
+/**
+ * @param name - The item. `nil` clears the filter.
+ */
+interface LogisticParameters {
+    'max'?: number
+    'min'?: number
+    /**
+     * The item. `nil` clears the filter.
+     */
+    'name'?: string
 }
 
 /**
@@ -2403,18 +2415,6 @@ interface PathfinderWaypoint {
      * The position of the waypoint on its surface.
      */
     'position': Position
-}
-
-/**
- * @param name - The item. `nil` clears the filter.
- */
-interface PersonalLogisticParameters {
-    'max'?: number
-    'min'?: number
-    /**
-     * The item. `nil` clears the filter.
-     */
-    'name'?: string
 }
 
 /**
