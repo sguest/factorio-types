@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.47
+// Factorio version 1.1.49
 // API version 1
 
 /**
@@ -299,10 +299,12 @@ interface LuaBootstrap {
 
     /**
      * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session. It gives the mod the opportunity to do some very specific actions, should it need to. Doing anything other than these three will lead to desyncs, which breaks multiplayer and replay functionality. Access to {@link LuaGameScript | LuaGameScript} and {@link LuaRendering | LuaRendering} is not available. The `global` table can be accessed and is safe to read from, but not write to.
+     * 
      * The only legitimate uses of this event are these three:
      * - Re-setup {@link metatables | https://www.lua.org/pil/13.html} as they are not persisted through save-load.
      * - Re-setup conditional event handlers.
      * - Create local references to data stored in the {@link global | Global.html} table.
+     * 
      * For all other purposes, {@link LuaBootstrap::on_init | LuaBootstrap::on_init}, {@link LuaBootstrap::on_configuration_changed | LuaBootstrap::on_configuration_changed} or migration scripts should be used instead.
      * @param f - The handler for this event. Passing `nil` will unregister it.
      */
@@ -340,6 +342,7 @@ interface LuaBootstrap {
 
     /**
      * Raise an event. Only events generated with {@link LuaBootstrap::generate_event_name | LuaBootstrap::generate_event_name} and the following can be raised:
+     * 
      * - {@link on_console_chat | on_console_chat}
      * - {@link on_player_crafted_item | on_player_crafted_item}
      * - {@link on_player_fast_transferred | on_player_fast_transferred}
@@ -626,6 +629,7 @@ interface LuaBurnerPrototype {
 
 /**
  * A chunk iterator can be used for iterating chunks coordinates of a surface.
+ * 
  * The returned type is a {@link ChunkPositionAndArea | ChunkPositionAndArea} containing the chunk coordinates and its area.
  * @example
  * ```
@@ -1105,7 +1109,7 @@ interface LuaControl {
      * @returns `true` when the entity was successfully teleported.
      */
     teleport(this: void,
-        position: Position,
+        position: MapPosition,
         surface?: SurfaceIdentification): boolean
 
     /**
@@ -1113,7 +1117,7 @@ interface LuaControl {
      * @param position - Position of the entity to select
      */
     update_selected_entity(this: void,
-        position: Position): void
+        position: MapPosition): void
 
     /**
      * The build distance of this character or max uint when not a character or player connected to a character.
@@ -1321,6 +1325,7 @@ interface LuaControl {
 
     /**
      * The GUI the player currently has open, or `nil` if no GUI is open. Writing to it fires the {@link on_gui_opened | on_gui_opened} event.
+     * 
      * This is the GUI that will asked to close (by firing the {@link on_gui_closed | on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is not `nil`, and a new GUI is written to it, the existing one will be asked to close.
      * @remarks
      * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element` or `nil`.
@@ -1341,7 +1346,7 @@ interface LuaControl {
     /**
      * Current position of the entity.
      */
-    readonly position: Position
+    readonly position: MapPosition
 
     /**
      * The reach distance of this character or max uint when not a character or player connected to a character.
@@ -1574,6 +1579,7 @@ interface LuaCustomInputPrototype {
 
 /**
  * Lazily evaluated table. For performance reasons, we sometimes return a custom table-like type instead of a native Lua table. This custom type lazily constructs the necessary Lua wrappers of the corresponding C++ objects, therefore preventing their unnecessary construction in some cases.
+ * 
  * There are some notable consequences to the usage of a custom table type rather than the native Lua table type: Iterating a custom table is only possible using the `pairs` Lua function; `ipairs` won't work. Another key difference is that custom tables cannot be serialised into a game save file -- if saving the game would require serialisation of a custom table, an error will be displayed and the game will not be saved.
  * @example
  * In previous versions of Factorio, this would create a [LuaPlayer](LuaPlayer) instance for every player in the game, even though only one such wrapper is needed. In the current version, accessing [game.players](LuaGameScript::players) by itself does not create any [LuaPlayer](LuaPlayer) instances; they are created lazily when accessed. Therefore, this example only constructs one [LuaPlayer](LuaPlayer) instance, no matter how many elements there are in `game.players`. 
@@ -1791,6 +1797,7 @@ interface LuaElectricEnergySourcePrototype {
 
 /**
  * The primary interface for interacting with entities through the Lua API. Entities are everything that exists on the map except for tiles (see {@link LuaTile | LuaTile}).
+ * 
  * Most functions on LuaEntity also work when the entity is contained in a ghost.
  */
 interface LuaEntity extends LuaControl {
@@ -1802,7 +1809,7 @@ interface LuaEntity extends LuaControl {
      * @param position - The position the spidertron should move to.
      */
     add_autopilot_destination(this: void,
-        position: Position): void
+        position: MapPosition): void
 
     /**
      * Offer a thing on the market.
@@ -1836,7 +1843,7 @@ interface LuaEntity extends LuaControl {
      */
     can_shoot(this: void,
         target: LuaEntity,
-        position: Position): boolean
+        position: MapPosition): boolean
 
     /**
      * Can wires reach between these entities.
@@ -1898,7 +1905,7 @@ interface LuaEntity extends LuaControl {
      */
     clone(this: void,
         table: {
-            position: Position,
+            position: MapPosition,
             surface?: LuaSurface,
             force?: ForceIdentification,
             create_build_effect_smoke?: boolean
@@ -1906,6 +1913,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Connects current linked belt with another one.
+     * 
      * Neighbours have to be of different type. If given linked belt is connected to something else it will be disconnected first. If provided neighbour is connected to something else it will also be disconnected first. Automatically updates neighbour to be connected back to this one.
      * @remarks
      * Can also be used on entity ghost if it contains linked-belt
@@ -1918,6 +1926,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Connect two devices with a circuit wire or copper cable. Depending on which type of connection should be made, there are different procedures:
+     * 
      * - To connect two electric poles, `target` must be a {@link LuaEntity | LuaEntity} that specifies another electric pole. This will connect them with copper cable.
      * - To connect two devices with circuit wire, `target` must be a table of type {@link WireConnectionDefinition | WireConnectionDefinition}.
      * @param target - The target with which to establish a connection.
@@ -1989,6 +1998,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Immediately kills the entity. Does nothing if the entity doesn't have health.
+     * 
      * Unlike {@link LuaEntity::destroy | LuaEntity::destroy}, `die` will trigger the {@link on_entity_died | on_entity_died} event and the entity will produce a corpse and drop loot if it has any.
      * @remarks
      * If `force` is not specified, `on_entity_died` will blame the `"neutral"` force.
@@ -2018,6 +2028,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Disconnect circuit wires or copper cables between devices. Depending on which type of connection should be cut, there are different procedures:
+     * 
      * - To remove all copper cables, leave the `target` parameter blank: `pole.disconnect_neighbour()`.
      * - To remove all wires of a specific color, set `target` to {@link defines.wire_type.red | defines.wire_type.red} or {@link defines.wire_type.green | defines.wire_type.green}.
      * - To remove a specific copper cable between two electric poles, `target` must be a {@link LuaEntity | LuaEntity} that specifies the other pole: `pole1.disconnect_neighbour(pole2)`.
@@ -2870,7 +2881,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: SpiderVehicle
      *
      */
-    autopilot_destination?: Position
+    autopilot_destination?: MapPosition
 
     /**
      * The queued destination positions of spidertron's autopilot.
@@ -2878,7 +2889,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: SpiderVehicle
      *
      */
-    readonly autopilot_destinations: Position[]
+    readonly autopilot_destinations: MapPosition[]
 
     /**
      * The backer name assigned to this entity, or `nil` if this entity doesn't support backer names. Entities that support backer names are labs, locomotives, radars, roboports, and train stops.
@@ -3846,6 +3857,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The ticks left before a ghost, combat robot, highlight box or smoke with trigger is destroyed.
+     * 
      * - for ghosts set to uint32 max (4,294,967,295) to never expire.
      * - for ghosts Cannot be set higher than {@link LuaForce::ghost_time_to_live | LuaForce::ghost_time_to_live} of the entity's force.
      */
@@ -4543,7 +4555,7 @@ interface LuaEntityPrototype {
     readonly inserter_rotation_speed?: number
 
     /**
-     * Gets the current stack size bonus of this entity, returns nil if not an inserter.
+     * Gets the built-in stack size bonus of this inserter prototype. `nil` if this is not an inserter.
      */
     readonly inserter_stack_size_bonus: number
 
@@ -5546,6 +5558,7 @@ interface LuaEquipmentPrototype {
 
 /**
  * Encapsulates statistic data for different parts of the game. In the context of flow statistics, `input` and `output` describe on which side of the associated GUI the values are shown. Input values are shown on the left side, output values on the right side.
+ * 
  * Examples:
  * - The item production GUI shows "consumption" on the right, thus `output` describes the item consumption numbers. The same goes for fluid consumption.
  * - The kills gui shows "losses" on the right, so `output` describes how many of the force's entities were killed by enemies.
@@ -5647,7 +5660,9 @@ interface LuaFlowStatistics {
 
 /**
  * An array of fluid boxes of an entity. Entities may contain more than one fluid box, and some can change the number of fluid boxes -- for instance, an assembling machine will change its number of fluid boxes depending on its active recipe.
+ * 
  * See {@link Fluid | Fluid}
+ * 
  * Do note that reading from a {@link LuaFluidBox | LuaFluidBox} creates a new table and writing will copy the given fields from the table into the engine's own fluid box structure. Therefore, the correct way to update a fluidbox of an entity is to read it first, modify the table, then write the modified table back. Directly accessing the returned table's attributes won't have the desired effect.
  * @example
  * Double the temperature of the fluid in `entity`'s first fluid box. 
@@ -6428,6 +6443,7 @@ interface LuaForce {
 
     /**
      * The connected players belonging to this force.
+     * 
      * This is primarily useful when you want to do some action against all online players of this force.
      * @remarks
      * This does *not* index using player index. See {@link LuaPlayer::index | LuaPlayer::index} on each player instance for the player index.
@@ -6597,6 +6613,7 @@ interface LuaForce {
 
     /**
      * The research queue of this force. The first technology in the array is the currently active one. Reading this attribute gives an array of {@link LuaTechnology | LuaTechnology}.
+     * 
      * To write to this, the entire table must be written. Providing an empty table or `nil` will empty the research queue and cancel the current research. Writing to this when the research queue is disabled will simply set the last research in the table as the current research.
      * @remarks
      * This only allows mods to queue research that this force is able to research in the first place. As an example, an already researched technology or one whose prerequisites are not fulfilled will not be queued, but dropped silently instead.
@@ -7193,6 +7210,11 @@ interface LuaGameScript {
         path: string): void
 
     /**
+     * Reset scenario state (game_finished, player_won, etc.).
+     */
+    reset_game_state(this: void): void
+
+    /**
      * Resets the amount of time played for this map.
      */
     reset_time_played(this: void): void
@@ -7383,6 +7405,7 @@ interface LuaGameScript {
 
     /**
      * The players that are currently online.
+     * 
      * This is primarily useful when you want to do some action against all online players.
      * @remarks
      * This does *not* index using player index. See {@link LuaPlayer::index | LuaPlayer::index} on each player instance for the player index.
@@ -7457,9 +7480,14 @@ interface LuaGameScript {
     readonly equipment_prototypes: {[key: string]: LuaEquipmentPrototype}
 
     /**
-     * Is the scenario finished?
+     * True while the victory screen is shown.
      */
     readonly finished: boolean
+
+    /**
+     * True after players finished the game and clicked "continue".
+     */
+    readonly finished_but_continuing: boolean
 
     /**
      * A dictionary containing every LuaFluidPrototype indexed by `name`.
@@ -7850,7 +7878,9 @@ interface LuaGui {
 
 /**
  * An element of a custom GUI. This type is used to represent any kind of a GUI element - labels, buttons and frames are all instances of this type. Just like {@link LuaEntity | LuaEntity}, different kinds of elements support different attributes; attempting to access an attribute on an element that doesn't support it (for instance, trying to access the `column_count` of a `textfield`) will result in a runtime error.
+ * 
  * The following types of GUI element are supported:
+ * 
  * - `"button"`: A clickable element. Relevant event: {@link on_gui_click | on_gui_click}
  * - `"sprite-button"`: A `button` that displays a sprite rather than text. Relevant event: {@link on_gui_click | on_gui_click}
  * - `"checkbox"`: A clickable element with a check mark that can be turned off or on. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
@@ -7876,6 +7906,7 @@ interface LuaGui {
  * - `"tabbed-pane"`: A collection of `tab`s and their contents. Relevant event: {@link on_gui_selected_tab_changed | on_gui_selected_tab_changed}
  * - `"tab"`: A tab for use in a `tabbed-pane`.
  * - `"switch"`: A switch with three possible states. Can have labels attached to either side. Relevant event: {@link on_gui_switch_state_changed | on_gui_switch_state_changed}
+ * 
  * Each GUI element allows access to its children by having them as attributes. Thus, one can use the `parent.child` syntax to refer to children. Lua also supports the `parent["child"]` syntax to refer to the same element. This can be used in cases where the child has a name that isn't a valid Lua identifier.
  * @example
  * This will add a label called `greeting` to the top flow. Immediately after, it will change its text to illustrate accessing child elements. 
@@ -8314,6 +8345,7 @@ interface LuaGuiElement {
 
     /**
      * The elem filters of this choose-elem-button or `nil` if there are no filters.
+     * 
      * The compatible type of filter is determined by elem_type:
      * - Type `"item"` - {@link ItemPrototypeFilter | ItemPrototypeFilter}
      * - Type `"tile"` - {@link TilePrototypeFilter | TilePrototypeFilter}
@@ -10178,6 +10210,7 @@ interface LuaItemStack {
 
     /**
      * The unique identifier for this item if it has one, `nil` otherwise. Note that this ID stays the same no matter where the item is moved to.
+     * 
      * Only these types of items have unique IDs:
      * - `"armor"`
      * - `"spidertron-remote"`
@@ -10326,6 +10359,7 @@ interface LuaLampControlBehavior extends LuaGenericOnOffControlBehavior {
 
 /**
  * A lazily loaded value. For performance reasons, we sometimes return a custom lazily-loaded value type instead of the native Lua value. This custom type lazily constructs the necessary value when {@link LuaLazyLoadedValue::get | LuaLazyLoadedValue::get} is called, therefore preventing its unnecessary construction in some cases.
+ * 
  * An instance of LuaLazyLoadedValue is only valid during the event it was created from and cannot be saved.
  */
 interface LuaLazyLoadedValue<T> {
@@ -11226,7 +11260,7 @@ interface LuaPlayer extends LuaControl {
      */
     build_from_cursor(this: void,
         table: {
-            position: Position,
+            position: MapPosition,
             direction?: defines.direction,
             alt?: boolean,
             terrain_building_size?: number,
@@ -11243,7 +11277,7 @@ interface LuaPlayer extends LuaControl {
      */
     can_build_from_cursor(this: void,
         table: {
-            position: Position,
+            position: MapPosition,
             direction?: defines.direction,
             alt?: boolean,
             terrain_building_size?: number,
@@ -11259,7 +11293,7 @@ interface LuaPlayer extends LuaControl {
     can_place_entity(this: void,
         table: {
             name: string,
-            position: Position,
+            position: MapPosition,
             direction?: defines.direction
         }): boolean
 
@@ -11333,7 +11367,7 @@ interface LuaPlayer extends LuaControl {
     create_local_flying_text(this: void,
         table: {
             text: LocalisedString,
-            position?: Position,
+            position?: MapPosition,
             create_at_cursor?: boolean,
             color?: Color,
             time_to_live?: number,
@@ -11374,7 +11408,7 @@ interface LuaPlayer extends LuaControl {
      */
     drag_wire(this: void,
         table: {
-            position: Position
+            position: MapPosition
         }): boolean
 
     /**
@@ -11505,7 +11539,7 @@ interface LuaPlayer extends LuaControl {
      * Queues a request to open the map at the specified position. If the map is already opened, the request will simply set the position (and scale). Render mode change requests are processed before rendering of the next frame.
      */
     open_map(this: void,
-        position: Position,
+        position: MapPosition,
         scale?: number): void
 
     /**
@@ -11676,7 +11710,7 @@ interface LuaPlayer extends LuaControl {
      * @param selection_mode - The type of selection to start. Can be `select`, `alternative-select`, `reverse-select`.
      */
     start_selection(this: void,
-        position: Position,
+        position: MapPosition,
         selection_mode: string): void
 
     /**
@@ -11709,7 +11743,7 @@ interface LuaPlayer extends LuaControl {
      * Queues a request to zoom to world at the specified position. If the player is already zooming to world, the request will simply set the position (and scale). Render mode change requests are processed before rendering of the next frame.
      */
     zoom_to_world(this: void,
-        position: Position,
+        position: MapPosition,
         scale?: number): void
 
     /**
@@ -11786,6 +11820,7 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * The source entity used during entity settings copy-paste if any.
+     * 
      * `nil` if there isn't currently a source entity.
      */
     readonly entity_copy_source: LuaEntity
@@ -13836,6 +13871,7 @@ interface LuaSettings {
 
     /**
      * The current global mod settings, indexed by prototype name.
+     * 
      * Even though these are marked as read-only, they can be changed by overwriting individual {@link ModSetting | ModSetting} tables in the custom table. Mods can only change their own settings. Using the in-game console, all global settings can be changed.
      */
     readonly global: {[key: string]: ModSetting}
@@ -13847,6 +13883,7 @@ interface LuaSettings {
 
     /**
      * The default player mod settings for this map, indexed by prototype name.
+     * 
      * Even though these are marked as read-only, they can be changed by overwriting individual {@link ModSetting | ModSetting} tables in the custom table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
      */
     readonly player: {[key: string]: ModSetting}
@@ -14547,6 +14584,7 @@ interface LuaSurface {
 
     /**
      * Count entities of given type or name in a given area. Works just like {@link LuaSurface::find_entities_filtered | LuaSurface::find_entities_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of entities.
+     * 
      * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns entities in the radius of the position. If `area` is specified, this returns entities colliding with that area.
      * @param table.invert - If the filters should be inverted. These filters are: name, type, ghost_name, ghost_type, direction, collision_mask, force.
      * @param table.radius - If given with position, will count all entities within the radius of the position.
@@ -14571,6 +14609,7 @@ interface LuaSurface {
 
     /**
      * Count tiles of a given name in a given area. Works just like {@link LuaSurface::find_tiles_filtered | LuaSurface::find_tiles_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of tiles.
+     * 
      * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
      * @param table.position - Ignored if not given with radius.
      * @param table.radius - If given with position, will return all entities within the radius of the position.
@@ -14756,6 +14795,7 @@ interface LuaSurface {
 
     /**
      * Find decoratives of a given name in a given area.
+     * 
      * If no filters are given, returns all decoratives in the search area. If multiple filters are specified, returns only decoratives matching every given filter. If no area and no position are given, the entire surface is searched.
      * @param table.invert - If the filters should be inverted.
      * @example
@@ -14796,6 +14836,7 @@ interface LuaSurface {
 
     /**
      * Find entities in a given area.
+     * 
      * If no area is given all entities on the surface are returned.
      * @example
      * Will evaluate to a list of all entities within given area. 
@@ -14809,7 +14850,9 @@ interface LuaSurface {
 
     /**
      * Find all entities of the given type or name in the given area.
+     * 
      * If no filters (`name`, `type`, `force`, etc.) are given, this returns all entities in the search area. If multiple filters are specified, only entities matching all given filters are returned.
+     * 
      * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns the entities within the radius of the position. If `area` is specified, this returns the entities colliding with that area.
      * @param table.invert - If the filters should be inverted. These filters are: name, type, ghost_name, ghost_type, direction, collision_mask, force.
      * @param table.position - Has precedence over area field.
@@ -14938,7 +14981,9 @@ interface LuaSurface {
 
     /**
      * Find all tiles of the given name in the given area.
+     * 
      * If no filters are given, this returns all tiles in the search area.
+     * 
      * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
      * @param table.position - Ignored if not given with radius.
      * @param table.radius - If given with position, will return all entities within the radius of the position.
@@ -15205,6 +15250,7 @@ interface LuaSurface {
 
     /**
      * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities. If you want to command actual units to move, use the {@link LuaEntity::set_command | LuaEntity::set_command} functionality instead.
+     * 
      * The resulting path is ultimately returned asynchronously via {@link on_script_path_request_finished | on_script_path_request_finished}.
      * @param table.bounding_box - The dimensions of the object that's supposed to travel the path.
      * @param table.can_open_gates - Whether the path request can open gates. Defaults to `false`.
@@ -15276,6 +15322,7 @@ interface LuaSurface {
 
     /**
      * Set tiles at specified locations. Can automatically correct the edges around modified tiles.
+     * 
      * Placing a {@link mineable | LuaTilePrototype::mineable_properties} tile on top of a non-mineable one will turn the latter into the {@link LuaTile::hidden_tile | LuaTile::hidden_tile} for that tile. Placing a mineable tile on a mineable one or a non-mineable tile on a non-mineable one will not modify the hidden tile. This restriction can however be circumvented by using {@link LuaSurface::set_hidden_tile | LuaSurface::set_hidden_tile}.
      * @remarks
      * It is recommended to call this method once for all the tiles you want to change rather than calling it individually for every tile. As the tile correction is used after every step, calling it one by one could cause the tile correction logic to redo some of the changes. Also, many small API calls are generally more performance intensive than one big one.
@@ -15332,7 +15379,9 @@ interface LuaSurface {
 
     /**
      * Defines how surface daytime brightness influences each color channel of the current color lookup table (LUT).
+     * 
      * The LUT is multiplied by `((1 - weight) + brightness * weight)` and result is clamped to range [0, 1].
+     * 
      * Default is `{0, 0, 0}`, which means no influence.
      * @example
      * Makes night on the surface pitch black, assuming [LuaSurface::min_brightness](LuaSurface::min_brightness) being set to default value `0.15`. 
@@ -15999,6 +16048,7 @@ interface LuaTrain {
 
     /**
      * The players killed by this train.
+     * 
      * The keys are the player indices, the values are how often this train killed that player.
      */
     readonly killed_players: {[key: number]: number}

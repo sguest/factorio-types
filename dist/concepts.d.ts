@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.47
+// Factorio version 1.1.49
 // API version 1
 
 /**
@@ -599,6 +599,7 @@ type CollisionMask = {[key in CollisionMaskLayer]: boolean}
 
 /**
  * A {@link string | string} specifying a collision mask layer.
+ * 
  * Possible values for the string are:
  * - `"ground-tile"`
  * - `"water-tile"`
@@ -613,12 +614,14 @@ type CollisionMask = {[key in CollisionMaskLayer]: boolean}
  * - `"rail-layer"`
  * - `"transport-belt-layer"`
  * - `"not-setup"`
+ * 
  * Additionally the values `"layer-13"` through `"layer-55"`. These layers are currently unused by the game but may change. If a mod is going to use one of the unused layers it's recommended to start at the higher layers because the base game will take from the lower ones.
  */
 type CollisionMaskLayer = 'ground-tile' | 'water-tile' | 'resource-layer' | 'doodad-layer' | 'floor-layer' | 'item-layer' | 'ghost-layer' | 'object-layer' | 'player-layer' | 'train-layer' | 'rail-layer' | 'transport-belt-layer' | 'not-setup' | 'layer-13' | 'layer-14' | 'layer-15' | 'layer-16' | 'layer-17' | 'layer-18' | 'layer-19' | 'layer-20' | 'layer-21' | 'layer-22' | 'layer-23' | 'layer-24' | 'layer-25' | 'layer-26' | 'layer-27' | 'layer-28' | 'layer-29' | 'layer-30' | 'layer-31' | 'layer-32' | 'layer-33' | 'layer-34' | 'layer-35' | 'layer-36' | 'layer-37' | 'layer-38' | 'layer-39' | 'layer-40' | 'layer-41' | 'layer-42' | 'layer-43' | 'layer-44' | 'layer-45' | 'layer-46' | 'layer-47' | 'layer-48' | 'layer-49' | 'layer-50' | 'layer-51' | 'layer-52' | 'layer-53' | 'layer-54' | 'layer-55'
 
 /**
  * A {@link CollisionMask | CollisionMask} but also includes any flags this mask has.
+ * 
  * Flags such as:
  * - `"not-colliding-with-itself"`
  * - `"consider-tile-transitions"`
@@ -628,6 +631,7 @@ type CollisionMaskWithFlags = CollisionMask & {[key:string]: true}
 
 /**
  * Red, green, blue and alpha values, all in range [0, 1] or all in range [0, 255] if any value is > 1. All values here are optional. Color channels default to `0`, the alpha channel defaults to `1`.
+ * 
  * Similar to {@link Position | Position}, Color allows the short-hand notation of passing an array of exactly 3 or 4 numbers. The game usually expects colors to be in pre-multiplied form (color channels are pre-multiplied by alpha).
  * @example
  * ```
@@ -991,7 +995,9 @@ interface EnemyEvolutionMapSettings {
 
 /**
  * Candidate chunks are given scores to determine which one of them should be expanded into. This score takes into account various settings noted below. The iteration is over a square region centered around the chunk for which the calculation is done, and includes the central chunk as well. Distances are calculated as {@link Manhattan distance | https://en.wikipedia.org/wiki/Taxicab_geometry}.
+ * 
  * The pseudocode algorithm to determine a chunk's score is as follows:
+ * 
  * ```
  * player = 0
  * for neighbour in all chunks within enemy_building_influence_radius from chunk:
@@ -1145,6 +1151,7 @@ interface EventData {
 
 /**
  * Used to filter out irrelevant event callbacks in a performant way.
+ * 
  * Available filters:
  * - {@link LuaEntityClonedEventFilter | LuaEntityClonedEventFilter}
  * - {@link LuaEntityDamagedEventFilter | LuaEntityDamagedEventFilter}
@@ -1599,10 +1606,14 @@ interface ItemStackLocation {
 
 /**
  * Localised strings are a way to support translation of in-game text. It is an array where the first element is the key and the remaining elements are parameters that will be substituted for placeholders in the template designated by the key.
+ * 
  * The key identifies the string template. For example, `"gui-alert-tooltip.attack"` (for the template `"__1__
  *     objects are being damaged"`; see the file `data/core/locale/en.cfg`).
+ * 
  * The template can contain placeholders such as `__1__` or `__2__`. These will be replaced by the respective parameter in the LocalisedString. The parameters themselves can be other localised strings, which will be processed recursively in the same fashion. Localised strings can not be recursed deeper than 20 levels and can not have more than 20 parameters.
+ * 
  * As a special case, when the key is just the empty string, all the parameters will be concatenated (after processing, if any are localised strings). If there is only one parameter, it will be used as is.
+ * 
  * Furthermore, when an API function expects a localised string, it will also accept a regular string (i.e. not a table) which will not be translated, as well as a number or boolean, which will be converted to their textual representation.
  * @example
  * In the English translation, this will print `"No ammo"`; in the Czech translation, it will print `"Bez munice"`: 
@@ -2015,7 +2026,9 @@ interface MapGenSettings {
 
 /**
  * A floating point number specifying an amount.
+ * 
  * For backwards compatibility, MapGenSizes can also be specified as one of the following strings, which will be converted to a number (when queried, a number will always be returned):
+ * 
  * - `"none"` - equivalent to `0`
  * - `"very-low"`, `"very-small"`, `"very-poor"` - equivalent to `1/2`
  * - `"low"`, `"small"`, `"poor"` - equivalent to `1/sqrt(2)`
@@ -2027,6 +2040,14 @@ interface MapGenSettings {
  *
  */
 type MapGenSize = number | 'none' | 'very-low' | 'very-small' | 'very-poor' | 'low' | 'small' | 'poor' | 'normal' | 'medium' | 'regular' | 'high' | 'big' | 'good' | 'very-high' | 'very-big' | 'very-good'
+
+/**
+ * Coordinates of an entity on a map. This uses the same format as {@link Position | Position}, meaning it can be specified either with or without explicit keys.
+ */
+interface MapPosition {
+    'x': number
+    'y': number
+}
 
 /**
  * Various game-related settings. Updating any of the attributes will immediately take effect in the game engine.
@@ -2133,8 +2154,11 @@ interface ModuleEffects {
 
 /**
  * This is a set of flags given as a dictionary{@link [string | string} &rarr; {@link boolean | boolean}]. When a flag is set, it is present in the dictionary with the value `true`. Unset flags aren't present in the dictionary at all.
+ * 
  * To write to this, use an array{@link [string | string}] of the mouse buttons that should be possible to use with on button.
+ * 
  * When setting flags, the flag `"left-and-right"` can also be set which will set `"left"` and `"right"` true.
+ * 
  * Possible flags when reading are:
  * - `"left"`
  * - `"right"`
@@ -2206,7 +2230,7 @@ interface OldTileAndPosition {
  * @param direct_distance_to_consider_short_request - The maximum direct distance in tiles before a request is no longer considered short. Defaults to `100`.
  * @param enemy_with_different_destination_collision_penalty - A penalty that is applied for another unit that is too close and either not moving or has a different goal. Defaults to `30`.
  * @param extended_collision_penalty - The collision penalty for collisions in the extended bounding box but outside the entity's actual bounding box. Defaults to `3`.
- * @param fwd2bwd_ratio - Determines whether forwards (`>1`), backwards (`<-1`), or symmetrical (`1`) search is preferred. Defaults to `5`.
+ * @param fwd2bwd_ratio - The pathfinder performs a step of the backward search every `fwd2bwd_ratio`'th step. The minimum allowed value is `2`, which means symmetric search. The default value is `5`.
  * @param general_entity_collision_penalty - The general collision penalty with other units. Defaults to `10`.
  * @param general_entity_subsequent_collision_penalty - The collision penalty for positions that require the destruction of an entity to get to. Defaults to `3`.
  * @param goal_pressure_ratio - When looking at which node to check next, their heuristic value is multiplied by this ratio. The higher it is, the more the search is directed straight at the goal. Defaults to `2`.
@@ -2266,7 +2290,7 @@ interface PathFinderMapSettings {
      */
     'extended_collision_penalty': number
     /**
-     * Determines whether forwards (`>1`), backwards (`<-1`), or symmetrical (`1`) search is preferred. Defaults to `5`.
+     * The pathfinder performs a step of the backward search every `fwd2bwd_ratio`'th step. The minimum allowed value is `2`, which means symmetric search. The default value is `5`.
      */
     'fwd2bwd_ratio': number
     /**
@@ -2586,6 +2610,7 @@ interface ProgrammableSpeakerParameters {
 
 /**
  * The smooth orientation. It is a {@link float | float} in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise. This means a value of `0` indicates "north", a value of `0.5` indicates "south".
+ * 
  * For example then, a value of `0.625` would indicate "south-west", and a value of `0.875` would indicate "north-west".
  */
 type RealOrientation = number
@@ -2602,6 +2627,7 @@ type RecipePrototypeFilter = RecipePrototypeFilterCategory | RecipePrototypeFilt
 
 /**
  * A value between 0 and 255 inclusive represented by one of the following named {@link string | string} or string version of the value (for example `"27"` and `"decals"` are both valid). Higher values are rendered on top of lower values.
+ * 
  * - `"water-tile"`: 15
  * - `"ground-tile"`: 25
  * - `"tile-transition"`: 26
@@ -2827,9 +2853,11 @@ interface SmokeSource {
 
 /**
  * A sound defined by a {@link string | string}. It can be either the name of a {@link sound prototype | https://wiki.factorio.com/Prototype/Sound} defined in the data stage or a path in the form `"type/name"`. The latter option can be sorted into three categories.
+ * 
  * The utility and ambient types each contain general use sound prototypes defined by the game itself.
  * - `"utility"` - Uses the {@link UtilitySounds | https://wiki.factorio.com/Prototype/UtilitySounds} prototype. Example: `"utility/wire_connect_pole"`
  * - `"ambient"` - Uses {@link AmbientSound | https://wiki.factorio.com/Prototype/AmbientSound} prototypes. Example: `"ambient/resource-deficiency"`
+ * 
  * The following types can be combined with any tile name as long as its prototype defines the
  *     corresponding sound.
  * - `"tile-walking"` - Uses {@link Tile::walking_sound | https://wiki.factorio.com/Prototype/Tile#walking_sound}. Example: `"tile-walking/concrete"`
@@ -2837,6 +2865,7 @@ interface SmokeSource {
  * - `"tile-build-small"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}. Example: `"tile-build-small/concrete"`
  * - `"tile-build-medium"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}
  * - `"tile-build-large"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}
+ * 
  * The following types can be combined with any entity name as long as its prototype defines the
  *     corresponding sound.
  * - `"entity-build"` - Uses {@link Entity::build_sound | https://wiki.factorio.com/Prototype/Entity#build_sound}. Example: `"entity-build/wooden-chest"`
@@ -2879,6 +2908,7 @@ interface SpawnPointDefinition {
 
 /**
  * It is specified by {@link string | string}. It can be either the name of a {@link sprite prototype | https://wiki.factorio.com/Prototype/Sprite} defined in the data stage or a path in form "type/name".
+ * 
  * The supported types are:
  * - `"item"` - for example "item/iron-plate" is the icon sprite of iron plate
  * - `"entity"` - for example "entity/small-biter" is the icon sprite of the small biter
