@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.49
+// Factorio version 1.1.50
 // API version 1
 
 /**
@@ -4787,14 +4787,6 @@ interface LuaEntityPrototype {
      *
      */
     readonly neighbour_bonus: number
-
-    /**
-     * Controls how much a reactor extends when connected to other reactors.
-     * @remarks
-     * Applies to subclasses: Reactor
-     *
-     */
-    readonly neighbour_collision_increase: number
 
     /**
      * The next upgrade for this entity or `nil`.
@@ -15835,6 +15827,11 @@ interface LuaTilePrototype {
      * False if this tile is not allowed in blueprints regardless of the ability to build it.
      */
     readonly can_be_part_of_blueprint: boolean
+
+    /**
+     * True if building this tile should check for colliding entities above and prevent building if such are found. Also during mining tiles above this tile checks for entities colliding with this tile and prevents mining if such are found.
+     */
+    readonly check_collision_with_entities: boolean
 
     /**
      * The collision mask this tile uses

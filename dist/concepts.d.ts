@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.49
+// Factorio version 1.1.50
 // API version 1
 
 /**
@@ -1900,15 +1900,29 @@ type LuaSectorScannedEventFilter = LuaSectorScannedEventFilterGhostName | LuaSec
 type LuaUpgradeCancelledEventFilter = LuaUpgradeCancelledEventFilterGhostName | LuaUpgradeCancelledEventFilterGhostType | LuaUpgradeCancelledEventFilterName | LuaUpgradeCancelledEventFilterType | DefaultLuaUpgradeCancelledEventFilter
 
 /**
+ * All regular {@link MapSettings | MapSettings} plus an additional table that contains the {@link DifficultySettings | DifficultySettings}.
+ * @param max_failed_behavior_count - If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
+ */
+interface MapAndDifficultySettings {
+    'difficulty_settings': DifficultySettings
+    'enemy_evolution': EnemyEvolutionMapSettings
+    'enemy_expansion': EnemyExpansionMapSettings
+    /**
+     * If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
+     */
+    'max_failed_behavior_count': number
+    'path_finder': PathFinderMapSettings
+    'pollution': PollutionMapSettings
+    'steering': SteeringMapSettings
+    'unit_group': UnitGroupMapSettings
+}
+
+/**
  * The data that can be extracted from a map exchange string, as a plain table.
- * @param map_settings - All the regular map settings plus an additional table called `difficulty_settings` that contains the [DifficultySettings](DifficultySettings).
  */
 interface MapExchangeStringData {
     'map_gen_settings': MapGenSettings
-    /**
-     * All the regular map settings plus an additional table called `difficulty_settings` that contains the {@link DifficultySettings | DifficultySettings}.
-     */
-    'map_settings': MapSettings
+    'map_settings': MapAndDifficultySettings
 }
 
 /**
