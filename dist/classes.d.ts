@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.50
+// Factorio version 1.1.51
 // API version 1
 
 /**
@@ -2329,6 +2329,14 @@ interface LuaEntity extends LuaControl {
         slot: number): SimpleItemStack
 
     /**
+     * Gets legs of given SpiderVehicle.
+     * @remarks
+     * Applies to subclasses: SpiderVehicle
+     *
+     */
+    get_spider_legs(this: void): LuaEntity[]
+
+    /**
      * The train currently stopped at this train stop or `nil` if none.
      * @remarks
      * Applies to subclasses: TrainStop
@@ -2460,7 +2468,7 @@ interface LuaEntity extends LuaControl {
     is_registered_for_construction(this: void): boolean
 
     /**
-     * Is this entity registered for deconstruction with this force? If false, it means a construction robot has been dispatched to deconstruct it, or it is not marked for deconstruction. This is worst-case O(N) complexity where N is the current number of things in the deconstruct queue.
+     * Is this entity registered for deconstruction with this force? If false, it means a construction robot has been dispatched to deconstruct it, or it is not marked for deconstruction. The complexity is effectively O(1) - it depends on the number of objects targeting this entity which should be small enough.
      * @param force - The force construction manager to check.
      */
     is_registered_for_deconstruction(this: void,
@@ -3387,7 +3395,7 @@ interface LuaEntity extends LuaControl {
     inserter_stack_size_override: number
 
     /**
-     * If this entity is EntityWithForce
+     * (deprecated by 1.1.51) If this entity is a MilitaryTarget. Returns same value as LuaEntity::is_military_target
      */
     readonly is_entity_with_force: boolean
 
@@ -3400,6 +3408,11 @@ interface LuaEntity extends LuaControl {
      * If this entity is EntityWithOwner
      */
     readonly is_entity_with_owner: boolean
+
+    /**
+     * If this entity is a MilitaryTarget. Can be written to if LuaEntityPrototype::allow_run_time_change_of_is_military_target returns true
+     */
+    is_military_target: boolean
 
     /**
      * Items this ghost will request when revived or items this item request proxy is requesting. Result is a dictionary mapping each item prototype name to the required count.
@@ -3527,6 +3540,7 @@ interface LuaEntity extends LuaControl {
      * - When called on a pipe-connectable entity, this is an array of entity arrays of all entities a given fluidbox is connected to.
      * - When called on an underground transport belt, this is the other end of the underground belt connection, or `nil` if none.
      * - When called on a wall-connectable entity or reactor, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
+     * - When called on a cliff entity, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
      */
     readonly neighbours?: {[key: string]: LuaEntity[]} | Array<LuaEntity[]> | LuaEntity
 
@@ -4098,6 +4112,14 @@ interface LuaEntityPrototype {
     readonly allow_passengers: boolean
 
     /**
+     * True if this entity-with-owner's is_military_target can be changed run-time (on the entity, not on the prototype itself)
+     * @remarks
+     * Applies to subclasses: EntityWithOwnerPrototype
+     *
+     */
+    readonly allow_run_time_change_of_is_military_target: boolean
+
+    /**
      * The allowed module effects for this entity or `nil`.
      */
     readonly allowed_effects?: {[key: string]: boolean}
@@ -4567,6 +4589,19 @@ interface LuaEntityPrototype {
     readonly is_building: boolean
 
     /**
+     * True if this is entity-with-owner
+     */
+    readonly is_entity_with_owner: boolean
+
+    /**
+     * True if this entity-with-owner is military target
+     * @remarks
+     * Applies to subclasses: EntityWithOwnerPrototype
+     *
+     */
+    readonly is_military_target: boolean
+
+    /**
      * @remarks
      * Applies to subclasses: Character
      *
@@ -4812,6 +4847,11 @@ interface LuaEntityPrototype {
      * The amount of pollution that has to be absorbed by the unit's spawner before the unit will leave the spawner and attack the source of the pollution. `nil` when prototype is not a unit prototype.
      */
     readonly pollution_to_join_attack: number
+
+    /**
+     * True if this entity prototype should be included during tile collision checks with {@link LuaTilePrototype::check_collision_with_entities | LuaTilePrototype::check_collision_with_entities} enabled.
+     */
+    readonly protected_from_tile_building: boolean
 
     /**
      * The pumping speed of this offshore pump, normal pump, or `nil`.
@@ -5065,6 +5105,11 @@ interface LuaEntityPrototype {
      * If it is a tree, return the number of colors it supports. `nil` otherwise.
      */
     readonly tree_color_count: number
+
+    /**
+     * Collision mask entity must collide with to make landmine blowup
+     */
+    readonly trigger_collision_mask: CollisionMask
 
     /**
      * The range of this turret or `nil` if this isn't a turret related prototype.
@@ -14911,11 +14956,11 @@ interface LuaSurface {
         force: ForceIdentification): LuaLogisticNetwork[]
 
     /**
-     * Find the enemy entity-with-force ({@link military entity | https://wiki.factorio.com/Military_units_and_structures}) closest to the given position.
+     * Find the enemy military target ({@link military entity | https://wiki.factorio.com/Military_units_and_structures}) closest to the given position.
      * @param table.force - The force the result will be an enemy of. Uses the player force if not specified.
      * @param table.max_distance - Radius of the circular search area.
      * @param table.position - Center of the search area.
-     * @returns The nearest enemy entity-with-force or `nil` if no enemy could be found within the given area.
+     * @returns The nearest enemy military target or `nil` if no enemy could be found within the given area.
      */
     find_nearest_enemy(this: void,
         table: {
@@ -15051,7 +15096,7 @@ interface LuaSurface {
         tiles: string[]): Position[]
 
     /**
-     * Returns all the entities with force on this chunk for the given force.
+     * Returns all the military targets (entities with force) on this chunk for the given force.
      * @param force - Entities of this force will be returned.
      * @param position - The chunk's position.
      */
