@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.51
-// API version 1
+// Factorio version 1.1.54
+// API version 2
 
 /**
  * Allows registering custom commands for the in-game console accessible via the grave key.

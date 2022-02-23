@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.51
-// API version 1
+// Factorio version 1.1.54
+// API version 2
 
 /**
  * Base type for all events
@@ -28,7 +28,7 @@ interface CustomInputEvent extends event  {
     /**
      * The mouse cursor position when the custom input was activated.
      */
-    cursor_position: Position
+    cursor_position: MapPosition
     /**
      * The prototype name of the custom input that was activated.
      */
@@ -339,12 +339,20 @@ interface on_entity_damaged extends event  {
 }
 /**
  * Called after an entity is destroyed that has been registered with {@link LuaBootstrap::register_on_entity_destroyed | LuaBootstrap::register_on_entity_destroyed}
+ * 
+ * at the end of the next tick.
  * @remarks
- * Depending on when a given entity is destroyed this will be fired at the end of the current tick or end of the next tick.
+ * Depending on when a given entity is destroyed, this event will be fired at the end of the current tick or
  *
  */
 interface on_entity_destroyed extends event  {
+    /**
+     * The number returned by {@link register_on_entity_destroyed | LuaBootstrap::register_on_entity_destroyed} to uniquely identify this entity during this event.
+     */
     registration_number: number
+    /**
+     * The {@link LuaEntity::unit_number | LuaEntity::unit_number} of the destroyed entity, if it had one.
+     */
     unit_number?: number
 }
 /**
@@ -592,8 +600,9 @@ interface on_gui_click extends event  {
 }
 /**
  * Called when the player closes the GUI they have open.
+ * 
+ * This can only be raised when the GUI's player controller is still valid. If a GUI is thus closed due to the player disconnecting, dying, or becoming a spectator in other ways, it won't cause this event to be raised.
  * @remarks
- * This is only called if the player explicitly closed the GUI.
  * It's not advised to open any other GUI during this event because if this is run as a request to open a different GUI the game will force close the new opened GUI without notice to ensure the original requested GUI is opened.
  *
  */
@@ -1112,7 +1121,7 @@ interface on_player_clicked_gps_tag extends event  {
     /**
      * Map position contained in gps tag
      */
-    position: Position
+    position: MapPosition
     /**
      * Surface name contained in gps tag, even when such surface does not exists
      */
@@ -1622,7 +1631,7 @@ interface on_player_used_capsule extends event  {
     /**
      * The position the capsule was used.
      */
-    position: Position
+    position: MapPosition
 }
 /**
  * Called when a player uses spidertron remote to send a spidertron to a given position
@@ -1635,7 +1644,7 @@ interface on_player_used_spider_remote extends event  {
     /**
      * Goal position to which spidertron was sent to.
      */
-    position: Position
+    position: MapPosition
     /**
      * If the use was successful. It may fail when spidertron has different driver or when player is on different surface.
      */
@@ -1668,7 +1677,7 @@ interface on_post_entity_died extends event  {
     /**
      * Position where the entity died.
      */
-    position: Position
+    position: MapPosition
     /**
      * The entity prototype of the entity that died.
      */
@@ -1709,7 +1718,7 @@ interface on_pre_build extends event  {
     /**
      * Where the item was placed.
      */
-    position: Position
+    position: MapPosition
     /**
      * Item was placed using shift building.
      */
@@ -2132,13 +2141,13 @@ interface on_script_trigger_effect extends event  {
      */
     effect_id: string
     source_entity?: LuaEntity
-    source_position?: Position
+    source_position?: MapPosition
     /**
      * The surface the effect happened on.
      */
     surface_index: number
     target_entity?: LuaEntity
-    target_position?: Position
+    target_position?: MapPosition
 }
 /**
  * Called when an entity of type `radar` finishes scanning a sector. Can be filtered for the radar using {@link LuaSectorScannedEventFilter | LuaSectorScannedEventFilter}.
