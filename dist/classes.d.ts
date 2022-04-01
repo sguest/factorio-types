@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.54
+// Factorio version 1.1.57
 // API version 2
 
 /**
@@ -1498,22 +1498,22 @@ interface LuaCustomInputPrototype {
     readonly consuming: string
 
     /**
-     * If this custom input is enabled. Disabled custom inputs exist but are not used by the game.
+     * Whether this custom input is enabled. Disabled custom inputs exist but are not used by the game.
      */
     readonly enabled: boolean
 
     /**
-     * If this custom input is enabled while using the cutscene controller.
+     * Whether this custom input is enabled while using the cutscene controller.
      */
     readonly enabled_while_in_cutscene: boolean
 
     /**
-     * If this custom input is enabled while using the spectator controller.
+     * Whether this custom input is enabled while using the spectator controller.
      */
     readonly enabled_while_spectating: boolean
 
     /**
-     * If this custom input will include the selected prototype (if any) when triggered.
+     * Whether this custom input will include the selected prototype (if any) when triggered.
      */
     readonly include_selected_prototype: boolean
 
@@ -2380,7 +2380,7 @@ interface LuaEntity extends LuaControl {
     is_connected_to_electric_network(this: void): void
 
     /**
-     * Returns whether a craft is currently in process. It does not indicate whether progress is currently being made, but whether any crafting action has made progress in this machine.
+     * Returns whether a craft is currently in process. It does not indicate whether progress is currently being made, but whether a crafting process has been started in this machine.
      * @remarks
      * Applies to subclasses: CraftingMachine
      *
@@ -3583,6 +3583,14 @@ interface LuaEntity extends LuaControl {
     readonly pump_rail_target?: LuaEntity
 
     /**
+     * The current radar scan progress, as a number in range [0, 1].
+     * @remarks
+     * Applies to subclasses: Radar
+     *
+     */
+    readonly radar_scan_progress: number
+
+    /**
      * When locked; the recipe in this assembling machine can't be changed by the player.
      * @remarks
      * Applies to subclasses: AssemblingMachine
@@ -4122,6 +4130,11 @@ interface LuaEntityPrototype {
      */
     readonly burner_prototype?: LuaBurnerPrototype
 
+    /**
+     * If this generator prototype burns fluid.
+     */
+    readonly burns_fluid: boolean
+
     readonly call_for_help_radius: number
 
     /**
@@ -4260,6 +4273,11 @@ interface LuaEntityPrototype {
      * The hardcoded default collision mask (with flags) for this entity prototype type.
      */
     readonly default_collision_mask_with_flags: CollisionMaskWithFlags
+
+    /**
+     * If this generator prototype destroys non fuel fluids.
+     */
+    readonly destroy_non_fuel_fluid: boolean
 
     /**
      * The distraction cooldown of this unit prototype or `nil`.
@@ -4454,6 +4472,11 @@ interface LuaEntityPrototype {
     readonly healing_per_tick: number
 
     /**
+     * The heat buffer prototype this entity uses or `nil`.
+     */
+    readonly heat_buffer_prototype?: LuaHeatBufferPrototype
+
+    /**
      * The heat energy source prototype this entity uses or `nil`.
      */
     readonly heat_energy_source_prototype?: LuaHeatEnergySourcePrototype
@@ -4565,6 +4588,14 @@ interface LuaEntityPrototype {
     readonly logistic_mode?: string
 
     /**
+     * The logistic parameters for this roboport. or `nil`.
+     * @remarks
+     * Both the `charging_station_shift` and `stationing_offset` vectors are tables with `x` and `y` keys instead of an array.
+     *
+     */
+    readonly logistic_parameters?: { charge_approach_distance: number, charging_distance: number, charging_energy: number, charging_station_count: number, charging_station_shift: Vector, charging_threshold_distance: number, construction_radius: number, logistic_radius: number, logistics_connection_distance: number, robot_limit: number, robot_vertical_acceleration: number, robots_shrink_when_entering_and_exiting: boolean, spawn_and_station_height: number, spawn_and_station_shadow_height_offset: number, stationing_offset: Vector }
+
+    /**
      * The logistic radius for this roboport prototype or `nil`.
      */
     readonly logistic_radius?: number
@@ -4650,6 +4681,11 @@ interface LuaEntityPrototype {
      * The maximum polyphony for this programmable speaker or `nil`.
      */
     readonly max_polyphony?: number
+
+    /**
+     * The default maximum power output of this generator prototype or `nil`.
+     */
+    readonly max_power_output?: number
 
     /**
      * The maximum pursue distance of this unit prototype or `nil`.
@@ -4893,6 +4929,11 @@ interface LuaEntityPrototype {
      *
      */
     readonly running_speed: number
+
+    /**
+     * If this generator prototype scales fluid usage.
+     */
+    readonly scale_fluid_usage: boolean
 
     /**
      * The secondary bounding box used for collision checking, or `nil` if it doesn't have one. This is only used in rails and rail remnants.
@@ -7145,8 +7186,8 @@ interface LuaGameScript {
         players?: Array<LuaPlayer | string>): void
 
     /**
-     * Remove file or directory. Given path is taken relative to the script output directory. Can be used to remove files created by {@link LuaGameScript::write_file | LuaGameScript::write_file}.
-     * @param path - Path to remove, relative to the script output directory
+     * Remove a file or directory in the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. Can be used to remove files created by {@link LuaGameScript::write_file | LuaGameScript::write_file}.
+     * @param path - The path to the file or directory to remove, relative to `script-output`.
      */
     remove_path(this: void,
         path: string): void
@@ -7220,7 +7261,7 @@ interface LuaGameScript {
         data: Table): void
 
     /**
-     * Take a screenshot and save it to a file. The filename should include a file extension indicating the desired image format. Supports `.png`, `.jpg` / `.jpeg`, `.tga` and `.bmp`.
+     * Take a screenshot of the game and save it to the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. The name of the image file can be specified via the `path` parameter.
      * @remarks
      * If Factorio is running headless, this function will do nothing.
      *
@@ -7229,7 +7270,7 @@ interface LuaGameScript {
      * @param table.by_player - If defined, the screenshot will only be taken for this player.
      * @param table.daytime - Overrides the current surface daytime for the duration of screenshot rendering.
      * @param table.force_render - Screenshot requests are processed in between game update and render. The game may skip rendering (ie. drop frames) if the previous frame has not finished rendering or the game simulation starts to fall below 60 updates per second. If `force_render` is set to `true`, the game won't drop frames and process the screenshot request at the end of the update in which the request was created. This is not honored on multiplayer clients that are catching up to server. Defaults to `false`.
-     * @param table.path - The sub-path in `"script-output"` to save the screenshot to. Defaults to `"screenshot.png"`.
+     * @param table.path - The name of the image file. It should include a file extension indicating the desired format. Supports `.png`, `.jpg` /`.jpeg`, `.tga` and `.bmp`. Providing a directory path (ex. `"save/here/screenshot.png"`) will create the necessary folder structure in `script-output`. Defaults to `"screenshot.png"`.
      * @param table.player - The player to focus on. Defaults to the local player.
      * @param table.position - If defined, the screenshot will be centered on this position. Otherwise, the screenshot will center on `player`.
      * @param table.quality - The `.jpg` render quality as a percentage (from 0% to 100% inclusive), if used. A lower value means a more compressed image. Defaults to `80`.
@@ -7262,10 +7303,10 @@ interface LuaGameScript {
         }): void
 
     /**
-     * Take a screenshot of the technology screen and save it to a file. The filename should include a file extension indicating the desired image format. Supports `.png`, `.jpg` / `.jpeg`, `.tga` and `.bmp`.
+     * Take a screenshot of the technology screen and save it to the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. The name of the image file can be specified via the `path` parameter.
      * @param table.by_player - If given, the screenshot will only be taken for this player.
      * @param table.force - The force whose technology to screenshot. If not given, the `"player`" force is used.
-     * @param table.path - The sub-path in `"script-output"` to save the screenshot to. Defaults to `"technology-screenshot.png"`.
+     * @param table.path - The name of the image file. It should include a file extension indicating the desired format. Supports `.png`, `.jpg` /`.jpeg`, `.tga` and `.bmp`. Providing a directory path (ex. `"save/here/screenshot.png"`) will create the necessary folder structure in `script-output`. Defaults to `"technology-screenshot.png"`.
      * @param table.quality - The `.jpg` render quality as a percentage (from 0% to 100% inclusive), if used. A lower value means a more compressed image. Defaults to `80`.
      * @param table.selected_technology - The technology to highlight.
      * @param table.skip_disabled - If `true`, disabled technologies will be skipped. Their successors will be attached to the disabled technology's parents. Defaults to `false`.
@@ -7295,11 +7336,11 @@ interface LuaGameScript {
         player: PlayerIdentification): void
 
     /**
-     * Write a string to a file.
-     * @param append - When `true`, this will append to the end of the file. Defaults to `false`, which will overwrite any pre-existing file with the new data.
-     * @param data - File content
-     * @param filename - Path to the file to write to.
-     * @param for_player - If given, the file will only be written for this player_index. 0 means only the server if one exists.
+     * Write a file to the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. The name and file extension of the file can be specified via the `filename` parameter.
+     * @param append - If `true`, `data` will be appended to the end of the file. Defaults to `false`, which will overwrite any pre-existing file with the new `data`.
+     * @param data - The content to write to the file.
+     * @param filename - The name of the file. Providing a directory path (ex. `"save/here/example.txt"`) will create the necessary folder structure in `script-output`.
+     * @param for_player - If given, the file will only be written for this `player_index`. Providing `0` will only write to the server's output if present.
      */
     write_file(this: void,
         filename: string,
@@ -8664,7 +8705,7 @@ interface LuaGuiElement {
     word_wrap: boolean
 
     /**
-     * The zoom this camera or minimap is using.
+     * The zoom this camera or minimap is using. This value must be positive.
      */
     zoom: number
 
@@ -8675,6 +8716,43 @@ interface LuaGuiElement {
      *
      */
     readonly [key: string]: any
+
+}
+
+/**
+ * Prototype of a heat buffer.
+ */
+interface LuaHeatBufferPrototype {
+    /**
+     * All methods and properties that this object supports.
+     */
+    help(this: void): void
+
+    readonly connections: HeatConnection[]
+
+    readonly default_temperature: number
+
+    readonly max_temperature: number
+
+    readonly max_transfer: number
+
+    readonly min_temperature_gradient: number
+
+    readonly min_working_temperature: number
+
+    readonly minimum_glow_temperature: number
+
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string
+
+    readonly specific_heat: number
+
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean
 
 }
 
@@ -8692,6 +8770,8 @@ interface LuaHeatEnergySourcePrototype {
     readonly default_temperature: number
 
     readonly emissions: number
+
+    readonly heat_buffer_prototype: LuaHeatBufferPrototype
 
     readonly max_temperature: number
 
@@ -9413,6 +9493,70 @@ interface LuaItemPrototype {
      * Resistances of this armour item, indexed by damage type name. `nil` if not an armor or the armor has no resistances.
      */
     readonly resistances: {[key: string]: Resistance}
+
+    /**
+     * The reverse entity filter mode used by this selection tool.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly reverse_alt_entity_filter_mode: string
+
+    /**
+     * The reverse entity filters used by this selection tool indexed by entity name.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly reverse_entity_filters: {[key: string]: LuaEntityPrototype}
+
+    /**
+     * The reverse entity type filters used by this selection tool indexed by entity type.
+     * @remarks
+     * The boolean value is meaningless and is used to allow easy lookup if a type exists in the dictionary.
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly reverse_entity_type_filters: {[key: string]: boolean}
+
+    /**
+     * The color used when doing reverse selection with this selection tool prototype.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly reverse_selection_border_color: Color
+
+    /**
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly reverse_selection_cursor_box_type: string
+
+    /**
+     * Flags that affect which entities will be selected during reverse selection.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly reverse_selection_mode_flags: SelectionModeFlags
+
+    /**
+     * The reverse tile filter mode used by this selection tool.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly reverse_tile_filter_mode: string
+
+    /**
+     * The reverse tile filters used by this selection tool indexed by tile name.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly reverse_tile_filters: {[key: string]: LuaTilePrototype}
 
     /**
      * The results from launching this item in a rocket.
@@ -15113,7 +15257,7 @@ interface LuaSurface {
         id: number): void
 
     /**
-     * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities. If you want to command actual units to move, use the {@link LuaEntity::set_command | LuaEntity::set_command} functionality instead.
+     * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities, such as vehicles. If you want to command actual units (such as biters or spitters) to move, use {@link LuaEntity::set_command | LuaEntity::set_command} instead.
      * 
      * The resulting path is ultimately returned asynchronously via {@link on_script_path_request_finished | on_script_path_request_finished}.
      * @param table.bounding_box - The dimensions of the object that's supposed to travel the path.

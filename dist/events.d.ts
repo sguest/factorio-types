@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.54
+// Factorio version 1.1.57
 // API version 2
 
 /**
@@ -38,7 +38,7 @@ interface CustomInputEvent extends event  {
      */
     player_index: number
     /**
-     * Information about the prototype that is selected when the custom input is used. `nil` if none is selected.
+     * Information about the prototype that is selected when the custom input is used. Needs to be enabled on the custom input's prototype. `nil` if none is selected.
      */
     selected_prototype?: SelectedPrototypeData
 }
@@ -338,11 +338,9 @@ interface on_entity_damaged extends event  {
     original_damage_amount: number
 }
 /**
- * Called after an entity is destroyed that has been registered with {@link LuaBootstrap::register_on_entity_destroyed | LuaBootstrap::register_on_entity_destroyed}
- * 
- * at the end of the next tick.
+ * Called after an entity is destroyed that has been registered with {@link LuaBootstrap::register_on_entity_destroyed | LuaBootstrap::register_on_entity_destroyed}.
  * @remarks
- * Depending on when a given entity is destroyed, this event will be fired at the end of the current tick or
+ * Depending on when a given entity is destroyed, this event will be fired at the end of the current tick or at the end of the next tick.
  *
  */
 interface on_entity_destroyed extends event  {
