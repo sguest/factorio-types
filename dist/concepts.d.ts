@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.57
+// Factorio version 1.1.58
 // API version 2
 
 /**
@@ -1628,7 +1628,7 @@ interface ItemStackLocation {
  * 
  * As a special case, when the key is just the empty string, all the parameters will be concatenated (after processing, if any are localised strings). If there is only one parameter, it will be used as is.
  * 
- * Furthermore, when an API function expects a localised string, it will also accept a regular string (i.e. not a table) which will not be translated, as well as a number or boolean, which will be converted to their textual representation.
+ * Furthermore, when an API function expects a localised string, it will also accept a regular string (i.e. not a table) which will not be translated, as well as a number, boolean or `nil`, which will be converted to their textual representation.
  * @example
  * In the English translation, this will print `"No ammo"`; in the Czech translation, it will print `"Bez munice"`: 
  * ```
@@ -3342,7 +3342,7 @@ interface BaseAchievementPrototypeFilter {
 
 /**
  * @param filter - The condition to filter on. One of `"allowed-without-fight"`, `"type"`.
- * @param type - The prototype type
+ * @param type - The prototype type, or a list of acceptable types.
  */
 interface AchievementPrototypeFilterType extends BaseAchievementPrototypeFilter {
     /**
@@ -3350,9 +3350,9 @@ interface AchievementPrototypeFilterType extends BaseAchievementPrototypeFilter 
      */
     'filter': 'type'
     /**
-     * The prototype type
+     * The prototype type, or a list of acceptable types.
      */
-    'type': string
+    'type': string | string[]
 }
 
 /**
@@ -3843,7 +3843,7 @@ interface EntityPrototypeFilterSelectionPriority extends BaseEntityPrototypeFilt
 
 /**
  * @param filter - The condition to filter on. One of `"flying-robot"`, `"robot-with-logistics-interface"`, `"rail"`, `"ghost"`, `"explosion"`, `"vehicle"`, `"crafting-machine"`, `"rolling-stock"`, `"turret"`, `"transport-belt-connectable"`, `"wall-connectable"`, `"buildable"`, `"placable-in-editor"`, `"clonable"`, `"selectable"`, `"hidden"`, `"entity-with-health"`, `"building"`, `"fast-replaceable"`, `"uses-direction"`, `"minable"`, `"circuit-connectable"`, `"autoplace"`, `"blueprintable"`, `"item-to-place"`, `"name"`, `"type"`, `"collision-mask"`, `"flag"`, `"build-base-evolution-requirement"`, `"selection-priority"`, `"emissions"`, `"crafting-category"`.
- * @param type - The prototype type
+ * @param type - The prototype type, or a list of acceptable types.
  */
 interface EntityPrototypeFilterType extends BaseEntityPrototypeFilter {
     /**
@@ -3851,9 +3851,9 @@ interface EntityPrototypeFilterType extends BaseEntityPrototypeFilter {
      */
     'filter': 'type'
     /**
-     * The prototype type
+     * The prototype type, or a list of acceptable types.
      */
-    'type': string
+    'type': string | string[]
 }
 
 /**
@@ -3883,7 +3883,7 @@ interface BaseEquipmentPrototypeFilter {
 
 /**
  * @param filter - The condition to filter on. One of `"item-to-place"`, `"type"`.
- * @param type - The prototype type
+ * @param type - The prototype type, or a list of acceptable types.
  */
 interface EquipmentPrototypeFilterType extends BaseEquipmentPrototypeFilter {
     /**
@@ -3891,9 +3891,9 @@ interface EquipmentPrototypeFilterType extends BaseEquipmentPrototypeFilter {
      */
     'filter': 'type'
     /**
-     * The prototype type
+     * The prototype type, or a list of acceptable types.
      */
-    'type': string
+    'type': string | string[]
 }
 
 /**
@@ -4415,7 +4415,7 @@ interface ItemPrototypeFilterSubgroup extends BaseItemPrototypeFilter {
 
 /**
  * @param filter - The condition to filter on. One of `"tool"`, `"mergeable"`, `"item-with-inventory"`, `"selection-tool"`, `"item-with-label"`, `"has-rocket-launch-products"`, `"fuel"`, `"place-result"`, `"burnt-result"`, `"place-as-tile"`, `"placed-as-equipment-result"`, `"name"`, `"type"`, `"flag"`, `"subgroup"`, `"fuel-category"`, `"stack-size"`, `"default-request-amount"`, `"wire-count"`, `"fuel-value"`, `"fuel-acceleration-multiplier"`, `"fuel-top-speed-multiplier"`, `"fuel-emissions-multiplier"`.
- * @param type - The prototype type
+ * @param type - The prototype type, or a list of acceptable types.
  */
 interface ItemPrototypeFilterType extends BaseItemPrototypeFilter {
     /**
@@ -4423,9 +4423,9 @@ interface ItemPrototypeFilterType extends BaseItemPrototypeFilter {
      */
     'filter': 'type'
     /**
-     * The prototype type
+     * The prototype type, or a list of acceptable types.
      */
-    'type': string
+    'type': string | string[]
 }
 
 /**
@@ -6224,7 +6224,7 @@ interface ModSettingPrototypeFilterMod extends BaseModSettingPrototypeFilter {
 
 /**
  * @param filter - The condition to filter on. One of `"type"`, `"mod"`, `"setting-type"`.
- * @param type - The setting scope type (startup, runtime-global, or runtime-per-user)
+ * @param type - The setting scope type (`"startup"`, `"runtime-global"`, or `"runtime-per-user"`)
  */
 interface ModSettingPrototypeFilterSettingType extends BaseModSettingPrototypeFilter {
     /**
@@ -6232,14 +6232,14 @@ interface ModSettingPrototypeFilterSettingType extends BaseModSettingPrototypeFi
      */
     'filter': 'setting-type'
     /**
-     * The setting scope type (startup, runtime-global, or runtime-per-user)
+     * The setting scope type (`"startup"`, `"runtime-global"`, or `"runtime-per-user"`)
      */
     'type': string
 }
 
 /**
  * @param filter - The condition to filter on. One of `"type"`, `"mod"`, `"setting-type"`.
- * @param type - The prototype type
+ * @param type - The prototype type, or a list of acceptable types.
  */
 interface ModSettingPrototypeFilterType extends BaseModSettingPrototypeFilter {
     /**
@@ -6247,9 +6247,9 @@ interface ModSettingPrototypeFilterType extends BaseModSettingPrototypeFilter {
      */
     'filter': 'type'
     /**
-     * The prototype type
+     * The prototype type, or a list of acceptable types.
      */
-    'type': string
+    'type': string | string[]
 }
 
 /**

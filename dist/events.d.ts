@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.57
+// Factorio version 1.1.58
 // API version 2
 
 /**
@@ -1485,6 +1485,35 @@ interface on_player_respawned extends event  {
     player_port?: LuaEntity
 }
 /**
+ * Called after a player reverse-selects an area with a selection-tool item.
+ */
+interface on_player_reverse_selected_area extends event  {
+    /**
+     * The area selected.
+     */
+    area: BoundingBox
+    /**
+     * The entities selected.
+     */
+    entities: LuaEntity[]
+    /**
+     * The item used to select the area.
+     */
+    item: string
+    /**
+     * The player doing the selection.
+     */
+    player_index: number
+    /**
+     * The surface selected.
+     */
+    surface: LuaSurface
+    /**
+     * The tiles selected.
+     */
+    tiles: LuaTile[]
+}
+/**
  * Called when the player rotates an entity. This event is only fired when the entity actually changes its orientation -- pressing the rotate key on an entity that can't be rotated won't fire this event.
  */
 interface on_player_rotated_entity extends event  {
@@ -1882,6 +1911,15 @@ interface on_pre_surface_cleared extends event  {
  */
 interface on_pre_surface_deleted extends event  {
     surface_index: number
+}
+/**
+ * Called when research is cancelled.
+ */
+interface on_research_cancelled extends event  {
+    /**
+     * A mapping of technology name to how many times it was cancelled.
+     */
+    research: {[key: string]: number}
 }
 /**
  * Called when a research finishes.

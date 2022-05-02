@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.57
+// Factorio version 1.1.58
 // API version 2
 
 /**
@@ -160,9 +160,9 @@ interface LuaArithmeticCombinatorControlBehavior extends LuaCombinatorControlBeh
     readonly object_name: string
 
     /**
-     * The arithmetic combinator parameters.
+     * This arithmetic combinator's parameters.
      * @remarks
-     * `parameters` may be `nil` in order to clear the parameters.
+     * Writing `nil` clears the combinator's parameters.
      *
      */
     parameters: ArithmeticCombinatorParameters
@@ -819,12 +819,12 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
     readonly object_name: string
 
     /**
-     * The constant combinator parameters
+     * This constant combinator's parameters, or `nil` if the {@link item_slot_count | LuaEntityPrototype::item_slot_count} of the combinator's prototype is `0`.
      * @remarks
-     * Setting to `nil` clears the parameters.
+     * Writing `nil` clears the combinator's parameters.
      *
      */
-    parameters: ConstantCombinatorParameters[]
+    parameters?: ConstantCombinatorParameters[]
 
     /**
      * The number of signals this constant combinator supports
@@ -977,7 +977,7 @@ interface LuaControl {
     get_main_inventory(this: void): void
 
     /**
-     * Gets the parameters of a personal logistic request and auto-trash slot.
+     * Gets the parameters of a personal logistic request and auto-trash slot. Only used on `spider-vehicle`.
      * @param slot_index - The slot to get.
      */
     get_personal_logistic_slot(this: void,
@@ -1073,7 +1073,7 @@ interface LuaControl {
         value: LogisticParameters): void
 
     /**
-     * Sets a vehicle logistic request and auto-trash slot to the given value. Only used on `spider-vehicule`s.
+     * Sets a vehicle logistic request and auto-trash slot to the given value. Only used on `spider-vehicle`.
      * @param slot_index - The slot to set.
      * @param value - The logistic request parameters.
      */
@@ -1673,9 +1673,9 @@ interface LuaDeciderCombinatorControlBehavior extends LuaCombinatorControlBehavi
     readonly object_name: string
 
     /**
-     * The decider combinator parameters
+     * This decider combinator's parameters.
      * @remarks
-     * Setting to `nil` clears the parameters.
+     * Writing `nil` clears the combinator's parameters.
      *
      */
     parameters: DeciderCombinatorParameters
@@ -10033,7 +10033,7 @@ interface LuaItemStack {
 
     /**
      * Set this item stack to another item stack.
-     * @param stack - Item stack to set this one to. Omitting this parameter or passing `nil` will clear this item stack, as if by calling [LuaItemStack::clear](LuaItemStack::clear).
+     * @param stack - Item stack to set it to. Omitting this parameter or passing `nil` will clear this item stack, as if [LuaItemStack::clear](LuaItemStack::clear) was called.
      */
     set_stack(this: void,
         stack?: ItemStackIdentification): void
@@ -14119,12 +14119,12 @@ interface LuaStyle {
     extra_left_padding_when_activated: number
 
     /**
-     * Sets extra_top/right/bottom/left_margin_when_activated to this value. An array with two values sets top/bottom margin to the first value and left/right margin to the second value. An array with four values sets top, right, bottom, left margin respectively.
+     * Sets `extra_top/right/bottom/left_margin_when_activated` to this value. An array with two values sets top/bottom margin to the first value and left/right margin to the second value. An array with four values sets top, right, bottom, left margin respectively.
      */
     extra_margin_when_activated: number | number[]
 
     /**
-     * Sets extra_top/right/bottom/left_padding_when_actived to this value. An array with two values sets top/bottom padding to the first value and left/right padding to the second value. An array with four values sets top, right, bottom, left padding respectively.
+     * Sets `extra_top/right/bottom/left_padding_when_activated` to this value. An array with two values sets top/bottom padding to the first value and left/right padding to the second value. An array with four values sets top, right, bottom, left padding respectively.
      */
     extra_padding_when_activated: number | number[]
 
@@ -14178,7 +14178,7 @@ interface LuaStyle {
     /**
      * Horizontal space between individual cells.
      * @remarks
-     * Applies to subclasses: LuaTableStyle,LuaFlowStyle,LuaHorizontalFlow
+     * Applies to subclasses: LuaTableStyle,LuaFlowStyle,LuaHorizontalFlowStyle
      *
      */
     horizontal_spacing: number

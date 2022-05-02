@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.57
+// Factorio version 1.1.58
 // API version 2
 
 declare namespace defines {
@@ -598,6 +598,7 @@ declare namespace defines {
         on_player_removed_equipment,
         on_player_repaired_entity,
         on_player_respawned,
+        on_player_reverse_selected_area,
         on_player_rotated_entity,
         on_player_selected_area,
         on_player_set_quick_bar_slot,
@@ -626,6 +627,7 @@ declare namespace defines {
         on_pre_script_inventory_resized,
         on_pre_surface_cleared,
         on_pre_surface_deleted,
+        on_research_cancelled,
         on_research_finished,
         on_research_reversed,
         on_research_started,
@@ -831,6 +833,7 @@ declare namespace defines {
         remove_train_station,
         reset_assembling_machine,
         reset_item,
+        reverse_select_area,
         rotate_entity,
         select_area,
         select_blueprint_entities,
