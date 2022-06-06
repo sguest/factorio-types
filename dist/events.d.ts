@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.58
+// Factorio version 1.1.60
 // API version 2
 
 /**
@@ -1916,6 +1916,10 @@ interface on_pre_surface_deleted extends event  {
  * Called when research is cancelled.
  */
 interface on_research_cancelled extends event  {
+    /**
+     * The force whose research was cancelled.
+     */
+    force: LuaForce
     /**
      * A mapping of technology name to how many times it was cancelled.
      */

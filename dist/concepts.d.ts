@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.58
+// Factorio version 1.1.60
 // API version 2
 
 /**
@@ -14,6 +14,13 @@
  * @param mode - How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
  */
 type AchievementPrototypeFilter = AchievementPrototypeFilterType | DefaultAchievementPrototypeFilter
+
+interface AdvancedMapGenSettings {
+    'difficulty_settings': DifficultySettings
+    'enemy_evolution': EnemyEvolutionMapSettings
+    'enemy_expansion': EnemyExpansionMapSettings
+    'pollution': PollutionMapSettings
+}
 
 /**
  * @param icon - The SignalID used for a custom alert. Only present for custom alerts.
@@ -39,7 +46,7 @@ interface Alert {
 }
 
 /**
- * A {@link string | string} that specifies where a gui element should be.
+ * A {@link string | string} that specifies where a GUI element should be.
  */
 declare enum Alignment {
     'top-left',
@@ -191,17 +198,11 @@ interface AutoplaceControl {
     'size': MapGenSize
 }
 
-interface AutoplaceSetting {
-    'frequency': MapGenSize
-    'richness': MapGenSize
-    'size': MapGenSize
-}
-
 /**
  * @param treat_missing_as_default - Whether missing autoplace names for this type should be default enabled.
  */
 interface AutoplaceSettings {
-    'settings': {[key: string]: AutoplaceSetting}
+    'settings': {[key: string]: AutoplaceControl}
     /**
      * Whether missing autoplace names for this type should be default enabled.
      */
@@ -395,7 +396,7 @@ interface BlueprintSignalIcon {
  * @example
  * Explicit definition: 
  * ```
- * {left_top = {-2, -3}, right_bottom = {5, 8}}
+ * {left_top = {x = -2, y = -3}, right_bottom = {x = 5, y = 8}}
  * ```
  *
  * @example
@@ -1090,6 +1091,9 @@ type EntityPrototypeFilter = EntityPrototypeFilterBuildBaseEvolutionRequirement 
 
 /**
  * This is a set of flags given as a dictionary{@link [string | string} &rarr; {@link boolean | boolean}]. When a flag is set, it is present in the dictionary with the value `true`. Unset flags aren't present in the dictionary at all. So, the boolean value is meaningless and exists just for easy table lookup if a flag is set.
+ * @remarks
+ * By default, none of these flags are set.
+ *
  */
 type EntityPrototypeFlags = {
     [key in EntityPrototypeFlagsKey]: true
@@ -1556,6 +1560,9 @@ type ItemPrototypeFilter = ItemPrototypeFilterBurntResult | ItemPrototypeFilterD
 
 /**
  * This is a set of flags given as dictionary{@link [string | string} &rarr; {@link boolean | boolean}]. When a flag is set, it is present in the dictionary with the value `true`. Unset flags aren't present in the dictionary at all. So, the boolean value is meaningless and exists just for easy table lookup if a flag is set.
+ * @remarks
+ * By default, none of these flags are set.
+ *
  */
 type ItemPrototypeFlags = {
     [key in ItemPrototypeFlagsKey]: true
@@ -1938,6 +1945,23 @@ interface MapAndDifficultySettings {
 interface MapExchangeStringData {
     'map_gen_settings': MapGenSettings
     'map_settings': MapAndDifficultySettings
+}
+
+/**
+ * @param default - Whether this is the preset that is selected by default.
+ * @param order - The string used to alphabetically sort the presets. It is a simple string that has no additional semantic meaning.
+ */
+interface MapGenPreset {
+    'advanced_settings'?: AdvancedMapGenSettings
+    'basic_settings'?: MapGenSettings
+    /**
+     * Whether this is the preset that is selected by default.
+     */
+    'default'?: boolean
+    /**
+     * The string used to alphabetically sort the presets. It is a simple string that has no additional semantic meaning.
+     */
+    'order': string
 }
 
 /**
@@ -2633,6 +2657,25 @@ interface ProgrammableSpeakerParameters {
 }
 
 /**
+ * Types `"signal"` and `"item-group"` do not support filters.
+ * 
+ * Available filters:
+ * - {@link ItemPrototypeFilter | ItemPrototypeFilter} for type `"item"`
+ * - {@link TilePrototypeFilter | TilePrototypeFilter} for type `"tile"`
+ * - {@link EntityPrototypeFilter | EntityPrototypeFilter} for type `"entity"`
+ * - {@link FluidPrototypeFilter | FluidPrototypeFilter} for type `"fluid"`
+ * - {@link RecipePrototypeFilter | RecipePrototypeFilter} for type `"recipe"`
+ * - {@link DecorativePrototypeFilter | DecorativePrototypeFilter} for type `"decorative"`
+ * - {@link AchievementPrototypeFilter | AchievementPrototypeFilter} for type `"achievement"`
+ * - {@link EquipmentPrototypeFilter | EquipmentPrototypeFilter} for type `"equipment"`
+ * - {@link TechnologyPrototypeFilter | TechnologyPrototypeFilter} for type `"technology"`
+ * @remarks
+ * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
+ *
+ */
+type PrototypeFilter = ItemPrototypeFilter | TilePrototypeFilter | EntityPrototypeFilter | FluidPrototypeFilter | RecipePrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | TechnologyPrototypeFilter
+
+/**
  * The smooth orientation. It is a {@link float | float} in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise. This means a value of `0` indicates "north", a value of `0.5` indicates "south".
  * 
  * For example then, a value of `0.625` would indicate "south-west", and a value of `0.875` would indicate "north-west".
@@ -2880,6 +2923,8 @@ interface SmokeSource {
 /**
  * A sound defined by a {@link string | string}. It can be either the name of a {@link sound prototype | https://wiki.factorio.com/Prototype/Sound} defined in the data stage or a path in the form `"type/name"`. The latter option can be sorted into three categories.
  * 
+ * The validity of a SoundPath can be verified at runtime using {@link LuaGameScript::is_valid_sound_path | LuaGameScript::is_valid_sound_path}.
+ * 
  * The utility and ambient types each contain general use sound prototypes defined by the game itself.
  * - `"utility"` - Uses the {@link UtilitySounds | https://wiki.factorio.com/Prototype/UtilitySounds} prototype. Example: `"utility/wire_connect_pole"`
  * - `"ambient"` - Uses {@link AmbientSound | https://wiki.factorio.com/Prototype/AmbientSound} prototypes. Example: `"ambient/resource-deficiency"`
@@ -2934,6 +2979,8 @@ interface SpawnPointDefinition {
 
 /**
  * It is specified by {@link string | string}. It can be either the name of a {@link sprite prototype | https://wiki.factorio.com/Prototype/Sprite} defined in the data stage or a path in form "type/name".
+ * 
+ * The validity of a SpritePath can be verified at runtime using {@link LuaGameScript::is_valid_sprite_path | LuaGameScript::is_valid_sprite_path}.
  * 
  * The supported types are:
  * - `"item"` - for example "item/iron-plate" is the icon sprite of iron plate

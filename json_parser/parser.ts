@@ -653,6 +653,8 @@ function writeCustomConcept(concept: UntypedConcept) {
             return 'type TriggerTargetMask = {[key: string]: boolean}\n\n'
         case 'Vector':
             return 'type Vector = [number, number] | {x: number, y: number}\n\n';
+        case 'PrototypeFilter':
+            return `type PrototypeFilter = ${parseType(concept.name)}\n\n`;
         default:
             throw new Error(`Unrecognized "concept" type concept ${concept.name}`);
     }

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.58
+// Factorio version 1.1.60
 // API version 2
 
 /**
@@ -97,7 +97,7 @@ interface LuaAchievementPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -134,7 +134,7 @@ interface LuaAmmoCategoryPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -207,7 +207,7 @@ interface LuaAutoplaceControlPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -249,7 +249,10 @@ interface LuaBootstrap {
     get_event_order(this: void): void
 
     /**
-     * Register a function to be run when mod configuration changes. This is called when the game version or any mod version changes; when any mod is added or removed; or when prototypes or startup mod settings have changed. It allows the mod to make any changes it deems appropriate to both the data structures in its `global` table or to the game state through {@link LuaGameScript | LuaGameScript}.
+     * Register a function to be run when mod configuration changes. This is called when the major game version or any mod version changed, when any mod was added or removed, when a startup setting has changed, or when any prototypes have been added or removed. It allows the mod to make any changes it deems appropriate to both the data structures in its {@link global | global} table or to the game state through {@link LuaGameScript | LuaGameScript}.
+     * @remarks
+     * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
+     *
      * @param f - The handler for this event. Passing `nil` will unregister it.
      */
     on_configuration_changed(this: void,
@@ -282,7 +285,10 @@ interface LuaBootstrap {
         filters?: EventFilter[]): void
 
     /**
-     * Register a callback to be run on mod initialization. This is only called when a new save game is created or when a save file is loaded that previously didn't contain the mod. During it, the mod gets the chance to set up initial values that it will use for its lifetime. It has full access to {@link LuaGameScript | LuaGameScript} and the `global` table and can change anything about them that it deems appropriate. No other events will be raised for the mod until it has finished this step.
+     * Register a function to be run on mod initialization. This is only called when a new save game is created or when a save file is loaded that previously didn't contain the mod. During it, the mod gets the chance to set up initial values that it will use for its lifetime. It has full access to {@link LuaGameScript | LuaGameScript} and the {@link global | global} table and can change anything about them that it deems appropriate. No other events will be raised for the mod until it has finished this step.
+     * @remarks
+     * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
+     *
      * @param f - The handler for this event. Passing `nil` will unregister it.
      * @example
      * Initialize a `players` table in `global` for later use. 
@@ -297,14 +303,17 @@ interface LuaBootstrap {
         f: (this: void) => any): void
 
     /**
-     * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session. It gives the mod the opportunity to do some very specific actions, should it need to. Doing anything other than these three will lead to desyncs, which breaks multiplayer and replay functionality. Access to {@link LuaGameScript | LuaGameScript} and {@link LuaRendering | LuaRendering} is not available. The `global` table can be accessed and is safe to read from, but not write to.
+     * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session. It gives the mod the opportunity to do some very specific actions, should it need to. Doing anything other than these three will lead to desyncs, which breaks multiplayer and replay functionality. Access to {@link LuaGameScript | LuaGameScript} is not available. The {@link global | global} table can be accessed and is safe to read from, but not write to, as doing so will lead to an error.
      * 
-     * The only legitimate uses of this event are these three:
-     * - Re-setup {@link metatables | https://www.lua.org/pil/13.html} as they are not persisted through save-load.
-     * - Re-setup conditional event handlers.
-     * - Create local references to data stored in the {@link global | Global.html} table.
+     * The only legitimate uses of this event are the following:
+     * - Re-setup {@link metatables | https://www.lua.org/pil/13.html} as they are not persisted through the save/load cycle.
+     * - Re-setup conditional event handlers, meaning subscribing to an event only when some condition is met to save processing time.
+     * - Create local references to data stored in the {@link global | global} table.
      * 
-     * For all other purposes, {@link LuaBootstrap::on_init | LuaBootstrap::on_init}, {@link LuaBootstrap::on_configuration_changed | LuaBootstrap::on_configuration_changed} or migration scripts should be used instead.
+     * For all other purposes, {@link LuaBootstrap::on_init | LuaBootstrap::on_init}, {@link LuaBootstrap::on_configuration_changed | LuaBootstrap::on_configuration_changed} or {@link migrations | migrations} should be used instead.
+     * @remarks
+     * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
+     *
      * @param f - The handler for this event. Passing `nil` will unregister it.
      */
     on_load(this: void,
@@ -1547,7 +1556,7 @@ interface LuaCustomInputPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -1647,7 +1656,7 @@ interface LuaDamagePrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -1728,7 +1737,7 @@ interface LuaDecorativePrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -2199,7 +2208,7 @@ interface LuaEntity extends LuaControl {
     get_or_create_control_behavior(this: void): void
 
     /**
-     * Gets the entities output inventory if it has one.
+     * Gets the entity's output inventory if it has one.
      */
     get_output_inventory(this: void): void
 
@@ -2375,7 +2384,7 @@ interface LuaEntity extends LuaControl {
     is_closing(this: void): void
 
     /**
-     * Returns true if this entity is connected to an electric network.
+     * Returns `true` if this entity produces or consumes electricity and is connected to an electric network that has at least one entity that can produce power.
      */
     is_connected_to_electric_network(this: void): void
 
@@ -2788,14 +2797,17 @@ interface LuaEntity extends LuaControl {
     readonly armed: boolean
 
     /**
-     * The player this character is associated with or `nil` if none. When the player logs off in multiplayer all of the associated characters will be logged off with him.
+     * The player this character is associated with, or `nil` if there isn't one. Set to `nil` to clear.
+     * 
+     * The player will be automatically disassociated when a controller is set on the character. Also, all characters associated to a player will be logged off when the player logs off in multiplayer.
+     * 
+     * Reading this property will return a {@link LuaPlayer | LuaPlayer}, while {@link PlayerIdentification | PlayerIdentification} can be used when writing.
      * @remarks
      * A character associated with a player is not directly controlled by any player.
-     * Set to `nil` to clear. The player will be automatically disassociated when a controller is set on the character.
      * Applies to subclasses: Character
      *
      */
-    associated_player?: LuaPlayer
+    associated_player?: LuaPlayer | PlayerIdentification
 
     /**
      * Whether this rocket silo automatically launches the rocket when cargo is inserted.
@@ -3349,12 +3361,14 @@ interface LuaEntity extends LuaControl {
     kills: number
 
     /**
-     * The last player that changed any setting on this entity. This includes building the entity, changing its color, or configuring its circuit network. Can be `nil` if the last user is not part of the save anymore. Mods can overwrite it if desired.
+     * The last player that changed any setting on this entity. This includes building the entity, changing its color, or configuring its circuit network. Can be `nil` if the last user is not part of the save anymore.
+     * 
+     * Reading this property will return a {@link LuaPlayer | LuaPlayer}, while {@link PlayerIdentification | PlayerIdentification} can be used when writing.
      * @remarks
      * Applies to subclasses: EntityWithOwner
      *
      */
-    last_user: LuaPlayer
+    last_user: LuaPlayer | PlayerIdentification
 
     /**
      * The link ID this linked container is using.
@@ -3616,8 +3630,10 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The player that this `simple-entity-with-owner`, `simple-entity-with-force`, `flying-text`, or `highlight-box` is visible to. `nil` means it is rendered for every player.
+     * 
+     * Reading this property will return a {@link LuaPlayer | LuaPlayer}, while {@link PlayerIdentification | PlayerIdentification} can be used when writing.
      */
-    render_player: LuaPlayer
+    render_player: LuaPlayer | PlayerIdentification
 
     /**
      * The forces that this `simple-entity-with-owner`, `simple-entity-with-force`, or `flying-text` is visible to. `nil` or an empty array means it is rendered for every force.
@@ -3657,12 +3673,12 @@ interface LuaEntity extends LuaControl {
     rotatable: boolean
 
     /**
-     * The secondary bounding box of this entity or `nil` if it doesn't have one.
+     * The secondary bounding box of this entity or `nil` if it doesn't have one. This only exists for curved rails, and is automatically determined by the game.
      */
     readonly secondary_bounding_box?: BoundingBox
 
     /**
-     * The secondary selection box of this entity or `nil` if it doesn't have one.
+     * The secondary selection box of this entity or `nil` if it doesn't have one. This only exists for curved rails, and is automatically determined by the game.
      */
     readonly secondary_selection_box?: BoundingBox
 
@@ -4060,6 +4076,11 @@ interface LuaEntityPrototype {
     readonly always_on?: boolean
 
     /**
+     * Gets the animation speed coefficient of this belt . `nil` if this is not transport belt connectable.
+     */
+    readonly animation_speed_coefficient: number
+
+    /**
      * The attack parameters for this entity or `nil` if the entity doesn't use attack parameters.
      */
     readonly attack_parameters?: AttackParameters
@@ -4073,6 +4094,11 @@ interface LuaEntityPrototype {
      * The amount of ammo that inserters automatically insert into this ammo-turret or artillery-turret or `nil`.
      */
     readonly automated_ammo_count?: number
+
+    /**
+     * Does this prototoype automaticly cycle weapons. `nil` if this is not a spider vechicle.
+     */
+    readonly automatic_weapon_cycling: boolean
 
     /**
      * Autoplace specification for this entity prototype. `nil` if none.
@@ -4151,11 +4177,21 @@ interface LuaEntityPrototype {
     readonly center_collision_mask: CollisionMask
 
     /**
+     * Gets the chain shooting cooldown modifier of this prototype. `nil` if this is not a spider vechicle.
+     */
+    readonly chain_shooting_cooldown_modifier: number
+
+    /**
      * @remarks
      * Applies to subclasses: Character
      *
      */
     readonly character_corpse: LuaEntityPrototype
+
+    /**
+     * Gets the chunk exploration radius of this prototype. `nil` if this is not a spider vechicle.
+     */
+    readonly chunk_exploration_radius: number
 
     /**
      * The item prototype name used to destroy this cliff or `nil`.
@@ -4310,6 +4346,14 @@ interface LuaEntityPrototype {
      *
      */
     readonly drop_item_distance: number
+
+    /**
+     * The dying time of this corpse prototype. `nil` if not a corpse prototype.
+     * @remarks
+     * Applies to subclasses: Corpse
+     *
+     */
+    readonly dying_speed: number
 
     /**
      * The effectivity of this car prototype, generator prototype or `nil`.
@@ -4482,6 +4526,11 @@ interface LuaEntityPrototype {
     readonly heat_energy_source_prototype?: LuaHeatEnergySourcePrototype
 
     /**
+     * Gets the height of this prototype. `nil` if this is not a spider vechicle.
+     */
+    readonly height: number
+
+    /**
      * Every time this infinite resource 'ticks' down it is reduced by this amount. `nil` when not a resource. Meaningless if this isn't an infinite type resource.
      */
     readonly infinite_depletion_resource_amount: number
@@ -4611,6 +4660,13 @@ interface LuaEntityPrototype {
      *
      */
     readonly loot_pickup_distance: number
+
+    /**
+     * Get the manual range modifier for artillery turret and artillery wagon prototypes. `nil` if not artillery type prototype
+     * 
+     * subclass(ArtilleryWagon, ArtilleryTurret)
+     */
+    readonly manual_range_modifier: number
 
     /**
      * The map color used when charting this entity if a friendly or enemy color isn't defined or `nil`.
@@ -4797,7 +4853,7 @@ interface LuaEntityPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -5065,6 +5121,11 @@ interface LuaEntityPrototype {
     readonly timeout: number
 
     /**
+     * Gets the torso rotation speed of this prototype. `nil` if this is not a spider vechicle.
+     */
+    readonly torso_rotation_speed: number
+
+    /**
      * If it is a tree, return the number of colors it supports. `nil` otherwise.
      */
     readonly tree_color_count: number
@@ -5223,7 +5284,7 @@ interface LuaEquipmentCategoryPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -5417,7 +5478,7 @@ interface LuaEquipmentGridPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -5516,7 +5577,7 @@ interface LuaEquipmentPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -5552,7 +5613,7 @@ interface LuaEquipmentPrototype {
  * 
  * Examples:
  * - The item production GUI shows "consumption" on the right, thus `output` describes the item consumption numbers. The same goes for fluid consumption.
- * - The kills gui shows "losses" on the right, so `output` describes how many of the force's entities were killed by enemies.
+ * - The kills GUI shows "losses" on the right, so `output` describes how many of the force's entities were killed by enemies.
  * - The electric network GUI shows "power consumption" on the left side, so in this case `input` describes the power consumption numbers.
  */
 interface LuaFlowStatistics {
@@ -5562,17 +5623,23 @@ interface LuaFlowStatistics {
     clear(this: void): void
 
     /**
-     * Gets the flow count value for the given time frame.
-     * @param table.count - If true, the count is returned instead of the per-time-frame value.
+     * Gets the flow count value for the given time frame. If `sample_index` is not provided, then the value returned is the average across the provided precision time period. These are the values shown in the bottom section of the statistics GUIs.
+     * 
+     * Use `sample_index` to access the data used to generate the statistics graphs. Each precision level contains 300 samples of data so at a precision of 1 minute, each sample contains data averaged across 60s / 300 = 0.2s = 12 ticks.
+     * 
+     * All return values are normalized to be per-tick for electric networks and per-minute for all other types.
+     * @param table.count - If true, the count of items/fluids/entities is returned instead of the per-time-frame value.
      * @param table.input - Read the input values or the output values
      * @param table.name - The prototype name.
-     * @param table.precision_index - The precision to read.
+     * @param table.precision_index - The precision range to read.
+     * @param table.sample_index - The sample index to read from within the precision range. If not provided, the entire precision range is read. Must be between 1 and 300 where 1 is the most recent sample and 300 is the oldest.
      */
     get_flow_count(this: void,
         table: {
             name: string,
             input: boolean,
             precision_index: defines.flow_precision_index,
+            sample_index?: number,
             count?: boolean
         }): void
 
@@ -5680,7 +5747,7 @@ interface LuaFluidBox {
         index: number): void
 
     /**
-     * The fluidbox connections for the given fluidbox index.
+     * The fluidboxes to which the fluidbox at the given index is connected.
      */
     get_connections(this: void,
         index: number): void
@@ -5957,7 +6024,7 @@ interface LuaFluidPrototype {
     readonly object_name: string
 
     /**
-     * Order string for this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -6705,7 +6772,7 @@ interface LuaFuelCategoryPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -7067,10 +7134,7 @@ interface LuaGameScript {
         sound_path: SoundPath): void
 
     /**
-     * Checks if the given SpritePath is valid and contains a loaded sprite.
-     * @remarks
-     * The existence of the image is not checked for paths of type `file`.
-     *
+     * Checks if the given SpritePath is valid and contains a loaded sprite. The existence of the image is not checked for paths of type `file`.
      * @param sprite_path - Path to the image.
      */
     is_valid_sprite_path(this: void,
@@ -7574,7 +7638,9 @@ interface LuaGameScript {
     readonly permissions: LuaPermissionGroups
 
     /**
-     * The player typing at the console - `nil` in all other instances. See {@link LuaGameScript::players | LuaGameScript::players} for accessing all players.
+     * This property is only populated inside {@link custom command | LuaCommandProcessor} handlers and when writing {@link Lua console commands | https://wiki.factorio.com/Console#Scripting_and_cheat_commands}. Returns the player that is typing the command, `nil` in all other instances.
+     * 
+     * See {@link LuaGameScript::players | LuaGameScript::players} for accessing all players.
      */
     readonly player: LuaPlayer
 
@@ -7761,6 +7827,9 @@ interface LuaGroup {
      */
     readonly object_name: string
 
+    /**
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
+     */
     readonly order: string
 
     /**
@@ -7802,6 +7871,8 @@ interface LuaGui {
 
     /**
      * Returns `true` if sprite_path is valid and contains loaded sprite, otherwise `false`. Sprite path of type `file` doesn't validate if file exists.
+     * 
+     * If you want to avoid needing a LuaGui object, {@link LuaGameScript::is_valid_sprite_path | LuaGameScript::is_valid_sprite_path} can be used instead.
      * @param sprite_path - Path to a image.
      */
     is_valid_sprite_path(this: void,
@@ -8334,20 +8405,7 @@ interface LuaGuiElement {
     draw_vertical_lines: boolean
 
     /**
-     * The elem filters of this choose-elem-button or `nil` if there are no filters.
-     * 
-     * The compatible type of filter is determined by elem_type:
-     * - Type `"item"` - {@link ItemPrototypeFilter | ItemPrototypeFilter}
-     * - Type `"tile"` - {@link TilePrototypeFilter | TilePrototypeFilter}
-     * - Type `"entity"` - {@link EntityPrototypeFilter | EntityPrototypeFilter}
-     * - Type `"signal"` - Does not support filters
-     * - Type `"fluid"` - {@link FluidPrototypeFilter | FluidPrototypeFilter}
-     * - Type `"recipe"` - {@link RecipePrototypeFilter | RecipePrototypeFilter}
-     * - Type `"decorative"` - {@link DecorativePrototypeFilter | DecorativePrototypeFilter}
-     * - Type `"item-group"` - Does not support filters
-     * - Type `"achievement"` - {@link AchievementPrototypeFilter | AchievementPrototypeFilter}
-     * - Type `"equipment"` - {@link EquipmentPrototypeFilter | EquipmentPrototypeFilter}
-     * - Type `"technology"` - {@link TechnologyPrototypeFilter | TechnologyPrototypeFilter}
+     * The elem filters of this choose-elem-button, or `nil` if there are no filters. The compatible type of filter is determined by `elem_type`.
      * @remarks
      * Writing to this field does not change or clear the currently selected element.
      * Applies to subclasses: choose-elem-button
@@ -8500,7 +8558,7 @@ interface LuaGuiElement {
     mouse_button_filter: MouseButtonFlags
 
     /**
-     * The name of this element.
+     * The name of this element. `""` if no name was set.
      * @example
      * ```
      * game.player.gui.top.greeting.name == "greeting"
@@ -9439,7 +9497,7 @@ interface LuaItemPrototype {
     readonly mapper_count: number
 
     /**
-     * Effects of this module; `nil` if this is not a module.
+     * Effects of this module.
      * @remarks
      * Applies to subclasses: ModuleItem
      *
@@ -9457,7 +9515,7 @@ interface LuaItemPrototype {
     readonly object_name: string
 
     /**
-     * Order string.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -10956,7 +11014,7 @@ interface LuaModSettingPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -10993,7 +11051,7 @@ interface LuaModuleCategoryPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -11038,7 +11096,7 @@ interface LuaNamedNoiseExpression {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -11073,7 +11131,7 @@ interface LuaNoiseLayerPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -11118,7 +11176,7 @@ interface LuaParticlePrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -11881,7 +11939,7 @@ interface LuaPlayer extends LuaControl {
     hand_location: ItemStackLocation
 
     /**
-     * This player's index in {@link LuaGameScript::players | LuaGameScript::players}.
+     * This player's unique index in {@link LuaGameScript::players | LuaGameScript::players}. It is given to them when they are {@link created | on_player_created} and remains assigned to them until they are {@link removed | on_player_removed}.
      */
     readonly index: number
 
@@ -12340,7 +12398,7 @@ interface LuaRecipe {
     readonly object_name: string
 
     /**
-     * Order string. This is used to sort the crafting menu.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -12390,7 +12448,7 @@ interface LuaRecipeCategoryPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -12508,7 +12566,7 @@ interface LuaRecipePrototype {
     readonly object_name: string
 
     /**
-     * Order string. This is used to sort the crafting menu.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -12644,13 +12702,13 @@ interface LuaRendering {
      * @param table.animation - Name of an [animation prototype](https://wiki.factorio.com/Prototype/Animation).
      * @param table.animation_offset - Offset of the animation in frames. Default is 0.
      * @param table.animation_speed - How many frames the animation goes forward per tick. Default is 1.
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
      * @param table.orientation - The orientation of the animation. Default is 0.
      * @param table.orientation_target - If given, the animation rotates so that it faces this target. Note that `orientation` is still applied to the animation.
      * @param table.orientation_target_offset - Only used if `orientation_target` is a LuaEntity.
      * @param table.oriented_offset - Offsets the center of the animation if `orientation_target` is given. This offset will rotate together with the animation.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.target - Center of the animation.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
@@ -12685,11 +12743,11 @@ interface LuaRendering {
      * Create an arc.
      * @param table.angle - The angle of the arc, in radian.
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.max_radius - The radius of the outer edge of the arc, in tiles.
      * @param table.min_radius - The radius of the inner edge of the arc, in tiles.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.start_angle - Where the arc starts, in radian.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
@@ -12717,9 +12775,9 @@ interface LuaRendering {
      * Create a circle.
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
      * @param table.filled - If the circle should be filled.
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.radius - In tiles.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
@@ -12749,13 +12807,13 @@ interface LuaRendering {
      * The base game uses the utility sprites `light_medium` and `light_small` for lights.
      *
      * @param table.color - Defaults to white (no tint).
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.intensity - Default is 1.
      * @param table.minimum_darkness - The minimum darkness at which this light is rendered. Default is 0.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
      * @param table.orientation - The orientation of the light. Default is 0.
      * @param table.oriented - If this light has the same orientation as the entity target, default is false. Note that `orientation` is still applied to the sprite.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.scale - Default is 1.
      * @param table.target - Center of the light.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
@@ -12785,11 +12843,11 @@ interface LuaRendering {
      * Create a line.
      * @param table.dash_length - Length of the dashes that this line has. Used only if gap_length > 0. Default is 0.
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.from_offset - Only used if `from` is a LuaEntity.
      * @param table.gap_length - Length of the gaps that this line has, in tiles. Default is 0.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.to_offset - Only used if `to` is a LuaEntity.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
@@ -12829,12 +12887,12 @@ interface LuaRendering {
     /**
      * Create a triangle mesh defined by a triangle strip.
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
      * @param table.orientation - The orientation applied to all vertices. Default is 0.
      * @param table.orientation_target - If given, the vertices (that are not set to an entity) rotate so that it faces this target. Note that `orientation` is still applied.
      * @param table.orientation_target_offset - Only used if `orientation_target` is a LuaEntity.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.target - Acts like an offset applied to all vertices that are not set to an entity.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
@@ -12862,10 +12920,10 @@ interface LuaRendering {
      * Create a rectangle.
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
      * @param table.filled - If the rectangle should be filled.
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.left_top_offset - Only used if `left_top` is a LuaEntity.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.right_bottom_offset - Only used if `right_bottom` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
@@ -12891,13 +12949,13 @@ interface LuaRendering {
 
     /**
      * Create a sprite.
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
      * @param table.orientation - The orientation of the sprite. Default is 0.
      * @param table.orientation_target - If given, the sprite rotates so that it faces this target. Note that `orientation` is still applied to the sprite.
      * @param table.orientation_target_offset - Only used if `orientation_target` is a LuaEntity.
      * @param table.oriented_offset - Offsets the center of the sprite if `orientation_target` is given. This offset will rotate together with the sprite.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.target - Center of the sprite.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
@@ -12946,10 +13004,10 @@ interface LuaRendering {
      * @param table.alignment - Defaults to "left". Other options are "right" and "center".
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
      * @param table.font - Name of font to use. Defaults to the same font as flying-text.
-     * @param table.forces - The forces that this object is rendered to.
+     * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
      * @param table.orientation - The orientation of the text. Default is 0.
-     * @param table.players - The players that this object is rendered to.
+     * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.scale_with_zoom - Defaults to false. If true, the text scales with player zoom, resulting in it always being the same size on screen, and the size compared to the game world changes.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.text - The text to display.
@@ -13833,7 +13891,7 @@ interface LuaResourceCategoryPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -13952,7 +14010,7 @@ interface LuaShortcutPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -14869,10 +14927,12 @@ interface LuaSurface {
      * 
      * If no filters (`name`, `type`, `force`, etc.) are given, this returns all entities in the search area. If multiple filters are specified, only entities matching all given filters are returned.
      * 
-     * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns the entities within the radius of the position. If `area` is specified, this returns the entities colliding with that area.
-     * @param table.invert - If the filters should be inverted.
+     * - If no `area` or `position` are given, the entire surface is searched.
+     * - If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box).
+     * - If `position` and `radius` are given, this returns the entities within the radius of the position. Looks for the center of entities.
+     * - If `area` is specified, this returns the entities colliding with that area.
+     * @param table.invert - Whether the filters should be inverted.
      * @param table.position - Has precedence over area field.
-     * @param table.radius - If given with position, will return all entities within the radius of the position.
      * @example
      * ```
      * game.surfaces[1].find_entities_filtered{area = {{-10, -10}, {10, 10}}, type = "resource"} -- gets all resources in the rectangle
@@ -15565,7 +15625,7 @@ interface LuaTechnology {
     readonly object_name: string
 
     /**
-     * Order string for this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -15684,7 +15744,7 @@ interface LuaTechnologyPrototype {
     readonly object_name: string
 
     /**
-     * Order string for this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -15857,7 +15917,7 @@ interface LuaTilePrototype {
     readonly emissions_per_second: number
 
     /**
-     * Items that when placed will produce this tile. It is a dictionary indexed by the item prototype name.
+     * Items that when placed will produce this tile. It is a dictionary indexed by the item prototype name. `nil` (instead of an empty table) if no items can place this tile.
      */
     readonly items_to_place_this: SimpleItemStack[]
 
@@ -15869,7 +15929,7 @@ interface LuaTilePrototype {
 
     readonly map_color: Color
 
-    readonly mineable_properties: { minable: boolean, miningparticle?: string, miningtime: number, products: Product[] }
+    readonly mineable_properties: { minable: boolean, mining_particle?: string, mining_time: number, products: Product[] }
 
     /**
      * Name of this prototype.
@@ -15892,7 +15952,7 @@ interface LuaTilePrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -16405,7 +16465,7 @@ interface LuaTrivialSmokePrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -16550,7 +16610,7 @@ interface LuaVirtualSignalPrototype {
     readonly object_name: string
 
     /**
-     * Order string of this prototype.
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
      */
     readonly order: string
 
@@ -16737,7 +16797,7 @@ interface LuaGuiElementAddParams {
     'index'?: number
 
     /**
-     * Name of the child element.
+     * Name of the child element. It must be unique within the parent element.
      */
     'name'?: string
 
@@ -16834,7 +16894,7 @@ interface LuaGuiElementAddParamsChooseElemButton extends LuaGuiElementAddParams 
     'decorative'?: string
 
     /**
-     * Filters describing what to show in the selection window. See {@link LuaGuiElement::elem_filters | LuaGuiElement::elem_filters}.
+     * Filters describing what to show in the selection window. The applicable filter depends on the `elem_type`.
      */
     'elem_filters'?: ItemPrototypeFilter | TilePrototypeFilter | EntityPrototypeFilter | FluidPrototypeFilter | RecipePrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | TechnologyPrototypeFilter[]
 
@@ -17328,7 +17388,7 @@ interface LuaSurfaceCreateEntityParams {
     /**
      * Source entity. Used for beams and highlight-boxes.
      */
-    'source'?: LuaEntity
+    'source'?: LuaEntity | MapPosition
 
     /**
      * If true, entity types that have spawn_decorations property will apply triggers defined in the property.
@@ -17343,7 +17403,7 @@ interface LuaSurfaceCreateEntityParams {
     /**
      * Entity with health for the new entity to target.
      */
-    'target'?: LuaEntity
+    'target'?: LuaEntity | MapPosition
 
 }
 
@@ -17507,7 +17567,7 @@ interface LuaSurfaceCreateEntityParamsHighlightBox extends LuaSurfaceCreateEntit
     'blink_interval'?: number
 
     /**
-     * The bounding box defining the highlight box using absolute map coordinates. If specified, the `position` parameter is ignored, but needs to be present anyways. If not specified, the game falls back to the `source` parameter first, then the `target` parameter second. One of these three parameters need to be specified.
+     * The bounding box defining the highlight box using absolute map coordinates. If specified, the general `position` parameter still needs to be present, but will be ignored. If not specified, the game falls back to the `source` parameter first, then the `target` parameter second. One of these three parameters need to be specified.
      */
     'bounding_box'?: BoundingBox
 
