@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.60
+// Factorio version 1.1.61
 // API version 2
 
 /**
@@ -771,6 +771,7 @@ interface ConstantCombinatorParameters {
 /**
  * @param count - The amount of items being crafted.
  * @param index - The index of the item in the crafting queue.
+ * @param prerequisite - The item is a prerequisite for another item in the queue.
  * @param recipe - The recipe being crafted.
  */
 interface CraftingQueueItem {
@@ -782,6 +783,10 @@ interface CraftingQueueItem {
      * The index of the item in the crafting queue.
      */
     'index': number
+    /**
+     * The item is a prerequisite for another item in the queue.
+     */
+    'prerequisite': boolean
     /**
      * The recipe being crafted.
      */
@@ -3740,7 +3745,7 @@ interface BaseDecorativePrototypeFilter {
 
 /**
  * @param filter - The condition to filter on. One of `"decal"`, `"autoplace"`, `"collision-mask"`.
- * @param mask_mode - How to filter: `"collides"` or `"layers-equals"`
+ * @param mask_mode - How to filter: `"collides"`, `"layers-equals"`, `"contains-any"` or `"contains-all"`
  */
 interface DecorativePrototypeFilterCollisionMask extends BaseDecorativePrototypeFilter {
     /**
@@ -3749,7 +3754,7 @@ interface DecorativePrototypeFilterCollisionMask extends BaseDecorativePrototype
     'filter': 'collision-mask'
     'mask': CollisionMask | CollisionMaskWithFlags
     /**
-     * How to filter: `"collides"` or `"layers-equals"`
+     * How to filter: `"collides"`, `"layers-equals"`, `"contains-any"` or `"contains-all"`
      */
     'mask_mode': string
 }
@@ -3797,7 +3802,7 @@ interface EntityPrototypeFilterBuildBaseEvolutionRequirement extends BaseEntityP
 
 /**
  * @param filter - The condition to filter on. One of `"flying-robot"`, `"robot-with-logistics-interface"`, `"rail"`, `"ghost"`, `"explosion"`, `"vehicle"`, `"crafting-machine"`, `"rolling-stock"`, `"turret"`, `"transport-belt-connectable"`, `"wall-connectable"`, `"buildable"`, `"placable-in-editor"`, `"clonable"`, `"selectable"`, `"hidden"`, `"entity-with-health"`, `"building"`, `"fast-replaceable"`, `"uses-direction"`, `"minable"`, `"circuit-connectable"`, `"autoplace"`, `"blueprintable"`, `"item-to-place"`, `"name"`, `"type"`, `"collision-mask"`, `"flag"`, `"build-base-evolution-requirement"`, `"selection-priority"`, `"emissions"`, `"crafting-category"`.
- * @param mask_mode - How to filter: `"collides"` or `"layers-equals"`
+ * @param mask_mode - How to filter: `"collides"`, `"layers-equals"`, `"contains-any"` or `"contains-all"`
  */
 interface EntityPrototypeFilterCollisionMask extends BaseEntityPrototypeFilter {
     /**
@@ -3806,7 +3811,7 @@ interface EntityPrototypeFilterCollisionMask extends BaseEntityPrototypeFilter {
     'filter': 'collision-mask'
     'mask': CollisionMask | CollisionMaskWithFlags
     /**
-     * How to filter: `"collides"` or `"layers-equals"`
+     * How to filter: `"collides"`, `"layers-equals"`, `"contains-any"` or `"contains-all"`
      */
     'mask_mode': string
 }
@@ -6781,7 +6786,7 @@ interface BaseTilePrototypeFilter {
 
 /**
  * @param filter - The condition to filter on. One of `"minable"`, `"autoplace"`, `"blueprintable"`, `"item-to-place"`, `"collision-mask"`, `"walking-speed-modifier"`, `"vehicle-friction-modifier"`, `"decorative-removal-probability"`, `"emissions"`.
- * @param mask_mode - How to filter: `"collides"` or `"layers-equals"`
+ * @param mask_mode - How to filter: `"collides"`, `"layers-equals"`, `"contains-any"` or `"contains-all"`
  */
 interface TilePrototypeFilterCollisionMask extends BaseTilePrototypeFilter {
     /**
@@ -6790,7 +6795,7 @@ interface TilePrototypeFilterCollisionMask extends BaseTilePrototypeFilter {
     'filter': 'collision-mask'
     'mask': CollisionMask | CollisionMaskWithFlags
     /**
-     * How to filter: `"collides"` or `"layers-equals"`
+     * How to filter: `"collides"`, `"layers-equals"`, `"contains-any"` or `"contains-all"`
      */
     'mask_mode': string
 }

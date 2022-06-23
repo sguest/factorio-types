@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.60
+// Factorio version 1.1.61
 // API version 2
 
 /**
@@ -1242,7 +1242,7 @@ interface LuaControl {
     /**
      * The crafting queue progress [0-1] 0 when no recipe is being crafted.
      */
-    readonly crafting_queue_progress: number
+    crafting_queue_progress: number
 
     /**
      * Size of the crafting queue.
@@ -4529,6 +4529,11 @@ interface LuaEntityPrototype {
      * Gets the height of this prototype. `nil` if this is not a spider vechicle.
      */
     readonly height: number
+
+    /**
+     * A vector of the gun prototypes this prototype uses, or `nil`.
+     */
+    readonly indexed_guns?: LuaItemPrototype[]
 
     /**
      * Every time this infinite resource 'ticks' down it is reduced by this amount. `nil` when not a resource. Meaningless if this isn't an infinite type resource.
@@ -14663,7 +14668,7 @@ interface LuaSurface {
      * Count entities of given type or name in a given area. Works just like {@link LuaSurface::find_entities_filtered | LuaSurface::find_entities_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of entities.
      * 
      * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns entities in the radius of the position. If `area` is specified, this returns entities colliding with that area.
-     * @param table.invert - If the filters should be inverted.
+     * @param table.invert - Whether the filters should be inverted.
      * @param table.radius - If given with position, will count all entities within the radius of the position.
      */
     count_entities_filtered(this: void,
@@ -14689,8 +14694,11 @@ interface LuaSurface {
      * Count tiles of a given name in a given area. Works just like {@link LuaSurface::find_tiles_filtered | LuaSurface::find_tiles_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of tiles.
      * 
      * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
+     * @param table.has_tile_ghost - Can be further filtered by supplying a `force` filter.
+     * @param table.invert - If the filters should be inverted.
      * @param table.position - Ignored if not given with radius.
      * @param table.radius - If given with position, will return all entities within the radius of the position.
+     * @param table.to_be_deconstructed - Can be further filtered by supplying a `force` filter.
      */
     count_tiles_filtered(this: void,
         table: {
@@ -14698,9 +14706,13 @@ interface LuaSurface {
             position?: MapPosition,
             radius?: number,
             name?: string | string[],
+            force?: ForceIdentification | ForceIdentification[],
             limit?: number,
             has_hidden_tile?: boolean,
-            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[]
+            has_tile_ghost?: boolean,
+            to_be_deconstructed?: boolean,
+            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
+            invert?: boolean
         }): void
 
     /**
@@ -14829,6 +14841,7 @@ interface LuaSurface {
 
     /**
      * Removes all decoratives from the given area. If no area and no position are given, then the entire surface is searched.
+     * @param table.exclude_soft - Soft decoratives can be drawn over rails.
      * @param table.invert - If the filters should be inverted.
      */
     destroy_decoratives(this: void,
@@ -14836,6 +14849,10 @@ interface LuaSurface {
             area?: BoundingBox,
             position?: TilePosition,
             name?: string | string[] | LuaDecorativePrototype | LuaDecorativePrototype[],
+            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
+            from_layer?: string,
+            to_layer?: string,
+            exclude_soft?: boolean,
             limit?: number,
             invert?: boolean
         }): void
@@ -14871,6 +14888,7 @@ interface LuaSurface {
      * Find decoratives of a given name in a given area.
      * 
      * If no filters are given, returns all decoratives in the search area. If multiple filters are specified, returns only decoratives matching every given filter. If no area and no position are given, the entire surface is searched.
+     * @param table.exclude_soft - Soft decoratives can be drawn over rails.
      * @param table.invert - If the filters should be inverted.
      * @example
      * ```
@@ -14884,6 +14902,10 @@ interface LuaSurface {
             area?: BoundingBox,
             position?: TilePosition,
             name?: string | string[] | LuaDecorativePrototype | LuaDecorativePrototype[],
+            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
+            from_layer?: string,
+            to_layer?: string,
+            exclude_soft?: boolean,
             limit?: number,
             invert?: boolean
         }): void
@@ -15056,8 +15078,11 @@ interface LuaSurface {
      * If no filters are given, this returns all tiles in the search area.
      * 
      * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
+     * @param table.has_tile_ghost - Can be further filtered by supplying a `force` filter.
+     * @param table.invert - Whether the filters should be inverted.
      * @param table.position - Ignored if not given with radius.
      * @param table.radius - If given with position, will return all entities within the radius of the position.
+     * @param table.to_be_deconstructed - Can be further filtered by supplying a `force` filter.
      */
     find_tiles_filtered(this: void,
         table: {
@@ -15065,9 +15090,13 @@ interface LuaSurface {
             position?: MapPosition,
             radius?: number,
             name?: string | string[],
+            force?: ForceIdentification | ForceIdentification[],
             limit?: number,
             has_hidden_tile?: boolean,
-            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[]
+            has_tile_ghost?: boolean,
+            to_be_deconstructed?: boolean,
+            collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
+            invert?: boolean
         }): void
 
     /**
@@ -15819,6 +15848,20 @@ interface LuaTile {
         layer: CollisionMaskLayer): void
 
     /**
+     * Gets all tile ghosts on this tile.
+     * @param force - Get tile ghosts of this force.
+     */
+    get_tile_ghosts(this: void,
+        force?: ForceIdentification): void
+
+    /**
+     * Does this tile have any tile ghosts on it.
+     * @param force - Check for tile ghosts of this force.
+     */
+    has_tile_ghost(this: void,
+        force?: ForceIdentification): void
+
+    /**
      * All methods and properties that this object supports.
      */
     help(this: void): void
@@ -15834,8 +15877,10 @@ interface LuaTile {
 
     /**
      * Is this tile marked for deconstruction?
+     * @param force - The force who did the deconstruction order.
      */
-    to_be_deconstructed(this: void): void
+    to_be_deconstructed(this: void,
+        force?: ForceIdentification): void
 
     /**
      * The name of the {@link LuaTilePrototype | LuaTilePrototype} hidden under this tile or `nil` if there is no hidden tile. During normal gameplay, only {@link non-mineable | LuaTilePrototype::mineable_properties} tiles can become hidden. This can however be circumvented with {@link LuaSurface::set_hidden_tile | LuaSurface::set_hidden_tile}.
