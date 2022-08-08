@@ -4,10 +4,6 @@
 import * as http from 'https';
 import * as fs from 'fs';
 
-interface AttributeWithOptional extends Attribute {
-    optional: boolean;
-}
-
 const fileName = __dirname + '/runtime-api.json';
 
 let arg = process.argv[2];
@@ -37,7 +33,7 @@ function handleFile() {
     writeEvents(apiData, apiVersion);
     writeDefines(apiData, apiVersion);
     writeConcepts(apiData, apiVersion);
-    writeGlobalObjects(apiData, apiVersion);
+    writeGlobals(apiData, apiVersion);
 }
 
 function writeHeaders(apiData: ApiData) {
@@ -116,7 +112,7 @@ function writeDocs(itemData: FactorioClass | FactorioEvent | Concept | Method | 
     return output;
 }
 
-function parseType(type: FactorioType | undefined): string {
+function parseType(type: FactorioType | undefined, indent: string): string {
     if (!type) {
         return 'void';
     }
@@ -131,6 +127,12 @@ function parseType(type: FactorioType | undefined): string {
         if(type === 'table') {
             return 'Table';
         }
+        if(type === 'LuaObject') {
+            return 'object';
+        }
+        if(type === 'nil') {
+            return 'null';
+        }
 
         if(type === 'PrototypeFilter') {
             return 'ItemPrototypeFilter | TilePrototypeFilter | EntityPrototypeFilter | FluidPrototypeFilter | RecipePrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | TechnologyPrototypeFilter';
@@ -138,25 +140,31 @@ function parseType(type: FactorioType | undefined): string {
         return type;
     }
     else {
+        let result: string;
         switch(type.complex_type) {
             case 'array':
                 if(typeof type.value === 'string') {
-                    return parseType(type.value) + '[]';
+                    return parseType(type.value, '') + '[]';
                 }
                 else {
-                    return `Array<${parseType(type.value)}>`;
+                    return `Array<${parseType(type.value, '')}>`;
                 }
-            case 'variant':
-                return type.options.map(parseType).filter((value, index, self) => self.indexOf(value) === index).join(' | ');
+            case 'union':
+                // Unions just allow their composite types to handle description, something like
+                // type MyType = /* foo description */ FooType | /* bar description */ BarType
+                // This ends up a little messy and isn't accessible via doc parsers
+                // Would love to do a better job of this, but it seems like support isn't there yet
+                // https://github.com/microsoft/TypeScript/issues/38106
+                return type.options.map(o => parseType(o, '')).filter((value, index, self) => self.indexOf(value) === index).join(' | ');
             case 'dictionary':
             case 'LuaCustomTable':
                 // typescript requires either a number or string as indexer key.
                 // if it's not a number, just make it a string, which is as close as we can get.
-                let keyType = parseType(type.key);
+                let keyType = parseType(type.key, '');
                 if(keyType !== 'number') {
                     keyType = 'string';
                 }
-                return `{[key: ${keyType}]: ${parseType(type.value)}}`;
+                return `{[key: ${keyType}]: ${parseType(type.value, indent)}}`;
             case 'function':
                 let value = '(this: void';
                 if(type.parameters.length) {
@@ -165,21 +173,53 @@ function parseType(type: FactorioType | undefined): string {
                 // The json spec doesn't appear to have enough info to identify the return type of the function, so we're stuck with `any`
                 return value + `${type.parameters.map((paramType, index) => `arg${index}: ${paramType}`).join(', ')}) => any`;
             case 'table':
+            case 'tuple':
                 if(type.variant_parameter_groups) {
                     // The docs say this can exist, but currently the json data doesn't have any instance of it
                     // I'm not sure exactly what this would look like, so for now throw in case it's ever introduced
-                    throw new Error('Found table type with variant parameters');
+                    //throw new Error('Found table type with variant parameters');
                 }
-                let paramStrings = type.parameters.map(p => {
+                let paramStrings = type.parameters.map((p, index) => {
                     let str = p.name;
+                    
+                    // at least one type (CircularProjectileCreationSpecification) has multiple properties named _, so differentiate them since that's not valid TS
+                    if(str === '_') {
+                        str = '_' + index;
+                    }
+
+                    if(/-/.test(str)) {
+                        str = `'${str}'`
+                    }
                     if(p.optional) {
                         str += '?';
                     }
-                    return str + `: ${parseType(p.type)}`;
+
+                    if(p.description) {
+                        str = `\n    ${indent}/**\n${indent}     * ${formatLinks(p.description)}\n${indent}     */\n${indent}    ${str}`
+                    }
+
+                    return str + `: ${parseType(p.type, indent)}`;
                 })
-                return '{ ' + paramStrings.join(', ') + ' }';
+                return `{\n${indent}    ` + paramStrings.join(`,\n${indent}    `) + `\n${indent}}`;
             case 'LuaLazyLoadedValue':
-                return `LuaLazyLoadedValue<${parseType(type.value)}>`;
+                return `LuaLazyLoadedValue<${parseType(type.value, '')}>`;
+            case 'literal':
+                result = '';
+                if(type.description) {
+                    result = `/* ${formatLinks(type.description)} */ `
+                }
+                if(typeof type.value === 'string') {
+                    return result + `'${type.value}'`;
+                }
+                return result + type.value.toString();
+            case 'type':
+                result = '';
+                if(type.description) {
+                    result = `/* ${formatLinks(type.description)} */ `
+                }
+                return result + parseType(type.value, indent);
+            case 'struct':
+                return `{\n${type.attributes.map(a => writeAttribute(a, '')).join('')}}`;
         }
 
         //Unreachable assuming the current types are exhaustive, but leaving this here so that future added types will throw instead of being silently ignored
@@ -187,19 +227,19 @@ function parseType(type: FactorioType | undefined): string {
     }
 }
 
-function writeMethod(method: Method) {
+function writeMethod(method: Method, indent: string = '    ') {
     if(method.subclasses) {
         let notes = method.notes || [];
         notes.push('Applies to subclasses: ' + method.subclasses.join(','));
         method.notes = notes;
     }
-    let output = writeDocs(method, '    ');
-    output += `    ${method.name}(this: void`;
+    let output = writeDocs(method, indent);
+    output += `${indent}${method.name}(this: void`;
 
-    let paramIndent = '        ';
+    let paramIndent = `${indent}    `;
     let useComma = true;
     if(method.takes_table) {
-        output += ',\n        table'
+        output += `,\n${indent}    table`
         if(method.table_is_optional) {
             output += '?';
         }
@@ -219,16 +259,16 @@ function writeMethod(method: Method) {
         if(parameter.optional) {
             output += '?';
         }
-        output += `: ${parseType(parameter.type)}`;
+        output += `: ${parseType(parameter.type, indent + '    ')}`;
     }
     if(method.variadic_type) {
-        output += `,\n${paramIndent}...args: ${parseType({ complex_type: 'array', value: method.variadic_type })}`;
+        output += `,\n${paramIndent}...args: ${parseType({ complex_type: 'array', value: method.variadic_type }, '')}`;
     }
     if(method.takes_table) {
-        output += '\n        }';
+        output += `\n${indent}    }`;
     }
 
-    let returnType = parseType(method.return_type);
+    let returnType = parseType(method.return_type, '');
     if(/(or|returns) `?nil/i.test(method.return_description || '')) {
         returnType += ' | null';
     }
@@ -237,7 +277,7 @@ function writeMethod(method: Method) {
     return output;
 }
 
-function writeAttribute(attribute: Attribute | AttributeWithOptional): string {
+function writeAttribute(attribute: Attribute, indent: string): string {
     if(attribute.subclasses) {
         let notes = attribute.notes || [];
         notes.push('Applies to subclasses: ' + attribute.subclasses.join(','));
@@ -250,10 +290,10 @@ function writeAttribute(attribute: Attribute | AttributeWithOptional): string {
         output += 'readonly ';
     }
     output += attribute.name;
-    if(('optional' in attribute && attribute.optional) || /(or|returns) ?`nil/i.test(attribute.description)) {
+    if(attribute.optional || /(or|returns) ?`nil/i.test(attribute.description)) {
         output += '?'
     }
-    return output + `: ${parseType(attribute.type)}\n\n`;
+    return output + `: ${parseType(attribute.type, indent)}\n\n`;
 }
 
 function writeOperator(operator: Method | Attribute): string {
@@ -268,8 +308,9 @@ function writeOperator(operator: Method | Attribute): string {
 
             // Have to change indexing operators to return `any` since typescript won't let us have a typed indexer along with other fields
             // add a note to indicate the type it actually returns
-            let returnType = parseType((operator as Attribute).type);
+            let returnType = parseType((operator as Attribute).type, '');
             (operator as Attribute).type = 'any';
+            (operator as Attribute).optional = false;
             let notes = operator.notes;
             notes = notes || [];
             notes.push(`This will return a [${returnType}](${returnType}). The return type is any due to typescript limitations.`);
@@ -286,7 +327,7 @@ function writeOperator(operator: Method | Attribute): string {
     if('parameters' in operator) {
         return writeMethod(operator);
     }
-    return writeAttribute(operator);
+    return writeAttribute(operator, '');
 }
 
 function extractTypeNames(description: string): string[] {
@@ -311,7 +352,7 @@ function formatTypeName(rawName: string) {
     return piece.replace(/(?:^|[-_ ])(.)/g, (_, g1) => g1.toUpperCase());
 }
 
-function parameterToAttribute(parameter: Parameter): AttributeWithOptional {
+function parameterToAttribute(parameter: Parameter): Attribute {
     return {
         name: `'${parameter.name}'`,
         order: parameter.order,
@@ -386,6 +427,7 @@ function parseVariantClasses(classes: FactorioClass[]) {
                                                     type: variantOptions.map(o => `'${o}'`).join(' | '),
                                                     read: true,
                                                     write: true,
+                                                    optional: param.optional,
                                                 }],
                                                 base_classes: [variantBaseName],
                                             });
@@ -458,7 +500,7 @@ function writeClasses(apiData: ApiData, apiVersion: string) {
                     method.name = 'on_event<T extends event>'
                     for(let parameter of method.parameters) {
                         if(parameter.name === 'f') {
-                            (parameter.type as FunctionType).parameters = ['T'];
+                            ((parameter.type as UnionType).options[0] as FunctionType).parameters = ['T'];
                         }
                     }
                 }
@@ -480,7 +522,7 @@ function writeClasses(apiData: ApiData, apiVersion: string) {
         }
 
         if(classData.attributes) {
-            classData.attributes.forEach(a => output += writeAttribute(a));
+            classData.attributes.forEach(a => output += writeAttribute(a, '    '));
         }
 
         if(classData.operators) {
@@ -514,7 +556,7 @@ function writeEvent(eventData: FactorioEvent, isBase: boolean = false): string {
             if(data.optional) {
                 output += '?';
             }
-            output += `: ${parseType(data.type)}\n`;
+            output += `: ${parseType(data.type, '')}\n`;
         }
     }
 
@@ -606,74 +648,20 @@ function writeDefines(apiData: ApiData, apiVersion: string) {
     fs.writeFileSync(__dirname + '/../dist/defines.d.ts', output);
 }
 
-// These are just text descriptions, no real way to handle them other than manually.
-function writeCustomConcept(concept: UntypedConcept) {
-    let output = '';
-    switch(concept.name) {
-        case 'Any':
-            return 'type Any = any;\n\n';
-        case 'AnyBasic':
-            return 'type AnyBasic = string | number | boolean | object\n\n';
-        case 'CircularProjectileCreationSpecification':
-            return 'type CircularProjectileCreationSpecification = [RealOrientation, Vector]\n\n';
-        case 'CollisionMask':
-            return 'type CollisionMask = {[key in CollisionMaskLayer]: boolean}\n\n';
-        case 'CollisionMaskLayer':
-            output = "type CollisionMaskLayer = 'ground-tile' | 'water-tile' | 'resource-layer' | 'doodad-layer' | 'floor-layer' | 'item-layer' | 'ghost-layer' | 'object-layer' | 'player-layer' | 'train-layer' | 'rail-layer' | 'transport-belt-layer' | 'not-setup'";
-            for(let i = 13; i <= 55; i++) {
-                output += ` | 'layer-${i}'`;
-            }
-            return output + '\n\n';
-        case 'CollisionMaskWithFlags':
-            return 'type CollisionMaskWithFlags = CollisionMask & {[key:string]: true}\n\n';
-        case 'EventFilter':
-            return 'type EventFilter = LuaEntityClonedEventFilter | LuaEntityDamagedEventFilter | LuaPlayerMinedEntityEventFilter | LuaPreRobotMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPostEntityDiedEventFilter | LuaEntityDiedEventFilter | LuaScriptRaisedReviveEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaPreGhostDeconstructedEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaSectorScannedEventFilter | LuaRobotMinedEntityEventFilter | LuaScriptRaisedDestroyEventFilter | LuaUpgradeCancelledEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPlayerBuiltEntityEventFilter | LuaPlayerRepairedEntityEventFilter\n\n';
-        case 'LocalisedString':
-            return 'type LocalisedString = string[] | string | number\n\n';
-        case 'MapGenSize':
-            return "type MapGenSize = number | 'none' | 'very-low' | 'very-small' | 'very-poor' | 'low' | 'small' | 'poor' | 'normal' | 'medium' | 'regular' | 'high' | 'big' | 'good' | 'very-high' | 'very-big' | 'very-good'\n\n";
-        case 'MapSettings':
-            // Reference to prototype data, not currently supported in typings
-            return 'type MapSettings = any\n\n';
-        case 'MouseButtonFlags':
-            output = 'type MouseButtonFlags = MouseButtonFlagKey[] | {[key in MouseButtonFlagKey]: true}\n\n';
-            output += "type MouseButtonFlagKey = 'left' | 'right' | 'left-and-right' | 'middle' | 'button-4' | 'button-5' | 'button-6' | 'button-7' | 'button-8' | 'button-9'\n\n";
-            return output;
-        case 'RealOrientation':
-            return 'type RealOrientation = number\n\n';
-        case 'RenderLayer':
-            return "type RenderLayer = 'water-tile' |  '15' | 'ground-tile' | '25' | 'tile-transition' | '26' | 'decals' | '27' | 'lower-radius-visualization' | '29' | 'radius-visualization' | '30' | 'transport-belt-integration' | '65' | 'resource' | '6' | 'building-smoke' | '7' | 'decorative' | '92' | 'ground-patch' | '93' | 'ground-patch-higher' | '94' | 'ground-patch-higher2' | '95' | 'remnants' | '112' | 'floor' | '113' | 'transport-belt' | '114' | 'transport-belt-endings' | '115' | 'floor-mechanics-under-corpse' | '120' | 'corpse' | '121' | 'floor-mechanics' | '122' | 'item' | '123' | 'lower-object' | '124' | 'transport-belt-circuit-connector' | '126' | 'lower-object-above-shadow' | '127' | 'object' | '129' | 'higher-object-under' | '131' | 'higher-object-above' | '132' | 'item-in-inserter-hand' | '134' | 'wires' | '135' | 'wires-above' | '136' | 'entity-info-icon' | '138' | 'entity-info-icon-above' | '139' | 'explosion' | '142' | 'projectile' | '143' | 'smoke' | '144' | 'air-object' | '145' | 'air-entity-info-icon' | '147' | 'light-effect' | '148' | 'selection-box' | '187' | 'higher-selection-box' | '188' | 'collision-selection-box' | '189' | 'arrow' | '190' | 'cursor' | '210'\n\n";
-        case 'SoundPath':
-            return 'type SoundPath = string\n\n';
-        case 'SpritePath':
-            return 'type SpritePath = string\n\n';
-        case 'Tags':
-            return 'type Tags = {[key: string]: string | boolean | number | object}\n\n';
-        case 'TriggerTargetMask':
-            return 'type TriggerTargetMask = {[key: string]: boolean}\n\n'
-        case 'Vector':
-            return 'type Vector = [number, number] | {x: number, y: number}\n\n';
-        case 'PrototypeFilter':
-            return `type PrototypeFilter = ${parseType(concept.name)}\n\n`;
-        default:
-            throw new Error(`Unrecognized "concept" type concept ${concept.name}`);
-    }
-}
-
 function parseVariantConcepts(concepts: Concept[]) {
     let variantConcepts: Concept[] = [];
     for(let concept of concepts) {
-        if(concept.category === 'table' || concept.category === 'filter') {
-            if(concept.variant_parameter_groups && concept.variant_parameter_groups.length) {
+        if(typeof concept.type === 'object' && 'complex_type' in concept.type && (concept.type.complex_type === 'table' || concept.type.complex_type === 'tuple')) {
+            if(concept.type.variant_parameter_groups && concept.type.variant_parameter_groups.length) {
                 let variantsCreated = false;
-                if(concept.variant_parameter_description) {
+                if(concept.type.variant_parameter_description) {
                     let notes = concept.notes || [];
-                    notes.push(concept.variant_parameter_description);
+                    notes.push(concept.type.variant_parameter_description);
                     concept.notes = notes;
-                    let variantPropertyNameList = extractTypeNames(concept.variant_parameter_description);
+                    let variantPropertyNameList = extractTypeNames(concept.type.variant_parameter_description);
                     if(variantPropertyNameList.length === 1) {
                         let variantPropertyName = variantPropertyNameList[0];
-                        for(let parameter of concept.parameters) {
+                        for(let parameter of concept.type.parameters) {
                             if(parameter.name === variantPropertyName) {
                                 let variantOptions = extractTypeNames(parameter.description);
                                 if(variantOptions.length) {
@@ -681,21 +669,26 @@ function parseVariantConcepts(concepts: Concept[]) {
                                     let unionNames: string[] = [];
                                     let baseName = 'Base' + concept.name
                                     variantConcepts.push({
-                                        category: 'table',
+                                        type: {
+                                            complex_type: 'table',
+                                            parameters: concept.type.parameters.filter(p => p.name !== variantPropertyName),
+                                        },
                                         name: baseName,
                                         order: 0,
                                         description: '',
-                                        parameters: concept.parameters.filter(p => p.name !== variantPropertyName),
                                     });
-                                    for(let group of concept.variant_parameter_groups) {
-                                        let newConcept: TableConcept = {
-                                            category: 'table',
+                                    for(let group of concept.type.variant_parameter_groups) {
+                                        let newConceptType: TableType = {
+                                            complex_type: 'table',
+                                            parameters: group.parameters,
+                                        };
+                                        let newConcept: Concept = {
+                                            type: newConceptType,
                                             name: `${concept.name}${formatTypeName(group.name)} extends ${baseName}`,
                                             order: 0,
                                             description: '',
-                                            parameters: group.parameters,
                                         };
-                                        newConcept.parameters.unshift({
+                                        newConceptType.parameters.unshift({
                                             name: variantPropertyName,
                                             order: -1,
                                             description: parameter.description,
@@ -708,28 +701,26 @@ function parseVariantConcepts(concepts: Concept[]) {
                                     }
                                     if(variantOptions.length) {
                                         variantConcepts.push({
-                                            category: 'table',
+                                            type: {
+                                                complex_type: 'table',
+                                                parameters: [{
+                                                    name: variantPropertyName,
+                                                    order: -1,
+                                                    description: parameter.description,
+                                                    type: variantOptions.map(o => `'${o}'`).join(' | '),
+                                                    optional: parameter.optional,
+                                                }],
+                                            },
                                             name: `Default${concept.name} extends ${baseName}`,
                                             order: 0,
                                             description: '',
-                                            parameters: [{
-                                                name: variantPropertyName,
-                                                order: -1,
-                                                description: parameter.description,
-                                                type: variantOptions.map(o => `'${o}'`).join(' | '),
-                                                optional: parameter.optional,
-                                            }],
                                         });
                                         unionNames.push('Default' + concept.name);
                                     }
                                     // Dirty type hacks to "convert" the base concept to a union type
                                     // The parser will ignore the old table properties, we want to preserve description, notes, etc
-                                    (concept as any).category = 'union';
-                                    (concept as any as UnionConcept).options = unionNames.map(s => ({
-                                        type: s,
-                                        description: '',
-                                        order: 0,
-                                    }));
+                                    (concept as any).type.complex_type = 'union';
+                                    (concept.type as any as UnionType).options = unionNames;
                                 }
                             }
                         }
@@ -737,13 +728,15 @@ function parseVariantConcepts(concepts: Concept[]) {
                 }
 
                 if(!variantsCreated) {
-                    for(let group of concept.variant_parameter_groups) {
+                    for(let group of concept.type.variant_parameter_groups) {
                         variantConcepts.push({
-                            category: 'table',
+                            type: {
+                                complex_type: 'table',
+                                parameters: group.parameters,
+                            },
                             name: `${concept.name}${formatTypeName(group.name)} extends ${concept.name}`,
                             order: 0,
                             description: '',
-                            parameters: group.parameters,
                             notes: [`Applies to \`${group.name}\` variant case`],
                         });
                     }
@@ -759,75 +752,54 @@ function writeConcepts(apiData: ApiData, apiVersion: string) {
     output += writeHeaders(apiData);
 
     let concepts = apiData.concepts;
+
+    let collisionMaskLayer = concepts.find(c => c.name === 'CollisionMaskLayer');
+    if(collisionMaskLayer) {
+        let cmlType = collisionMaskLayer.type as UnionType;
+        for(let i = 13; i <= 55; i++) {
+            cmlType.options.push({
+                complex_type: 'literal',
+                value: `layer-${i}`,
+                description: '',
+            })
+        }
+    }
+
     concepts.push(...parseVariantConcepts(concepts));
     for(let concept of concepts) {
-        if(concept.category === 'union') {
-            let notes = concept.notes || [];
-            for(let option of concept.options) {
-                if(option.description) {
-                    notes.push(`For type ${parseType(option.type)} - ${option.description}`);
-                }
-            }
-            concept.notes = notes;
-        }
         output += writeDocs(concept, '');
-
-        switch(concept.category) {
-            case 'table':
-            case 'table_or_array':
-            case 'filter':
-                output += `interface ${concept.name} {\n`
-                for(let parameter of concept.parameters) {
-                    output += writeDocs(parameter, '    ');
-                    output += `    '${parameter.name}'`;
-                    if(parameter.optional) {
-                        output += '?';
-                    }
-                    output += `: ${parseType(parameter.type)}\n`;
-                }
-                output += '}\n\n';
-                break;
-            case 'enum':
-                output += `declare enum ${concept.name} {\n`;
-                for(let option of concept.options) {
-                    output += writeDocs(option, '    ');
-                    output += `    '${option.name}',\n`;
-                }
-                output += '}\n\n';
-                break;
-            case 'flag':
-                output += `type ${concept.name} = {\n    [key in ${concept.name}Key]: true\n}\n\n`;
-                output += `type ${concept.name}Key = ${concept.options.map(o => `'${o.name}'`).join(' | ')}\n\n`;
-                break;
-            case 'union':
-                output += `type ${concept.name} = ${concept.options.map(o => parseType(o.type)).join(' | ')}\n\n`;
-                break;
-            case 'struct':
-                output += `interface ${concept.name} {\n`;
-                concept.attributes.forEach(a => output += writeAttribute(a));
-                output += '}\n\n';
-                break;
-            case 'concept':
-                output += writeCustomConcept(concept);
-                break;
-            default:
-                // Unreachable with current types, but leaving this here in case more are added in the future
-                throw new Error(`Unrecognized concept category ${(concept as Concept).category}`);
+        if(typeof concept.type === 'object' && 'complex_type' in concept.type && (concept.type.complex_type === 'table' || concept.type.complex_type === 'tuple' || concept.type.complex_type === 'struct')) {
+            output += `interface ${concept.name} `;
         }
+        else {
+            output += `type ${concept.name} = `
+        }
+        output += `${parseType(concept.type, '')}\n\n`;
     }
 
     fs.writeFileSync(__dirname + '/../dist/concepts.d.ts', output);
 }
 
-function writeGlobalObjects(apiData: ApiData, apiVersion: string) {
-    var output = '// Factorio global object definitions\n';
+function writeGlobals(apiData: ApiData, apiVersion: string) {
+    var output = '// Factorio global definitions\n';
     output += writeHeaders(apiData);
 
     for(let globalObject of apiData.global_objects) {
         if(globalObject.description) {
             output += writeDocs(globalObject, '');
         }
-        output += `declare const ${globalObject.name}: ${parseType(globalObject.type)}\n`;
+        output += `declare const ${globalObject.name}: ${parseType(globalObject.type, '')}\n`;
+    }
+
+    for(let globalFunction of apiData.global_functions) {
+        let fnOutput = writeMethod(globalFunction, '');
+        if(fnOutput.indexOf('*/') === -1) {
+            fnOutput = 'declare function ' + fnOutput;
+        }
+        else {
+            fnOutput = fnOutput.replace('*/\n', '*/\ndeclare function ');
+        }
+        output += fnOutput;
     }
 
     fs.writeFileSync(__dirname + '/../dist/global.d.ts', output);

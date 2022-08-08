@@ -9,6 +9,7 @@ interface ApiData {
     builtin_types: BuiltinType[];
     concepts: Concept[];
     global_objects: GlobalObject[];
+    global_functions: Method[];
 }
 
 interface FactorioClass {
@@ -22,6 +23,8 @@ interface FactorioClass {
     attributes?: Attribute[];
     operators?: Array<Method | Attribute>;
     base_classes?: string[];
+    // Currently ignored by the parser since factorio classes are being used as interfaces
+    abstract?: boolean;
 }
 
 interface FactorioEvent {
@@ -48,63 +51,14 @@ interface BuiltinType {
     description: string;
 }
 
-interface BaseConcept {
+interface Concept {
     name: string;
     order: number;
     description: string;
     notes?: string[];
     examples?: string[];
-    see_also?: string[];
+    type: FactorioType;
 }
-
-interface TableConcept extends BaseConcept {
-    category: 'table';
-    parameters: Parameter[];
-    variant_parameter_groups?: ParameterGroup[];
-    variant_parameter_description?: string;
-}
-
-interface TableOrArrayConcept extends BaseConcept {
-    category: 'table_or_array';
-    parameters: Parameter[];
-}
-
-interface EnumConcept extends BaseConcept {
-    category: 'enum';
-    options: BasicMember[];
-}
-
-interface FlagConcept extends BaseConcept {
-    category: 'flag';
-    options: BasicMember[];
-}
-
-interface UnionConcept extends BaseConcept {
-    category: 'union';
-    options: Array<{
-        type: FactorioType,
-        order: number,
-        description: string,
-    }>;
-}
-
-interface FilterConcept extends BaseConcept {
-    category: 'filter';
-    parameters: Parameter[];
-    variant_parameter_groups?: ParameterGroup[];
-    variant_parameter_description?: string;
-}
-
-interface StructConcept extends BaseConcept {
-    category: 'struct';
-    attributes: Attribute[];
-}
-
-interface UntypedConcept extends BaseConcept {
-    category: 'concept';
-}
-
-type Concept = TableConcept | TableOrArrayConcept | EnumConcept | FlagConcept | UnionConcept | FilterConcept | StructConcept | UntypedConcept;
 
 interface GlobalObject {
     name: string;
@@ -119,11 +73,11 @@ interface BasicMember {
     description: string;
 }
 
-type FactorioType = string | VariantType | ArrayType | DictionaryType | FunctionType | LuaLazyLoadedValueType | TableType;
+type FactorioType = string | UnionType | ArrayType | DictionaryType | FunctionType | LuaLazyLoadedValueType | TableType | LiteralType | TypeType | StructType;
 
-interface VariantType {
-    complex_type: 'variant';
-    options: FactorioType[];
+interface UnionType {
+    complex_type: 'union';
+    options: Array<string | FactorioType>;
 }
 
 interface ArrayType {
@@ -148,10 +102,27 @@ interface LuaLazyLoadedValueType {
 }
 
 interface TableType {
-    complex_type: 'table';
+    complex_type: 'table' | 'tuple';
     parameters: Parameter[];
     variant_parameter_groups?: ParameterGroup[];
     variant_parameter_description?: string;
+}
+
+interface LiteralType {
+    complex_type: 'literal';
+    value: string | number | boolean;
+    description?: string;
+}
+
+interface TypeType {
+    complex_type: 'type';
+    value: FactorioType;
+    description: string;
+}
+
+interface StructType {
+    complex_type: 'struct';
+    attributes: Attribute[];
 }
 
 interface Parameter {
@@ -199,4 +170,5 @@ interface Attribute {
     type: FactorioType;
     read: boolean;
     write: boolean;
+    optional: boolean;
 }

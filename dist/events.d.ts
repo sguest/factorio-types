@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.61
-// API version 2
+// Factorio version 1.1.65
+// API version 3
 
 /**
  * Base type for all events
@@ -139,8 +139,10 @@ interface on_cancelled_deconstruction extends event  {
  * Called when the upgrade of an entity is canceled. Can be filtered using {@link LuaUpgradeCancelledEventFilter | LuaUpgradeCancelledEventFilter}.
  */
 interface on_cancelled_upgrade extends event  {
+    direction?: defines.direction
     entity: LuaEntity
     player_index?: number
+    target: LuaEntityPrototype
 }
 /**
  * Called when a character corpse expires due to timeout or all of the items being removed from it.
@@ -622,6 +624,10 @@ interface on_gui_closed extends event  {
      */
     gui_type: defines.gui_type
     /**
+     * The script inventory that was open
+     */
+    inventory?: LuaInventory
+    /**
      * The item that was open
      */
     item?: LuaItemStack
@@ -713,6 +719,10 @@ interface on_gui_opened extends event  {
      * The GUI type that was opened.
      */
     gui_type: defines.gui_type
+    /**
+     * The script inventory that was opened
+     */
+    inventory?: LuaInventory
     /**
      * The item that was opened
      */
@@ -1312,7 +1322,7 @@ interface on_player_gun_inventory_changed extends event  {
     player_index: number
 }
 /**
- * Called after a player joins the game.
+ * Called after a player joins the game. This is not called when loading a save file in singleplayer, as the player doesn't actually leave the game, and the save is just on pause until they rejoin.
  */
 interface on_player_joined_game extends event  {
     player_index: number
@@ -1335,7 +1345,7 @@ interface on_player_kicked extends event  {
     reason?: string
 }
 /**
- * Called after a player leaves the game.
+ * Called after a player leaves the game. This is not called when closing a save file in singleplayer, as the player doesn't actually leave the game, and the save is just on pause until they rejoin.
  */
 interface on_player_left_game extends event  {
     player_index: number
@@ -1784,6 +1794,17 @@ interface on_pre_ghost_deconstructed extends event  {
      * The player that did the deconstruction if any.
      */
     player_index?: number
+}
+/**
+ * Called before a ghost entity is upgraded. Can be filtered using {@link LuaPreGhostUpgradedEventFilter | LuaPreGhostUpgradedEventFilter}.
+ */
+interface on_pre_ghost_upgraded extends event  {
+    ghost: LuaEntity
+    /**
+     * The player that did the upgrade if any.
+     */
+    player_index?: number
+    target: LuaEntityPrototype
 }
 /**
  * Called directly before a permission group is deleted.

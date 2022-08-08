@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.61
-// API version 2
+// Factorio version 1.1.65
+// API version 3
 
 declare namespace defines {
     enum alert_type {
@@ -70,6 +70,7 @@ declare namespace defines {
         electric_pole,
         inserter,
         lamp,
+        linked_container,
         offshore_pump,
         programmable_speaker,
         pump,
@@ -615,6 +616,7 @@ declare namespace defines {
         on_pre_chunk_deleted,
         on_pre_entity_settings_pasted,
         on_pre_ghost_deconstructed,
+        on_pre_ghost_upgraded,
         on_pre_permission_group_deleted,
         on_pre_permission_string_imported,
         on_pre_player_crafted_item,
@@ -706,6 +708,7 @@ declare namespace defines {
         player_management,
         production,
         research,
+        script_inventory,
         server_management,
         tile,
         trains,
@@ -913,6 +916,10 @@ declare namespace defines {
         wire_dragging,
         write_to_console,
     }
+    enum input_method {
+        game_controller,
+        keyboard_and_mouse,
+    }
     enum inventory {
         artillery_turret_ammo,
         artillery_wagon_ammo,
@@ -950,6 +957,9 @@ declare namespace defines {
         robot_cargo,
         robot_repair,
         rocket,
+        rocket_silo_input,
+        rocket_silo_modules,
+        rocket_silo_output,
         rocket_silo_result,
         rocket_silo_rocket,
         spider_ammo,
@@ -1052,6 +1062,7 @@ declare namespace defines {
         resource_entity_gui,
         roboport_gui,
         rocket_silo_gui,
+        script_inventory_gui,
         server_config_gui,
         spider_vehicle_gui,
         splitter_gui,
@@ -1087,6 +1098,23 @@ declare namespace defines {
             right,
             straight,
         }
+    }
+    enum rocket_silo_status {
+        arms_advance,
+        arms_retract,
+        building_rocket,
+        create_rocket,
+        doors_closing,
+        doors_opened,
+        doors_opening,
+        engine_starting,
+        launch_started,
+        launch_starting,
+        lights_blinking_close,
+        lights_blinking_open,
+        rocket_flying,
+        rocket_ready,
+        rocket_rising,
     }
     enum shooting {
         not_shooting,
