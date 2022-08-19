@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.65
+// Factorio version 1.1.67
 // API version 3
 
 /**
@@ -2868,6 +2868,14 @@ interface LuaEntity extends LuaControl {
     start_fading_out(this: void): void
 
     /**
+     * Stops the given SpiderVehicle.
+     * @remarks
+     * Applies to subclasses: SpiderVehicle
+     *
+     */
+    stop_spider(this: void): void
+
+    /**
      * Whether this entity supports a backer name.
      */
     supports_backer_name(this: void): void
@@ -4032,7 +4040,7 @@ interface LuaEntity extends LuaControl {
     readonly train?: LuaTrain
 
     /**
-     * Amount of trains related to this particular train stop. Includes train stopped at this train stop (until it finds a path to next target) and trains having this train stop as goal or waypoint. Writing nil will disable the limit (will set a maximum possible value).
+     * Amount of trains related to this particular train stop. Includes train stopped at this train stop (until it finds a path to next target) and trains having this train stop as goal or waypoint.
      * @remarks
      * Train may be included multiple times when braking distance covers this train stop multiple times
      * Value may be read even when train stop has no control behavior
@@ -4050,7 +4058,7 @@ interface LuaEntity extends LuaControl {
     readonly trains_in_block: number
 
     /**
-     * Amount of trains above which no new trains will be sent to this train stop.
+     * Amount of trains above which no new trains will be sent to this train stop. Writing nil will disable the limit (will set a maximum possible value).
      * @remarks
      * When a train stop has a control behavior with wire connected and set_trains_limit enabled, this value will be overwritten by it
      * Applies to subclasses: TrainStop
