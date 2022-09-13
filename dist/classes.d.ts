@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.67
+// Factorio version 1.1.69
 // API version 3
 
 /**
@@ -4315,7 +4315,7 @@ interface LuaEntityPrototype {
     readonly automated_ammo_count?: number
 
     /**
-     * Whether this spider vehicle prototoype automatically cycles weapons.
+     * Whether this spider vehicle prototype automatically cycles weapons.
      * @remarks
      * Applies to subclasses: SpiderVehicle
      *
@@ -5754,6 +5754,14 @@ interface LuaEntityPrototype {
      *
      */
     readonly timeout?: number
+
+    /**
+     * The torso bob speed of this spider vehicle prototype.
+     * @remarks
+     * Applies to subclasses: SpiderVehicle
+     *
+     */
+    readonly torso_bob_speed?: number
 
     /**
      * The torso rotation speed of this spider vehicle prototype.
