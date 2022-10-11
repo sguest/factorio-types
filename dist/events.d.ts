@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.69
+// Factorio version 1.1.70
 // API version 3
 
 /**
@@ -1254,7 +1254,10 @@ interface on_player_display_scale_changed extends event  {
     player_index: number
 }
 /**
- * Called when the player's driving state has changed, this means a player has either entered or left a vehicle.
+ * Called when the player's driving state has changed, meaning a player has either entered or left a vehicle.
+ * @remarks
+ * This event is not raised when the player is ejected from a vehicle due to it being destroyed.
+ *
  */
 interface on_player_driving_changed_state extends event  {
     /**
@@ -1864,7 +1867,7 @@ interface on_pre_player_left_game extends event  {
     reason: defines.disconnect_reason
 }
 /**
- * Called when the player finishes mining an entity, before the entity is removed from map. Can be filtered using {@link LuaPrePlayerMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter}.
+ * Called when the player completes a mining action, but before the entity is potentially removed from the map. This is called even if the entity does not end up being removed. Can be filtered using {@link LuaPrePlayerMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter}.
  */
 interface on_pre_player_mined_item extends event  {
     /**

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.69
+// Factorio version 1.1.70
 // API version 3
 
 /**
@@ -634,6 +634,9 @@ interface LuaBurnerPrototype {
 
     readonly effectivity: number
 
+    /**
+     * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
+     */
     readonly emissions: number
 
     /**
@@ -1032,14 +1035,14 @@ interface LuaControl {
     get_main_inventory(this: void): void
 
     /**
-     * Gets the parameters of a personal logistic request and auto-trash slot. Only used on `spider-vehicle`.
+     * Gets the parameters of a personal logistic request and auto-trash slot.
      * @param slot_index - The slot to get.
      */
     get_personal_logistic_slot(this: void,
         slot_index: number): void
 
     /**
-     * Gets the parameters of a vehicle logistic request and auto-trash slot.
+     * Gets the parameters of a vehicle logistic request and auto-trash slot. Only used on `spider-vehicle`.
      * @param slot_index - The slot to get.
      */
     get_vehicle_logistic_slot(this: void,
@@ -1376,10 +1379,10 @@ interface LuaControl {
      * 
      * This is the GUI that will asked to close (by firing the {@link on_gui_closed | on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is not `nil`, and a new GUI is written to it, the existing one will be asked to close.
      * @remarks
-     * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory` or `nil`.
+     * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory`, `technology`, or `nil`.
      *
      */
-    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | defines.gui_type
+    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaTechnology | defines.gui_type
 
     readonly opened_gui_type?: defines.gui_type
 
@@ -1420,7 +1423,7 @@ interface LuaControl {
     readonly resource_reach_distance: number
 
     /**
-     * Current riding state of this car or the vehicle this player is riding in.
+     * Current riding state of this car, or of the car this player is riding in.
      */
     riding_state: RidingState
 
@@ -1848,6 +1851,9 @@ interface LuaElectricEnergySourcePrototype {
 
     readonly drain: number
 
+    /**
+     * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
+     */
     readonly emissions: number
 
     readonly input_flow_limit: number
@@ -2241,7 +2247,7 @@ interface LuaEntity extends LuaControl {
     get_inbound_signals(this: void): void
 
     /**
-     * Gets the filter for this infinity container at the given index or `nil` if the filter index doesn't exist or is empty.
+     * Gets the filter for this infinity container at the given index, or `nil` if the filter index doesn't exist or is empty.
      * @remarks
      * Applies to subclasses: InfinityContainer
      *
@@ -2251,7 +2257,7 @@ interface LuaEntity extends LuaControl {
         index: number): void
 
     /**
-     * Gets the filter for this infinity pipe or `nil` if the filter is empty.
+     * Gets the filter for this infinity pipe, or `nil` if the filter is empty.
      * @remarks
      * Applies to subclasses: InfinityPipe
      *
@@ -2335,7 +2341,7 @@ interface LuaEntity extends LuaControl {
      * Gets the passenger of this car or spidertron if any.
      * @remarks
      * This differs over {@link LuaEntity::get_driver | LuaEntity::get_driver} in that the passenger can't drive the car.
-     * Applies to subclasses: Vehicle
+     * Applies to subclasses: Car,SpiderVehicle
      *
      */
     get_passenger(this: void): void
@@ -2775,12 +2781,12 @@ interface LuaEntity extends LuaControl {
      * @remarks
      * The entity must allow filters.
      *
-     * @param item - Prototype name of the item to filter.
+     * @param item - Prototype name of the item to filter, or `nil` to clear the filter.
      * @param slot_index - Index of the slot to set the filter for.
      */
     set_filter(this: void,
         slot_index: number,
-        item: string): void
+        item: string | null): void
 
     /**
      * Sets the heat setting for this heat interface.
@@ -2797,28 +2803,28 @@ interface LuaEntity extends LuaControl {
      * @remarks
      * Applies to subclasses: InfinityContainer
      *
-     * @param filter - The new filter or `nil` to clear the filter.
+     * @param filter - The new filter, or `nil` to clear the filter.
      * @param index - The index to set.
      */
     set_infinity_container_filter(this: void,
         index: number,
-        filter: InfinityInventoryFilter): void
+        filter: InfinityInventoryFilter | null): void
 
     /**
      * Sets the filter for this infinity pipe.
      * @remarks
      * Applies to subclasses: InfinityPipe
      *
-     * @param filter - The new filter or `nil` to clear the filter.
+     * @param filter - The new filter, or `nil` to clear the filter.
      */
     set_infinity_pipe_filter(this: void,
-        filter: InfinityPipeFilter): void
+        filter: InfinityPipeFilter | null): void
 
     /**
      * Sets the passenger of this car or spidertron.
      * @remarks
      * This differs over {@link LuaEntity::get_driver | LuaEntity::get_driver} in that the passenger can't drive the car.
-     * Applies to subclasses: Vehicle
+     * Applies to subclasses: Car,SpiderVehicle
      *
      */
     set_passenger(this: void,
@@ -2868,7 +2874,7 @@ interface LuaEntity extends LuaControl {
     start_fading_out(this: void): void
 
     /**
-     * Stops the given SpiderVehicle.
+     * Sets the {@link speed | LuaEntity::speed} of the given SpiderVehicle to zero. Notably does not clear its {@link autopilot_destination | LuaEntity::autopilot_destination}, which it will continue moving towards if set.
      * @remarks
      * Applies to subclasses: SpiderVehicle
      *
@@ -3208,6 +3214,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Whether the driver of this car or spidertron is the gunner. If `false`, the passenger is the gunner. `nil` if this is neither a car or a spidertron.
+     * @remarks
+     * Applies to subclasses: Car,SpiderVehicle
+     *
      */
     driver_is_gunner?: boolean
 
@@ -3851,7 +3860,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Index of the currently selected weapon slot of this character, car, or spidertron. `nil` if this entity doesn't have guns.
      * @remarks
-     * Applies to subclasses: Character,Car
+     * Applies to subclasses: Character,Car,SpiderVehicle
      *
      */
     selected_gun_index?: number
@@ -3862,7 +3871,7 @@ interface LuaEntity extends LuaControl {
     readonly selection_box: BoundingBox
 
     /**
-     * The shooting target for this turret, if any.
+     * The shooting target for this turret, if any. Can't be set to `nil` via script.
      */
     shooting_target?: LuaEntity
 
@@ -4287,6 +4296,14 @@ interface LuaEntityPrototype {
      *
      */
     readonly always_on?: boolean
+
+    /**
+     * Name of the ammo category of this land mine.
+     * @remarks
+     * Applies to subclasses: LandMine
+     *
+     */
+    readonly ammo_category?: string
 
     /**
      * The animation speed coefficient of this belt connectable prototype.
@@ -4980,6 +4997,52 @@ interface LuaEntityPrototype {
      */
     readonly instruments?: ProgrammableSpeakerInstrument[]
 
+    /**
+     * Everything in the following list is considered a building.
+     * 
+     * - AccumulatorPrototype
+     * - ArtilleryTurretPrototype
+     * - BeaconPrototype
+     * - BoilerPrototype
+     * - BurnerGeneratorPrototype
+     * - CombinatorPrototype → ArithmeticCombinator, DeciderCombinator
+     * - ConstantCombinatorPrototype
+     * - ContainerPrototype → LogisticContainer, InfinityContainer
+     * - CraftingMachinePrototype → AssemblingMachine, RocketSilo, Furnace
+     * - ElectricEnergyInterfacePrototype
+     * - ElectricPolePrototype
+     * - EnemySpawnerPrototype
+     * - GatePrototype
+     * - GeneratorPrototype
+     * - HeatInterfacePrototype
+     * - HeatPipePrototype
+     * - InserterPrototype
+     * - LabPrototype
+     * - LampPrototype
+     * - LinkedContainerPrototype
+     * - MarketPrototype
+     * - MiningDrillPrototype
+     * - OffshorePumpPrototype
+     * - PipePrototype → InfinityPipe
+     * - PipeToGroundPrototype
+     * - PlayerPortPrototype
+     * - PowerSwitchPrototype
+     * - ProgrammableSpeakerPrototype
+     * - PumpPrototype
+     * - RadarPrototype
+     * - RailPrototype → CurvedRail, StraightRail
+     * - RailSignalBasePrototype → RailChainSignal, RailSignal
+     * - ReactorPrototype
+     * - RoboportPrototype
+     * - SimpleEntityPrototype
+     * - SimpleEntityWithOwnerPrototype → SimpleEntityWithForce
+     * - SolarPanelPrototype
+     * - StorageTankPrototype
+     * - TrainStopPrototype
+     * - TransportBeltConnectablePrototype → LinkedBelt, Loader1x1, Loader1x2, Splitter, TransportBelt, UndergroundBelt
+     * - TurretPrototype → AmmoTurret, ElectricTurret, FluidTurret
+     * - WallPrototype
+     */
     readonly is_building: boolean
 
     /**
@@ -6252,9 +6315,10 @@ interface LuaEquipmentPrototype {
      * The logistic parameters for this roboport equipment.
      * @remarks
      * Both the `charging_station_shift` and `stationing_offset` vectors are tables with `x` and `y` keys instead of an array.
+     * Applies to subclasses: RoboportEquipment
      *
      */
-    readonly logistic_parameters: {
+    readonly logistic_parameters?: {
         charge_approach_distance: number,
         charging_distance: number,
         charging_energy: number,
@@ -6274,10 +6338,10 @@ interface LuaEquipmentPrototype {
 
     /**
      * @remarks
-     * Applies to subclasses: MovementBonusEquipmentPrototype
+     * Applies to subclasses: MovementBonusEquipment
      *
      */
-    readonly movement_bonus: number
+    readonly movement_bonus?: number
 
     /**
      * Name of this prototype.
@@ -6520,7 +6584,7 @@ interface LuaFluidBox {
      */
     set_filter(this: void,
         index: number,
-        filter?: FluidBoxFilterSpec): void
+        filter: FluidBoxFilterSpec | null): void
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -6538,7 +6602,7 @@ interface LuaFluidBox {
     readonly valid: boolean
 
     /**
-     * Access, set or clear a fluid box. The index must always be in bounds (see {@link LuaFluidBox::index | LuaFluidBox::index}). New fluidboxes may not be added or removed using this operator.
+     * Access, set or clear a fluid box. The index must always be in bounds (see {@link LuaFluidBox::length_operator | LuaFluidBox::length_operator}). New fluidboxes may not be added or removed using this operator.
      * 
      * Is `nil` if the given fluid box does not contain any fluid. Writing `nil` removes all fluid from the fluid box.
      * @remarks
@@ -6643,6 +6707,9 @@ interface LuaFluidEnergySourcePrototype {
 
     readonly effectivity: number
 
+    /**
+     * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
+     */
     readonly emissions: number
 
     /**
@@ -6974,6 +7041,8 @@ interface LuaForce {
 
     /**
      * Gets train stops matching the given filters.
+     * @param table.name - The name(s) of the train stops. Not providing names will match any stop.
+     * @param table.surface - The surface to search. Not providing a surface will match stops on any surface.
      */
     get_train_stops(this: void,
         table?: {
@@ -6982,7 +7051,7 @@ interface LuaForce {
         }): void
 
     /**
-     * @param surface - If given only trains on the surface are returned.
+     * @param surface - The surface to search. Not providing a surface will match trains on any surface.
      */
     get_trains(this: void,
         surface?: SurfaceIdentification): void
@@ -7674,7 +7743,7 @@ interface LuaGameScript {
      * @remarks
      * This is very expensive to determine.
      *
-     * @param surface - If give, only the entities active on this surface are counted.
+     * @param surface - If given, only the entities active on this surface are counted.
      */
     get_active_entities_count(this: void,
         surface?: SurfaceIdentification): void
@@ -7836,6 +7905,9 @@ interface LuaGameScript {
 
     /**
      * Gets train stops matching the given filters.
+     * @param table.force - The force to search. Not providing a force will match stops in any force.
+     * @param table.name - The name(s) of the train stops. Not providing names will match any stop.
+     * @param table.surface - The surface to search. Not providing a surface will match stops on any surface.
      */
     get_train_stops(this: void,
         table?: {
@@ -8010,15 +8082,15 @@ interface LuaGameScript {
         name?: string): void
 
     /**
-     * Set scenario state.
+     * Set scenario state. Any parameters not provided do not change the current state.
      */
     set_game_state(this: void,
         table: {
-            game_finished: boolean,
-            player_won: boolean,
-            next_level: string,
-            can_continue: boolean,
-            victorious_force: ForceIdentification
+            game_finished?: boolean,
+            player_won?: boolean,
+            next_level?: string,
+            can_continue?: boolean,
+            victorious_force?: ForceIdentification
         }): void
 
     /**
@@ -8557,20 +8629,14 @@ interface LuaGroup {
     readonly order: string
 
     /**
-     * The additional order value used in recipe ordering.
-     * @remarks
-     * Can only be used on groups, not on subgroups.
-     *
+     * The additional order value used in recipe ordering. Can only be used on groups, not on subgroups.
      */
-    readonly order_in_recipe: string
+    readonly order_in_recipe?: string
 
     /**
-     * Subgroups of this group.
-     * @remarks
-     * Can only be used on groups, not on subgroups.
-     *
+     * Subgroups of this group. Can only be used on groups, not on subgroups.
      */
-    readonly subgroups: LuaGroup[]
+    readonly subgroups?: LuaGroup[]
 
     readonly type?: string
 
@@ -8716,6 +8782,9 @@ interface LuaGuiElement {
 
     /**
      * Inserts a string at the end or at the given index of this dropdown or listbox.
+     * @remarks
+     * Applies to subclasses: drop-down,list-box
+     *
      * @param index - The index at which to insert the item.
      * @param string - The text to insert.
      */
@@ -8755,6 +8824,9 @@ interface LuaGuiElement {
 
     /**
      * Removes the items in this dropdown or listbox.
+     * @remarks
+     * Applies to subclasses: drop-down,list-box
+     *
      */
     clear_items(this: void): void
 
@@ -8794,6 +8866,9 @@ interface LuaGuiElement {
 
     /**
      * Gets the item at the given index from this dropdown or listbox.
+     * @remarks
+     * Applies to subclasses: drop-down,list-box
+     *
      * @param index - The index to get
      */
     get_item(this: void,
@@ -8839,6 +8914,9 @@ interface LuaGuiElement {
 
     /**
      * Removes the item at the given index from this dropdown or listbox.
+     * @remarks
+     * Applies to subclasses: drop-down,list-box
+     *
      * @param index - The index
      */
     remove_item(this: void,
@@ -8946,6 +9024,9 @@ interface LuaGuiElement {
 
     /**
      * Sets the given string at the given index in this dropdown or listbox.
+     * @remarks
+     * Applies to subclasses: drop-down,list-box
+     *
      * @param index - The index whose text to replace.
      * @param string - The text to set at the given index.
      */
@@ -9066,7 +9147,10 @@ interface LuaGuiElement {
     clear_and_focus_on_right_click: boolean
 
     /**
-     * The image to display on this sprite-button when it is clicked.
+     * The sprite to display on this sprite-button when it is clicked.
+     * @remarks
+     * Applies to subclasses: sprite-button
+     *
      */
     clicked_sprite: SpritePath
 
@@ -9179,11 +9263,17 @@ interface LuaGuiElement {
 
     /**
      * The entity associated with this entity-preview, camera, minimap, if any.
+     * @remarks
+     * Applies to subclasses: entity-preview,camera,minimap
+     *
      */
     entity?: LuaEntity
 
     /**
      * The force this minimap is using, if any.
+     * @remarks
+     * Applies to subclasses: minimap
+     *
      */
     force?: string
 
@@ -9201,7 +9291,7 @@ interface LuaGuiElement {
     horizontal_scroll_policy: string
 
     /**
-     * The image to display on this sprite-button when it is hovered.
+     * The sprite to display on this sprite-button when it is hovered.
      * @remarks
      * Applies to subclasses: sprite-button
      *
@@ -9228,6 +9318,9 @@ interface LuaGuiElement {
 
     /**
      * The items in this dropdown or listbox.
+     * @remarks
+     * Applies to subclasses: drop-down,list-box
+     *
      */
     items: LocalisedString[]
 
@@ -9278,6 +9371,9 @@ interface LuaGuiElement {
 
     /**
      * The mouse button filters for this button or sprite-button.
+     * @remarks
+     * Applies to subclasses: button,sprite-button
+     *
      */
     mouse_button_filter: MouseButtonFlags
 
@@ -9293,6 +9389,9 @@ interface LuaGuiElement {
 
     /**
      * The number to be shown in the bottom right corner of this sprite-button. Set this to `nil` to show nothing.
+     * @remarks
+     * Applies to subclasses: sprite-button
+     *
      */
     number: number
 
@@ -9321,6 +9420,9 @@ interface LuaGuiElement {
 
     /**
      * The position this camera or minimap is focused on, if any.
+     * @remarks
+     * Applies to subclasses: camera,minimap
+     *
      */
     position: MapPosition
 
@@ -9333,7 +9435,10 @@ interface LuaGuiElement {
     read_only: boolean
 
     /**
-     * Whether the image widget should resize according to the sprite in it. Defaults to `true`.
+     * Whether the sprite widget should resize according to the sprite in it. Defaults to `true`.
+     * @remarks
+     * Applies to subclasses: sprite
+     *
      */
     resize_to_sprite: boolean
 
@@ -9363,6 +9468,9 @@ interface LuaGuiElement {
 
     /**
      * The selected index for this dropdown or listbox. Returns `0` if none is selected.
+     * @remarks
+     * Applies to subclasses: drop-down,list-box
+     *
      */
     selected_index: number
 
@@ -9376,6 +9484,9 @@ interface LuaGuiElement {
 
     /**
      * Related to the number to be shown in the bottom right corner of this sprite-button. When set to `true`, numbers that are non-zero and smaller than one are shown as a percentage rather than the value. For example, `0.5` will be shown as `50%` instead.
+     * @remarks
+     * Applies to subclasses: sprite-button
+     *
      */
     show_percent_for_small_numbers: boolean
 
@@ -9388,14 +9499,17 @@ interface LuaGuiElement {
     slider_value: number
 
     /**
-     * The image to display on this sprite-button or sprite in the default state.
+     * The sprite to display on this sprite-button or sprite in the default state.
+     * @remarks
+     * Applies to subclasses: sprite-button,sprite
+     *
      */
     sprite: SpritePath
 
     /**
      * Is this checkbox or radiobutton checked?
      * @remarks
-     * Applies to subclasses: CheckBox,RadioButton
+     * Applies to subclasses: checkbox,radiobutton
      *
      */
     state: boolean
@@ -9407,6 +9521,9 @@ interface LuaGuiElement {
 
     /**
      * The surface index this camera or minimap is using.
+     * @remarks
+     * Applies to subclasses: camera,minimap
+     *
      */
     surface_index: number
 
@@ -9421,6 +9538,9 @@ interface LuaGuiElement {
 
     /**
      * The tabs and contents being shown in this tabbed-pane.
+     * @remarks
+     * Applies to subclasses: tabbed-pane
+     *
      */
     readonly tabs: TabAndContent[]
 
@@ -9488,6 +9608,9 @@ interface LuaGuiElement {
 
     /**
      * The zoom this camera or minimap is using. This value must be positive.
+     * @remarks
+     * Applies to subclasses: camera,minimap
+     *
      */
     zoom: number
 
@@ -9551,6 +9674,9 @@ interface LuaHeatEnergySourcePrototype {
 
     readonly default_temperature: number
 
+    /**
+     * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
+     */
     readonly emissions: number
 
     readonly heat_buffer_prototype: LuaHeatBufferPrototype
@@ -9878,7 +10004,7 @@ interface LuaItemPrototype {
      * @remarks
      * Applies to subclasses: AmmoItem
      *
-     * @param ammo_source_type - "default", "player", "turret", or "vehicle"
+     * @param ammo_source_type - One of `"default"`, `"player"`, `"turret"`, or `"vehicle"`. Defaults to `"default"`.
      */
     get_ammo_type(this: void,
         ammo_source_type?: string): void
@@ -12173,9 +12299,9 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Checks if this player can build the give entity at the given location on the surface the player is on.
-     * @param table.direction - Direction the entity would be placed
-     * @param table.name - Name of the entity to check
-     * @param table.position - Where the entity would be placed
+     * @param table.direction - Direction the entity would be placed. Defaults to `north`.
+     * @param table.name - Name of the entity to check.
+     * @param table.position - Where the entity would be placed.
      */
     can_place_entity(this: void,
         table: {
@@ -12555,7 +12681,7 @@ interface LuaPlayer extends LuaControl {
      */
     set_infinity_inventory_filter(this: void,
         index: number,
-        filter: InfinityInventoryFilter): void
+        filter: InfinityInventoryFilter | null): void
 
     /**
      * Sets the quick bar filter for the given slot.
@@ -13393,11 +13519,8 @@ interface LuaRecipePrototype {
 interface LuaRemote {
     /**
      * Add a remote interface.
-     * @remarks
-     * It is an error if the given interface `name` is already registered.
-     *
      * @param functions - List of functions that are members of the new interface.
-     * @param name - Name of the interface.
+     * @param name - Name of the interface. If the name matches any existing interface, an error is thrown.
      */
     add_interface(this: void,
         name: string,
@@ -13405,9 +13528,9 @@ interface LuaRemote {
 
     /**
      * Call a function of an interface.
-     * @param fn - Function name that belongs to `interface`.
+     * @param fn - Function name that belongs to the `interface`.
      * @param interface - Interface to look up `function` in.
-     * @param ...args - Arguments to pass to the called function.
+     * @param ...args - Arguments to pass to the called function. Note that any arguments passed through the interface are a copy of the original, not a reference. Metatables are not retained, while references to LuaObjects stay intact.
      */
     call(this: void,
         interface: string,
@@ -13422,7 +13545,7 @@ interface LuaRemote {
         name: string): void
 
     /**
-     * List of all registered interfaces. For each interface name, `remote.interfaces[name]` is a dictionary mapping the interface's registered functions to the value `true`.
+     * List of all registered interfaces. For each interface name, `remote.interfaces[name]` is a dictionary mapping the interface's registered functions to `true`.
      * @example
      * Assuming the "human interactor" interface is registered as above 
      * ```
@@ -13431,7 +13554,7 @@ interface LuaRemote {
      * ```
      *
      */
-    readonly interfaces: {[key: string]: {[key: string]: boolean}}
+    readonly interfaces: {[key: string]: {[key: string]: true}}
 
     /**
      * This object's name.
@@ -15280,10 +15403,10 @@ interface LuaSurface {
 
     /**
      * If there exists an entity at the given location that can be fast-replaced with the given entity parameters.
-     * @param table.direction - Direction the entity would be placed
-     * @param table.force - The force that would place the entity. If not specified, the enemy force is assumed.
-     * @param table.name - Name of the entity to check
-     * @param table.position - Where the entity would be placed
+     * @param table.direction - Direction the entity would be placed. Defaults to `north`.
+     * @param table.force - The force that would place the entity. Defaults to the `"neutral"` force.
+     * @param table.name - Name of the entity to check.
+     * @param table.position - Where the entity would be placed.
      */
     can_fast_replace(this: void,
         table: {
@@ -15295,10 +15418,10 @@ interface LuaSurface {
 
     /**
      * Check for collisions with terrain or other entities.
-     * @param table.build_check_type - Which type of check should be carried out.
-     * @param table.direction - Direction of the placed entity.
-     * @param table.force - The force that would place the entity. If not specified, the enemy force is assumed.
-     * @param table.forced - If `true`, entities that can be marked for deconstruction are ignored. Only used if `build_check_type` is either `manual_ghost`, `script_ghost` or `blueprint_ghost`.
+     * @param table.build_check_type - Which type of check should be carried out. Defaults to `ghost_revive`.
+     * @param table.direction - Direction of the placed entity. Defaults to `north`.
+     * @param table.force - The force that would place the entity. Defaults to the `"neutral"` force.
+     * @param table.forced - If `true`, entities that can be marked for deconstruction are ignored. Only used if `build_check_type` is either `manual_ghost`, `script_ghost` or `blueprint_ghost`. Defaults to `false`.
      * @param table.inner_name - The prototype name of the entity contained in the ghost. Only used if `name` is `entity-ghost`.
      * @param table.name - Name of the entity prototype to check.
      * @param table.position - Where the entity would be placed.
@@ -16007,9 +16130,9 @@ interface LuaSurface {
     get_starting_area_radius(this: void): void
 
     /**
-     * Get the tile at a given position.
+     * Get the tile at a given position. An alternative call signature for this method is passing it a single {@link TilePosition | TilePosition}.
      * @remarks
-     * The input position params can also be a single tile position.
+     * Non-integer values will result in them being rounded down.
      *
      */
     get_tile(this: void,
@@ -16023,6 +16146,8 @@ interface LuaSurface {
 
     /**
      * Gets train stops matching the given filters.
+     * @param table.force - The force to search. Not providing a force will match stops in any force.
+     * @param table.name - The name(s) of the train stops. Not providing names will match any stop.
      */
     get_train_stops(this: void,
         table?: {
@@ -16031,7 +16156,7 @@ interface LuaSurface {
         }): void
 
     /**
-     * @param force - If given only trains matching this force are returned.
+     * @param force - The force to search. Not providing a force will match trains in any force.
      */
     get_trains(this: void,
         force?: ForceIdentification): void
@@ -17454,7 +17579,7 @@ interface LuaVirtualSignalPrototype {
     readonly order: string
 
     /**
-     * If this is a special signal
+     * Whether this is a special signal. The `everything`, `anything`, `each`, and `unknown` signals are considered special.
      */
     readonly special: boolean
 
@@ -17476,6 +17601,9 @@ interface LuaVoidEnergySourcePrototype {
      */
     help(this: void): void
 
+    /**
+     * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
+     */
     readonly emissions: number
 
     /**
@@ -17641,7 +17769,7 @@ interface LuaGuiElementAddParams {
     'name'?: string
 
     /**
-     * Style of the child element.
+     * The name of the style prototype to apply to the new element.
      */
     'style'?: string
 
@@ -18264,6 +18392,18 @@ interface LuaSurfaceCreateEntityParamsArtilleryFlare extends LuaSurfaceCreateEnt
 
 /**
  * @remarks
+ * Applies to variant case `artillery-projectile`
+ *
+ */
+interface LuaSurfaceCreateEntityParamsArtilleryProjectile extends LuaSurfaceCreateEntityParams {
+    'max_range'?: number
+
+    'speed': number
+
+}
+
+/**
+ * @remarks
  * Applies to variant case `assembling-machine`
  *
  */
@@ -18527,7 +18667,7 @@ interface LuaSurfaceCreateEntityParamsProgrammableSpeaker extends LuaSurfaceCrea
  *
  */
 interface LuaSurfaceCreateEntityParamsProjectile extends LuaSurfaceCreateEntityParams {
-    'max_range': number
+    'max_range'?: number
 
     'speed': number
 
@@ -18605,6 +18745,29 @@ interface LuaSurfaceCreateEntityParamsSpeechBubble extends LuaSurfaceCreateEntit
     'lifetime'?: number
 
     'text': LocalisedString
+
+}
+
+/**
+ * @remarks
+ * Applies to variant case `stream`
+ *
+ */
+interface LuaSurfaceCreateEntityParamsStream extends LuaSurfaceCreateEntityParams {
+    /**
+     * Source position will be offset by this value when rendering the stream.
+     */
+    'source_offset'?: Vector
+
+    /**
+     * Absolute source position that can be used instead of source entity (entity has precedence if both entity and position are defined).
+     */
+    'source_position'?: MapPosition
+
+    /**
+     * Absolute target position that can be used instead of target entity (entity has precedence if both entity and position are defined).
+     */
+    'target_position'?: MapPosition
 
 }
 

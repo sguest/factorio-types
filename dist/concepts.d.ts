@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.69
+// Factorio version 1.1.70
 // API version 3
 
 /**
@@ -356,23 +356,12 @@ type BoundingBox = {
     right_bottom: MapPosition
 }
 
-interface CapsuleAction {
-    
-    /**
-     * Only present when `type` is `"throw"` or `"use-on-self"`.
-     */
-    attack_parameters?: AttackParameters,
-    
-    /**
-     * Only present when `type` is `"equipment-remote"`. It is the equipment prototype name.
-     */
-    equipment?: string,
-    
-    /**
-     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`.
-     */
-    type: string
-}
+/**
+ * @remarks
+ * Other attributes may be specified depending on `type`:
+ *
+ */
+type CapsuleAction = CapsuleActionArtilleryRemote | CapsuleActionDestroyCliffs | CapsuleActionEquipmentRemote | CapsuleActionThrow | CapsuleActionUseOnSelf
 
 /**
  * @remarks
@@ -503,7 +492,7 @@ interface CliffPlacementSettings {
 }
 
 /**
- * A set of flags. Set flags are in the dictionary as `true`, while unset flags aren't present at all.
+ * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  */
 type CollisionMask = {[key: string]: true}
 
@@ -897,7 +886,7 @@ interface EnemyExpansionMapSettings {
 type EntityPrototypeFilter = EntityPrototypeFilterBuildBaseEvolutionRequirement | EntityPrototypeFilterCollisionMask | EntityPrototypeFilterCraftingCategory | EntityPrototypeFilterEmissions | EntityPrototypeFilterFlag | EntityPrototypeFilterName | EntityPrototypeFilterSelectionPriority | EntityPrototypeFilterType | DefaultEntityPrototypeFilter
 
 /**
- * A set of flags. Set flags are in the dictionary as `true`, while unset flags aren't present at all.
+ * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  * 
  * By default, none of these flags are set.
  */
@@ -1278,7 +1267,7 @@ interface InventoryFilter {
 type ItemPrototypeFilter = ItemPrototypeFilterBurntResult | ItemPrototypeFilterDefaultRequestAmount | ItemPrototypeFilterFlag | ItemPrototypeFilterFuelAccelerationMultiplier | ItemPrototypeFilterFuelCategory | ItemPrototypeFilterFuelEmissionsMultiplier | ItemPrototypeFilterFuelTopSpeedMultiplier | ItemPrototypeFilterFuelValue | ItemPrototypeFilterName | ItemPrototypeFilterPlaceAsTile | ItemPrototypeFilterPlaceResult | ItemPrototypeFilterPlacedAsEquipmentResult | ItemPrototypeFilterStackSize | ItemPrototypeFilterSubgroup | ItemPrototypeFilterType | ItemPrototypeFilterWireCount | DefaultItemPrototypeFilter
 
 /**
- * A set of flags. Set flags are in the dictionary as `true`, while unset flags aren't present at all.
+ * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  * 
  * By default, none of these flags are set.
  */
@@ -1865,7 +1854,7 @@ interface ModuleEffects {
 }
 
 /**
- * A set of flags. Set flags are in the dictionary as `true`, while unset flags aren't present at all.
+ * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  * 
  * To write to this, use an array{@link [string | string}] of the mouse buttons that should be possible to use with on button. The flag `"left-and-right"` can also be set, which will set `"left"` and `"right"` to `true`.
  */
@@ -2153,7 +2142,7 @@ interface PollutionMapSettings {
     /**
      * The amount of pollution eaten by a chunk's tiles as a percentage of 1. Defaults to `1`.
      */
-    aeging: number,
+    ageing: number,
     
     /**
      * The amount that is diffused to a neighboring chunk (possibly repeated for other directions as well). Defaults to `0.02`.
@@ -2365,7 +2354,7 @@ interface SelectedPrototypeData {
 }
 
 /**
- * A set of flags. Set flags are in the dictionary as `true`, while unset flags aren't present at all.
+ * A set of flags on a selection tool that define how entities and tiles are selected. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  */
 type SelectionModeFlags = {[key: string]: true}
 
@@ -2816,12 +2805,12 @@ interface WaitCondition {
     compare_type: string,
     
     /**
-     * Only present when `type` is `"item_count"`, `"circuit"` or `"fluid_count"`.
+     * Only present when `type` is `"item_count"`, `"circuit"` or `"fluid_count"`, and a circuit condition is configured.
      */
     condition?: CircuitCondition,
     
     /**
-     * Number of ticks to wait or of inactivity. Only present when `type` is `"time"` or `"inactivity"`.
+     * Number of ticks to wait when `type` is `"time"`, or number of ticks of inactivity when `type` is `"inactivity"`.
      */
     ticks?: number,
     
@@ -3001,6 +2990,70 @@ interface DefaultAttackParameters extends BaseAttackParameters {
      * The type of AttackParameter. One of `'projectile'`, `'stream'` or `'beam'`.
      */
     type: 'beam'
+}
+
+interface BaseCapsuleAction {
+    
+}
+
+interface CapsuleActionArtilleryRemote extends BaseCapsuleAction {
+    
+    /**
+     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
+     */
+    type: 'artillery-remote',
+    
+    /**
+     * Name of the {@link flare prototype | LuaEntityPrototype}.
+     */
+    flare: string
+}
+
+interface CapsuleActionDestroyCliffs extends BaseCapsuleAction {
+    
+    /**
+     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
+     */
+    type: 'destroy-cliffs',
+    attack_parameters: AttackParameters,
+    radius: number,
+    timeout: number
+}
+
+interface CapsuleActionEquipmentRemote extends BaseCapsuleAction {
+    
+    /**
+     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
+     */
+    type: 'equipment-remote',
+    
+    /**
+     * Name of the {@link LuaEquipmentPrototype | LuaEquipmentPrototype}.
+     */
+    equipment: string
+}
+
+interface CapsuleActionThrow extends BaseCapsuleAction {
+    
+    /**
+     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
+     */
+    type: 'throw',
+    attack_parameters: AttackParameters,
+    
+    /**
+     * Whether using the capsule consumes an item from the stack.
+     */
+    uses_stack: boolean
+}
+
+interface CapsuleActionUseOnSelf extends BaseCapsuleAction {
+    
+    /**
+     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
+     */
+    type: 'use-on-self',
+    attack_parameters: AttackParameters
 }
 
 /**

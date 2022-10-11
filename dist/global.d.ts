@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.69
+// Factorio version 1.1.70
 // API version 3
 
 /**
@@ -58,7 +58,7 @@ declare function log(this: void,
  * end
  * ```
  * 
- * Note that `table_size()` does not work correctly for {@link LuaCustomTable | LuaCustomTable}, their size has to be determined with {@link LuaCustomTable::length | LuaCustomTable::length} instead.
+ * Note that `table_size()` does not work correctly for {@link LuaCustomTable | LuaCustomTable}, their size has to be determined with {@link LuaCustomTable::length_operator | LuaCustomTable::length_operator} instead.
  */
 declare function table_size(this: void,
     table: Table): void
