@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.70
+// Factorio version 1.1.71
 // API version 3
 
 declare namespace defines {
@@ -557,6 +557,7 @@ declare namespace defines {
         on_permission_group_edited,
         on_permission_string_imported,
         on_picked_up_item,
+        on_player_alt_reverse_selected_area,
         on_player_alt_selected_area,
         on_player_ammo_inventory_changed,
         on_player_armor_inventory_changed,
@@ -721,6 +722,7 @@ declare namespace defines {
         add_permission_group,
         add_train_station,
         admin_action,
+        alt_reverse_select_area,
         alt_select_area,
         alt_select_blueprint_entities,
         alternative_copy,

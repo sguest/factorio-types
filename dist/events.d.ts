@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.70
+// Factorio version 1.1.71
 // API version 3
 
 /**
@@ -952,6 +952,35 @@ interface on_permission_string_imported extends event  {
 interface on_picked_up_item extends event  {
     item_stack: SimpleItemStack
     player_index: number
+}
+/**
+ * Called after a player alt-reverse-selects an area with a selection-tool item.
+ */
+interface on_player_alt_reverse_selected_area extends event  {
+    /**
+     * The area selected.
+     */
+    area: BoundingBox
+    /**
+     * The entities selected.
+     */
+    entities: LuaEntity[]
+    /**
+     * The item used to select the area.
+     */
+    item: string
+    /**
+     * The player doing the selection.
+     */
+    player_index: number
+    /**
+     * The surface selected.
+     */
+    surface: LuaSurface
+    /**
+     * The tiles selected.
+     */
+    tiles: LuaTile[]
 }
 /**
  * Called after a player alt-selects an area with a selection-tool item.

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.70
+// Factorio version 1.1.71
 // API version 3
 
 /**
@@ -253,16 +253,16 @@ interface LuaBootstrap {
      * @remarks
      * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
      *
-     * @param f - The handler for this event. Passing `nil` will unregister it.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
      */
     on_configuration_changed(this: void,
-        f: (this: void, arg0: ConfigurationChangedData) => any | null): void
+        handler: (this: void, arg0: ConfigurationChangedData) => any | null): void
 
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event - The event(s) or custom-input to invoke the handler on.
-     * @param f - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @example
      * Register for the [on_tick](on_tick) event to print the current tick to console each tick. 
      * ```
@@ -281,7 +281,7 @@ interface LuaBootstrap {
      */
     on_event<T extends event>(this: void,
         event: defines.events | defines.events[] | string,
-        f: (this: void, arg0: T) => any | null,
+        handler: (this: void, arg0: EventData) => any | null,
         filters?: EventFilter): void
 
     /**
@@ -289,7 +289,7 @@ interface LuaBootstrap {
      * @remarks
      * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
      *
-     * @param f - The handler for this event. Passing `nil` will unregister it.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @example
      * Initialize a `players` table in `global` for later use. 
      * ```
@@ -300,7 +300,7 @@ interface LuaBootstrap {
      *
      */
     on_init(this: void,
-        f: (this: void) => any | null): void
+        handler: (this: void) => any | null): void
 
     /**
      * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session. It gives the mod the opportunity to do some very specific actions, should it need to. Doing anything other than these three will lead to desyncs, which breaks multiplayer and replay functionality. Access to {@link LuaGameScript | LuaGameScript} is not available. The {@link global | global} table can be accessed and is safe to read from, but not write to, as doing so will lead to an error.
@@ -314,19 +314,19 @@ interface LuaBootstrap {
      * @remarks
      * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
      *
-     * @param f - The handler for this event. Passing `nil` will unregister it.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
      */
     on_load(this: void,
-        f: (this: void) => any | null): void
+        handler: (this: void) => any | null): void
 
     /**
      * Register a handler to run every nth-tick(s). When the game is on tick 0 it will trigger all registered handlers.
-     * @param f - The handler to run. Passing `nil` will unregister it for the provided nth-tick(s).
+     * @param handler - The handler to run. Passing `nil` will unregister it for the provided nth-tick(s).
      * @param tick - The nth-tick(s) to invoke the handler on. Passing `nil` as the only parameter will unregister all nth-tick handlers.
      */
     on_nth_tick(this: void,
         tick: number | number[] | null,
-        f: (this: void, arg0: NthTickEventData) => any | null): void
+        handler: (this: void, arg0: NthTickEventData) => any | null): void
 
     /**
      * @param table.entity - The entity that was built.
@@ -2038,7 +2038,7 @@ interface LuaEntity extends LuaControl {
      * @param damage - The amount of damage to be done.
      * @param dealer - The entity to consider as the damage dealer. Needs to be on the same surface as the entity being damaged.
      * @param force - The force that will be doing the damage.
-     * @param type - The type of damage to be done, defaults to "impact".
+     * @param type - The type of damage to be done, defaults to "impact". Can't be `nil`.
      */
     damage(this: void,
         damage: number,
@@ -7957,9 +7957,9 @@ interface LuaGameScript {
         reason?: LocalisedString): void
 
     /**
-     * Marks two forces to be merged together. All entities in the source force will be reassigned to the target force. The source force will then be destroyed.
+     * Marks two forces to be merged together. All players and entities in the source force will be reassigned to the target force. The source force will then be destroyed. Importantly, this does not merge technologies or bonuses, which are instead retained from the target force.
      * @remarks
-     * The three built-in forces -- player, enemy and neutral -- can't be destroyed. I.e. they can't be used as the source argument to this function.
+     * The three built-in forces (player, enemy and neutral) can't be destroyed, meaning they can't be used as the source argument to this function.
      * The source force is not removed until the end of the current tick, or if called during the {@link on_forces_merging | on_forces_merging} or {@link on_forces_merged | on_forces_merged} event, the end of the next tick.
      *
      * @param destination - The force to reassign all entities to.
@@ -8829,6 +8829,11 @@ interface LuaGuiElement {
      *
      */
     clear_items(this: void): void
+
+    /**
+     * Closes the dropdown list if this is a dropdown and it is open.
+     */
+    close_dropdown(this: void): void
 
     /**
      * Remove this element, along with its children. Any {@link LuaGuiElement | LuaGuiElement} objects referring to the destroyed elements become invalid after this operation.
@@ -10045,6 +10050,70 @@ interface LuaItemPrototype {
      *
      */
     readonly alt_entity_type_filters?: {[key: string]: boolean}
+
+    /**
+     * The alt reverse entity filter mode used by this selection tool.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly alt_reverse_alt_entity_filter_mode?: string
+
+    /**
+     * The alt reverse entity filters used by this selection tool indexed by entity name.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly alt_reverse_entity_filters?: {[key: string]: LuaEntityPrototype}
+
+    /**
+     * The alt reverse entity type filters used by this selection tool indexed by entity type.
+     * @remarks
+     * The boolean value is meaningless and is used to allow easy lookup if a type exists in the dictionary.
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly alt_reverse_entity_type_filters?: {[key: string]: boolean}
+
+    /**
+     * The color used when doing alt reverse selection with this selection tool prototype.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly alt_reverse_selection_border_color?: Color
+
+    /**
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly alt_reverse_selection_cursor_box_type?: string
+
+    /**
+     * Flags that affect which entities will be selected during alt reverse selection.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly alt_reverse_selection_mode_flags?: SelectionModeFlags
+
+    /**
+     * The alt reverse tile filter mode used by this selection tool.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly alt_reverse_tile_filter_mode?: string
+
+    /**
+     * The alt reverse tile filters used by this selection tool indexed by tile name.
+     * @remarks
+     * Applies to subclasses: SelectionTool
+     *
+     */
+    readonly alt_reverse_tile_filters?: {[key: string]: LuaTilePrototype}
 
     /**
      * The color used when doing alt selection with this selection tool prototype.
@@ -11511,7 +11580,7 @@ interface LuaLogisticContainerControlBehavior extends LuaControlBehavior {
     help(this: void): void
 
     /**
-     * The circuit mode of operations for the logistic container.
+     * The circuit mode of operations for the logistic container. Can only be set on containers whose {@link logistic_mode | LuaEntityPrototype::logistic_mode} is set to "requester".
      */
     circuit_mode_of_operation: defines.control_behavior.logistic_container.circuit_mode_of_operation
 
@@ -12298,7 +12367,7 @@ interface LuaPlayer extends LuaControl {
         }): void
 
     /**
-     * Checks if this player can build the give entity at the given location on the surface the player is on.
+     * Checks if this player can build the given entity at the given location on the surface the player is on.
      * @param table.direction - Direction the entity would be placed. Defaults to `north`.
      * @param table.name - Name of the entity to check.
      * @param table.position - Where the entity would be placed.
@@ -12673,9 +12742,6 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Sets the filter for this map editor infinity filters at the given index.
-     * @remarks
-     * Applies to subclasses: InfinityContainer
-     *
      * @param filter - The new filter or `nil` to clear the filter.
      * @param index - The index to set.
      */

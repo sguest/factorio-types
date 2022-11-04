@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.70
+// Factorio version 1.1.71
 // API version 3
 
 /**
@@ -1192,7 +1192,7 @@ interface InfinityInventoryFilter {
     count?: number,
     
     /**
-     * The index of this filter in the filters list.
+     * The index of this filter in the filters list. Not required when writing a filter.
      */
     index: number,
     
