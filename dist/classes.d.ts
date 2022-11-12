@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.71
+// Factorio version 1.1.72
 // API version 3
 
 /**
@@ -9787,10 +9787,12 @@ interface LuaInventory {
 
     /**
      * Counts the number of empty stacks.
+     * @param include_bar - If true, slots blocked by the current bar will be included. Defaults to true.
      * @param include_filtered - If true, filtered slots will be included. Defaults to false.
      */
     count_empty_stacks(this: void,
-        include_filtered?: boolean): void
+        include_filtered?: boolean,
+        include_bar?: boolean): void
 
     /**
      * Destroys this inventory.
@@ -9874,6 +9876,11 @@ interface LuaInventory {
      * If this inventory supports filters and has at least 1 filter set.
      */
     is_filtered(this: void): void
+
+    /**
+     * Is every stack in this inventory full? Ignores stacks blocked by the current bar.
+     */
+    is_full(this: void): void
 
     /**
      * Remove items from this inventory.
