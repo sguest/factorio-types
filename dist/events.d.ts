@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.72
+// Factorio version 1.1.74
 // API version 3
 
 /**
@@ -2285,6 +2285,10 @@ interface on_spider_command_completed extends event  {
  * Called when a translation request generated through {@link LuaPlayer::request_translation | LuaPlayer::request_translation} is translated.
  */
 interface on_string_translated extends event  {
+    /**
+     * The unique id for this translation request.
+     */
+    id: number
     /**
      * The localised string being translated.
      */

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.72
+// Factorio version 1.1.74
 // API version 3
 
 /**
@@ -12696,6 +12696,15 @@ interface LuaPlayer extends LuaControl {
         localised_string: LocalisedString): void
 
     /**
+     * Requests a translation for the given localised strings. If the request is successful the {@link on_string_translated | on_string_translated} event will be fired at a later time with the results.
+     * @remarks
+     * Does nothing if this player is not connected. (see {@link LuaPlayer::connected | LuaPlayer::connected}).
+     *
+     */
+    request_translations(this: void,
+        localised_strings: LocalisedString[]): void
+
+    /**
      * Sets which quick bar page is being used for the given screen page.
      * @param page_index - The new quick bar page.
      * @param screen_index - The screen page. Index 1 is the top row in the gui. Index can go beyond the visible number of bars on the screen to account for the interface config setting change.
@@ -12866,6 +12875,11 @@ interface LuaPlayer extends LuaControl {
     readonly connected: boolean
 
     readonly controller_type: defines.controllers
+
+    /**
+     * Returns true if the current item stack in cursor will be destroyed after clearing the cursor. Manually putting it into inventory still preserves the item. If the cursor stack is not one of the supported types (blueprint, blueprint-book, deconstruction-planner, upgrade-planner), write operation will be silently ignored.
+     */
+    cursor_stack_temporary: boolean
 
     /**
      * When in a cutscene; the character this player would be using once the cutscene is over, if any. Returns `nil` when the player is disconnected (see {@link LuaPlayer::connected | LuaPlayer::connected}).
