@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.74
+// Factorio version 1.1.77
 // API version 3
 
 declare namespace defines {
@@ -673,6 +673,7 @@ declare namespace defines {
         script_raised_destroy,
         script_raised_revive,
         script_raised_set_tiles,
+        script_raised_teleported,
     }
     enum flow_precision_index {
         fifty_hours,

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.74
+// Factorio version 1.1.77
 // API version 3
 
 /**
@@ -1318,6 +1318,10 @@ interface on_player_fast_transferred extends event  {
      */
     from_player: boolean
     /**
+     * Whether the transfer was a split action (half stack).
+     */
+    is_split: boolean
+    /**
      * The player transferred from or to.
      */
     player_index: number
@@ -1765,7 +1769,7 @@ interface on_post_entity_died extends event  {
  */
 interface on_pre_build extends event  {
     /**
-     * Item was placed while moving.
+     * Whether the item was placed while moving.
      */
     created_by_moving: boolean
     /**
@@ -1773,11 +1777,11 @@ interface on_pre_build extends event  {
      */
     direction: defines.direction
     /**
-     * If building this blueprint was flipped horizontally.
+     * Whether the blueprint was flipped horizontally. `nil` if not built by a blueprint.
      */
     flip_horizontal: boolean
     /**
-     * If building this blueprint was flipped vertically.
+     * Whether the blueprint was flipped vertically. `nil` if not built by a blueprint.
      */
     flip_vertical: boolean
     /**
@@ -2282,7 +2286,7 @@ interface on_spider_command_completed extends event  {
     vehicle: LuaEntity
 }
 /**
- * Called when a translation request generated through {@link LuaPlayer::request_translation | LuaPlayer::request_translation} is translated.
+ * Called when a translation request generated through {@link LuaPlayer::request_translation | LuaPlayer::request_translation} or {@link LuaPlayer::request_translations | LuaPlayer::request_translations} has been completed.
  */
 interface on_string_translated extends event  {
     /**
@@ -2476,4 +2480,21 @@ interface script_raised_set_tiles extends event  {
      * The tiles that were changed.
      */
     tiles: Tile[]
+}
+/**
+ * A static event mods can use to tell other mods they teleported something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_teleported | LuaBootstrap::raise_script_teleported}, or when `raise_teleported` is passed to {@link LuaControl::teleport | LuaControl::teleport}. Can be filtered using {@link LuaScriptRaisedTeleportedEventFilter | LuaScriptRaisedTeleportedEventFilter}.
+ */
+interface script_raised_teleported extends event  {
+    /**
+     * The entity that was teleported.
+     */
+    entity: LuaEntity
+    /**
+     * The entity's position before the teleportation.
+     */
+    old_position: MapPosition
+    /**
+     * The entity's surface before the teleportation.
+     */
+    old_surface_index: number
 }

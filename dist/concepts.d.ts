@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.74
+// Factorio version 1.1.77
 // API version 3
 
 /**
@@ -762,6 +762,20 @@ interface DisplayResolution {
     width: number
 }
 
+interface DragTarget {
+    
+    /**
+     * If the wire being dragged is a circuit wire this is the connector id.
+     */
+    target_circuit_id?: defines.circuit_connector_id,
+    target_entity: LuaEntity,
+    
+    /**
+     * If the wire being dragged is copper wire this is the wire id.
+     */
+    target_wire_id?: defines.wire_connection_id
+}
+
 /**
  * These values represent a percentual increase in evolution. This means a value of `0.1` would increase evolution by 10%.
  */
@@ -1059,9 +1073,9 @@ type FluidPrototypeFilter = FluidPrototypeFilterDefaultTemperature | FluidProtot
 type ForceCondition = /* All forces pass. */ 'all' | /* Forces which will attack pass. */ 'enemy' | /* Forces which won't attack pass. */ 'ally' | /* Forces which are friends pass. */ 'friend' | /* Forces which are not friends pass. */ 'not-friend' | /* The same force pass. */ 'same' | /* The non-same forces pass. */ 'not-same'
 
 /**
- * A force may be specified in one of two ways.
+ * A force may be specified in one of three ways.
  */
-type ForceIdentification = /* The force name. */ string | /* A reference to {@link LuaForce | LuaForce} may be passed directly. */ LuaForce
+type ForceIdentification = /* The force index. */ number | /* The force name. */ string | /* A reference to {@link LuaForce | LuaForce} may be passed directly. */ LuaForce
 
 /**
  * Parameters that affect the look and control of the game. Updating any of the member attributes here will immediately take effect in the game engine.
@@ -1569,6 +1583,14 @@ type LuaScriptRaisedReviveEventFilter = LuaScriptRaisedReviveEventFilterGhostNam
  * Other attributes may be specified depending on `filter`:
  *
  */
+type LuaScriptRaisedTeleportedEventFilter = LuaScriptRaisedTeleportedEventFilterGhostName | LuaScriptRaisedTeleportedEventFilterGhostType | LuaScriptRaisedTeleportedEventFilterName | LuaScriptRaisedTeleportedEventFilterType | DefaultLuaScriptRaisedTeleportedEventFilter
+
+/**
+ * Depending on the value of `filter`, the table may take additional fields. `filter` may be one of the following:
+ * @remarks
+ * Other attributes may be specified depending on `filter`:
+ *
+ */
 type LuaSectorScannedEventFilter = LuaSectorScannedEventFilterGhostName | LuaSectorScannedEventFilterGhostType | LuaSectorScannedEventFilterName | LuaSectorScannedEventFilterType | DefaultLuaSectorScannedEventFilter
 
 /**
@@ -1816,7 +1838,7 @@ interface ModSetting {
     /**
      * The value of the mod setting. The type depends on the kind of setting.
      */
-    value: number | boolean | string
+    value: number | boolean | string | Color
 }
 
 /**
@@ -2259,6 +2281,19 @@ interface ProgrammableSpeakerParameters {
  */
 type PrototypeFilter = Array</* for type `"item"` */ ItemPrototypeFilter | /* for type `"tile"` */ TilePrototypeFilter | /* for type `"entity"` */ EntityPrototypeFilter | /* for type `"fluid"` */ FluidPrototypeFilter | /* for type `"recipe"` */ RecipePrototypeFilter | /* for type `"decorative"` */ DecorativePrototypeFilter | /* for type `"achievement"` */ AchievementPrototypeFilter | /* for type `"equipment"` */ EquipmentPrototypeFilter | /* for type `"technology"` */ TechnologyPrototypeFilter>
 
+interface PrototypeHistory {
+    
+    /**
+     * The mods that changed this prototype in the order they changed it.
+     */
+    changed: string[],
+    
+    /**
+     * The mod that created this prototype.
+     */
+    created: string
+}
+
 /**
  * The smooth orientation. It is a {@link float | float} in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise. This means a value of `0` indicates "north", a value of `0.5` indicates "south".
  * 
@@ -2545,6 +2580,8 @@ interface TabAndContent {
 
 /**
  * A dictionary of string to the four basic Lua types: `string`, `boolean`, `number`, `table`.
+ * 
+ * Note that the API returns tags as a simple table, meaning any modifications to it will not propagate back to the game. Thus, to modify a set of tags, the whole table needs to be written back to the respective property.
  * @example
  * ```
  * {a = 1, b = true, c = "three", d = {e = "f"}}
@@ -2572,7 +2609,7 @@ type TechnologyModifier = TechnologyModifierOtherTypes | TechnologyModifierAmmoD
  * Other attributes may be specified depending on `filter`:
  *
  */
-type TechnologyPrototypeFilter = TechnologyPrototypeFilterLevel | TechnologyPrototypeFilterMaxLevel | TechnologyPrototypeFilterResearchUnitIngredient | TechnologyPrototypeFilterTime | DefaultTechnologyPrototypeFilter
+type TechnologyPrototypeFilter = TechnologyPrototypeFilterLevel | TechnologyPrototypeFilterMaxLevel | TechnologyPrototypeFilterResearchUnitIngredient | TechnologyPrototypeFilterTime | TechnologyPrototypeFilterUnlocksRecipe | DefaultTechnologyPrototypeFilter
 
 interface Tile {
     
@@ -2830,7 +2867,7 @@ interface WireConnectionDefinition {
     /**
      * Mandatory if the source entity has more than one wire connection using copper wire.
      */
-    source_wire_id?: defines.circuit_connector_id,
+    source_wire_id?: defines.wire_connection_id,
     
     /**
      * Mandatory if the target entity has more than one circuit connection using circuit wire.
@@ -2845,7 +2882,7 @@ interface WireConnectionDefinition {
     /**
      * Mandatory if the target entity has more than one wire connection using copper wire.
      */
-    target_wire_id?: defines.circuit_connector_id,
+    target_wire_id?: defines.wire_connection_id,
     
     /**
      * Wire color, either {@link defines.wire_type.red | defines.wire_type.red} or {@link defines.wire_type.green | defines.wire_type.green}.
@@ -5350,6 +5387,79 @@ interface DefaultLuaScriptRaisedReviveEventFilter extends BaseLuaScriptRaisedRev
     filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable'
 }
 
+interface BaseLuaScriptRaisedTeleportedEventFilter {
+    
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean,
+    
+    /**
+     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: string
+}
+
+interface LuaScriptRaisedTeleportedEventFilterGhostName extends BaseLuaScriptRaisedTeleportedEventFilter {
+    
+    /**
+     * The condition to filter on. One of `"ghost"`, `"rail"`, `"rail-signal"`, `"rolling-stock"`, `"robot-with-logistics-interface"`, `"vehicle"`, `"turret"`, `"crafting-machine"`, `"wall-connectable"`, `"transport-belt-connectable"`, `"circuit-network-connectable"`, `"type"`, `"name"`, `"ghost_type"`, `"ghost_name"`.
+     */
+    filter: 'ghost_name',
+    
+    /**
+     * The ghost prototype name
+     */
+    name: string
+}
+
+interface LuaScriptRaisedTeleportedEventFilterGhostType extends BaseLuaScriptRaisedTeleportedEventFilter {
+    
+    /**
+     * The condition to filter on. One of `"ghost"`, `"rail"`, `"rail-signal"`, `"rolling-stock"`, `"robot-with-logistics-interface"`, `"vehicle"`, `"turret"`, `"crafting-machine"`, `"wall-connectable"`, `"transport-belt-connectable"`, `"circuit-network-connectable"`, `"type"`, `"name"`, `"ghost_type"`, `"ghost_name"`.
+     */
+    filter: 'ghost_type',
+    
+    /**
+     * The ghost prototype type
+     */
+    type: string
+}
+
+interface LuaScriptRaisedTeleportedEventFilterName extends BaseLuaScriptRaisedTeleportedEventFilter {
+    
+    /**
+     * The condition to filter on. One of `"ghost"`, `"rail"`, `"rail-signal"`, `"rolling-stock"`, `"robot-with-logistics-interface"`, `"vehicle"`, `"turret"`, `"crafting-machine"`, `"wall-connectable"`, `"transport-belt-connectable"`, `"circuit-network-connectable"`, `"type"`, `"name"`, `"ghost_type"`, `"ghost_name"`.
+     */
+    filter: 'name',
+    
+    /**
+     * The prototype name
+     */
+    name: string
+}
+
+interface LuaScriptRaisedTeleportedEventFilterType extends BaseLuaScriptRaisedTeleportedEventFilter {
+    
+    /**
+     * The condition to filter on. One of `"ghost"`, `"rail"`, `"rail-signal"`, `"rolling-stock"`, `"robot-with-logistics-interface"`, `"vehicle"`, `"turret"`, `"crafting-machine"`, `"wall-connectable"`, `"transport-belt-connectable"`, `"circuit-network-connectable"`, `"type"`, `"name"`, `"ghost_type"`, `"ghost_name"`.
+     */
+    filter: 'type',
+    
+    /**
+     * The prototype type
+     */
+    type: string
+}
+
+interface DefaultLuaScriptRaisedTeleportedEventFilter extends BaseLuaScriptRaisedTeleportedEventFilter {
+    
+    /**
+     * The condition to filter on. One of `"ghost"`, `"rail"`, `"rail-signal"`, `"rolling-stock"`, `"robot-with-logistics-interface"`, `"vehicle"`, `"turret"`, `"crafting-machine"`, `"wall-connectable"`, `"transport-belt-connectable"`, `"circuit-network-connectable"`, `"type"`, `"name"`, `"ghost_type"`, `"ghost_name"`.
+     */
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable'
+}
+
 interface BaseLuaSectorScannedEventFilter {
     
     /**
@@ -5896,7 +6006,7 @@ interface BaseTechnologyPrototypeFilter {
 interface TechnologyPrototypeFilterLevel extends BaseTechnologyPrototypeFilter {
     
     /**
-     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"level"`, `"max-level"`, `"time"`.
+     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"unlocks-recipe"`, `"level"`, `"max-level"`, `"time"`.
      */
     filter: 'level',
     comparison: ComparatorString,
@@ -5910,7 +6020,7 @@ interface TechnologyPrototypeFilterLevel extends BaseTechnologyPrototypeFilter {
 interface TechnologyPrototypeFilterMaxLevel extends BaseTechnologyPrototypeFilter {
     
     /**
-     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"level"`, `"max-level"`, `"time"`.
+     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"unlocks-recipe"`, `"level"`, `"max-level"`, `"time"`.
      */
     filter: 'max-level',
     comparison: ComparatorString,
@@ -5924,7 +6034,7 @@ interface TechnologyPrototypeFilterMaxLevel extends BaseTechnologyPrototypeFilte
 interface TechnologyPrototypeFilterResearchUnitIngredient extends BaseTechnologyPrototypeFilter {
     
     /**
-     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"level"`, `"max-level"`, `"time"`.
+     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"unlocks-recipe"`, `"level"`, `"max-level"`, `"time"`.
      */
     filter: 'research-unit-ingredient',
     
@@ -5937,7 +6047,7 @@ interface TechnologyPrototypeFilterResearchUnitIngredient extends BaseTechnology
 interface TechnologyPrototypeFilterTime extends BaseTechnologyPrototypeFilter {
     
     /**
-     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"level"`, `"max-level"`, `"time"`.
+     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"unlocks-recipe"`, `"level"`, `"max-level"`, `"time"`.
      */
     filter: 'time',
     comparison: ComparatorString,
@@ -5948,10 +6058,23 @@ interface TechnologyPrototypeFilterTime extends BaseTechnologyPrototypeFilter {
     value: number
 }
 
+interface TechnologyPrototypeFilterUnlocksRecipe extends BaseTechnologyPrototypeFilter {
+    
+    /**
+     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"unlocks-recipe"`, `"level"`, `"max-level"`, `"time"`.
+     */
+    filter: 'unlocks-recipe',
+    
+    /**
+     * The recipe to check.
+     */
+    recipe: string
+}
+
 interface DefaultTechnologyPrototypeFilter extends BaseTechnologyPrototypeFilter {
     
     /**
-     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"level"`, `"max-level"`, `"time"`.
+     * The condition to filter on. One of `"enabled"`, `"hidden"`, `"upgrade"`, `"visible-when-disabled"`, `"has-effects"`, `"has-prerequisites"`, `"research-unit-ingredient"`, `"unlocks-recipe"`, `"level"`, `"max-level"`, `"time"`.
      */
     filter: 'enabled' | 'hidden' | 'upgrade' | 'visible-when-disabled' | 'has-effects' | 'has-prerequisites'
 }

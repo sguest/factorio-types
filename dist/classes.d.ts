@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.74
+// Factorio version 1.1.77
 // API version 3
 
 /**
@@ -249,7 +249,14 @@ interface LuaBootstrap {
     get_event_order(this: void): void
 
     /**
-     * Register a function to be run when mod configuration changes. This is called when the major game version or any mod version changed, when any mod was added or removed, when a startup setting has changed, or when any prototypes have been added or removed. It allows the mod to make any changes it deems appropriate to both the data structures in its {@link global | global} table or to the game state through {@link LuaGameScript | LuaGameScript}.
+     * Gets the prototype history for the given type and name.
+     */
+    get_prototype_history(this: void,
+        type: string,
+        name: string): void
+
+    /**
+     * Register a function to be run when mod configuration changes. This is called when the game version or any mod version changed, when any mod was added or removed, when a startup setting has changed, when any prototypes have been added or removed, or when a migration was applied. It allows the mod to make any changes it deems appropriate to both the data structures in its {@link global | global} table or to the game state through {@link LuaGameScript | LuaGameScript}.
      * @remarks
      * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
      *
@@ -401,13 +408,15 @@ interface LuaBootstrap {
     /**
      * @param table.entity - The entity transferred from or to.
      * @param table.from_player - Whether the transfer was from player to entity. If `false`, the transfer was from entity to player.
+     * @param table.is_split - Whether the transfer was a split action (half stack).
      * @param table.player_index - The player transferred from or to.
      */
     raise_player_fast_transferred(this: void,
         table: {
             player_index: number,
             entity: LuaEntity,
-            from_player: boolean
+            from_player: boolean,
+            is_split: boolean
         }): void
 
     /**
@@ -444,6 +453,18 @@ interface LuaBootstrap {
         table: {
             surface_index: number,
             tiles: Tile[]
+        }): void
+
+    /**
+     * @param table.entity - The entity that was teleported.
+     * @param table.old_position - The entity's position before the teleportation.
+     * @param table.old_surface_index - The entity's surface before the teleportation.
+     */
+    raise_script_teleported(this: void,
+        table: {
+            entity: LuaEntity,
+            old_surface_index: number,
+            old_position: MapPosition
         }): void
 
     /**
@@ -792,7 +813,7 @@ interface LuaCombinatorControlBehavior extends LuaControlBehavior {
 }
 
 /**
- * Allows for the registration of custom console commands. Similarly to {@link event subscriptions | LuaBootstrap::on_event}, these don't persist through a save-and-load cycle.
+ * Allows for the registration of custom console commands through the global object named `commands`. Similarly to {@link event subscriptions | LuaBootstrap::on_event}, these don't persist through a save-and-load cycle.
  */
 interface LuaCommandProcessor {
     /**
@@ -1035,6 +1056,11 @@ interface LuaControl {
     get_main_inventory(this: void): void
 
     /**
+     * The maximum inventory index this entity may use.
+     */
+    get_max_inventory_index(this: void): void
+
+    /**
      * Gets the parameters of a personal logistic request and auto-trash slot.
      * @param slot_index - The slot to get.
      */
@@ -1144,13 +1170,16 @@ interface LuaControl {
      * @remarks
      * Some entities may not be teleported. For instance, transport belts won't allow teleportation and this method will always return `false` when used on any such entity.
      * You can also pass 1 or 2 numbers as the parameters and they will be used as relative teleport coordinates `'teleport(0, 1)'` to move the entity 1 tile positive y. `'teleport(4)'` to move the entity 4 tiles to the positive x.
+     * `script_raised_teleported` will not be raised if teleporting a player with no character.
      *
      * @param position - Where to teleport to.
+     * @param raise_teleported - If true, [defines.events.script_raised_teleported](defines.events.script_raised_teleported) will be fired on successful entity teleportation.
      * @param surface - Surface to teleport to. If not given, will teleport to the entity's current surface. Only players, cars, and spidertrons can be teleported cross-surface.
      */
     teleport(this: void,
         position: MapPosition,
-        surface?: SurfaceIdentification): void
+        surface?: SurfaceIdentification,
+        raise_teleported?: boolean): void
 
     /**
      * Select an entity, as if by hovering the mouse above it.
@@ -1341,6 +1370,11 @@ interface LuaControl {
     force: ForceIdentification
 
     /**
+     * Unique ID associated with the force of this entity.
+     */
+    readonly force_index: number
+
+    /**
      * Whether this character entity is in combat.
      */
     readonly in_combat: boolean
@@ -1452,6 +1486,11 @@ interface LuaControl {
      * The surface this entity is currently on.
      */
     readonly surface: LuaSurface
+
+    /**
+     * Unique ID associated with the surface this entity is currently on.
+     */
+    readonly surface_index: number
 
     /**
      * The vehicle the player is currently sitting in.
@@ -3498,6 +3537,14 @@ interface LuaEntity extends LuaControl {
     inserter_stack_size_override: number
 
     /**
+     * Returns the current target pickup count of the inserter.
+     * @remarks
+     * This considers the circuit network, manual override and the inserter stack size limit based on technology.
+     *
+     */
+    readonly inserter_target_pickup_count: number
+
+    /**
      * (deprecated by 1.1.51) If this entity is a MilitaryTarget. Returns same value as LuaEntity::is_military_target
      */
     readonly is_entity_with_force: boolean
@@ -4219,6 +4266,11 @@ interface LuaEntityPrototype {
     readonly air_resistance?: number
 
     /**
+     * The alert icon scale of this entity prototype.
+     */
+    readonly alert_icon_scale: number
+
+    /**
      * The alert icon shift of this entity prototype.
      */
     readonly alert_icon_shift: Vector
@@ -4803,7 +4855,7 @@ interface LuaEntityPrototype {
     /**
      * The fluid capacity of this entity or 0 if this entity doesn't support fluids.
      * @remarks
-     * Crafting machines will report 0 due to their fluid capacity being what ever a given recipe needs.
+     * Crafting machines will report 0 due to their fluid capacity being whatever a given recipe needs.
      *
      */
     readonly fluid_capacity: number
@@ -6564,7 +6616,7 @@ interface LuaFluidBox {
         index: number): void
 
     /**
-     * The prototype of this fluidbox index.
+     * The prototype of this fluidbox index. If this is used on a fluidbox of a crafting machine which due to recipe was created by merging multiple prototypes, a table of prototypes that were merged will be returned instead
      */
     get_prototype(this: void,
         index: number): void
@@ -8259,6 +8311,11 @@ interface LuaGameScript {
      *
      */
     readonly connected_players: LuaPlayer[]
+
+    /**
+     * Whether a console command has been used.
+     */
+    readonly console_command_used: boolean
 
     /**
      * A dictionary containing every LuaCustomInputPrototype indexed by `name`.
@@ -11178,6 +11235,14 @@ interface LuaItemStack {
     durability?: number
 
     /**
+     * If this is an item with entity data, get the stored entity color.
+     * @remarks
+     * Applies to subclasses: ItemWithEntityData
+     *
+     */
+    entity_color?: Color
+
+    /**
      * The number of entity filters this deconstruction item supports.
      * @remarks
      * Applies to subclasses: DeconstructionItem
@@ -11197,6 +11262,14 @@ interface LuaItemStack {
      * The entity filters for this deconstruction item. The attribute is a sparse array with the keys representing the index of the filter. All strings in this array must be entity prototype names that don't have the `"not-deconstructable"` flag set and are either a `cliff` or marked as `minable`.
      */
     entity_filters: string[]
+
+    /**
+     * If this is an item with entity data, get the stored entity label.
+     * @remarks
+     * Applies to subclasses: ItemWithEntityData
+     *
+     */
+    entity_label?: string
 
     /**
      * If this item extends the inventory it resides in (provides its contents for counts, crafting, insertion). Only callable on items with inventories.
@@ -12336,11 +12409,7 @@ interface LuaPlayer extends LuaControl {
         character: LuaEntity): void
 
     /**
-     * Builds what ever is in the cursor on the surface the player is on.
-     * @remarks
-     * Anything built will fire normal player-built events.
-     * The cursor stack will automatically be reduced as if the player built normally.
-     *
+     * Builds whatever is in the cursor on the surface the player is on. The cursor stack will automatically be reduced as if the player built normally.
      * @param table.alt - If alt build should be used instead of normal build. Defaults to normal.
      * @param table.direction - Direction the entity would be placed
      * @param table.position - Where the entity would be placed
@@ -12618,11 +12687,13 @@ interface LuaPlayer extends LuaControl {
         alert_type: defines.alert_type): void
 
     /**
-     * Queues a request to open the map at the specified position. If the map is already opened, the request will simply set the position (and scale). Render mode change requests are processed before rendering of the next frame.
+     * Queues a request to open the map at the specified position. If the map is already opened, the request will simply set the position, scale, and entity to follow. Render mode change requests are processed before rendering of the next frame.
+     * @param entity - The entity to follow. If not given the current entity being followed will be cleared.
      */
     open_map(this: void,
         position: MapPosition,
-        scale?: number): void
+        scale?: number,
+        entity?: LuaEntity): void
 
     /**
      * Invokes the "smart pipette" action on the player as if the user pressed it.
@@ -12687,18 +12758,18 @@ interface LuaPlayer extends LuaControl {
         }): void
 
     /**
-     * Requests a translation for the given localised string. If the request is successful the {@link on_string_translated | on_string_translated} event will be fired at a later time with the results.
+     * Requests a translation for the given localised string. If the request is successful, the {@link on_string_translated | on_string_translated} event will be fired with the results.
      * @remarks
-     * Does nothing if this player is not connected. (see {@link LuaPlayer::connected | LuaPlayer::connected}).
+     * Does nothing if this player is not connected (see {@link LuaPlayer::connected | LuaPlayer::connected}).
      *
      */
     request_translation(this: void,
         localised_string: LocalisedString): void
 
     /**
-     * Requests a translation for the given localised strings. If the request is successful the {@link on_string_translated | on_string_translated} event will be fired at a later time with the results.
+     * Requests translation for the given set of localised strings. If the request is successful, a {@link on_string_translated | on_string_translated} event will be fired for each string with the results.
      * @remarks
-     * Does nothing if this player is not connected. (see {@link LuaPlayer::connected | LuaPlayer::connected}).
+     * Does nothing if this player is not connected (see {@link LuaPlayer::connected | LuaPlayer::connected}).
      *
      */
     request_translations(this: void,
@@ -12825,11 +12896,13 @@ interface LuaPlayer extends LuaControl {
         position: MapPosition): void
 
     /**
-     * Queues a request to zoom to world at the specified position. If the player is already zooming to world, the request will simply set the position (and scale). Render mode change requests are processed before rendering of the next frame.
+     * Queues a request to zoom to world at the specified position. If the player is already zooming to world, the request will simply set the position, scale, and entity to follow. Render mode change requests are processed before rendering of the next frame.
+     * @param entity - The entity to follow. If not given the current entity being followed will be cleared.
      */
     zoom_to_world(this: void,
         position: MapPosition,
-        scale?: number): void
+        scale?: number,
+        entity?: LuaEntity): void
 
     /**
      * `true` if the player is an admin.
@@ -12901,6 +12974,11 @@ interface LuaPlayer extends LuaControl {
      *
      */
     readonly display_scale: number
+
+    /**
+     * The wire drag target for this player, if any.
+     */
+    readonly drag_target?: DragTarget
 
     /**
      * The source entity used during entity settings copy-paste, if any.
@@ -13117,7 +13195,7 @@ interface LuaProgrammableSpeakerControlBehavior extends LuaControlBehavior {
 }
 
 /**
- * An interface to send messages to the calling RCON interface.
+ * An interface to send messages to the calling RCON interface through the global object named `rcon`.
  */
 interface LuaRCON {
     /**
@@ -13175,6 +13253,11 @@ interface LuaRailPath {
      * The current rail index.
      */
     readonly current: number
+
+    /**
+     * If the path goes from the front of the train
+     */
+    readonly is_front: boolean
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -13651,7 +13734,7 @@ interface LuaRemote {
 }
 
 /**
- * Allows rendering of geometric shapes, text and sprites in the game world. Each render object is identified by an id that is universally unique for the lifetime of a whole game.
+ * Allows rendering of geometric shapes, text and sprites in the game world through the global object named `rendering`. Each render object is identified by an id that is universally unique for the lifetime of a whole game.
  * @remarks
  * If an entity target of an object is destroyed or changes surface, then the object is also destroyed.
  *
@@ -13981,7 +14064,7 @@ interface LuaRendering {
      * Not all fonts support scaling.
      *
      * @param table.alignment - Defaults to "left". Other options are "right" and "center".
-     * @param table.draw_on_ground - If this should be drawn below sprites and entities.
+     * @param table.draw_on_ground - If this should be drawn below sprites and entities. Rich text does not support this option.
      * @param table.font - Name of font to use. Defaults to the same font as flying-text.
      * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
@@ -13991,6 +14074,7 @@ interface LuaRendering {
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.text - The text to display.
      * @param table.time_to_live - In ticks. Defaults to living forever.
+     * @param table.use_rich_text - If rich text rendering is enabled. Defaults to false.
      * @param table.vertical_alignment - Defaults to "top". Other options are "middle", "baseline" and "bottom".
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      */
@@ -14012,7 +14096,8 @@ interface LuaRendering {
             alignment?: string,
             vertical_alignment?: string,
             scale_with_zoom?: boolean,
-            only_in_alt_mode?: boolean
+            only_in_alt_mode?: boolean,
+            use_rich_text?: boolean
         }): void
 
     /**
@@ -14338,6 +14423,15 @@ interface LuaRendering {
      * Gets the type of the given object. The types are "text", "line", "circle", "rectangle", "arc", "polygon", "sprite", "light" and "animation".
      */
     get_type(this: void,
+        id: number): void
+
+    /**
+     * Get if the text with this id parses rich text tags.
+     * @remarks
+     * Applies to subclasses: Text
+     *
+     */
+    get_use_rich_text(this: void,
         id: number): void
 
     /**
@@ -14782,6 +14876,16 @@ interface LuaRendering {
         to_offset?: Vector): void
 
     /**
+     * Set if the text with this id parses rich text tags.
+     * @remarks
+     * Applies to subclasses: Text
+     *
+     */
+    set_use_rich_text(this: void,
+        id: number,
+        use_rich_text: boolean): void
+
+    /**
      * Set the vertical alignment of the text with this id. Does nothing if this object is not a text.
      * @remarks
      * Applies to subclasses: Text
@@ -15000,7 +15104,7 @@ interface LuaShortcutPrototype {
     readonly order: string
 
     /**
-     * The technology to unlock when this shortcut is used, if any.
+     * The technology that needs to be researched once (in any save) for this shortcut to be unlocked (in all saves).
      */
     readonly technology_to_unlock?: LuaTechnologyPrototype
 
@@ -15809,6 +15913,7 @@ interface LuaSurface {
         }): void
 
     /**
+     * Whether the given decorative prototype collides at the given position and direction.
      * @param position - The position to check
      * @param prototype - The decorative prototype to check
      */
@@ -15857,6 +15962,7 @@ interface LuaSurface {
         area: ScriptPosition): void
 
     /**
+     * Whether the given entity prototype collides at the given position and direction.
      * @param position - The position to check
      * @param prototype - The entity prototype to check
      * @param use_map_generation_bounding_box - If the map generation bounding box should be used instead of the collision bounding box
@@ -15965,6 +16071,7 @@ interface LuaSurface {
             to_be_upgraded?: boolean,
             limit?: number,
             is_military_target?: boolean,
+            has_item_inside?: LuaItemPrototype,
             invert?: boolean
         }): void
 
@@ -16517,7 +16624,7 @@ interface LuaSurface {
     map_gen_settings: MapGenSettings
 
     /**
-     * The minimal brightness during the night. Default is `0.15`. The value has an effect on the game simalution only, it doesn't have any effect on rendering.
+     * The minimal brightness during the night. Defaults to `0.15`. This has an effect on both rendering and game mechanics such as biter spawns and solar power.
      */
     min_brightness: number
 
