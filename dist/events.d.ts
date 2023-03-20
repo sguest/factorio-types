@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.77
+// Factorio version 1.1.78
 // API version 3
 
 /**
@@ -1487,11 +1487,11 @@ interface on_player_promoted extends event  {
     player_index: number
 }
 /**
- * Called when a player is removed (deleted) from the game. Not to be confused with the player logging of this is different in that the player is deleted as if he never existed in the save file.
+ * Called when a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | on_player_left_game} the game, and instead behaves like the player never existed in the save file.
  */
 interface on_player_removed extends event  {
     /**
-     * The player index that was removed
+     * The index of the removed player.
      */
     player_index: number
 }
@@ -1910,11 +1910,11 @@ interface on_pre_player_mined_item extends event  {
     player_index: number
 }
 /**
- * Called before a player is removed (deleted) from the game. Not to be confused with the player logging of this is different in that the player is deleted as if he never existed in the save file.
+ * Called before a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | on_player_left_game} the game, and instead behaves like the player never existed in the save file.
  */
 interface on_pre_player_removed extends event  {
     /**
-     * The player index that will be removed
+     * The index of the removed player.
      */
     player_index: number
 }
@@ -2332,7 +2332,7 @@ interface on_surface_deleted extends event  {
     surface_index: number
 }
 /**
- * Called after a surface is imported.
+ * Called after a surface is imported via the map editor.
  */
 interface on_surface_imported extends event  {
     /**

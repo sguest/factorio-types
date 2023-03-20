@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.77
+// Factorio version 1.1.78
 // API version 3
 
 /**
@@ -310,9 +310,11 @@ interface LuaBootstrap {
         handler: (this: void) => any | null): void
 
     /**
-     * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session. It gives the mod the opportunity to do some very specific actions, should it need to. Doing anything other than these three will lead to desyncs, which breaks multiplayer and replay functionality. Access to {@link LuaGameScript | LuaGameScript} is not available. The {@link global | global} table can be accessed and is safe to read from, but not write to, as doing so will lead to an error.
+     * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session.
      * 
-     * The only legitimate uses of this event are the following:
+     * It gives the mod the opportunity to rectify potential differences in local state introduced by the save/load cycle. Doing anything other than the following three will lead to desyncs, breaking multiplayer and replay functionality. Access to {@link LuaGameScript | LuaGameScript} is not available. The {@link global | global} table can be accessed and is safe to read from, but not write to, as doing so will lead to an error.
+     * 
+     * The only legitimate uses of this event are these:
      * - Re-setup {@link metatables | https://www.lua.org/pil/13.html} as they are not persisted through the save/load cycle.
      * - Re-setup conditional event handlers, meaning subscribing to an event only when some condition is met to save processing time.
      * - Create local references to data stored in the {@link global | global} table.
@@ -1370,7 +1372,7 @@ interface LuaControl {
     force: ForceIdentification
 
     /**
-     * Unique ID associated with the force of this entity.
+     * Unique {@link index | LuaForce::index} associated with the force of this entity.
      */
     readonly force_index: number
 
@@ -1488,7 +1490,7 @@ interface LuaControl {
     readonly surface: LuaSurface
 
     /**
-     * Unique ID associated with the surface this entity is currently on.
+     * Unique {@link index | LuaSurface::index} associated with the surface this entity is currently on.
      */
     readonly surface_index: number
 
@@ -2150,6 +2152,19 @@ interface LuaEntity extends LuaControl {
      */
     disconnect_rolling_stock(this: void,
         direction: defines.rail_direction): void
+
+    /**
+     * Returns a table with all entities affected by this beacon
+     * @remarks
+     * Applies to subclasses: Beacon
+     *
+     */
+    get_beacon_effect_receivers(this: void): void
+
+    /**
+     * Returns a table with all beacons affecting this effect receiver. Can only be used when the entity has an effect receiver (AssemblingMachine, Furnace, Lab, MiningDrills)
+     */
+    get_beacons(this: void): void
 
     /**
      * Get the source of this beam.
@@ -3043,6 +3058,11 @@ interface LuaEntity extends LuaControl {
     backer_name?: string
 
     /**
+     * Number of beacons affecting this effect receiver. Can only be used when the entity has an effect receiver (AssemblingMachine, Furnace, Lab, MiningDrills)
+     */
+    readonly beacons_count?: number
+
+    /**
      * The belt connectable neighbours of this belt connectable entity. Only entities that input to or are outputs of this entity. Does not contain the other end of an underground belt, see {@link LuaEntity::neighbours | LuaEntity::neighbours} for that. This is a dictionary with `"inputs"`, `"outputs"` entries that are arrays of transport belt connectable entities, or empty tables if no entities.
      * @remarks
      * Applies to subclasses: TransportBeltConnectable
@@ -3362,7 +3382,7 @@ interface LuaEntity extends LuaControl {
     readonly energy_generated_last_tick: number
 
     /**
-     * The label on this entity, if any. `nil` if this is not a spider-vehicule.
+     * The label on this entity, if any. `nil` if this is not a spider-vehicle.
      */
     entity_label?: string
 
@@ -4166,7 +4186,9 @@ interface LuaEntity extends LuaControl {
     readonly unit_group?: LuaUnitGroup
 
     /**
-     * A universally unique number identifying this entity for the lifetime of the save. Only entities inheriting from {@link EntityWithOwner | https://wiki.factorio.com/Prototype/EntityWithOwner}, as well as {@link ItemRequestProxy | https://wiki.factorio.com/Prototype/ItemRequestProxy} and {@link EntityGhost | https://wiki.factorio.com/Prototype/EntityGhost} are assigned a unit number. `nil` if this entity doesn't have a unit number.
+     * A unique number identifying this entity for the lifetime of the save. These are allocated sequentially, and not re-used (until overflow).
+     * 
+     * Only entities inheriting from {@link EntityWithOwner | https://wiki.factorio.com/Prototype/EntityWithOwner}, as well as {@link ItemRequestProxy | https://wiki.factorio.com/Prototype/ItemRequestProxy} and {@link EntityGhost | https://wiki.factorio.com/Prototype/EntityGhost} are assigned a unit number. Returns `nil` otherwise.
      */
     readonly unit_number?: number
 
@@ -4962,7 +4984,7 @@ interface LuaEntityPrototype {
     readonly idle_energy_usage?: number
 
     /**
-     * A vector of the gun prototypes of this car, spider vehicule, or artillery wagon or turret.
+     * A vector of the gun prototypes of this car, spider vehicle, artillery wagon, or turret.
      * @remarks
      * Applies to subclasses: Car,SpiderVehicle,ArtilleryTurret,ArtilleryWagon
      *
@@ -5326,7 +5348,7 @@ interface LuaEntityPrototype {
     /**
      * The default maximum power output of this generator prototype.
      * @remarks
-     * Applies to subclasses: Generator
+     * Applies to subclasses: BurnerGenerator,Generator
      *
      */
     readonly max_power_output?: number
@@ -7406,7 +7428,7 @@ interface LuaForce {
     ghost_time_to_live: number
 
     /**
-     * Unique ID associated with this force.
+     * This force's unique ID, and index in {@link LuaGameScript::forces | LuaGameScript::forces}. It is assigned when a force is created, and remains so until it is {@link merged | on_force_merged} (ie. deleted). Indexes of merged forces can be reused.
      */
     readonly index: number
 
@@ -11137,6 +11159,15 @@ interface LuaItemStack {
         stack: ItemStackIdentification): void
 
     /**
+     * Use the capsule item with the entity as the source, targeting the given position.
+     * @param entity - The entity to use the capsule item with.
+     * @param target_position - The position to use the capsule item with.
+     */
+    use_capsule(this: void,
+        entity: LuaEntity,
+        target_position: MapPosition): void
+
+    /**
      * The active blueprint index for this blueprint book. `nil` if this blueprint book is empty.
      * @remarks
      * Applies to subclasses: BlueprintBookItem
@@ -12998,7 +13029,7 @@ interface LuaPlayer extends LuaControl {
     hand_location?: ItemStackLocation
 
     /**
-     * This player's unique index in {@link LuaGameScript::players | LuaGameScript::players}. It is given to them when they are {@link created | on_player_created} and remains assigned to them until they are {@link removed | on_player_removed}.
+     * This player's unique ID, and index in {@link LuaGameScript::players | LuaGameScript::players}. It is assigned when a player is created, and remains so (even when the player is not {@link connected | LuaPlayer::connected}) until the player is irreversably {@link removed | on_player_removed}. Indexes of removed players can be reused.
      */
     readonly index: number
 
@@ -16614,7 +16645,7 @@ interface LuaSurface {
     generate_with_lab_tiles: boolean
 
     /**
-     * Unique ID associated with this surface.
+     * This surface's unique ID, and index in {@link LuaGameScript::surfaces | LuaGameScript::surfaces}. It is assigned when a surface is created, and remains so until it is {@link deleted | on_surface_deleted}. Indexes of deleted surfaces can be reused.
      */
     readonly index: number
 
@@ -18496,6 +18527,11 @@ interface LuaGuiElementAddParamsTextfield extends LuaGuiElementAddParams {
  *
  */
 interface LuaSurfaceCreateEntityParams {
+    /**
+     * If fast_replace is true simulate fast replace using this character.
+     */
+    'character'?: LuaEntity
+
     /**
      * If false, the building effect smoke will not be shown around the new entity.
      */
