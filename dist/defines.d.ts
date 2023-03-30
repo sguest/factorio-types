@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.78
+// Factorio version 1.1.80
 // API version 3
 
 declare namespace defines {
@@ -539,6 +539,8 @@ declare namespace defines {
         on_gui_closed,
         on_gui_confirmed,
         on_gui_elem_changed,
+        on_gui_hover,
+        on_gui_leave,
         on_gui_location_changed,
         on_gui_opened,
         on_gui_selected_tab_changed,
@@ -794,6 +796,8 @@ declare namespace defines {
         gui_click,
         gui_confirmed,
         gui_elem_changed,
+        gui_hover,
+        gui_leave,
         gui_location_changed,
         gui_selected_tab_changed,
         gui_selection_state_changed,

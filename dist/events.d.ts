@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.78
+// Factorio version 1.1.80
 // API version 3
 
 /**
@@ -687,6 +687,32 @@ interface on_gui_elem_changed extends event  {
     player_index: number
 }
 /**
+ * Called when {@link LuaGuiElement | LuaGuiElement} is hovered by the mouse.
+ */
+interface on_gui_hover extends event  {
+    /**
+     * The element that is being hovered over.
+     */
+    element: LuaGuiElement
+    /**
+     * The player whose cursor is hovering.
+     */
+    player_index: number
+}
+/**
+ * Called when the player's cursor leaves a {@link LuaGuiElement | LuaGuiElement} that was previously hovered.
+ */
+interface on_gui_leave extends event  {
+    /**
+     * The element that was being hovered.
+     */
+    element: LuaGuiElement
+    /**
+     * The player whose cursor was hovering.
+     */
+    player_index: number
+}
+/**
  * Called when {@link LuaGuiElement | LuaGuiElement} element location is changed (related to frames in `player.gui.screen`).
  */
 interface on_gui_location_changed extends event  {
@@ -1210,7 +1236,7 @@ interface on_player_created extends event  {
     player_index: number
 }
 /**
- * Called after a players cursorstack changed in some way.
+ * Called after a player's {@link cursor stack | LuaControl::cursor_stack} changed in some way.
  */
 interface on_player_cursor_stack_changed extends event  {
     player_index: number

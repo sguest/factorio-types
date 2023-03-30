@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.78
+// Factorio version 1.1.80
 // API version 3
 
 /**
@@ -35,7 +35,7 @@ interface LuaAISettings {
     readonly object_name: string
 
     /**
-     * The pathing resolution modifier, must be between -8 and 8.
+     * Defines how coarse the pathfinder's grid is, where smaller values mean a coarser grid. Defaults to `0`, which equals a resolution of `1x1` tiles, centered on tile centers. Values range from `-8` to `8` inclusive, where each integer increment doubles/halves the resolution. So, a resolution of `-8` equals a grid of `256x256` tiles, and a resolution of `8` equals `1/256` of a tile.
      */
     path_resolution_modifier: number
 
@@ -366,6 +366,7 @@ interface LuaBootstrap {
      * - {@link script_raised_built | script_raised_built}
      * - {@link script_raised_destroy | script_raised_destroy}
      * - {@link script_raised_revive | script_raised_revive}
+     * - {@link script_raised_teleported | script_raised_teleported}
      * - {@link script_raised_set_tiles | script_raised_set_tiles}
      * @param data - Table with extra data that will be passed to the event handler. Any invalid LuaObjects will silently stop the event from being raised.
      * @param event - ID of the event to raise.
@@ -476,6 +477,22 @@ interface LuaBootstrap {
      *
      * @param metatable - The metatable to register.
      * @param name - The name of this metatable. Names must be unique per mod.
+     * @example
+     * The metatable first needs to be defined in the mod's root scope, then registered using this method. From then on, it will be properly restored for tables in [global](global). 
+     * ```
+     * local metatable = {
+     *    __index = function(key)
+     *       return "no value for key " .. key
+     *    end
+     * }
+     * script.register_metatable("my_metatable", metatable)
+     * ```
+     *  This previously defined `metatable` can then be set on any table as usual: 
+     * ```
+     * local table = {key="value"}
+     * setmetatable(table, metatable)
+     * ```
+     *
      */
     register_metatable(this: void,
         name: string,
@@ -589,7 +606,7 @@ interface LuaBurner {
     readonly burnt_result_inventory: LuaInventory
 
     /**
-     * The currently burning item.
+     * The currently burning item. Writing `nil` will void the currently burning item without producing a {@link LuaBurner::burnt_result | LuaBurner::burnt_result}.
      * @remarks
      * Writing to this automatically handles correcting {@link LuaBurner::remaining_burning_fuel | LuaBurner::remaining_burning_fuel}.
      *
@@ -884,11 +901,12 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
     help(this: void): void
 
     /**
-     * Sets the signal at the given index
+     * Sets the signal at the given index.
+     * @param signal - Passing `nil` clears the signal.
      */
     set_signal(this: void,
         index: number,
-        signal: Signal): void
+        signal?: Signal): void
 
     /**
      * Turns this constant combinator on and off.
@@ -908,7 +926,7 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
     parameters?: ConstantCombinatorParameters[]
 
     /**
-     * The number of signals this constant combinator supports
+     * The number of signals this constant combinator supports.
      */
     readonly signals_count: number
 
@@ -1372,7 +1390,7 @@ interface LuaControl {
     force: ForceIdentification
 
     /**
-     * Unique {@link index | LuaForce::index} associated with the force of this entity.
+     * Unique {@link index | LuaForce::index} (ID) associated with the force of this entity.
      */
     readonly force_index: number
 
@@ -1394,18 +1412,18 @@ interface LuaControl {
     /**
      * Current mining state.
      * @remarks
-     * When the player isn't mining tiles the player will mine what ever entity is currently selected. See {@link LuaControl::selected | LuaControl::selected} and {@link LuaControl::update_selected_entity | LuaControl::update_selected_entity}.
+     * When the player isn't mining tiles, the player will mine what ever entity is currently selected. See {@link LuaControl::selected | LuaControl::selected} and {@link LuaControl::update_selected_entity | LuaControl::update_selected_entity}.
      *
      */
     mining_state: {
         
         /**
-         * Whether the player is mining at all
+         * Whether the player is mining at all.
          */
         mining: boolean,
         
         /**
-         * What tiles the player is mining; only used when the player is mining tiles (holding a tile in the cursor).
+         * What location the player is mining. Only relevant if `mining` is `true`.
          */
         position?: MapPosition
     }
@@ -1490,7 +1508,7 @@ interface LuaControl {
     readonly surface: LuaSurface
 
     /**
-     * Unique {@link index | LuaSurface::index} associated with the surface this entity is currently on.
+     * Unique {@link index | LuaSurface::index} (ID) associated with the surface this entity is currently on.
      */
     readonly surface_index: number
 
@@ -2458,7 +2476,7 @@ interface LuaEntity extends LuaControl {
         direction: defines.rail_direction): void
 
     /**
-     * Current recipe being assembled by this machine or `nil` if no recipe is set.
+     * Current recipe being assembled by this machine, if any.
      * @remarks
      * Applies to subclasses: CraftingMachine
      *
@@ -2822,13 +2840,13 @@ interface LuaEntity extends LuaControl {
     /**
      * Sets the driver of this vehicle.
      * @remarks
-     * This differs over {@link LuaEntity::set_passenger | LuaEntity::set_passenger} in that the passenger can't drive the vehicle.
+     * This differs from {@link LuaEntity::set_passenger | LuaEntity::set_passenger} in that the passenger can't drive the vehicle.
      * Applies to subclasses: Vehicle
      *
-     * @param driver - The new driver or `nil` to eject the current driver if any.
+     * @param driver - The new driver. Writing `nil` ejects the current driver, if any.
      */
     set_driver(this: void,
-        driver: LuaEntity | PlayerIdentification): void
+        driver?: LuaEntity | PlayerIdentification): void
 
     /**
      * Set the filter for a slot in an inserter, loader, or logistic storage container.
@@ -2877,22 +2895,23 @@ interface LuaEntity extends LuaControl {
     /**
      * Sets the passenger of this car or spidertron.
      * @remarks
-     * This differs over {@link LuaEntity::get_driver | LuaEntity::get_driver} in that the passenger can't drive the car.
+     * This differs from {@link LuaEntity::get_driver | LuaEntity::get_driver} in that the passenger can't drive the car.
      * Applies to subclasses: Car,SpiderVehicle
      *
+     * @param passenger - The new passenger. Writing `nil` ejects the current passenger, if any.
      */
     set_passenger(this: void,
-        passenger: LuaEntity | PlayerIdentification): void
+        passenger?: LuaEntity | PlayerIdentification): void
 
     /**
-     * Sets the current recipe in this assembly machine.
+     * Sets the given recipe in this assembly machine.
      * @remarks
      * Applies to subclasses: AssemblingMachine
      *
-     * @param recipe - The new recipe or `nil` to clear the recipe.
+     * @param recipe - The new recipe. Writing `nil` clears the recipe, if any.
      */
     set_recipe(this: void,
-        recipe: string | LuaRecipe): void
+        recipe?: string | LuaRecipe): void
 
     /**
      * Set a logistic requester slot.
@@ -3034,7 +3053,7 @@ interface LuaEntity extends LuaControl {
     auto_launch: boolean
 
     /**
-     * Destination of this spidertron's autopilot, if any.
+     * Destination of this spidertron's autopilot, if any. Writing `nil` clears all destinations.
      * @remarks
      * Applies to subclasses: SpiderVehicle
      *
@@ -3382,7 +3401,7 @@ interface LuaEntity extends LuaControl {
     readonly energy_generated_last_tick: number
 
     /**
-     * The label on this entity, if any. `nil` if this is not a spider-vehicle.
+     * The label on this spider-vehicle entity, if any. `nil` if this is not a spider-vehicle.
      */
     entity_label?: string
 
@@ -5148,9 +5167,9 @@ interface LuaEntityPrototype {
     readonly item_slot_count?: number
 
     /**
-     * Items that when placed will produce this entity, if any. Construction bots will always choose the first item in this list to build this entity.
+     * Items that when placed will produce this entity, if any. Construction bots will choose the first item in the list to build this entity.
      */
-    readonly items_to_place_this?: SimpleItemStack[]
+    readonly items_to_place_this?: ItemStackDefinition[]
 
     /**
      * The item prototype names that are the inputs of this lab prototype.
@@ -6230,7 +6249,7 @@ interface LuaEquipmentGrid {
     readonly height: number
 
     /**
-     * True if this movement bonus equipment is turned off, otherwise false.
+     * Whether this grid's equipment movement bonus is active.
      */
     inhibit_movement_bonus: boolean
 
@@ -7428,7 +7447,7 @@ interface LuaForce {
     ghost_time_to_live: number
 
     /**
-     * This force's unique ID, and index in {@link LuaGameScript::forces | LuaGameScript::forces}. It is assigned when a force is created, and remains so until it is {@link merged | on_force_merged} (ie. deleted). Indexes of merged forces can be reused.
+     * This force's index in {@link LuaGameScript::forces | LuaGameScript::forces} (unique ID). It is assigned when a force is created, and remains so until it is {@link merged | on_forces_merged} (ie. deleted). Indexes of merged forces can be reused.
      */
     readonly index: number
 
@@ -7808,7 +7827,7 @@ interface LuaGameScript {
         variables?: {[key: string]: number}): void
 
     /**
-     * Force a CRC check. Tells all peers to calculate their current map CRC; these CRC are then compared against each other. If a mismatch is detected, the game is desynced and some peers are forced to reconnect.
+     * Force a CRC check. Tells all peers to calculate their current CRC, which are then compared to each other. If a mismatch is detected, the game desyncs and some peers are forced to reconnect.
      */
     force_crc(this: void): void
 
@@ -8814,7 +8833,7 @@ interface LuaGui {
  * - `"progressbar"`: A partially filled bar that can be used to indicate progress.
  * - `"table"`: An invisible container that lays out its children in a specific number of columns. The width of each column is determined by the widest element it contains.
  * - `"textfield"`: A single-line box the user can type into. Relevant events: {@link on_gui_text_changed | on_gui_text_changed}, {@link on_gui_confirmed | on_gui_confirmed}
- * - `"radiobutton"`: A clickable element that is functionally identical to a `checkbox`, but has a circular appearance. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
+ * - `"radiobutton"`: An element that is similar to a `checkbox`, but with a circular appearance. Clicking a selected radio button will not deselect it. Radio buttons are not linked to each other in any way. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
  * - `"sprite"`: An element that shows an image.
  * - `"scroll-pane"`: An invisible element that is similar to a `flow`, but has the ability to show and use scroll bars.
  * - `"drop-down"`: A drop-down containing strings of text. Relevant event: {@link on_gui_selection_state_changed | on_gui_selection_state_changed}
@@ -9509,6 +9528,11 @@ interface LuaGuiElement {
      *
      */
     position: MapPosition
+
+    /**
+     * Whether this element will raise {@link on_gui_hover | on_gui_hover} and {@link on_gui_leave | on_gui_leave}.
+     */
+    raise_hover_events: boolean
 
     /**
      * Whether this text-box is read-only. Defaults to `false`.
@@ -11255,7 +11279,7 @@ interface LuaItemStack {
      * Applies to subclasses: BlueprintItem
      *
      */
-    readonly default_icons: BlueprintItemIcon[]
+    readonly default_icons: BlueprintSignalIcon[]
 
     /**
      * Durability of the contained item. Automatically capped at the item's maximum durability.
@@ -13029,7 +13053,7 @@ interface LuaPlayer extends LuaControl {
     hand_location?: ItemStackLocation
 
     /**
-     * This player's unique ID, and index in {@link LuaGameScript::players | LuaGameScript::players}. It is assigned when a player is created, and remains so (even when the player is not {@link connected | LuaPlayer::connected}) until the player is irreversably {@link removed | on_player_removed}. Indexes of removed players can be reused.
+     * This player's index in {@link LuaGameScript::players | LuaGameScript::players} (unique ID). It is assigned when a player is created, and remains so (even when the player is not {@link connected | LuaPlayer::connected}) until the player is irreversably {@link removed | on_player_removed}. Indexes of removed players can be reused.
      */
     readonly index: number
 
@@ -13054,9 +13078,14 @@ interface LuaPlayer extends LuaControl {
     minimap_enabled: boolean
 
     /**
-     * The current per-player settings for the this player, indexed by prototype name. Returns the same structure as {@link LuaSettings::get_player_settings | LuaSettings::get_player_settings}.
-     * @remarks
-     * This table will become invalid if its associated player does.
+     * The current per-player settings for the this player, indexed by prototype name. Returns the same structure as {@link LuaSettings::get_player_settings | LuaSettings::get_player_settings}. This table becomes invalid if its associated player does.
+     * 
+     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
+     * @example
+     * ```
+     * -- Change the value of the "active_lifestyle" setting
+     * player.mod_settings["active_lifestyle"] = {value = true}
+     * ```
      *
      */
     readonly mod_settings: {[key: string]: ModSetting}
@@ -13460,17 +13489,11 @@ interface LuaRecipe {
     hidden_from_flow_stats: boolean
 
     /**
-     * Ingredients for this recipe.
+     * The ingredients to this recipe.
      * @example
-     * What the "steel-chest" recipe would return 
+     * The ingredients of `"advanced-oil-processing"` would look like this: 
      * ```
-     * {{type="item", name="steel-plate", amount=8}}
-     * ```
-     *
-     * @example
-     * What the "advanced-oil-processing" recipe would return 
-     * ```
-     * {{type="fluid", name="crude-oil", amount=10}, {type="fluid", name="water", amount=5}}
+     * {{type="fluid", name="crude-oil", amount=100}, {type="fluid", name="water", amount=50}}
      * ```
      *
      */
@@ -13499,7 +13522,13 @@ interface LuaRecipe {
     readonly order: string
 
     /**
-     * The results of this recipe.
+     * The results/products of this recipe.
+     * @example
+     * The products of `"advanced-oil-processing"` would look like this: 
+     * ```
+     * {{type="fluid", name="heavy-oil", amount=25}, {type="fluid", name="light-oil", amount=45}, {type="fluid", name="petroleum-gas", amount=55}}
+     * ```
+     *
      */
     readonly products: Product[]
 
@@ -13635,7 +13664,13 @@ interface LuaRecipePrototype {
     readonly hidden_from_player_crafting: boolean
 
     /**
-     * Ingredients for this recipe.
+     * The ingredients to this recipe.
+     * @example
+     * The ingredients of `"advanced-oil-processing"` would look like this: 
+     * ```
+     * {{type="fluid", name="crude-oil", amount=100}, {type="fluid", name="water", amount=50}}
+     * ```
+     *
      */
     readonly ingredients: Ingredient[]
 
@@ -13672,7 +13707,13 @@ interface LuaRecipePrototype {
     readonly overload_multiplier: number
 
     /**
-     * The results of this recipe.
+     * The results/products of this recipe.
+     * @example
+     * The products of `"advanced-oil-processing"` would look like this: 
+     * ```
+     * {{type="fluid", name="heavy-oil", amount=25}, {type="fluid", name="light-oil", amount=45}, {type="fluid", name="petroleum-gas", amount=55}}
+     * ```
+     *
      */
     readonly products: Product[]
 
@@ -13778,8 +13819,8 @@ interface LuaRendering {
         id: number): void
 
     /**
-     * Destroys all render objects.
-     * @param mod_name - If provided, only the render objects created by this mod are destroyed.
+     * Destroys all render objects. Passing an empty string (`""`)
+     * @param mod_name - If provided, only the render objects created by this mod are destroyed. An empty string (`""`) refers to all objects not belonging to a mod, such as those created using console commands.
      */
     clear(this: void,
         mod_name?: string): void
@@ -13805,6 +13846,7 @@ interface LuaRendering {
      * @param table.target - Center of the animation.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
+     * @param table.use_target_orientation - Only used if `orientation_target` is a LuaEntity.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      * @param table.x_scale - Horizontal scale of the animation. Default is 1.
      * @param table.y_scale - Vertical scale of the animation. Default is 1.
@@ -13821,6 +13863,7 @@ interface LuaRendering {
             animation_offset?: number,
             orientation_target?: MapPosition | LuaEntity,
             orientation_target_offset?: Vector,
+            use_target_orientation?: boolean,
             oriented_offset?: Vector,
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
@@ -13989,6 +14032,7 @@ interface LuaRendering {
      * @param table.target - Acts like an offset applied to all vertices that are not set to an entity.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
+     * @param table.use_target_orientation - Only used if `orientation_target` is a LuaEntity.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      */
     draw_polygon(this: void,
@@ -14000,6 +14044,7 @@ interface LuaRendering {
             orientation?: RealOrientation,
             orientation_target?: MapPosition | LuaEntity,
             orientation_target_offset?: Vector,
+            use_target_orientation?: boolean,
             surface: SurfaceIdentification,
             time_to_live?: number,
             forces?: ForceIdentification[],
@@ -14052,6 +14097,7 @@ interface LuaRendering {
      * @param table.target - Center of the sprite.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
+     * @param table.use_target_orientation - Only used if `orientation_target` is a LuaEntity.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      * @param table.x_scale - Horizontal scale of the sprite. Default is 1.
      * @param table.y_scale - Vertical scale of the sprite. Default is 1.
@@ -14078,6 +14124,7 @@ interface LuaRendering {
             render_layer?: RenderLayer,
             orientation_target?: MapPosition | LuaEntity,
             orientation_target_offset?: Vector,
+            use_target_orientation?: boolean,
             oriented_offset?: Vector,
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
@@ -14142,7 +14189,7 @@ interface LuaRendering {
 
     /**
      * Gets an array of all valid object ids.
-     * @param mod_name - If provided, get only the render objects created by this mod.
+     * @param mod_name - If provided, get only the render objects created by this mod. An empty string (`""`) refers to all objects not belonging to a mod, such as those created using console commands.
      */
     get_all_ids(this: void,
         mod_name?: string): void
@@ -14463,6 +14510,12 @@ interface LuaRendering {
      *
      */
     get_use_rich_text(this: void,
+        id: number): void
+
+    /**
+     * Get whether this uses the target orientation.
+     */
+    get_use_target_orientation(this: void,
         id: number): void
 
     /**
@@ -14917,6 +14970,13 @@ interface LuaRendering {
         use_rich_text: boolean): void
 
     /**
+     * Set whether this uses the target orientation.
+     */
+    set_use_target_orientation(this: void,
+        id: number,
+        use_target_orientation: boolean): void
+
+    /**
      * Set the vertical alignment of the text with this id. Does nothing if this object is not a text.
      * @remarks
      * Applies to subclasses: Text
@@ -15060,9 +15120,14 @@ interface LuaRoboportControlBehavior extends LuaControlBehavior {
  */
 interface LuaSettings {
     /**
-     * Gets the current per-player settings for the given player, indexed by prototype name. Returns the same structure as {@link LuaPlayer::mod_settings | LuaPlayer::mod_settings}.
-     * @remarks
-     * This table will become invalid if its associated player does.
+     * Gets the current per-player settings for the given player, indexed by prototype name. Returns the same structure as {@link LuaPlayer::mod_settings | LuaPlayer::mod_settings}. This table becomes invalid if its associated player does.
+     * 
+     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
+     * @example
+     * ```
+     * -- Change the value of the "active_lifestyle" setting
+     * settings.get_player_settings(player_index)["active_lifestyle"] = {value = true}
+     * ```
      *
      */
     get_player_settings(this: void,
@@ -15071,7 +15136,7 @@ interface LuaSettings {
     /**
      * The current global mod settings, indexed by prototype name.
      * 
-     * Even though these are marked as read-only, they can be changed by overwriting individual {@link ModSetting | ModSetting} tables in the custom table. Mods can only change their own settings. Using the in-game console, all global settings can be changed.
+     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
      */
     readonly global: {[key: string]: ModSetting}
 
@@ -15083,7 +15148,7 @@ interface LuaSettings {
     /**
      * The default player mod settings for this map, indexed by prototype name.
      * 
-     * Even though these are marked as read-only, they can be changed by overwriting individual {@link ModSetting | ModSetting} tables in the custom table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
+     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
      */
     readonly player: {[key: string]: ModSetting}
 
@@ -16478,7 +16543,7 @@ interface LuaSurface {
      * @param table.entity_to_ignore - Makes the pathfinder ignore collisions with this entity if it is given.
      * @param table.force - The force for which to generate the path, determining which gates can be opened for example.
      * @param table.goal - The position to find a path to.
-     * @param table.path_resolution_modifier - Defines how coarse the pathfinder's grid is. Smaller values mean a coarser grid (negative numbers allowed). Allowed values are from -8 to 8. Defaults to `0`.
+     * @param table.path_resolution_modifier - Defines how coarse the pathfinder's grid is, where smaller values mean a coarser grid. Defaults to `0`, which equals a resolution of `1x1` tiles, centered on tile centers. Values range from `-8` to `8` inclusive, where each integer increment doubles/halves the resolution. So, a resolution of `-8` equals a grid of `256x256` tiles, and a resolution of `8` equals `1/256` of a tile.
      * @param table.pathfind_flags - Flags that affect pathfinder behavior.
      * @param table.radius - How close the pathfinder needs to get to its `goal` (in tiles). Defaults to `1`.
      * @param table.start - The position from which to start pathfinding.
@@ -16645,12 +16710,12 @@ interface LuaSurface {
     generate_with_lab_tiles: boolean
 
     /**
-     * This surface's unique ID, and index in {@link LuaGameScript::surfaces | LuaGameScript::surfaces}. It is assigned when a surface is created, and remains so until it is {@link deleted | on_surface_deleted}. Indexes of deleted surfaces can be reused.
+     * This surface's index in {@link LuaGameScript::surfaces | LuaGameScript::surfaces} (unique ID). It is assigned when a surface is created, and remains so until it is {@link deleted | on_surface_deleted}. Indexes of deleted surfaces can be reused.
      */
     readonly index: number
 
     /**
-     * The generation settings for this surface. These can be modified to after surface generation, but note that this will not retroactively update the surface. To manually adjust it, {@link LuaSurface::regenerate_entity | LuaSurface::regenerate_entity}, {@link LuaSurface::regenerate_decorative | LuaSurface::regenerate_decorative} and {@link LuaSurface::delete_chunk | LuaSurface::delete_chunk} can be used.
+     * The generation settings for this surface. These can be modified after surface generation, but note that this will not retroactively update the surface. To manually regenerate it, {@link LuaSurface::regenerate_entity | LuaSurface::regenerate_entity}, {@link LuaSurface::regenerate_decorative | LuaSurface::regenerate_decorative}, and {@link LuaSurface::delete_chunk | LuaSurface::delete_chunk} can be used.
      */
     map_gen_settings: MapGenSettings
 
@@ -16719,7 +16784,7 @@ interface LuaSurface {
     wind_orientation_change: number
 
     /**
-     * Current wind speed.
+     * Current wind speed in tiles per tick.
      */
     wind_speed: number
 
@@ -16800,7 +16865,7 @@ interface LuaTechnology {
     readonly research_unit_count: number
 
     /**
-     * The count formula used for this infinite research. `nil` if this research isn't infinite.
+     * The count formula, if this research has any. See the {@link wiki | https://wiki.factorio.com/Prototype/Technology#Technology_data} for details.
      */
     readonly research_unit_count_formula?: string
 
@@ -16914,7 +16979,7 @@ interface LuaTechnologyPrototype {
     readonly research_unit_count: number
 
     /**
-     * The count formula used for this infinite research. `nil` if this research isn't infinite.
+     * The count formula, if this research has any. See the {@link wiki | https://wiki.factorio.com/Prototype/Technology#Technology_data} for details.
      */
     readonly research_unit_count_formula?: string
 
@@ -17085,9 +17150,9 @@ interface LuaTilePrototype {
     readonly emissions_per_second: number
 
     /**
-     * Items that when placed will produce this tile. It is a dictionary indexed by the item prototype name. `nil` (instead of an empty table) if no items can place this tile.
+     * Items that when placed will produce this tile, if any. Construction bots will choose the first item in the list to build this tile.
      */
-    readonly items_to_place_this: SimpleItemStack[]
+    readonly items_to_place_this?: ItemStackDefinition[]
 
     readonly layer: number
 
@@ -18583,7 +18648,7 @@ interface LuaSurfaceCreateEntityParams {
     'raise_built'?: boolean
 
     /**
-     * Source entity. Used for beams and highlight-boxes.
+     * Source entity. Used for beams, projectiles, and highlight-boxes.
      */
     'source'?: LuaEntity | MapPosition
 

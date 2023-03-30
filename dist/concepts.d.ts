@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.78
+// Factorio version 1.1.80
 // API version 3
 
 /**
@@ -307,19 +307,6 @@ interface BlueprintEntity {
      * The entity tags of the entity, if there are any. Only relevant for entity ghosts.
      */
     tags?: Tags
-}
-
-interface BlueprintItemIcon {
-    
-    /**
-     * Index of the icon in the blueprint icons slots. Has to be an integer in the range [1, 4].
-     */
-    index: number,
-    
-    /**
-     * Name of the item prototype whose icon should be used.
-     */
-    name: string
 }
 
 interface BlueprintSignalIcon {
@@ -1343,7 +1330,7 @@ interface ItemStackLocation {
  * 
  * The template can contain placeholders such as `__1__` or `__2__`. These will be replaced by the respective parameter in the LocalisedString. The parameters themselves can be other localised strings, which will be processed recursively in the same fashion. Localised strings can not be recursed deeper than 20 levels and can not have more than 20 parameters.
  * 
- * As a special case, when the key is just the empty string, all the parameters will be concatenated (after processing, if any are localised strings). If there is only one parameter, it will be used as is.
+ * There are two special flags for the localised string, indicated by the key being a particular string. First, if the key is the empty string (`""`), then all parameters will be concatenated (after processing, if any are localised strings themselves). Second, if the key is a question mark (`"?"`), then the first valid parameter will be used. A parameter can be invalid if its name doesn't match any string template. If no parameters are valid, the last one is returned. This is useful to implement a fallback for missing locale templates.
  * 
  * Furthermore, when an API function expects a localised string, it will also accept a regular string (i.e. not a table) which will not be translated, as well as a number, boolean or `nil`, which will be converted to their textual representation.
  * @example
@@ -1370,6 +1357,13 @@ interface ItemStackLocation {
  * ```
  * game.print({"", {"item-name.iron-plate"}, ": ", 60})
  * ```
+ *
+ * @example
+ * As an example of a localised string with fallback, consider this: 
+ * ```
+ * {"?", {"", {"entity-description.furnace"}, "\n"}, {"item-description.furnace"}, "optional fallback"}
+ * ```
+ *  If `entity-description.furnace` exists, it is concatenated with `"\n"` and returned. Otherwise, if `item-description.furnace` exists, it is returned as-is. Otherwise, `"optional fallback"` is returned. If this value wasn't specified, the translation result would be `"Unknown key: 'item-description.furnace'"`.
  *
  */
 type LocalisedString = string | number | boolean | object | null | Array<string | LocalisedString>
@@ -1828,11 +1822,6 @@ interface ModChangeData {
     old_version: string
 }
 
-/**
- * @remarks
- * Runtime settings can be changed through console commands and by the mod that owns the settings by writing a new table to the ModSetting.
- *
- */
 interface ModSetting {
     
     /**
@@ -2885,7 +2874,7 @@ interface WireConnectionDefinition {
     target_wire_id?: defines.wire_connection_id,
     
     /**
-     * Wire color, either {@link defines.wire_type.red | defines.wire_type.red} or {@link defines.wire_type.green | defines.wire_type.green}.
+     * The type of wire used.
      */
     wire: defines.wire_type
 }
