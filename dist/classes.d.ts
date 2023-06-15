@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.80
+// Factorio version 1.1.84
 // API version 3
 
 /**
@@ -1076,7 +1076,12 @@ interface LuaControl {
     get_main_inventory(this: void): void
 
     /**
-     * The maximum inventory index this entity may use.
+     * The highest index of all inventories this entity can use. Allows iteration over all of them if desired.
+     * @example
+     * ```
+     *  for k = 1, entity.get_max_inventory_index() do [...] end
+     * ```
+     *
      */
     get_max_inventory_index(this: void): void
 
@@ -1654,6 +1659,16 @@ interface LuaCustomInputPrototype {
      * The consuming type: `"none"` or `"game-only"`.
      */
     readonly consuming: string
+
+    /**
+     * The default controller alternative key sequence for this custom input, if any
+     */
+    readonly controller_alternative_key_sequence?: string
+
+    /**
+     * The default controller key sequence for this custom input, if any
+     */
+    readonly controller_key_sequence?: string
 
     /**
      * Whether this custom input is enabled. Disabled custom inputs exist but are not used by the game.
@@ -3090,12 +3105,12 @@ interface LuaEntity extends LuaControl {
     readonly belt_neighbours: {[key: string]: LuaEntity[]}
 
     /**
-     * `"input"` or `"output"`, depending on whether this underground belt goes down or up.
+     * Whether this underground belt goes into or out of the ground.
      * @remarks
      * Applies to subclasses: TransportBeltToGround
      *
      */
-    readonly belt_to_ground_type: string
+    readonly belt_to_ground_type: 'input' | 'output'
 
     /**
      * The bonus mining progress for this mining drill. Read yields a number in range [0, mining_target.prototype.mineable_properties.mining_time]. `nil` if this isn't a mining drill.
@@ -3660,12 +3675,12 @@ interface LuaEntity extends LuaControl {
     readonly loader_container?: LuaEntity
 
     /**
-     * `"input"` or `"output"`, depending on whether this loader puts to or gets from a container.
+     * Whether this loader gets items from or puts item into a container.
      * @remarks
      * Applies to subclasses: Loader
      *
      */
-    loader_type: string
+    loader_type: 'input' | 'output'
 
     readonly localised_description: LocalisedString
 
@@ -4092,7 +4107,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The ticks left before a ghost, combat robot, highlight box or smoke with trigger is destroyed.
      * 
-     * - for ghosts set to uint32 max (4,294,967,295) to never expire.
+     * - for ghosts set to uint32 max (4'294'967'295) to never expire.
      * - for ghosts Cannot be set higher than {@link LuaForce::ghost_time_to_live | LuaForce::ghost_time_to_live} of the entity's force.
      */
     time_to_live: number
@@ -7224,8 +7239,10 @@ interface LuaForce {
 
     /**
      * Force a rechart of the whole chart.
+     * @param surface - Which surface to rechart or all if not given.
      */
-    rechart(this: void): void
+    rechart(this: void,
+        surface?: SurfaceIdentification): void
 
     /**
      * Research all technologies.
@@ -7763,7 +7780,7 @@ interface LuaGameScript {
     /**
      * Create a new surface.
      * @remarks
-     * The game currently supports a maximum of 4,294,967,295 surfaces, including the default surface.
+     * The game currently supports a maximum of 4'294'967'295 surfaces, including the default surface.
      * Surface names must be unique.
      *
      * @param name - Name of the new surface.
@@ -8015,7 +8032,7 @@ interface LuaGameScript {
     is_demo(this: void): void
 
     /**
-     * Is the map loaded is multiplayer?
+     * Whether the save is loaded as a multiplayer map.
      */
     is_multiplayer(this: void): void
 
@@ -8445,7 +8462,7 @@ interface LuaGameScript {
     readonly font_prototypes: {[key: string]: LuaFontPrototype}
 
     /**
-     * Get a table of all the forces that currently exist. This sparse table allows you to find forces by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will only iterate the array part of the table. Iterating with `ipairs()` will not work at all.
+     * Get a table of all the forces that currently exist. This sparse table allows you to find forces by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will only iterate the hash part of the table. Iterating with `ipairs()` will not work at all.
      */
     readonly forces: {[key: string]: LuaForce}
 
@@ -8588,7 +8605,7 @@ interface LuaGameScript {
     readonly styles: {[key: string]: string}
 
     /**
-     * Get a table of all the surfaces that currently exist. This sparse table allows you to find surfaces by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will only iterate the array part of the table. Iterating with `ipairs()` will not work at all.
+     * Get a table of all the surfaces that currently exist. This sparse table allows you to find surfaces by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will only iterate the hash part of the table. Iterating with `ipairs()` will not work at all.
      */
     readonly surfaces: {[key: string]: LuaSurface}
 
@@ -8608,11 +8625,9 @@ interface LuaGameScript {
     tick_paused: boolean
 
     /**
-     * The number of ticks since this game was 'created'. A game is 'created' either by using "new game" or "new game from scenario".
-     * @remarks
-     * This differs over {@link LuaGameScript::tick | LuaGameScript::tick} in that making a game from a scenario always starts with ticks_played value at 0 even if the scenario has its own level data where the {@link LuaGameScript::tick | LuaGameScript::tick} is > 0.
-     * This value has no relation with {@link LuaGameScript::tick | LuaGameScript::tick} and can be completely different values.
-     *
+     * The number of ticks since this game was created using either "new game" or "new game from scenario". Notably, this number progresses even when the game is {@link tick_paused | LuaGameScript::tick_paused}.
+     * 
+     * This differs from {@link LuaGameScript::tick | LuaGameScript::tick} in that creating a game from a scenario always starts with this value at `0`, even if the scenario has its own level data where the `tick` has progressed past `0`.
      */
     readonly ticks_played: number
 
@@ -8833,7 +8848,7 @@ interface LuaGui {
  * - `"progressbar"`: A partially filled bar that can be used to indicate progress.
  * - `"table"`: An invisible container that lays out its children in a specific number of columns. The width of each column is determined by the widest element it contains.
  * - `"textfield"`: A single-line box the user can type into. Relevant events: {@link on_gui_text_changed | on_gui_text_changed}, {@link on_gui_confirmed | on_gui_confirmed}
- * - `"radiobutton"`: An element that is similar to a `checkbox`, but with a circular appearance. Clicking a selected radio button will not deselect it. Radio buttons are not linked to each other in any way. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
+ * - `"radiobutton"`: An element that is similar to a `checkbox`, but with a circular appearance. Clicking a selected radio button will not unselect it. Radio buttons are not linked to each other in any way. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
  * - `"sprite"`: An element that shows an image.
  * - `"scroll-pane"`: An invisible element that is similar to a `flow`, but has the ability to show and use scroll bars.
  * - `"drop-down"`: A drop-down containing strings of text. Relevant event: {@link on_gui_selection_state_changed | on_gui_selection_state_changed}
@@ -9216,6 +9231,14 @@ interface LuaGuiElement {
     auto_center: boolean
 
     /**
+     * Whether this button will automatically toggle when clicked.
+     * @remarks
+     * Applies to subclasses: button,sprite-button
+     *
+     */
+    auto_toggle: boolean
+
+    /**
      * The text to display after the normal tab text (designed to work with numbers)
      * @remarks
      * Applies to subclasses: tab
@@ -9379,6 +9402,11 @@ interface LuaGuiElement {
      *
      */
     force?: string
+
+    /**
+     * How this element should interact with game controllers.
+     */
+    game_controller_interaction: defines.game_controller_interaction
 
     /**
      * The GUI this element is a child of.
@@ -9664,6 +9692,14 @@ interface LuaGuiElement {
      *
      */
     text: string
+
+    /**
+     * Whether this button is currently toggled. When a button is toggled, it will use the `selected_graphical_set` and `selected_font_color` defined in its style.
+     * @remarks
+     * Applies to subclasses: button,sprite-button
+     *
+     */
+    toggled: boolean
 
     tooltip: LocalisedString
 
@@ -12127,6 +12163,11 @@ interface LuaModSettingPrototype {
     readonly setting_type: string
 
     /**
+     * Type of this prototype.
+     */
+    readonly type: string
+
+    /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean
@@ -13061,6 +13102,11 @@ interface LuaPlayer extends LuaControl {
      * The filters for this map editor infinity inventory settings.
      */
     infinity_inventory_filters: InfinityInventoryFilter[]
+
+    /**
+     * The input method of the player, mouse and keyboard or game controller
+     */
+    readonly input_method: defines.input_method
 
     /**
      * At what tick this player was last online.
@@ -16070,6 +16116,14 @@ interface LuaSurface {
         direction?: defines.direction): void
 
     /**
+     * Find the logistic network with a cell closest to a given position.
+     * @param force - Force the logistic network should belong to.
+     */
+    find_closest_logistic_network_by_position(this: void,
+        position: MapPosition,
+        force: ForceIdentification): void
+
+    /**
      * Find decoratives of a given name in a given area.
      * 
      * If no filters are given, returns all decoratives in the search area. If multiple filters are specified, returns only decoratives matching every given filter. If no area and no position are given, the entire surface is searched.
@@ -16172,7 +16226,7 @@ interface LuaSurface {
         }): void
 
     /**
-     * Find a specific entity at a specific position.
+     * Find an entity of the given type at the given position. This checks both the exact position and the bounding box of the entity.
      * @param entity - Entity to look for.
      * @param position - Coordinates to look at.
      * @example
@@ -16336,12 +16390,16 @@ interface LuaSurface {
      * @remarks
      * This won't find tiles in non-generated chunks.
      *
+     * @param area - The area to find connected tiles in. If provided the start position must be in this area.
+     * @param include_diagonal - Include tiles that are connected diagonally.
      * @param position - The tile position to start at.
      * @param tiles - The tiles to search for.
      */
     get_connected_tiles(this: void,
         position: TilePosition,
-        tiles: string[]): void
+        tiles: string[],
+        include_diagonal?: boolean,
+        area?: BoundingBox): void
 
     /**
      * Returns all the military targets (entities with force) on this chunk for the given force.
@@ -18044,6 +18102,11 @@ interface LuaGuiElementAddParams {
     'enabled'?: boolean
 
     /**
+     * How the element should interact with game controllers. Defaults to {@link defines.game_controller_interaction.normal | defines.game_controller_interaction.normal}.
+     */
+    'game_controller_interaction'?: defines.game_controller_interaction
+
+    /**
      * Whether the child element is ignored by interaction. Defaults to `false`.
      */
     'ignored_by_interaction'?: boolean
@@ -18057,6 +18120,11 @@ interface LuaGuiElementAddParams {
      * Name of the child element. It must be unique within the parent element.
      */
     'name'?: string
+
+    /**
+     * Whether this element will raise {@link on_gui_hover | on_gui_hover} and {@link on_gui_leave | on_gui_leave}. Defaults to `false`.
+     */
+    'raise_hover_events'?: boolean
 
     /**
      * The name of the style prototype to apply to the new element.
@@ -18092,9 +18160,19 @@ interface LuaGuiElementAddParams {
  */
 interface LuaGuiElementAddParamsButton extends LuaGuiElementAddParams {
     /**
+     * Whether the button will automatically toggle when clicked. Defaults to `false`.
+     */
+    'auto_toggle'?: boolean
+
+    /**
      * Which mouse buttons the button responds to. Defaults to `"left-and-right"`.
      */
     'mouse_button_filter'?: MouseButtonFlags
+
+    /**
+     * The initial toggled state of the button. Defaults to `false`.
+     */
+    'toggled'?: boolean
 
 }
 
@@ -18422,6 +18500,11 @@ interface LuaGuiElementAddParamsSprite extends LuaGuiElementAddParams {
  */
 interface LuaGuiElementAddParamsSpriteButton extends LuaGuiElementAddParams {
     /**
+     * Whether the button will automatically toggle when clicked. Defaults to `false`.
+     */
+    'auto_toggle'?: boolean
+
+    /**
      * Path to the image to display on the button when it is clicked.
      */
     'clicked_sprite'?: SpritePath
@@ -18450,6 +18533,11 @@ interface LuaGuiElementAddParamsSpriteButton extends LuaGuiElementAddParams {
      * Path to the image to display on the button.
      */
     'sprite'?: SpritePath
+
+    /**
+     * The initial toggled state of the button. Defaults to `false`.
+     */
+    'toggled'?: boolean
 
 }
 

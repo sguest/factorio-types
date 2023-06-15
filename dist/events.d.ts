@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.80
+// Factorio version 1.1.84
 // API version 3
 
 /**
@@ -25,6 +25,10 @@ interface event  {
  * Called when a {@link CustomInput | https://wiki.factorio.com/Prototype/CustomInput} is activated.
  */
 interface CustomInputEvent extends event  {
+    /**
+     * The mouse cursor display location when the custom input was activated.
+     */
+    cursor_display_location: GuiLocation
     /**
      * The mouse cursor position when the custom input was activated.
      */
@@ -275,6 +279,24 @@ interface on_cutscene_cancelled extends event  {
     player_index: number
 }
 /**
+ * Called when a cutscene finishes naturally (was not cancelled).
+ */
+interface on_cutscene_finished extends event  {
+    /**
+     * The player the cutscene was shown to.
+     */
+    player_index: number
+}
+/**
+ * Called when a cutscene starts.
+ */
+interface on_cutscene_started extends event  {
+    /**
+     * The player the cutscene is being shown to.
+     */
+    player_index: number
+}
+/**
  * Called when a cutscene is playing, each time it reaches a waypoint in that cutscene.
  * 
  * This refers to an index in the table previously passed to set_controller which started the cutscene.
@@ -308,6 +330,15 @@ interface on_difficulty_settings_changed extends event  {
 interface on_entity_cloned extends event  {
     destination: LuaEntity
     source: LuaEntity
+}
+/**
+ * Called after an entity has been recolored either by the player or through script.
+ */
+interface on_entity_color_changed extends event  {
+    /**
+     * The entity that was recolored.
+     */
+    entity: LuaEntity
 }
 /**
  * Called when an entity is damaged. Can be filtered using {@link LuaEntityDamagedEventFilter | LuaEntityDamagedEventFilter}.
@@ -585,6 +616,10 @@ interface on_gui_click extends event  {
      * If control was pressed.
      */
     control: boolean
+    /**
+     * The display location of the player's cursor.
+     */
+    cursor_display_location: GuiLocation
     /**
      * The clicked element.
      */
@@ -1381,6 +1416,18 @@ interface on_player_flushed_fluid extends event  {
  * Called after a players gun inventory changed in some way.
  */
 interface on_player_gun_inventory_changed extends event  {
+    player_index: number
+}
+/**
+ * Called when a player's input method changes.
+ * @remarks
+ * See {@link LuaPlayer::input_method | LuaPlayer::input_method}.
+ *
+ */
+interface on_player_input_method_changed extends event  {
+    /**
+     * The player whose input method changed.
+     */
     player_index: number
 }
 /**

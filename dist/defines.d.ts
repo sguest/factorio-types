@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.80
+// Factorio version 1.1.84
 // API version 3
 
 declare namespace defines {
@@ -515,9 +515,12 @@ declare namespace defines {
         on_console_chat,
         on_console_command,
         on_cutscene_cancelled,
+        on_cutscene_finished,
+        on_cutscene_started,
         on_cutscene_waypoint_reached,
         on_difficulty_settings_changed,
         on_entity_cloned,
+        on_entity_color_changed,
         on_entity_damaged,
         on_entity_destroyed,
         on_entity_died,
@@ -587,6 +590,7 @@ declare namespace defines {
         on_player_fast_transferred,
         on_player_flushed_fluid,
         on_player_gun_inventory_changed,
+        on_player_input_method_changed,
         on_player_joined_game,
         on_player_kicked,
         on_player_left_game,
@@ -686,6 +690,20 @@ declare namespace defines {
         ten_hours,
         ten_minutes,
         two_hundred_fifty_hours,
+    }
+    enum game_controller_interaction {
+        /**
+         * Game controller will always hover this element regardless of type or state.
+         */
+        always,
+        /**
+         * Hover according to the element type and implementation.
+         */
+        never,
+        /**
+         * Never hover this element with a game controller.
+         */
+        normal,
     }
     enum group_state {
         attacking_distraction,
