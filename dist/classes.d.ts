@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.84
+// Factorio version 1.1.86
 // API version 3
 
 /**
@@ -4053,7 +4053,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The storage filter for this logistic storage container.
      */
-    storage_filter: LuaItemPrototype
+    storage_filter?: LuaItemPrototype
 
     /**
      * Whether the entity has direction. When it is false for this entity, it will always return north direction when asked for.
@@ -6660,6 +6660,12 @@ interface LuaFluidBox {
         index: number): void
 
     /**
+     * Gets counts of all fluids in the fluid system. May return `nil` for fluid wagon, fluid turret's internal buffer, or a fluidbox which does not belong to a fluid system.
+     */
+    get_fluid_system_contents(this: void,
+        index: number): void
+
+    /**
      * Gets unique fluid system identifier of selected fluid box. May return nil for fluid wagon, fluid turret's internal buffer or a fluidbox which does not belong to a fluid system
      */
     get_fluid_system_id(this: void,
@@ -6669,6 +6675,12 @@ interface LuaFluidBox {
      * Returns the fluid the fluidbox is locked onto
      */
     get_locked_fluid(this: void,
+        index: number): void
+
+    /**
+     * Get the fluid box's connections and associated data.
+     */
+    get_pipe_connections(this: void,
         index: number): void
 
     /**
@@ -13889,6 +13901,7 @@ interface LuaRendering {
      * @param table.orientation_target_offset - Only used if `orientation_target` is a LuaEntity.
      * @param table.oriented_offset - Offsets the center of the animation if `orientation_target` is given. This offset will rotate together with the animation.
      * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
+     * @param table.render_layer - Render layer of the animation. Defaults to `"arrow"`.
      * @param table.target - Center of the animation.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
@@ -14024,6 +14037,7 @@ interface LuaRendering {
     /**
      * Create a line.
      * @param table.dash_length - Length of the dashes that this line has. Used only if gap_length > 0. Default is 0.
+     * @param table.dash_offset - Starting offset to apply to dashes. Cannot be greater than dash_length + gap_length. Default is 0.
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
      * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.from_offset - Only used if `from` is a LuaEntity.
@@ -14053,6 +14067,7 @@ interface LuaRendering {
             width: number,
             gap_length?: number,
             dash_length?: number,
+            dash_offset?: number,
             from: MapPosition | LuaEntity,
             from_offset?: Vector,
             to: MapPosition | LuaEntity,
@@ -14140,6 +14155,7 @@ interface LuaRendering {
      * @param table.orientation_target_offset - Only used if `orientation_target` is a LuaEntity.
      * @param table.oriented_offset - Offsets the center of the sprite if `orientation_target` is given. This offset will rotate together with the sprite.
      * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
+     * @param table.render_layer - Render layer of the sprite. Defaults to `"arrow"`.
      * @param table.target - Center of the sprite.
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.

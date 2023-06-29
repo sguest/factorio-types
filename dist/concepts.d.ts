@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.84
+// Factorio version 1.1.86
 // API version 3
 
 /**
@@ -998,7 +998,7 @@ interface FluidBoxConnection {
     positions: Vector[],
     
     /**
-     * The connection type: "input", "output", or "input-output".
+     * One of "input", "output", or "input-output".
      */
     type: string
 }
@@ -1079,9 +1079,24 @@ interface GameViewSettings {
     show_controller_gui: boolean
 
     /**
+     * Shows or hides the crafting queue.
+     */
+    show_crafting_queue: boolean
+
+    /**
      * Show overlay icons on entities. Also known as "alt-mode".
      */
     show_entity_info: boolean
+
+    /**
+     * Shows or hides the tooltip that is displayed when selecting an entity.
+     */
+    show_entity_tooltip: boolean
+
+    /**
+     * Shows or hides the mouse and keyboard/controller button hints in the bottom left corner if they are enabled in the interface settings.
+     */
+    show_hotkey_suggestions: boolean
 
     /**
      * Shows or hides the view options when map is opened.
@@ -1117,6 +1132,11 @@ interface GameViewSettings {
      * Shows or hides the buttons row.
      */
     show_side_menu: boolean
+
+    /**
+     * Shows or hides the tool window with the weapons and armor.
+     */
+    show_tool_bar: boolean
 
     /**
      * When `true` (the default), mousing over an entity will select it. Otherwise, moving the mouse won't update entity selection.
@@ -2128,6 +2148,42 @@ interface PathfinderWaypoint {
      * The position of the waypoint on its surface.
      */
     position: MapPosition
+}
+
+/**
+ * A single pipe connection for a given fluidbox.
+ */
+interface PipeConnection {
+    
+    /**
+     * One of "normal" or "underground".
+     */
+    connection_type: string,
+    
+    /**
+     * One of "input", "output", or "input-output".
+     */
+    flow_direction: string,
+    
+    /**
+     * The absolute position of this connection within the entity.
+     */
+    position: MapPosition,
+    
+    /**
+     * The connected fluidbox, if any.
+     */
+    target?: LuaFluidBox,
+    
+    /**
+     * The index of the connected fluidbox, if any.
+     */
+    target_index?: number,
+    
+    /**
+     * The absolute position of the connection's intended target.
+     */
+    target_position: MapPosition
 }
 
 interface PlaceAsTileResult {
