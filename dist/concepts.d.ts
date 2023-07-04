@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.86
+// Factorio version 1.1.87
 // API version 3
 
 /**
@@ -2176,9 +2176,14 @@ interface PipeConnection {
     target?: LuaFluidBox,
     
     /**
-     * The index of the connected fluidbox, if any.
+     * The index of the target fluidbox, if any.
      */
-    target_index?: number,
+    target_fluidbox_index?: number,
+    
+    /**
+     * The index of the target fluidbox pipe connection, if any.
+     */
+    target_pipe_connection_index?: number,
     
     /**
      * The absolute position of the connection's intended target.
