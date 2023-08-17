@@ -218,12 +218,12 @@ function parseType(type: FactorioType | undefined, indent: string): string {
                     result = `/* ${formatLinks(type.description)} */ `
                 }
                 return result + parseType(type.value, indent);
-            case 'struct':
+            case 'LuaStruct':
                 return `{\n${type.attributes.map(a => writeAttribute(a, '')).join('')}}`;
         }
 
         //Unreachable assuming the current types are exhaustive, but leaving this here so that future added types will throw instead of being silently ignored
-        throw new Error('unrecognized complex type ' + type['complex_type']);
+        throw new Error(`unrecognized complex type ${type['complex_type']}`);
     }
 }
 
@@ -768,7 +768,7 @@ function writeConcepts(apiData: ApiData, apiVersion: string) {
     concepts.push(...parseVariantConcepts(concepts));
     for(let concept of concepts) {
         output += writeDocs(concept, '');
-        if(typeof concept.type === 'object' && 'complex_type' in concept.type && (concept.type.complex_type === 'table' || concept.type.complex_type === 'tuple' || concept.type.complex_type === 'struct')) {
+        if(typeof concept.type === 'object' && 'complex_type' in concept.type && (concept.type.complex_type === 'table' || concept.type.complex_type === 'tuple' || concept.type.complex_type === 'LuaStruct')) {
             output += `interface ${concept.name} `;
         }
         else {

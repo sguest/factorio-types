@@ -121,7 +121,7 @@ interface TypeType {
 }
 
 interface StructType {
-    complex_type: 'struct';
+    complex_type: 'LuaStruct';
     attributes: Attribute[];
 }
 

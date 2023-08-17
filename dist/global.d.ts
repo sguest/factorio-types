@@ -2,23 +2,23 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.87
-// API version 3
+// Factorio version 1.1.89
+// API version 4
 
 /**
- * Allows registering custom commands for the in-game console accessible via the grave key.
+ * Allows registration of custom commands for the in-game console.
  */
 declare const commands: LuaCommandProcessor
 /**
- * This is the main object, through which most of the API is accessed. It is, however, not available inside handlers registered with {@link LuaBootstrap::on_load | LuaBootstrap::on_load}.
+ * The main scripting interface through which most of the API is accessed.
  */
 declare const game: LuaGameScript
 /**
- * Allows printing messages to the calling RCON instance if any.
+ * Allows printing messages to the calling RCON instance, if any.
  */
 declare const rcon: LuaRCON
 /**
- * Allows inter-mod communication by way of providing a repository of interfaces that is shared by all mods.
+ * Allows registration and use of functions to communicate between mods.
  */
 declare const remote: LuaRemote
 /**
@@ -26,21 +26,21 @@ declare const remote: LuaRemote
  */
 declare const rendering: LuaRendering
 /**
- * Provides an interface for registering event handlers.
+ * Provides an interface for registering game event handlers.
  */
 declare const script: LuaBootstrap
 /**
- * Allows reading the current mod settings.
+ * Provides access to the current mod settings.
  */
 declare const settings: LuaSettings
 /**
- * `localised_print()` allows printing {@link LocalisedString | LocalisedString} to stdout without polluting the Factorio {@link log file | https://wiki.factorio.com/Log_file}. This is primarily useful when communicating with external tools that launch Factorio as a child process.
+ * `localised_print()` allows printing {@link LocalisedString | runtime:LocalisedString} to stdout without polluting the Factorio {@link log file | https://wiki.factorio.com/Log_file}. This is primarily useful when communicating with external tools that launch Factorio as a child process.
  */
 declare function localised_print(this: void,
     string: LocalisedString): void
 
 /**
- * `log()` can print {@link LocalisedStrings | LocalisedString} to the Factorio {@link log file | https://wiki.factorio.com/Log_file}. This, in combination with the serpent library, makes debugging in the data stage easier because it allows the inspection of entire prototype tables. For example, printing all properties of the sulfur item prototype can be done like so: `log(serpent.block(data.raw["item"]["sulfur"]))`
+ * `log()` can print {@link LocalisedStrings | runtime:LocalisedString} to the Factorio {@link log file | https://wiki.factorio.com/Log_file}. This, in combination with the serpent library, makes debugging in the data stage easier because it allows the inspection of entire prototype tables. For example, printing all properties of the sulfur item prototype can be done like so: `log(serpent.block(data.raw["item"]["sulfur"]))`
  */
 declare function log(this: void,
     string: LocalisedString): void
@@ -58,7 +58,7 @@ declare function log(this: void,
  * end
  * ```
  * 
- * Note that `table_size()` does not work correctly for {@link LuaCustomTable | LuaCustomTable}, their size has to be determined with {@link LuaCustomTable::length_operator | LuaCustomTable::length_operator} instead.
+ * Note that `table_size()` does not work correctly for {@link LuaCustomTable | runtime:LuaCustomTable}, their size has to be determined with {@link LuaCustomTable::length_operator | runtime:LuaCustomTable::length_operator} instead.
  */
 declare function table_size(this: void,
     table: Table): void

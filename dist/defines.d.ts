@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.87
-// API version 3
+// Factorio version 1.1.89
+// API version 4
 
 declare namespace defines {
     enum alert_type {
@@ -18,7 +18,7 @@ declare namespace defines {
         turret_fire,
     }
     /**
-     * AI command exit status. See {@link LuaEntity::set_command | LuaEntity::set_command}
+     * AI command exit status. See {@link LuaEntity::set_command | runtime:LuaEntity::set_command}
      */
     enum behavior_result {
         deleted,
@@ -97,7 +97,7 @@ declare namespace defines {
          */
         build_base,
         /**
-         * Chain commands together, see {@link defines.compound_command | defines.compound_command}.
+         * Chain commands together, see {@link defines.compound_command | runtime:defines.compound_command}.
          */
         compound,
         /**
@@ -122,7 +122,7 @@ declare namespace defines {
         wander,
     }
     /**
-     * How commands are joined together in a compound command (see {@link defines.command.compound | defines.command.compound}).
+     * How commands are joined together in a compound command (see {@link defines.command.compound | runtime:defines.command.compound}).
      */
     enum compound_command {
         /**
@@ -177,75 +177,75 @@ declare namespace defines {
         }
         enum type {
             /**
-             * {@link LuaAccumulatorControlBehavior | LuaAccumulatorControlBehavior}
+             * {@link LuaAccumulatorControlBehavior | runtime:LuaAccumulatorControlBehavior}
              */
             accumulator,
             /**
-             * {@link LuaArithmeticCombinatorControlBehavior | LuaArithmeticCombinatorControlBehavior}
+             * {@link LuaArithmeticCombinatorControlBehavior | runtime:LuaArithmeticCombinatorControlBehavior}
              */
             arithmetic_combinator,
             /**
-             * {@link LuaConstantCombinatorControlBehavior | LuaConstantCombinatorControlBehavior}
+             * {@link LuaConstantCombinatorControlBehavior | runtime:LuaConstantCombinatorControlBehavior}
              */
             constant_combinator,
             /**
-             * {@link LuaContainerControlBehavior | LuaContainerControlBehavior}
+             * {@link LuaContainerControlBehavior | runtime:LuaContainerControlBehavior}
              */
             container,
             /**
-             * {@link LuaDeciderCombinatorControlBehavior | LuaDeciderCombinatorControlBehavior}
+             * {@link LuaDeciderCombinatorControlBehavior | runtime:LuaDeciderCombinatorControlBehavior}
              */
             decider_combinator,
             /**
-             * {@link LuaGenericOnOffControlBehavior | LuaGenericOnOffControlBehavior}
+             * {@link LuaGenericOnOffControlBehavior | runtime:LuaGenericOnOffControlBehavior}
              */
             generic_on_off,
             /**
-             * {@link LuaInserterControlBehavior | LuaInserterControlBehavior}
+             * {@link LuaInserterControlBehavior | runtime:LuaInserterControlBehavior}
              */
             inserter,
             /**
-             * {@link LuaLampControlBehavior | LuaLampControlBehavior}
+             * {@link LuaLampControlBehavior | runtime:LuaLampControlBehavior}
              */
             lamp,
             /**
-             * {@link LuaLogisticContainerControlBehavior | LuaLogisticContainerControlBehavior}
+             * {@link LuaLogisticContainerControlBehavior | runtime:LuaLogisticContainerControlBehavior}
              */
             logistic_container,
             /**
-             * {@link LuaMiningDrillControlBehavior | LuaMiningDrillControlBehavior}
+             * {@link LuaMiningDrillControlBehavior | runtime:LuaMiningDrillControlBehavior}
              */
             mining_drill,
             /**
-             * {@link LuaProgrammableSpeakerControlBehavior | LuaProgrammableSpeakerControlBehavior}
+             * {@link LuaProgrammableSpeakerControlBehavior | runtime:LuaProgrammableSpeakerControlBehavior}
              */
             programmable_speaker,
             /**
-             * {@link LuaRailChainSignalControlBehavior | LuaRailChainSignalControlBehavior}
+             * {@link LuaRailChainSignalControlBehavior | runtime:LuaRailChainSignalControlBehavior}
              */
             rail_chain_signal,
             /**
-             * {@link LuaRailSignalControlBehavior | LuaRailSignalControlBehavior}
+             * {@link LuaRailSignalControlBehavior | runtime:LuaRailSignalControlBehavior}
              */
             rail_signal,
             /**
-             * {@link LuaRoboportControlBehavior | LuaRoboportControlBehavior}
+             * {@link LuaRoboportControlBehavior | runtime:LuaRoboportControlBehavior}
              */
             roboport,
             /**
-             * {@link LuaStorageTankControlBehavior | LuaStorageTankControlBehavior}
+             * {@link LuaStorageTankControlBehavior | runtime:LuaStorageTankControlBehavior}
              */
             storage_tank,
             /**
-             * {@link LuaTrainStopControlBehavior | LuaTrainStopControlBehavior}
+             * {@link LuaTrainStopControlBehavior | runtime:LuaTrainStopControlBehavior}
              */
             train_stop,
             /**
-             * {@link LuaTransportBeltControlBehavior | LuaTransportBeltControlBehavior}
+             * {@link LuaTransportBeltControlBehavior | runtime:LuaTransportBeltControlBehavior}
              */
             transport_belt,
             /**
-             * {@link LuaWallControlBehavior | LuaWallControlBehavior}
+             * {@link LuaWallControlBehavior | runtime:LuaWallControlBehavior}
              */
             wall,
         }
@@ -493,7 +493,7 @@ declare namespace defines {
         working,
     }
     /**
-     * See the {@link events page | events.html} for more info on what events contain and when they get raised.
+     * See the {@link events page | runtime:events} for more info on what events contain and when they get raised.
      */
     enum events {
         on_ai_command_completed,

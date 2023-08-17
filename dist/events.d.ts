@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.87
-// API version 3
+// Factorio version 1.1.89
+// API version 4
 
 /**
  * Base type for all events
@@ -22,7 +22,7 @@ interface event  {
     tick: number
 }
 /**
- * Called when a {@link CustomInput | https://wiki.factorio.com/Prototype/CustomInput} is activated.
+ * Called when a {@link CustomInputPrototype | prototype:CustomInputPrototype} is activated.
  */
 interface CustomInputEvent extends event  {
     /**
@@ -104,7 +104,7 @@ interface on_brush_cloned extends event  {
     source_surface: LuaSurface
 }
 /**
- * Called when a {@link defines.command.build_base | defines.command.build_base} command reaches its destination, and before building starts.
+ * Called when a {@link defines.command.build_base | runtime:defines.command.build_base} command reaches its destination, and before building starts.
  */
 interface on_build_base_arrived extends event  {
     /**
@@ -117,7 +117,7 @@ interface on_build_base_arrived extends event  {
     unit?: LuaEntity
 }
 /**
- * Called when player builds something. Can be filtered using {@link LuaPlayerBuiltEntityEventFilter | LuaPlayerBuiltEntityEventFilter}.
+ * Called when player builds something. Can be filtered using {@link LuaPlayerBuiltEntityEventFilter | runtime:LuaPlayerBuiltEntityEventFilter}.
  */
 interface on_built_entity extends event  {
     created_entity: LuaEntity
@@ -133,14 +133,14 @@ interface on_built_entity extends event  {
     tags?: Tags
 }
 /**
- * Called when the deconstruction of an entity is canceled. Can be filtered using {@link LuaEntityDeconstructionCancelledEventFilter | LuaEntityDeconstructionCancelledEventFilter}.
+ * Called when the deconstruction of an entity is canceled. Can be filtered using {@link LuaEntityDeconstructionCancelledEventFilter | runtime:LuaEntityDeconstructionCancelledEventFilter}.
  */
 interface on_cancelled_deconstruction extends event  {
     entity: LuaEntity
     player_index?: number
 }
 /**
- * Called when the upgrade of an entity is canceled. Can be filtered using {@link LuaUpgradeCancelledEventFilter | LuaUpgradeCancelledEventFilter}.
+ * Called when the upgrade of an entity is canceled. Can be filtered using {@link LuaUpgradeCancelledEventFilter | runtime:LuaUpgradeCancelledEventFilter}.
  */
 interface on_cancelled_upgrade extends event  {
     direction?: defines.direction
@@ -151,7 +151,7 @@ interface on_cancelled_upgrade extends event  {
 /**
  * Called when a character corpse expires due to timeout or all of the items being removed from it.
  * @remarks
- * this is not called if the corpse is mined. See {@link defines.events.on_pre_player_mined_item | defines.events.on_pre_player_mined_item} to detect that.
+ * this is not called if the corpse is mined. See {@link defines.events.on_pre_player_mined_item | runtime:defines.events.on_pre_player_mined_item} to detect that.
  *
  */
 interface on_character_corpse_expired extends event  {
@@ -200,7 +200,7 @@ interface on_chunk_charted extends event  {
     surface_index: number
 }
 /**
- * Called when one or more chunks are deleted using {@link LuaSurface::delete_chunk | LuaSurface::delete_chunk}.
+ * Called when one or more chunks are deleted using {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk}.
  */
 interface on_chunk_deleted extends event  {
     /**
@@ -325,7 +325,7 @@ interface on_difficulty_settings_changed extends event  {
     old_technology_difficulty: number
 }
 /**
- * Called when an entity is cloned. Can be filtered for the source entity using {@link LuaEntityClonedEventFilter | LuaEntityClonedEventFilter}.
+ * Called when an entity is cloned. Can be filtered for the source entity using {@link LuaEntityClonedEventFilter | runtime:LuaEntityClonedEventFilter}.
  */
 interface on_entity_cloned extends event  {
     destination: LuaEntity
@@ -334,7 +334,7 @@ interface on_entity_cloned extends event  {
 /**
  * Called after an entity has been recolored either by the player or through script.
  * @remarks
- * Automatic recoloring due to {@link LuaPlayer::color | LuaPlayer::color} will not raise events, as that is a separate mechanism.
+ * Automatic recoloring due to {@link LuaPlayer::color | runtime:LuaPlayer::color} will not raise events, as that is a separate mechanism.
  *
  */
 interface on_entity_color_changed extends event  {
@@ -344,7 +344,7 @@ interface on_entity_color_changed extends event  {
     entity: LuaEntity
 }
 /**
- * Called when an entity is damaged. Can be filtered using {@link LuaEntityDamagedEventFilter | LuaEntityDamagedEventFilter}.
+ * Called when an entity is damaged. Can be filtered using {@link LuaEntityDamagedEventFilter | runtime:LuaEntityDamagedEventFilter}.
  * @remarks
  * This is not called when an entities health is set directly by another mod.
  *
@@ -374,23 +374,23 @@ interface on_entity_damaged extends event  {
     original_damage_amount: number
 }
 /**
- * Called after an entity is destroyed that has been registered with {@link LuaBootstrap::register_on_entity_destroyed | LuaBootstrap::register_on_entity_destroyed}.
+ * Called after an entity is destroyed that has been registered with {@link LuaBootstrap::register_on_entity_destroyed | runtime:LuaBootstrap::register_on_entity_destroyed}.
  * @remarks
  * Depending on when a given entity is destroyed, this event will be fired at the end of the current tick or at the end of the next tick.
  *
  */
 interface on_entity_destroyed extends event  {
     /**
-     * The number returned by {@link register_on_entity_destroyed | LuaBootstrap::register_on_entity_destroyed} to uniquely identify this entity during this event.
+     * The number returned by {@link register_on_entity_destroyed | runtime:LuaBootstrap::register_on_entity_destroyed} to uniquely identify this entity during this event.
      */
     registration_number: number
     /**
-     * The {@link LuaEntity::unit_number | LuaEntity::unit_number} of the destroyed entity, if it had one.
+     * The {@link LuaEntity::unit_number | runtime:LuaEntity::unit_number} of the destroyed entity, if it had one.
      */
     unit_number?: number
 }
 /**
- * Called when an entity dies. Can be filtered using {@link LuaEntityDiedEventFilter | LuaEntityDiedEventFilter}.
+ * Called when an entity dies. Can be filtered using {@link LuaEntityDiedEventFilter | runtime:LuaEntityDiedEventFilter}.
  */
 interface on_entity_died extends event  {
     /**
@@ -544,7 +544,7 @@ interface on_force_friends_changed extends event  {
     other_force: LuaForce
 }
 /**
- * Called when {@link LuaForce::reset | LuaForce::reset} is finished.
+ * Called when {@link LuaForce::reset | runtime:LuaForce::reset} is finished.
  */
 interface on_force_reset extends event  {
     force: LuaForce
@@ -583,7 +583,7 @@ interface on_forces_merging extends event  {
     source: LuaForce
 }
 /**
- * Called when a game is created from a scenario. This is fired for every mod, even when the scenario's save data already includes it. In those cases however, {@link LuaBootstrap::on_init | LuaBootstrap::on_init} is not fired.
+ * Called when a game is created from a scenario. This is fired for every mod, even when the scenario's save data already includes it. In those cases however, {@link LuaBootstrap::on_init | runtime:LuaBootstrap::on_init} is not fired.
  * @remarks
  * This event is not fired when the scenario is loaded via the map editor.
  *
@@ -591,7 +591,7 @@ interface on_forces_merging extends event  {
 interface on_game_created_from_scenario extends event  {
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} checked state is changed (related to checkboxes and radio buttons).
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} checked state is changed (related to checkboxes and radio buttons).
  */
 interface on_gui_checked_state_changed extends event  {
     /**
@@ -604,7 +604,7 @@ interface on_gui_checked_state_changed extends event  {
     player_index: number
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} is clicked.
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} is clicked.
  */
 interface on_gui_click extends event  {
     /**
@@ -687,7 +687,7 @@ interface on_gui_closed extends event  {
     tile_position?: TilePosition
 }
 /**
- * Called when a {@link LuaGuiElement | LuaGuiElement} is confirmed, for example by pressing Enter in a textfield.
+ * Called when a {@link LuaGuiElement | runtime:LuaGuiElement} is confirmed, for example by pressing Enter in a textfield.
  */
 interface on_gui_confirmed extends event  {
     /**
@@ -712,7 +712,7 @@ interface on_gui_confirmed extends event  {
     shift: boolean
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} element value is changed (related to choose element buttons).
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} element value is changed (related to choose element buttons).
  */
 interface on_gui_elem_changed extends event  {
     /**
@@ -725,7 +725,7 @@ interface on_gui_elem_changed extends event  {
     player_index: number
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} is hovered by the mouse.
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} is hovered by the mouse.
  */
 interface on_gui_hover extends event  {
     /**
@@ -738,7 +738,7 @@ interface on_gui_hover extends event  {
     player_index: number
 }
 /**
- * Called when the player's cursor leaves a {@link LuaGuiElement | LuaGuiElement} that was previously hovered.
+ * Called when the player's cursor leaves a {@link LuaGuiElement | runtime:LuaGuiElement} that was previously hovered.
  */
 interface on_gui_leave extends event  {
     /**
@@ -751,7 +751,7 @@ interface on_gui_leave extends event  {
     player_index: number
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} element location is changed (related to frames in `player.gui.screen`).
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} element location is changed (related to frames in `player.gui.screen`).
  */
 interface on_gui_location_changed extends event  {
     /**
@@ -801,7 +801,7 @@ interface on_gui_opened extends event  {
     player_index: number
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} selected tab is changed (related to tabbed-panes).
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} selected tab is changed (related to tabbed-panes).
  */
 interface on_gui_selected_tab_changed extends event  {
     /**
@@ -814,7 +814,7 @@ interface on_gui_selected_tab_changed extends event  {
     player_index: number
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} selection state is changed (related to drop-downs and listboxes).
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} selection state is changed (related to drop-downs and listboxes).
  */
 interface on_gui_selection_state_changed extends event  {
     /**
@@ -827,7 +827,7 @@ interface on_gui_selection_state_changed extends event  {
     player_index: number
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} switch state is changed (related to switches).
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} switch state is changed (related to switches).
  */
 interface on_gui_switch_state_changed extends event  {
     /**
@@ -840,7 +840,7 @@ interface on_gui_switch_state_changed extends event  {
     player_index: number
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} text is changed by the player.
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} text is changed by the player.
  */
 interface on_gui_text_changed extends event  {
     /**
@@ -857,7 +857,7 @@ interface on_gui_text_changed extends event  {
     text: string
 }
 /**
- * Called when {@link LuaGuiElement | LuaGuiElement} slider value is changed (related to the slider element).
+ * Called when {@link LuaGuiElement | runtime:LuaGuiElement} slider value is changed (related to the slider element).
  */
 interface on_gui_value_changed extends event  {
     /**
@@ -886,14 +886,14 @@ interface on_lua_shortcut extends event  {
     prototype_name: string
 }
 /**
- * Called when an entity is marked for deconstruction with the Deconstruction planner or via script. Can be filtered using {@link LuaEntityMarkedForDeconstructionEventFilter | LuaEntityMarkedForDeconstructionEventFilter}.
+ * Called when an entity is marked for deconstruction with the Deconstruction planner or via script. Can be filtered using {@link LuaEntityMarkedForDeconstructionEventFilter | runtime:LuaEntityMarkedForDeconstructionEventFilter}.
  */
 interface on_marked_for_deconstruction extends event  {
     entity: LuaEntity
     player_index?: number
 }
 /**
- * Called when an entity is marked for upgrade with the Upgrade planner or via script. Can be filtered using {@link LuaEntityMarkedForUpgradeEventFilter | LuaEntityMarkedForUpgradeEventFilter}.
+ * Called when an entity is marked for upgrade with the Upgrade planner or via script. Can be filtered using {@link LuaEntityMarkedForUpgradeEventFilter | runtime:LuaEntityMarkedForUpgradeEventFilter}.
  */
 interface on_marked_for_upgrade extends event  {
     /**
@@ -1251,7 +1251,7 @@ interface on_player_configured_spider_remote extends event  {
     vehicle: LuaEntity
 }
 /**
- * Called when the player finishes crafting an item. This event fires just before the results are inserted into the player's inventory, not when the crafting is queued (see {@link on_pre_player_crafted_item | on_pre_player_crafted_item}).
+ * Called when the player finishes crafting an item. This event fires just before the results are inserted into the player's inventory, not when the crafting is queued (see {@link on_pre_player_crafted_item | runtime:on_pre_player_crafted_item}).
  */
 interface on_player_crafted_item extends event  {
     /**
@@ -1274,7 +1274,7 @@ interface on_player_created extends event  {
     player_index: number
 }
 /**
- * Called after a player's {@link cursor stack | LuaControl::cursor_stack} changed in some way.
+ * Called after a player's {@link cursor stack | runtime:LuaControl::cursor_stack} changed in some way.
  */
 interface on_player_cursor_stack_changed extends event  {
     player_index: number
@@ -1424,7 +1424,7 @@ interface on_player_gun_inventory_changed extends event  {
 /**
  * Called when a player's input method changes.
  * @remarks
- * See {@link LuaPlayer::input_method | LuaPlayer::input_method}.
+ * See {@link LuaPlayer::input_method | runtime:LuaPlayer::input_method}.
  *
  */
 interface on_player_input_method_changed extends event  {
@@ -1470,7 +1470,7 @@ interface on_player_main_inventory_changed extends event  {
     player_index: number
 }
 /**
- * Called after the results of an entity being mined are collected just before the entity is destroyed. After this event any items in the buffer will be transferred into the player as if they came from mining the entity. Can be filtered using {@link LuaPlayerMinedEntityEventFilter | LuaPlayerMinedEntityEventFilter}.
+ * Called after the results of an entity being mined are collected just before the entity is destroyed. After this event any items in the buffer will be transferred into the player as if they came from mining the entity. Can be filtered using {@link LuaPlayerMinedEntityEventFilter | runtime:LuaPlayerMinedEntityEventFilter}.
  * @remarks
  * The buffer inventory is special in that it's only valid during this event and has a dynamic size expanding as more items are transferred into it.
  *
@@ -1563,7 +1563,7 @@ interface on_player_promoted extends event  {
     player_index: number
 }
 /**
- * Called when a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | on_player_left_game} the game, and instead behaves like the player never existed in the save file.
+ * Called when a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | runtime:on_player_left_game} the game, and instead behaves like the player never existed in the save file.
  */
 interface on_player_removed extends event  {
     /**
@@ -1590,7 +1590,7 @@ interface on_player_removed_equipment extends event  {
     player_index: number
 }
 /**
- * Called when a player repairs an entity. Can be filtered using {@link LuaPlayerRepairedEntityEventFilter | LuaPlayerRepairedEntityEventFilter}.
+ * Called when a player repairs an entity. Can be filtered using {@link LuaPlayerRepairedEntityEventFilter | runtime:LuaPlayerRepairedEntityEventFilter}.
  */
 interface on_player_repaired_entity extends event  {
     entity: LuaEntity
@@ -1718,7 +1718,7 @@ interface on_player_setup_blueprint extends event  {
  */
 interface on_player_toggled_alt_mode extends event  {
     /**
-     * The new alt mode value. This value is a shortcut for accessing {@link GameViewSettings::show_entity_info | GameViewSettings::show_entity_info} on the player.
+     * The new alt mode value. This value is a shortcut for accessing {@link GameViewSettings::show_entity_info | runtime:GameViewSettings::show_entity_info} on the player.
      */
     alt_mode: boolean
     player_index: number
@@ -1804,7 +1804,7 @@ interface on_player_used_spider_remote extends event  {
     vehicle: LuaEntity
 }
 /**
- * Called after an entity dies. Can be filtered using {@link LuaPostEntityDiedEventFilter | LuaPostEntityDiedEventFilter}.
+ * Called after an entity dies. Can be filtered using {@link LuaPostEntityDiedEventFilter | runtime:LuaPostEntityDiedEventFilter}.
  */
 interface on_post_entity_died extends event  {
     /**
@@ -1841,7 +1841,7 @@ interface on_post_entity_died extends event  {
     unit_number?: number
 }
 /**
- * Called when players uses an item to build something. Called before {@link on_built_entity | on_built_entity}.
+ * Called when players uses an item to build something. Called before {@link on_built_entity | runtime:on_built_entity}.
  */
 interface on_pre_build extends event  {
     /**
@@ -1874,7 +1874,7 @@ interface on_pre_build extends event  {
     shift_build: boolean
 }
 /**
- * Called before one or more chunks are deleted using {@link LuaSurface::delete_chunk | LuaSurface::delete_chunk}.
+ * Called before one or more chunks are deleted using {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk}.
  */
 interface on_pre_chunk_deleted extends event  {
     /**
@@ -1898,7 +1898,7 @@ interface on_pre_entity_settings_pasted extends event  {
     source: LuaEntity
 }
 /**
- * Called before a ghost entity is destroyed as a result of being marked for deconstruction. Can be filtered using {@link LuaPreGhostDeconstructedEventFilter | LuaPreGhostDeconstructedEventFilter}.
+ * Called before a ghost entity is destroyed as a result of being marked for deconstruction. Can be filtered using {@link LuaPreGhostDeconstructedEventFilter | runtime:LuaPreGhostDeconstructedEventFilter}.
  */
 interface on_pre_ghost_deconstructed extends event  {
     ghost: LuaEntity
@@ -1908,7 +1908,7 @@ interface on_pre_ghost_deconstructed extends event  {
     player_index?: number
 }
 /**
- * Called before a ghost entity is upgraded. Can be filtered using {@link LuaPreGhostUpgradedEventFilter | LuaPreGhostUpgradedEventFilter}.
+ * Called before a ghost entity is upgraded. Can be filtered using {@link LuaPreGhostUpgradedEventFilter | runtime:LuaPreGhostUpgradedEventFilter}.
  */
 interface on_pre_ghost_upgraded extends event  {
     ghost: LuaEntity
@@ -1976,7 +1976,7 @@ interface on_pre_player_left_game extends event  {
     reason: defines.disconnect_reason
 }
 /**
- * Called when the player completes a mining action, but before the entity is potentially removed from the map. This is called even if the entity does not end up being removed. Can be filtered using {@link LuaPrePlayerMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter}.
+ * Called when the player completes a mining action, but before the entity is potentially removed from the map. This is called even if the entity does not end up being removed. Can be filtered using {@link LuaPrePlayerMinedEntityEventFilter | runtime:LuaPrePlayerMinedEntityEventFilter}.
  */
 interface on_pre_player_mined_item extends event  {
     /**
@@ -1986,7 +1986,7 @@ interface on_pre_player_mined_item extends event  {
     player_index: number
 }
 /**
- * Called before a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | on_player_left_game} the game, and instead behaves like the player never existed in the save file.
+ * Called before a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | runtime:on_player_left_game} the game, and instead behaves like the player never existed in the save file.
  */
 interface on_pre_player_removed extends event  {
     /**
@@ -2101,7 +2101,7 @@ interface on_resource_depleted extends event  {
     entity: LuaEntity
 }
 /**
- * Called when a construction robot builds an entity. Can be filtered using {@link LuaRobotBuiltEntityEventFilter | LuaRobotBuiltEntityEventFilter}.
+ * Called when a construction robot builds an entity. Can be filtered using {@link LuaRobotBuiltEntityEventFilter | runtime:LuaRobotBuiltEntityEventFilter}.
  */
 interface on_robot_built_entity extends event  {
     /**
@@ -2174,7 +2174,7 @@ interface on_robot_mined extends event  {
     robot: LuaEntity
 }
 /**
- * Called after the results of an entity being mined are collected just before the entity is destroyed. After this event any items in the buffer will be transferred into the robot as if they came from mining the entity. Can be filtered using {@link LuaRobotMinedEntityEventFilter | LuaRobotMinedEntityEventFilter}.
+ * Called after the results of an entity being mined are collected just before the entity is destroyed. After this event any items in the buffer will be transferred into the robot as if they came from mining the entity. Can be filtered using {@link LuaRobotMinedEntityEventFilter | runtime:LuaRobotMinedEntityEventFilter}.
  * @remarks
  * The buffer inventory is special in that it's only valid during this event and has a dynamic size expanding as more items are transferred into it.
  *
@@ -2211,7 +2211,7 @@ interface on_robot_mined_tile extends event  {
     tiles: OldTileAndPosition[]
 }
 /**
- * Called before a robot mines an entity. Can be filtered using {@link LuaPreRobotMinedEntityEventFilter | LuaPreRobotMinedEntityEventFilter}.
+ * Called before a robot mines an entity. Can be filtered using {@link LuaPreRobotMinedEntityEventFilter | runtime:LuaPreRobotMinedEntityEventFilter}.
  */
 interface on_robot_pre_mined extends event  {
     /**
@@ -2289,11 +2289,11 @@ interface on_script_inventory_resized extends event  {
     player_index?: number
 }
 /**
- * Called when a {@link LuaSurface::request_path | LuaSurface::request_path} call completes.
+ * Called when a {@link LuaSurface::request_path | runtime:LuaSurface::request_path} call completes.
  */
 interface on_script_path_request_finished extends event  {
     /**
-     * Handle to associate the callback with a particular call to {@link LuaSurface::request_path | LuaSurface::request_path}.
+     * Handle to associate the callback with a particular call to {@link LuaSurface::request_path | runtime:LuaSurface::request_path}.
      */
     id: number
     /**
@@ -2323,7 +2323,7 @@ interface on_script_trigger_effect extends event  {
     target_position?: MapPosition
 }
 /**
- * Called when an entity of type `radar` finishes scanning a sector. Can be filtered for the radar using {@link LuaSectorScannedEventFilter | LuaSectorScannedEventFilter}.
+ * Called when an entity of type `radar` finishes scanning a sector. Can be filtered for the radar using {@link LuaSectorScannedEventFilter | runtime:LuaSectorScannedEventFilter}.
  */
 interface on_sector_scanned extends event  {
     /**
@@ -2362,7 +2362,7 @@ interface on_spider_command_completed extends event  {
     vehicle: LuaEntity
 }
 /**
- * Called when a translation request generated through {@link LuaPlayer::request_translation | LuaPlayer::request_translation} or {@link LuaPlayer::request_translations | LuaPlayer::request_translations} has been completed.
+ * Called when a translation request generated through {@link LuaPlayer::request_translation | runtime:LuaPlayer::request_translation} or {@link LuaPlayer::request_translations | runtime:LuaPlayer::request_translations} has been completed.
  */
 interface on_string_translated extends event  {
     /**
@@ -2426,7 +2426,7 @@ interface on_surface_renamed extends event  {
     surface_index: number
 }
 /**
- * Called when {@link LuaForce::reset_technology_effects | LuaForce::reset_technology_effects} is finished.
+ * Called when {@link LuaForce::reset_technology_effects | runtime:LuaForce::reset_technology_effects} is finished.
  */
 interface on_technology_effects_reset extends event  {
     force: LuaForce
@@ -2514,7 +2514,7 @@ interface on_worker_robot_expired extends event  {
     robot: LuaEntity
 }
 /**
- * A static event mods can use to tell other mods they built something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_built | LuaBootstrap::raise_script_built}, or when `raise_built` is passed to {@link LuaSurface::create_entity | LuaSurface::create_entity}. Can be filtered using {@link LuaScriptRaisedBuiltEventFilter | LuaScriptRaisedBuiltEventFilter}.
+ * A static event mods can use to tell other mods they built something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_built | runtime:LuaBootstrap::raise_script_built}, or when `raise_built` is passed to {@link LuaSurface::create_entity | runtime:LuaSurface::create_entity}. Can be filtered using {@link LuaScriptRaisedBuiltEventFilter | runtime:LuaScriptRaisedBuiltEventFilter}.
  */
 interface script_raised_built extends event  {
     /**
@@ -2523,7 +2523,7 @@ interface script_raised_built extends event  {
     entity: LuaEntity
 }
 /**
- * A static event mods can use to tell other mods they destroyed something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_destroy | LuaBootstrap::raise_script_destroy}, or when `raise_destroy` is passed to {@link LuaEntity::destroy | LuaEntity::destroy}. Can be filtered using {@link LuaScriptRaisedDestroyEventFilter | LuaScriptRaisedDestroyEventFilter}.
+ * A static event mods can use to tell other mods they destroyed something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_destroy | runtime:LuaBootstrap::raise_script_destroy}, or when `raise_destroy` is passed to {@link LuaEntity::destroy | runtime:LuaEntity::destroy}. Can be filtered using {@link LuaScriptRaisedDestroyEventFilter | runtime:LuaScriptRaisedDestroyEventFilter}.
  */
 interface script_raised_destroy extends event  {
     /**
@@ -2532,7 +2532,7 @@ interface script_raised_destroy extends event  {
     entity: LuaEntity
 }
 /**
- * A static event mods can use to tell other mods they revived something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_revive | LuaBootstrap::raise_script_revive}, or when `raise_revive` is passed to {@link LuaEntity::revive | LuaEntity::revive}. Can be filtered using {@link LuaScriptRaisedReviveEventFilter | LuaScriptRaisedReviveEventFilter}.
+ * A static event mods can use to tell other mods they revived something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_revive | runtime:LuaBootstrap::raise_script_revive}, or when `raise_revive` is passed to {@link LuaEntity::revive | runtime:LuaEntity::revive}. Can be filtered using {@link LuaScriptRaisedReviveEventFilter | runtime:LuaScriptRaisedReviveEventFilter}.
  */
 interface script_raised_revive extends event  {
     /**
@@ -2545,7 +2545,7 @@ interface script_raised_revive extends event  {
     tags?: Tags
 }
 /**
- * A static event mods can use to tell other mods they changed tiles on a surface by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_set_tiles | LuaBootstrap::raise_script_set_tiles}, or when `raise_event` is passed to {@link LuaSurface::set_tiles | LuaSurface::set_tiles}.
+ * A static event mods can use to tell other mods they changed tiles on a surface by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_set_tiles | runtime:LuaBootstrap::raise_script_set_tiles}, or when `raise_event` is passed to {@link LuaSurface::set_tiles | runtime:LuaSurface::set_tiles}.
  */
 interface script_raised_set_tiles extends event  {
     /**
@@ -2558,7 +2558,7 @@ interface script_raised_set_tiles extends event  {
     tiles: Tile[]
 }
 /**
- * A static event mods can use to tell other mods they teleported something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_teleported | LuaBootstrap::raise_script_teleported}, or when `raise_teleported` is passed to {@link LuaControl::teleport | LuaControl::teleport}. Can be filtered using {@link LuaScriptRaisedTeleportedEventFilter | LuaScriptRaisedTeleportedEventFilter}.
+ * A static event mods can use to tell other mods they teleported something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_teleported | runtime:LuaBootstrap::raise_script_teleported}, or when `raise_teleported` is passed to {@link LuaControl::teleport | runtime:LuaControl::teleport}. Can be filtered using {@link LuaScriptRaisedTeleportedEventFilter | runtime:LuaScriptRaisedTeleportedEventFilter}.
  */
 interface script_raised_teleported extends event  {
     /**

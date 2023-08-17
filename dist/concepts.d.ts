@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.87
-// API version 3
+// Factorio version 1.1.89
+// API version 4
 
 /**
  * Depending on the value of `filter`, the table may take additional fields. `filter` may be one of the following:
@@ -42,7 +42,7 @@ interface Alert {
 }
 
 /**
- * A {@link string | string} that specifies where a GUI element should be.
+ * A {@link string | runtime:string} that specifies where a GUI element should be.
  */
 type Alignment = 'top-left' | 'middle-left' | /* The same as `"middle-left"` */ 'left' | 'bottom-left' | 'top-center' | 'middle-center' | /* The same as `"middle-center"` */ 'center' | 'bottom-center' | 'top-right' | /* The same as `"middle-right"` */ 'right' | 'bottom-right'
 
@@ -124,7 +124,7 @@ interface AttackParameterFluid {
     damage_modifier: number,
     
     /**
-     * Name of the {@link LuaFluidPrototype | LuaFluidPrototype}.
+     * Name of the {@link LuaFluidPrototype | runtime:LuaFluidPrototype}.
      */
     type: string
 }
@@ -139,12 +139,12 @@ type AttackParameters = AttackParametersProjectile | AttackParametersStream | De
 interface AutoplaceControl {
     
     /**
-     * For things that are placed as spots such as ores and enemy bases, frequency is generally proportional to number of spots placed per unit area. For continuous features such as forests, frequency is how compressed the probability function is over distance, i.e. the inverse of 'scale' (similar to terrain_segmentation). When the {@link LuaAutoplaceControlPrototype | LuaAutoplaceControlPrototype} is of the category `"terrain"`, then scale is shown in the map generator GUI instead of frequency.
+     * For things that are placed as spots such as ores and enemy bases, frequency is generally proportional to number of spots placed per unit area. For continuous features such as forests, frequency is how compressed the probability function is over distance, i.e. the inverse of 'scale' (similar to terrain_segmentation). When the {@link LuaAutoplaceControlPrototype | runtime:LuaAutoplaceControlPrototype} is of the category `"terrain"`, then scale is shown in the map generator GUI instead of frequency.
      */
     frequency: MapGenSize,
     
     /**
-     * Has different effects for different things, but generally affects the 'health' or density of a thing that is placed without affecting where it is placed. For trees, richness affects tree health. For ores, richness multiplies the amount of ore at any given tile in a patch. Metadata about autoplace controls (such as whether or not 'richness' does anything for them) can be found in the {@link LuaAutoplaceControlPrototype | LuaAutoplaceControlPrototype} by looking up `game.autoplace_control_prototypes[(control prototype name)]`, e.g. `game.autoplace_control_prototypes["enemy-base"].richness` is false, because enemy base autoplacement doesn't use richness.
+     * Has different effects for different things, but generally affects the 'health' or density of a thing that is placed without affecting where it is placed. For trees, richness affects tree health. For ores, richness multiplies the amount of ore at any given tile in a patch. Metadata about autoplace controls (such as whether or not 'richness' does anything for them) can be found in the {@link LuaAutoplaceControlPrototype | runtime:LuaAutoplaceControlPrototype} by looking up `game.autoplace_control_prototypes[(control prototype name)]`, e.g. `game.autoplace_control_prototypes["enemy-base"].richness` is false, because enemy base autoplacement doesn't use richness.
      */
     richness: MapGenSize,
     
@@ -323,7 +323,7 @@ interface BlueprintSignalIcon {
 }
 
 /**
- * Two positions, specifying the top-left and bottom-right corner of the box respectively. Like with {@link MapPosition | MapPosition}, the names of the members may be omitted. When read from the game, the third member `orientation` is present if it is non-zero.
+ * Two positions, specifying the top-left and bottom-right corner of the box respectively. Like with {@link MapPosition | runtime:MapPosition}, the names of the members may be omitted. When read from the game, the third member `orientation` is present if it is non-zero.
  * @example
  * Explicit definition: 
  * ```
@@ -363,7 +363,7 @@ interface ChartTagSpec {
 }
 
 /**
- * Coordinates of a chunk in a {@link LuaSurface | LuaSurface} where each integer `x`/`y` represents a different chunk. This uses the same format as {@link MapPosition | MapPosition}, meaning it can be specified either with or without explicit keys. A {@link MapPosition | MapPosition} can be translated to a ChunkPosition by dividing the `x`/`y` values by 32.
+ * Coordinates of a chunk in a {@link LuaSurface | runtime:LuaSurface} where each integer `x`/`y` represents a different chunk. This uses the same format as {@link MapPosition | runtime:MapPosition}, meaning it can be specified either with or without explicit keys. A {@link MapPosition | runtime:MapPosition} can be translated to a ChunkPosition by dividing the `x`/`y` values by 32.
  */
 type ChunkPosition = {
     x: number,
@@ -371,7 +371,7 @@ type ChunkPosition = {
 }
 
 /**
- * A {@link ChunkPosition | ChunkPosition} with an added bounding box for the area of the chunk.
+ * A {@link ChunkPosition | runtime:ChunkPosition} with an added bounding box for the area of the chunk.
  */
 interface ChunkPositionAndArea {
     area: BoundingBox,
@@ -417,7 +417,7 @@ interface CircuitConnectionDefinition {
     target_entity: LuaEntity,
     
     /**
-     * Wire color, either {@link defines.wire_type.red | defines.wire_type.red} or {@link defines.wire_type.green | defines.wire_type.green}.
+     * Wire color, either {@link defines.wire_type.red | runtime:defines.wire_type.red} or {@link defines.wire_type.green | runtime:defines.wire_type.green}.
      */
     wire: defines.wire_type
 }
@@ -436,7 +436,7 @@ interface CircularParticleCreationSpecification {
     height_deviation: number,
     
     /**
-     * Name of the {@link LuaEntityPrototype | LuaEntityPrototype}
+     * Name of the {@link LuaEntityPrototype | runtime:LuaEntityPrototype}
      */
     name: string,
     speed: number,
@@ -484,21 +484,21 @@ interface CliffPlacementSettings {
 type CollisionMask = {[key: string]: true}
 
 /**
- * A {@link string | string} specifying a collision mask layer.
+ * A {@link string | runtime:string} specifying a collision mask layer.
  * 
  * In addition to the listed layers, there is `"layer-13"` through `"layer-55"`. These layers are currently unused by the game but may change. If a mod is going to use one of the unused layers it's recommended to start at the higher layers because the base game will take from the lower ones.
  */
 type CollisionMaskLayer = 'ground-tile' | 'water-tile' | 'resource-layer' | 'doodad-layer' | 'floor-layer' | 'item-layer' | 'ghost-layer' | 'object-layer' | 'player-layer' | 'train-layer' | 'rail-layer' | 'transport-belt-layer' | 'not-setup' | 'layer-13' | 'layer-14' | 'layer-15' | 'layer-16' | 'layer-17' | 'layer-18' | 'layer-19' | 'layer-20' | 'layer-21' | 'layer-22' | 'layer-23' | 'layer-24' | 'layer-25' | 'layer-26' | 'layer-27' | 'layer-28' | 'layer-29' | 'layer-30' | 'layer-31' | 'layer-32' | 'layer-33' | 'layer-34' | 'layer-35' | 'layer-36' | 'layer-37' | 'layer-38' | 'layer-39' | 'layer-40' | 'layer-41' | 'layer-42' | 'layer-43' | 'layer-44' | 'layer-45' | 'layer-46' | 'layer-47' | 'layer-48' | 'layer-49' | 'layer-50' | 'layer-51' | 'layer-52' | 'layer-53' | 'layer-54' | 'layer-55'
 
 /**
- * A {@link CollisionMask | CollisionMask} which also includes any flags this mask has.
+ * A {@link CollisionMask | runtime:CollisionMask} which also includes any flags this mask has.
  */
 type CollisionMaskWithFlags = {[key: string]: true}
 
 /**
  * Red, green, blue and alpha values, all in range [0, 1] or all in range [0, 255] if any value is > 1. All values here are optional. Color channels default to `0`, the alpha channel defaults to `1`.
  * 
- * Similar to {@link MapPosition | MapPosition}, Color allows the short-hand notation of passing an array of exactly 3 or 4 numbers. The game usually expects colors to be in pre-multiplied form (color channels are pre-multiplied by alpha).
+ * Similar to {@link MapPosition | runtime:MapPosition}, Color allows the short-hand notation of passing an array of exactly 3 or 4 numbers. The game usually expects colors to be in pre-multiplied form (color channels are pre-multiplied by alpha).
  * @example
  * ```
  * red1 = {r = 0.5, g = 0, b = 0, a = 0.5}  -- Half-opacity red
@@ -516,7 +516,7 @@ type Color = {
 }
 
 /**
- * Same as {@link Color | Color}, but red, green, blue and alpha values can be any floating point number, without any special handling of the range [1, 255].
+ * Same as {@link Color | runtime:Color}, but red, green, blue and alpha values can be any floating point number, without any special handling of the range [1, 255].
  */
 type ColorModifier = {
     a?: number,
@@ -591,6 +591,12 @@ interface ConstantCombinatorParameters {
      * Signal to emit.
      */
     signal: SignalID
+}
+
+interface CopperConnectionDefinition {
+    source_wire_connector: defines.wire_connection_id,
+    target_entity: LuaEntity,
+    target_wire_connector: defines.wire_connection_id
 }
 
 interface CraftingQueueItem {
@@ -730,18 +736,20 @@ interface DecorativeResult {
  * Technology and recipe difficulty settings. Updating any of the attributes will immediately take effect in the game engine.
  */
 interface DifficultySettings {
-    recipe_difficulty: defines.difficulty_settings.recipe_difficulty,
-    
+    recipe_difficulty: defines.difficulty_settings.recipe_difficulty
+
     /**
-     * Either `"after-victory"`, `"always"` or `"never"`. Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce | LuaForce} for that.
+     * Either `"after-victory"`, `"always"` or `"never"`. Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce | runtime:LuaForce} for that.
      */
-    research_queue_setting: string,
-    technology_difficulty: defines.difficulty_settings.technology_difficulty,
-    
+    research_queue_setting: string
+
+    technology_difficulty: defines.difficulty_settings.technology_difficulty
+
     /**
      * A value in range [0.001, 1000].
      */
     technology_price_multiplier: number
+
 }
 
 interface DisplayResolution {
@@ -907,7 +915,7 @@ interface EquipmentPoint {
 }
 
 /**
- * Position inside an equipment grid. This uses the same format as {@link MapPosition | MapPosition}, meaning it can be specified either with or without explicit keys.
+ * Position inside an equipment grid. This uses the same format as {@link MapPosition | runtime:MapPosition}, meaning it can be specified either with or without explicit keys.
  * @example
  * Explicit definition: 
  * ```
@@ -936,12 +944,12 @@ type EquipmentPosition = {
 type EquipmentPrototypeFilter = EquipmentPrototypeFilterType | DefaultEquipmentPrototypeFilter
 
 /**
- * Information about the event that has been raised. The table can also contain other fields depending on the type of event. See {@link the list of Factorio events | events.html} for more information on these.
+ * Information about the event that has been raised. The table can also contain other fields depending on the type of event. See {@link the list of Factorio events | runtime:events} for more information on these.
  */
 interface EventData {
     
     /**
-     * The name of the mod that raised the event if it was raised using {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event}.
+     * The name of the mod that raised the event if it was raised using {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}.
      */
     mod_name?: string,
     
@@ -977,7 +985,7 @@ interface Fluid {
     name: string,
     
     /**
-     * The temperature. When reading from {@link LuaFluidBox | LuaFluidBox}, this field will always be present. It is not necessary to specify it when writing, however. When not specified, the fluid will be set to the fluid's default temperature as specified in the fluid's prototype.
+     * The temperature. When reading from {@link LuaFluidBox | runtime:LuaFluidBox}, this field will always be present. It is not necessary to specify it when writing, however. When not specified, the fluid will be set to the fluid's default temperature as specified in the fluid's prototype.
      */
     temperature?: number
 }
@@ -1062,7 +1070,7 @@ type ForceCondition = /* All forces pass. */ 'all' | /* Forces which will attack
 /**
  * A force may be specified in one of three ways.
  */
-type ForceIdentification = /* The force index. */ number | /* The force name. */ string | /* A reference to {@link LuaForce | LuaForce} may be passed directly. */ LuaForce
+type ForceIdentification = /* The force index. */ number | /* The force name. */ string | /* A reference to {@link LuaForce | runtime:LuaForce} may be passed directly. */ LuaForce
 
 /**
  * Parameters that affect the look and control of the game. Updating any of the member attributes here will immediately take effect in the game engine.
@@ -1173,8 +1181,12 @@ interface GuiAnchor {
  */
 type GuiArrowSpecification = GuiArrowSpecificationCraftingQueue | GuiArrowSpecificationEntity | GuiArrowSpecificationItemStack | GuiArrowSpecificationPosition | DefaultGuiArrowSpecification
 
+type GuiArrowType = 'nowhere' | 'goal' | 'entity_info' | 'active_window' | 'entity' | 'position' | 'crafting_queue' | 'item_stack'
+
+type GuiElementType = /* A clickable element. Relevant event: {@link on_gui_click | runtime:on_gui_click} */ 'button' | /* A `button` that displays a sprite rather than text. Relevant event: {@link on_gui_click | runtime:on_gui_click} */ 'sprite-button' | /* A clickable element with a check mark that can be turned off or on. Relevant event: {@link on_gui_checked_state_changed | runtime:on_gui_checked_state_changed} */ 'checkbox' | /* An invisible container that lays out its children either horizontally or vertically. */ 'flow' | /* A non-transparent box that contains other elements. It can have a title (set via the `caption` attribute). Just like a `flow`, it lays out its children either horizontally or vertically. Relevant event: {@link on_gui_location_changed | runtime:on_gui_location_changed} */ 'frame' | /* A piece of text. */ 'label' | /* A horizontal or vertical separation line. */ 'line' | /* A partially filled bar that can be used to indicate progress. */ 'progressbar' | /* An invisible container that lays out its children in a specific number of columns. The width of each column is determined by the widest element it contains. */ 'table' | /* A single-line box the user can type into. Relevant events: {@link on_gui_text_changed | runtime:on_gui_text_changed}, {@link on_gui_confirmed | runtime:on_gui_confirmed} */ 'textfield' | /* An element that is similar to a `checkbox`, but with a circular appearance. Clicking a selected radio button will not unselect it. Radio buttons are not linked to each other in any way. Relevant event: {@link on_gui_checked_state_changed | runtime:on_gui_checked_state_changed} */ 'radiobutton' | /* An element that shows an image. */ 'sprite' | /* An invisible element that is similar to a `flow`, but has the ability to show and use scroll bars. */ 'scroll-pane' | /* A drop-down containing strings of text. Relevant event: {@link on_gui_selection_state_changed | runtime:on_gui_selection_state_changed} */ 'drop-down' | /* A list of strings, only one of which can be selected at a time. Shows a scroll bar if necessary. Relevant event: {@link on_gui_selection_state_changed | runtime:on_gui_selection_state_changed} */ 'list-box' | /* A camera that shows the game at the given position on the given surface. It can visually track an {@link entity | runtime:LuaGuiElement::entity} that is set after the element has been created. */ 'camera' | /* A button that lets the player pick from a certain kind of prototype, with optional filtering. Relevant event: {@link on_gui_elem_changed | runtime:on_gui_elem_changed} */ 'choose-elem-button' | /* A multi-line `textfield`. Relevant event: {@link on_gui_text_changed | runtime:on_gui_text_changed} */ 'text-box' | /* A horizontal number line which can be used to choose a number. Relevant event: {@link on_gui_value_changed | runtime:on_gui_value_changed} */ 'slider' | /* A minimap preview, similar to the normal player minimap. It can visually track an {@link entity | runtime:LuaGuiElement::entity} that is set after the element has been created. */ 'minimap' | /* A preview of an entity. The {@link entity | runtime:LuaGuiElement::entity} has to be set after the element has been created. */ 'entity-preview' | /* An empty element that just exists. The root GUI elements `screen` and `relative` are `empty-widget`s. */ 'empty-widget' | /* A collection of `tab`s and their contents. Relevant event: {@link on_gui_selected_tab_changed | runtime:on_gui_selected_tab_changed} */ 'tabbed-pane' | /* A tab for use in a `tabbed-pane`. */ 'tab' | /* A switch with three possible states. Can have labels attached to either side. Relevant event: {@link on_gui_switch_state_changed | runtime:on_gui_switch_state_changed} */ 'switch'
+
 /**
- * Screen coordinates of a GUI element in a {@link LuaGui | LuaGui}. This uses the same format as {@link TilePosition | TilePosition}, meaning it can be specified either with or without explicit keys.
+ * Screen coordinates of a GUI element in a {@link LuaGui | runtime:LuaGui}. This uses the same format as {@link TilePosition | runtime:TilePosition}, meaning it can be specified either with or without explicit keys.
  */
 type GuiLocation = {
     x: number,
@@ -1386,7 +1398,7 @@ interface ItemStackLocation {
  *  If `entity-description.furnace` exists, it is concatenated with `"\n"` and returned. Otherwise, if `item-description.furnace` exists, it is returned as-is. Otherwise, `"optional fallback"` is returned. If this value wasn't specified, the translation result would be `"Unknown key: 'item-description.furnace'"`.
  *
  */
-type LocalisedString = string | number | boolean | object | null | Array<string | LocalisedString>
+type LocalisedString = string | number | boolean | object | null | LocalisedString[]
 
 interface LogisticFilter {
     
@@ -1616,10 +1628,10 @@ type LuaSectorScannedEventFilter = LuaSectorScannedEventFilterGhostName | LuaSec
 type LuaUpgradeCancelledEventFilter = LuaUpgradeCancelledEventFilterGhostName | LuaUpgradeCancelledEventFilterGhostType | LuaUpgradeCancelledEventFilterName | LuaUpgradeCancelledEventFilterType | DefaultLuaUpgradeCancelledEventFilter
 
 /**
- * All regular {@link MapSettings | MapSettings} plus an additional table that contains the {@link DifficultySettings | DifficultySettings}.
+ * A standard table containing all {@link MapSettings | runtime:MapSettings} attributes plus an additional table that contains all {@link DifficultySettings | runtime:DifficultySettings} properties.
  */
 interface MapAndDifficultySettings {
-    difficulty_settings: DifficultySettings,
+    difficulty_settings: MapDifficultySettings,
     enemy_evolution: EnemyEvolutionMapSettings,
     enemy_expansion: EnemyExpansionMapSettings,
     
@@ -1631,6 +1643,21 @@ interface MapAndDifficultySettings {
     pollution: PollutionMapSettings,
     steering: SteeringMapSettings,
     unit_group: UnitGroupMapSettings
+}
+
+interface MapDifficultySettings {
+    recipe_difficulty: defines.difficulty_settings.recipe_difficulty,
+    
+    /**
+     * Either `"after-victory"`, `"always"` or `"never"`. Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce | runtime:LuaForce} for that.
+     */
+    research_queue_setting: string,
+    technology_difficulty: defines.difficulty_settings.technology_difficulty,
+    
+    /**
+     * A value in range [0.001, 1000].
+     */
+    technology_price_multiplier: number
 }
 
 /**
@@ -1716,8 +1743,8 @@ interface MapGenSettings {
 - `moisture` - a value between 0 and 1 that determines whether a tile becomes sandy (low moisture) or grassy (high moisture).
 - `aux` - a value between 0 and 1 that determines whether low-moisture tiles become sand or red desert.
 - `temperature` - provides a value (vaguely representing degrees Celsius, varying between -20 and 50) that is used (together with moisture and aux) as part of tree and decorative placement.
-- `elevation` - tiles values less than zero become water. Cliffs are placed along certain contours according to {@link CliffPlacementSettings | CliffPlacementSettings}.
-- `cliffiness` - determines whether (when >0.5) or not (when <0.5) a cliff will be placed at an otherwise suitable (according to {@link CliffPlacementSettings | CliffPlacementSettings}) location.
+- `elevation` - tiles values less than zero become water. Cliffs are placed along certain contours according to {@link CliffPlacementSettings | runtime:CliffPlacementSettings}.
+- `cliffiness` - determines whether (when >0.5) or not (when <0.5) a cliff will be placed at an otherwise suitable (according to {@link CliffPlacementSettings | runtime:CliffPlacementSettings}) location.
 - `enemy-base-intensity` - a number that is referenced by both `enemy-base-frequency` and `enemy-base-radius`. i.e. if this is overridden, enemy base frequency and size will both be affected and do something reasonable. By default, this expression returns a value proportional to distance from any starting point, clamped at about 7.
 - `enemy-base-frequency` - a number representing average number of enemy bases per tile for a region, by default in terms of `enemy-base-intensity`.
 - `enemy-base-radius` - a number representing the radius of an enemy base, if one were to be placed on the given tile, by default proportional to a constant plus `enemy-base-intensity`. Climate controls ('Moisture' and 'Terrain type' at the bottom of the Terrain tab in the map generator GUI) don't have their own dedicated structures in MapGenSettings. Instead, their values are stored as property expression overrides with long names: 
@@ -1802,17 +1829,23 @@ type MapPosition = {
  *
  */
 interface MapSettings {
-    enemy_evolution: EnemyEvolutionMapSettings,
-    enemy_expansion: EnemyExpansionMapSettings,
-    
+    enemy_evolution: EnemyEvolutionMapSettings
+
+    enemy_expansion: EnemyExpansionMapSettings
+
     /**
      * If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
      */
-    max_failed_behavior_count: number,
-    path_finder: PathFinderMapSettings,
-    pollution: PollutionMapSettings,
-    steering: SteeringMapSettings,
+    max_failed_behavior_count: number
+
+    path_finder: PathFinderMapSettings
+
+    pollution: PollutionMapSettings
+
+    steering: SteeringMapSetting
+
     unit_group: UnitGroupMapSettings
+
 }
 
 /**
@@ -1887,12 +1920,12 @@ interface ModuleEffects {
 /**
  * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  * 
- * To write to this, use an array{@link [string | string}] of the mouse buttons that should be possible to use with on button. The flag `"left-and-right"` can also be set, which will set `"left"` and `"right"` to `true`.
+ * To write to this, use an array{@link [string | runtime:string}] of the mouse buttons that should be possible to use with on button. The flag `"left-and-right"` can also be set, which will set `"left"` and `"right"` to `true`.
  */
 type MouseButtonFlags = {[key: string]: true}
 
 /**
- * A fragment of a functional program used to generate coherent noise, probably for purposes related to terrain generation. These can only be meaningfully written/modified during the data load phase. More detailed information is found on the {@link wiki | https://wiki.factorio.com/Types/NoiseExpression}.
+ * A fragment of a functional program used to generate coherent noise, probably for purposes related to terrain generation. These can only be meaningfully written/modified during the data load phase. More detailed information is found on the {@link prototype docs | prototype:NamedNoiseExpression}.
  */
 interface NoiseExpression {
     
@@ -2204,7 +2237,7 @@ interface PlaceAsTileResult {
 /**
  * A player may be specified in one of three ways.
  */
-type PlayerIdentification = /* The player index. */ number | /* The player name. */ string | /* A reference to {@link LuaPlayer | LuaPlayer} may be passed directly. */ LuaPlayer
+type PlayerIdentification = /* The player index. */ number | /* The player name. */ string | /* A reference to {@link LuaPlayer | runtime:LuaPlayer} may be passed directly. */ LuaPlayer
 
 /**
  * These values are for the time frame of one second (60 ticks).
@@ -2345,7 +2378,7 @@ interface PrototypeHistory {
 }
 
 /**
- * The smooth orientation. It is a {@link float | float} in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise. This means a value of `0` indicates "north", a value of `0.5` indicates "south".
+ * The smooth orientation. It is a {@link float | runtime:float} in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise. This means a value of `0` indicates "north", a value of `0.5` indicates "south".
  * 
  * For example then, a value of `0.625` would indicate "south-west", and a value of `0.875` would indicate "north-west".
  */
@@ -2380,6 +2413,11 @@ interface Resistance {
 interface RidingState {
     acceleration: defines.riding.acceleration,
     direction: defines.riding.direction
+}
+
+interface RollingStockDrawData {
+    orientaton: RealOrientation,
+    position: MapPosition
 }
 
 /**
@@ -2531,31 +2569,31 @@ interface SmokeSource {
 }
 
 /**
- * It can be either the name of a {@link sound prototype | https://wiki.factorio.com/Prototype/Sound} defined in the data stage, or a path in the form `"type/name"`. The latter option can be sorted into three categories.
+ * It can be either the name of a {@link SoundPrototype | prototype:SoundPrototype} defined in the data stage, or a path in the form `"type/name"`. The latter option can be sorted into three categories.
  * 
- * The validity of a SoundPath can be verified at runtime using {@link LuaGameScript::is_valid_sound_path | LuaGameScript::is_valid_sound_path}.
+ * The validity of a SoundPath can be verified at runtime using {@link LuaGameScript::is_valid_sound_path | runtime:LuaGameScript::is_valid_sound_path}.
  * 
  * The utility and ambient types each contain general use sound prototypes defined by the game itself.
- * - `"utility"` - Uses the {@link UtilitySounds | https://wiki.factorio.com/Prototype/UtilitySounds} prototype. Example: `"utility/wire_connect_pole"`
- * - `"ambient"` - Uses {@link AmbientSound | https://wiki.factorio.com/Prototype/AmbientSound} prototypes. Example: `"ambient/resource-deficiency"`
+ * - `"utility"` - Uses {@link UtilitySounds | prototype:UtilitySounds}. Example: `"utility/wire_connect_pole"`
+ * - `"ambient"` - Uses {@link AmbientSound | prototype:AmbientSound}. Example: `"ambient/resource-deficiency"`
  * 
  * The following types can be combined with any tile name as long as its prototype defines the
  *     corresponding sound.
- * - `"tile-walking"` - Uses {@link Tile::walking_sound | https://wiki.factorio.com/Prototype/Tile#walking_sound}. Example: `"tile-walking/concrete"`
- * - `"tile-mined"` - Uses {@link Tile::mined_sound | https://wiki.factorio.com/Prototype/Tile#mined_sound}
- * - `"tile-build-small"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}. Example: `"tile-build-small/concrete"`
- * - `"tile-build-medium"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}
- * - `"tile-build-large"` - Uses {@link Tile::build_sound | https://wiki.factorio.com/Prototype/Tile#build_sound}
+ * - `"tile-walking"` - Uses {@link TilePrototype::walking_sound | prototype:TilePrototype::walking_sound}. Example: `"tile-walking/concrete"`
+ * - `"tile-mined"` - Uses {@link TilePrototype::mined_sound | prototype:TilePrototype::mined_sound}
+ * - `"tile-build-small"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}. Example: `"tile-build-small/concrete"`
+ * - `"tile-build-medium"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}
+ * - `"tile-build-large"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}
  * 
  * The following types can be combined with any entity name as long as its prototype defines the
  *     corresponding sound.
- * - `"entity-build"` - Uses {@link Entity::build_sound | https://wiki.factorio.com/Prototype/Entity#build_sound}. Example: `"entity-build/wooden-chest"`
- * - `"entity-mined"` - Uses {@link Entity::mined_sound | https://wiki.factorio.com/Prototype/Entity#mined_sound}
- * - `"entity-mining"` - Uses {@link Entity::mining_sound | https://wiki.factorio.com/Prototype/Entity#mining_sound}
- * - `"entity-vehicle_impact"` - Uses {@link Entity::vehicle_impact_sound | https://wiki.factorio.com/Prototype/Entity#vehicle_impact_sound}
- * - `"entity-rotated"` - Uses {@link Entity::rotated_sound | https://wiki.factorio.com/Prototype/Entity#rotated_sound}
- * - `"entity-open"` - Uses {@link Entity::open_sound | https://wiki.factorio.com/Prototype/Entity#open_sound}
- * - `"entity-close"` - Uses {@link Entity::close_sound | https://wiki.factorio.com/Prototype/Entity#close_sound}
+ * - `"entity-build"` - Uses {@link Entity::build_sound | prototype:EntityPrototype::build_sound}. Example: `"entity-build/wooden-chest"`
+ * - `"entity-mined"` - Uses {@link Entity::mined_sound | prototype:EntityPrototype::mined_sound}
+ * - `"entity-mining"` - Uses {@link Entity::mining_sound | prototype:EntityPrototype::mining_sound}
+ * - `"entity-vehicle_impact"` - Uses {@link EntityPrototype::vehicle_impact_sound | prototype:EntityPrototype::vehicle_impact_sound}
+ * - `"entity-rotated"` - Uses {@link EntityPrototype::rotated_sound | prototype:EntityPrototype::rotated_sound}
+ * - `"entity-open"` - Uses {@link Entity::open_sound | prototype:EntityPrototype::open_sound}
+ * - `"entity-close"` - Uses {@link Entity::close_sound | prototype:EntityPrototype::close_sound}
  */
 type SoundPath = string
 
@@ -2578,9 +2616,9 @@ interface SpawnPointDefinition {
 }
 
 /**
- * It can be either the name of a {@link sprite prototype | https://wiki.factorio.com/Prototype/Sprite} defined in the data stage, or a path in form "type/name".
+ * It can be either the name of a {@link SpritePrototype | prototype:SpritePrototype} defined in the data stage, or a path in form "type/name".
  * 
- * The validity of a SpritePath can be verified at runtime using {@link LuaGameScript::is_valid_sprite_path | LuaGameScript::is_valid_sprite_path}.
+ * The validity of a SpritePath can be verified at runtime using {@link LuaGameScript::is_valid_sprite_path | runtime:LuaGameScript::is_valid_sprite_path}.
  * 
  * The supported types are:
  * - `"item"` - for example "item/iron-plate" is the icon sprite of iron plate
@@ -2621,7 +2659,7 @@ interface SteeringMapSettings {
 /**
  * A surface may be specified in one of three ways.
  */
-type SurfaceIdentification = /* It will be the index of the surface. `nauvis` has index `1`, the first surface-created surface will have index `2` and so on. */ number | /* It will be the surface name. E.g. `"nauvis"`. */ string | /* A reference to {@link LuaSurface | LuaSurface} may be passed directly. */ LuaSurface
+type SurfaceIdentification = /* It will be the index of the surface. `nauvis` has index `1`, the first surface-created surface will have index `2` and so on. */ number | /* It will be the surface name. E.g. `"nauvis"`. */ string | /* A reference to {@link LuaSurface | runtime:LuaSurface} may be passed directly. */ LuaSurface
 
 interface TabAndContent {
     content: LuaGuiElement,
@@ -2643,7 +2681,7 @@ type Tags = {[key: string]: AnyBasic}
 /**
  * A technology may be specified in one of three ways.
  */
-type TechnologyIdentification = /* The technology name. */ string | /* A reference to {@link LuaTechnology | LuaTechnology} may be passed directly. */ LuaTechnology | /* A reference to {@link LuaTechnologyPrototype | LuaTechnologyPrototype} may be passed directly. */ LuaTechnologyPrototype
+type TechnologyIdentification = /* The technology name. */ string | /* A reference to {@link LuaTechnology | runtime:LuaTechnology} may be passed directly. */ LuaTechnology | /* A reference to {@link LuaTechnologyPrototype | runtime:LuaTechnologyPrototype} may be passed directly. */ LuaTechnologyPrototype
 
 /**
  * The effect that is applied when a technology is researched. It is a table that contains at least the field `type`.
@@ -2675,7 +2713,7 @@ interface Tile {
 }
 
 /**
- * Coordinates of a tile on a {@link LuaSurface | LuaSurface} where each integer `x`/`y` represents a different tile. This uses the same format as {@link MapPosition | MapPosition}, except it rounds any non-integer `x`/`y` down to whole numbers. It can be specified either with or without explicit keys.
+ * Coordinates of a tile on a {@link LuaSurface | runtime:LuaSurface} where each integer `x`/`y` represents a different tile. This uses the same format as {@link MapPosition | runtime:MapPosition}, except it rounds any non-integer `x`/`y` down to whole numbers. It can be specified either with or without explicit keys.
  */
 type TilePosition = {
     x: number,
@@ -2707,7 +2745,7 @@ interface TrainScheduleRecord {
     rail?: LuaEntity,
     
     /**
-     * When a train is allowed to reach rail target from any direction it will be `nil`. If rail has to be reached from specific direction, this value allows to choose the direction. This value corresponds to {@link LuaEntity::connected_rail_direction | LuaEntity::connected_rail_direction} of a TrainStop.
+     * When a train is allowed to reach rail target from any direction it will be `nil`. If rail has to be reached from specific direction, this value allows to choose the direction. This value corresponds to {@link LuaEntity::connected_rail_direction | runtime:LuaEntity::connected_rail_direction} of a TrainStop.
      */
     rail_direction?: defines.rail_direction,
     
@@ -2977,7 +3015,7 @@ interface DefaultAchievementPrototypeFilter extends BaseAchievementPrototypeFilt
 interface BaseAttackParameters {
     
     /**
-     * List of the names of compatible {@link LuaAmmoCategoryPrototypes | LuaAmmoCategoryPrototype}.
+     * List of the names of compatible {@link LuaAmmoCategoryPrototypes | runtime:LuaAmmoCategoryPrototype}.
      */
     ammo_categories?: string[],
     
@@ -3091,7 +3129,7 @@ interface CapsuleActionArtilleryRemote extends BaseCapsuleAction {
     type: 'artillery-remote',
     
     /**
-     * Name of the {@link flare prototype | LuaEntityPrototype}.
+     * Name of the {@link flare prototype | runtime:LuaEntityPrototype}.
      */
     flare: string
 }
@@ -3115,7 +3153,7 @@ interface CapsuleActionEquipmentRemote extends BaseCapsuleAction {
     type: 'equipment-remote',
     
     /**
-     * Name of the {@link LuaEquipmentPrototype | LuaEquipmentPrototype}.
+     * Name of the {@link LuaEquipmentPrototype | runtime:LuaEquipmentPrototype}.
      */
     equipment: string
 }
@@ -3452,7 +3490,7 @@ interface EntityPrototypeFilterFlag extends BaseEntityPrototypeFilter {
     filter: 'flag',
     
     /**
-     * One of the values in {@link EntityPrototypeFlags | EntityPrototypeFlags}.
+     * One of the values in {@link EntityPrototypeFlags | runtime:EntityPrototypeFlags}.
      */
     flag: string
 }
@@ -3657,7 +3695,7 @@ interface FluidPrototypeFilterSubgroup extends BaseFluidPrototypeFilter {
     filter: 'subgroup',
     
     /**
-     * A {@link LuaGroup | LuaGroup} (subgroup) name
+     * A {@link LuaGroup | runtime:LuaGroup} (subgroup) name
      */
     subgroup: string
 }
@@ -3828,7 +3866,7 @@ interface ItemPrototypeFilterFlag extends BaseItemPrototypeFilter {
     filter: 'flag',
     
     /**
-     * One of the values in {@link ItemPrototypeFlags | ItemPrototypeFlags}.
+     * One of the values in {@link ItemPrototypeFlags | runtime:ItemPrototypeFlags}.
      */
     flag: string
 }
@@ -3855,7 +3893,7 @@ interface ItemPrototypeFilterFuelCategory extends BaseItemPrototypeFilter {
     filter: 'fuel-category',
     
     /**
-     * A {@link LuaFuelCategoryPrototype | LuaFuelCategoryPrototype} name
+     * A {@link LuaFuelCategoryPrototype | runtime:LuaFuelCategoryPrototype} name
      */
     'fuel-category': string
 }
@@ -3976,7 +4014,7 @@ interface ItemPrototypeFilterSubgroup extends BaseItemPrototypeFilter {
     filter: 'subgroup',
     
     /**
-     * A {@link LuaGroup | LuaGroup} (subgroup) name
+     * A {@link LuaGroup | runtime:LuaGroup} (subgroup) name
      */
     subgroup: string
 }
@@ -4110,7 +4148,7 @@ interface LuaEntityDamagedEventFilterDamageType extends BaseLuaEntityDamagedEven
     filter: 'damage-type',
     
     /**
-     * A {@link LuaDamagePrototype | LuaDamagePrototype} name
+     * A {@link LuaDamagePrototype | runtime:LuaDamagePrototype} name
      */
     type: string
 }
@@ -5783,7 +5821,7 @@ interface RecipePrototypeFilterCategory extends BaseRecipePrototypeFilter {
     filter: 'category',
     
     /**
-     * A {@link LuaRecipeCategoryPrototype | LuaRecipeCategoryPrototype} name
+     * A {@link LuaRecipeCategoryPrototype | runtime:LuaRecipeCategoryPrototype} name
      */
     category: string
 }
@@ -5904,7 +5942,7 @@ interface RecipePrototypeFilterSubgroup extends BaseRecipePrototypeFilter {
     filter: 'subgroup',
     
     /**
-     * A {@link LuaGroup | LuaGroup} (subgroup) name
+     * A {@link LuaGroup | runtime:LuaGroup} (subgroup) name
      */
     subgroup: string
 }

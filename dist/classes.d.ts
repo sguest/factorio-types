@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.87
-// API version 3
+// Factorio version 1.1.89
+// API version 4
 
 /**
  * Collection of settings for overriding default ai behavior.
@@ -225,7 +225,7 @@ interface LuaAutoplaceControlPrototype {
  */
 interface LuaBootstrap {
     /**
-     * Generate a new, unique event ID that can be used to raise custom events with {@link LuaBootstrap::raise_event | LuaBootstrap::raise_event}.
+     * Generate a new, unique event ID that can be used to raise custom events with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}.
      */
     generate_event_name(this: void): void
 
@@ -256,9 +256,9 @@ interface LuaBootstrap {
         name: string): void
 
     /**
-     * Register a function to be run when mod configuration changes. This is called when the game version or any mod version changed, when any mod was added or removed, when a startup setting has changed, when any prototypes have been added or removed, or when a migration was applied. It allows the mod to make any changes it deems appropriate to both the data structures in its {@link global | global} table or to the game state through {@link LuaGameScript | LuaGameScript}.
+     * Register a function to be run when mod configuration changes. This is called when the game version or any mod version changed, when any mod was added or removed, when a startup setting has changed, when any prototypes have been added or removed, or when a migration was applied. It allows the mod to make any changes it deems appropriate to both the data structures in its {@link global | runtime:global} table or to the game state through {@link LuaGameScript | runtime:LuaGameScript}.
      * @remarks
-     * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
+     * For more context, refer to the {@link Data Lifecycle | runtime:data-lifecycle} page.
      *
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      */
@@ -271,14 +271,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @example
-     * Register for the [on_tick](on_tick) event to print the current tick to console each tick. 
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
@@ -292,9 +292,9 @@ interface LuaBootstrap {
         filters?: EventFilter): void
 
     /**
-     * Register a function to be run on mod initialization. This is only called when a new save game is created or when a save file is loaded that previously didn't contain the mod. During it, the mod gets the chance to set up initial values that it will use for its lifetime. It has full access to {@link LuaGameScript | LuaGameScript} and the {@link global | global} table and can change anything about them that it deems appropriate. No other events will be raised for the mod until it has finished this step.
+     * Register a function to be run on mod initialization. This is only called when a new save game is created or when a save file is loaded that previously didn't contain the mod. During it, the mod gets the chance to set up initial values that it will use for its lifetime. It has full access to {@link LuaGameScript | runtime:LuaGameScript} and the {@link global | runtime:global} table and can change anything about them that it deems appropriate. No other events will be raised for the mod until it has finished this step.
      * @remarks
-     * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
+     * For more context, refer to the {@link Data Lifecycle | runtime:data-lifecycle} page.
      *
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @example
@@ -312,16 +312,16 @@ interface LuaBootstrap {
     /**
      * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session.
      * 
-     * It gives the mod the opportunity to rectify potential differences in local state introduced by the save/load cycle. Doing anything other than the following three will lead to desyncs, breaking multiplayer and replay functionality. Access to {@link LuaGameScript | LuaGameScript} is not available. The {@link global | global} table can be accessed and is safe to read from, but not write to, as doing so will lead to an error.
+     * It gives the mod the opportunity to rectify potential differences in local state introduced by the save/load cycle. Doing anything other than the following three will lead to desyncs, breaking multiplayer and replay functionality. Access to {@link LuaGameScript | runtime:LuaGameScript} is not available. The {@link global | runtime:global} table can be accessed and is safe to read from, but not write to, as doing so will lead to an error.
      * 
      * The only legitimate uses of this event are these:
      * - Re-setup {@link metatables | https://www.lua.org/pil/13.html} as they are not persisted through the save/load cycle.
      * - Re-setup conditional event handlers, meaning subscribing to an event only when some condition is met to save processing time.
-     * - Create local references to data stored in the {@link global | global} table.
+     * - Create local references to data stored in the {@link global | runtime:global} table.
      * 
-     * For all other purposes, {@link LuaBootstrap::on_init | LuaBootstrap::on_init}, {@link LuaBootstrap::on_configuration_changed | LuaBootstrap::on_configuration_changed} or {@link migrations | migrations} should be used instead.
+     * For all other purposes, {@link LuaBootstrap::on_init | runtime:LuaBootstrap::on_init}, {@link LuaBootstrap::on_configuration_changed | runtime:LuaBootstrap::on_configuration_changed} or {@link migrations | runtime:migrations} should be used instead.
      * @remarks
-     * For more context, refer to the {@link Data Lifecycle | data-lifecycle} page.
+     * For more context, refer to the {@link Data Lifecycle | runtime:data-lifecycle} page.
      *
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      */
@@ -356,22 +356,22 @@ interface LuaBootstrap {
         }): void
 
     /**
-     * Raise an event. Only events generated with {@link LuaBootstrap::generate_event_name | LuaBootstrap::generate_event_name} and the following can be raised:
+     * Raise an event. Only events generated with {@link LuaBootstrap::generate_event_name | runtime:LuaBootstrap::generate_event_name} and the following can be raised:
      * 
-     * - {@link on_console_chat | on_console_chat}
-     * - {@link on_player_crafted_item | on_player_crafted_item}
-     * - {@link on_player_fast_transferred | on_player_fast_transferred}
-     * - {@link on_biter_base_built | on_biter_base_built}
-     * - {@link on_market_item_purchased | on_market_item_purchased}
-     * - {@link script_raised_built | script_raised_built}
-     * - {@link script_raised_destroy | script_raised_destroy}
-     * - {@link script_raised_revive | script_raised_revive}
-     * - {@link script_raised_teleported | script_raised_teleported}
-     * - {@link script_raised_set_tiles | script_raised_set_tiles}
+     * - {@link on_console_chat | runtime:on_console_chat}
+     * - {@link on_player_crafted_item | runtime:on_player_crafted_item}
+     * - {@link on_player_fast_transferred | runtime:on_player_fast_transferred}
+     * - {@link on_biter_base_built | runtime:on_biter_base_built}
+     * - {@link on_market_item_purchased | runtime:on_market_item_purchased}
+     * - {@link script_raised_built | runtime:script_raised_built}
+     * - {@link script_raised_destroy | runtime:script_raised_destroy}
+     * - {@link script_raised_revive | runtime:script_raised_revive}
+     * - {@link script_raised_teleported | runtime:script_raised_teleported}
+     * - {@link script_raised_set_tiles | runtime:script_raised_set_tiles}
      * @param data - Table with extra data that will be passed to the event handler. Any invalid LuaObjects will silently stop the event from being raised.
      * @param event - ID of the event to raise.
      * @example
-     * Raise the [on_console_chat](on_console_chat) event with the desired message 'from' the first player. 
+     * Raise the [on_console_chat](runtime:on_console_chat) event with the desired message 'from' the first player. 
      * ```
      * local data = {player_index = 1, message = "Hello friends!"}
      * script.raise_event(defines.events.on_console_chat, data)
@@ -478,7 +478,7 @@ interface LuaBootstrap {
      * @param metatable - The metatable to register.
      * @param name - The name of this metatable. Names must be unique per mod.
      * @example
-     * The metatable first needs to be defined in the mod's root scope, then registered using this method. From then on, it will be properly restored for tables in [global](global). 
+     * The metatable first needs to be defined in the mod's root scope, then registered using this method. From then on, it will be properly restored for tables in [global](runtime:global). 
      * ```
      * local metatable = {
      *    __index = function(key)
@@ -499,9 +499,9 @@ interface LuaBootstrap {
         metatable: Table): void
 
     /**
-     * Registers an entity so that after it's destroyed, {@link on_entity_destroyed | on_entity_destroyed} is called. Once an entity is registered, it stays registered until it is actually destroyed, even through save/load cycles. The registration is global across all mods, meaning once one mod registers an entity, all mods listening to {@link on_entity_destroyed | on_entity_destroyed} will receive the event when it is destroyed. Registering the same entity multiple times will still only fire the destruction event once, and will return the same registration number.
+     * Registers an entity so that after it's destroyed, {@link on_entity_destroyed | runtime:on_entity_destroyed} is called. Once an entity is registered, it stays registered until it is actually destroyed, even through save/load cycles. The registration is global across all mods, meaning once one mod registers an entity, all mods listening to {@link on_entity_destroyed | runtime:on_entity_destroyed} will receive the event when it is destroyed. Registering the same entity multiple times will still only fire the destruction event once, and will return the same registration number.
      * @remarks
-     * Depending on when a given entity is destroyed, {@link on_entity_destroyed | on_entity_destroyed} will either be fired at the end of the current tick or at the end of the next tick.
+     * Depending on when a given entity is destroyed, {@link on_entity_destroyed | runtime:on_entity_destroyed} will either be fired at the end of the current tick or at the end of the next tick.
      *
      * @param entity - The entity to register.
      */
@@ -513,19 +513,19 @@ interface LuaBootstrap {
      * @param event - ID of the event to filter.
      * @param filters - The filters or `nil` to clear them.
      * @example
-     * Limit the [on_marked_for_deconstruction](on_marked_for_deconstruction) event to only be received when a non-ghost entity is marked for deconstruction. 
+     * Limit the [on_marked_for_deconstruction](runtime:on_marked_for_deconstruction) event to only be received when a non-ghost entity is marked for deconstruction. 
      * ```
      * script.set_event_filter(defines.events.on_marked_for_deconstruction, {{filter = "ghost", invert = true}})
      * ```
      *
      * @example
-     * Limit the [on_built_entity](on_built_entity) event to only be received when either a `unit` or a `unit-spawner` is built. 
+     * Limit the [on_built_entity](runtime:on_built_entity) event to only be received when either a `unit` or a `unit-spawner` is built. 
      * ```
      * script.set_event_filter(defines.events.on_built_entity, {{filter = "type", type = "unit"}, {filter = "type", type = "unit-spawner"}})
      * ```
      *
      * @example
-     * Limit the [on_entity_damaged](on_entity_damaged) event to only be received when a `rail` is damaged by an `acid` attack. 
+     * Limit the [on_entity_damaged](runtime:on_entity_damaged) event to only be received when a `rail` is damaged by an `acid` attack. 
      * ```
      * script.set_event_filter(defines.events.on_entity_damaged, {{filter = "rail"}, {filter = "damage-type", type = "acid", mode = "and"}})
      * ```
@@ -592,7 +592,7 @@ interface LuaBootstrap {
 }
 
 /**
- * A reference to the burner energy source owned by a specific {@link LuaEntity | LuaEntity} or {@link LuaEquipment | LuaEquipment}.
+ * A reference to the burner energy source owned by a specific {@link LuaEntity | runtime:LuaEntity} or {@link LuaEquipment | runtime:LuaEquipment}.
  */
 interface LuaBurner {
     /**
@@ -606,9 +606,9 @@ interface LuaBurner {
     readonly burnt_result_inventory: LuaInventory
 
     /**
-     * The currently burning item. Writing `nil` will void the currently burning item without producing a {@link LuaBurner::burnt_result | LuaBurner::burnt_result}.
+     * The currently burning item. Writing `nil` will void the currently burning item without producing a {@link LuaBurner::burnt_result | runtime:LuaBurner::burnt_result}.
      * @remarks
-     * Writing to this automatically handles correcting {@link LuaBurner::remaining_burning_fuel | LuaBurner::remaining_burning_fuel}.
+     * Writing to this automatically handles correcting {@link LuaBurner::remaining_burning_fuel | runtime:LuaBurner::remaining_burning_fuel}.
      *
      */
     currently_burning?: LuaItemPrototype
@@ -649,7 +649,7 @@ interface LuaBurner {
     /**
      * The amount of energy left in the currently-burning fuel item.
      * @remarks
-     * Writing to this will silently do nothing if there's no {@link LuaBurner::currently_burning | LuaBurner::currently_burning} set.
+     * Writing to this will silently do nothing if there's no {@link LuaBurner::currently_burning | runtime:LuaBurner::currently_burning} set.
      *
      */
     remaining_burning_fuel: number
@@ -726,7 +726,7 @@ interface LuaBurnerPrototype {
 /**
  * A chunk iterator can be used for iterating chunks coordinates of a surface.
  * 
- * The returned type is a {@link ChunkPositionAndArea | ChunkPositionAndArea} containing the chunk coordinates and its area.
+ * The returned type is a {@link ChunkPositionAndArea | runtime:ChunkPositionAndArea} containing the chunk coordinates and its area.
  * @example
  * ```
  * for chunk in some_surface.get_chunks() do
@@ -832,7 +832,7 @@ interface LuaCombinatorControlBehavior extends LuaControlBehavior {
 }
 
 /**
- * Allows for the registration of custom console commands through the global object named `commands`. Similarly to {@link event subscriptions | LuaBootstrap::on_event}, these don't persist through a save-and-load cycle.
+ * Allows for the registration of custom console commands through the global object named `commands`. Similarly to {@link event subscriptions | runtime:LuaBootstrap::on_event}, these don't persist through a save-and-load cycle.
  */
 interface LuaCommandProcessor {
     /**
@@ -890,7 +890,7 @@ interface LuaCommandProcessor {
  */
 interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
     /**
-     * Gets the signal at the given index. Returned {@link Signal | Signal} will not contain signal if none is set for the index.
+     * Gets the signal at the given index. Returned {@link Signal | runtime:Signal} will not contain signal if none is set for the index.
      */
     get_signal(this: void,
         index: number): void
@@ -919,7 +919,7 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
     readonly object_name: string
 
     /**
-     * This constant combinator's parameters. `nil` if the {@link item_slot_count | LuaEntityPrototype::item_slot_count} of the combinator's prototype is `0`.
+     * This constant combinator's parameters. `nil` if the {@link item_slot_count | runtime:LuaEntityPrototype::item_slot_count} of the combinator's prototype is `0`.
      * 
      * Writing `nil` clears the combinator's parameters.
      */
@@ -959,7 +959,7 @@ interface LuaContainerControlBehavior extends LuaControlBehavior {
 }
 
 /**
- * This is an abstract base class containing the common functionality between {@link LuaPlayer | LuaPlayer} and entities (see {@link LuaEntity | LuaEntity}). When accessing player-related functions through a {@link LuaEntity | LuaEntity}, it must refer to a character entity.
+ * This is an abstract base class containing the common functionality between {@link LuaPlayer | runtime:LuaPlayer} and entities (see {@link LuaEntity | runtime:LuaEntity}). When accessing player-related functions through a {@link LuaEntity | runtime:LuaEntity}, it must refer to a character entity.
  */
 interface LuaControl {
     /**
@@ -1057,7 +1057,7 @@ interface LuaControl {
     /**
      * Get an inventory belonging to this entity. This can be either the "main" inventory or some auxiliary one, like the module slots or logistic trash slots.
      * @remarks
-     * A given {@link defines.inventory | defines.inventory} is only meaningful for the corresponding LuaObject type. EG: get_inventory(defines.inventory.character_main) is only meaningful if 'this' is a player character. You may get a value back but if the type of 'this' isn't the type referred to by the {@link defines.inventory | defines.inventory} it's almost guaranteed to not be the inventory asked for.
+     * A given {@link defines.inventory | runtime:defines.inventory} is only meaningful for the corresponding LuaObject type. EG: get_inventory(defines.inventory.character_main) is only meaningful if 'this' is a player character. You may get a value back but if the type of 'this' isn't the type referred to by the {@link defines.inventory | runtime:defines.inventory} it's almost guaranteed to not be the inventory asked for.
      *
      */
     get_inventory(this: void,
@@ -1114,7 +1114,7 @@ interface LuaControl {
     /**
      * Returns whether the player is holding a blueprint. This takes both blueprint items as well as blueprint records from the blueprint library into account.
      * 
-     * Note that both this method and {@link LuaControl::get_blueprint_entities | LuaControl::get_blueprint_entities} refer to the currently selected blueprint, meaning a blueprint book with a selected blueprint will return the information as well.
+     * Note that both this method and {@link LuaControl::get_blueprint_entities | runtime:LuaControl::get_blueprint_entities} refer to the currently selected blueprint, meaning a blueprint book with a selected blueprint will return the information as well.
      */
     is_cursor_blueprint(this: void): void
 
@@ -1198,7 +1198,7 @@ interface LuaControl {
      * `script_raised_teleported` will not be raised if teleporting a player with no character.
      *
      * @param position - Where to teleport to.
-     * @param raise_teleported - If true, [defines.events.script_raised_teleported](defines.events.script_raised_teleported) will be fired on successful entity teleportation.
+     * @param raise_teleported - If true, [defines.events.script_raised_teleported](runtime:defines.events.script_raised_teleported) will be fired on successful entity teleportation.
      * @param surface - Surface to teleport to. If not given, will teleport to the entity's current surface. Only players, cars, and spidertrons can be teleported cross-surface.
      */
     teleport(this: void,
@@ -1220,63 +1220,63 @@ interface LuaControl {
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_additional_mining_categories: string[]
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_build_distance_bonus: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_crafting_speed_modifier: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_health_bonus: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_inventory_slots_bonus: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_item_drop_distance_bonus: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_item_pickup_distance_bonus: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_loot_pickup_distance_bonus: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_maximum_following_robot_count_bonus: number
@@ -1288,7 +1288,7 @@ interface LuaControl {
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_mining_speed_modifier: number
@@ -1300,14 +1300,14 @@ interface LuaControl {
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_reach_distance_bonus: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_resource_reach_distance_bonus: number
@@ -1320,14 +1320,14 @@ interface LuaControl {
     /**
      * Modifies the running speed of this character by the given value as a percentage. Setting the running modifier to `0.5` makes the character run 50% faster. The minimum value of `-1` reduces the movement speed by 100%, resulting in a speed of `0`.
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_running_speed_modifier: number
 
     /**
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     character_trash_slot_count_bonus: number
@@ -1353,7 +1353,7 @@ interface LuaControl {
     readonly crafting_queue_size: number
 
     /**
-     * The ghost prototype in the player's cursor. When read, it will be a {@link LuaItemPrototype | LuaItemPrototype}.
+     * The ghost prototype in the player's cursor. When read, it will be a {@link LuaItemPrototype | runtime:LuaItemPrototype}.
      * @remarks
      * Items in the cursor stack will take priority over the cursor ghost.
      *
@@ -1363,7 +1363,7 @@ interface LuaControl {
     /**
      * The player's cursor stack. `nil` if the player controller is a spectator.
      * @example
-     * Even though this property is marked as read-only, it returns a [LuaItemStack](LuaItemStack), meaning it can be manipulated like so: 
+     * Even though this property is marked as read-only, it returns a [LuaItemStack](runtime:LuaItemStack), meaning it can be manipulated like so: 
      * ```
      * player.cursor_stack.clear()
      * ```
@@ -1384,18 +1384,18 @@ interface LuaControl {
     /**
      * The current combat robots following the character.
      * @remarks
-     * When called on a {@link LuaPlayer | LuaPlayer}, it must be associated with a character(see {@link LuaPlayer::character | LuaPlayer::character}).
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character(see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      *
      */
     readonly following_robots: LuaEntity[]
 
     /**
-     * The force of this entity. Reading will always give a {@link LuaForce | LuaForce}, but it is possible to assign either {@link string | string} or {@link LuaForce | LuaForce} to this attribute to change the force.
+     * The force of this entity. Reading will always give a {@link LuaForce | runtime:LuaForce}, but it is possible to assign either {@link string | runtime:string} or {@link LuaForce | runtime:LuaForce} to this attribute to change the force.
      */
     force: ForceIdentification
 
     /**
-     * Unique {@link index | LuaForce::index} (ID) associated with the force of this entity.
+     * Unique {@link index | runtime:LuaForce::index} (ID) associated with the force of this entity.
      */
     readonly force_index: number
 
@@ -1417,7 +1417,7 @@ interface LuaControl {
     /**
      * Current mining state.
      * @remarks
-     * When the player isn't mining tiles, the player will mine what ever entity is currently selected. See {@link LuaControl::selected | LuaControl::selected} and {@link LuaControl::update_selected_entity | LuaControl::update_selected_entity}.
+     * When the player isn't mining tiles the player will mine whatever entity is currently selected. See {@link LuaControl::selected | runtime:LuaControl::selected} and {@link LuaControl::update_selected_entity | runtime:LuaControl::update_selected_entity}.
      *
      */
     mining_state: {
@@ -1436,7 +1436,7 @@ interface LuaControl {
     /**
      * The GUI the player currently has open.
      * 
-     * This is the GUI that will asked to close (by firing the {@link on_gui_closed | on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is not `nil`, and a new GUI is written to it, the existing one will be asked to close.
+     * This is the GUI that will asked to close (by firing the {@link on_gui_closed | runtime:on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is not `nil`, and a new GUI is written to it, the existing one will be asked to close.
      * @remarks
      * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory`, `technology`, or `nil`.
      *
@@ -1513,7 +1513,7 @@ interface LuaControl {
     readonly surface: LuaSurface
 
     /**
-     * Unique {@link index | LuaSurface::index} (ID) associated with the surface this entity is currently on.
+     * Unique {@link index | runtime:LuaSurface::index} (ID) associated with the surface this entity is currently on.
      */
     readonly surface_index: number
 
@@ -1554,7 +1554,7 @@ interface LuaControl {
 /**
  * The control behavior for an entity. Inserters have logistic network and circuit network behavior logic, lamps have circuit logic and so on. This is an abstract base class that concrete control behaviors inherit.
  * @remarks
- * An control reference becomes invalid once the control behavior is removed or the entity (see {@link LuaEntity | LuaEntity}) it resides in is destroyed.
+ * An control reference becomes invalid once the control behavior is removed or the entity (see {@link LuaEntity | runtime:LuaEntity}) it resides in is destroyed.
  *
  */
 interface LuaControlBehavior {
@@ -1736,7 +1736,7 @@ interface LuaCustomInputPrototype {
  * 
  * There are some notable consequences to the usage of a custom table type rather than the native Lua table type: Iterating a custom table is only possible using the `pairs` Lua function; `ipairs` won't work. Another key difference is that custom tables cannot be serialised into a game save file -- if saving the game would require serialisation of a custom table, an error will be displayed and the game will not be saved.
  * @example
- * In previous versions of Factorio, this would create a [LuaPlayer](LuaPlayer) instance for every player in the game, even though only one such wrapper is needed. In the current version, accessing [game.players](LuaGameScript::players) by itself does not create any [LuaPlayer](LuaPlayer) instances; they are created lazily when accessed. Therefore, this example only constructs one [LuaPlayer](LuaPlayer) instance, no matter how many elements there are in `game.players`. 
+ * In previous versions of Factorio, this would create a [LuaPlayer](runtime:LuaPlayer) instance for every player in the game, even though only one such wrapper is needed. In the current version, accessing [game.players](runtime:LuaGameScript::players) by itself does not create any [LuaPlayer](runtime:LuaPlayer) instances; they are created lazily when accessed. Therefore, this example only constructs one [LuaPlayer](runtime:LuaPlayer) instance, no matter how many elements there are in `game.players`. 
  * ```
  * game.players["Oxyd"].character.die()
  * ```
@@ -1953,7 +1953,7 @@ interface LuaElectricEnergySourcePrototype {
 }
 
 /**
- * The primary interface for interacting with entities through the Lua API. Entities are everything that exists on the map except for tiles (see {@link LuaTile | LuaTile}).
+ * The primary interface for interacting with entities through the Lua API. Entities are everything that exists on the map except for tiles (see {@link LuaTile | runtime:LuaTile}).
  * 
  * Most functions on LuaEntity also work when the entity is contained in a ghost.
  */
@@ -2078,8 +2078,8 @@ interface LuaEntity extends LuaControl {
     /**
      * Connect two devices with a circuit wire or copper cable. Depending on which type of connection should be made, there are different procedures:
      * 
-     * - To connect two electric poles, `target` must be a {@link LuaEntity | LuaEntity} that specifies another electric pole. This will connect them with copper cable.
-     * - To connect two devices with circuit wire, `target` must be a table of type {@link WireConnectionDefinition | WireConnectionDefinition}.
+     * - To connect two electric poles, `target` must be a {@link LuaEntity | runtime:LuaEntity} that specifies another electric pole. This will connect them with copper cable.
+     * - To connect two devices with circuit wire, `target` must be a table of type {@link WireConnectionDefinition | runtime:WireConnectionDefinition}.
      * @param target - The target with which to establish a connection.
      */
     connect_neighbour(this: void,
@@ -2093,14 +2093,14 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Copies settings from the given entity onto this entity.
-     * @param by_player - If provided, the copying is done 'as' this player and [on_entity_settings_pasted](on_entity_settings_pasted) is triggered.
+     * @param by_player - If provided, the copying is done 'as' this player and [on_entity_settings_pasted](runtime:on_entity_settings_pasted) is triggered.
      */
     copy_settings(this: void,
         entity: LuaEntity,
         by_player?: PlayerIdentification): void
 
     /**
-     * Creates the same smoke that is created when you place a building by hand. You can play the building sound to go with it by using {@link LuaSurface::play_sound | LuaSurface::play_sound}, eg: entity.surface.play_sound{path="entity-build/"..entity.prototype.name, position=entity.position}
+     * Creates the same smoke that is created when you place a building by hand. You can play the building sound to go with it by using {@link LuaSurface::play_sound | runtime:LuaSurface::play_sound}, eg: entity.surface.play_sound{path="entity-build/"..entity.prototype.name, position=entity.position}
      */
     create_build_effect_smoke(this: void): void
 
@@ -2134,7 +2134,7 @@ interface LuaEntity extends LuaControl {
      * Not all entities can be destroyed - things such as rails under trains cannot be destroyed until the train is moved or destroyed.
      *
      * @param table.do_cliff_correction - Whether neighbouring cliffs should be corrected. Defaults to `false`.
-     * @param table.raise_destroy - If `true`, [script_raised_destroy](script_raised_destroy) will be called. Defaults to `false`.
+     * @param table.raise_destroy - If `true`, [script_raised_destroy](runtime:script_raised_destroy) will be called. Defaults to `false`.
      */
     destroy(this: void,
         table?: {
@@ -2145,7 +2145,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Immediately kills the entity. Does nothing if the entity doesn't have health.
      * 
-     * Unlike {@link LuaEntity::destroy | LuaEntity::destroy}, `die` will trigger the {@link on_entity_died | on_entity_died} event and the entity will produce a corpse and drop loot if it has any.
+     * Unlike {@link LuaEntity::destroy | runtime:LuaEntity::destroy}, `die` will trigger the {@link on_entity_died | runtime:on_entity_died} event and the entity will produce a corpse and drop loot if it has any.
      * @param cause - The cause to attribute the kill to.
      * @param force - The force to attribute the kill to.
      * @example
@@ -2172,9 +2172,9 @@ interface LuaEntity extends LuaControl {
      * Disconnect circuit wires or copper cables between devices. Depending on which type of connection should be cut, there are different procedures:
      * 
      * - To remove all copper cables, leave the `target` parameter blank: `pole.disconnect_neighbour()`.
-     * - To remove all wires of a specific color, set `target` to {@link defines.wire_type.red | defines.wire_type.red} or {@link defines.wire_type.green | defines.wire_type.green}.
-     * - To remove a specific copper cable between two electric poles, `target` must be a {@link LuaEntity | LuaEntity} that specifies the other pole: `pole1.disconnect_neighbour(pole2)`.
-     * - To remove a specific circuit wire, `target` must be a table of type {@link WireConnectionDefinition | WireConnectionDefinition}.
+     * - To remove all wires of a specific color, set `target` to {@link defines.wire_type.red | runtime:defines.wire_type.red} or {@link defines.wire_type.green | runtime:defines.wire_type.green}.
+     * - To remove a specific copper cable between two electric poles, `target` must be a {@link LuaEntity | runtime:LuaEntity} that specifies the other pole: `pole1.disconnect_neighbour(pole2)`.
+     * - To remove a specific circuit wire, `target` must be a table of type {@link WireConnectionDefinition | runtime:WireConnectionDefinition}.
      * @param target - The target with which to cut a connection.
      */
     disconnect_neighbour(this: void,
@@ -2292,7 +2292,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Get amounts of all fluids in this entity.
      * @remarks
-     * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | LuaEntity::fluidbox} should be used instead.
+     * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | runtime:LuaEntity::fluidbox} should be used instead.
      *
      */
     get_fluid_contents(this: void): void
@@ -2300,7 +2300,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Get the amount of all or some fluid in this entity.
      * @remarks
-     * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | LuaEntity::fluidbox} should be used instead.
+     * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | runtime:LuaEntity::fluidbox} should be used instead.
      *
      * @param fluid - Prototype name of the fluid to count. If not specified, count all fluids.
      */
@@ -2427,7 +2427,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Gets the passenger of this car or spidertron if any.
      * @remarks
-     * This differs over {@link LuaEntity::get_driver | LuaEntity::get_driver} in that the passenger can't drive the car.
+     * This differs over {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that the passenger can't drive the car.
      * Applies to subclasses: Car,SpiderVehicle
      *
      */
@@ -2553,11 +2553,11 @@ interface LuaEntity extends LuaControl {
     get_upgrade_target(this: void): void
 
     /**
-     * Same as {@link LuaEntity::has_flag | LuaEntity::has_flag}, but targets the inner entity on a entity ghost.
+     * Same as {@link LuaEntity::has_flag | runtime:LuaEntity::has_flag}, but targets the inner entity on a entity ghost.
      * @remarks
      * Applies to subclasses: EntityGhost
      *
-     * @param flag - The flag to test. See [EntityPrototypeFlags](EntityPrototypeFlags) for a list of flags.
+     * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
      */
     ghost_has_flag(this: void,
         flag: string): void
@@ -2575,7 +2575,7 @@ interface LuaEntity extends LuaControl {
      * @remarks
      * `entity.has_flag(f)` is a shortcut for `entity.prototype.has_flag(f)`.
      *
-     * @param flag - The flag to test. See [EntityPrototypeFlags](EntityPrototypeFlags) for a list of flags.
+     * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
      */
     has_flag(this: void,
         flag: string): void
@@ -2688,8 +2688,8 @@ interface LuaEntity extends LuaControl {
      *
      * @param table.force - If true, when the item(s) don't fit into the given inventory the entity is force mined. If false, the mining operation fails when there isn't enough room to transfer all of the items into the inventory. Defaults to false. This is ignored and acts as `true` if no inventory is provided.
      * @param table.ignore_minable - If true, the minable state of the entity is ignored. Defaults to `false`. If false, an entity that isn't minable (set as not-minable in the prototype or isn't minable for other reasons) will fail to be mined.
-     * @param table.inventory - If provided the item(s) will be transferred into this inventory. If provided, this must be an inventory created with [LuaGameScript::create_inventory](LuaGameScript::create_inventory) or be a basic inventory owned by some entity.
-     * @param table.raise_destroyed - If true, [script_raised_destroy](script_raised_destroy) will be raised. Defaults to `true`.
+     * @param table.inventory - If provided the item(s) will be transferred into this inventory. If provided, this must be an inventory created with [LuaGameScript::create_inventory](runtime:LuaGameScript::create_inventory) or be a basic inventory owned by some entity.
+     * @param table.raise_destroyed - If true, [script_raised_destroy](runtime:script_raised_destroy) will be raised. Defaults to `true`.
      */
     mine(this: void,
         table?: {
@@ -2790,7 +2790,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Revive a ghost. I.e. turn it from a ghost to a real entity or tile.
-     * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](script_raised_set_tiles) will be called.
+     * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](runtime:script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](runtime:script_raised_set_tiles) will be called.
      * @param table.return_item_request_proxy - If `true` the function will return item request proxy as the third return value.
      */
     revive(this: void,
@@ -2801,8 +2801,8 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Rotates this entity as if the player rotated it.
-     * @param table.by_player - If not specified, the [on_player_rotated_entity](on_player_rotated_entity) event will not be fired.
-     * @param table.enable_looted - When true, each spilled item will be flagged with the [LuaEntity::to_be_looted](LuaEntity::to_be_looted) flag.
+     * @param table.by_player - If not specified, the [on_player_rotated_entity](runtime:on_player_rotated_entity) event will not be fired.
+     * @param table.enable_looted - When true, each spilled item will be flagged with the [LuaEntity::to_be_looted](runtime:LuaEntity::to_be_looted) flag.
      * @param table.force - When provided the spilled items will be marked for deconstruction by this force.
      * @param table.reverse - If `true`, rotate the entity in the counter-clockwise direction.
      * @param table.spill_items - If the player is not given should extra items be spilled or returned as a second return value from this.
@@ -2855,7 +2855,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Sets the driver of this vehicle.
      * @remarks
-     * This differs from {@link LuaEntity::set_passenger | LuaEntity::set_passenger} in that the passenger can't drive the vehicle.
+     * This differs from {@link LuaEntity::set_passenger | runtime:LuaEntity::set_passenger} in that the passenger can't drive the vehicle.
      * Applies to subclasses: Vehicle
      *
      * @param driver - The new driver. Writing `nil` ejects the current driver, if any.
@@ -2910,7 +2910,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Sets the passenger of this car or spidertron.
      * @remarks
-     * This differs from {@link LuaEntity::get_driver | LuaEntity::get_driver} in that the passenger can't drive the car.
+     * This differs from {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that the passenger can't drive the car.
      * Applies to subclasses: Car,SpiderVehicle
      *
      * @param passenger - The new passenger. Writing `nil` ejects the current passenger, if any.
@@ -2942,7 +2942,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Revives a ghost silently.
-     * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](script_raised_set_tiles) will be called.
+     * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](runtime:script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](runtime:script_raised_set_tiles) will be called.
      * @param table.return_item_request_proxy - If `true` the function will return item request proxy as the third parameter.
      */
     silent_revive(this: void,
@@ -2962,7 +2962,7 @@ interface LuaEntity extends LuaControl {
     start_fading_out(this: void): void
 
     /**
-     * Sets the {@link speed | LuaEntity::speed} of the given SpiderVehicle to zero. Notably does not clear its {@link autopilot_destination | LuaEntity::autopilot_destination}, which it will continue moving towards if set.
+     * Sets the {@link speed | runtime:LuaEntity::speed} of the given SpiderVehicle to zero. Notably does not clear its {@link autopilot_destination | runtime:LuaEntity::autopilot_destination}, which it will continue moving towards if set.
      * @remarks
      * Applies to subclasses: SpiderVehicle
      *
@@ -3051,7 +3051,7 @@ interface LuaEntity extends LuaControl {
      * 
      * The player will be automatically disassociated when a controller is set on the character. Also, all characters associated to a player will be logged off when the player logs off in multiplayer.
      * 
-     * Reading this property will return a {@link LuaPlayer | LuaPlayer}, while {@link PlayerIdentification | PlayerIdentification} can be used when writing.
+     * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
      * @remarks
      * A character associated with a player is not directly controlled by any player.
      * Applies to subclasses: Character
@@ -3097,7 +3097,7 @@ interface LuaEntity extends LuaControl {
     readonly beacons_count?: number
 
     /**
-     * The belt connectable neighbours of this belt connectable entity. Only entities that input to or are outputs of this entity. Does not contain the other end of an underground belt, see {@link LuaEntity::neighbours | LuaEntity::neighbours} for that. This is a dictionary with `"inputs"`, `"outputs"` entries that are arrays of transport belt connectable entities, or empty tables if no entities.
+     * The belt connectable neighbours of this belt connectable entity. Only entities that input to or are outputs of this entity. Does not contain the other end of an underground belt, see {@link LuaEntity::neighbours | runtime:LuaEntity::neighbours} for that. This is a dictionary with `"inputs"`, `"outputs"` entries that are arrays of transport belt connectable entities, or empty tables if no entities.
      * @remarks
      * Applies to subclasses: TransportBeltConnectable
      *
@@ -3126,7 +3126,7 @@ interface LuaEntity extends LuaControl {
     bonus_progress: number
 
     /**
-     * {@link LuaEntityPrototype::collision_box | LuaEntityPrototype::collision_box} around entity's given position and respecting the current entity orientation.
+     * {@link LuaEntityPrototype::collision_box | runtime:LuaEntityPrototype::collision_box} around entity's given position and respecting the current entity orientation.
      */
     readonly bounding_box: BoundingBox
 
@@ -3245,6 +3245,14 @@ interface LuaEntity extends LuaControl {
     consumption_modifier: number
 
     /**
+     * The connection definition for entities that are directly connected to this entity via copper cables.
+     * @remarks
+     * This function is temporary in 1.1.x, it will not be available in 1.2
+     *
+     */
+    readonly copper_connection_definitions: CopperConnectionDefinition[]
+
+    /**
      * Whether this corpse will ever fade away.
      * @remarks
      * Useable only on corpses.
@@ -3304,6 +3312,14 @@ interface LuaEntity extends LuaControl {
      *
      */
     readonly distraction_command?: Command
+
+    /**
+     * Gives a draw data of the given entity if it supports such data
+     * @remarks
+     * Applies to subclasses: RollingStock
+     *
+     */
+    readonly draw_data: RollingStockDrawData
 
     /**
      * Whether the driver of this car or spidertron is the gunner. If `false`, the passenger is the gunner. `nil` if this is neither a car or a spidertron.
@@ -3500,7 +3516,7 @@ interface LuaEntity extends LuaControl {
     readonly ghost_type: string
 
     /**
-     * The {@link unit_number | LuaEntity::unit_number} of the entity contained in this ghost. It is the same as the unit number of the {@link EntityWithOwner | https://wiki.factorio.com/Prototype/EntityWithOwner} that was destroyed to create this ghost. If it was created by other means, or if the inner entity does not support unit numbers, this property is `nil`.
+     * The {@link unit_number | runtime:LuaEntity::unit_number} of the entity contained in this ghost. It is the same as the unit number of the {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype} that was destroyed to create this ghost. If it was created by other means, or if the inner entity does not support unit numbers, this property is `nil`.
      * @remarks
      * Applies to subclasses: EntityGhost
      *
@@ -3520,7 +3536,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The current health of the entity, if any. Health is automatically clamped to be between `0` and max health (inclusive). Entities with a health of `0` can not be attacked.
      * @remarks
-     * To get the maximum possible health of this entity, see {@link LuaEntityPrototype::max_health | LuaEntityPrototype::max_health} on its prototype.
+     * To get the maximum possible health of this entity, see {@link LuaEntityPrototype::max_health | runtime:LuaEntityPrototype::max_health} on its prototype.
      *
      */
     health?: number
@@ -3614,7 +3630,15 @@ interface LuaEntity extends LuaControl {
     readonly is_entity_with_owner: boolean
 
     /**
-     * Whether this entity is a MilitaryTarget. Can be written to if {@link LuaEntityPrototype::allow_run_time_change_of_is_military_target | LuaEntityPrototype::allow_run_time_change_of_is_military_target} returns `true`.
+     * If the rolling stock is facing train's front
+     * @remarks
+     * Applies to subclasses: RollingStock
+     *
+     */
+    readonly is_headed_to_trains_front: boolean
+
+    /**
+     * Whether this entity is a MilitaryTarget. Can be written to if {@link LuaEntityPrototype::allow_run_time_change_of_is_military_target | runtime:LuaEntityPrototype::allow_run_time_change_of_is_military_target} returns `true`.
      */
     is_military_target: boolean
 
@@ -3634,7 +3658,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The last player that changed any setting on this entity. This includes building the entity, changing its color, or configuring its circuit network. `nil` if the last user is not part of the save anymore.
      * 
-     * Reading this property will return a {@link LuaPlayer | LuaPlayer}, while {@link PlayerIdentification | PlayerIdentification} can be used when writing.
+     * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
      * @remarks
      * Applies to subclasses: EntityWithOwner
      *
@@ -3667,7 +3691,7 @@ interface LuaEntity extends LuaControl {
     linked_belt_type: string
 
     /**
-     * The container entity this loader is pointing at/pulling from depending on the {@link LuaEntity::loader_type | LuaEntity::loader_type}, if any.
+     * The container entity this loader is pointing at/pulling from depending on the {@link LuaEntity::loader_type | runtime:LuaEntity::loader_type}, if any.
      * @remarks
      * Applies to subclasses: Loader
      *
@@ -3902,14 +3926,14 @@ interface LuaEntity extends LuaControl {
     /**
      * The player that this `simple-entity-with-owner`, `simple-entity-with-force`, `flying-text`, or `highlight-box` is visible to. `nil` when this entity is rendered for all players.
      * 
-     * Reading this property will return a {@link LuaPlayer | LuaPlayer}, while {@link PlayerIdentification | PlayerIdentification} can be used when writing.
+     * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
      */
     render_player?: LuaPlayer | PlayerIdentification
 
     /**
      * The forces that this `simple-entity-with-owner`, `simple-entity-with-force`, or `flying-text` is visible to. `nil` or an empty array when this entity is rendered for all forces.
      * @remarks
-     * Reading will always give an array of {@link LuaForce | LuaForce}
+     * Reading will always give an array of {@link LuaForce | runtime:LuaForce}
      *
      */
     render_to_forces?: ForceIdentification[]
@@ -3967,7 +3991,7 @@ interface LuaEntity extends LuaControl {
     selected_gun_index?: number
 
     /**
-     * {@link LuaEntityPrototype::selection_box | LuaEntityPrototype::selection_box} around entity's given position and respecting the current entity orientation.
+     * {@link LuaEntityPrototype::selection_box | runtime:LuaEntityPrototype::selection_box} around entity's given position and respecting the current entity orientation.
      */
     readonly selection_box: BoundingBox
 
@@ -4108,7 +4132,7 @@ interface LuaEntity extends LuaControl {
      * The ticks left before a ghost, combat robot, highlight box or smoke with trigger is destroyed.
      * 
      * - for ghosts set to uint32 max (4'294'967'295) to never expire.
-     * - for ghosts Cannot be set higher than {@link LuaForce::ghost_time_to_live | LuaForce::ghost_time_to_live} of the entity's force.
+     * - for ghosts can not be set higher than {@link LuaForce::ghost_time_to_live | runtime:LuaForce::ghost_time_to_live} of the entity's force.
      */
     time_to_live: number
 
@@ -4222,7 +4246,7 @@ interface LuaEntity extends LuaControl {
     /**
      * A unique number identifying this entity for the lifetime of the save. These are allocated sequentially, and not re-used (until overflow).
      * 
-     * Only entities inheriting from {@link EntityWithOwner | https://wiki.factorio.com/Prototype/EntityWithOwner}, as well as {@link ItemRequestProxy | https://wiki.factorio.com/Prototype/ItemRequestProxy} and {@link EntityGhost | https://wiki.factorio.com/Prototype/EntityGhost} are assigned a unit number. Returns `nil` otherwise.
+     * Only entities inheriting from {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}, as well as {@link ItemRequestProxyPrototype | prototype:ItemRequestProxyPrototype} and {@link EntityGhostPrototype | prototype:EntityGhostPrototype} are assigned a unit number. Returns `nil` otherwise.
      */
     readonly unit_number?: number
 
@@ -4258,7 +4282,7 @@ interface LuaEntityPrototype {
 
     /**
      * Test whether this entity prototype has a certain flag set.
-     * @param flag - The flag to test. See [EntityPrototypeFlags](EntityPrototypeFlags) for a list of flags.
+     * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
      */
     has_flag(this: void,
         flag: string): void
@@ -5585,7 +5609,7 @@ interface LuaEntityPrototype {
     readonly pollution_to_join_attack?: number
 
     /**
-     * True if this entity prototype should be included during tile collision checks with {@link LuaTilePrototype::check_collision_with_entities | LuaTilePrototype::check_collision_with_entities} enabled.
+     * True if this entity prototype should be included during tile collision checks with {@link LuaTilePrototype::check_collision_with_entities | runtime:LuaTilePrototype::check_collision_with_entities} enabled.
      */
     readonly protected_from_tile_building: boolean
 
@@ -5993,6 +6017,14 @@ interface LuaEntityPrototype {
     readonly valid: boolean
 
     /**
+     * Vertical selection shift used by rolling stocks. It affects selection box vertical position but is also used to shift rolling stock graphics along the rails to fine tune train's look.
+     * @remarks
+     * Applies to subclasses: RollingStock
+     *
+     */
+    readonly vertical_selection_shift?: number
+
+    /**
      * The vision distance of this unit prototype.
      * @remarks
      * Applies to subclasses: Unit
@@ -6016,7 +6048,7 @@ interface LuaEntityPrototype {
 }
 
 /**
- * An item in a {@link LuaEquipmentGrid | LuaEquipmentGrid}, for example a fusion reactor placed in one's power armor.
+ * An item in a {@link LuaEquipmentGrid | runtime:LuaEquipmentGrid}, for example a fusion reactor placed in one's power armor.
  * 
  * An equipment reference becomes invalid once the equipment is removed or the equipment grid it resides in is destroyed.
  */
@@ -6089,7 +6121,7 @@ interface LuaEquipment {
     /**
      * Current shield value of the equipment.
      * @remarks
-     * Can't be set higher than {@link LuaEquipment::max_shield | LuaEquipment::max_shield}.
+     * Can't be set higher than {@link LuaEquipment::max_shield | runtime:LuaEquipment::max_shield}.
      *
      */
     shield: number
@@ -6158,7 +6190,7 @@ interface LuaEquipmentGrid {
 
     /**
      * Clear all equipment from the grid, removing it without actually returning it.
-     * @param by_player - If provided, the action is done 'as' this player and [on_player_removed_equipment](on_player_removed_equipment) is triggered.
+     * @param by_player - If provided, the action is done 'as' this player and [on_player_removed_equipment](runtime:on_player_removed_equipment) is triggered.
      */
     clear(this: void,
         by_player?: PlayerIdentification): void
@@ -6207,7 +6239,7 @@ interface LuaEquipmentGrid {
 
     /**
      * Insert an equipment into the grid.
-     * @param table.by_player - If provided the action is done 'as' this player and [on_player_placed_equipment](on_player_placed_equipment) is triggered.
+     * @param table.by_player - If provided the action is done 'as' this player and [on_player_placed_equipment](runtime:on_player_placed_equipment) is triggered.
      * @param table.name - Equipment prototype name
      * @param table.position - Grid position to put the equipment in.
      */
@@ -6220,7 +6252,7 @@ interface LuaEquipmentGrid {
 
     /**
      * Remove an equipment from the grid.
-     * @param table.by_player - If provided the action is done 'as' this player and [on_player_removed_equipment](on_player_removed_equipment) is triggered.
+     * @param table.by_player - If provided the action is done 'as' this player and [on_player_removed_equipment](runtime:on_player_removed_equipment) is triggered.
      * @param table.equipment - Take this exact equipment.
      * @param table.position - Take the equipment that contains this position in the grid.
      */
@@ -6233,7 +6265,7 @@ interface LuaEquipmentGrid {
 
     /**
      * Remove all equipment from the grid.
-     * @param by_player - If provided, the action is done 'as' this player and [on_player_removed_equipment](on_player_removed_equipment) is triggered.
+     * @param by_player - If provided, the action is done 'as' this player and [on_player_removed_equipment](runtime:on_player_removed_equipment) is triggered.
      */
     take_all(this: void,
         by_player?: PlayerIdentification): void
@@ -6317,7 +6349,7 @@ interface LuaEquipmentGridPrototype {
     help(this: void): void
 
     /**
-     * Equipment category names for the {@link categories | LuaEquipmentPrototype::equipment_categories} that may be inserted into this equipment grid. The grid will accept any equipment that has at least one category in this list.
+     * Equipment category names for the {@link categories | runtime:LuaEquipmentPrototype::equipment_categories} that may be inserted into this equipment grid. The grid will accept any equipment that has at least one category in this list.
      */
     readonly equipment_categories: string[]
 
@@ -6411,7 +6443,7 @@ interface LuaEquipmentPrototype {
     readonly energy_source: LuaElectricEnergySourcePrototype
 
     /**
-     * Category names for this equipment. These {@link categories | LuaEquipmentGridPrototype::equipment_categories} will be used to determine whether this equipment is allowed in a particular equipment grid.
+     * Category names for this equipment. These {@link categories | runtime:LuaEquipmentGridPrototype::equipment_categories} will be used to determine whether this equipment is allowed in a particular equipment grid.
      */
     readonly equipment_categories: string[]
 
@@ -6610,9 +6642,9 @@ interface LuaFlowStatistics {
 }
 
 /**
- * An array of fluid boxes of an entity. Entities may contain more than one fluid box, and some can change the number of fluid boxes -- for instance, an assembling machine will change its number of fluid boxes depending on its active recipe. See {@link Fluid | Fluid}.
+ * An array of fluid boxes of an entity. Entities may contain more than one fluid box, and some can change the number of fluid boxes -- for instance, an assembling machine will change its number of fluid boxes depending on its active recipe. See {@link Fluid | runtime:Fluid}.
  * 
- * Do note that reading from a {@link LuaFluidBox | LuaFluidBox} creates a new table and writing will copy the given fields from the table into the engine's own fluid box structure. Therefore, the correct way to update a fluidbox of an entity is to read it first, modify the table, then write the modified table back. Directly accessing the returned table's attributes won't have the desired effect.
+ * Do note that reading from a {@link LuaFluidBox | runtime:LuaFluidBox} creates a new table and writing will copy the given fields from the table into the engine's own fluid box structure. Therefore, the correct way to update a fluidbox of an entity is to read it first, modify the table, then write the modified table back. Directly accessing the returned table's attributes won't have the desired effect.
  * @example
  * Double the temperature of the fluid in `entity`'s first fluid box. 
  * ```
@@ -6722,7 +6754,7 @@ interface LuaFluidBox {
     readonly valid: boolean
 
     /**
-     * Access, set or clear a fluid box. The index must always be in bounds (see {@link LuaFluidBox::length_operator | LuaFluidBox::length_operator}). New fluidboxes may not be added or removed using this operator.
+     * Access, set or clear a fluid box. The index must always be in bounds (see {@link LuaFluidBox::length_operator | runtime:LuaFluidBox::length_operator}). New fluidboxes may not be added or removed using this operator.
      * 
      * Is `nil` if the given fluid box does not contain any fluid. Writing `nil` removes all fluid from the fluid box.
      * @remarks
@@ -6739,7 +6771,7 @@ interface LuaFluidBox {
 }
 
 /**
- * A prototype of a fluidbox owned by some {@link LuaEntityPrototype | LuaEntityPrototype}.
+ * A prototype of a fluidbox owned by some {@link LuaEntityPrototype | runtime:LuaEntityPrototype}.
  */
 interface LuaFluidBoxPrototype {
     /**
@@ -7061,7 +7093,7 @@ interface LuaForce {
     disable_research(this: void): void
 
     /**
-     * Enables all recipes and technologies. The opposite of {@link LuaForce::disable_all_prototypes | LuaForce::disable_all_prototypes}
+     * Enables all recipes and technologies. The opposite of {@link LuaForce::disable_all_prototypes | runtime:LuaForce::disable_all_prototypes}
      */
     enable_all_prototypes(this: void): void
 
@@ -7419,7 +7451,7 @@ interface LuaForce {
      * 
      * This is primarily useful when you want to do some action against all online players of this force.
      * @remarks
-     * This does *not* index using player index. See {@link LuaPlayer::index | LuaPlayer::index} on each player instance for the player index.
+     * This does *not* index using player index. See {@link LuaPlayer::index | runtime:LuaPlayer::index} on each player instance for the player index.
      *
      */
     readonly connected_players: LuaPlayer[]
@@ -7476,7 +7508,7 @@ interface LuaForce {
     ghost_time_to_live: number
 
     /**
-     * This force's index in {@link LuaGameScript::forces | LuaGameScript::forces} (unique ID). It is assigned when a force is created, and remains so until it is {@link merged | on_forces_merged} (ie. deleted). Indexes of merged forces can be reused.
+     * This force's index in {@link LuaGameScript::forces | runtime:LuaGameScript::forces} (unique ID). It is assigned when a force is created, and remains so until it is {@link merged | runtime:on_forces_merged} (ie. deleted). Indexes of merged forces can be reused.
      */
     readonly index: number
 
@@ -7580,7 +7612,7 @@ interface LuaForce {
     readonly recipes: {[key: string]: LuaRecipe}
 
     /**
-     * Whether research is enabled for this force, see {@link LuaForce::enable_research | LuaForce::enable_research} and {@link LuaForce::disable_research | LuaForce::disable_research}
+     * Whether research is enabled for this force, see {@link LuaForce::enable_research | runtime:LuaForce::enable_research} and {@link LuaForce::disable_research | runtime:LuaForce::disable_research}
      */
     readonly research_enabled: boolean
 
@@ -7590,7 +7622,7 @@ interface LuaForce {
     research_progress: number
 
     /**
-     * The research queue of this force. The first technology in the array is the currently active one. Reading this attribute gives an array of {@link LuaTechnology | LuaTechnology}.
+     * The research queue of this force. The first technology in the array is the currently active one. Reading this attribute gives an array of {@link LuaTechnology | runtime:LuaTechnology}.
      * 
      * To write to this, the entire table must be written. Providing an empty table or `nil` will empty the research queue and cancel the current research. Writing to this when the research queue is disabled will simply set the last research in the table as the current research.
      * @remarks
@@ -7726,7 +7758,7 @@ interface LuaGameScript {
      */
     ban_player(this: void,
         player: PlayerIdentification,
-        reason?: LocalisedString): void
+        reason?: string): void
 
     /**
      * Run internal consistency checks. Allegedly prints any errors it finds.
@@ -7761,9 +7793,9 @@ interface LuaGameScript {
         force: string): void
 
     /**
-     * Creates an inventory that is not owned by any game object. It can be resized later with {@link LuaInventory::resize | LuaInventory::resize}.
+     * Creates an inventory that is not owned by any game object. It can be resized later with {@link LuaInventory::resize | runtime:LuaInventory::resize}.
      * @remarks
-     * Make sure to destroy it when you are done with it using {@link LuaInventory::destroy | LuaInventory::destroy}.
+     * Make sure to destroy it when you are done with it using {@link LuaInventory::destroy | runtime:LuaInventory::destroy}.
      *
      * @param size - The number of slots the inventory initially has.
      */
@@ -7771,7 +7803,7 @@ interface LuaGameScript {
         size: number): void
 
     /**
-     * Creates a {@link LuaProfiler | LuaProfiler}, which is used for measuring script performance.
+     * Creates a {@link LuaProfiler | runtime:LuaProfiler}, which is used for measuring script performance.
      * @remarks
      * LuaProfiler cannot be serialized.
      *
@@ -7840,7 +7872,7 @@ interface LuaGameScript {
         string: string): void
 
     /**
-     * Evaluate an expression, substituting variables as provided. For details on the formula, see the relevant page on the {@link Factorio wiki | https://wiki.factorio.com/Prototype/Technology#unit}.
+     * Evaluate an expression, substituting variables as provided. For details on the formula, see {@link TechnologyPrototype::unit | prototype:TechnologyPrototype::unit}.
      * @param expression - The expression to evaluate.
      * @param variables - Variables to be substituted.
      * @example
@@ -8006,7 +8038,7 @@ interface LuaGameScript {
         player: number | string): void
 
     /**
-     * Gets the inventories created through {@link LuaGameScript::create_inventory | LuaGameScript::create_inventory}
+     * Gets the inventories created through {@link LuaGameScript::create_inventory | runtime:LuaGameScript::create_inventory}
      * @remarks
      * Inventories created through console commands will be owned by `"core"`.
      *
@@ -8076,13 +8108,13 @@ interface LuaGameScript {
      */
     kick_player(this: void,
         player: PlayerIdentification,
-        reason?: LocalisedString): void
+        reason?: string): void
 
     /**
      * Marks two forces to be merged together. All players and entities in the source force will be reassigned to the target force. The source force will then be destroyed. Importantly, this does not merge technologies or bonuses, which are instead retained from the target force.
      * @remarks
      * The three built-in forces (player, enemy and neutral) can't be destroyed, meaning they can't be used as the source argument to this function.
-     * The source force is not removed until the end of the current tick, or if called during the {@link on_forces_merging | on_forces_merging} or {@link on_forces_merged | on_forces_merged} event, the end of the next tick.
+     * The source force is not removed until the end of the current tick, or if called during the {@link on_forces_merging | runtime:on_forces_merging} or {@link on_forces_merged | runtime:on_forces_merged} event, the end of the next tick.
      *
      * @param destination - The force to reassign all entities to.
      * @param source - The force to remove.
@@ -8172,7 +8204,7 @@ interface LuaGameScript {
         players?: Array<LuaPlayer | string>): void
 
     /**
-     * Remove a file or directory in the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. Can be used to remove files created by {@link LuaGameScript::write_file | LuaGameScript::write_file}.
+     * Remove a file or directory in the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. Can be used to remove files created by {@link LuaGameScript::write_file | runtime:LuaGameScript::write_file}.
      * @param path - The path to the file or directory to remove, relative to `script-output`.
      */
     remove_path(this: void,
@@ -8377,7 +8409,7 @@ interface LuaGameScript {
      * 
      * This is primarily useful when you want to do some action against all online players.
      * @remarks
-     * This does *not* index using player index. See {@link LuaPlayer::index | LuaPlayer::index} on each player instance for the player index.
+     * This does *not* index using player index. See {@link LuaPlayer::index | runtime:LuaPlayer::index} on each player instance for the player index.
      *
      */
     readonly connected_players: LuaPlayer[]
@@ -8509,7 +8541,7 @@ interface LuaGameScript {
     /**
      * The currently active set of map settings. Even though this property is marked as read-only, the members of the dictionary that is returned can be modified mid-game.
      * @remarks
-     * This does not contain difficulty settings, use {@link LuaGameScript::difficulty_settings | LuaGameScript::difficulty_settings} instead.
+     * This does not contain difficulty settings, use {@link LuaGameScript::difficulty_settings | runtime:LuaGameScript::difficulty_settings} instead.
      *
      */
     readonly map_settings: MapSettings
@@ -8565,16 +8597,16 @@ interface LuaGameScript {
     readonly permissions: LuaPermissionGroups
 
     /**
-     * This property is only populated inside {@link custom command | LuaCommandProcessor} handlers and when writing {@link Lua console commands | https://wiki.factorio.com/Console#Scripting_and_cheat_commands}. Returns the player that is typing the command, `nil` in all other instances.
+     * This property is only populated inside {@link custom command | runtime:LuaCommandProcessor} handlers and when writing {@link Lua console commands | https://wiki.factorio.com/Console#Scripting_and_cheat_commands}. Returns the player that is typing the command, `nil` in all other instances.
      * 
-     * See {@link LuaGameScript::players | LuaGameScript::players} for accessing all players.
+     * See {@link LuaGameScript::players | runtime:LuaGameScript::players} for accessing all players.
      */
     readonly player?: LuaPlayer
 
     /**
      * Get a table of all the players that currently exist. This sparse table allows you to find players by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will only iterate the array part of the table. Iterating with `ipairs()` will not work at all.
      * 
-     * If only a single player is required, {@link LuaGameScript::get_player | LuaGameScript::get_player} should be used instead, as it avoids the unnecessary overhead of passing the whole table to Lua.
+     * If only a single player is required, {@link LuaGameScript::get_player | runtime:LuaGameScript::get_player} should be used instead, as it avoids the unnecessary overhead of passing the whole table to Lua.
      */
     readonly players: {[key: string]: LuaPlayer}
 
@@ -8612,7 +8644,7 @@ interface LuaGameScript {
     speed: number
 
     /**
-     * The styles that {@link LuaGuiElement | LuaGuiElement} can use, indexed by `name`.
+     * The styles that {@link LuaGuiElement | runtime:LuaGuiElement} can use, indexed by `name`.
      */
     readonly styles: {[key: string]: string}
 
@@ -8622,7 +8654,7 @@ interface LuaGameScript {
     readonly surfaces: {[key: string]: LuaSurface}
 
     /**
-     * A dictionary containing every {@link LuaTechnologyPrototype | LuaTechnologyPrototype} indexed by `name`.
+     * A dictionary containing every {@link LuaTechnologyPrototype | runtime:LuaTechnologyPrototype} indexed by `name`.
      */
     readonly technology_prototypes: {[key: string]: LuaTechnologyPrototype}
 
@@ -8637,14 +8669,14 @@ interface LuaGameScript {
     tick_paused: boolean
 
     /**
-     * The number of ticks since this game was created using either "new game" or "new game from scenario". Notably, this number progresses even when the game is {@link tick_paused | LuaGameScript::tick_paused}.
+     * The number of ticks since this game was created using either "new game" or "new game from scenario". Notably, this number progresses even when the game is {@link tick_paused | runtime:LuaGameScript::tick_paused}.
      * 
-     * This differs from {@link LuaGameScript::tick | LuaGameScript::tick} in that creating a game from a scenario always starts with this value at `0`, even if the scenario has its own level data where the `tick` has progressed past `0`.
+     * This differs from {@link LuaGameScript::tick | runtime:LuaGameScript::tick} in that creating a game from a scenario always starts with this value at `0`, even if the scenario has its own level data where the `tick` has progressed past `0`.
      */
     readonly ticks_played: number
 
     /**
-     * The number of ticks to be run while the tick is paused. When {@link LuaGameScript::tick_paused | LuaGameScript::tick_paused} is true, ticks_to_run behaves the following way: While this is > 0, the entity update is running normally and this value is decremented every tick. When this reaches 0, the game will pause again.
+     * The number of ticks to be run while the tick is paused. When {@link LuaGameScript::tick_paused | runtime:LuaGameScript::tick_paused} is true, ticks_to_run behaves the following way: While this is > 0, the entity update is running normally and this value is decremented every tick. When this reaches 0, the game will pause again.
      */
     ticks_to_run: number
 
@@ -8787,7 +8819,7 @@ interface LuaGui {
     /**
      * Returns `true` if sprite_path is valid and contains loaded sprite, otherwise `false`. Sprite path of type `file` doesn't validate if file exists.
      * 
-     * If you want to avoid needing a LuaGui object, {@link LuaGameScript::is_valid_sprite_path | LuaGameScript::is_valid_sprite_path} can be used instead.
+     * If you want to avoid needing a LuaGui object, {@link LuaGameScript::is_valid_sprite_path | runtime:LuaGameScript::is_valid_sprite_path} can be used instead.
      * @param sprite_path - Path to a image.
      */
     is_valid_sprite_path(this: void,
@@ -8846,35 +8878,9 @@ interface LuaGui {
 }
 
 /**
- * An element of a custom GUI. This type is used to represent any kind of a GUI element - labels, buttons and frames are all instances of this type. Just like {@link LuaEntity | LuaEntity}, different kinds of elements support different attributes; attempting to access an attribute on an element that doesn't support it (for instance, trying to access the `column_count` of a `textfield`) will result in a runtime error.
+ * An element of a custom GUI. This type is used to represent {@link any kind | runtime:GuiElementType} of a GUI element - labels, buttons and frames are all instances of this type. Just like {@link LuaEntity | runtime:LuaEntity}, different kinds of elements support different attributes; attempting to access an attribute on an element that doesn't support it (for instance, trying to access the `column_count` of a `textfield`) will result in a runtime error.
  * 
- * The following types of GUI element are supported:
- * 
- * - `"button"`: A clickable element. Relevant event: {@link on_gui_click | on_gui_click}
- * - `"sprite-button"`: A `button` that displays a sprite rather than text. Relevant event: {@link on_gui_click | on_gui_click}
- * - `"checkbox"`: A clickable element with a check mark that can be turned off or on. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
- * - `"flow"`: An invisible container that lays out its children either horizontally or vertically.
- * - `"frame"`: A non-transparent box that contains other elements. It can have a title (set via the `caption` attribute). Just like a `flow`, it lays out its children either horizontally or vertically. Relevant event: {@link on_gui_location_changed | on_gui_location_changed}
- * - `"label"`: A piece of text.
- * - `"line"`: A horizontal or vertical separation line.
- * - `"progressbar"`: A partially filled bar that can be used to indicate progress.
- * - `"table"`: An invisible container that lays out its children in a specific number of columns. The width of each column is determined by the widest element it contains.
- * - `"textfield"`: A single-line box the user can type into. Relevant events: {@link on_gui_text_changed | on_gui_text_changed}, {@link on_gui_confirmed | on_gui_confirmed}
- * - `"radiobutton"`: An element that is similar to a `checkbox`, but with a circular appearance. Clicking a selected radio button will not unselect it. Radio buttons are not linked to each other in any way. Relevant event: {@link on_gui_checked_state_changed | on_gui_checked_state_changed}
- * - `"sprite"`: An element that shows an image.
- * - `"scroll-pane"`: An invisible element that is similar to a `flow`, but has the ability to show and use scroll bars.
- * - `"drop-down"`: A drop-down containing strings of text. Relevant event: {@link on_gui_selection_state_changed | on_gui_selection_state_changed}
- * - `"list-box"`: A list of strings, only one of which can be selected at a time. Shows a scroll bar if necessary. Relevant event: {@link on_gui_selection_state_changed | on_gui_selection_state_changed}
- * - `"camera"`: A camera that shows the game at the given position on the given surface. It can visually track an {@link entity | LuaGuiElement::entity} that is set after the element has been created.
- * - `"choose-elem-button"`: A button that lets the player pick from a certain kind of prototype, with optional filtering. Relevant event: {@link on_gui_elem_changed | on_gui_elem_changed}
- * - `"text-box"`: A multi-line `textfield`. Relevant event: {@link on_gui_text_changed | on_gui_text_changed}
- * - `"slider"`: A horizontal number line which can be used to choose a number. Relevant event: {@link on_gui_value_changed | on_gui_value_changed}
- * - `"minimap"`: A minimap preview, similar to the normal player minimap. It can visually track an {@link entity | LuaGuiElement::entity} that is set after the element has been created.
- * - `"entity-preview"`: A preview of an entity. The {@link entity | LuaGuiElement::entity} has to be set after the element has been created.
- * - `"empty-widget"`: An empty element that just exists. The root GUI elements `screen` and `relative` are `empty-widget`s.
- * - `"tabbed-pane"`: A collection of `tab`s and their contents. Relevant event: {@link on_gui_selected_tab_changed | on_gui_selected_tab_changed}
- * - `"tab"`: A tab for use in a `tabbed-pane`.
- * - `"switch"`: A switch with three possible states. Can have labels attached to either side. Relevant event: {@link on_gui_switch_state_changed | on_gui_switch_state_changed}
+ * For information on all supported GUI elements, see {@link GuiElementType | runtime:GuiElementType}.
  * 
  * Each GUI element allows access to its children by having them as attributes. Thus, one can use the `parent.child` syntax to refer to children. Lua also supports the `parent["child"]` syntax to refer to the same element. This can be used in cases where the child has a name that isn't a valid Lua identifier.
  * @example
@@ -8932,13 +8938,13 @@ interface LuaGuiElement {
     /**
      * Moves this GUI element to the "front" so it will draw over other elements.
      * @remarks
-     * Only works for elements in {@link LuaGui::screen | LuaGui::screen}
+     * Only works for elements in {@link LuaGui::screen | runtime:LuaGui::screen}
      *
      */
     bring_to_front(this: void): void
 
     /**
-     * Remove children of this element. Any {@link LuaGuiElement | LuaGuiElement} objects referring to the destroyed elements become invalid after this operation.
+     * Remove children of this element. Any {@link LuaGuiElement | runtime:LuaGuiElement} objects referring to the destroyed elements become invalid after this operation.
      * @example
      * ```
      * game.player.gui.top.clear()
@@ -8961,9 +8967,9 @@ interface LuaGuiElement {
     close_dropdown(this: void): void
 
     /**
-     * Remove this element, along with its children. Any {@link LuaGuiElement | LuaGuiElement} objects referring to the destroyed elements become invalid after this operation.
+     * Remove this element, along with its children. Any {@link LuaGuiElement | runtime:LuaGuiElement} objects referring to the destroyed elements become invalid after this operation.
      * @remarks
-     * The top-level GUI elements - {@link LuaGui::top | LuaGui::top}, {@link LuaGui::left | LuaGui::left}, {@link LuaGui::center | LuaGui::center} and {@link LuaGui::screen | LuaGui::screen} - can't be destroyed.
+     * The top-level GUI elements - {@link LuaGui::top | runtime:LuaGui::top}, {@link LuaGui::left | runtime:LuaGui::left}, {@link LuaGui::center | runtime:LuaGui::center} and {@link LuaGui::screen | runtime:LuaGui::screen} - can't be destroyed.
      *
      * @example
      * ```
@@ -8979,7 +8985,7 @@ interface LuaGuiElement {
     focus(this: void): void
 
     /**
-     * Forces this frame to re-auto-center. Only works on frames stored directly in {@link LuaGui::screen | LuaGui::screen}.
+     * Forces this frame to re-auto-center. Only works on frames stored directly in {@link LuaGui::screen | runtime:LuaGui::screen}.
      * @remarks
      * Applies to subclasses: frame
      *
@@ -9056,7 +9062,7 @@ interface LuaGuiElement {
      * Removes the given tab and its associated content from this tabbed pane.
      * @remarks
      * Removing a tab does not destroy the tab or the tab contents. It just removes them from the view.
-     * When removing tabs, {@link LuaGuiElement::selected_tab_index | LuaGuiElement::selected_tab_index} needs to be manually updated.
+     * When removing tabs, {@link LuaGuiElement::selected_tab_index | runtime:LuaGuiElement::selected_tab_index} needs to be manually updated.
      * Applies to subclasses: tabbed-pane
      *
      * @param tab - The tab to remove. If not given, it removes all tabs.
@@ -9235,7 +9241,7 @@ interface LuaGuiElement {
     anchor?: GuiAnchor
 
     /**
-     * Whether this frame auto-centers on window resize when stored in {@link LuaGui::screen | LuaGui::screen}.
+     * Whether this frame auto-centers on window resize when stored in {@link LuaGui::screen | runtime:LuaGui::screen}.
      * @remarks
      * Applies to subclasses: frame
      *
@@ -9311,7 +9317,7 @@ interface LuaGuiElement {
     /**
      * The `frame` that is being moved when dragging this GUI element, if any. This element needs to be a child of the `drag_target` at some level.
      * @remarks
-     * Only top-level elements in {@link LuaGui::screen | LuaGui::screen} can be `drag_target`s.
+     * Only top-level elements in {@link LuaGui::screen | runtime:LuaGui::screen} can be `drag_target`s.
      * Applies to subclasses: flow,frame,label,table,empty-widget
      *
      * @example
@@ -9363,7 +9369,7 @@ interface LuaGuiElement {
      * ```
      *
      * @example
-     * Then, there are some types of filters that work on a specific kind of attribute. The following will configure a choose-elem-button of type `"entity"` to only show entities that have their `"hidden"` [flags](EntityPrototypeFlags) set. 
+     * Then, there are some types of filters that work on a specific kind of attribute. The following will configure a choose-elem-button of type `"entity"` to only show entities that have their `"hidden"` [flags](runtime:EntityPrototypeFlags) set. 
      * ```
      * button.elem_filters = {{filter = "hidden"}}
      * ```
@@ -9388,7 +9394,7 @@ interface LuaGuiElement {
     /**
      * The elem value of this choose-elem-button, if any.
      * @remarks
-     * The `"signal"` type operates with {@link SignalID | SignalID}, while all other types use strings.
+     * The `"signal"` type operates with {@link SignalID | runtime:SignalID}, while all other types use strings.
      * Applies to subclasses: choose-elem-button
      *
      */
@@ -9484,7 +9490,7 @@ interface LuaGuiElement {
     left_label_tooltip: LocalisedString
 
     /**
-     * The location of this widget when stored in {@link LuaGui::screen | LuaGui::screen}. `nil` if not set or not in {@link LuaGui::screen | LuaGui::screen}.
+     * The location of this widget when stored in {@link LuaGui::screen | runtime:LuaGui::screen}. `nil` if not set or not in {@link LuaGui::screen | runtime:LuaGui::screen}.
      */
     location?: GuiLocation
 
@@ -9497,7 +9503,7 @@ interface LuaGuiElement {
     locked: boolean
 
     /**
-     * Whether this textfield loses focus after {@link defines.events.on_gui_confirmed | defines.events.on_gui_confirmed} is fired.
+     * Whether this textfield loses focus after {@link defines.events.on_gui_confirmed | runtime:defines.events.on_gui_confirmed} is fired.
      * @remarks
      * Applies to subclasses: textfield
      *
@@ -9557,7 +9563,7 @@ interface LuaGuiElement {
     readonly parent?: LuaGuiElement
 
     /**
-     * Index into {@link LuaGameScript::players | LuaGameScript::players} specifying the player who owns this element.
+     * Index into {@link LuaGameScript::players | runtime:LuaGameScript::players} specifying the player who owns this element.
      */
     readonly player_index: number
 
@@ -9570,7 +9576,7 @@ interface LuaGuiElement {
     position: MapPosition
 
     /**
-     * Whether this element will raise {@link on_gui_hover | on_gui_hover} and {@link on_gui_leave | on_gui_leave}.
+     * Whether this element will raise {@link on_gui_hover | runtime:on_gui_hover} and {@link on_gui_leave | runtime:on_gui_leave}.
      */
     raise_hover_events: boolean
 
@@ -9663,7 +9669,7 @@ interface LuaGuiElement {
     state: boolean
 
     /**
-     * The style of this element. When read, this evaluates to a {@link LuaStyle | LuaStyle}. For writing, it only accepts a string that specifies the textual identifier (prototype name) of the desired style.
+     * The style of this element. When read, this evaluates to a {@link LuaStyle | runtime:LuaStyle}. For writing, it only accepts a string that specifies the textual identifier (prototype name) of the desired style.
      */
     style: LuaStyle | string
 
@@ -9678,7 +9684,7 @@ interface LuaGuiElement {
     /**
      * The switch state (left, none, right) for this switch.
      * @remarks
-     * If {@link LuaGuiElement::allow_none_state | LuaGuiElement::allow_none_state} is false this can't be set to `"none"`.
+     * If {@link LuaGuiElement::allow_none_state | runtime:LuaGuiElement::allow_none_state} is false this can't be set to `"none"`.
      * Applies to subclasses: switch
      *
      */
@@ -9713,6 +9719,9 @@ interface LuaGuiElement {
      */
     toggled: boolean
 
+    /**
+     * The text to display when hovering over this element. Writing `""` will disable the tooltip, while writing `nil` will set it to `"nil"`.
+     */
     tooltip: LocalisedString
 
     /**
@@ -9734,7 +9743,7 @@ interface LuaGuiElement {
     value: number
 
     /**
-     * Whether the content of this table should be vertically centered. Overrides {@link LuaStyle::column_alignments | LuaStyle::column_alignments}. Defaults to `true`.
+     * Whether the content of this table should be vertically centered. Overrides {@link LuaStyle::column_alignments | runtime:LuaStyle::column_alignments}. Defaults to `true`.
      * @remarks
      * Applies to subclasses: table
      *
@@ -9948,7 +9957,7 @@ interface LuaInventory {
     /**
      * Destroys this inventory.
      * @remarks
-     * Only inventories created by {@link LuaGameScript::create_inventory | LuaGameScript::create_inventory} can be destroyed this way.
+     * Only inventories created by {@link LuaGameScript::create_inventory | runtime:LuaGameScript::create_inventory} can be destroyed this way.
      *
      */
     destroy(this: void): void
@@ -10044,7 +10053,7 @@ interface LuaInventory {
      * Resizes the inventory.
      * @remarks
      * Items in slots beyond the new capacity are deleted.
-     * Only inventories created by {@link LuaGameScript::create_inventory | LuaGameScript::create_inventory} can be resized.
+     * Only inventories created by {@link LuaGameScript::create_inventory | runtime:LuaGameScript::create_inventory} can be resized.
      *
      * @param size - New size of a inventory
      */
@@ -10174,7 +10183,7 @@ interface LuaItemPrototype {
 
     /**
      * Does this prototype have a flag enabled?
-     * @param flag - The flag to check. Can be one of [ItemPrototypeFlags](ItemPrototypeFlags). Any other value will cause an error.
+     * @param flag - The flag to check. Can be one of [ItemPrototypeFlags](runtime:ItemPrototypeFlags). Any other value will cause an error.
      */
     has_flag(this: void,
         flag: string): void
@@ -10347,7 +10356,7 @@ interface LuaItemPrototype {
     readonly capsule_action?: CapsuleAction
 
     /**
-     * The name of a {@link LuaModuleCategoryPrototype | LuaModuleCategoryPrototype}. Used when upgrading modules: Ctrl + click modules into an entity and it will replace lower tier modules of the same category with higher tier modules.
+     * The name of a {@link LuaModuleCategoryPrototype | runtime:LuaModuleCategoryPrototype}. Used when upgrading modules: Ctrl + click modules into an entity and it will replace lower tier modules of the same category with higher tier modules.
      * @remarks
      * Applies to subclasses: ModuleItem
      *
@@ -10826,7 +10835,7 @@ interface LuaItemPrototype {
  * A reference to an item and count owned by some external entity.
  * @remarks
  * In most instances this is a simple reference as in: it points at a specific slot in an inventory and not the item in the slot.
- * In the instance this references an item on a {@link LuaTransportLine | LuaTransportLine} the reference is only guaranteed to stay valid (and refer to the same item) as long as nothing changes the transport line.
+ * In the instance this references an item on a {@link LuaTransportLine | runtime:LuaTransportLine} the reference is only guaranteed to stay valid (and refer to the same item) as long as nothing changes the transport line.
  *
  */
 interface LuaItemStack {
@@ -10854,12 +10863,12 @@ interface LuaItemStack {
      * @remarks
      * Built entities can be come invalid between the building of the blueprint and the function returning if by_player or raise_built is used and one of those events invalidates the entity.
      *
-     * @param table.by_player - The player to use if any. If provided [defines.events.on_built_entity](defines.events.on_built_entity) will also be fired on successful entity creation.
+     * @param table.by_player - The player to use if any. If provided [defines.events.on_built_entity](runtime:defines.events.on_built_entity) will also be fired on successful entity creation.
      * @param table.direction - The direction to use when building
      * @param table.force - Force to use for the building
      * @param table.force_build - When true, anything that can be built is else nothing is built if any one thing can't be built
      * @param table.position - The position to build at
-     * @param table.raise_built - If true; [defines.events.script_raised_built](defines.events.script_raised_built) will be fired on successful entity creation. Note: this is ignored if by_player is provided.
+     * @param table.raise_built - If true; [defines.events.script_raised_built](runtime:defines.events.script_raised_built) will be fired on successful entity creation. Note: this is ignored if by_player is provided.
      * @param table.skip_fog_of_war - If chunks covered by fog-of-war are skipped.
      * @param table.surface - Surface to build on
      */
@@ -10876,7 +10885,7 @@ interface LuaItemStack {
         }): void
 
     /**
-     * Would a call to {@link LuaItemStack::set_stack | LuaItemStack::set_stack} succeed?
+     * Would a call to {@link LuaItemStack::set_stack | runtime:LuaItemStack::set_stack} succeed?
      * @param stack - Stack that would be set, possibly `nil`.
      */
     can_set_stack(this: void,
@@ -11059,7 +11068,7 @@ interface LuaItemStack {
 
     /**
      * Access the inner inventory of an item.
-     * @param inventory - Index of the inventory to access, which can only be [defines.inventory.item_main](defines.inventory.item_main).
+     * @param inventory - Index of the inventory to access, which can only be [defines.inventory.item_main](runtime:defines.inventory.item_main).
      */
     get_inventory(this: void,
         inventory: defines.inventory): void
@@ -11192,7 +11201,7 @@ interface LuaItemStack {
 
     /**
      * Set this item stack to another item stack.
-     * @param stack - Item stack to set it to. Omitting this parameter or passing `nil` will clear this item stack, as if [LuaItemStack::clear](LuaItemStack::clear) was called.
+     * @param stack - Item stack to set it to. Omitting this parameter or passing `nil` will clear this item stack, as if [LuaItemStack::clear](runtime:LuaItemStack::clear) was called.
      */
     set_stack(this: void,
         stack?: ItemStackIdentification): void
@@ -11612,7 +11621,7 @@ interface LuaLampControlBehavior extends LuaGenericOnOffControlBehavior {
 }
 
 /**
- * A lazily loaded value. For performance reasons, we sometimes return a custom lazily-loaded value type instead of the native Lua value. This custom type lazily constructs the necessary value when {@link LuaLazyLoadedValue::get | LuaLazyLoadedValue::get} is called, therefore preventing its unnecessary construction in some cases.
+ * A lazily loaded value. For performance reasons, we sometimes return a custom lazily-loaded value type instead of the native Lua value. This custom type lazily constructs the necessary value when {@link LuaLazyLoadedValue::get | runtime:LuaLazyLoadedValue::get} is called, therefore preventing its unnecessary construction in some cases.
  * 
  * An instance of LuaLazyLoadedValue is only valid during the event it was created from and cannot be saved.
  */
@@ -11640,7 +11649,7 @@ interface LuaLazyLoadedValue<T> {
 }
 
 /**
- * Logistic cell of a particular {@link LuaEntity | LuaEntity}. A "Logistic Cell" is the given name for settings and properties used by what would normally be seen as a "Roboport". A logistic cell however doesn't have to be attached to the roboport entity (the character has one for the personal roboport).
+ * Logistic cell of a particular {@link LuaEntity | runtime:LuaEntity}. A "Logistic Cell" is the given name for settings and properties used by what would normally be seen as a "Roboport". A logistic cell however doesn't have to be attached to the roboport entity (the character has one for the personal roboport).
  */
 interface LuaLogisticCell {
     /**
@@ -11763,7 +11772,7 @@ interface LuaLogisticContainerControlBehavior extends LuaControlBehavior {
     help(this: void): void
 
     /**
-     * The circuit mode of operations for the logistic container. Can only be set on containers whose {@link logistic_mode | LuaEntityPrototype::logistic_mode} is set to "requester".
+     * The circuit mode of operations for the logistic container. Can only be set on containers whose {@link logistic_mode | runtime:LuaEntityPrototype::logistic_mode} is set to "requester".
      */
     circuit_mode_of_operation: defines.control_behavior.logistic_container.circuit_mode_of_operation
 
@@ -11801,7 +11810,7 @@ interface LuaLogisticNetwork {
         position: MapPosition): void
 
     /**
-     * Get item counts for the entire network, similar to how {@link LuaInventory::get_contents | LuaInventory::get_contents} does.
+     * Get item counts for the entire network, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      */
     get_contents(this: void): void
 
@@ -11995,7 +12004,7 @@ interface LuaLogisticNetwork {
 }
 
 /**
- * Logistic point of a particular {@link LuaEntity | LuaEntity}. A "Logistic point" is the name given for settings and properties used by requester, provider, and storage points in a given logistic network. These "points" don't have to be a logistic container but often are. One other entity that can own several points is the "character" character type entity.
+ * Logistic point of a particular {@link LuaEntity | runtime:LuaEntity}. A "Logistic point" is the name given for settings and properties used by requester, provider, and storage points in a given logistic network. These "points" don't have to be a logistic container but often are. One other entity that can own several points is the "character" character type entity.
  */
 interface LuaLogisticPoint {
     /**
@@ -12019,7 +12028,7 @@ interface LuaLogisticPoint {
     /**
      * The force of this logistic point.
      * @remarks
-     * This will always be the same as the {@link LuaLogisticPoint::owner | LuaLogisticPoint::owner} force.
+     * This will always be the same as the {@link LuaLogisticPoint::owner | runtime:LuaLogisticPoint::owner} force.
      *
      */
     readonly force: LuaForce
@@ -12042,7 +12051,7 @@ interface LuaLogisticPoint {
     readonly object_name: string
 
     /**
-     * The {@link LuaEntity | LuaEntity} owner of this {@link LuaLogisticPoint | LuaLogisticPoint}.
+     * The {@link LuaEntity | runtime:LuaEntity} owner of this {@link LuaLogisticPoint | runtime:LuaLogisticPoint}.
      */
     readonly owner: LuaEntity
 
@@ -12078,7 +12087,7 @@ interface LuaMiningDrillControlBehavior extends LuaGenericOnOffControlBehavior {
     circuit_enable_disable: boolean
 
     /**
-     * `true` if this drill should send the resources in the field to the circuit network. Which resources depends on {@link LuaMiningDrillControlBehavior::resource_read_mode | LuaMiningDrillControlBehavior::resource_read_mode}
+     * `true` if this drill should send the resources in the field to the circuit network. Which resources depends on {@link LuaMiningDrillControlBehavior::resource_read_mode | runtime:LuaMiningDrillControlBehavior::resource_read_mode}
      */
     circuit_read_resources: boolean
 
@@ -12465,7 +12474,7 @@ interface LuaPermissionGroups {
 }
 
 /**
- * A player in the game. Pay attention that a player may or may not have a character, which is the {@link LuaEntity | LuaEntity} of the little guy running around the world doing things.
+ * A player in the game. Pay attention that a player may or may not have a character, which is the {@link LuaEntity | runtime:LuaEntity} of the little guy running around the world doing things.
  */
 interface LuaPlayer extends LuaControl {
     /**
@@ -12508,8 +12517,8 @@ interface LuaPlayer extends LuaControl {
      * Associates a character with this player.
      * @remarks
      * The character must not be connected to any controller.
-     * If this player is currently disconnected (see {@link LuaPlayer::connected | LuaPlayer::connected}) the character will be immediately "logged off".
-     * See {@link LuaPlayer::get_associated_characters | LuaPlayer::get_associated_characters} for more information.
+     * If this player is currently disconnected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}) the character will be immediately "logged off".
+     * See {@link LuaPlayer::get_associated_characters | runtime:LuaPlayer::get_associated_characters} for more information.
      *
      * @param character - The character entity.
      */
@@ -12608,7 +12617,7 @@ interface LuaPlayer extends LuaControl {
     /**
      * Creates and attaches a character entity to this player.
      * @remarks
-     * The player must not have a character already connected and must be online (see {@link LuaPlayer::connected | LuaPlayer::connected}).
+     * The player must not have a character already connected and must be online (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
      *
      * @param character - The character to create else the default is used.
      */
@@ -12655,9 +12664,9 @@ interface LuaPlayer extends LuaControl {
     disable_recipe_subgroups(this: void): void
 
     /**
-     * Disassociates a character from this player. This is functionally the same as setting {@link LuaEntity::associated_player | LuaEntity::associated_player} to `nil`.
+     * Disassociates a character from this player. This is functionally the same as setting {@link LuaEntity::associated_player | runtime:LuaEntity::associated_player} to `nil`.
      * @remarks
-     * See {@link LuaPlayer::get_associated_characters | LuaPlayer::get_associated_characters} for more information.
+     * See {@link LuaPlayer::get_associated_characters | runtime:LuaPlayer::get_associated_characters} for more information.
      *
      * @param character - The character entity
      */
@@ -12716,7 +12725,7 @@ interface LuaPlayer extends LuaControl {
     /**
      * The characters associated with this player.
      * @remarks
-     * The array will always be empty when the player is disconnected (see {@link LuaPlayer::connected | LuaPlayer::connected}) regardless of there being associated characters.
+     * The array will always be empty when the player is disconnected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}) regardless of there being associated characters.
      * Characters associated with this player will be logged off when this player disconnects but are not controlled by any player.
      *
      */
@@ -12866,18 +12875,18 @@ interface LuaPlayer extends LuaControl {
         }): void
 
     /**
-     * Requests a translation for the given localised string. If the request is successful, the {@link on_string_translated | on_string_translated} event will be fired with the results.
+     * Requests a translation for the given localised string. If the request is successful, the {@link on_string_translated | runtime:on_string_translated} event will be fired with the results.
      * @remarks
-     * Does nothing if this player is not connected (see {@link LuaPlayer::connected | LuaPlayer::connected}).
+     * Does nothing if this player is not connected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
      *
      */
     request_translation(this: void,
         localised_string: LocalisedString): void
 
     /**
-     * Requests translation for the given set of localised strings. If the request is successful, a {@link on_string_translated | on_string_translated} event will be fired for each string with the results.
+     * Requests translation for the given set of localised strings. If the request is successful, a {@link on_string_translated | runtime:on_string_translated} event will be fired for each string with the results.
      * @remarks
-     * Does nothing if this player is not connected (see {@link LuaPlayer::connected | LuaPlayer::connected}).
+     * Does nothing if this player is not connected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
      *
      */
     request_translations(this: void,
@@ -12895,16 +12904,16 @@ interface LuaPlayer extends LuaControl {
     /**
      * Set the controller type of the player.
      * @remarks
-     * Setting a player to {@link defines.controllers.editor | defines.controllers.editor} auto promotes the player to admin and enables cheat mode.
-     * Setting a player to {@link defines.controllers.editor | defines.controllers.editor} also requires the calling player be an admin.
+     * Setting a player to {@link defines.controllers.editor | runtime:defines.controllers.editor} auto promotes the player to admin and enables cheat mode.
+     * Setting a player to {@link defines.controllers.editor | runtime:defines.controllers.editor} also requires the calling player be an admin.
      *
-     * @param table.character - Entity to control. Mandatory when `type` is [defines.controllers.character](defines.controllers.character), ignored otherwise.
-     * @param table.chart_mode_cutoff - If specified and `type` is [defines.controllers.cutscene](defines.controllers.cutscene), the game will switch to chart-mode (map zoomed out) rendering when the zoom level is less than this value.
-     * @param table.final_transition_time - If specified and `type` is [defines.controllers.cutscene](defines.controllers.cutscene), it is the time in ticks it will take for the camera to pan from the final waypoint back to the starting position. If not given the camera will not pan back to the start position/zoom.
-     * @param table.start_position - If specified and `type` is [defines.controllers.cutscene](defines.controllers.cutscene), the cutscene will start at this position. If not given the start position will be the player position.
-     * @param table.start_zoom - If specified and `type` is [defines.controllers.cutscene](defines.controllers.cutscene), the cutscene will start at this zoom level. If not given the start zoom will be the players zoom.
+     * @param table.character - Entity to control. Mandatory when `type` is [defines.controllers.character](runtime:defines.controllers.character), ignored otherwise.
+     * @param table.chart_mode_cutoff - If specified and `type` is [defines.controllers.cutscene](runtime:defines.controllers.cutscene), the game will switch to chart-mode (map zoomed out) rendering when the zoom level is less than this value.
+     * @param table.final_transition_time - If specified and `type` is [defines.controllers.cutscene](runtime:defines.controllers.cutscene), it is the time in ticks it will take for the camera to pan from the final waypoint back to the starting position. If not given the camera will not pan back to the start position/zoom.
+     * @param table.start_position - If specified and `type` is [defines.controllers.cutscene](runtime:defines.controllers.cutscene), the cutscene will start at this position. If not given the start position will be the player position.
+     * @param table.start_zoom - If specified and `type` is [defines.controllers.cutscene](runtime:defines.controllers.cutscene), the cutscene will start at this zoom level. If not given the start zoom will be the players zoom.
      * @param table.type - Which controller to use.
-     * @param table.waypoints - List of waypoints for the cutscene controller. This parameter is mandatory when `type` is [defines.controllers.cutscene](defines.controllers.cutscene).
+     * @param table.waypoints - List of waypoints for the cutscene controller. This parameter is mandatory when `type` is [defines.controllers.cutscene](runtime:defines.controllers.cutscene).
      */
     set_controller(this: void,
         table: {
@@ -13036,7 +13045,7 @@ interface LuaPlayer extends LuaControl {
     readonly blueprint_to_setup: LuaItemStack
 
     /**
-     * The character attached to this player, if any. Returns `nil` when the player is disconnected (see {@link LuaPlayer::connected | LuaPlayer::connected}).
+     * The character attached to this player, if any. Returns `nil` when the player is disconnected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
      */
     character?: LuaEntity
 
@@ -13063,14 +13072,14 @@ interface LuaPlayer extends LuaControl {
     cursor_stack_temporary: boolean
 
     /**
-     * When in a cutscene; the character this player would be using once the cutscene is over, if any. Returns `nil` when the player is disconnected (see {@link LuaPlayer::connected | LuaPlayer::connected}).
+     * When in a cutscene; the character this player would be using once the cutscene is over, if any. Returns `nil` when the player is disconnected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
      */
     readonly cutscene_character?: LuaEntity
 
     /**
      * The display resolution for this player.
      * @remarks
-     * During {@link on_player_created | on_player_created}, this attribute will always return a resolution of `{width=1920, height=1080}`. To get the actual resolution, listen to the {@link on_player_display_resolution_changed | on_player_display_resolution_changed} event raised shortly afterwards.
+     * During {@link on_player_created | runtime:on_player_created}, this attribute will always return a resolution of `{width=1920, height=1080}`. To get the actual resolution, listen to the {@link on_player_display_resolution_changed | runtime:on_player_display_resolution_changed} event raised shortly afterwards.
      *
      */
     readonly display_resolution: DisplayResolution
@@ -13078,7 +13087,7 @@ interface LuaPlayer extends LuaControl {
     /**
      * The display scale for this player.
      * @remarks
-     * During {@link on_player_created | on_player_created}, this attribute will always return a scale of `1`. To get the actual scale, listen to the {@link on_player_display_scale_changed | on_player_display_scale_changed} event raised shortly afterwards.
+     * During {@link on_player_created | runtime:on_player_created}, this attribute will always return a scale of `1`. To get the actual scale, listen to the {@link on_player_display_scale_changed | runtime:on_player_display_scale_changed} event raised shortly afterwards.
      *
      */
     readonly display_scale: number
@@ -13106,7 +13115,7 @@ interface LuaPlayer extends LuaControl {
     hand_location?: ItemStackLocation
 
     /**
-     * This player's index in {@link LuaGameScript::players | LuaGameScript::players} (unique ID). It is assigned when a player is created, and remains so (even when the player is not {@link connected | LuaPlayer::connected}) until the player is irreversably {@link removed | on_player_removed}. Indexes of removed players can be reused.
+     * This player's index in {@link LuaGameScript::players | runtime:LuaGameScript::players} (unique ID). It is assigned when a player is created, and remains so (even when the player is not {@link connected | runtime:LuaPlayer::connected}) until the player is irreversably {@link removed | runtime:on_player_removed}. Indexes of removed players can be reused.
      */
     readonly index: number
 
@@ -13136,9 +13145,9 @@ interface LuaPlayer extends LuaControl {
     minimap_enabled: boolean
 
     /**
-     * The current per-player settings for the this player, indexed by prototype name. Returns the same structure as {@link LuaSettings::get_player_settings | LuaSettings::get_player_settings}. This table becomes invalid if its associated player does.
+     * The current per-player settings for the this player, indexed by prototype name. Returns the same structure as {@link LuaSettings::get_player_settings | runtime:LuaSettings::get_player_settings}. This table becomes invalid if its associated player does.
      * 
-     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
+     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | runtime:ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
      * @example
      * ```
      * -- Change the value of the "active_lifestyle" setting
@@ -13179,7 +13188,7 @@ interface LuaPlayer extends LuaControl {
     remove_unfiltered_items: boolean
 
     /**
-     * The render mode of the player, like map or zoom to world. The render mode can be set using {@link LuaPlayer::open_map | LuaPlayer::open_map}, {@link LuaPlayer::zoom_to_world | LuaPlayer::zoom_to_world} and {@link LuaPlayer::close_map | LuaPlayer::close_map}.
+     * The render mode of the player, like map or zoom to world. The render mode can be set using {@link LuaPlayer::open_map | runtime:LuaPlayer::open_map}, {@link LuaPlayer::zoom_to_world | runtime:LuaPlayer::zoom_to_world} and {@link LuaPlayer::close_map | runtime:LuaPlayer::close_map}.
      */
     readonly render_mode: defines.render_mode
 
@@ -13231,7 +13240,7 @@ interface LuaPlayer extends LuaControl {
 /**
  * An object used to measure script performance.
  * @remarks
- * Since performance is non-deterministic, these objects don't allow reading the raw time values from Lua. They can be used anywhere a {@link LocalisedString | LocalisedString} is used, except for {@link LuaGuiElement::add | LuaGuiElement::add}'s LocalisedString arguments, {@link LuaSurface::create_entity | LuaSurface::create_entity}'s `text` argument, and {@link LuaEntity::add_market_item | LuaEntity::add_market_item}.
+ * Since performance is non-deterministic, these objects don't allow reading the raw time values from Lua. They can be used anywhere a {@link LocalisedString | runtime:LocalisedString} is used, except for {@link LuaGuiElement::add | runtime:LuaGuiElement::add}'s LocalisedString arguments, {@link LuaSurface::create_entity | runtime:LuaSurface::create_entity}'s `text` argument, and {@link LuaEntity::add_market_item | runtime:LuaEntity::add_market_item}.
  *
  */
 interface LuaProfiler {
@@ -13452,7 +13461,7 @@ interface LuaRailSignalControlBehavior extends LuaControlBehavior {
 }
 
 /**
- * A deterministic random generator independent from the core games random generator that can be seeded and re-seeded at will. This random generator can be saved and loaded and will maintain its state. Note this is entirely different from calling {@link math.random | Libraries.html#math.random}() and you should be sure you actually want to use this over calling `math.random()`. If you aren't sure if you need to use this over calling `math.random()` then you probably don't need to use this.
+ * A deterministic random generator independent from the core games random generator that can be seeded and re-seeded at will. This random generator can be saved and loaded and will maintain its state. Note this is entirely different from calling {@link math.random | libraries.html}() and you should be sure you actually want to use this over calling `math.random()`. If you aren't sure if you need to use this over calling `math.random()` then you probably don't need to use this.
  * @example
  * Create a generator and use it to print a random number. 
  * ```
@@ -13498,7 +13507,7 @@ interface LuaRandomGenerator {
 }
 
 /**
- * A crafting recipe. Recipes belong to forces (see {@link LuaForce | LuaForce}) because some recipes are unlocked by research, and researches are per-force.
+ * A crafting recipe. Recipes belong to forces (see {@link LuaForce | runtime:LuaForce}) because some recipes are unlocked by research, and researches are per-force.
  */
 interface LuaRecipe {
     /**
@@ -13803,7 +13812,7 @@ interface LuaRecipePrototype {
 }
 
 /**
- * Registry of interfaces between scripts. An interface is simply a dictionary mapping names to functions. A script or mod can then register an interface with {@link LuaRemote | LuaRemote}, after that any script can call the registered functions, provided it knows the interface name and the desired function name. An instance of LuaRemote is available through the global object named `remote`.
+ * Registry of interfaces between scripts. An interface is simply a dictionary mapping names to functions. A script or mod can then register an interface with {@link LuaRemote | runtime:LuaRemote}, after that any script can call the registered functions, provided it knows the interface name and the desired function name. An instance of LuaRemote is available through the global object named `remote`.
  * @example
  * Will register a remote interface containing two functions. Later, it will call these functions through `remote`. 
  * ```
@@ -13891,7 +13900,7 @@ interface LuaRendering {
 
     /**
      * Create an animation.
-     * @param table.animation - Name of an [animation prototype](https://wiki.factorio.com/Prototype/Animation).
+     * @param table.animation - Name of an [AnimationPrototype](prototype:AnimationPrototype).
      * @param table.animation_offset - Offset of the animation in frames. Default is 0.
      * @param table.animation_speed - How many frames the animation goes forward per tick. Default is 1.
      * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
@@ -15182,9 +15191,9 @@ interface LuaRoboportControlBehavior extends LuaControlBehavior {
  */
 interface LuaSettings {
     /**
-     * Gets the current per-player settings for the given player, indexed by prototype name. Returns the same structure as {@link LuaPlayer::mod_settings | LuaPlayer::mod_settings}. This table becomes invalid if its associated player does.
+     * Gets the current per-player settings for the given player, indexed by prototype name. Returns the same structure as {@link LuaPlayer::mod_settings | runtime:LuaPlayer::mod_settings}. This table becomes invalid if its associated player does.
      * 
-     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
+     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | runtime:ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
      * @example
      * ```
      * -- Change the value of the "active_lifestyle" setting
@@ -15198,7 +15207,7 @@ interface LuaSettings {
     /**
      * The current global mod settings, indexed by prototype name.
      * 
-     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
+     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | runtime:ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
      */
     readonly global: {[key: string]: ModSetting}
 
@@ -15210,7 +15219,7 @@ interface LuaSettings {
     /**
      * The default player mod settings for this map, indexed by prototype name.
      * 
-     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
+     * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | runtime:ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
      */
     readonly player: {[key: string]: ModSetting}
 
@@ -15469,7 +15478,7 @@ interface LuaStyle {
     font_color: Color
 
     /**
-     * Gui of the {@link LuaGuiElement | LuaGuiElement} of this style.
+     * Gui of the {@link LuaGuiElement | runtime:LuaGuiElement} of this style.
      */
     readonly gui: LuaGui
 
@@ -15863,7 +15872,7 @@ interface LuaSurface {
     /**
      * Clones the given area.
      * @remarks
-     * {@link defines.events.on_entity_cloned | defines.events.on_entity_cloned} is raised for each entity, and then {@link defines.events.on_area_cloned | defines.events.on_area_cloned} is raised.
+     * {@link defines.events.on_entity_cloned | runtime:defines.events.on_entity_cloned} is raised for each entity, and then {@link defines.events.on_area_cloned | runtime:defines.events.on_area_cloned} is raised.
      * Entities are cloned in an order such that they can always be created, eg rails before trains.
      *
      * @param table.clear_destination_decoratives - If the destination decoratives should be cleared
@@ -15910,7 +15919,7 @@ interface LuaSurface {
         }): void
 
     /**
-     * Count entities of given type or name in a given area. Works just like {@link LuaSurface::find_entities_filtered | LuaSurface::find_entities_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of entities.
+     * Count entities of given type or name in a given area. Works just like {@link LuaSurface::find_entities_filtered | runtime:LuaSurface::find_entities_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of entities.
      * 
      * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns entities in the radius of the position. If `area` is specified, this returns entities colliding with that area.
      * @param table.invert - Whether the filters should be inverted.
@@ -15936,7 +15945,7 @@ interface LuaSurface {
         }): void
 
     /**
-     * Count tiles of a given name in a given area. Works just like {@link LuaSurface::find_tiles_filtered | LuaSurface::find_tiles_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of tiles.
+     * Count tiles of a given name in a given area. Works just like {@link LuaSurface::find_tiles_filtered | runtime:LuaSurface::find_tiles_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of tiles.
      * 
      * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
      * @param table.has_tile_ghost - Can be further filtered by supplying a `force` filter.
@@ -16168,7 +16177,7 @@ interface LuaSurface {
     /**
      * Find enemy units (entities with type "unit") of a given force within an area.
      * @remarks
-     * This is more efficient than {@link LuaSurface::find_entities | LuaSurface::find_entities}.
+     * This is more efficient than {@link LuaSurface::find_entities | runtime:LuaSurface::find_entities}.
      *
      * @param center - Center of the search area
      * @param force - Force to find enemies of. If not given, uses the player force.
@@ -16358,7 +16367,7 @@ interface LuaSurface {
     /**
      * Find units (entities with type "unit") of a given force and force condition within a given area.
      * @remarks
-     * This is more efficient than {@link LuaSurface::find_entities | LuaSurface::find_entities}.
+     * This is more efficient than {@link LuaSurface::find_entities | runtime:LuaSurface::find_entities}.
      *
      * @param table.area - Box to find units within.
      * @param table.condition - Only forces which meet the condition will be included in the search.
@@ -16494,7 +16503,7 @@ interface LuaSurface {
     get_starting_area_radius(this: void): void
 
     /**
-     * Get the tile at a given position. An alternative call signature for this method is passing it a single {@link TilePosition | TilePosition}.
+     * Get the tile at a given position. An alternative call signature for this method is passing it a single {@link TilePosition | runtime:TilePosition}.
      * @remarks
      * Non-integer values will result in them being rounded down.
      *
@@ -16608,9 +16617,9 @@ interface LuaSurface {
         id: number): void
 
     /**
-     * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities, such as vehicles. If you want to command actual units (such as biters or spitters) to move, use {@link LuaEntity::set_command | LuaEntity::set_command} instead.
+     * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | runtime:PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities, such as vehicles. If you want to command actual units (such as biters or spitters) to move, use {@link LuaEntity::set_command | runtime:LuaEntity::set_command} instead.
      * 
-     * The resulting path is ultimately returned asynchronously via {@link on_script_path_request_finished | on_script_path_request_finished}.
+     * The resulting path is ultimately returned asynchronously via {@link on_script_path_request_finished | runtime:on_script_path_request_finished}.
      * @param table.bounding_box - The dimensions of the object that's supposed to travel the path.
      * @param table.can_open_gates - Whether the path request can open gates. Defaults to `false`.
      * @param table.collision_mask - The list of masks the `bounding_box` collides with.
@@ -16655,7 +16664,7 @@ interface LuaSurface {
         status: defines.chunk_generated_status): void
 
     /**
-     * Set the hidden tile for the specified position. While during normal gameplay only {@link non-mineable | LuaTilePrototype::mineable_properties} tiles can become hidden, this method allows any kind of tile to be set as the hidden one.
+     * Set the hidden tile for the specified position. While during normal gameplay only {@link non-mineable | runtime:LuaTilePrototype::mineable_properties} tiles can become hidden, this method allows any kind of tile to be set as the hidden one.
      * @param position - The tile position.
      * @param tile - The new hidden tile or `nil` to clear the hidden tile.
      */
@@ -16680,7 +16689,7 @@ interface LuaSurface {
     /**
      * Set tiles at specified locations. Can automatically correct the edges around modified tiles.
      * 
-     * Placing a {@link mineable | LuaTilePrototype::mineable_properties} tile on top of a non-mineable one will turn the latter into the {@link LuaTile::hidden_tile | LuaTile::hidden_tile} for that tile. Placing a mineable tile on a mineable one or a non-mineable tile on a non-mineable one will not modify the hidden tile. This restriction can however be circumvented by using {@link LuaSurface::set_hidden_tile | LuaSurface::set_hidden_tile}.
+     * Placing a {@link mineable | runtime:LuaTilePrototype::mineable_properties} tile on top of a non-mineable one will turn the latter into the {@link LuaTile::hidden_tile | runtime:LuaTile::hidden_tile} for that tile. Placing a mineable tile on a mineable one or a non-mineable tile on a non-mineable one will not modify the hidden tile. This restriction can however be circumvented by using {@link LuaSurface::set_hidden_tile | runtime:LuaSurface::set_hidden_tile}.
      * @remarks
      * It is recommended to call this method once for all the tiles you want to change rather than calling it individually for every tile. As the tile correction is used after every step, calling it one by one could cause the tile correction logic to redo some of the changes. Also, many small API calls are generally more performance intensive than one big one.
      *
@@ -16699,7 +16708,7 @@ interface LuaSurface {
     /**
      * Spill items on the ground centered at a given location.
      * @param allow_belts - Whether items can be spilled onto belts. Defaults to `true`.
-     * @param enable_looted - When true, each created item will be flagged with the [LuaEntity::to_be_looted](LuaEntity::to_be_looted) flag.
+     * @param enable_looted - When true, each created item will be flagged with the [LuaEntity::to_be_looted](runtime:LuaEntity::to_be_looted) flag.
      * @param force - When provided (and not `nil`) the items will be marked for deconstruction by this force.
      * @param items - Items to spill
      * @param position - Center of the spillage
@@ -16740,7 +16749,7 @@ interface LuaSurface {
      * 
      * Default is `{0, 0, 0}`, which means no influence.
      * @example
-     * Makes night on the surface pitch black, assuming [LuaSurface::min_brightness](LuaSurface::min_brightness) being set to default value `0.15`. 
+     * Makes night on the surface pitch black, assuming [LuaSurface::min_brightness](runtime:LuaSurface::min_brightness) being set to default value `0.15`. 
      * ```
      * game.surfaces[1].brightness_visual_weights = { 1 / 0.85, 1 / 0.85, 1 / 0.85 }
      * ```
@@ -16784,12 +16793,12 @@ interface LuaSurface {
     generate_with_lab_tiles: boolean
 
     /**
-     * This surface's index in {@link LuaGameScript::surfaces | LuaGameScript::surfaces} (unique ID). It is assigned when a surface is created, and remains so until it is {@link deleted | on_surface_deleted}. Indexes of deleted surfaces can be reused.
+     * This surface's index in {@link LuaGameScript::surfaces | runtime:LuaGameScript::surfaces} (unique ID). It is assigned when a surface is created, and remains so until it is {@link deleted | runtime:on_surface_deleted}. Indexes of deleted surfaces can be reused.
      */
     readonly index: number
 
     /**
-     * The generation settings for this surface. These can be modified after surface generation, but note that this will not retroactively update the surface. To manually regenerate it, {@link LuaSurface::regenerate_entity | LuaSurface::regenerate_entity}, {@link LuaSurface::regenerate_decorative | LuaSurface::regenerate_decorative}, and {@link LuaSurface::delete_chunk | LuaSurface::delete_chunk} can be used.
+     * The generation settings for this surface. These can be modified after surface generation, but note that this will not retroactively update the surface. To manually regenerate it, {@link LuaSurface::regenerate_entity | runtime:LuaSurface::regenerate_entity}, {@link LuaSurface::regenerate_decorative | runtime:LuaSurface::regenerate_decorative}, and {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk} can be used.
      */
     map_gen_settings: MapGenSettings
 
@@ -16894,7 +16903,7 @@ interface LuaTechnology {
     readonly force: LuaForce
 
     /**
-     * The current level of this technology. For level-based technology writing to this is the same as researching the technology to the previous level. Writing the level will set {@link LuaTechnology::enabled | LuaTechnology::enabled} to `true`.
+     * The current level of this technology. For level-based technology writing to this is the same as researching the technology to the previous level. Writing the level will set {@link LuaTechnology::enabled | runtime:LuaTechnology::enabled} to `true`.
      */
     level: number
 
@@ -16921,7 +16930,7 @@ interface LuaTechnology {
     readonly order: string
 
     /**
-     * Prerequisites of this technology. The result maps technology name to the {@link LuaTechnology | LuaTechnology} object.
+     * Prerequisites of this technology. The result maps technology name to the {@link LuaTechnology | runtime:LuaTechnology} object.
      */
     readonly prerequisites: {[key: string]: LuaTechnology}
 
@@ -16933,13 +16942,13 @@ interface LuaTechnology {
     /**
      * The number of research units required for this technology.
      * @remarks
-     * This is multiplied by the current research cost multiplier, unless {@link LuaTechnologyPrototype::ignore_tech_cost_multiplier | LuaTechnologyPrototype::ignore_tech_cost_multiplier} is `true`.
+     * This is multiplied by the current research cost multiplier, unless {@link LuaTechnologyPrototype::ignore_tech_cost_multiplier | runtime:LuaTechnologyPrototype::ignore_tech_cost_multiplier} is `true`.
      *
      */
     readonly research_unit_count: number
 
     /**
-     * The count formula, if this research has any. See the {@link wiki | https://wiki.factorio.com/Prototype/Technology#Technology_data} for details.
+     * The count formula, if this research has any. See {@link TechnologyUnit::count_formula | prototype:TechnologyUnit::count_formula} for details.
      */
     readonly research_unit_count_formula?: string
 
@@ -17002,7 +17011,7 @@ interface LuaTechnologyPrototype {
     /**
      * If this technology ignores the technology cost multiplier setting.
      * @remarks
-     * {@link LuaTechnologyPrototype::research_unit_count | LuaTechnologyPrototype::research_unit_count} will already take this setting into account.
+     * {@link LuaTechnologyPrototype::research_unit_count | runtime:LuaTechnologyPrototype::research_unit_count} will already take this setting into account.
      *
      */
     readonly ignore_tech_cost_multiplier: boolean
@@ -17040,20 +17049,20 @@ interface LuaTechnologyPrototype {
     readonly order: string
 
     /**
-     * Prerequisites of this technology. The result maps technology name to the {@link LuaTechnologyPrototype | LuaTechnologyPrototype} object.
+     * Prerequisites of this technology. The result maps technology name to the {@link LuaTechnologyPrototype | runtime:LuaTechnologyPrototype} object.
      */
     readonly prerequisites: {[key: string]: LuaTechnologyPrototype}
 
     /**
      * The number of research units required for this technology.
      * @remarks
-     * This is multiplied by the current research cost multiplier, unless {@link LuaTechnologyPrototype::ignore_tech_cost_multiplier | LuaTechnologyPrototype::ignore_tech_cost_multiplier} is `true`.
+     * This is multiplied by the current research cost multiplier, unless {@link LuaTechnologyPrototype::ignore_tech_cost_multiplier | runtime:LuaTechnologyPrototype::ignore_tech_cost_multiplier} is `true`.
      *
      */
     readonly research_unit_count: number
 
     /**
-     * The count formula, if this research has any. See the {@link wiki | https://wiki.factorio.com/Prototype/Technology#Technology_data} for details.
+     * The count formula, if this research has any. See {@link TechnologyUnit::count_formula | prototype:TechnologyUnit::count_formula} for details.
      */
     readonly research_unit_count_formula?: string
 
@@ -17145,7 +17154,7 @@ interface LuaTile {
         force?: ForceIdentification): void
 
     /**
-     * The name of the {@link LuaTilePrototype | LuaTilePrototype} hidden under this tile, if any. During normal gameplay, only {@link non-mineable | LuaTilePrototype::mineable_properties} tiles can become hidden. This can however be circumvented with {@link LuaSurface::set_hidden_tile | LuaSurface::set_hidden_tile}.
+     * The name of the {@link LuaTilePrototype | runtime:LuaTilePrototype} hidden under this tile, if any. During normal gameplay, only {@link non-mineable | runtime:LuaTilePrototype::mineable_properties} tiles can become hidden. This can however be circumvented with {@link LuaSurface::set_hidden_tile | runtime:LuaSurface::set_hidden_tile}.
      */
     readonly hidden_tile?: string
 
@@ -17387,7 +17396,7 @@ interface LuaTrain {
     readonly back_rail?: LuaEntity
 
     /**
-     * The back stock of this train, if any. The back of the train is at the opposite end of the {@link front | LuaTrain::front_stock}.
+     * The back stock of this train, if any. The back of the train is at the opposite end of the {@link front | runtime:LuaTrain::front_stock}.
      */
     readonly back_stock?: LuaEntity
 
@@ -17397,7 +17406,7 @@ interface LuaTrain {
     readonly cargo_wagons: LuaEntity[]
 
     /**
-     * The rolling stocks this train is composed of, with the numbering starting at the {@link front | LuaTrain::front_stock} of the train.
+     * The rolling stocks this train is composed of, with the numbering starting at the {@link front | runtime:LuaTrain::front_stock} of the train.
      */
     readonly carriages: LuaEntity[]
 
@@ -17466,7 +17475,7 @@ interface LuaTrain {
     /**
      * The player passengers on the train
      * @remarks
-     * This does *not* index using player index. See {@link LuaPlayer::index | LuaPlayer::index} on each player instance for the player index.
+     * This does *not* index using player index. See {@link LuaPlayer::index | runtime:LuaPlayer::index} on each player instance for the player index.
      *
      */
     readonly passengers: LuaPlayer[]
@@ -17662,12 +17671,12 @@ interface LuaTransportLine {
     clear(this: void): void
 
     /**
-     * Get counts of all items on this line, similar to how {@link LuaInventory::get_contents | LuaInventory::get_contents} does.
+     * Get counts of all items on this line, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      */
     get_contents(this: void): void
 
     /**
-     * Count some or all items on this line, similar to how {@link LuaInventory::get_item_count | LuaInventory::get_item_count} does.
+     * Count some or all items on this line, similar to how {@link LuaInventory::get_item_count | runtime:LuaInventory::get_item_count} does.
      * @param item - Prototype name of the item to count. If not specified, count all items.
      */
     get_item_count(this: void,
@@ -17696,7 +17705,7 @@ interface LuaTransportLine {
     /**
      * Returns whether the associated internal transport line of this line is the same as the others associated internal transport line.
      * @remarks
-     * This can return true even when the {@link LuaTransportLine::owner | LuaTransportLine::owner}s are different (so `this == other` is false), because the internal transport lines can span multiple tiles.
+     * This can return true even when the {@link LuaTransportLine::owner | runtime:LuaTransportLine::owner}s are different (so `this == other` is false), because the internal transport lines can span multiple tiles.
      *
      */
     line_equals(this: void,
@@ -17836,7 +17845,7 @@ interface LuaUnitGroup {
     help(this: void): void
 
     /**
-     * Make this group autonomous. Autonomous groups will automatically attack polluted areas. Autonomous groups aren't considered to be {@link script-driven | LuaUnitGroup::is_script_driven}.
+     * Make this group autonomous. Autonomous groups will automatically attack polluted areas. Autonomous groups aren't considered to be {@link script-driven | runtime:LuaUnitGroup::is_script_driven}.
      */
     set_autonomous(this: void): void
 
@@ -17878,7 +17887,7 @@ interface LuaUnitGroup {
     readonly group_number: number
 
     /**
-     * Whether this unit group is controlled by a script or by the game engine. This can be changed using {@link LuaUnitGroup::set_autonomous | LuaUnitGroup::set_autonomous}.
+     * Whether this unit group is controlled by a script or by the game engine. This can be changed using {@link LuaUnitGroup::set_autonomous | runtime:LuaUnitGroup::set_autonomous}.
      */
     readonly is_script_driven: boolean
 
@@ -18018,7 +18027,17 @@ interface LuaWallControlBehavior extends LuaControlBehavior {
 
 }
 
-interface BaseLuaControlSetGuiArrowParams {
+/**
+ * @remarks
+ * Other attributes may be specified depending on `type`:
+ *
+ */
+interface LuaControlSetGuiArrowParams {
+    /**
+     * Where to point to. This field determines what other fields are mandatory.
+     */
+    'type': GuiArrowType
+
 }
 
 /**
@@ -18026,12 +18045,7 @@ interface BaseLuaControlSetGuiArrowParams {
  * Applies to variant case `crafting_queue`
  *
  */
-interface LuaControlSetGuiArrowParamsCraftingQueue extends BaseLuaControlSetGuiArrowParams {
-    /**
-     * Where to point to. This field determines what other fields are mandatory. May be `"nowhere"`, `"goal"`, `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"`, or `"item_stack"`.
-     */
-    type: 'crafting_queue'
-
+interface LuaControlSetGuiArrowParamsCraftingQueue extends LuaControlSetGuiArrowParams {
     'crafting_queueindex': number
 
 }
@@ -18041,12 +18055,7 @@ interface LuaControlSetGuiArrowParamsCraftingQueue extends BaseLuaControlSetGuiA
  * Applies to variant case `entity`
  *
  */
-interface LuaControlSetGuiArrowParamsEntity extends BaseLuaControlSetGuiArrowParams {
-    /**
-     * Where to point to. This field determines what other fields are mandatory. May be `"nowhere"`, `"goal"`, `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"`, or `"item_stack"`.
-     */
-    type: 'entity'
-
+interface LuaControlSetGuiArrowParamsEntity extends LuaControlSetGuiArrowParams {
     'entity': LuaEntity
 
 }
@@ -18056,12 +18065,7 @@ interface LuaControlSetGuiArrowParamsEntity extends BaseLuaControlSetGuiArrowPar
  * Applies to variant case `item_stack`
  *
  */
-interface LuaControlSetGuiArrowParamsItemStack extends BaseLuaControlSetGuiArrowParams {
-    /**
-     * Where to point to. This field determines what other fields are mandatory. May be `"nowhere"`, `"goal"`, `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"`, or `"item_stack"`.
-     */
-    type: 'item_stack'
-
+interface LuaControlSetGuiArrowParamsItemStack extends LuaControlSetGuiArrowParams {
     'inventory_index': defines.inventory
 
     'item_stack_index': number
@@ -18078,21 +18082,8 @@ interface LuaControlSetGuiArrowParamsItemStack extends BaseLuaControlSetGuiArrow
  * Applies to variant case `position`
  *
  */
-interface LuaControlSetGuiArrowParamsPosition extends BaseLuaControlSetGuiArrowParams {
-    /**
-     * Where to point to. This field determines what other fields are mandatory. May be `"nowhere"`, `"goal"`, `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"`, or `"item_stack"`.
-     */
-    type: 'position'
-
+interface LuaControlSetGuiArrowParamsPosition extends LuaControlSetGuiArrowParams {
     'position': MapPosition
-
-}
-
-interface DefaultLuaControlSetGuiArrowParams extends BaseLuaControlSetGuiArrowParams {
-    /**
-     * Where to point to. This field determines what other fields are mandatory. May be `"nowhere"`, `"goal"`, `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"`, or `"item_stack"`.
-     */
-    type: 'nowhere' | 'goal' | 'entity_info' | 'active_window'
 
 }
 
@@ -18118,7 +18109,7 @@ interface LuaGuiElementAddParams {
     'enabled'?: boolean
 
     /**
-     * How the element should interact with game controllers. Defaults to {@link defines.game_controller_interaction.normal | defines.game_controller_interaction.normal}.
+     * How the element should interact with game controllers. Defaults to {@link defines.game_controller_interaction.normal | runtime:defines.game_controller_interaction.normal}.
      */
     'game_controller_interaction'?: defines.game_controller_interaction
 
@@ -18138,7 +18129,7 @@ interface LuaGuiElementAddParams {
     'name'?: string
 
     /**
-     * Whether this element will raise {@link on_gui_hover | on_gui_hover} and {@link on_gui_leave | on_gui_leave}. Defaults to `false`.
+     * Whether this element will raise {@link on_gui_hover | runtime:on_gui_hover} and {@link on_gui_leave | runtime:on_gui_leave}. Defaults to `false`.
      */
     'raise_hover_events'?: boolean
 
@@ -18148,7 +18139,7 @@ interface LuaGuiElementAddParams {
     'style'?: string
 
     /**
-     * {@link Tags | Tags} associated with the child element.
+     * {@link Tags | runtime:Tags} associated with the child element.
      */
     'tags'?: Tags
 
@@ -18158,9 +18149,9 @@ interface LuaGuiElementAddParams {
     'tooltip'?: LocalisedString
 
     /**
-     * The kind of element to add. Has to be one of the GUI element types listed at the top of this page.
+     * The kind of element to add, which potentially has its own attributes as listed below.
      */
-    'type': string
+    'type': GuiElementType
 
     /**
      * Whether the child element is visible. Defaults to `true`.
@@ -18326,7 +18317,7 @@ interface LuaGuiElementAddParamsDropDown extends LuaGuiElementAddParams {
  */
 interface LuaGuiElementAddParamsFlow extends LuaGuiElementAddParams {
     /**
-     * The initial direction of the flow's layout. See {@link LuaGuiElement::direction | LuaGuiElement::direction}. Defaults to `"horizontal"`.
+     * The initial direction of the flow's layout. See {@link LuaGuiElement::direction | runtime:LuaGuiElement::direction}. Defaults to `"horizontal"`.
      */
     'direction'?: string
 
@@ -18339,7 +18330,7 @@ interface LuaGuiElementAddParamsFlow extends LuaGuiElementAddParams {
  */
 interface LuaGuiElementAddParamsFrame extends LuaGuiElementAddParams {
     /**
-     * The initial direction of the frame's layout. See {@link LuaGuiElement::direction | LuaGuiElement::direction}. Defaults to `"horizontal"`.
+     * The initial direction of the frame's layout. See {@link LuaGuiElement::direction | runtime:LuaGuiElement::direction}. Defaults to `"horizontal"`.
      */
     'direction'?: string
 
@@ -18747,7 +18738,7 @@ interface LuaSurfaceCreateEntityParams {
     'position': MapPosition
 
     /**
-     * If true; {@link defines.events.script_raised_built | defines.events.script_raised_built} will be fired on successful entity creation.
+     * If true; {@link defines.events.script_raised_built | runtime:defines.events.script_raised_built} will be fired on successful entity creation.
      */
     'raise_built'?: boolean
 
@@ -19182,6 +19173,4 @@ interface LuaSurfaceCreateEntityParamsUndergroundBelt extends LuaSurfaceCreateEn
     'type'?: string
 
 }
-
-type LuaControlSetGuiArrowParams = LuaControlSetGuiArrowParamsCraftingQueue | LuaControlSetGuiArrowParamsEntity | LuaControlSetGuiArrowParamsItemStack | LuaControlSetGuiArrowParamsPosition | DefaultLuaControlSetGuiArrowParams
 
