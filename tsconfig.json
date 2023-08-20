@@ -3,7 +3,7 @@
         "target": "esnext",
         "lib": ["esnext"],
         "strict": true,
-        "types": [],
+        "types": ["@typescript-to-lua/language-extensions"],
     },
     "include": [
         "dist/*.d.ts",

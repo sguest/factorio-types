@@ -2,6 +2,7 @@ prototype_parser/prototype_overview.html
 prototype_parser/prototypes.d.ts
 
 json_parser/runtime-api.json
+json_parser/prototype-api.json
 dist/core.d.ts
 dist/serpent.d.ts
 

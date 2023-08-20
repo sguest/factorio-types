@@ -1,8 +1,42 @@
 interface ApiData {
     application: string;
-    stage: 'runtime';
-    application_version: string;
+    stage: string;
     api_version: number;
+    application_version: string;
+}
+
+interface PrototypeData extends ApiData {
+    stage: 'prototype';
+    prototypes: FactorioPrototype[];
+    types: FactorioPrototypeType[];
+}
+
+interface FactorioPrototype {
+    name: string;
+    order: number;
+    description: string;
+    examples: string[];
+    parent: string;
+    abstract: boolean;
+    typename: string;
+    deprecated: boolean;
+    properties: Attribute[];
+}
+
+interface FactorioPrototypeType {
+    name: string;
+    order: number;
+    description: string;
+    examples: string[];
+    parent: string;
+    abstract: boolean;
+    inline: boolean;
+    type: FactorioType;
+    properties: Attribute[];
+}
+
+interface RuntimeData extends ApiData{
+    stage: 'runtime';
     classes: FactorioClass[];
     events: FactorioEvent[];
     defines: Define[];
@@ -73,7 +107,7 @@ interface BasicMember {
     description: string;
 }
 
-type FactorioType = string | UnionType | ArrayType | DictionaryType | FunctionType | LuaLazyLoadedValueType | TableType | LiteralType | TypeType | StructType;
+type FactorioType = string | UnionType | ArrayType | DictionaryType | FunctionType | LuaLazyLoadedValueType | TableType | LiteralType | TypeType | StructType | StructParentType | TupleType;
 
 interface UnionType {
     complex_type: 'union';
@@ -106,6 +140,15 @@ interface TableType {
     parameters: Parameter[];
     variant_parameter_groups?: ParameterGroup[];
     variant_parameter_description?: string;
+}
+
+interface TupleType {
+    complex_type: 'tuple';
+    values: FactorioType[];
+}
+
+interface StructParentType {
+    complex_type: 'struct';
 }
 
 interface LiteralType {
@@ -155,8 +198,14 @@ interface Method {
     variadic_description?: string;
     takes_table: boolean;
     table_is_optional?: boolean;
-    return_type?: FactorioType;
-    return_description?: string;
+    return_values: MethodReturnValue[];
+}
+
+interface MethodReturnValue {
+    order: number;
+    description: string;
+    type: FactorioType;
+    optional: boolean;
 }
 
 interface Attribute {

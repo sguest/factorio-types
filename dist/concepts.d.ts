@@ -5,6 +5,7 @@
 // Factorio version 1.1.89
 // API version 4
 
+declare namespace runtime {
 /**
  * Depending on the value of `filter`, the table may take additional fields. `filter` may be one of the following:
  * @remarks
@@ -6258,3 +6259,5 @@ interface DefaultTilePrototypeFilter extends BaseTilePrototypeFilter {
     filter: 'minable' | 'autoplace' | 'blueprintable' | 'item-to-place'
 }
 
+
+}

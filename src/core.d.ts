@@ -8,14 +8,13 @@ declare const table: {
 };
 
 declare const data: {
-    // data-phase type info not currently supported because API docs are long-since not updated
-    raw: any,
+    raw: prototype.dataCollection,
     extend(values: any[]): void,
 };
 
 declare const global: { [key: string]: any };
 
-declare function log(str: LocalisedString): void;
+declare function log(str: runtime.LocalisedString): void;
 
 declare function table_size(tbl: object): number;
 

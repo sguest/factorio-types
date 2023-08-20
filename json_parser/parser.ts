@@ -4,28 +4,39 @@
 import * as http from 'https';
 import * as fs from 'fs';
 
-const fileName = __dirname + '/runtime-api.json';
+const files = [{ name: 'runtime-api.json', handler: handleRuntimeFile }, { name: 'prototype-api.json', handler: handlePrototypeFile }];
 
 let arg = process.argv[2];
-if(arg === '-clean' && fs.existsSync(fileName)) {
-    fs.unlinkSync(fileName);
+if(arg === '-clean') {
+    for(let file of files)
+    {
+        const fileName = `${__dirname}/${file.name}`;
+        if(fs.existsSync(fileName))
+        {
+            fs.unlinkSync(fileName);
+        }
+    }
 }
 
-if(!fs.existsSync(fileName)) {
-    // Save a local copy of the file so it's possible to re-run the parser without waiting for a download each time
-    // Run with -clean or delete the local copy to get fresh data (like between versions)
-    http.get('https://lua-api.factorio.com/latest/runtime-api.json', (response) => {
-        response.on('end', handleFile);
-        response.pipe(fs.createWriteStream(fileName));
-    });
-}
-else {
-    handleFile();
+for(let file of files)
+{
+    const fileName = `${__dirname}/${file.name}`;
+    if(!fs.existsSync(fileName)) {
+        // Save a local copy of the file so it's possible to re-run the parser without waiting for a download each time
+        // Run with -clean or delete the local copy to get fresh data (like between versions)
+        http.get(`https://lua-api.factorio.com/latest/${file.name}`, (response) => {
+            response.on('end', () => file.handler(fileName));
+            response.pipe(fs.createWriteStream(fileName));
+        });
+    }
+    else {
+        file.handler(fileName);
+    }
 }
 
-function handleFile() {
+function handleRuntimeFile(fileName: string) {
     const content = fs.readFileSync(fileName, 'utf-8');
-    const apiData = JSON.parse(content) as ApiData;
+    const apiData = JSON.parse(content) as RuntimeData;
     var apiVersion = apiData['application_version'];
 
     fs.mkdirSync(__dirname + '/../dist', {recursive: true});
@@ -36,9 +47,18 @@ function handleFile() {
     writeGlobals(apiData, apiVersion);
 }
 
+function handlePrototypeFile(fileName: string) {
+    const content = fs.readFileSync(fileName, 'utf-8');
+    const apiData = JSON.parse(content) as PrototypeData;
+    var apiVersion = apiData['application_version'];
+    fs.mkdirSync(__dirname + '/../dist', {recursive: true});
+    writePrototypes(apiData, apiVersion);
+    writePrototypeTypes(apiData, apiVersion);
+}
+
 function writeHeaders(apiData: ApiData) {
     let output = '// Factorio API reference https://lua-api.factorio.com/latest/index.html\n';
-    output += '// Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json\n';
+    output += `// Generated from JSON source https://lua-api.factorio.com/latest/${apiData.stage}-api.json\n`;
     output += '// Definition source https://github.com/sguest/factorio-types\n';
     output += `// Factorio version ${apiData.application_version}\n`;
     output += `// API version ${apiData.api_version}\n\n`;
@@ -62,7 +82,7 @@ function fixName(name: string) {
     return name;
 }
 
-function writeDocs(itemData: FactorioClass | FactorioEvent | Concept | Method | Attribute | { description: string }, indent: string) {
+function writeDocs(itemData: FactorioClass | FactorioEvent | Concept | Method | Attribute | FactorioPrototypeType | { description: string }, indent: string) {
     let output = '';
     if(itemData.description) {
         output += `${indent} * ${formatLinks(formatDocLines(itemData.description, indent))}\n`;
@@ -102,8 +122,21 @@ function writeDocs(itemData: FactorioClass | FactorioEvent | Concept | Method | 
             output += `${indent} * @see {@link ${see}}\n`;
         }
     }
-    if('return_description' in itemData && itemData.return_description) {
-        output += `${indent} * @returns ${itemData.return_description}\n`;
+    if('return_values' in itemData && itemData.return_values?.length > 0)
+    {
+        if(itemData.return_values.length === 1) {
+            if(itemData.return_values[0].description)
+            {
+                output += `${indent} * @returns ${itemData.return_values[0].description}\n`
+            }
+        }
+        else {
+            output += `${indent} * @returns multiple values\n`
+            for(let returnValue of itemData.return_values)
+            {
+                output += `${indent} *  [${returnValue.order}] - ${returnValue.description}\n`
+            }
+        }
     }
 
     if(output) {
@@ -112,7 +145,7 @@ function writeDocs(itemData: FactorioClass | FactorioEvent | Concept | Method | 
     return output;
 }
 
-function parseType(type: FactorioType | undefined, indent: string): string {
+function parseType(type: FactorioType | undefined, indent: string, parent?: FactorioPrototypeType | FactorioPrototype): string {
     if (!type) {
         return 'void';
     }
@@ -133,6 +166,9 @@ function parseType(type: FactorioType | undefined, indent: string): string {
         if(type === 'nil') {
             return 'null';
         }
+        if(type === 'bool') {
+            return 'boolean';
+        }
 
         if(type === 'PrototypeFilter') {
             return 'ItemPrototypeFilter | TilePrototypeFilter | EntityPrototypeFilter | FluidPrototypeFilter | RecipePrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | TechnologyPrototypeFilter';
@@ -144,10 +180,10 @@ function parseType(type: FactorioType | undefined, indent: string): string {
         switch(type.complex_type) {
             case 'array':
                 if(typeof type.value === 'string') {
-                    return parseType(type.value, '') + '[]';
+                    return parseType(type.value, '', parent) + '[]';
                 }
                 else {
-                    return `Array<${parseType(type.value, '')}>`;
+                    return `Array<${parseType(type.value, '', parent)}>`;
                 }
             case 'union':
                 // Unions just allow their composite types to handle description, something like
@@ -155,7 +191,7 @@ function parseType(type: FactorioType | undefined, indent: string): string {
                 // This ends up a little messy and isn't accessible via doc parsers
                 // Would love to do a better job of this, but it seems like support isn't there yet
                 // https://github.com/microsoft/TypeScript/issues/38106
-                return type.options.map(o => parseType(o, '')).filter((value, index, self) => self.indexOf(value) === index).join(' | ');
+                return type.options.map(o => parseType(o, '', parent)).filter((value, index, self) => self.indexOf(value) === index).join(' | ');
             case 'dictionary':
             case 'LuaCustomTable':
                 // typescript requires either a number or string as indexer key.
@@ -174,12 +210,63 @@ function parseType(type: FactorioType | undefined, indent: string): string {
                 return value + `${type.parameters.map((paramType, index) => `arg${index}: ${paramType}`).join(', ')}) => any`;
             case 'table':
             case 'tuple':
-                if(type.variant_parameter_groups) {
-                    // The docs say this can exist, but currently the json data doesn't have any instance of it
-                    // I'm not sure exactly what this would look like, so for now throw in case it's ever introduced
-                    //throw new Error('Found table type with variant parameters');
+                if(type.complex_type === 'tuple' && 'values' in type)
+                {
+                    return `\n[${indent}    ${type.values.map(t => parseType(t, indent + '    ')).join(`,\n${indent}    `)}\n${indent}]`;
                 }
-                let paramStrings = type.parameters.map((p, index) => {
+                else {
+                    if(type.variant_parameter_groups) {
+                        // The docs say this can exist, but currently the json data doesn't have any instance of it
+                        // I'm not sure exactly what this would look like, so for now throw in case it's ever introduced
+                        //throw new Error('Found table type with variant parameters');
+                    }
+                    let paramStrings = type.parameters.map((p, index) => {
+                        let str = p.name;
+                        
+                        // at least one type (CircularProjectileCreationSpecification) has multiple properties named _, so differentiate them since that's not valid TS
+                        if(str === '_') {
+                            str = '_' + index;
+                        }
+
+                        if(/-/.test(str)) {
+                            str = `'${str}'`
+                        }
+                        if(p.optional) {
+                            str += '?';
+                        }
+
+                        if(p.description) {
+                            str = `\n    ${indent}/**\n${indent}     * ${formatLinks(p.description)}\n${indent}     */\n${indent}    ${str}`
+                        }
+
+                        return str + `: ${parseType(p.type, indent)}`;
+                    })
+                    return `{\n${indent}    ` + paramStrings.join(`,\n${indent}    `) + `\n${indent}}`;
+                }
+            case 'LuaLazyLoadedValue':
+                return `LuaLazyLoadedValue<${parseType(type.value, '')}>`;
+            case 'literal':
+                result = '';
+                if(type.description) {
+                    result = `/* ${formatLinks(type.description)} */ `
+                }
+                if(typeof type.value === 'string') {
+                    return result + `'${type.value}'`;
+                }
+                return result + type.value.toString();
+            case 'type':
+                result = '';
+                if(type.description) {
+                    result = `/* ${formatLinks(type.description)} */ `
+                }
+                return result + parseType(type.value, indent);
+            case 'LuaStruct':
+                return `{\n${type.attributes.map(a => writeAttribute(a, '')).join('')}}`;
+            case 'struct':
+                if(!parent) {
+                    throw new Error('Found "struct" type without parent supplied, cannot parse');
+                }
+                let paramStrings = parent.properties.map((p, index) => {
                     let str = p.name;
                     
                     // at least one type (CircularProjectileCreationSpecification) has multiple properties named _, so differentiate them since that's not valid TS
@@ -201,25 +288,6 @@ function parseType(type: FactorioType | undefined, indent: string): string {
                     return str + `: ${parseType(p.type, indent)}`;
                 })
                 return `{\n${indent}    ` + paramStrings.join(`,\n${indent}    `) + `\n${indent}}`;
-            case 'LuaLazyLoadedValue':
-                return `LuaLazyLoadedValue<${parseType(type.value, '')}>`;
-            case 'literal':
-                result = '';
-                if(type.description) {
-                    result = `/* ${formatLinks(type.description)} */ `
-                }
-                if(typeof type.value === 'string') {
-                    return result + `'${type.value}'`;
-                }
-                return result + type.value.toString();
-            case 'type':
-                result = '';
-                if(type.description) {
-                    result = `/* ${formatLinks(type.description)} */ `
-                }
-                return result + parseType(type.value, indent);
-            case 'LuaStruct':
-                return `{\n${type.attributes.map(a => writeAttribute(a, '')).join('')}}`;
         }
 
         //Unreachable assuming the current types are exhaustive, but leaving this here so that future added types will throw instead of being silently ignored
@@ -268,10 +336,19 @@ function writeMethod(method: Method, indent: string = '    ') {
         output += `\n${indent}    }`;
     }
 
-    let returnType = parseType(method.return_type, '');
-    if(/(or|returns) `?nil/i.test(method.return_description || '')) {
-        returnType += ' | null';
+    let returnType = 'void';
+    if(method.return_values.length === 1) {
+        returnType = parseType(method.return_values[0].type, '');
+        if(method.return_values[0].optional) {
+            returnType += ' | null';
+        }
     }
+    else if(method.return_values.length > 1) {
+        returnType = 'LuaMultiReturn<[';
+        returnType += method.return_values.map(v => parseType(v.type, '') + (v.optional ? ' | null' : '')).join(', ');
+        returnType += ']>';
+    }
+
     output += `): ${returnType}\n\n`;
 
     return output;
@@ -474,9 +551,166 @@ function parseVariantClasses(classes: FactorioClass[]) {
     return { variantClasses, variantUnions };
 }
 
-function writeClasses(apiData: ApiData, apiVersion: string) {
+function writePrototypes(apiData: PrototypeData, apiVersion: string) {
+    let output = '// Factorio prototypes\n';
+    output += writeHeaders(apiData);
+
+    output += 'declare namespace prototype {\n\n';
+
+    output += 'interface dataCollection {\n'
+
+    for(let prototype of apiData.prototypes) {
+        if(prototype.typename) {
+            output += `    '${prototype.typename}': { [key: string]: ${prototype.name} }\n`
+        }
+    }
+
+    output += '\n}'
+
+    parseParentStructure(apiData.prototypes);
+
+    for(let prototype of apiData.prototypes) {
+        // Ugly hack, but this is a weird one-off where a property in a sub-class is a more generic union than the superclass
+        // a truly dynamic fix probably isn't worth it for this one case, so just "fix" it manually by maknig the parent accept the union
+        if(prototype.name === 'ItemWithInventoryPrototype') {
+            for(let property of prototype.properties) {
+                if(property.name === 'inventory_size') {
+                    property.type = {
+                        complex_type: 'union',
+                        options: [
+                            'ItemStackIndex',
+                            {
+                                "complex_type": "literal",
+                                "value": "dynamic"
+                            }
+                        ],
+                    };
+                    property.description += ' - This will only accept an ItemStackIndex (aka number). The union with \'dynamic\' is only to satisfy BlueprintBookPrototype within Typescript\'s inheritance rules';
+                }
+            }
+        }
+
+        output += writeDocs(prototype, '');
+        output += `interface ${prototype.name} `;
+        if(prototype.parent) {
+            output += `extends ${prototype.parent}`;
+        }
+        output += parseType({ complex_type: 'struct' }, '', prototype) + '\n\n';
+    }
+
+    output += '\n}'
+
+    fs.writeFileSync(__dirname + '/../dist/prototypes.d.ts', output);
+}
+
+function writePrototypeTypes(apiData: PrototypeData, apiVersion: string) {
+    let output = '// Factorio type definitions for prototypes\n';
+    output += writeHeaders(apiData);
+
+    output += 'declare namespace prototype {\n\n';
+
+    const childTypes = parseParentStructure(apiData.types);
+
+    for(let typeData of apiData.types) {
+        if(childTypes[typeData.name]) {
+            /*
+             * Factorio prototypes often have super/sub classes with a "type" property of different literal strings
+             * Typescript doesn't support this inheritance as the properties are incompatible, so inject a 
+             * surrogate "base" interface with all the properties, and a new interface to handle the base type's literal
+             */
+            const typeIndex = typeData.properties.findIndex(p => p.name === 'type');
+            if(typeIndex >= 0) {
+                let typeProp = typeData.properties[typeIndex];
+                if(typeof typeProp.type === 'object' && typeProp.type.complex_type === 'literal') {
+                    let baseName = typeData.name + 'Base';
+                    let typeName = typeData.name;
+
+                    output += `interface ${typeName} extends ${baseName} {\n`;
+                    output += `    type: '${typeProp.type.value}'\n`
+                    output += '}\n\n';
+
+                    typeData.name = baseName;
+                    typeProp.type = 'string';
+
+                    for(let child of childTypes[typeName]) {
+                        child.parent = baseName;
+                    }
+                }
+                else {
+                    throw new Error('Cannot handle type inheritance where type property is non-literal');
+                }
+            }
+        }
+    }
+
+    for(let typeData of apiData.types)
+    {
+        // As far as I can tell, Resistances is improperly documented and should be an array
+        if(typeData.name === 'Resistances')
+        {
+            typeData.type = { complex_type: 'array', value: typeData.type };
+        }
+
+        if(typeData.type !== 'builtin')
+        {
+            output += writeDocs(typeData, '');
+            if(typeof typeData.type === 'object' && 'complex_type' in typeData.type && typeData.type.complex_type === 'struct') {
+                output += `interface ${typeData.name} `;
+                if(typeData.parent) {
+                    output += `extends ${typeData.parent}`;
+                }
+                output += parseType(typeData.type, '', typeData) + '\n\n';
+            }
+            else {
+                output += `type ${typeData.name} = ${parseType(typeData.type, '', typeData)}\n\n`;
+            }
+        }
+    }
+    output += '\n}'
+
+    fs.writeFileSync(__dirname + '/../dist/types.d.ts', output);
+}
+
+function parseParentStructure<T extends { parent: string, name: string, properties: Attribute[]}>(items: T[]) {
+    const childTypes: {[key: string]: T[]} = {};
+
+    for(let item of items) {
+        if(item.parent) {
+            childTypes[item.parent] = childTypes[item.parent] || [];
+            childTypes[item.parent].push(item);
+        }
+    }
+
+    for(let item of items) {
+        if(childTypes[item.name]) {
+            for(let child of childTypes[item.name])
+            {
+                if(item.properties && child.properties)
+                {
+                    for(let parentProp of item.properties)
+                    {
+                        for(let childProp of child.properties)
+                        {
+                            if(childProp.name === parentProp.name && childProp.optional && !parentProp.optional)
+                            {
+                                // Can't inherit a required prop with an optional one in TS, so just set the parent prop to optional
+                                parentProp.optional = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return childTypes;
+}
+
+function writeClasses(apiData: RuntimeData, apiVersion: string) {
     let output = '// Factorio class definitions\n';
     output += writeHeaders(apiData);
+
+    output += 'declare namespace runtime {\n';
 
     let classDataList = apiData.classes;
     let variantInfo = parseVariantClasses(classDataList);
@@ -489,7 +723,7 @@ function writeClasses(apiData: ApiData, apiVersion: string) {
             classData.name = 'LuaLazyLoadedValue<T>';
             for(let method of classData.methods!) {
                 if(method.name === 'get') {
-                    method.return_type = 'T';
+                    method.return_values[0].type = 'T';
                 }
             }
         }
@@ -536,6 +770,8 @@ function writeClasses(apiData: ApiData, apiVersion: string) {
         output += union + '\n\n';
     }
 
+    output += '\n}';
+
     fs.writeFileSync(__dirname + '/../dist/classes.d.ts', output);
 }
 
@@ -545,7 +781,7 @@ function writeEvent(eventData: FactorioEvent, isBase: boolean = false): string {
     if(!isBase) {
         output += 'extends event ';
     }
-    output += ' {\n';
+    output += '{\n';
 
     for(let data of eventData.data)
     {
@@ -564,9 +800,11 @@ function writeEvent(eventData: FactorioEvent, isBase: boolean = false): string {
     return output;
 }
 
-function writeEvents(apiData: ApiData, apiVersion: string) {
+function writeEvents(apiData: RuntimeData, apiVersion: string) {
     var output = '// Factorio event definitions\n';
     output += writeHeaders(apiData);
+
+    output += 'declare namespace runtime {\n';
 
     let eventDataList = apiData.events;
     output += writeEvent({
@@ -596,6 +834,8 @@ function writeEvents(apiData: ApiData, apiVersion: string) {
     {
         output += writeEvent(eventData);
     }
+
+    output += '\n}';
 
     fs.writeFileSync(__dirname + '/../dist/events.d.ts', output);
 }
@@ -632,7 +872,7 @@ function writeDefine(define: Define, indent: string) {
     return output;
 }
 
-function writeDefines(apiData: ApiData, apiVersion: string) {
+function writeDefines(apiData: RuntimeData, apiVersion: string) {
     var output = '// Factorio defines\n';
     output += writeHeaders(apiData);
 
@@ -651,7 +891,7 @@ function writeDefines(apiData: ApiData, apiVersion: string) {
 function parseVariantConcepts(concepts: Concept[]) {
     let variantConcepts: Concept[] = [];
     for(let concept of concepts) {
-        if(typeof concept.type === 'object' && 'complex_type' in concept.type && (concept.type.complex_type === 'table' || concept.type.complex_type === 'tuple')) {
+        if(typeof concept.type === 'object' && 'complex_type' in concept.type && (concept.type.complex_type === 'table' || (concept.type.complex_type === 'tuple' && !('values' in concept.type)))) {
             if(concept.type.variant_parameter_groups && concept.type.variant_parameter_groups.length) {
                 let variantsCreated = false;
                 if(concept.type.variant_parameter_description) {
@@ -747,9 +987,11 @@ function parseVariantConcepts(concepts: Concept[]) {
     return variantConcepts;
 }
 
-function writeConcepts(apiData: ApiData, apiVersion: string) {
+function writeConcepts(apiData: RuntimeData, apiVersion: string) {
     var output ='// Factorio concept definitions\n';
     output += writeHeaders(apiData);
+
+    output += 'declare namespace runtime {\n';
 
     let concepts = apiData.concepts;
 
@@ -777,10 +1019,12 @@ function writeConcepts(apiData: ApiData, apiVersion: string) {
         output += `${parseType(concept.type, '')}\n\n`;
     }
 
+    output += '\n}';
+
     fs.writeFileSync(__dirname + '/../dist/concepts.d.ts', output);
 }
 
-function writeGlobals(apiData: ApiData, apiVersion: string) {
+function writeGlobals(apiData: RuntimeData, apiVersion: string) {
     var output = '// Factorio global definitions\n';
     output += writeHeaders(apiData);
 
@@ -788,10 +1032,16 @@ function writeGlobals(apiData: ApiData, apiVersion: string) {
         if(globalObject.description) {
             output += writeDocs(globalObject, '');
         }
-        output += `declare const ${globalObject.name}: ${parseType(globalObject.type, '')}\n`;
+        output += `declare const ${globalObject.name}: runtime.${parseType(globalObject.type, '')}\n`;
     }
 
     for(let globalFunction of apiData.global_functions) {
+        for(let parameter of globalFunction.parameters) {
+            if(parameter.type !== 'table') {
+                parameter.type = 'runtime.' + parameter.type;
+            }
+        }
+
         let fnOutput = writeMethod(globalFunction, '');
         if(fnOutput.indexOf('*/') === -1) {
             fnOutput = 'declare function ' + fnOutput;

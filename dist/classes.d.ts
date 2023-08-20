@@ -5,6 +5,7 @@
 // Factorio version 1.1.89
 // API version 4
 
+declare namespace runtime {
 /**
  * Collection of settings for overriding default ai behavior.
  */
@@ -12,7 +13,7 @@ interface LuaAISettings {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * If enabled, units that repeatedly fail to succeed at commands will be destroyed.
@@ -53,7 +54,7 @@ interface LuaAccumulatorControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -76,7 +77,7 @@ interface LuaAchievementPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly allowed_without_fight: boolean
 
@@ -115,7 +116,7 @@ interface LuaAmmoCategoryPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly bonus_gui_order: string
 
@@ -152,7 +153,7 @@ interface LuaArithmeticCombinatorControlBehavior extends LuaCombinatorControlBeh
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -181,7 +182,7 @@ interface LuaAutoplaceControlPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly can_be_disabled: boolean
 
@@ -226,34 +227,37 @@ interface LuaAutoplaceControlPrototype {
 interface LuaBootstrap {
     /**
      * Generate a new, unique event ID that can be used to raise custom events with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}.
+     * @returns The newly generated event ID.
      */
-    generate_event_name(this: void): void
+    generate_event_name(this: void): number
 
     /**
      * Gets the filters for the given event.
      * @param event - ID of the event to get.
+     * @returns The filters or `nil` if none are defined.
      */
     get_event_filter(this: void,
-        event: number): void
+        event: number): EventFilter | null
 
     /**
      * Find the event handler for an event.
      * @param event - The event identifier to get a handler for.
+     * @returns Reference to the function currently registered as the handler, if it was found.
      */
     get_event_handler(this: void,
-        event: number): void
+        event: number): (this: void, arg0: EventData) => any | null
 
     /**
      * Gets the mod event order as a string.
      */
-    get_event_order(this: void): void
+    get_event_order(this: void): string
 
     /**
      * Gets the prototype history for the given type and name.
      */
     get_prototype_history(this: void,
         type: string,
-        name: string): void
+        name: string): PrototypeHistory
 
     /**
      * Register a function to be run when mod configuration changes. This is called when the game version or any mod version changed, when any mod was added or removed, when a startup setting has changed, when any prototypes have been added or removed, or when a migration was applied. It allows the mod to make any changes it deems appropriate to both the data structures in its {@link global | runtime:global} table or to the game state through {@link LuaGameScript | runtime:LuaGameScript}.
@@ -504,9 +508,10 @@ interface LuaBootstrap {
      * Depending on when a given entity is destroyed, {@link on_entity_destroyed | runtime:on_entity_destroyed} will either be fired at the end of the current tick or at the end of the next tick.
      *
      * @param entity - The entity to register.
+     * @returns The registration number. It is used to identify the entity in the [on_entity_destroyed](runtime:on_entity_destroyed) event.
      */
     register_on_entity_destroyed(this: void,
-        entity: LuaEntity): void
+        entity: LuaEntity): number
 
     /**
      * Sets the filters for the given event. The filters are only retained when set after the actual event registration, because registering for an event with different or no filters will overwrite previously set ones.
@@ -598,7 +603,7 @@ interface LuaBurner {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The burnt result inventory.
@@ -668,7 +673,7 @@ interface LuaBurnerPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly burnt_inventory_size: number
 
@@ -740,7 +745,7 @@ interface LuaChunkIterator {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -755,7 +760,7 @@ interface LuaChunkIterator {
     /**
      * Gets the next chunk position if the iterator is not yet done and increments the it.
      */
-    (this: void): void
+    (this: void): ChunkPositionAndArea | null
 
 }
 
@@ -765,14 +770,15 @@ interface LuaChunkIterator {
 interface LuaCircuitNetwork {
     /**
      * @param signal - The signal to read.
+     * @returns The current value of the signal.
      */
     get_signal(this: void,
-        signal: SignalID): void
+        signal: SignalID): number
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The circuit connector ID on the associated entity this network was gotten from.
@@ -822,7 +828,7 @@ interface LuaCombinatorControlBehavior extends LuaControlBehavior {
      * @param signal - The signal to get
      */
     get_signal_last_tick(this: void,
-        signal: SignalID): void
+        signal: SignalID): number | null
 
     /**
      * The circuit network signals sent by this combinator last tick.
@@ -864,9 +870,10 @@ interface LuaCommandProcessor {
     /**
      * Remove a custom console command.
      * @param name - The name of the command to remove (case sensitive).
+     * @returns Whether the command was successfully removed. Returns `false` if the command didn't exist.
      */
     remove_command(this: void,
-        name: string): void
+        name: string): boolean
 
     /**
      * Lists the custom commands registered by scripts through `LuaCommandProcessor`.
@@ -893,12 +900,12 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
      * Gets the signal at the given index. Returned {@link Signal | runtime:Signal} will not contain signal if none is set for the index.
      */
     get_signal(this: void,
-        index: number): void
+        index: number): Signal
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Sets the signal at the given index.
@@ -944,7 +951,7 @@ interface LuaContainerControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -967,26 +974,28 @@ interface LuaControl {
      * @param table.count - The count to craft.
      * @param table.recipe - The recipe to craft.
      * @param table.silent - If false and the recipe can't be crafted the requested number of times printing the failure is skipped.
+     * @returns The count that was actually started crafting.
      */
     begin_crafting(this: void,
         table: {
             count: number,
             recipe: string | LuaRecipe,
             silent?: boolean
-        }): void
+        }): number
 
     /**
      * Can at least some items be inserted?
      * @param items - Items that would be inserted.
+     * @returns `true` if at least a part of the given items could be inserted into this inventory.
      */
     can_insert(this: void,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): boolean
 
     /**
      * Can a given entity be opened or accessed?
      */
     can_reach_entity(this: void,
-        entity: LuaEntity): void
+        entity: LuaEntity): boolean
 
     /**
      * Cancels crafting the given count of the given crafting queue index.
@@ -1044,36 +1053,40 @@ interface LuaControl {
 
     /**
      * Gets the entities that are part of the currently selected blueprint, regardless of it being in a blueprint book or picked from the blueprint library.
+     * @returns Returns `nil` if there is no currently selected blueprint.
      */
-    get_blueprint_entities(this: void): void
+    get_blueprint_entities(this: void): BlueprintEntity[] | null
 
     /**
      * Gets the count of the given recipe that can be crafted.
      * @param recipe - The recipe.
+     * @returns The count that can be crafted.
      */
     get_craftable_count(this: void,
-        recipe: string | LuaRecipe): void
+        recipe: string | LuaRecipe): number
 
     /**
      * Get an inventory belonging to this entity. This can be either the "main" inventory or some auxiliary one, like the module slots or logistic trash slots.
      * @remarks
      * A given {@link defines.inventory | runtime:defines.inventory} is only meaningful for the corresponding LuaObject type. EG: get_inventory(defines.inventory.character_main) is only meaningful if 'this' is a player character. You may get a value back but if the type of 'this' isn't the type referred to by the {@link defines.inventory | runtime:defines.inventory} it's almost guaranteed to not be the inventory asked for.
      *
+     * @returns The inventory or `nil` if none with the given index was found.
      */
     get_inventory(this: void,
-        inventory: defines.inventory): void
+        inventory: defines.inventory): LuaInventory | null
 
     /**
      * Get the number of all or some items in this entity.
      * @param item - Prototype name of the item to count. If not specified, count all items.
      */
     get_item_count(this: void,
-        item?: string): void
+        item?: string): number
 
     /**
      * Gets the main inventory for this character or player if this is a character or player.
+     * @returns The inventory or `nil` if this entity is not a character or player.
      */
-    get_main_inventory(this: void): void
+    get_main_inventory(this: void): LuaInventory | null
 
     /**
      * The highest index of all inventories this entity can use. Allows iteration over all of them if desired.
@@ -1083,71 +1096,76 @@ interface LuaControl {
      * ```
      *
      */
-    get_max_inventory_index(this: void): void
+    get_max_inventory_index(this: void): defines.inventory
 
     /**
      * Gets the parameters of a personal logistic request and auto-trash slot.
      * @param slot_index - The slot to get.
+     * @returns The logistic parameters. If personal logistics are not researched yet, their `name` will be `nil`.
      */
     get_personal_logistic_slot(this: void,
-        slot_index: number): void
+        slot_index: number): LogisticParameters
 
     /**
      * Gets the parameters of a vehicle logistic request and auto-trash slot. Only used on `spider-vehicle`.
      * @param slot_index - The slot to get.
+     * @returns The logistic parameters. If the vehicle does not use logistics, their `name` will be `nil`.
      */
     get_vehicle_logistic_slot(this: void,
-        slot_index: number): void
+        slot_index: number): LogisticParameters
 
     /**
      * Does this entity have any item inside it?
      */
-    has_items_inside(this: void): void
+    has_items_inside(this: void): boolean
 
     /**
      * Insert items into this entity. This works the same way as inserters or shift-clicking: the "best" inventory is chosen automatically.
      * @param items - The items to insert.
+     * @returns The number of items that were actually inserted.
      */
     insert(this: void,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): number
 
     /**
      * Returns whether the player is holding a blueprint. This takes both blueprint items as well as blueprint records from the blueprint library into account.
      * 
      * Note that both this method and {@link LuaControl::get_blueprint_entities | runtime:LuaControl::get_blueprint_entities} refer to the currently selected blueprint, meaning a blueprint book with a selected blueprint will return the information as well.
      */
-    is_cursor_blueprint(this: void): void
+    is_cursor_blueprint(this: void): boolean
 
     /**
      * Returns whether the player is holding something in the cursor. It takes into account items from the blueprint library, as well as items and ghost cursor.
      */
-    is_cursor_empty(this: void): void
+    is_cursor_empty(this: void): boolean
 
     /**
      * Is the flashlight enabled.
      */
-    is_flashlight_enabled(this: void): void
+    is_flashlight_enabled(this: void): boolean
 
     /**
      * When `true` control adapter is a LuaPlayer object, `false` for entities including characters with players.
      */
-    is_player(this: void): void
+    is_player(this: void): boolean
 
     /**
      * Mines the given entity as if this player (or character) mined it.
      * @param entity - The entity to mine
      * @param force - Forces mining the entity even if the items can't fit in the player.
+     * @returns Whether the mining succeeded.
      */
     mine_entity(this: void,
         entity: LuaEntity,
-        force?: boolean): void
+        force?: boolean): boolean
 
     /**
      * Mines the given tile as if this player (or character) mined it.
      * @param tile - The tile to mine.
+     * @returns Whether the mining succeeded.
      */
     mine_tile(this: void,
-        tile: LuaTile): void
+        tile: LuaTile): boolean
 
     /**
      * Open the technology GUI and select a given technology.
@@ -1159,9 +1177,10 @@ interface LuaControl {
     /**
      * Remove items from this entity.
      * @param items - The items to remove.
+     * @returns The number of items that were actually removed.
      */
     remove_item(this: void,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): number
 
     /**
      * Create an arrow which points at this entity. This is used in the tutorial. For examples, see `control.lua` in the campaign missions.
@@ -1176,19 +1195,21 @@ interface LuaControl {
      *
      * @param slot_index - The slot to set.
      * @param value - The logistic request parameters.
+     * @returns Whether the slot was set successfully. `false` if personal logistics are not researched yet.
      */
     set_personal_logistic_slot(this: void,
         slot_index: number,
-        value: LogisticParameters): void
+        value: LogisticParameters): boolean
 
     /**
      * Sets a vehicle logistic request and auto-trash slot to the given value. Only used on `spider-vehicle`.
      * @param slot_index - The slot to set.
      * @param value - The logistic request parameters.
+     * @returns Whether the slot was set successfully. `false` if the vehicle does not use logistics.
      */
     set_vehicle_logistic_slot(this: void,
         slot_index: number,
-        value: LogisticParameters): void
+        value: LogisticParameters): boolean
 
     /**
      * Teleport the entity to a given position, possibly on another surface.
@@ -1200,11 +1221,12 @@ interface LuaControl {
      * @param position - Where to teleport to.
      * @param raise_teleported - If true, [defines.events.script_raised_teleported](runtime:defines.events.script_raised_teleported) will be fired on successful entity teleportation.
      * @param surface - Surface to teleport to. If not given, will teleport to the entity's current surface. Only players, cars, and spidertrons can be teleported cross-surface.
+     * @returns `true` if the entity was successfully teleported.
      */
     teleport(this: void,
         position: MapPosition,
         surface?: SurfaceIdentification,
-        raise_teleported?: boolean): void
+        raise_teleported?: boolean): boolean
 
     /**
      * Select an entity, as if by hovering the mouse above it.
@@ -1561,10 +1583,11 @@ interface LuaControlBehavior {
     /**
      * @param circuit_connector - The connector to get circuit network for. Must be specified for entities with more than one circuit network connector.
      * @param wire - Wire color of the network connected to this entity.
+     * @returns The circuit network or nil.
      */
     get_circuit_network(this: void,
         wire: defines.wire_type,
-        circuit_connector?: defines.circuit_connector_id): void
+        circuit_connector?: defines.circuit_connector_id): LuaCircuitNetwork
 
     /**
      * The entity this control behavior belongs to.
@@ -1590,7 +1613,7 @@ interface LuaCustomChartTag {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The force this tag belongs to.
@@ -1643,7 +1666,7 @@ interface LuaCustomInputPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The action that happens when this custom input is triggered.
@@ -1764,7 +1787,7 @@ interface LuaCustomTable {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -1798,7 +1821,7 @@ interface LuaDamagePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Whether this damage type is hidden from entity tooltips.
@@ -1838,7 +1861,7 @@ interface LuaDeciderCombinatorControlBehavior extends LuaCombinatorControlBehavi
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -1867,7 +1890,7 @@ interface LuaDecorativePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Autoplace specification for this decorative prototype, if any.
@@ -1919,7 +1942,7 @@ interface LuaElectricEnergySourcePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly buffer_capacity: number
 
@@ -1992,20 +2015,20 @@ interface LuaEntity extends LuaControl {
     /**
      * Whether the entity can be destroyed
      */
-    can_be_destroyed(this: void): void
+    can_be_destroyed(this: void): boolean
 
     /**
      * Whether this character can shoot the given entity or position.
      */
     can_shoot(this: void,
         target: LuaEntity,
-        position: MapPosition): void
+        position: MapPosition): boolean
 
     /**
      * Can wires reach between these entities.
      */
     can_wires_reach(this: void,
-        entity: LuaEntity): void
+        entity: LuaEntity): boolean
 
     /**
      * Cancels deconstruction if it is scheduled, does nothing otherwise.
@@ -2020,10 +2043,11 @@ interface LuaEntity extends LuaControl {
      * Cancels upgrade if it is scheduled, does nothing otherwise.
      * @param force - The force who did the upgrade order.
      * @param player - The player to set the last_user to if any.
+     * @returns Whether the cancel was successful.
      */
     cancel_upgrade(this: void,
         force: ForceIdentification,
-        player?: PlayerIdentification): void
+        player?: PlayerIdentification): boolean
 
     /**
      * Remove all fluids from this entity.
@@ -2053,6 +2077,7 @@ interface LuaEntity extends LuaControl {
      * @param table.create_build_effect_smoke - If false, the building effect smoke will not be shown around the new entity.
      * @param table.position - The destination position
      * @param table.surface - The destination surface
+     * @returns The cloned entity or `nil` if this entity can't be cloned/can't be cloned to the given location.
      */
     clone(this: void,
         table: {
@@ -2060,7 +2085,7 @@ interface LuaEntity extends LuaControl {
             surface?: LuaSurface,
             force?: ForceIdentification,
             create_build_effect_smoke?: boolean
-        }): void
+        }): LuaEntity | null
 
     /**
      * Connects current linked belt with another one.
@@ -2081,23 +2106,26 @@ interface LuaEntity extends LuaControl {
      * - To connect two electric poles, `target` must be a {@link LuaEntity | runtime:LuaEntity} that specifies another electric pole. This will connect them with copper cable.
      * - To connect two devices with circuit wire, `target` must be a table of type {@link WireConnectionDefinition | runtime:WireConnectionDefinition}.
      * @param target - The target with which to establish a connection.
+     * @returns Whether the connection was successfully formed.
      */
     connect_neighbour(this: void,
-        target: LuaEntity | WireConnectionDefinition): void
+        target: LuaEntity | WireConnectionDefinition): boolean
 
     /**
      * Connects the rolling stock in the given direction.
+     * @returns Whether any connection was made
      */
     connect_rolling_stock(this: void,
-        direction: defines.rail_direction): void
+        direction: defines.rail_direction): boolean
 
     /**
      * Copies settings from the given entity onto this entity.
      * @param by_player - If provided, the copying is done 'as' this player and [on_entity_settings_pasted](runtime:on_entity_settings_pasted) is triggered.
+     * @returns Any items removed from this entity as a result of copying the settings.
      */
     copy_settings(this: void,
         entity: LuaEntity,
-        by_player?: PlayerIdentification): void
+        by_player?: PlayerIdentification): {[key: string]: number}
 
     /**
      * Creates the same smoke that is created when you place a building by hand. You can play the building sound to go with it by using {@link LuaSurface::play_sound | runtime:LuaSurface::play_sound}, eg: entity.surface.play_sound{path="entity-build/"..entity.prototype.name, position=entity.position}
@@ -2113,12 +2141,13 @@ interface LuaEntity extends LuaControl {
      * @param dealer - The entity to consider as the damage dealer. Needs to be on the same surface as the entity being damaged.
      * @param force - The force that will be doing the damage.
      * @param type - The type of damage to be done, defaults to "impact". Can't be `nil`.
+     * @returns the total damage actually applied after resistances.
      */
     damage(this: void,
         damage: number,
         force: ForceIdentification,
         type?: string,
-        dealer?: LuaEntity): void
+        dealer?: LuaEntity): number
 
     /**
      * Depletes and destroys this resource entity.
@@ -2135,12 +2164,13 @@ interface LuaEntity extends LuaControl {
      *
      * @param table.do_cliff_correction - Whether neighbouring cliffs should be corrected. Defaults to `false`.
      * @param table.raise_destroy - If `true`, [script_raised_destroy](runtime:script_raised_destroy) will be called. Defaults to `false`.
+     * @returns Returns `false` if the entity was valid and destruction failed, `true` in all other cases.
      */
     destroy(this: void,
         table?: {
             do_cliff_correction?: boolean,
             raise_destroy?: boolean
-        }): void
+        }): boolean
 
     /**
      * Immediately kills the entity. Does nothing if the entity doesn't have health.
@@ -2154,10 +2184,11 @@ interface LuaEntity extends LuaControl {
      * entity.die(nil, killer_entity)
      * ```
      *
+     * @returns Whether the entity was successfully killed.
      */
     die(this: void,
         force?: ForceIdentification,
-        cause?: LuaEntity): void
+        cause?: LuaEntity): boolean
 
     /**
      * Disconnects linked belt from its neighbour.
@@ -2182,9 +2213,10 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Tries to disconnect this rolling stock in the given direction.
+     * @returns If anything was disconnected
      */
     disconnect_rolling_stock(this: void,
-        direction: defines.rail_direction): void
+        direction: defines.rail_direction): boolean
 
     /**
      * Returns a table with all entities affected by this beacon
@@ -2192,12 +2224,12 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Beacon
      *
      */
-    get_beacon_effect_receivers(this: void): void
+    get_beacon_effect_receivers(this: void): LuaEntity[]
 
     /**
      * Returns a table with all beacons affecting this effect receiver. Can only be used when the entity has an effect receiver (AssemblingMachine, Furnace, Lab, MiningDrills)
      */
-    get_beacons(this: void): void
+    get_beacons(this: void): LuaEntity[] | null
 
     /**
      * Get the source of this beam.
@@ -2205,7 +2237,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Beam
      *
      */
-    get_beam_source(this: void): void
+    get_beam_source(this: void): BeamTarget | null
 
     /**
      * Get the target of this beam.
@@ -2213,12 +2245,12 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Beam
      *
      */
-    get_beam_target(this: void): void
+    get_beam_target(this: void): BeamTarget | null
 
     /**
      * The burnt result inventory for this entity or `nil` if this entity doesn't have a burnt result inventory.
      */
-    get_burnt_result_inventory(this: void): void
+    get_burnt_result_inventory(this: void): LuaInventory | null
 
     /**
      * Returns all child signals. Child signals can be either RailSignal or RailChainSignal. Child signals are signals which are checked by this signal to determine a chain state.
@@ -2226,26 +2258,31 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: RailChainSignal
      *
      */
-    get_child_signals(this: void): void
+    get_child_signals(this: void): LuaEntity[]
 
     /**
      * @param circuit_connector - The connector to get circuit network for. Must be specified for entities with more than one circuit network connector.
      * @param wire - Wire color of the network connected to this entity.
+     * @returns The circuit network or nil.
      */
     get_circuit_network(this: void,
         wire: defines.wire_type,
-        circuit_connector?: defines.circuit_connector_id): void
+        circuit_connector?: defines.circuit_connector_id): LuaCircuitNetwork | null
 
     /**
      * @remarks
      * Applies to subclasses: Rail
      *
+     * @returns multiple values
+     *  [0] - Rail connected in the specified manner to this one, `nil` if unsuccessful.
+     *  [1] - Rail direction of the returned rail which points to origin rail
+     *  [2] - Turn to be taken when going back from returned rail to origin rail
      */
     get_connected_rail(this: void,
         table: {
             rail_direction: defines.rail_direction,
             rail_connection_direction: defines.rail_connection_direction
-        }): void
+        }): LuaMultiReturn<[LuaEntity | null, defines.rail_direction | null, defines.rail_connection_direction | null]>
 
     /**
      * Get the rails that this signal is connected to.
@@ -2253,31 +2290,37 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: RailSignal,RailChainSignal
      *
      */
-    get_connected_rails(this: void): void
+    get_connected_rails(this: void): LuaEntity[]
 
     /**
      * Gets rolling stock connected to the given end of this stock.
+     * @returns multiple values
+     *  [0] - The rolling stock connected at the given end, `nil` if none is connected there.
+     *  [1] - The rail direction of the connected rolling stock if any.
      */
     get_connected_rolling_stock(this: void,
-        direction: defines.rail_direction): void
+        direction: defines.rail_direction): LuaMultiReturn<[LuaEntity | null, defines.rail_direction | null]>
 
     /**
      * Gets the control behavior of the entity (if any).
+     * @returns The control behavior or `nil`.
      */
-    get_control_behavior(this: void): void
+    get_control_behavior(this: void): LuaControlBehavior | null
 
     /**
      * Returns the amount of damage to be taken by this entity.
+     * @returns `nil` if this entity does not have health.
      */
-    get_damage_to_be_taken(this: void): void
+    get_damage_to_be_taken(this: void): number | null
 
     /**
      * Gets the driver of this vehicle if any.
      * @remarks
      * Applies to subclasses: Vehicle
      *
+     * @returns `nil` if the vehicle contains no driver. To check if there's a passenger see [LuaEntity::get_passenger](runtime:LuaEntity::get_passenger).
      */
-    get_driver(this: void): void
+    get_driver(this: void): LuaEntity | LuaPlayer | null
 
     /**
      * Get the filter for a slot in an inserter, loader, or logistic storage container.
@@ -2285,17 +2328,19 @@ interface LuaEntity extends LuaControl {
      * The entity must allow filters.
      *
      * @param slot_index - Index of the slot to get the filter for.
+     * @returns Prototype name of the item being filtered. `nil` if the given slot has no filter.
      */
     get_filter(this: void,
-        slot_index: number): void
+        slot_index: number): string | null
 
     /**
      * Get amounts of all fluids in this entity.
      * @remarks
      * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | runtime:LuaEntity::fluidbox} should be used instead.
      *
+     * @returns The amounts, indexed by fluid names.
      */
-    get_fluid_contents(this: void): void
+    get_fluid_contents(this: void): {[key: string]: number}
 
     /**
      * Get the amount of all or some fluid in this entity.
@@ -2305,17 +2350,18 @@ interface LuaEntity extends LuaControl {
      * @param fluid - Prototype name of the fluid to count. If not specified, count all fluids.
      */
     get_fluid_count(this: void,
-        fluid?: string): void
+        fluid?: string): number
 
     /**
      * The fuel inventory for this entity or `nil` if this entity doesn't have a fuel inventory.
      */
-    get_fuel_inventory(this: void): void
+    get_fuel_inventory(this: void): LuaInventory | null
 
     /**
      * The health ratio of this entity between 1 and 0 (for full health and no health respectively).
+     * @returns `nil` if this entity doesn't have health.
      */
-    get_health_ratio(this: void): void
+    get_health_ratio(this: void): number | null
 
     /**
      * Gets the heat setting for this heat interface.
@@ -2323,7 +2369,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: HeatInterface
      *
      */
-    get_heat_setting(this: void): void
+    get_heat_setting(this: void): HeatSetting
 
     /**
      * Returns all signals guarding entrance to a rail block this rail belongs to.
@@ -2331,7 +2377,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Rail
      *
      */
-    get_inbound_signals(this: void): void
+    get_inbound_signals(this: void): LuaEntity[]
 
     /**
      * Gets the filter for this infinity container at the given index, or `nil` if the filter index doesn't exist or is empty.
@@ -2341,7 +2387,7 @@ interface LuaEntity extends LuaControl {
      * @param index - The index to get.
      */
     get_infinity_container_filter(this: void,
-        index: number): void
+        index: number): InfinityInventoryFilter | null
 
     /**
      * Gets the filter for this infinity pipe, or `nil` if the filter is empty.
@@ -2349,7 +2395,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: InfinityPipe
      *
      */
-    get_infinity_pipe_filter(this: void): void
+    get_infinity_pipe_filter(this: void): InfinityPipeFilter | null
 
     /**
      * Gets all the `LuaLogisticPoint`s that this entity owns. Optionally returns only the point specified by the index parameter.
@@ -2359,7 +2405,7 @@ interface LuaEntity extends LuaControl {
      * @param index - If provided, only returns the `LuaLogisticPoint` specified by this index.
      */
     get_logistic_point(this: void,
-        index?: defines.logistic_member_index): void
+        index?: defines.logistic_member_index): LuaLogisticPoint | {[key: string]: LuaLogisticPoint} | null
 
     /**
      * Get all offers in a market as an array.
@@ -2367,7 +2413,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Market
      *
      */
-    get_market_items(this: void): void
+    get_market_items(this: void): Offer[]
 
     /**
      * Get the maximum transport line index of a belt or belt connectable entity.
@@ -2375,33 +2421,36 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: TransportBeltConnectable
      *
      */
-    get_max_transport_line_index(this: void): void
+    get_max_transport_line_index(this: void): number
 
     /**
      * Read a single signal from the combined circuit networks.
      * @param circuit_connector - The connector to get signals for. Must be specified for entities with more than one circuit network connector.
      * @param signal - The signal to read.
+     * @returns The current value of the signal.
      */
     get_merged_signal(this: void,
         signal: SignalID,
-        circuit_connector?: defines.circuit_connector_id): void
+        circuit_connector?: defines.circuit_connector_id): number
 
     /**
      * The merged circuit network signals or `nil` if there are no signals.
      * @param circuit_connector - The connector to get signals for. Must be specified for entities with more than one circuit network connector.
+     * @returns The sum of signals on both the red and green networks, or `nil` if it doesn't have a circuit connector.
      */
     get_merged_signals(this: void,
-        circuit_connector?: defines.circuit_connector_id): void
+        circuit_connector?: defines.circuit_connector_id): Signal[] | null
 
     /**
      * Inventory for storing modules of this entity; `nil` if this entity has no module inventory.
      */
-    get_module_inventory(this: void): void
+    get_module_inventory(this: void): LuaInventory | null
 
     /**
      * Gets (and or creates if needed) the control behavior of the entity.
+     * @returns The control behavior or `nil`.
      */
-    get_or_create_control_behavior(this: void): void
+    get_or_create_control_behavior(this: void): LuaControlBehavior | null
 
     /**
      * Returns all signals guarding exit from a rail block this rail belongs to.
@@ -2409,12 +2458,13 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Rail
      *
      */
-    get_outbound_signals(this: void): void
+    get_outbound_signals(this: void): LuaEntity[]
 
     /**
      * Gets the entity's output inventory if it has one.
+     * @returns A reference to the entity's output inventory.
      */
-    get_output_inventory(this: void): void
+    get_output_inventory(this: void): LuaInventory | null
 
     /**
      * Returns all parent signals. Parent signals are always RailChainSignal. Parent signals are those signals that are checking state of this signal to determine their own chain state.
@@ -2422,7 +2472,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: RailSignal,RailChainSignal
      *
      */
-    get_parent_signals(this: void): void
+    get_parent_signals(this: void): LuaEntity[]
 
     /**
      * Gets the passenger of this car or spidertron if any.
@@ -2430,13 +2480,14 @@ interface LuaEntity extends LuaControl {
      * This differs over {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that the passenger can't drive the car.
      * Applies to subclasses: Car,SpiderVehicle
      *
+     * @returns `nil` if the vehicle contains no passenger. To check if there's a driver see [LuaEntity::get_driver](runtime:LuaEntity::get_driver).
      */
-    get_passenger(this: void): void
+    get_passenger(this: void): LuaEntity | LuaPlayer | null
 
     /**
      * The radius of this entity.
      */
-    get_radius(this: void): void
+    get_radius(this: void): number
 
     /**
      * Get the rail at the end of the rail segment this rail is in.
@@ -2444,9 +2495,12 @@ interface LuaEntity extends LuaControl {
      * A rail segment is a continuous section of rail with no branches, signals, nor train stops.
      * Applies to subclasses: Rail
      *
+     * @returns multiple values
+     *  [0] - The rail entity.
+     *  [1] - A rail direction pointing out of the rail segment from the end rail.
      */
     get_rail_segment_end(this: void,
-        direction: defines.rail_direction): void
+        direction: defines.rail_direction): LuaMultiReturn<[LuaEntity, defines.rail_direction]>
 
     /**
      * Get the rail signal or train stop at the start/end of the rail segment this rail is in.
@@ -2456,10 +2510,11 @@ interface LuaEntity extends LuaControl {
      *
      * @param direction - The direction of travel relative to this rail.
      * @param in_else_out - If true, gets the entity at the entrance of the rail segment, otherwise gets the entity at the exit of the rail segment.
+     * @returns `nil` if the rail segment doesn't start/end with a signal nor a train stop.
      */
     get_rail_segment_entity(this: void,
         direction: defines.rail_direction,
-        in_else_out: boolean): void
+        in_else_out: boolean): LuaEntity | null
 
     /**
      * Get the length of the rail segment this rail is in.
@@ -2468,7 +2523,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Rail
      *
      */
-    get_rail_segment_length(this: void): void
+    get_rail_segment_length(this: void): number
 
     /**
      * Get a rail from each rail segment that overlaps with this rail's rail segment.
@@ -2477,7 +2532,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Rail
      *
      */
-    get_rail_segment_overlaps(this: void): void
+    get_rail_segment_overlaps(this: void): LuaEntity[]
 
     /**
      * Get all rails of a rail segment this rail is in
@@ -2486,9 +2541,10 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Rail
      *
      * @param direction - Selects end of this rail that points to a rail segment end from which to start returning rails
+     * @returns Rails of this rail segment
      */
     get_rail_segment_rails(this: void,
-        direction: defines.rail_direction): void
+        direction: defines.rail_direction): LuaEntity[]
 
     /**
      * Current recipe being assembled by this machine, if any.
@@ -2496,7 +2552,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: CraftingMachine
      *
      */
-    get_recipe(this: void): void
+    get_recipe(this: void): LuaRecipe | null
 
     /**
      * Get a logistic requester slot.
@@ -2504,9 +2560,10 @@ interface LuaEntity extends LuaControl {
      * Useable only on entities that have requester slots.
      *
      * @param slot - The slot index.
+     * @returns Contents of the specified slot; `nil` if the given slot contains no request.
      */
     get_request_slot(this: void,
-        slot: number): void
+        slot: number): SimpleItemStack | null
 
     /**
      * Gets legs of given SpiderVehicle.
@@ -2514,7 +2571,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: SpiderVehicle
      *
      */
-    get_spider_legs(this: void): void
+    get_spider_legs(this: void): LuaEntity[]
 
     /**
      * The train currently stopped at this train stop, if any.
@@ -2522,7 +2579,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: TrainStop
      *
      */
-    get_stopped_train(this: void): void
+    get_stopped_train(this: void): LuaTrain | null
 
     /**
      * The trains scheduled to stop at this train stop.
@@ -2530,7 +2587,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: TrainStop
      *
      */
-    get_train_stop_trains(this: void): void
+    get_train_stop_trains(this: void): LuaTrain[]
 
     /**
      * Get a transport line of a belt or belt connectable entity.
@@ -2540,17 +2597,19 @@ interface LuaEntity extends LuaControl {
      * @param index - Index of the requested transport line. Transport lines are 1-indexed.
      */
     get_transport_line(this: void,
-        index: number): void
+        index: number): LuaTransportLine
 
     /**
      * Returns the new entity direction after upgrading.
+     * @returns `nil` if this entity is not marked for upgrade.
      */
-    get_upgrade_direction(this: void): void
+    get_upgrade_direction(this: void): defines.direction | null
 
     /**
      * Returns the new entity prototype.
+     * @returns `nil` if this entity is not marked for upgrade.
      */
-    get_upgrade_target(this: void): void
+    get_upgrade_target(this: void): LuaEntityPrototype | null
 
     /**
      * Same as {@link LuaEntity::has_flag | runtime:LuaEntity::has_flag}, but targets the inner entity on a entity ghost.
@@ -2558,9 +2617,10 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: EntityGhost
      *
      * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
+     * @returns `true` if the entity has the given flag set.
      */
     ghost_has_flag(this: void,
-        flag: string): void
+        flag: string): boolean
 
     /**
      * Has this unit been assigned a command?
@@ -2568,7 +2628,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Unit
      *
      */
-    has_command(this: void): void
+    has_command(this: void): boolean
 
     /**
      * Test whether this entity's prototype has a certain flag set.
@@ -2576,40 +2636,44 @@ interface LuaEntity extends LuaControl {
      * `entity.has_flag(f)` is a shortcut for `entity.prototype.has_flag(f)`.
      *
      * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
+     * @returns `true` if this entity has the given flag set.
      */
     has_flag(this: void,
-        flag: string): void
+        flag: string): boolean
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Insert fluid into this entity. Fluidbox is chosen automatically.
      * @param fluid - Fluid to insert.
+     * @returns Amount of fluid actually inserted.
      */
     insert_fluid(this: void,
-        fluid: Fluid): void
+        fluid: Fluid): number
 
     /**
      * @remarks
      * Applies to subclasses: Gate
      *
+     * @returns `true` if this gate is currently closed.
      */
-    is_closed(this: void): void
+    is_closed(this: void): boolean
 
     /**
      * @remarks
      * Applies to subclasses: Gate
      *
+     * @returns `true` if this gate is currently closing
      */
-    is_closing(this: void): void
+    is_closing(this: void): boolean
 
     /**
      * Returns `true` if this entity produces or consumes electricity and is connected to an electric network that has at least one entity that can produce power.
      */
-    is_connected_to_electric_network(this: void): void
+    is_connected_to_electric_network(this: void): boolean
 
     /**
      * Returns whether a craft is currently in process. It does not indicate whether progress is currently being made, but whether a crafting process has been started in this machine.
@@ -2617,21 +2681,23 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: CraftingMachine
      *
      */
-    is_crafting(this: void): void
+    is_crafting(this: void): boolean
 
     /**
      * @remarks
      * Applies to subclasses: Gate
      *
+     * @returns `true` if this gate is currently opened.
      */
-    is_opened(this: void): void
+    is_opened(this: void): boolean
 
     /**
      * @remarks
      * Applies to subclasses: Gate
      *
+     * @returns `true` if this gate is currently opening.
      */
-    is_opening(this: void): void
+    is_opening(this: void): boolean
 
     /**
      * Checks if this rail and other rail both belong to the same rail block.
@@ -2640,7 +2706,7 @@ interface LuaEntity extends LuaControl {
      *
      */
     is_rail_in_same_rail_block_as(this: void,
-        other_rail: LuaEntity): void
+        other_rail: LuaEntity): boolean
 
     /**
      * Checks if this rail and other rail both belong to the same rail segment.
@@ -2649,36 +2715,37 @@ interface LuaEntity extends LuaControl {
      *
      */
     is_rail_in_same_rail_segment_as(this: void,
-        other_rail: LuaEntity): void
+        other_rail: LuaEntity): boolean
 
     /**
      * Is this entity or tile ghost or item request proxy registered for construction? If false, it means a construction robot has been dispatched to build the entity, or it is not an entity that can be constructed.
      */
-    is_registered_for_construction(this: void): void
+    is_registered_for_construction(this: void): boolean
 
     /**
      * Is this entity registered for deconstruction with this force? If false, it means a construction robot has been dispatched to deconstruct it, or it is not marked for deconstruction. The complexity is effectively O(1) - it depends on the number of objects targeting this entity which should be small enough.
      * @param force - The force construction manager to check.
      */
     is_registered_for_deconstruction(this: void,
-        force: ForceIdentification): void
+        force: ForceIdentification): boolean
 
     /**
      * Is this entity registered for repair? If false, it means a construction robot has been dispatched to upgrade it, or it is not damaged. This is worst-case O(N) complexity where N is the current number of things in the repair queue.
      */
-    is_registered_for_repair(this: void): void
+    is_registered_for_repair(this: void): boolean
 
     /**
      * Is this entity registered for upgrade? If false, it means a construction robot has been dispatched to upgrade it, or it is not marked for upgrade. This is worst-case O(N) complexity where N is the current number of things in the upgrade queue.
      */
-    is_registered_for_upgrade(this: void): void
+    is_registered_for_upgrade(this: void): boolean
 
     /**
      * @remarks
      * Applies to subclasses: RocketSilo
      *
+     * @returns `true` if the rocket was successfully launched. Return value of `false` means the silo is not ready for launch.
      */
-    launch_rocket(this: void): void
+    launch_rocket(this: void): boolean
 
     /**
      * Mines this entity.
@@ -2690,6 +2757,7 @@ interface LuaEntity extends LuaControl {
      * @param table.ignore_minable - If true, the minable state of the entity is ignored. Defaults to `false`. If false, an entity that isn't minable (set as not-minable in the prototype or isn't minable for other reasons) will fail to be mined.
      * @param table.inventory - If provided the item(s) will be transferred into this inventory. If provided, this must be an inventory created with [LuaGameScript::create_inventory](runtime:LuaGameScript::create_inventory) or be a basic inventory owned by some entity.
      * @param table.raise_destroyed - If true, [script_raised_destroy](runtime:script_raised_destroy) will be raised. Defaults to `true`.
+     * @returns Whether mining succeeded.
      */
     mine(this: void,
         table?: {
@@ -2697,22 +2765,24 @@ interface LuaEntity extends LuaControl {
             force?: boolean,
             raise_destroyed?: boolean,
             ignore_minable?: boolean
-        }): void
+        }): boolean
 
     /**
      * Sets the entity to be deconstructed by construction robots.
      * @param force - The force whose robots are supposed to do the deconstruction.
      * @param player - The player to set the `last_user` to if any.
+     * @returns if the entity was marked for deconstruction.
      */
     order_deconstruction(this: void,
         force: ForceIdentification,
-        player?: PlayerIdentification): void
+        player?: PlayerIdentification): boolean
 
     /**
      * Sets the entity to be upgraded by construction robots.
      * @param table.direction - The new direction if any.
      * @param table.force - The force whose robots are supposed to do the upgrade.
      * @param table.target - The prototype of the entity to upgrade to.
+     * @returns Whether the entity was marked for upgrade.
      */
     order_upgrade(this: void,
         table: {
@@ -2720,17 +2790,18 @@ interface LuaEntity extends LuaControl {
             target: EntityPrototypeIdentification,
             player?: PlayerIdentification,
             direction?: defines.direction
-        }): void
+        }): boolean
 
     /**
      * Plays a note with the given instrument and note.
      * @remarks
      * Applies to subclasses: ProgrammableSpeaker
      *
+     * @returns Whether the request is valid. The sound may or may not be played depending on polyphony settings.
      */
     play_note(this: void,
         instrument: number,
-        note: number): void
+        note: number): boolean
 
     /**
      * Release the unit from the spawner which spawned it. This allows the spawner to continue spawning additional units.
@@ -2747,6 +2818,7 @@ interface LuaEntity extends LuaControl {
      *
      * @param table.amount - Amount to remove
      * @param table.name - Fluid prototype name.
+     * @returns Amount of fluid actually removed.
      */
     remove_fluid(this: void,
         table: {
@@ -2755,7 +2827,7 @@ interface LuaEntity extends LuaControl {
             minimum_temperature?: number,
             maximum_temperature?: number,
             temperature?: number
-        }): void
+        }): number
 
     /**
      * Remove an offer from a market.
@@ -2764,9 +2836,10 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: Market
      *
      * @param offer - Index of offer to remove.
+     * @returns `true` if the offer was successfully removed; `false` when the given index was not valid.
      */
     remove_market_item(this: void,
-        offer: number): void
+        offer: number): boolean
 
     /**
      * @remarks
@@ -2792,12 +2865,16 @@ interface LuaEntity extends LuaControl {
      * Revive a ghost. I.e. turn it from a ghost to a real entity or tile.
      * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](runtime:script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](runtime:script_raised_set_tiles) will be called.
      * @param table.return_item_request_proxy - If `true` the function will return item request proxy as the third return value.
+     * @returns multiple values
+     *  [0] - Any items the new real entity collided with or `nil` if the ghost could not be revived.
+     *  [1] - The revived entity if an entity ghost was successfully revived.
+     *  [2] - The item request proxy if it was requested with `return_item_request_proxy`.
      */
     revive(this: void,
         table?: {
             return_item_request_proxy?: boolean,
             raise_revive?: boolean
-        }): void
+        }): LuaMultiReturn<[{[key: string]: number} | null, LuaEntity | null, LuaEntity | null]>
 
     /**
      * Rotates this entity as if the player rotated it.
@@ -2806,6 +2883,9 @@ interface LuaEntity extends LuaControl {
      * @param table.force - When provided the spilled items will be marked for deconstruction by this force.
      * @param table.reverse - If `true`, rotate the entity in the counter-clockwise direction.
      * @param table.spill_items - If the player is not given should extra items be spilled or returned as a second return value from this.
+     * @returns multiple values
+     *  [0] - Whether the rotation was successful.
+     *  [1] - Count of spilled items indexed by their prototype names if `spill_items` was `true`.
      */
     rotate(this: void,
         table?: {
@@ -2814,7 +2894,7 @@ interface LuaEntity extends LuaControl {
             spill_items?: boolean,
             enable_looted?: boolean,
             force?: LuaForce | string
-        }): void
+        }): LuaMultiReturn<[boolean, {[key: string]: number} | null]>
 
     /**
      * Set the source of this beam.
@@ -2924,9 +3004,10 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: AssemblingMachine
      *
      * @param recipe - The new recipe. Writing `nil` clears the recipe, if any.
+     * @returns Any items removed from this entity as a result of setting the recipe.
      */
     set_recipe(this: void,
-        recipe?: string | LuaRecipe): void
+        recipe?: string | LuaRecipe): {[key: string]: number}
 
     /**
      * Set a logistic requester slot.
@@ -2935,21 +3016,26 @@ interface LuaEntity extends LuaControl {
      *
      * @param request - What to request.
      * @param slot - The slot index.
+     * @returns Whether the slot was set.
      */
     set_request_slot(this: void,
         request: ItemStackIdentification,
-        slot: number): void
+        slot: number): boolean
 
     /**
      * Revives a ghost silently.
      * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](runtime:script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](runtime:script_raised_set_tiles) will be called.
      * @param table.return_item_request_proxy - If `true` the function will return item request proxy as the third parameter.
+     * @returns multiple values
+     *  [0] - Any items the new real entity collided with or `nil` if the ghost could not be revived.
+     *  [1] - The revived entity if an entity ghost was successfully revived.
+     *  [2] - The item request proxy if it was requested with `return_item_request_proxy`.
      */
     silent_revive(this: void,
         table?: {
             return_item_request_proxy?: boolean,
             raise_revive?: boolean
-        }): void
+        }): LuaMultiReturn<[{[key: string]: number} | null, LuaEntity | null, LuaEntity | null]>
 
     /**
      * Triggers spawn_decoration actions defined in the entity prototype or does nothing if entity is not "turret" or "unit-spawner".
@@ -2972,17 +3058,17 @@ interface LuaEntity extends LuaControl {
     /**
      * Whether this entity supports a backer name.
      */
-    supports_backer_name(this: void): void
+    supports_backer_name(this: void): boolean
 
     /**
      * Is this entity marked for deconstruction?
      */
-    to_be_deconstructed(this: void): void
+    to_be_deconstructed(this: void): boolean
 
     /**
      * Is this entity marked for upgrade?
      */
-    to_be_upgraded(this: void): void
+    to_be_upgraded(this: void): boolean
 
     /**
      * Toggle this entity's equipment movement bonus. Does nothing if the entity does not have an equipment grid.
@@ -4278,19 +4364,20 @@ interface LuaEntityPrototype {
      * Gets the base size of the given inventory on this entity or `nil` if the given inventory doesn't exist.
      */
     get_inventory_size(this: void,
-        index: defines.inventory): void
+        index: defines.inventory): number | null
 
     /**
      * Test whether this entity prototype has a certain flag set.
      * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
+     * @returns `true` if this prototype has the given flag set.
      */
     has_flag(this: void,
-        flag: string): void
+        flag: string): boolean
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The active energy usage of this rocket silo or combinator prototype.
@@ -6056,7 +6143,7 @@ interface LuaEquipment {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The burner energy source for this equipment, if any.
@@ -6145,7 +6232,7 @@ interface LuaEquipmentCategoryPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly localised_description: LocalisedString
 
@@ -6186,7 +6273,7 @@ interface LuaEquipmentGrid {
         table: {
             equipment: LuaEquipment,
             position: EquipmentPosition
-        }): void
+        }): boolean
 
     /**
      * Clear all equipment from the grid, removing it without actually returning it.
@@ -6200,75 +6287,82 @@ interface LuaEquipmentGrid {
      * @param equipment - Prototype name of the equipment to count. If not specified, count all equipment.
      */
     count(this: void,
-        equipment?: string): void
+        equipment?: string): number
 
     /**
      * Find equipment by name.
      * @param equipment - Prototype name of the equipment to find.
+     * @returns The first found equipment, or `nil` if equipment could not be found.
      */
     find(this: void,
-        equipment: string): void
+        equipment: string): LuaEquipment | null
 
     /**
      * Find equipment in the Equipment Grid based off a position.
      * @param position - The position
+     * @returns The found equipment, or `nil` if equipment could not be found at the given position.
      */
     get(this: void,
-        position: EquipmentPosition): void
+        position: EquipmentPosition): LuaEquipment | null
 
     /**
      * Get counts of all equipment in this grid.
+     * @returns The counts, indexed by equipment names.
      */
-    get_contents(this: void): void
+    get_contents(this: void): {[key: string]: number}
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Move an equipment within this grid.
      * @param table.equipment - The equipment to move
      * @param table.position - Where to put it
+     * @returns `true` if the equipment was successfully moved.
      */
     move(this: void,
         table: {
             equipment: LuaEquipment,
             position: EquipmentPosition
-        }): void
+        }): boolean
 
     /**
      * Insert an equipment into the grid.
      * @param table.by_player - If provided the action is done 'as' this player and [on_player_placed_equipment](runtime:on_player_placed_equipment) is triggered.
      * @param table.name - Equipment prototype name
      * @param table.position - Grid position to put the equipment in.
+     * @returns The newly-added equipment, or `nil` if the equipment could not be added.
      */
     put(this: void,
         table: {
             name: string,
             position?: EquipmentPosition,
             by_player?: PlayerIdentification
-        }): void
+        }): LuaEquipment | null
 
     /**
      * Remove an equipment from the grid.
      * @param table.by_player - If provided the action is done 'as' this player and [on_player_removed_equipment](runtime:on_player_removed_equipment) is triggered.
      * @param table.equipment - Take this exact equipment.
      * @param table.position - Take the equipment that contains this position in the grid.
+     * @returns The removed equipment, or `nil` if no equipment was removed.
      */
     take(this: void,
         table: {
             position?: EquipmentPosition,
             equipment?: LuaEquipment,
             by_player?: PlayerIdentification
-        }): void
+        }): SimpleItemStack | null
 
     /**
      * Remove all equipment from the grid.
      * @param by_player - If provided, the action is done 'as' this player and [on_player_removed_equipment](runtime:on_player_removed_equipment) is triggered.
+     * @returns Count of each removed equipment, indexed by their prototype names.
      */
     take_all(this: void,
-        by_player?: PlayerIdentification): void
+        by_player?: PlayerIdentification): {[key: string]: number}
 
     /**
      * The total energy stored in all batteries in the equipment grid.
@@ -6346,7 +6440,7 @@ interface LuaEquipmentGridPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Equipment category names for the {@link categories | runtime:LuaEquipmentPrototype::equipment_categories} that may be inserted into this equipment grid. The grid will accept any equipment that has at least one category in this list.
@@ -6395,7 +6489,7 @@ interface LuaEquipmentPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The equipment attack parameters.
@@ -6566,26 +6660,26 @@ interface LuaFlowStatistics {
             precision_index: defines.flow_precision_index,
             sample_index?: number,
             count?: boolean
-        }): void
+        }): number
 
     /**
      * Gets the total input count for a given prototype.
      * @param name - The prototype name.
      */
     get_input_count(this: void,
-        name: string): void
+        name: string): number
 
     /**
      * Gets the total output count for a given prototype.
      * @param name - The prototype name.
      */
     get_output_count(this: void,
-        name: string): void
+        name: string): number
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Adds a value to this flow statistics.
@@ -6658,29 +6752,31 @@ interface LuaFluidBox {
     /**
      * Flushes all fluid from this fluidbox and its fluid system.
      * @param fluid - If provided, only this fluid is flushed.
+     * @returns The removed fluid.
      */
     flush(this: void,
         index: number,
-        fluid?: FluidIdentification): void
+        fluid?: FluidIdentification): {[key: string]: number}
 
     /**
      * The capacity of the given fluidbox index.
      */
     get_capacity(this: void,
-        index: number): void
+        index: number): number
 
     /**
      * The fluidboxes to which the fluidbox at the given index is connected.
      */
     get_connections(this: void,
-        index: number): void
+        index: number): LuaFluidBox[]
 
     /**
      * Get a fluid box filter
      * @param index - The index of the filter to get.
+     * @returns The filter at the requested index, or `nil` if there isn't one.
      */
     get_filter(this: void,
-        index: number): void
+        index: number): FluidBoxFilter | null
 
     /**
      * Flow through the fluidbox in the last tick. It is the larger of in-flow and out-flow.
@@ -6689,42 +6785,44 @@ interface LuaFluidBox {
      *
      */
     get_flow(this: void,
-        index: number): void
+        index: number): number
 
     /**
      * Gets counts of all fluids in the fluid system. May return `nil` for fluid wagon, fluid turret's internal buffer, or a fluidbox which does not belong to a fluid system.
+     * @returns The counts, indexed by fluid name.
      */
     get_fluid_system_contents(this: void,
-        index: number): void
+        index: number): {[key: string]: number} | null
 
     /**
      * Gets unique fluid system identifier of selected fluid box. May return nil for fluid wagon, fluid turret's internal buffer or a fluidbox which does not belong to a fluid system
      */
     get_fluid_system_id(this: void,
-        index: number): void
+        index: number): number
 
     /**
      * Returns the fluid the fluidbox is locked onto
+     * @returns `nil` if the fluidbox is not locked to any fluid.
      */
     get_locked_fluid(this: void,
-        index: number): void
+        index: number): string | null
 
     /**
      * Get the fluid box's connections and associated data.
      */
     get_pipe_connections(this: void,
-        index: number): void
+        index: number): PipeConnection[]
 
     /**
      * The prototype of this fluidbox index. If this is used on a fluidbox of a crafting machine which due to recipe was created by merging multiple prototypes, a table of prototypes that were merged will be returned instead
      */
     get_prototype(this: void,
-        index: number): void
+        index: number): LuaFluidBoxPrototype | LuaFluidBoxPrototype[]
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Set a fluid box filter.
@@ -6733,10 +6831,11 @@ interface LuaFluidBox {
      *
      * @param filter - The filter to set. Setting `nil` clears the filter.
      * @param index - The index of the filter to set.
+     * @returns Whether the filter was set successfully.
      */
     set_filter(this: void,
         index: number,
-        filter: FluidBoxFilterSpec | null): void
+        filter: FluidBoxFilterSpec | null): boolean
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -6777,7 +6876,7 @@ interface LuaFluidBoxPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly base_area: number
 
@@ -6851,7 +6950,7 @@ interface LuaFluidEnergySourcePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly burns_fluid: boolean
 
@@ -6903,7 +7002,7 @@ interface LuaFluidPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly base_color: Color
 
@@ -6987,7 +7086,7 @@ interface LuaFontPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly border: boolean
 
@@ -7035,13 +7134,14 @@ interface LuaForce {
      */
     add_chart_tag(this: void,
         surface: SurfaceIdentification,
-        tag: ChartTagSpec): void
+        tag: ChartTagSpec): LuaCustomChartTag | null
 
     /**
      * Add this technology to the back of the research queue if the queue is enabled. Otherwise, set this technology to be researched now.
+     * @returns Whether the technology was successfully added.
      */
     add_research(this: void,
-        technology: TechnologyIdentification): void
+        technology: TechnologyIdentification): boolean
 
     /**
      * Cancels pending chart requests for the given surface or all surfaces.
@@ -7117,27 +7217,28 @@ interface LuaForce {
      */
     find_chart_tags(this: void,
         surface: SurfaceIdentification,
-        area?: BoundingBox): void
+        area?: BoundingBox): LuaCustomChartTag[]
 
     /**
      * @param position - Position to find a network for
      * @param surface - Surface to search on
+     * @returns The found network or `nil`.
      */
     find_logistic_network_by_position(this: void,
         position: MapPosition,
-        surface: SurfaceIdentification): void
+        surface: SurfaceIdentification): LuaLogisticNetwork | null
 
     /**
      * @param ammo - Ammo category
      */
     get_ammo_damage_modifier(this: void,
-        ammo: string): void
+        ammo: string): number
 
     /**
      * Is `other` force in this force's cease fire list?
      */
     get_cease_fire(this: void,
-        other: ForceIdentification): void
+        other: ForceIdentification): boolean
 
     /**
      * Count entities of given type.
@@ -7145,51 +7246,54 @@ interface LuaForce {
      * This function has O(1) time complexity as entity counts are kept and maintained in the game engine.
      *
      * @param name - Prototype name of the entity.
+     * @returns Number of entities of given prototype belonging to this force.
      */
     get_entity_count(this: void,
-        name: string): void
+        name: string): number
 
     /**
      * Is `other` force in this force's friends list.
      */
     get_friend(this: void,
-        other: ForceIdentification): void
+        other: ForceIdentification): boolean
 
     /**
      * @param ammo - Ammo category
      */
     get_gun_speed_modifier(this: void,
-        ammo: string): void
+        ammo: string): number
 
     /**
      * Gets if the given recipe is explicitly disabled from being hand crafted.
      */
     get_hand_crafting_disabled_for_recipe(this: void,
-        recipe: string | LuaRecipe): void
+        recipe: string | LuaRecipe): boolean
 
     /**
      * Gets the count of a given item launched in rockets.
      * @param item - The item to get
+     * @returns The count of the item that has been launched.
      */
     get_item_launched(this: void,
-        item: string): void
+        item: string): number
 
     /**
      * Gets the linked inventory for the given prototype and link ID if it exists or `nil`.
      */
     get_linked_inventory(this: void,
         prototype: EntityPrototypeIdentification,
-        link_id: number): void
+        link_id: number): LuaInventory | null
 
     /**
      * Gets the saved progress for the given technology or `nil` if there is no saved progress.
      * @param technology - The technology
+     * @returns The progress as a percent.
      */
     get_saved_technology_progress(this: void,
-        technology: TechnologyIdentification): void
+        technology: TechnologyIdentification): number | null
 
     get_spawn_position(this: void,
-        surface: SurfaceIdentification): void
+        surface: SurfaceIdentification): MapPosition
 
     /**
      * Gets train stops matching the given filters.
@@ -7200,24 +7304,24 @@ interface LuaForce {
         table?: {
             name?: string | string[],
             surface?: SurfaceIdentification
-        }): void
+        }): LuaEntity[]
 
     /**
      * @param surface - The surface to search. Not providing a surface will match trains on any surface.
      */
     get_trains(this: void,
-        surface?: SurfaceIdentification): void
+        surface?: SurfaceIdentification): LuaTrain[]
 
     /**
      * @param turret - Turret prototype name
      */
     get_turret_attack_modifier(this: void,
-        turret: string): void
+        turret: string): number
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Has a chunk been charted?
@@ -7225,31 +7329,31 @@ interface LuaForce {
      */
     is_chunk_charted(this: void,
         surface: SurfaceIdentification,
-        position: ChunkPosition): void
+        position: ChunkPosition): boolean
 
     /**
      * Is the given chunk currently charted and visible (not covered by fog of war) on the map.
      */
     is_chunk_visible(this: void,
         surface: SurfaceIdentification,
-        position: ChunkPosition): void
+        position: ChunkPosition): boolean
 
     /**
      * Is this force an enemy? This differs from `get_cease_fire` in that it is always false for neutral force. This is equivalent to checking the `enemy` ForceCondition.
      */
     is_enemy(this: void,
-        other: ForceIdentification): void
+        other: ForceIdentification): boolean
 
     /**
      * Is this force a friend? This differs from `get_friend` in that it is always true for neutral force. This is equivalent to checking the `friend` ForceCondition.
      */
     is_friend(this: void,
-        other: ForceIdentification): void
+        other: ForceIdentification): boolean
 
     /**
      * Is pathfinder busy? When the pathfinder is busy, it won't accept any more pathfinding requests.
      */
-    is_pathfinder_busy(this: void): void
+    is_pathfinder_busy(this: void): boolean
 
     /**
      * Kill all units and flush the pathfinder.
@@ -7709,7 +7813,7 @@ interface LuaFuelCategoryPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly localised_description: LocalisedString
 
@@ -7788,9 +7892,10 @@ interface LuaGameScript {
      * Force names must be unique.
      *
      * @param force - Name of the new force
+     * @returns The force that was just created
      */
     create_force(this: void,
-        force: string): void
+        force: string): LuaForce
 
     /**
      * Creates an inventory that is not owned by any game object. It can be resized later with {@link LuaInventory::resize | runtime:LuaInventory::resize}.
@@ -7800,7 +7905,7 @@ interface LuaGameScript {
      * @param size - The number of slots the inventory initially has.
      */
     create_inventory(this: void,
-        size: number): void
+        size: number): LuaInventory
 
     /**
      * Creates a {@link LuaProfiler | runtime:LuaProfiler}, which is used for measuring script performance.
@@ -7810,7 +7915,7 @@ interface LuaGameScript {
      * @param stopped - Create the timer stopped
      */
     create_profiler(this: void,
-        stopped?: boolean): void
+        stopped?: boolean): LuaProfiler
 
     /**
      * Creates a deterministic standalone random generator with the given seed or if a seed is not provided the initial map seed is used.
@@ -7819,7 +7924,7 @@ interface LuaGameScript {
      *
      */
     create_random_generator(this: void,
-        seed?: number): void
+        seed?: number): LuaRandomGenerator
 
     /**
      * Create a new surface.
@@ -7829,17 +7934,19 @@ interface LuaGameScript {
      *
      * @param name - Name of the new surface.
      * @param settings - Map generation settings.
+     * @returns The surface that was just created.
      */
     create_surface(this: void,
         name: string,
-        settings?: MapGenSettings): void
+        settings?: MapGenSettings): LuaSurface
 
     /**
      * Base64 decodes and inflates the given string.
      * @param string - The string to decode.
+     * @returns The decoded string or `nil` if the decode failed.
      */
     decode_string(this: void,
-        string: string): void
+        string: string): string | null
 
     /**
      * Deletes the given surface and all entities on it.
@@ -7867,9 +7974,10 @@ interface LuaGameScript {
     /**
      * Deflates and base64 encodes the given string.
      * @param string - The string to encode.
+     * @returns The encoded string or `nil` if the encode failed.
      */
     encode_string(this: void,
-        string: string): void
+        string: string): string | null
 
     /**
      * Evaluate an expression, substituting variables as provided. For details on the formula, see {@link TechnologyPrototype::unit | prototype:TechnologyPrototype::unit}.
@@ -7885,7 +7993,7 @@ interface LuaGameScript {
      */
     evaluate_expression(this: void,
         expression: string,
-        variables?: {[key: string]: number}): void
+        variables?: {[key: string]: number}): number
 
     /**
      * Force a CRC check. Tells all peers to calculate their current CRC, which are then compared to each other. If a mismatch is detected, the game desyncs and some peers are forced to reconnect.
@@ -7900,10 +8008,10 @@ interface LuaGameScript {
      * @param surface - If given, only the entities active on this surface are counted.
      */
     get_active_entities_count(this: void,
-        surface?: SurfaceIdentification): void
+        surface?: SurfaceIdentification): number
 
     get_entity_by_tag(this: void,
-        tag: string): void
+        tag: string): LuaEntity | null
 
     /**
      * Returns a dictionary of all LuaAchievementPrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -7915,7 +8023,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_achievement_prototypes(this: void,
-        filters: AchievementPrototypeFilter[]): void
+        filters: AchievementPrototypeFilter[]): {[key: string]: LuaAchievementPrototype}
 
     /**
      * Returns a dictionary of all LuaDecorativePrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -7927,7 +8035,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_decorative_prototypes(this: void,
-        filters: DecorativePrototypeFilter[]): void
+        filters: DecorativePrototypeFilter[]): {[key: string]: LuaDecorativePrototype}
 
     /**
      * Returns a dictionary of all LuaEntityPrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -7939,7 +8047,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_entity_prototypes(this: void,
-        filters: EntityPrototypeFilter[]): void
+        filters: EntityPrototypeFilter[]): {[key: string]: LuaEntityPrototype}
 
     /**
      * Returns a dictionary of all LuaEquipmentPrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -7951,7 +8059,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_equipment_prototypes(this: void,
-        filters: EquipmentPrototypeFilter[]): void
+        filters: EquipmentPrototypeFilter[]): {[key: string]: LuaEquipmentPrototype}
 
     /**
      * Returns a dictionary of all LuaFluidPrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -7963,7 +8071,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_fluid_prototypes(this: void,
-        filters: FluidPrototypeFilter[]): void
+        filters: FluidPrototypeFilter[]): {[key: string]: LuaFluidPrototype}
 
     /**
      * Returns a dictionary of all LuaItemPrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -7975,7 +8083,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_item_prototypes(this: void,
-        filters: ItemPrototypeFilter[]): void
+        filters: ItemPrototypeFilter[]): {[key: string]: LuaItemPrototype}
 
     /**
      * Returns a dictionary of all LuaModSettingPrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -7987,7 +8095,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_mod_setting_prototypes(this: void,
-        filters: ModSettingPrototypeFilter[]): void
+        filters: ModSettingPrototypeFilter[]): {[key: string]: LuaModSettingPrototype}
 
     /**
      * Returns a dictionary of all LuaRecipePrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -7999,7 +8107,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_recipe_prototypes(this: void,
-        filters: RecipePrototypeFilter[]): void
+        filters: RecipePrototypeFilter[]): {[key: string]: LuaRecipePrototype}
 
     /**
      * Returns a dictionary of all LuaTechnologyPrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -8011,7 +8119,7 @@ interface LuaGameScript {
      *
      */
     get_filtered_technology_prototypes(this: void,
-        filters: TechnologyPrototypeFilter[]): void
+        filters: TechnologyPrototypeFilter[]): {[key: string]: LuaTechnologyPrototype}
 
     /**
      * Returns a dictionary of all LuaTilePrototypes that fit the given filters. The prototypes are indexed by `name`.
@@ -8023,19 +8131,19 @@ interface LuaGameScript {
      *
      */
     get_filtered_tile_prototypes(this: void,
-        filters: TilePrototypeFilter[]): void
+        filters: TilePrototypeFilter[]): {[key: string]: LuaTilePrototype}
 
     /**
      * Gets the map exchange string for the map generation settings that were used to create this map.
      */
-    get_map_exchange_string(this: void): void
+    get_map_exchange_string(this: void): string
 
     /**
      * Gets the given player or returns `nil` if no player is found.
      * @param player - The player index or name.
      */
     get_player(this: void,
-        player: number | string): void
+        player: number | string): LuaPlayer | null
 
     /**
      * Gets the inventories created through {@link LuaGameScript::create_inventory | runtime:LuaGameScript::create_inventory}
@@ -8043,9 +8151,10 @@ interface LuaGameScript {
      * Inventories created through console commands will be owned by `"core"`.
      *
      * @param mod - The mod who's inventories to get. If not provided all inventories are returned.
+     * @returns A mapping of mod name to array of inventories owned by that mod.
      */
     get_script_inventories(this: void,
-        mod?: string): void
+        mod?: string): {[key: string]: LuaInventory[]}
 
     /**
      * Gets the given surface or returns `nil` if no surface is found.
@@ -8055,7 +8164,7 @@ interface LuaGameScript {
      * @param surface - The surface index or name.
      */
     get_surface(this: void,
-        surface: number | string): void
+        surface: number | string): LuaSurface | null
 
     /**
      * Gets train stops matching the given filters.
@@ -8068,38 +8177,39 @@ interface LuaGameScript {
             name?: string | string[],
             surface?: SurfaceIdentification,
             force?: ForceIdentification
-        }): void
+        }): LuaEntity[]
 
     /**
      * Is this the demo version of Factorio?
      */
-    is_demo(this: void): void
+    is_demo(this: void): boolean
 
     /**
      * Whether the save is loaded as a multiplayer map.
      */
-    is_multiplayer(this: void): void
+    is_multiplayer(this: void): boolean
 
     /**
      * Checks if the given SoundPath is valid.
      * @param sound_path - Path to the sound.
      */
     is_valid_sound_path(this: void,
-        sound_path: SoundPath): void
+        sound_path: SoundPath): boolean
 
     /**
      * Checks if the given SpritePath is valid and contains a loaded sprite. The existence of the image is not checked for paths of type `file`.
      * @param sprite_path - Path to the image.
      */
     is_valid_sprite_path(this: void,
-        sprite_path: SpritePath): void
+        sprite_path: SpritePath): boolean
 
     /**
      * Convert a JSON string to a table.
      * @param json - The string to convert.
+     * @returns The returned object, or `nil` if the JSON string was invalid.
      */
     json_to_table(this: void,
-        json: string): void
+        json: string): AnyBasic | null
 
     /**
      * Kicks the given player from this multiplayer game. Does nothing if this is a single player game or if the player running this isn't an admin.
@@ -8134,7 +8244,7 @@ interface LuaGameScript {
      * Convert a map exchange string to map gen settings and map settings.
      */
     parse_map_exchange_string(this: void,
-        map_exchange_string: string): void
+        map_exchange_string: string): MapExchangeStringData
 
     /**
      * Play a sound for every player in the game.
@@ -8276,7 +8386,7 @@ interface LuaGameScript {
      * Convert a table to a JSON string
      */
     table_to_json(this: void,
-        data: Table): void
+        data: Table): string
 
     /**
      * Take a screenshot of the game and save it to the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. The name of the image file can be specified via the `path` parameter.
@@ -8704,7 +8814,7 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The circuit condition. Writing `nil` clears the circuit condition.
@@ -8761,7 +8871,7 @@ interface LuaGroup {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The parent group, if any.
@@ -8814,7 +8924,7 @@ interface LuaGui {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Returns `true` if sprite_path is valid and contains loaded sprite, otherwise `false`. Sprite path of type `file` doesn't validate if file exists.
@@ -8823,7 +8933,7 @@ interface LuaGui {
      * @param sprite_path - Path to a image.
      */
     is_valid_sprite_path(this: void,
-        sprite_path: SpritePath): void
+        sprite_path: SpritePath): boolean
 
     /**
      * The center part of the GUI. It is a flow element.
@@ -8907,9 +9017,10 @@ interface LuaGui {
 interface LuaGuiElement {
     /**
      * Add a new child element to this GuiElement.
+     * @returns The GUI element that was added.
      */
     add(this: void,
-        table: LuaGuiElementAddParams): void
+        table: LuaGuiElementAddParams): LuaGuiElement
 
     /**
      * Inserts a string at the end or at the given index of this dropdown or listbox.
@@ -8998,7 +9109,7 @@ interface LuaGuiElement {
      * This iterates through the children of the parent of this element, meaning this has a non-free cost to get, but is faster than doing the equivalent in Lua.
      *
      */
-    get_index_in_parent(this: void): void
+    get_index_in_parent(this: void): number
 
     /**
      * Gets the item at the given index from this dropdown or listbox.
@@ -9008,7 +9119,7 @@ interface LuaGuiElement {
      * @param index - The index to get
      */
     get_item(this: void,
-        index: number): void
+        index: number): LocalisedString
 
     /**
      * The mod that owns this Gui element or `nil` if it's owned by the scenario script.
@@ -9016,37 +9127,37 @@ interface LuaGuiElement {
      * This has a not-super-expensive, but non-free cost to get.
      *
      */
-    get_mod(this: void): void
+    get_mod(this: void): string | null
 
     /**
      * Returns whether this slider only allows being moved to discrete positions.
      */
-    get_slider_discrete_slider(this: void): void
+    get_slider_discrete_slider(this: void): boolean
 
     /**
      * Returns whether this slider only allows discrete values.
      */
-    get_slider_discrete_values(this: void): void
+    get_slider_discrete_values(this: void): boolean
 
     /**
      * Gets this sliders maximum value.
      */
-    get_slider_maximum(this: void): void
+    get_slider_maximum(this: void): number
 
     /**
      * Gets this sliders minimum value.
      */
-    get_slider_minimum(this: void): void
+    get_slider_minimum(this: void): number
 
     /**
      * Gets the minimum distance this slider can move.
      */
-    get_slider_value_step(this: void): void
+    get_slider_value_step(this: void): number
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Removes the item at the given index from this dropdown or listbox.
@@ -9796,7 +9907,7 @@ interface LuaHeatBufferPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly connections: HeatConnection[]
 
@@ -9833,7 +9944,7 @@ interface LuaHeatEnergySourcePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly connections: HeatConnection[]
 
@@ -9881,7 +9992,7 @@ interface LuaInserterControlBehavior extends LuaGenericOnOffControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The hand read mode for the inserter.
@@ -9927,9 +10038,10 @@ interface LuaInventory {
     /**
      * Can at least some items be inserted?
      * @param items - Items that would be inserted.
+     * @returns `true` if at least a part of the given items could be inserted into this inventory.
      */
     can_insert(this: void,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): boolean
 
     /**
      * If the given inventory slot filter can be set to the given filter.
@@ -9938,7 +10050,7 @@ interface LuaInventory {
      */
     can_set_filter(this: void,
         index: number,
-        filter: string): void
+        filter: string): boolean
 
     /**
      * Make this inventory empty.
@@ -9952,7 +10064,7 @@ interface LuaInventory {
      */
     count_empty_stacks(this: void,
         include_filtered?: boolean,
-        include_bar?: boolean): void
+        include_bar?: boolean): number
 
     /**
      * Destroys this inventory.
@@ -9965,16 +10077,22 @@ interface LuaInventory {
     /**
      * Finds the first empty stack. Filtered slots are excluded unless a filter item is given.
      * @param item - If given, empty stacks that are filtered for this item will be included.
+     * @returns multiple values
+     *  [0] - The first empty stack, or `nil` if there aren't any empty stacks.
+     *  [1] - The stack index of the matching stack, if any is found.
      */
     find_empty_stack(this: void,
-        item?: string): void
+        item?: string): LuaMultiReturn<[LuaItemStack | null, number | null]>
 
     /**
      * Finds the first LuaItemStack in the inventory that matches the given item name.
      * @param item - The item name to find
+     * @returns multiple values
+     *  [0] - The first matching stack, or `nil` if none match.
+     *  [1] - The stack index of the matching stack, if any is found.
      */
     find_item_stack(this: void,
-        item: string): void
+        item: string): LuaMultiReturn<[LuaItemStack | null, number | null]>
 
     /**
      * Get the current bar. This is the index at which the red area starts.
@@ -9982,19 +10100,21 @@ interface LuaInventory {
      * Only useable if this inventory supports having a bar.
      *
      */
-    get_bar(this: void): void
+    get_bar(this: void): number
 
     /**
      * Get counts of all items in this inventory.
+     * @returns The counts, indexed by item names.
      */
-    get_contents(this: void): void
+    get_contents(this: void): {[key: string]: number}
 
     /**
      * Gets the filter for the given item stack index.
      * @param index - The item stack index
+     * @returns The current filter or `nil` if none.
      */
     get_filter(this: void,
-        index: number): void
+        index: number): string | null
 
     /**
      * Gets the number of the given item that can be inserted into this inventory.
@@ -10013,41 +10133,43 @@ interface LuaInventory {
      * @param item - Prototype name of the item to count. If not specified, count all items.
      */
     get_item_count(this: void,
-        item?: string): void
+        item?: string): number
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Insert items into this inventory.
      * @param items - Items to insert.
+     * @returns Number of items actually inserted.
      */
     insert(this: void,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): number
 
     /**
      * Does this inventory contain nothing?
      */
-    is_empty(this: void): void
+    is_empty(this: void): boolean
 
     /**
      * If this inventory supports filters and has at least 1 filter set.
      */
-    is_filtered(this: void): void
+    is_filtered(this: void): boolean
 
     /**
      * Is every stack in this inventory full? Ignores stacks blocked by the current bar.
      */
-    is_full(this: void): void
+    is_full(this: void): boolean
 
     /**
      * Remove items from this inventory.
      * @param items - Items to remove.
+     * @returns Number of items actually removed.
      */
     remove(this: void,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): number
 
     /**
      * Resizes the inventory.
@@ -10077,10 +10199,11 @@ interface LuaInventory {
      *
      * @param filter - The new filter. `nil` erases any existing filter.
      * @param index - The item stack index.
+     * @returns If the filter was allowed to be set.
      */
     set_filter(this: void,
         index: number,
-        filter: string | null): void
+        filter: string | null): boolean
 
     /**
      * Sorts and merges the items in this inventory.
@@ -10093,12 +10216,12 @@ interface LuaInventory {
      * "Supporting a bar" doesn't mean that the bar is set to some nontrivial value. Supporting a bar means the inventory supports having this limit at all. The character's inventory is an example of an inventory without a bar; the wooden chest's inventory is an example of one with a bar.
      *
      */
-    supports_bar(this: void): void
+    supports_bar(this: void): boolean
 
     /**
      * If this inventory supports filters.
      */
-    supports_filters(this: void): void
+    supports_filters(this: void): boolean
 
     /**
      * The entity that owns this inventory, if any.
@@ -10179,19 +10302,19 @@ interface LuaItemPrototype {
      * @param ammo_source_type - One of `"default"`, `"player"`, `"turret"`, or `"vehicle"`. Defaults to `"default"`.
      */
     get_ammo_type(this: void,
-        ammo_source_type?: string): void
+        ammo_source_type?: string): AmmoType | null
 
     /**
      * Does this prototype have a flag enabled?
      * @param flag - The flag to check. Can be one of [ItemPrototypeFlags](runtime:ItemPrototypeFlags). Any other value will cause an error.
      */
     has_flag(this: void,
-        flag: string): void
+        flag: string): boolean
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The alt entity filter mode used by this selection tool.
@@ -10871,6 +10994,7 @@ interface LuaItemStack {
      * @param table.raise_built - If true; [defines.events.script_raised_built](runtime:defines.events.script_raised_built) will be fired on successful entity creation. Note: this is ignored if by_player is provided.
      * @param table.skip_fog_of_war - If chunks covered by fog-of-war are skipped.
      * @param table.surface - Surface to build on
+     * @returns Array of created ghosts
      */
     build_blueprint(this: void,
         table: {
@@ -10882,14 +11006,14 @@ interface LuaItemStack {
             skip_fog_of_war?: boolean,
             by_player?: PlayerIdentification,
             raise_built?: boolean
-        }): void
+        }): LuaEntity[]
 
     /**
      * Would a call to {@link LuaItemStack::set_stack | runtime:LuaItemStack::set_stack} succeed?
      * @param stack - Stack that would be set, possibly `nil`.
      */
     can_set_stack(this: void,
-        stack?: ItemStackIdentification): void
+        stack?: ItemStackIdentification): boolean
 
     /**
      * Cancel deconstruct the given area with this deconstruction item.
@@ -10948,6 +11072,7 @@ interface LuaItemStack {
      * @param table.include_station_names - When true, station names are included in the blueprint. Defaults to false.
      * @param table.include_trains - When true, trains are included in the blueprint. Defaults to false.
      * @param table.surface - Surface to create from
+     * @returns The blueprint entity index to source entity mapping.
      */
     create_blueprint(this: void,
         table: {
@@ -10960,7 +11085,7 @@ interface LuaItemStack {
             include_station_names?: boolean,
             include_trains?: boolean,
             include_fuel?: boolean
-        }): void
+        }): {[key: number]: LuaEntity}
 
     /**
      * Creates the equipment grid for this item if it doesn't exist and this is an item-with-entity-data that supports equipment grids.
@@ -10968,7 +11093,7 @@ interface LuaItemStack {
      * Applies to subclasses: ItemWithEntityData
      *
      */
-    create_grid(this: void): void
+    create_grid(this: void): LuaEquipmentGrid
 
     /**
      * Deconstruct the given area with this deconstruction item.
@@ -11009,8 +11134,9 @@ interface LuaItemStack {
 
     /**
      * Export a supported item (blueprint, blueprint-book, deconstruction-planner, upgrade-planner, item-with-tags) to a string.
+     * @returns The exported string
      */
-    export_stack(this: void): void
+    export_stack(this: void): string
 
     /**
      * The entities in this blueprint.
@@ -11018,7 +11144,7 @@ interface LuaItemStack {
      * Applies to subclasses: BlueprintItem
      *
      */
-    get_blueprint_entities(this: void): void
+    get_blueprint_entities(this: void): BlueprintEntity[] | null
 
     /**
      * Gets the number of entities in this blueprint item.
@@ -11026,7 +11152,7 @@ interface LuaItemStack {
      * Applies to subclasses: BlueprintItem
      *
      */
-    get_blueprint_entity_count(this: void): void
+    get_blueprint_entity_count(this: void): number
 
     /**
      * Gets the given tag on the given blueprint entity index in this blueprint item.
@@ -11038,7 +11164,7 @@ interface LuaItemStack {
      */
     get_blueprint_entity_tag(this: void,
         index: number,
-        tag: string): void
+        tag: string): AnyBasic | null
 
     /**
      * Gets the tags for the given blueprint entity index in this blueprint item.
@@ -11047,7 +11173,7 @@ interface LuaItemStack {
      *
      */
     get_blueprint_entity_tags(this: void,
-        index: number): void
+        index: number): Tags
 
     /**
      * A list of the tiles in this blueprint.
@@ -11055,7 +11181,7 @@ interface LuaItemStack {
      * Applies to subclasses: BlueprintItem
      *
      */
-    get_blueprint_tiles(this: void): void
+    get_blueprint_tiles(this: void): Tile[] | null
 
     /**
      * Gets the entity filter at the given index for this deconstruction item.
@@ -11064,14 +11190,15 @@ interface LuaItemStack {
      *
      */
     get_entity_filter(this: void,
-        index: number): void
+        index: number): string | null
 
     /**
      * Access the inner inventory of an item.
      * @param inventory - Index of the inventory to access, which can only be [defines.inventory.item_main](runtime:defines.inventory.item_main).
+     * @returns `nil` if there is no inventory with the given index.
      */
     get_inventory(this: void,
-        inventory: defines.inventory): void
+        inventory: defines.inventory): LuaInventory | null
 
     /**
      * Gets the filter at the given index for this upgrade item.
@@ -11083,7 +11210,7 @@ interface LuaItemStack {
      */
     get_mapper(this: void,
         index: number,
-        type: string): void
+        type: string): UpgradeFilter
 
     /**
      * Gets the tag with the given name or returns `nil` if it doesn't exist.
@@ -11092,7 +11219,7 @@ interface LuaItemStack {
      *
      */
     get_tag(this: void,
-        tag_name: string): void
+        tag_name: string): AnyBasic | null
 
     /**
      * Gets the tile filter at the given index for this deconstruction item.
@@ -11101,33 +11228,35 @@ interface LuaItemStack {
      *
      */
     get_tile_filter(this: void,
-        index: number): void
+        index: number): string | null
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Import a supported item (blueprint, blueprint-book, deconstruction-planner, upgrade-planner, item-with-tags) from a string.
      * @param data - The string to import
+     * @returns 0 if the import succeeded with no errors. -1 if the import succeeded with errors. 1 if the import failed.
      */
     import_stack(this: void,
-        data: string): void
+        data: string): number
 
     /**
      * Is this blueprint item setup? I.e. is it a non-empty blueprint?
      */
-    is_blueprint_setup(this: void): void
+    is_blueprint_setup(this: void): boolean
 
     /**
      * Removes a tag with the given name.
      * @remarks
      * Applies to subclasses: ItemWithTags
      *
+     * @returns If the tag existed and was removed.
      */
     remove_tag(this: void,
-        tag: string): void
+        tag: string): boolean
 
     /**
      * Set new entities to be a part of this blueprint.
@@ -11180,10 +11309,11 @@ interface LuaItemStack {
      * Applies to subclasses: DeconstructionItem
      *
      * @param filter - Writing `nil` removes the filter.
+     * @returns Whether the new filter was successfully set (ie. was valid).
      */
     set_entity_filter(this: void,
         index: number,
-        filter: string | LuaEntityPrototype | LuaEntity | null): void
+        filter: string | LuaEntityPrototype | LuaEntity | null): boolean
 
     /**
      * Sets the module filter at the given index for this upgrade item.
@@ -11202,9 +11332,10 @@ interface LuaItemStack {
     /**
      * Set this item stack to another item stack.
      * @param stack - Item stack to set it to. Omitting this parameter or passing `nil` will clear this item stack, as if [LuaItemStack::clear](runtime:LuaItemStack::clear) was called.
+     * @returns Whether the stack was set successfully. Returns `false` if this stack was not [valid for write](runtime:LuaItemStack::can_set_stack).
      */
     set_stack(this: void,
-        stack?: ItemStackIdentification): void
+        stack?: ItemStackIdentification): boolean
 
     /**
      * Sets the tag with the given name and value.
@@ -11222,31 +11353,35 @@ interface LuaItemStack {
      * Applies to subclasses: DeconstructionItem
      *
      * @param filter - Setting to nil erases the filter.
+     * @returns Whether the new filter was successfully set (ie. was valid).
      */
     set_tile_filter(this: void,
         index: number,
-        filter: string | LuaTilePrototype | LuaTile): void
+        filter: string | LuaTilePrototype | LuaTile): boolean
 
     /**
      * Swaps this item stack with the given item stack if allowed.
+     * @returns Whether the 2 stacks were swapped successfully.
      */
     swap_stack(this: void,
-        stack: LuaItemStack): void
+        stack: LuaItemStack): boolean
 
     /**
      * Transfers the given item stack into this item stack.
+     * @returns `true` if the full stack was transferred.
      */
     transfer_stack(this: void,
-        stack: ItemStackIdentification): void
+        stack: ItemStackIdentification): boolean
 
     /**
      * Use the capsule item with the entity as the source, targeting the given position.
      * @param entity - The entity to use the capsule item with.
      * @param target_position - The position to use the capsule item with.
+     * @returns Array of the entities that were created by the capsule action.
      */
     use_capsule(this: void,
         entity: LuaEntity,
-        target_position: MapPosition): void
+        target_position: MapPosition): LuaEntity[]
 
     /**
      * The active blueprint index for this blueprint book. `nil` if this blueprint book is empty.
@@ -11596,7 +11731,7 @@ interface LuaLampControlBehavior extends LuaGenericOnOffControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The color the lamp is showing, if any.
@@ -11634,7 +11769,7 @@ interface LuaLazyLoadedValue<T> {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -11655,25 +11790,25 @@ interface LuaLogisticCell {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Is a given position within the construction range of this cell?
      */
     is_in_construction_range(this: void,
-        position: MapPosition): void
+        position: MapPosition): boolean
 
     /**
      * Is a given position within the logistic range of this cell?
      */
     is_in_logistic_range(this: void,
-        position: MapPosition): void
+        position: MapPosition): boolean
 
     /**
      * Are two cells neighbours?
      */
     is_neighbour_with(this: void,
-        other: LuaLogisticCell): void
+        other: LuaLogisticCell): boolean
 
     /**
      * Radius at which the robots hover when waiting to be charged.
@@ -11769,7 +11904,7 @@ interface LuaLogisticContainerControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The circuit mode of operations for the logistic container. Can only be set on containers whose {@link logistic_mode | runtime:LuaEntityPrototype::logistic_mode} is set to "requester".
@@ -11797,22 +11932,25 @@ interface LuaLogisticNetwork {
      * @param count - Count to check. Defaults to 1.
      * @param include_buffers - Should buffers be considered? Defaults to false.
      * @param item - Item name to check.
+     * @returns Whether the network can satisfy the request.
      */
     can_satisfy_request(this: void,
         item: string,
         count?: number,
-        include_buffers?: boolean): void
+        include_buffers?: boolean): boolean
 
     /**
      * Find logistic cell closest to a given position.
+     * @returns `nil` if no cell was found.
      */
     find_cell_closest_to(this: void,
-        position: MapPosition): void
+        position: MapPosition): LuaLogisticCell | null
 
     /**
      * Get item counts for the entire network, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
+     * @returns A mapping of item prototype names to the number available in the network.
      */
-    get_contents(this: void): void
+    get_contents(this: void): {[key: string]: number}
 
     /**
      * Count given or all items in the network or given members.
@@ -11821,55 +11959,60 @@ interface LuaLogisticNetwork {
      */
     get_item_count(this: void,
         item?: string,
-        member?: string): void
+        member?: string): number
 
     /**
      * Get the amount of items of the given type indexed by the storage member.
      * @param item - Item name to check.
+     * @returns A mapping of member types ("storage", "passive-provider", "buffer", "active-provider") to the number available in the members.
      */
     get_supply_counts(this: void,
-        item: string): void
+        item: string): {[key: string]: number}
 
     /**
      * Gets the logistic points with of the given type indexed by the storage member.
      * @param item - Item name to check.
+     * @returns A mapping of member types ("storage", "passive-provider", "buffer", "active-provider") to an array of LuaLogisticPoint.
      */
     get_supply_points(this: void,
-        item: string): void
+        item: string): {[key: string]: LuaLogisticPoint[]}
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Insert items into the logistic network. This will actually insert the items into some logistic chests.
      * @param item - What to insert.
      * @param members - Which logistic members to insert the items to. Must be `"storage"`, `"storage-empty"` (storage chests that are completely empty), `"storage-empty-slot"` (storage chests that have an empty slot), or `"requester"`. If not specified, inserts items into the logistic network in the usual order.
+     * @returns Number of items actually inserted.
      */
     insert(this: void,
         item: ItemStackIdentification,
-        members?: string): void
+        members?: string): number
 
     /**
      * Remove items from the logistic network. This will actually remove the items from some logistic chests.
      * @param item - What to remove.
      * @param members - Which logistic members to remove from. Must be `"storage"`, `"passive-provider"`, `"buffer"`, or `"active-provider"`. If not specified, removes from the network in the usual order.
+     * @returns Number of items removed.
      */
     remove_item(this: void,
         item: ItemStackIdentification,
-        members?: string): void
+        members?: string): number
 
     /**
      * Find a logistic point to drop the specific item stack.
      * @param table.members - When given, it will find from only the specific type of member. Must be `"storage"`, `"storage-empty"`, `"storage-empty-slot"` or `"requester"`. If not specified, selects with normal priorities.
      * @param table.stack - Name of the item to select.
+     * @returns `nil` if no point was found.
      */
     select_drop_point(this: void,
         table: {
             stack: ItemStackIdentification,
             members?: string
-        }): void
+        }): LuaLogisticPoint | null
 
     /**
      * Find the 'best' logistic point with this item ID and from the given position or from given chest type.
@@ -11877,6 +12020,7 @@ interface LuaLogisticNetwork {
      * @param table.members - When given, it will find from only the specific type of member. Must be `"storage"`, `"passive-provider"`, `"buffer"` or `"active-provider"`. If not specified, selects with normal priorities. Not considered if position is specified.
      * @param table.name - Name of the item to select.
      * @param table.position - When given, it will find the storage 'best' storage point from this position.
+     * @returns `nil` if no point was found.
      */
     select_pickup_point(this: void,
         table: {
@@ -11884,7 +12028,7 @@ interface LuaLogisticNetwork {
             position?: MapPosition,
             include_buffers?: boolean,
             members?: string
-        }): void
+        }): LuaLogisticPoint | null
 
     /**
      * All active provider points in this network.
@@ -12010,7 +12154,7 @@ interface LuaLogisticPoint {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * If this logistic point is using the exact mode. In exact mode robots never over-deliver requests.
@@ -12079,7 +12223,7 @@ interface LuaMiningDrillControlBehavior extends LuaGenericOnOffControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * `true` if this drill is enabled or disabled using the logistics or circuit condition.
@@ -12120,7 +12264,7 @@ interface LuaModSettingPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Whether this string setting allows blank values. `nil` if not a string setting.
@@ -12202,7 +12346,7 @@ interface LuaModuleCategoryPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly localised_description: LocalisedString
 
@@ -12237,7 +12381,7 @@ interface LuaNamedNoiseExpression {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The expression itself.
@@ -12282,7 +12426,7 @@ interface LuaNoiseLayerPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly localised_description: LocalisedString
 
@@ -12317,7 +12461,7 @@ interface LuaParticlePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly ended_in_water_trigger_effect: TriggerEffectItem
 
@@ -12369,41 +12513,45 @@ interface LuaParticlePrototype {
 interface LuaPermissionGroup {
     /**
      * Adds the given player to this group.
+     * @returns Whether the player was added.
      */
     add_player(this: void,
-        player: PlayerIdentification): void
+        player: PlayerIdentification): boolean
 
     /**
      * Whether this group allows the given action.
      * @param action - The action in question.
      */
     allows_action(this: void,
-        action: defines.input_action): void
+        action: defines.input_action): boolean
 
     /**
      * Destroys this group.
+     * @returns Whether the group was successfully destroyed.
      */
-    destroy(this: void): void
+    destroy(this: void): boolean
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Removes the given player from this group.
+     * @returns Whether the player was removed.
      */
     remove_player(this: void,
-        player: PlayerIdentification): void
+        player: PlayerIdentification): boolean
 
     /**
      * Sets whether this group allows the performance the given action.
      * @param action - The action in question.
      * @param allow_action - Whether to allow the specified action.
+     * @returns Whether the value was successfully applied.
      */
     set_allows_action(this: void,
         action: defines.input_action,
-        allow_action: boolean): void
+        allow_action: boolean): boolean
 
     /**
      * The group ID
@@ -12441,20 +12589,22 @@ interface LuaPermissionGroup {
 interface LuaPermissionGroups {
     /**
      * Creates a new permission group.
+     * @returns `nil` if the calling player doesn't have permission to make groups.
      */
     create_group(this: void,
-        name?: string): void
+        name?: string): LuaPermissionGroup | null
 
     /**
      * Gets the permission group with the given name or group ID.
+     * @returns `nil` if there is no matching group.
      */
     get_group(this: void,
-        group: string | number): void
+        group: string | number): LuaPermissionGroup | null
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * All of the permission groups.
@@ -12557,7 +12707,7 @@ interface LuaPlayer extends LuaControl {
             alt?: boolean,
             terrain_building_size?: number,
             skip_fog_of_war?: boolean
-        }): void
+        }): boolean
 
     /**
      * Checks if this player can build the given entity at the given location on the surface the player is on.
@@ -12570,7 +12720,7 @@ interface LuaPlayer extends LuaControl {
             name: string,
             position: MapPosition,
             direction?: defines.direction
-        }): void
+        }): boolean
 
     /**
      * Clear the chat console.
@@ -12579,8 +12729,9 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Invokes the "clear cursor" action on the player as if the user pressed it.
+     * @returns Whether the cursor is now empty.
      */
-    clear_cursor(this: void): void
+    clear_cursor(this: void): boolean
 
     /**
      * Clears all recipe notifications for this player.
@@ -12620,9 +12771,10 @@ interface LuaPlayer extends LuaControl {
      * The player must not have a character already connected and must be online (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
      *
      * @param character - The character to create else the default is used.
+     * @returns Whether the character was created.
      */
     create_character(this: void,
-        character?: string): void
+        character?: string): boolean
 
     /**
      * Spawn flying text that is only visible to this player. Either `position` or `create_at_cursor` are required. When `create_at_cursor` is `true`, all parameters other than `text` are ignored.
@@ -12649,9 +12801,10 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Disables alerts for the given alert category.
+     * @returns Whether the alert type was disabled (false if it was already disabled).
      */
     disable_alert(this: void,
-        alert_type: defines.alert_type): void
+        alert_type: defines.alert_type): boolean
 
     /**
      * Disable recipe groups.
@@ -12676,17 +12829,19 @@ interface LuaPlayer extends LuaControl {
     /**
      * Start/end wire dragging at the specified location, wire type is based on the cursor contents
      * @param table.position - Position at which cursor was clicked. Used only to decide which side of arithmetic combinator, decider combinator or power switch is to be connected. Entity itself to be connected is based on the player's selected entity.
+     * @returns `true` if the action did something
      */
     drag_wire(this: void,
         table: {
             position: MapPosition
-        }): void
+        }): boolean
 
     /**
      * Enables alerts for the given alert category.
+     * @returns Whether the alert type was enabled (false if it was already enabled).
      */
     enable_alert(this: void,
-        alert_type: defines.alert_type): void
+        alert_type: defines.alert_type): boolean
 
     /**
      * Enable recipe groups.
@@ -12708,10 +12863,11 @@ interface LuaPlayer extends LuaControl {
      * @param index - The screen page. Index 1 is the top row in the gui. Index can go beyond the visible number of bars on the screen to account for the interface config setting change.
      */
     get_active_quick_bar_page(this: void,
-        index: number): void
+        index: number): number | null
 
     /**
      * Get all alerts matching the given filters, or all alerts if no filters are given.
+     * @returns A mapping of surface index to an array of arrays of [alerts](runtime:Alert) indexed by the [alert type](runtime:defines.alert_type).
      */
     get_alerts(this: void,
         table: {
@@ -12720,7 +12876,7 @@ interface LuaPlayer extends LuaControl {
             position?: MapPosition,
             type?: defines.alert_type,
             surface?: SurfaceIdentification
-        }): void
+        }): {[key: number]: {[key: string]: Alert[]}}
 
     /**
      * The characters associated with this player.
@@ -12729,57 +12885,57 @@ interface LuaPlayer extends LuaControl {
      * Characters associated with this player will be logged off when this player disconnects but are not controlled by any player.
      *
      */
-    get_associated_characters(this: void): void
+    get_associated_characters(this: void): LuaEntity[]
 
     /**
      * Get the current goal description, as a localised string.
      */
-    get_goal_description(this: void): void
+    get_goal_description(this: void): LocalisedString
 
     /**
      * Gets the filter for this map editor infinity filters at the given index or `nil` if the filter index doesn't exist or is empty.
      * @param index - The index to get.
      */
     get_infinity_inventory_filter(this: void,
-        index: number): void
+        index: number): InfinityInventoryFilter | null
 
     /**
      * Gets the quick bar filter for the given slot or `nil`.
      * @param index - The slot index. 1 for the first slot of page one, 2 for slot two of page one, 11 for the first slot of page 2, etc.
      */
     get_quick_bar_slot(this: void,
-        index: number): void
+        index: number): LuaItemPrototype | null
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * If the given alert type is currently enabled.
      */
     is_alert_enabled(this: void,
-        alert_type: defines.alert_type): void
+        alert_type: defines.alert_type): boolean
 
     /**
      * If the given alert type is currently muted.
      */
     is_alert_muted(this: void,
-        alert_type: defines.alert_type): void
+        alert_type: defines.alert_type): boolean
 
     /**
      * Is a custom Lua shortcut currently available?
      * @param prototype_name - Prototype name of the custom shortcut.
      */
     is_shortcut_available(this: void,
-        prototype_name: string): void
+        prototype_name: string): boolean
 
     /**
      * Is a custom Lua shortcut currently toggled?
      * @param prototype_name - Prototype name of the custom shortcut.
      */
     is_shortcut_toggled(this: void,
-        prototype_name: string): void
+        prototype_name: string): boolean
 
     /**
      * Jump to the specified cutscene waypoint. Only works when the player is viewing a cutscene.
@@ -12799,9 +12955,10 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Mutes alerts for the given alert category.
+     * @returns Whether the alert type was muted (false if it was already muted).
      */
     mute_alert(this: void,
-        alert_type: defines.alert_type): void
+        alert_type: defines.alert_type): boolean
 
     /**
      * Queues a request to open the map at the specified position. If the map is already opened, the request will simply set the position, scale, and entity to follow. Render mode change requests are processed before rendering of the next frame.
@@ -12814,9 +12971,10 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Invokes the "smart pipette" action on the player as if the user pressed it.
+     * @returns Whether the smart pipette found something to place.
      */
     pipette_entity(this: void,
-        entity: string | LuaEntity | LuaEntityPrototype): void
+        entity: string | LuaEntity | LuaEntityPrototype): boolean
 
     /**
      * Play a sound for this player.
@@ -12879,18 +13037,20 @@ interface LuaPlayer extends LuaControl {
      * @remarks
      * Does nothing if this player is not connected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
      *
+     * @returns The unique ID for the requested translation.
      */
     request_translation(this: void,
-        localised_string: LocalisedString): void
+        localised_string: LocalisedString): number | null
 
     /**
      * Requests translation for the given set of localised strings. If the request is successful, a {@link on_string_translated | runtime:on_string_translated} event will be fired for each string with the results.
      * @remarks
      * Does nothing if this player is not connected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
      *
+     * @returns The unique IDs for the requested translations.
      */
     request_translations(this: void,
-        localised_strings: LocalisedString[]): void
+        localised_strings: LocalisedString[]): number[] | null
 
     /**
      * Sets which quick bar page is being used for the given screen page.
@@ -13001,9 +13161,10 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Unmutes alerts for the given alert category.
+     * @returns Whether the alert type was unmuted (false if it was wasn't muted).
      */
     unmute_alert(this: void,
-        alert_type: defines.alert_type): void
+        alert_type: defines.alert_type): boolean
 
     /**
      * Uses the current item in the cursor if it's a capsule or does nothing if not.
@@ -13267,7 +13428,7 @@ interface LuaProfiler {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Resets the clock, also restarting it.
@@ -13303,7 +13464,7 @@ interface LuaProgrammableSpeakerControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     circuit_condition: CircuitConditionDefinition
 
@@ -13345,7 +13506,7 @@ interface LuaRailChainSignalControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     blue_signal: SignalID
 
@@ -13374,7 +13535,7 @@ interface LuaRailPath {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The current rail index.
@@ -13425,7 +13586,7 @@ interface LuaRailSignalControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The circuit condition when controlling the signal through the circuit network.
@@ -13474,7 +13635,7 @@ interface LuaRandomGenerator {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Re-seeds the random generator with the given value.
@@ -13502,7 +13663,7 @@ interface LuaRandomGenerator {
      */
     (this: void,
         lower?: number,
-        upper?: number): void
+        upper?: number): number
 
 }
 
@@ -13513,7 +13674,7 @@ interface LuaRecipe {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Reload the recipe from the prototype.
@@ -13623,7 +13784,7 @@ interface LuaRecipeCategoryPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly localised_description: LocalisedString
 
@@ -13658,7 +13819,7 @@ interface LuaRecipePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * If this recipe is enabled for the purpose of intermediate hand-crafting.
@@ -13844,14 +14005,15 @@ interface LuaRemote {
     call(this: void,
         interface: string,
         fn: string,
-        ...args: any[]): void
+        ...args: any[]): any | null
 
     /**
      * Removes an interface with the given name.
      * @param name - Name of the interface.
+     * @returns Whether the interface was removed. `False` if the interface didn't exist.
      */
     remove_interface(this: void,
-        name: string): void
+        name: string): boolean
 
     /**
      * List of all registered interfaces. For each interface name, `remote.interfaces[name]` is a dictionary mapping the interface's registered functions to `true`.
@@ -13918,6 +14080,7 @@ interface LuaRendering {
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      * @param table.x_scale - Horizontal scale of the animation. Default is 1.
      * @param table.y_scale - Vertical scale of the animation. Default is 1.
+     * @returns Id of the render object
      */
     draw_animation(this: void,
         table: {
@@ -13941,7 +14104,7 @@ interface LuaRendering {
             players?: PlayerIdentification[],
             visible?: boolean,
             only_in_alt_mode?: boolean
-        }): void
+        }): number
 
     /**
      * Create an arc.
@@ -13956,6 +14119,7 @@ interface LuaRendering {
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
+     * @returns Id of the render object
      */
     draw_arc(this: void,
         table: {
@@ -13973,7 +14137,7 @@ interface LuaRendering {
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): void
+        }): number
 
     /**
      * Create a circle.
@@ -13987,6 +14151,7 @@ interface LuaRendering {
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      * @param table.width - Width of the outline, used only if filled = false. Value is in pixels (32 per tile).
+     * @returns Id of the render object
      */
     draw_circle(this: void,
         table: {
@@ -14003,7 +14168,7 @@ interface LuaRendering {
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): void
+        }): number
 
     /**
      * Create a light.
@@ -14023,6 +14188,7 @@ interface LuaRendering {
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
+     * @returns Id of the render object
      */
     draw_light(this: void,
         table: {
@@ -14041,7 +14207,7 @@ interface LuaRendering {
             players?: PlayerIdentification[],
             visible?: boolean,
             only_in_alt_mode?: boolean
-        }): void
+        }): number
 
     /**
      * Create a line.
@@ -14069,6 +14235,7 @@ interface LuaRendering {
      * rendering.draw_line{surface = game.player.surface, from = {0, 0}, to = {0, 5}, color = {r = 1}, width = 3, gap_length = 1, dash_length = 1}
      * ```
      *
+     * @returns Id of the render object
      */
     draw_line(this: void,
         table: {
@@ -14088,7 +14255,7 @@ interface LuaRendering {
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): void
+        }): number
 
     /**
      * Create a triangle mesh defined by a triangle strip.
@@ -14104,6 +14271,7 @@ interface LuaRendering {
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.use_target_orientation - Only used if `orientation_target` is a LuaEntity.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
+     * @returns Id of the render object
      */
     draw_polygon(this: void,
         table: {
@@ -14122,7 +14290,7 @@ interface LuaRendering {
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): void
+        }): number
 
     /**
      * Create a rectangle.
@@ -14136,6 +14304,7 @@ interface LuaRendering {
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      * @param table.width - Width of the outline, used only if filled = false. Value is in pixels (32 per tile).
+     * @returns Id of the render object
      */
     draw_rectangle(this: void,
         table: {
@@ -14153,7 +14322,7 @@ interface LuaRendering {
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): void
+        }): number
 
     /**
      * Create a sprite.
@@ -14184,6 +14353,7 @@ interface LuaRendering {
      * rendering.draw_sprite{sprite = "item.iron-plate", target = game.player.character, target_offset = {0, -2}, surface = game.player.surface}
      * ```
      *
+     * @returns Id of the render object
      */
     draw_sprite(this: void,
         table: {
@@ -14205,7 +14375,7 @@ interface LuaRendering {
             players?: PlayerIdentification[],
             visible?: boolean,
             only_in_alt_mode?: boolean
-        }): void
+        }): number
 
     /**
      * Create a text.
@@ -14226,6 +14396,7 @@ interface LuaRendering {
      * @param table.use_rich_text - If rich text rendering is enabled. Defaults to false.
      * @param table.vertical_alignment - Defaults to "top". Other options are "middle", "baseline" and "bottom".
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
+     * @returns Id of the render object
      */
     draw_text(this: void,
         table: {
@@ -14247,77 +14418,84 @@ interface LuaRendering {
             scale_with_zoom?: boolean,
             only_in_alt_mode?: boolean,
             use_rich_text?: boolean
-        }): void
+        }): number
 
     /**
      * Get the alignment of the text with this id.
      * @remarks
      * Applies to subclasses: Text
      *
+     * @returns `nil` if the object is not a text.
      */
     get_alignment(this: void,
-        id: number): void
+        id: number): string | null
 
     /**
      * Gets an array of all valid object ids.
      * @param mod_name - If provided, get only the render objects created by this mod. An empty string (`""`) refers to all objects not belonging to a mod, such as those created using console commands.
      */
     get_all_ids(this: void,
-        mod_name?: string): void
+        mod_name?: string): number[]
 
     /**
      * Get the angle of the arc with this id.
      * @remarks
      * Applies to subclasses: Arc
      *
+     * @returns Angle in radian. `nil` if the object is not a arc.
      */
     get_angle(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the animation prototype name of the animation with this id.
      * @remarks
      * Applies to subclasses: Animation
      *
+     * @returns `nil` if the object is not an animation.
      */
     get_animation(this: void,
-        id: number): void
+        id: number): string | null
 
     /**
      * Get the animation offset of the animation with this id.
      * @remarks
      * Applies to subclasses: Animation
      *
+     * @returns Animation offset in frames. `nil` if the object is not an animation.
      */
     get_animation_offset(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the animation speed of the animation with this id.
      * @remarks
      * Applies to subclasses: Animation
      *
+     * @returns Animation speed in frames per tick. `nil` if the object is not an animation.
      */
     get_animation_speed(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the color or tint of the object with this id.
      * @remarks
      * Applies to subclasses: Text,Line,Circle,Rectangle,Arc,Polygon,Sprite,Light,Animation
      *
+     * @returns `nil` if the object does not support color.
      */
     get_color(this: void,
-        id: number): void
+        id: number): Color | null
 
     /**
      * Get the dash length of the line with this id.
      * @remarks
      * Applies to subclasses: Line
      *
+     * @returns `nil` if the object is not a line.
      */
     get_dash_length(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get whether this is being drawn on the ground, under most entities and sprites.
@@ -14326,100 +14504,109 @@ interface LuaRendering {
      *
      */
     get_draw_on_ground(this: void,
-        id: number): void
+        id: number): boolean
 
     /**
      * Get if the circle or rectangle with this id is filled.
      * @remarks
      * Applies to subclasses: Circle,Rectangle
      *
+     * @returns `nil` if the object is not a circle or rectangle.
      */
     get_filled(this: void,
-        id: number): void
+        id: number): boolean | null
 
     /**
      * Get the font of the text with this id.
      * @remarks
      * Applies to subclasses: Text
      *
+     * @returns `nil` if the object is not a text.
      */
     get_font(this: void,
-        id: number): void
+        id: number): string | null
 
     /**
      * Get the forces that the object with this id is rendered to or `nil` if visible to all forces.
      */
     get_forces(this: void,
-        id: number): void
+        id: number): LuaForce[] | null
 
     /**
      * Get from where the line with this id is drawn.
      * @remarks
      * Applies to subclasses: Line
      *
+     * @returns `nil` if this object is not a line.
      */
     get_from(this: void,
-        id: number): void
+        id: number): ScriptRenderTarget | null
 
     /**
      * Get the length of the gaps in the line with this id.
      * @remarks
      * Applies to subclasses: Line
      *
+     * @returns `nil` if the object is not a line.
      */
     get_gap_length(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the intensity of the light with this id.
      * @remarks
      * Applies to subclasses: Light
      *
+     * @returns `nil` if the object is not a light.
      */
     get_intensity(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get where top left corner of the rectangle with this id is drawn.
      * @remarks
      * Applies to subclasses: Rectangle
      *
+     * @returns `nil` if the object is not a rectangle.
      */
     get_left_top(this: void,
-        id: number): void
+        id: number): ScriptRenderTarget | null
 
     /**
      * Get the radius of the outer edge of the arc with this id.
      * @remarks
      * Applies to subclasses: Arc
      *
+     * @returns `nil` if the object is not a arc.
      */
     get_max_radius(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the radius of the inner edge of the arc with this id.
      * @remarks
      * Applies to subclasses: Arc
      *
+     * @returns `nil` if the object is not a arc.
      */
     get_min_radius(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the minimum darkness at which the light with this id is rendered.
      * @remarks
      * Applies to subclasses: Light
      *
+     * @returns `nil` if the object is not a light.
      */
     get_minimum_darkness(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get whether this is only rendered in alt-mode.
      */
     get_only_in_alt_mode(this: void,
-        id: number): void
+        id: number): boolean
 
     /**
      * Get the orientation of the object with this id.
@@ -14427,9 +14614,10 @@ interface LuaRendering {
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Text,Polygon,Sprite,Light,Animation
      *
+     * @returns `nil` if the object is not a text, polygon, sprite, light or animation.
      */
     get_orientation(this: void,
-        id: number): void
+        id: number): RealOrientation | null
 
     /**
      * The object rotates so that it faces this target. Note that `orientation` is still applied to the object. Get the orientation_target of the object with this id.
@@ -14437,102 +14625,112 @@ interface LuaRendering {
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Polygon,Sprite,Animation
      *
+     * @returns `nil` if no target or if this object is not a polygon, sprite, or animation.
      */
     get_orientation_target(this: void,
-        id: number): void
+        id: number): ScriptRenderTarget | null
 
     /**
      * Get if the light with this id is rendered has the same orientation as the target entity. Note that `orientation` is still applied to the sprite.
      * @remarks
      * Applies to subclasses: Light
      *
+     * @returns `nil` if the object is not a light.
      */
     get_oriented(this: void,
-        id: number): void
+        id: number): boolean | null
 
     /**
      * Offsets the center of the sprite or animation if `orientation_target` is given. This offset will rotate together with the sprite or animation. Get the oriented_offset of the sprite or animation with this id.
      * @remarks
      * Applies to subclasses: Sprite,Animation
      *
+     * @returns `nil` if this object is not a sprite or animation.
      */
     get_oriented_offset(this: void,
-        id: number): void
+        id: number): Vector | null
 
     /**
      * Get the players that the object with this id is rendered to or `nil` if visible to all players.
      */
     get_players(this: void,
-        id: number): void
+        id: number): LuaPlayer[] | null
 
     /**
      * Get the radius of the circle with this id.
      * @remarks
      * Applies to subclasses: Circle
      *
+     * @returns `nil` if the object is not a circle.
      */
     get_radius(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the render layer of the sprite or animation with this id.
      * @remarks
      * Applies to subclasses: Sprite,Animation
      *
+     * @returns `nil` if the object is not a sprite or animation.
      */
     get_render_layer(this: void,
-        id: number): void
+        id: number): RenderLayer | null
 
     /**
      * Get where bottom right corner of the rectangle with this id is drawn.
      * @remarks
      * Applies to subclasses: Rectangle
      *
+     * @returns `nil` if the object is not a rectangle.
      */
     get_right_bottom(this: void,
-        id: number): void
+        id: number): ScriptRenderTarget | null
 
     /**
      * Get the scale of the text or light with this id.
      * @remarks
      * Applies to subclasses: Text,Light
      *
+     * @returns `nil` if the object is not a text or light.
      */
     get_scale(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get if the text with this id scales with player zoom.
      * @remarks
      * Applies to subclasses: Text
      *
+     * @returns `nil` if the object is not a text.
      */
     get_scale_with_zoom(this: void,
-        id: number): void
+        id: number): boolean | null
 
     /**
      * Get the sprite of the sprite or light with this id.
      * @remarks
      * Applies to subclasses: Sprite,Light
      *
+     * @returns `nil` if the object is not a sprite or light.
      */
     get_sprite(this: void,
-        id: number): void
+        id: number): SpritePath | null
 
     /**
      * Get where the arc with this id starts.
      * @remarks
      * Applies to subclasses: Arc
      *
+     * @returns Angle in radian. `nil` if the object is not a arc.
      */
     get_start_angle(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * The surface the object with this id is rendered on.
      */
     get_surface(this: void,
-        id: number): void
+        id: number): LuaSurface
 
     /**
      * Get where the object with this id is drawn.
@@ -14540,117 +14738,127 @@ interface LuaRendering {
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Text,Circle,Arc,Polygon,Sprite,Light,Animation
      *
+     * @returns `nil` if the object does not support target.
      */
     get_target(this: void,
-        id: number): void
+        id: number): ScriptRenderTarget | null
 
     /**
      * Get the text that is displayed by the text with this id.
      * @remarks
      * Applies to subclasses: Text
      *
+     * @returns `nil` if the object is not a text.
      */
     get_text(this: void,
-        id: number): void
+        id: number): LocalisedString | null
 
     /**
      * Get the time to live of the object with this id. This will be 0 if the object does not expire.
      */
     get_time_to_live(this: void,
-        id: number): void
+        id: number): number
 
     /**
      * Get where the line with this id is drawn to.
      * @remarks
      * Applies to subclasses: Line
      *
+     * @returns `nil` if the object is not a line.
      */
     get_to(this: void,
-        id: number): void
+        id: number): ScriptRenderTarget | null
 
     /**
      * Gets the type of the given object. The types are "text", "line", "circle", "rectangle", "arc", "polygon", "sprite", "light" and "animation".
      */
     get_type(this: void,
-        id: number): void
+        id: number): string
 
     /**
      * Get if the text with this id parses rich text tags.
      * @remarks
      * Applies to subclasses: Text
      *
+     * @returns `nil` if the object is not a text.
      */
     get_use_rich_text(this: void,
-        id: number): void
+        id: number): boolean | null
 
     /**
      * Get whether this uses the target orientation.
+     * @returns `nil` if the object is not a sprite, polygon, or animation.
      */
     get_use_target_orientation(this: void,
-        id: number): void
+        id: number): boolean
 
     /**
      * Get the vertical alignment of the text with this id.
      * @remarks
      * Applies to subclasses: Text
      *
+     * @returns `nil` if the object is not a text.
      */
     get_vertical_alignment(this: void,
-        id: number): void
+        id: number): string | null
 
     /**
      * Get the vertices of the polygon with this id.
      * @remarks
      * Applies to subclasses: Polygon
      *
+     * @returns `nil` if the object is not a polygon.
      */
     get_vertices(this: void,
-        id: number): void
+        id: number): ScriptRenderTarget[] | null
 
     /**
      * Get whether this is rendered to anyone at all.
      */
     get_visible(this: void,
-        id: number): void
+        id: number): boolean
 
     /**
      * Get the width of the object with this id. Value is in pixels (32 per tile).
      * @remarks
      * Applies to subclasses: Line,Circle,Rectangle
      *
+     * @returns `nil` if the object does not support width.
      */
     get_width(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the horizontal scale of the sprite or animation with this id.
      * @remarks
      * Applies to subclasses: Sprite,Animation
      *
+     * @returns `nil` if the object is not a sprite or animation.
      */
     get_x_scale(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Get the vertical scale of the sprite or animation with this id.
      * @remarks
      * Applies to subclasses: Sprite,Animation
      *
+     * @returns `nil` if the object is not a sprite or animation.
      */
     get_y_scale(this: void,
-        id: number): void
+        id: number): number | null
 
     /**
      * Does a font with this name exist?
      */
     is_font_valid(this: void,
-        font_name: string): void
+        font_name: string): boolean
 
     /**
      * Does a valid object with this id exist?
      */
     is_valid(this: void,
-        id: number): void
+        id: number): boolean
 
     /**
      * Set the alignment of the text with this id. Does nothing if this object is not a text.
@@ -15119,7 +15327,7 @@ interface LuaResourceCategoryPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly localised_description: LocalisedString
 
@@ -15154,7 +15362,7 @@ interface LuaRoboportControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     available_construction_output_signal: SignalID
 
@@ -15202,7 +15410,7 @@ interface LuaSettings {
      *
      */
     get_player_settings(this: void,
-        player: PlayerIdentification): void
+        player: PlayerIdentification): {[key: string]: ModSetting}
 
     /**
      * The current global mod settings, indexed by prototype name.
@@ -15237,7 +15445,7 @@ interface LuaShortcutPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly action: string
 
@@ -15291,7 +15499,7 @@ interface LuaStorageTankControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -15312,7 +15520,7 @@ interface LuaStyle {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * @remarks
@@ -15720,15 +15928,17 @@ interface LuaStyle {
 interface LuaSurface {
     /**
      * Adds the given script area.
+     * @returns The id of the created area.
      */
     add_script_area(this: void,
-        area: ScriptArea): void
+        area: ScriptArea): number
 
     /**
      * Adds the given script position.
+     * @returns The id of the created position.
      */
     add_script_position(this: void,
-        area: ScriptPosition): void
+        area: ScriptPosition): number
 
     /**
      * Sets the given area to the checkerboard lab tiles.
@@ -15754,10 +15964,11 @@ interface LuaSurface {
     /**
      * @param positions - Positions for which to calculate property values
      * @param property_names - Names of properties (e.g. "elevation") to calculate
+     * @returns Table of property value lists, keyed by property name
      */
     calculate_tile_properties(this: void,
         property_names: string[],
-        positions: MapPosition[]): void
+        positions: MapPosition[]): {[key: string]: number[]}
 
     /**
      * If there exists an entity at the given location that can be fast-replaced with the given entity parameters.
@@ -15772,7 +15983,7 @@ interface LuaSurface {
             position: MapPosition,
             direction?: defines.direction,
             force?: ForceIdentification
-        }): void
+        }): boolean
 
     /**
      * Check for collisions with terrain or other entities.
@@ -15793,7 +16004,7 @@ interface LuaSurface {
             build_check_type?: defines.build_check_type,
             forced?: boolean,
             inner_name?: string
-        }): void
+        }): boolean
 
     /**
      * Cancel a deconstruction order.
@@ -15942,7 +16153,7 @@ interface LuaSurface {
             limit?: number,
             is_military_target?: boolean,
             invert?: boolean
-        }): void
+        }): number
 
     /**
      * Count tiles of a given name in a given area. Works just like {@link LuaSurface::find_tiles_filtered | runtime:LuaSurface::find_tiles_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of tiles.
@@ -15967,7 +16178,7 @@ interface LuaSurface {
             to_be_deconstructed?: boolean,
             collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
             invert?: boolean
-        }): void
+        }): number
 
     /**
      * Adds the given decoratives to the surface.
@@ -16022,9 +16233,10 @@ interface LuaSurface {
      * game.surfaces[1].create_entity{name = "inserter", position = game.player.position, direction = defines.direction.north}
      * ```
      *
+     * @returns The created entity or `nil` if the creation failed.
      */
     create_entity(this: void,
-        table: LuaSurfaceCreateEntityParams): void
+        table: LuaSurfaceCreateEntityParams): LuaEntity | null
 
     /**
      * Creates a particle at the given location
@@ -16060,7 +16272,7 @@ interface LuaSurface {
         table: {
             position: MapPosition,
             force?: ForceIdentification
-        }): void
+        }): LuaUnitGroup
 
     /**
      * Place a deconstruction request.
@@ -16086,7 +16298,7 @@ interface LuaSurface {
      */
     decorative_prototype_collides(this: void,
         prototype: string,
-        position: MapPosition): void
+        position: MapPosition): boolean
 
     /**
      * @param position - The chunk position to delete
@@ -16138,15 +16350,16 @@ interface LuaSurface {
         prototype: EntityPrototypeIdentification,
         position: MapPosition,
         use_map_generation_bounding_box: boolean,
-        direction?: defines.direction): void
+        direction?: defines.direction): boolean
 
     /**
      * Find the logistic network with a cell closest to a given position.
      * @param force - Force the logistic network should belong to.
+     * @returns The found network or `nil` if no such network was found.
      */
     find_closest_logistic_network_by_position(this: void,
         position: MapPosition,
-        force: ForceIdentification): void
+        force: ForceIdentification): LuaLogisticNetwork | null
 
     /**
      * Find decoratives of a given name in a given area.
@@ -16172,7 +16385,7 @@ interface LuaSurface {
             exclude_soft?: boolean,
             limit?: number,
             invert?: boolean
-        }): void
+        }): DecorativeResult[]
 
     /**
      * Find enemy units (entities with type "unit") of a given force within an area.
@@ -16192,7 +16405,7 @@ interface LuaSurface {
     find_enemy_units(this: void,
         center: MapPosition,
         radius: number,
-        force?: LuaForce | string): void
+        force?: LuaForce | string): LuaEntity[]
 
     /**
      * Find entities in a given area.
@@ -16206,7 +16419,7 @@ interface LuaSurface {
      *
      */
     find_entities(this: void,
-        area?: BoundingBox): void
+        area?: BoundingBox): LuaEntity[]
 
     /**
      * Find all entities of the given type or name in the given area.
@@ -16248,7 +16461,7 @@ interface LuaSurface {
             is_military_target?: boolean,
             has_item_inside?: LuaItemPrototype,
             invert?: boolean
-        }): void
+        }): LuaEntity[]
 
     /**
      * Find an entity of the given type at the given position. This checks both the exact position and the bounding box of the entity.
@@ -16259,18 +16472,20 @@ interface LuaSurface {
      * game.player.selected.surface.find_entity('filter-inserter', {0,0})
      * ```
      *
+     * @returns `nil` if no such entity is found.
      */
     find_entity(this: void,
         entity: string,
-        position: MapPosition): void
+        position: MapPosition): LuaEntity | null
 
     /**
      * Find the logistic network that covers a given position.
      * @param force - Force the logistic network should belong to.
+     * @returns The found network or `nil` if no such network was found.
      */
     find_logistic_network_by_position(this: void,
         position: MapPosition,
-        force: ForceIdentification): void
+        force: ForceIdentification): LuaLogisticNetwork | null
 
     /**
      * Finds all of the logistics networks whose construction area intersects with the given position.
@@ -16278,33 +16493,35 @@ interface LuaSurface {
      */
     find_logistic_networks_by_construction_area(this: void,
         position: MapPosition,
-        force: ForceIdentification): void
+        force: ForceIdentification): LuaLogisticNetwork[]
 
     /**
      * Find the enemy military target ({@link military entity | https://wiki.factorio.com/Military_units_and_structures}) closest to the given position.
      * @param table.force - The force the result will be an enemy of. Uses the player force if not specified.
      * @param table.max_distance - Radius of the circular search area.
      * @param table.position - Center of the search area.
+     * @returns The nearest enemy military target or `nil` if no enemy could be found within the given area.
      */
     find_nearest_enemy(this: void,
         table: {
             position: MapPosition,
             max_distance: number,
             force?: ForceIdentification
-        }): void
+        }): LuaEntity | null
 
     /**
      * Find the enemy entity-with-owner closest to the given position.
      * @param table.force - The force the result will be an enemy of. Uses the player force if not specified.
      * @param table.max_distance - Radius of the circular search area.
      * @param table.position - Center of the search area.
+     * @returns The nearest enemy entity-with-owner or `nil` if no enemy could be found within the given area.
      */
     find_nearest_enemy_entity_with_owner(this: void,
         table: {
             position: MapPosition,
             max_distance: number,
             force?: ForceIdentification
-        }): void
+        }): LuaEntity
 
     /**
      * Find a non-colliding position within a given radius.
@@ -16316,13 +16533,14 @@ interface LuaSurface {
      * @param name - Prototype name of the entity to find a position for. (The bounding box for the collision checking is taken from this prototype.)
      * @param precision - The step length from the given position as it searches, in tiles. Minimum value is `0.01`.
      * @param radius - Max distance from `center` to search in. A radius of `0` means an infinitely-large search area.
+     * @returns The non-colliding position. May be `nil` if no suitable position was found.
      */
     find_non_colliding_position(this: void,
         name: string,
         center: MapPosition,
         radius: number,
         precision: number,
-        force_to_tile_center?: boolean): void
+        force_to_tile_center?: boolean): MapPosition | null
 
     /**
      * Find a non-colliding position within a given rectangle.
@@ -16330,12 +16548,13 @@ interface LuaSurface {
      * @param name - Prototype name of the entity to find a position for. (The bounding box for the collision checking is taken from this prototype.)
      * @param precision - The step length from the given position as it searches, in tiles. Minimum value is 0.01.
      * @param search_space - The rectangle to search inside.
+     * @returns The non-colliding position. May be `nil` if no suitable position was found.
      */
     find_non_colliding_position_in_box(this: void,
         name: string,
         search_space: BoundingBox,
         precision: number,
-        force_to_tile_center?: boolean): void
+        force_to_tile_center?: boolean): MapPosition | null
 
     /**
      * Find all tiles of the given name in the given area.
@@ -16362,7 +16581,7 @@ interface LuaSurface {
             to_be_deconstructed?: boolean,
             collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
             invert?: boolean
-        }): void
+        }): LuaTile[]
 
     /**
      * Find units (entities with type "unit") of a given force and force condition within a given area.
@@ -16390,7 +16609,7 @@ interface LuaSurface {
             area: BoundingBox,
             force: LuaForce | string,
             condition: ForceCondition
-        }): void
+        }): LuaEntity[]
 
     /**
      * Blocks and generates all chunks that have been requested using all available threads.
@@ -16400,7 +16619,7 @@ interface LuaSurface {
     /**
      * Get an iterator going over every chunk on this surface.
      */
-    get_chunks(this: void): void
+    get_chunks(this: void): LuaChunkIterator
 
     /**
      * Gets the closest entity in the list to this position.
@@ -16408,7 +16627,7 @@ interface LuaSurface {
      */
     get_closest(this: void,
         position: MapPosition,
-        entities: LuaEntity[]): void
+        entities: LuaEntity[]): LuaEntity | null
 
     /**
      * Gets all tiles of the given types that are connected horizontally or vertically to the given tile position including the given tile position.
@@ -16419,12 +16638,13 @@ interface LuaSurface {
      * @param include_diagonal - Include tiles that are connected diagonally.
      * @param position - The tile position to start at.
      * @param tiles - The tiles to search for.
+     * @returns The resulting set of tiles.
      */
     get_connected_tiles(this: void,
         position: TilePosition,
         tiles: string[],
         include_diagonal?: boolean,
-        area?: BoundingBox): void
+        area?: BoundingBox): TilePosition[]
 
     /**
      * Returns all the military targets (entities with force) on this chunk for the given force.
@@ -16433,19 +16653,20 @@ interface LuaSurface {
      */
     get_entities_with_force(this: void,
         position: ChunkPosition,
-        force: LuaForce | string): void
+        force: LuaForce | string): LuaEntity[]
 
     /**
      * The hidden tile name.
      * @param position - The tile position.
+     * @returns `nil` if there isn't one for the given position.
      */
     get_hidden_tile(this: void,
-        position: TilePosition): void
+        position: TilePosition): string | null
 
     /**
      * Gets the map exchange string for the current map generation settings of this surface.
      */
-    get_map_exchange_string(this: void): void
+    get_map_exchange_string(this: void): string
 
     /**
      * Get the pollution for a given position.
@@ -16459,48 +16680,48 @@ interface LuaSurface {
      *
      */
     get_pollution(this: void,
-        position: MapPosition): void
+        position: MapPosition): number
 
     /**
      * Gets a random generated chunk position or 0,0 if no chunks have been generated on this surface.
      */
-    get_random_chunk(this: void): void
+    get_random_chunk(this: void): ChunkPosition
 
     /**
      * Gets the resource amount of all resources on this surface
      */
-    get_resource_counts(this: void): void
+    get_resource_counts(this: void): {[key: string]: number}
 
     /**
      * Gets the first script area by name or id.
      * @param key - The name or id of the area to get.
      */
     get_script_area(this: void,
-        key?: string | number): void
+        key?: string | number): ScriptArea | null
 
     /**
      * Gets the script areas that match the given name or if no name is given all areas are returned.
      */
     get_script_areas(this: void,
-        name?: string): void
+        name?: string): ScriptArea[]
 
     /**
      * Gets the first script position by name or id.
      * @param key - The name or id of the position to get.
      */
     get_script_position(this: void,
-        key?: string | number): void
+        key?: string | number): ScriptPosition | null
 
     /**
      * Gets the script positions that match the given name or if no name is given all positions are returned.
      */
     get_script_positions(this: void,
-        name?: string): void
+        name?: string): ScriptPosition[]
 
     /**
      * Gets the starting area radius of this surface.
      */
-    get_starting_area_radius(this: void): void
+    get_starting_area_radius(this: void): number
 
     /**
      * Get the tile at a given position. An alternative call signature for this method is passing it a single {@link TilePosition | runtime:TilePosition}.
@@ -16510,12 +16731,12 @@ interface LuaSurface {
      */
     get_tile(this: void,
         x: number,
-        y: number): void
+        y: number): LuaTile
 
     /**
      * Gets the total amount of pollution on the surface by iterating over all of the chunks containing pollution.
      */
-    get_total_pollution(this: void): void
+    get_total_pollution(this: void): number
 
     /**
      * Gets train stops matching the given filters.
@@ -16526,25 +16747,25 @@ interface LuaSurface {
         table?: {
             name?: string | string[],
             force?: ForceIdentification
-        }): void
+        }): LuaEntity[]
 
     /**
      * @param force - The force to search. Not providing a force will match trains in any force.
      */
     get_trains(this: void,
-        force?: ForceIdentification): void
+        force?: ForceIdentification): LuaTrain[]
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Is a given chunk generated?
      * @param position - The chunk's position.
      */
     is_chunk_generated(this: void,
-        position: ChunkPosition): void
+        position: ChunkPosition): boolean
 
     /**
      * Play a sound for every player on this surface.
@@ -16606,15 +16827,17 @@ interface LuaSurface {
 
     /**
      * Removes the given script area.
+     * @returns If the area was actually removed. False when it didn't exist.
      */
     remove_script_area(this: void,
-        id: number): void
+        id: number): boolean
 
     /**
      * Removes the given script position.
+     * @returns If the position was actually removed. False when it didn't exist.
      */
     remove_script_position(this: void,
-        id: number): void
+        id: number): boolean
 
     /**
      * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | runtime:PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities, such as vehicles. If you want to command actual units (such as biters or spitters) to move, use {@link LuaEntity::set_command | runtime:LuaEntity::set_command} instead.
@@ -16630,6 +16853,7 @@ interface LuaSurface {
      * @param table.pathfind_flags - Flags that affect pathfinder behavior.
      * @param table.radius - How close the pathfinder needs to get to its `goal` (in tiles). Defaults to `1`.
      * @param table.start - The position from which to start pathfinding.
+     * @returns A unique handle to identify this call when [on_script_path_request_finished](runtime:on_script_path_request_finished) fires.
      */
     request_path(this: void,
         table: {
@@ -16643,7 +16867,7 @@ interface LuaSurface {
             can_open_gates?: boolean,
             path_resolution_modifier?: number,
             entity_to_ignore?: LuaEntity
-        }): void
+        }): number
 
     /**
      * Request that the game's map generator generate chunks at the given position for the given radius on this surface.
@@ -16677,6 +16901,7 @@ interface LuaSurface {
      * @param table.force - Force of the units this command is to be given to. If not specified, uses the enemy force.
      * @param table.unit_count - Number of units to give the command to.
      * @param table.unit_search_distance - Radius to search for units. The search area is centered on the destination of the command.
+     * @returns Number of units actually sent. May be less than `count` if not enough units were available.
      */
     set_multi_command(this: void,
         table: {
@@ -16684,7 +16909,7 @@ interface LuaSurface {
             unit_count: number,
             force?: ForceIdentification,
             unit_search_distance?: number
-        }): void
+        }): number
 
     /**
      * Set tiles at specified locations. Can automatically correct the edges around modified tiles.
@@ -16712,13 +16937,14 @@ interface LuaSurface {
      * @param force - When provided (and not `nil`) the items will be marked for deconstruction by this force.
      * @param items - Items to spill
      * @param position - Center of the spillage
+     * @returns The created item-on-ground entities.
      */
     spill_item_stack(this: void,
         position: MapPosition,
         items: ItemStackIdentification,
         enable_looted?: boolean,
         force?: LuaForce | string,
-        allow_belts?: boolean): void
+        allow_belts?: boolean): LuaEntity[]
 
     /**
      * Place an upgrade request.
@@ -16880,7 +17106,7 @@ interface LuaTechnology {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Reload this technology from its prototype.
@@ -16991,7 +17217,7 @@ interface LuaTechnologyPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Effects applied when this technology is researched.
@@ -17116,42 +17342,43 @@ interface LuaTile {
      *
      */
     collides_with(this: void,
-        layer: CollisionMaskLayer): void
+        layer: CollisionMaskLayer): boolean
 
     /**
      * Gets all tile ghosts on this tile.
      * @param force - Get tile ghosts of this force.
      */
     get_tile_ghosts(this: void,
-        force?: ForceIdentification): void
+        force?: ForceIdentification): LuaTile[]
 
     /**
      * Does this tile have any tile ghosts on it.
      * @param force - Check for tile ghosts of this force.
      */
     has_tile_ghost(this: void,
-        force?: ForceIdentification): void
+        force?: ForceIdentification): boolean
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Orders deconstruction of this tile by the given force.
      * @param force - The force whose robots are supposed to do the deconstruction.
      * @param player - The player to set the last_user to if any.
+     * @returns The deconstructible tile proxy created, if any.
      */
     order_deconstruction(this: void,
         force: ForceIdentification,
-        player?: PlayerIdentification): void
+        player?: PlayerIdentification): LuaEntity | null
 
     /**
      * Is this tile marked for deconstruction?
      * @param force - The force who did the deconstruction order.
      */
     to_be_deconstructed(this: void,
-        force?: ForceIdentification): void
+        force?: ForceIdentification): boolean
 
     /**
      * The name of the {@link LuaTilePrototype | runtime:LuaTilePrototype} hidden under this tile, if any. During normal gameplay, only {@link non-mineable | runtime:LuaTilePrototype::mineable_properties} tiles can become hidden. This can however be circumvented with {@link LuaSurface::set_hidden_tile | runtime:LuaSurface::set_hidden_tile}.
@@ -17194,7 +17421,7 @@ interface LuaTilePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly allowed_neighbors: {[key: string]: LuaTilePrototype}
 
@@ -17320,32 +17547,34 @@ interface LuaTrain {
 
     /**
      * Get a mapping of the train's inventory.
+     * @returns The counts, indexed by item names.
      */
-    get_contents(this: void): void
+    get_contents(this: void): {[key: string]: number}
 
     /**
      * Gets a mapping of the train's fluid inventory.
+     * @returns The counts, indexed by fluid names.
      */
-    get_fluid_contents(this: void): void
+    get_fluid_contents(this: void): {[key: string]: number}
 
     /**
      * Get the amount of a particular fluid stored in the train.
      * @param fluid - Fluid name to count. If not given, counts all fluids.
      */
     get_fluid_count(this: void,
-        fluid?: string): void
+        fluid?: string): number
 
     /**
      * Get the amount of a particular item stored in the train.
      * @param item - Item name to count. If not given, counts all items.
      */
     get_item_count(this: void,
-        item?: string): void
+        item?: string): number
 
     /**
      * Gets all rails under the train.
      */
-    get_rails(this: void): void
+    get_rails(this: void): LuaEntity[]
 
     /**
      * Go to the station specified by the index in the train's schedule.
@@ -17356,7 +17585,7 @@ interface LuaTrain {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Insert a stack into the train.
@@ -17366,29 +17595,33 @@ interface LuaTrain {
 
     /**
      * Inserts the given fluid into the first available location in this train.
+     * @returns The amount inserted.
      */
     insert_fluid(this: void,
-        fluid: Fluid): void
+        fluid: Fluid): number
 
     /**
      * Checks if the path is invalid and tries to re-path if it isn't.
      * @param force - Forces the train to re-path regardless of the current path being valid or not.
+     * @returns If the train has a path after the repath attempt.
      */
     recalculate_path(this: void,
-        force?: boolean): void
+        force?: boolean): boolean
 
     /**
      * Remove some fluid from the train.
+     * @returns The amount of fluid actually removed.
      */
     remove_fluid(this: void,
-        fluid: Fluid): void
+        fluid: Fluid): number
 
     /**
      * Remove some items from the train.
      * @param stack - The amount and type of items to remove
+     * @returns Number of items actually removed.
      */
     remove_item(this: void,
-        stack: ItemStackIdentification): void
+        stack: ItemStackIdentification): number
 
     /**
      * The rail at the back end of the train, if any.
@@ -17554,7 +17787,7 @@ interface LuaTrainStopControlBehavior extends LuaGenericOnOffControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * `true` if the train stop is enabled/disabled through the circuit network.
@@ -17620,7 +17853,7 @@ interface LuaTransportBeltControlBehavior extends LuaGenericOnOffControlBehavior
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * If the belt will be enabled/disabled based off the circuit network.
@@ -17658,12 +17891,12 @@ interface LuaTransportLine {
      * @param position - Where to insert an item.
      */
     can_insert_at(this: void,
-        position: number): void
+        position: number): boolean
 
     /**
      * Can an item be inserted at the back of this line?
      */
-    can_insert_at_back(this: void): void
+    can_insert_at_back(this: void): boolean
 
     /**
      * Remove all items from this transport line.
@@ -17672,35 +17905,38 @@ interface LuaTransportLine {
 
     /**
      * Get counts of all items on this line, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
+     * @returns The counts, indexed by item names.
      */
-    get_contents(this: void): void
+    get_contents(this: void): {[key: string]: number}
 
     /**
      * Count some or all items on this line, similar to how {@link LuaInventory::get_item_count | runtime:LuaInventory::get_item_count} does.
      * @param item - Prototype name of the item to count. If not specified, count all items.
      */
     get_item_count(this: void,
-        item?: string): void
+        item?: string): number
 
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Insert items at a given position.
      * @param items - Items to insert.
      * @param position - Where on the line to insert the items.
+     * @returns Were the items inserted successfully?
      */
     insert_at(this: void,
         position: number,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): boolean
 
     /**
      * Insert items at the back of this line.
+     * @returns Were the items inserted successfully?
      */
     insert_at_back(this: void,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): boolean
 
     /**
      * Returns whether the associated internal transport line of this line is the same as the others associated internal transport line.
@@ -17709,14 +17945,15 @@ interface LuaTransportLine {
      *
      */
     line_equals(this: void,
-        other: LuaTransportLine): void
+        other: LuaTransportLine): boolean
 
     /**
      * Remove some items from this line.
      * @param items - Items to remove.
+     * @returns Number of items actually removed.
      */
     remove_item(this: void,
-        items: ItemStackIdentification): void
+        items: ItemStackIdentification): number
 
     /**
      * The transport lines that this transport line is fed by or an empty table if none.
@@ -17765,7 +18002,7 @@ interface LuaTrivialSmokePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly affected_by_wind: boolean
 
@@ -17842,7 +18079,7 @@ interface LuaUnitGroup {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * Make this group autonomous. Autonomous groups will automatically attack polluted areas. Autonomous groups aren't considered to be {@link script-driven | runtime:LuaUnitGroup::is_script_driven}.
@@ -17930,7 +18167,7 @@ interface LuaVirtualSignalPrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     readonly localised_description: LocalisedString
 
@@ -17972,7 +18209,7 @@ interface LuaVoidEnergySourcePrototype {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
@@ -18002,7 +18239,7 @@ interface LuaWallControlBehavior extends LuaControlBehavior {
     /**
      * All methods and properties that this object supports.
      */
-    help(this: void): void
+    help(this: void): string
 
     /**
      * The circuit condition.
@@ -19174,3 +19411,5 @@ interface LuaSurfaceCreateEntityParamsUndergroundBelt extends LuaSurfaceCreateEn
 
 }
 
+
+}

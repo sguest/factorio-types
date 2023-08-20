@@ -5,13 +5,14 @@
 // Factorio version 1.1.89
 // API version 4
 
+declare namespace runtime {
 /**
  * Base type for all events
  * @remarks
  * Not a member of the factorio API, added to type definitions for ease of use
  *
  */
-interface event  {
+interface event {
     /**
      * Identifier of the event
      */
@@ -24,7 +25,7 @@ interface event  {
 /**
  * Called when a {@link CustomInputPrototype | prototype:CustomInputPrototype} is activated.
  */
-interface CustomInputEvent extends event  {
+interface CustomInputEvent extends event {
     /**
      * The mouse cursor display location when the custom input was activated.
      */
@@ -49,7 +50,7 @@ interface CustomInputEvent extends event  {
 /**
  * Called when a unit/group completes a command.
  */
-interface on_ai_command_completed extends event  {
+interface on_ai_command_completed extends event {
     result: defines.behavior_result
     /**
      * unit_number/group_number of the unit/group which just completed a command.
@@ -63,7 +64,7 @@ interface on_ai_command_completed extends event  {
 /**
  * Called when an area of the map is cloned.
  */
-interface on_area_cloned extends event  {
+interface on_area_cloned extends event {
     clear_destination_decoratives: boolean
     clear_destination_entities: boolean
     clone_decoratives: boolean
@@ -81,7 +82,7 @@ interface on_area_cloned extends event  {
  * This will be called multiple times for each migration, once for every biter that is sacrificed to build part of the new base.
  *
  */
-interface on_biter_base_built extends event  {
+interface on_biter_base_built extends event {
     /**
      * The entity that was built.
      */
@@ -90,7 +91,7 @@ interface on_biter_base_built extends event  {
 /**
  * Called when a set of positions on the map is cloned.
  */
-interface on_brush_cloned extends event  {
+interface on_brush_cloned extends event {
     clear_destination_decoratives: boolean
     clear_destination_entities: boolean
     clone_decoratives: boolean
@@ -106,7 +107,7 @@ interface on_brush_cloned extends event  {
 /**
  * Called when a {@link defines.command.build_base | runtime:defines.command.build_base} command reaches its destination, and before building starts.
  */
-interface on_build_base_arrived extends event  {
+interface on_build_base_arrived extends event {
     /**
      * The unit group the command was assigned to.
      */
@@ -119,7 +120,7 @@ interface on_build_base_arrived extends event  {
 /**
  * Called when player builds something. Can be filtered using {@link LuaPlayerBuiltEntityEventFilter | runtime:LuaPlayerBuiltEntityEventFilter}.
  */
-interface on_built_entity extends event  {
+interface on_built_entity extends event {
     created_entity: LuaEntity
     /**
      * The item prototype used to build the entity. Note this won't exist in some situations (built from blueprint, undo, etc).
@@ -135,14 +136,14 @@ interface on_built_entity extends event  {
 /**
  * Called when the deconstruction of an entity is canceled. Can be filtered using {@link LuaEntityDeconstructionCancelledEventFilter | runtime:LuaEntityDeconstructionCancelledEventFilter}.
  */
-interface on_cancelled_deconstruction extends event  {
+interface on_cancelled_deconstruction extends event {
     entity: LuaEntity
     player_index?: number
 }
 /**
  * Called when the upgrade of an entity is canceled. Can be filtered using {@link LuaUpgradeCancelledEventFilter | runtime:LuaUpgradeCancelledEventFilter}.
  */
-interface on_cancelled_upgrade extends event  {
+interface on_cancelled_upgrade extends event {
     direction?: defines.direction
     entity: LuaEntity
     player_index?: number
@@ -154,7 +155,7 @@ interface on_cancelled_upgrade extends event  {
  * this is not called if the corpse is mined. See {@link defines.events.on_pre_player_mined_item | runtime:defines.events.on_pre_player_mined_item} to detect that.
  *
  */
-interface on_character_corpse_expired extends event  {
+interface on_character_corpse_expired extends event {
     /**
      * The corpse.
      */
@@ -163,7 +164,7 @@ interface on_character_corpse_expired extends event  {
 /**
  * Called when a chart tag is created.
  */
-interface on_chart_tag_added extends event  {
+interface on_chart_tag_added extends event {
     force: LuaForce
     player_index?: number
     tag: LuaCustomChartTag
@@ -171,7 +172,7 @@ interface on_chart_tag_added extends event  {
 /**
  * Called when a chart tag is modified by a player.
  */
-interface on_chart_tag_modified extends event  {
+interface on_chart_tag_modified extends event {
     force: LuaForce
     old_icon?: SignalID
     old_player?: number
@@ -182,7 +183,7 @@ interface on_chart_tag_modified extends event  {
 /**
  * Called just before a chart tag is deleted.
  */
-interface on_chart_tag_removed extends event  {
+interface on_chart_tag_removed extends event {
     force: LuaForce
     player_index?: number
     tag: LuaCustomChartTag
@@ -190,7 +191,7 @@ interface on_chart_tag_removed extends event  {
 /**
  * Called when a chunk is charted or re-charted.
  */
-interface on_chunk_charted extends event  {
+interface on_chunk_charted extends event {
     /**
      * Area of the chunk.
      */
@@ -202,7 +203,7 @@ interface on_chunk_charted extends event  {
 /**
  * Called when one or more chunks are deleted using {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk}.
  */
-interface on_chunk_deleted extends event  {
+interface on_chunk_deleted extends event {
     /**
      * The chunks deleted.
      */
@@ -212,7 +213,7 @@ interface on_chunk_deleted extends event  {
 /**
  * Called when a chunk is generated.
  */
-interface on_chunk_generated extends event  {
+interface on_chunk_generated extends event {
     /**
      * Area of the chunk.
      */
@@ -229,7 +230,7 @@ interface on_chunk_generated extends event  {
 /**
  * Called when a combat robot expires through a lack of energy, or timeout.
  */
-interface on_combat_robot_expired extends event  {
+interface on_combat_robot_expired extends event {
     /**
      * The entity that owns the robot if any.
      */
@@ -242,7 +243,7 @@ interface on_combat_robot_expired extends event  {
  * This event only fires for plain messages, not for any commands (including `/shout` or `/whisper`).
  *
  */
-interface on_console_chat extends event  {
+interface on_console_chat extends event {
     /**
      * The chat message that was sent.
      */
@@ -255,7 +256,7 @@ interface on_console_chat extends event  {
 /**
  * Called when someone enters a command-like message regardless of it being a valid command.
  */
-interface on_console_command extends event  {
+interface on_console_command extends event {
     /**
      * The command as typed without the preceding forward slash ('/').
      */
@@ -272,7 +273,7 @@ interface on_console_command extends event  {
 /**
  * Called when a cutscene is cancelled by the player or by script.
  */
-interface on_cutscene_cancelled extends event  {
+interface on_cutscene_cancelled extends event {
     /**
      * The player the cutscene was shown to.
      */
@@ -281,7 +282,7 @@ interface on_cutscene_cancelled extends event  {
 /**
  * Called when a cutscene finishes naturally (was not cancelled).
  */
-interface on_cutscene_finished extends event  {
+interface on_cutscene_finished extends event {
     /**
      * The player the cutscene was shown to.
      */
@@ -290,7 +291,7 @@ interface on_cutscene_finished extends event  {
 /**
  * Called when a cutscene starts.
  */
-interface on_cutscene_started extends event  {
+interface on_cutscene_started extends event {
     /**
      * The player the cutscene is being shown to.
      */
@@ -304,7 +305,7 @@ interface on_cutscene_started extends event  {
  * Due to implementation omission, waypoint_index is 0-based.
  *
  */
-interface on_cutscene_waypoint_reached extends event  {
+interface on_cutscene_waypoint_reached extends event {
     /**
      * The player index of the player viewing the cutscene.
      */
@@ -320,14 +321,14 @@ interface on_cutscene_waypoint_reached extends event  {
  * It's not guaranteed that both settings are changed - just that at least one has been changed.
  *
  */
-interface on_difficulty_settings_changed extends event  {
+interface on_difficulty_settings_changed extends event {
     old_recipe_difficulty: number
     old_technology_difficulty: number
 }
 /**
  * Called when an entity is cloned. Can be filtered for the source entity using {@link LuaEntityClonedEventFilter | runtime:LuaEntityClonedEventFilter}.
  */
-interface on_entity_cloned extends event  {
+interface on_entity_cloned extends event {
     destination: LuaEntity
     source: LuaEntity
 }
@@ -337,7 +338,7 @@ interface on_entity_cloned extends event  {
  * Automatic recoloring due to {@link LuaPlayer::color | runtime:LuaPlayer::color} will not raise events, as that is a separate mechanism.
  *
  */
-interface on_entity_color_changed extends event  {
+interface on_entity_color_changed extends event {
     /**
      * The entity that was recolored.
      */
@@ -349,7 +350,7 @@ interface on_entity_color_changed extends event  {
  * This is not called when an entities health is set directly by another mod.
  *
  */
-interface on_entity_damaged extends event  {
+interface on_entity_damaged extends event {
     /**
      * The entity that did the attacking if available.
      */
@@ -379,7 +380,7 @@ interface on_entity_damaged extends event  {
  * Depending on when a given entity is destroyed, this event will be fired at the end of the current tick or at the end of the next tick.
  *
  */
-interface on_entity_destroyed extends event  {
+interface on_entity_destroyed extends event {
     /**
      * The number returned by {@link register_on_entity_destroyed | runtime:LuaBootstrap::register_on_entity_destroyed} to uniquely identify this entity during this event.
      */
@@ -392,7 +393,7 @@ interface on_entity_destroyed extends event  {
 /**
  * Called when an entity dies. Can be filtered using {@link LuaEntityDiedEventFilter | runtime:LuaEntityDiedEventFilter}.
  */
-interface on_entity_died extends event  {
+interface on_entity_died extends event {
     /**
      * The entity that did the killing if available.
      */
@@ -420,7 +421,7 @@ interface on_entity_died extends event  {
  * "Personal logistic slot" refers to a character or vehicle's personal request / auto-trash slots, not the request slots on logistic chests.
  *
  */
-interface on_entity_logistic_slot_changed extends event  {
+interface on_entity_logistic_slot_changed extends event {
     /**
      * The entity for whom a logistic slot was changed.
      */
@@ -437,7 +438,7 @@ interface on_entity_logistic_slot_changed extends event  {
 /**
  * Called after an entity has been renamed either by the player or through script.
  */
-interface on_entity_renamed extends event  {
+interface on_entity_renamed extends event {
     by_script: boolean
     entity: LuaEntity
     old_name: string
@@ -449,7 +450,7 @@ interface on_entity_renamed extends event  {
 /**
  * Called after entity copy-paste is done.
  */
-interface on_entity_settings_pasted extends event  {
+interface on_entity_settings_pasted extends event {
     /**
      * The destination entity settings were copied to.
      */
@@ -463,14 +464,14 @@ interface on_entity_settings_pasted extends event  {
 /**
  * Called when an entity is spawned by a EnemySpawner
  */
-interface on_entity_spawned extends event  {
+interface on_entity_spawned extends event {
     entity: LuaEntity
     spawner: LuaEntity
 }
 /**
  * Called after equipment is inserted into an equipment grid.
  */
-interface on_equipment_inserted extends event  {
+interface on_equipment_inserted extends event {
     /**
      * The equipment inserted.
      */
@@ -483,7 +484,7 @@ interface on_equipment_inserted extends event  {
 /**
  * Called after equipment is removed from an equipment grid.
  */
-interface on_equipment_removed extends event  {
+interface on_equipment_removed extends event {
     /**
      * The count of equipment removed.
      */
@@ -500,7 +501,7 @@ interface on_equipment_removed extends event  {
 /**
  * Called when the a forces cease fire values change.
  */
-interface on_force_cease_fire_changed extends event  {
+interface on_force_cease_fire_changed extends event {
     /**
      * If the other force was added or removed.
      */
@@ -520,7 +521,7 @@ interface on_force_cease_fire_changed extends event  {
  * This is not called when the default forces (`'player'`, `'enemy'`, `'neutral'`) are created as they will always exist.
  *
  */
-interface on_force_created extends event  {
+interface on_force_created extends event {
     /**
      * The newly created force.
      */
@@ -529,7 +530,7 @@ interface on_force_created extends event  {
 /**
  * Called when the a forces friends change.
  */
-interface on_force_friends_changed extends event  {
+interface on_force_friends_changed extends event {
     /**
      * If the other force was added or removed.
      */
@@ -546,7 +547,7 @@ interface on_force_friends_changed extends event  {
 /**
  * Called when {@link LuaForce::reset | runtime:LuaForce::reset} is finished.
  */
-interface on_force_reset extends event  {
+interface on_force_reset extends event {
     force: LuaForce
 }
 /**
@@ -555,7 +556,7 @@ interface on_force_reset extends event  {
  * The source force is invalidated before this event is called and the name can be re-used in this event if desired.
  *
  */
-interface on_forces_merged extends event  {
+interface on_forces_merged extends event {
     /**
      * The force entities where reassigned to.
      */
@@ -572,7 +573,7 @@ interface on_forces_merged extends event  {
 /**
  * Called when two forces are about to be merged using `game.merge_forces()`.
  */
-interface on_forces_merging extends event  {
+interface on_forces_merging extends event {
     /**
      * The force to reassign entities to.
      */
@@ -588,12 +589,12 @@ interface on_forces_merging extends event  {
  * This event is not fired when the scenario is loaded via the map editor.
  *
  */
-interface on_game_created_from_scenario extends event  {
+interface on_game_created_from_scenario extends event {
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} checked state is changed (related to checkboxes and radio buttons).
  */
-interface on_gui_checked_state_changed extends event  {
+interface on_gui_checked_state_changed extends event {
     /**
      * The element whose checked state changed.
      */
@@ -606,7 +607,7 @@ interface on_gui_checked_state_changed extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} is clicked.
  */
-interface on_gui_click extends event  {
+interface on_gui_click extends event {
     /**
      * If alt was pressed.
      */
@@ -644,7 +645,7 @@ interface on_gui_click extends event  {
  * It's not advised to open any other GUI during this event because if this is run as a request to open a different GUI the game will force close the new opened GUI without notice to ensure the original requested GUI is opened.
  *
  */
-interface on_gui_closed extends event  {
+interface on_gui_closed extends event {
     /**
      * The custom GUI element that was open
      */
@@ -689,7 +690,7 @@ interface on_gui_closed extends event  {
 /**
  * Called when a {@link LuaGuiElement | runtime:LuaGuiElement} is confirmed, for example by pressing Enter in a textfield.
  */
-interface on_gui_confirmed extends event  {
+interface on_gui_confirmed extends event {
     /**
      * If alt was pressed.
      */
@@ -714,7 +715,7 @@ interface on_gui_confirmed extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} element value is changed (related to choose element buttons).
  */
-interface on_gui_elem_changed extends event  {
+interface on_gui_elem_changed extends event {
     /**
      * The element whose element value changed.
      */
@@ -727,7 +728,7 @@ interface on_gui_elem_changed extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} is hovered by the mouse.
  */
-interface on_gui_hover extends event  {
+interface on_gui_hover extends event {
     /**
      * The element that is being hovered over.
      */
@@ -740,7 +741,7 @@ interface on_gui_hover extends event  {
 /**
  * Called when the player's cursor leaves a {@link LuaGuiElement | runtime:LuaGuiElement} that was previously hovered.
  */
-interface on_gui_leave extends event  {
+interface on_gui_leave extends event {
     /**
      * The element that was being hovered.
      */
@@ -753,7 +754,7 @@ interface on_gui_leave extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} element location is changed (related to frames in `player.gui.screen`).
  */
-interface on_gui_location_changed extends event  {
+interface on_gui_location_changed extends event {
     /**
      * The element whose location changed.
      */
@@ -766,7 +767,7 @@ interface on_gui_location_changed extends event  {
 /**
  * Called when the player opens a GUI.
  */
-interface on_gui_opened extends event  {
+interface on_gui_opened extends event {
     /**
      * The custom GUI element that was opened
      */
@@ -803,7 +804,7 @@ interface on_gui_opened extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} selected tab is changed (related to tabbed-panes).
  */
-interface on_gui_selected_tab_changed extends event  {
+interface on_gui_selected_tab_changed extends event {
     /**
      * The tabbed pane whose selected tab changed.
      */
@@ -816,7 +817,7 @@ interface on_gui_selected_tab_changed extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} selection state is changed (related to drop-downs and listboxes).
  */
-interface on_gui_selection_state_changed extends event  {
+interface on_gui_selection_state_changed extends event {
     /**
      * The element whose selection state changed.
      */
@@ -829,7 +830,7 @@ interface on_gui_selection_state_changed extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} switch state is changed (related to switches).
  */
-interface on_gui_switch_state_changed extends event  {
+interface on_gui_switch_state_changed extends event {
     /**
      * The switch whose switch state changed.
      */
@@ -842,7 +843,7 @@ interface on_gui_switch_state_changed extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} text is changed by the player.
  */
-interface on_gui_text_changed extends event  {
+interface on_gui_text_changed extends event {
     /**
      * The edited element.
      */
@@ -859,7 +860,7 @@ interface on_gui_text_changed extends event  {
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} slider value is changed (related to the slider element).
  */
-interface on_gui_value_changed extends event  {
+interface on_gui_value_changed extends event {
     /**
      * The element whose value changed.
      */
@@ -872,13 +873,13 @@ interface on_gui_value_changed extends event  {
 /**
  * Called when a land mine is armed.
  */
-interface on_land_mine_armed extends event  {
+interface on_land_mine_armed extends event {
     mine: LuaEntity
 }
 /**
  * Called when a custom Lua shortcut is pressed.
  */
-interface on_lua_shortcut extends event  {
+interface on_lua_shortcut extends event {
     player_index: number
     /**
      * Shortcut prototype name of the shortcut that was clicked.
@@ -888,14 +889,14 @@ interface on_lua_shortcut extends event  {
 /**
  * Called when an entity is marked for deconstruction with the Deconstruction planner or via script. Can be filtered using {@link LuaEntityMarkedForDeconstructionEventFilter | runtime:LuaEntityMarkedForDeconstructionEventFilter}.
  */
-interface on_marked_for_deconstruction extends event  {
+interface on_marked_for_deconstruction extends event {
     entity: LuaEntity
     player_index?: number
 }
 /**
  * Called when an entity is marked for upgrade with the Upgrade planner or via script. Can be filtered using {@link LuaEntityMarkedForUpgradeEventFilter | runtime:LuaEntityMarkedForUpgradeEventFilter}.
  */
-interface on_marked_for_upgrade extends event  {
+interface on_marked_for_upgrade extends event {
     /**
      * The new direction (if any)
      */
@@ -907,7 +908,7 @@ interface on_marked_for_upgrade extends event  {
 /**
  * Called after a player purchases some offer from a `market` entity.
  */
-interface on_market_item_purchased extends event  {
+interface on_market_item_purchased extends event {
     /**
      * The amount of offers purchased.
      */
@@ -928,7 +929,7 @@ interface on_market_item_purchased extends event  {
 /**
  * Called when the player uses the 'Open item GUI' control on an item defined with the 'mod-openable' flag
  */
-interface on_mod_item_opened extends event  {
+interface on_mod_item_opened extends event {
     /**
      * The item clicked on.
      */
@@ -941,7 +942,7 @@ interface on_mod_item_opened extends event  {
 /**
  * Called directly after a permission group is added.
  */
-interface on_permission_group_added extends event  {
+interface on_permission_group_added extends event {
     /**
      * The group added.
      */
@@ -954,7 +955,7 @@ interface on_permission_group_added extends event  {
 /**
  * Called directly after a permission group is deleted.
  */
-interface on_permission_group_deleted extends event  {
+interface on_permission_group_deleted extends event {
     /**
      * The group that was deleted.
      */
@@ -971,7 +972,7 @@ interface on_permission_group_deleted extends event  {
 /**
  * Called directly after a permission group is edited in some way.
  */
-interface on_permission_group_edited extends event  {
+interface on_permission_group_edited extends event {
     /**
      * The action when the `type` is "add-permission" or "remove-permission".
      */
@@ -1004,7 +1005,7 @@ interface on_permission_group_edited extends event  {
 /**
  * Called directly after a permission string is imported.
  */
-interface on_permission_string_imported extends event  {
+interface on_permission_string_imported extends event {
     /**
      * The player that imported the string.
      */
@@ -1013,14 +1014,14 @@ interface on_permission_string_imported extends event  {
 /**
  * Called when a player picks up an item.
  */
-interface on_picked_up_item extends event  {
+interface on_picked_up_item extends event {
     item_stack: SimpleItemStack
     player_index: number
 }
 /**
  * Called after a player alt-reverse-selects an area with a selection-tool item.
  */
-interface on_player_alt_reverse_selected_area extends event  {
+interface on_player_alt_reverse_selected_area extends event {
     /**
      * The area selected.
      */
@@ -1049,7 +1050,7 @@ interface on_player_alt_reverse_selected_area extends event  {
 /**
  * Called after a player alt-selects an area with a selection-tool item.
  */
-interface on_player_alt_selected_area extends event  {
+interface on_player_alt_selected_area extends event {
     /**
      * The area selected.
      */
@@ -1078,19 +1079,19 @@ interface on_player_alt_selected_area extends event  {
 /**
  * Called after a players ammo inventory changed in some way.
  */
-interface on_player_ammo_inventory_changed extends event  {
+interface on_player_ammo_inventory_changed extends event {
     player_index: number
 }
 /**
  * Called after a players armor inventory changed in some way.
  */
-interface on_player_armor_inventory_changed extends event  {
+interface on_player_armor_inventory_changed extends event {
     player_index: number
 }
 /**
  * Called when a player is banned.
  */
-interface on_player_banned extends event  {
+interface on_player_banned extends event {
     /**
      * The player that did the banning if any.
      */
@@ -1111,7 +1112,7 @@ interface on_player_banned extends event  {
 /**
  * Called after a player builds tiles.
  */
-interface on_player_built_tile extends event  {
+interface on_player_built_tile extends event {
     /**
      * The item type used to build the tiles
      */
@@ -1137,7 +1138,7 @@ interface on_player_built_tile extends event  {
 /**
  * Called when a player cancels crafting.
  */
-interface on_player_cancelled_crafting extends event  {
+interface on_player_cancelled_crafting extends event {
     /**
      * The number of crafts that have been cancelled.
      */
@@ -1158,7 +1159,7 @@ interface on_player_cancelled_crafting extends event  {
 /**
  * Called after a player changes forces.
  */
-interface on_player_changed_force extends event  {
+interface on_player_changed_force extends event {
     /**
      * The old force.
      */
@@ -1171,7 +1172,7 @@ interface on_player_changed_force extends event  {
 /**
  * Called when the tile position a player is located at changes.
  */
-interface on_player_changed_position extends event  {
+interface on_player_changed_position extends event {
     /**
      * The player.
      */
@@ -1183,7 +1184,7 @@ interface on_player_changed_position extends event  {
  * In the instance a player is moved off a surface due to it being deleted this is not called.
  *
  */
-interface on_player_changed_surface extends event  {
+interface on_player_changed_surface extends event {
     /**
      * The player who changed surfaces.
      */
@@ -1196,7 +1197,7 @@ interface on_player_changed_surface extends event  {
 /**
  * Called when cheat mode is disabled on a player.
  */
-interface on_player_cheat_mode_disabled extends event  {
+interface on_player_cheat_mode_disabled extends event {
     /**
      * The player.
      */
@@ -1205,7 +1206,7 @@ interface on_player_cheat_mode_disabled extends event  {
 /**
  * Called when cheat mode is enabled on a player.
  */
-interface on_player_cheat_mode_enabled extends event  {
+interface on_player_cheat_mode_enabled extends event {
     /**
      * The player.
      */
@@ -1214,7 +1215,7 @@ interface on_player_cheat_mode_enabled extends event  {
 /**
  * Called when a player clicks a gps tag
  */
-interface on_player_clicked_gps_tag extends event  {
+interface on_player_clicked_gps_tag extends event {
     /**
      * Index of the player
      */
@@ -1231,7 +1232,7 @@ interface on_player_clicked_gps_tag extends event  {
 /**
  * Called when a player clicks the "confirm" button in the configure Blueprint GUI.
  */
-interface on_player_configured_blueprint extends event  {
+interface on_player_configured_blueprint extends event {
     /**
      * The player.
      */
@@ -1240,7 +1241,7 @@ interface on_player_configured_blueprint extends event  {
 /**
  * Called when a player configures spidertron remote to be connected with a given spidertron
  */
-interface on_player_configured_spider_remote extends event  {
+interface on_player_configured_spider_remote extends event {
     /**
      * The player that configured the remote.
      */
@@ -1253,7 +1254,7 @@ interface on_player_configured_spider_remote extends event  {
 /**
  * Called when the player finishes crafting an item. This event fires just before the results are inserted into the player's inventory, not when the crafting is queued (see {@link on_pre_player_crafted_item | runtime:on_pre_player_crafted_item}).
  */
-interface on_player_crafted_item extends event  {
+interface on_player_crafted_item extends event {
     /**
      * The item that has been crafted.
      */
@@ -1270,19 +1271,19 @@ interface on_player_crafted_item extends event  {
 /**
  * Called after the player was created.
  */
-interface on_player_created extends event  {
+interface on_player_created extends event {
     player_index: number
 }
 /**
  * Called after a player's {@link cursor stack | runtime:LuaControl::cursor_stack} changed in some way.
  */
-interface on_player_cursor_stack_changed extends event  {
+interface on_player_cursor_stack_changed extends event {
     player_index: number
 }
 /**
  * Called when a player selects an area with a deconstruction planner.
  */
-interface on_player_deconstructed_area extends event  {
+interface on_player_deconstructed_area extends event {
     /**
      * If normal selection or alt selection was used.
      */
@@ -1307,7 +1308,7 @@ interface on_player_deconstructed_area extends event  {
 /**
  * Called when a player is demoted.
  */
-interface on_player_demoted extends event  {
+interface on_player_demoted extends event {
     /**
      * The player.
      */
@@ -1316,14 +1317,14 @@ interface on_player_demoted extends event  {
 /**
  * Called after a player dies.
  */
-interface on_player_died extends event  {
+interface on_player_died extends event {
     cause?: LuaEntity
     player_index: number
 }
 /**
  * Called when the display resolution changes for a given player.
  */
-interface on_player_display_resolution_changed extends event  {
+interface on_player_display_resolution_changed extends event {
     /**
      * The old display resolution
      */
@@ -1336,7 +1337,7 @@ interface on_player_display_resolution_changed extends event  {
 /**
  * Called when the display scale changes for a given player.
  */
-interface on_player_display_scale_changed extends event  {
+interface on_player_display_scale_changed extends event {
     /**
      * The old display scale
      */
@@ -1352,7 +1353,7 @@ interface on_player_display_scale_changed extends event  {
  * This event is not raised when the player is ejected from a vehicle due to it being destroyed.
  *
  */
-interface on_player_driving_changed_state extends event  {
+interface on_player_driving_changed_state extends event {
     /**
      * The vehicle if any.
      */
@@ -1362,7 +1363,7 @@ interface on_player_driving_changed_state extends event  {
 /**
  * Called when a player drops an item on the ground.
  */
-interface on_player_dropped_item extends event  {
+interface on_player_dropped_item extends event {
     /**
      * The item-on-ground entity.
      */
@@ -1372,7 +1373,7 @@ interface on_player_dropped_item extends event  {
 /**
  * Called when a player fast-transfers something to or from an entity.
  */
-interface on_player_fast_transferred extends event  {
+interface on_player_fast_transferred extends event {
     /**
      * The entity transferred from or to.
      */
@@ -1393,7 +1394,7 @@ interface on_player_fast_transferred extends event  {
 /**
  * Called after player flushed fluid
  */
-interface on_player_flushed_fluid extends event  {
+interface on_player_flushed_fluid extends event {
     /**
      * Amount of fluid that was removed
      */
@@ -1418,7 +1419,7 @@ interface on_player_flushed_fluid extends event  {
 /**
  * Called after a players gun inventory changed in some way.
  */
-interface on_player_gun_inventory_changed extends event  {
+interface on_player_gun_inventory_changed extends event {
     player_index: number
 }
 /**
@@ -1427,7 +1428,7 @@ interface on_player_gun_inventory_changed extends event  {
  * See {@link LuaPlayer::input_method | runtime:LuaPlayer::input_method}.
  *
  */
-interface on_player_input_method_changed extends event  {
+interface on_player_input_method_changed extends event {
     /**
      * The player whose input method changed.
      */
@@ -1436,13 +1437,13 @@ interface on_player_input_method_changed extends event  {
 /**
  * Called after a player joins the game. This is not called when loading a save file in singleplayer, as the player doesn't actually leave the game, and the save is just on pause until they rejoin.
  */
-interface on_player_joined_game extends event  {
+interface on_player_joined_game extends event {
     player_index: number
 }
 /**
  * Called when a player is kicked.
  */
-interface on_player_kicked extends event  {
+interface on_player_kicked extends event {
     /**
      * The player that did the kicking if any.
      */
@@ -1459,14 +1460,14 @@ interface on_player_kicked extends event  {
 /**
  * Called after a player leaves the game. This is not called when closing a save file in singleplayer, as the player doesn't actually leave the game, and the save is just on pause until they rejoin.
  */
-interface on_player_left_game extends event  {
+interface on_player_left_game extends event {
     player_index: number
     reason: defines.disconnect_reason
 }
 /**
  * Called after a players main inventory changed in some way.
  */
-interface on_player_main_inventory_changed extends event  {
+interface on_player_main_inventory_changed extends event {
     player_index: number
 }
 /**
@@ -1475,7 +1476,7 @@ interface on_player_main_inventory_changed extends event  {
  * The buffer inventory is special in that it's only valid during this event and has a dynamic size expanding as more items are transferred into it.
  *
  */
-interface on_player_mined_entity extends event  {
+interface on_player_mined_entity extends event {
     /**
      * The temporary inventory that holds the result of mining the entity.
      */
@@ -1492,7 +1493,7 @@ interface on_player_mined_entity extends event  {
 /**
  * Called when the player mines something.
  */
-interface on_player_mined_item extends event  {
+interface on_player_mined_item extends event {
     /**
      * The item given to the player
      */
@@ -1502,7 +1503,7 @@ interface on_player_mined_item extends event  {
 /**
  * Called after a player mines tiles.
  */
-interface on_player_mined_tile extends event  {
+interface on_player_mined_tile extends event {
     player_index: number
     /**
      * The surface the tile(s) were mined from.
@@ -1516,7 +1517,7 @@ interface on_player_mined_tile extends event  {
 /**
  * Called when a player is muted.
  */
-interface on_player_muted extends event  {
+interface on_player_muted extends event {
     /**
      * The player.
      */
@@ -1525,7 +1526,7 @@ interface on_player_muted extends event  {
 /**
  * Called when a player invokes the "smart pipette" over an entity.
  */
-interface on_player_pipette extends event  {
+interface on_player_pipette extends event {
     /**
      * The item put in the cursor
      */
@@ -1542,7 +1543,7 @@ interface on_player_pipette extends event  {
 /**
  * Called after the player puts equipment in an equipment grid
  */
-interface on_player_placed_equipment extends event  {
+interface on_player_placed_equipment extends event {
     /**
      * The equipment put in the equipment grid.
      */
@@ -1556,7 +1557,7 @@ interface on_player_placed_equipment extends event  {
 /**
  * Called when a player is promoted.
  */
-interface on_player_promoted extends event  {
+interface on_player_promoted extends event {
     /**
      * The player.
      */
@@ -1565,7 +1566,7 @@ interface on_player_promoted extends event  {
 /**
  * Called when a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | runtime:on_player_left_game} the game, and instead behaves like the player never existed in the save file.
  */
-interface on_player_removed extends event  {
+interface on_player_removed extends event {
     /**
      * The index of the removed player.
      */
@@ -1574,7 +1575,7 @@ interface on_player_removed extends event  {
 /**
  * Called after the player removes equipment from an equipment grid
  */
-interface on_player_removed_equipment extends event  {
+interface on_player_removed_equipment extends event {
     /**
      * The count of equipment removed.
      */
@@ -1592,14 +1593,14 @@ interface on_player_removed_equipment extends event  {
 /**
  * Called when a player repairs an entity. Can be filtered using {@link LuaPlayerRepairedEntityEventFilter | runtime:LuaPlayerRepairedEntityEventFilter}.
  */
-interface on_player_repaired_entity extends event  {
+interface on_player_repaired_entity extends event {
     entity: LuaEntity
     player_index: number
 }
 /**
  * Called after a player respawns.
  */
-interface on_player_respawned extends event  {
+interface on_player_respawned extends event {
     player_index: number
     /**
      * The player port used to respawn if one was used.
@@ -1609,7 +1610,7 @@ interface on_player_respawned extends event  {
 /**
  * Called after a player reverse-selects an area with a selection-tool item.
  */
-interface on_player_reverse_selected_area extends event  {
+interface on_player_reverse_selected_area extends event {
     /**
      * The area selected.
      */
@@ -1638,7 +1639,7 @@ interface on_player_reverse_selected_area extends event  {
 /**
  * Called when the player rotates an entity. This event is only fired when the entity actually changes its orientation -- pressing the rotate key on an entity that can't be rotated won't fire this event.
  */
-interface on_player_rotated_entity extends event  {
+interface on_player_rotated_entity extends event {
     /**
      * The rotated entity.
      */
@@ -1652,7 +1653,7 @@ interface on_player_rotated_entity extends event  {
 /**
  * Called after a player selects an area with a selection-tool item.
  */
-interface on_player_selected_area extends event  {
+interface on_player_selected_area extends event {
     /**
      * The area selected.
      */
@@ -1681,13 +1682,13 @@ interface on_player_selected_area extends event  {
 /**
  * Called when a player sets a quickbar slot to anything (new value, or set to empty).
  */
-interface on_player_set_quick_bar_slot extends event  {
+interface on_player_set_quick_bar_slot extends event {
     player_index: number
 }
 /**
  * Called when a player selects an area with a blueprint.
  */
-interface on_player_setup_blueprint extends event  {
+interface on_player_setup_blueprint extends event {
     /**
      * If normal selection or alt selection was used.
      */
@@ -1716,7 +1717,7 @@ interface on_player_setup_blueprint extends event  {
 /**
  * Called when a player toggles alt mode, also known as "show entity info".
  */
-interface on_player_toggled_alt_mode extends event  {
+interface on_player_toggled_alt_mode extends event {
     /**
      * The new alt mode value. This value is a shortcut for accessing {@link GameViewSettings::show_entity_info | runtime:GameViewSettings::show_entity_info} on the player.
      */
@@ -1726,19 +1727,19 @@ interface on_player_toggled_alt_mode extends event  {
 /**
  * Called when a player toggles the map editor on or off.
  */
-interface on_player_toggled_map_editor extends event  {
+interface on_player_toggled_map_editor extends event {
     player_index: number
 }
 /**
  * Called after a players trash inventory changed in some way.
  */
-interface on_player_trash_inventory_changed extends event  {
+interface on_player_trash_inventory_changed extends event {
     player_index: number
 }
 /**
  * Called when a player is un-banned.
  */
-interface on_player_unbanned extends event  {
+interface on_player_unbanned extends event {
     /**
      * The player that did the un-banning if any.
      */
@@ -1759,7 +1760,7 @@ interface on_player_unbanned extends event  {
 /**
  * Called when a player is unmuted.
  */
-interface on_player_unmuted extends event  {
+interface on_player_unmuted extends event {
     /**
      * The player.
      */
@@ -1768,7 +1769,7 @@ interface on_player_unmuted extends event  {
 /**
  * Called when a player uses a capsule that results in some game action.
  */
-interface on_player_used_capsule extends event  {
+interface on_player_used_capsule extends event {
     /**
      * The capsule item used.
      */
@@ -1785,7 +1786,7 @@ interface on_player_used_capsule extends event  {
 /**
  * Called when a player uses spidertron remote to send a spidertron to a given position
  */
-interface on_player_used_spider_remote extends event  {
+interface on_player_used_spider_remote extends event {
     /**
      * The player that used the remote.
      */
@@ -1806,7 +1807,7 @@ interface on_player_used_spider_remote extends event  {
 /**
  * Called after an entity dies. Can be filtered using {@link LuaPostEntityDiedEventFilter | runtime:LuaPostEntityDiedEventFilter}.
  */
-interface on_post_entity_died extends event  {
+interface on_post_entity_died extends event {
     /**
      * The corpses created by the entity dying if any.
      */
@@ -1843,7 +1844,7 @@ interface on_post_entity_died extends event  {
 /**
  * Called when players uses an item to build something. Called before {@link on_built_entity | runtime:on_built_entity}.
  */
-interface on_pre_build extends event  {
+interface on_pre_build extends event {
     /**
      * Whether the item was placed while moving.
      */
@@ -1876,7 +1877,7 @@ interface on_pre_build extends event  {
 /**
  * Called before one or more chunks are deleted using {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk}.
  */
-interface on_pre_chunk_deleted extends event  {
+interface on_pre_chunk_deleted extends event {
     /**
      * The chunks to be deleted.
      */
@@ -1886,7 +1887,7 @@ interface on_pre_chunk_deleted extends event  {
 /**
  * Called before entity copy-paste is done.
  */
-interface on_pre_entity_settings_pasted extends event  {
+interface on_pre_entity_settings_pasted extends event {
     /**
      * The destination entity settings will be copied to.
      */
@@ -1900,7 +1901,7 @@ interface on_pre_entity_settings_pasted extends event  {
 /**
  * Called before a ghost entity is destroyed as a result of being marked for deconstruction. Can be filtered using {@link LuaPreGhostDeconstructedEventFilter | runtime:LuaPreGhostDeconstructedEventFilter}.
  */
-interface on_pre_ghost_deconstructed extends event  {
+interface on_pre_ghost_deconstructed extends event {
     ghost: LuaEntity
     /**
      * The player that did the deconstruction if any.
@@ -1910,7 +1911,7 @@ interface on_pre_ghost_deconstructed extends event  {
 /**
  * Called before a ghost entity is upgraded. Can be filtered using {@link LuaPreGhostUpgradedEventFilter | runtime:LuaPreGhostUpgradedEventFilter}.
  */
-interface on_pre_ghost_upgraded extends event  {
+interface on_pre_ghost_upgraded extends event {
     ghost: LuaEntity
     /**
      * The player that did the upgrade if any.
@@ -1921,7 +1922,7 @@ interface on_pre_ghost_upgraded extends event  {
 /**
  * Called directly before a permission group is deleted.
  */
-interface on_pre_permission_group_deleted extends event  {
+interface on_pre_permission_group_deleted extends event {
     /**
      * The group to be deleted.
      */
@@ -1934,7 +1935,7 @@ interface on_pre_permission_group_deleted extends event  {
 /**
  * Called directly before a permission string is imported.
  */
-interface on_pre_permission_string_imported extends event  {
+interface on_pre_permission_string_imported extends event {
     /**
      * The player importing the string.
      */
@@ -1943,7 +1944,7 @@ interface on_pre_permission_string_imported extends event  {
 /**
  * Called when a player queues something to be crafted.
  */
-interface on_pre_player_crafted_item extends event  {
+interface on_pre_player_crafted_item extends event {
     /**
      * The items removed from the players inventory to do the crafting.
      */
@@ -1964,21 +1965,21 @@ interface on_pre_player_crafted_item extends event  {
 /**
  * Called before a players dies.
  */
-interface on_pre_player_died extends event  {
+interface on_pre_player_died extends event {
     cause?: LuaEntity
     player_index: number
 }
 /**
  * Called before a player leaves the game.
  */
-interface on_pre_player_left_game extends event  {
+interface on_pre_player_left_game extends event {
     player_index: number
     reason: defines.disconnect_reason
 }
 /**
  * Called when the player completes a mining action, but before the entity is potentially removed from the map. This is called even if the entity does not end up being removed. Can be filtered using {@link LuaPrePlayerMinedEntityEventFilter | runtime:LuaPrePlayerMinedEntityEventFilter}.
  */
-interface on_pre_player_mined_item extends event  {
+interface on_pre_player_mined_item extends event {
     /**
      * The entity being mined
      */
@@ -1988,7 +1989,7 @@ interface on_pre_player_mined_item extends event  {
 /**
  * Called before a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | runtime:on_player_left_game} the game, and instead behaves like the player never existed in the save file.
  */
-interface on_pre_player_removed extends event  {
+interface on_pre_player_removed extends event {
     /**
      * The index of the removed player.
      */
@@ -1997,13 +1998,13 @@ interface on_pre_player_removed extends event  {
 /**
  * Called before a player toggles the map editor on or off.
  */
-interface on_pre_player_toggled_map_editor extends event  {
+interface on_pre_player_toggled_map_editor extends event {
     player_index: number
 }
 /**
  * Called directly before a robot explodes cliffs.
  */
-interface on_pre_robot_exploded_cliff extends event  {
+interface on_pre_robot_exploded_cliff extends event {
     cliff: LuaEntity
     /**
      * The cliff explosive used.
@@ -2014,7 +2015,7 @@ interface on_pre_robot_exploded_cliff extends event  {
 /**
  * Called just before a script inventory is resized.
  */
-interface on_pre_script_inventory_resized extends event  {
+interface on_pre_script_inventory_resized extends event {
     inventory: LuaInventory
     /**
      * The mod that did the resizing. This will be `"core"` if done by console command or scenario script.
@@ -2036,19 +2037,19 @@ interface on_pre_script_inventory_resized extends event  {
 /**
  * Called just before a surface is cleared (all entities removed and all chunks deleted).
  */
-interface on_pre_surface_cleared extends event  {
+interface on_pre_surface_cleared extends event {
     surface_index: number
 }
 /**
  * Called just before a surface is deleted.
  */
-interface on_pre_surface_deleted extends event  {
+interface on_pre_surface_deleted extends event {
     surface_index: number
 }
 /**
  * Called when research is cancelled.
  */
-interface on_research_cancelled extends event  {
+interface on_research_cancelled extends event {
     /**
      * The force whose research was cancelled.
      */
@@ -2061,7 +2062,7 @@ interface on_research_cancelled extends event  {
 /**
  * Called when a research finishes.
  */
-interface on_research_finished extends event  {
+interface on_research_finished extends event {
     /**
      * If the technology was researched by script.
      */
@@ -2074,7 +2075,7 @@ interface on_research_finished extends event  {
 /**
  * Called when a research is reversed (unresearched).
  */
-interface on_research_reversed extends event  {
+interface on_research_reversed extends event {
     /**
      * If the technology was un-researched by script.
      */
@@ -2087,7 +2088,7 @@ interface on_research_reversed extends event  {
 /**
  * Called when a technology research starts.
  */
-interface on_research_started extends event  {
+interface on_research_started extends event {
     last_research?: LuaTechnology
     /**
      * The technology being researched
@@ -2097,13 +2098,13 @@ interface on_research_started extends event  {
 /**
  * Called when a resource entity reaches 0 or its minimum yield for infinite resources.
  */
-interface on_resource_depleted extends event  {
+interface on_resource_depleted extends event {
     entity: LuaEntity
 }
 /**
  * Called when a construction robot builds an entity. Can be filtered using {@link LuaRobotBuiltEntityEventFilter | runtime:LuaRobotBuiltEntityEventFilter}.
  */
-interface on_robot_built_entity extends event  {
+interface on_robot_built_entity extends event {
     /**
      * The entity built.
      */
@@ -2124,7 +2125,7 @@ interface on_robot_built_entity extends event  {
 /**
  * Called after a robot builds tiles.
  */
-interface on_robot_built_tile extends event  {
+interface on_robot_built_tile extends event {
     /**
      * The item type used to build the tiles.
      */
@@ -2153,7 +2154,7 @@ interface on_robot_built_tile extends event  {
 /**
  * Called directly after a robot explodes cliffs.
  */
-interface on_robot_exploded_cliff extends event  {
+interface on_robot_exploded_cliff extends event {
     /**
      * The cliff explosive used.
      */
@@ -2163,7 +2164,7 @@ interface on_robot_exploded_cliff extends event  {
 /**
  * Called when a robot mines an entity.
  */
-interface on_robot_mined extends event  {
+interface on_robot_mined extends event {
     /**
      * The entity the robot just picked up.
      */
@@ -2179,7 +2180,7 @@ interface on_robot_mined extends event  {
  * The buffer inventory is special in that it's only valid during this event and has a dynamic size expanding as more items are transferred into it.
  *
  */
-interface on_robot_mined_entity extends event  {
+interface on_robot_mined_entity extends event {
     /**
      * The temporary inventory that holds the result of mining the entity.
      */
@@ -2196,7 +2197,7 @@ interface on_robot_mined_entity extends event  {
 /**
  * Called after a robot mines tiles.
  */
-interface on_robot_mined_tile extends event  {
+interface on_robot_mined_tile extends event {
     /**
      * The robot.
      */
@@ -2213,7 +2214,7 @@ interface on_robot_mined_tile extends event  {
 /**
  * Called before a robot mines an entity. Can be filtered using {@link LuaPreRobotMinedEntityEventFilter | runtime:LuaPreRobotMinedEntityEventFilter}.
  */
-interface on_robot_pre_mined extends event  {
+interface on_robot_pre_mined extends event {
     /**
      * The entity which is about to be mined.
      */
@@ -2226,7 +2227,7 @@ interface on_robot_pre_mined extends event  {
 /**
  * Called when a rocket silo is ordered to be launched.
  */
-interface on_rocket_launch_ordered extends event  {
+interface on_rocket_launch_ordered extends event {
     /**
      * The player that is riding the rocket, if any.
      */
@@ -2237,7 +2238,7 @@ interface on_rocket_launch_ordered extends event  {
 /**
  * Called when the rocket is launched.
  */
-interface on_rocket_launched extends event  {
+interface on_rocket_launched extends event {
     /**
      * The player that is riding the rocket, if any.
      */
@@ -2248,7 +2249,7 @@ interface on_rocket_launched extends event  {
 /**
  * Called when a runtime mod setting is changed by a player.
  */
-interface on_runtime_mod_setting_changed extends event  {
+interface on_runtime_mod_setting_changed extends event {
     /**
      * If the `setting_type` is `"global"` and it was changed through the mod settings GUI, this is the index of the player that changed the global setting. If the `setting_type` is `"runtime-per-user"` and it changed a current setting of the player, this is the index of the player whose setting was changed. In all other cases, this is `nil`.
      */
@@ -2265,7 +2266,7 @@ interface on_runtime_mod_setting_changed extends event  {
 /**
  * Called just after a script inventory is resized.
  */
-interface on_script_inventory_resized extends event  {
+interface on_script_inventory_resized extends event {
     inventory: LuaInventory
     /**
      * The mod that did the resizing. This will be `"core"` if done by console command or scenario script.
@@ -2291,7 +2292,7 @@ interface on_script_inventory_resized extends event  {
 /**
  * Called when a {@link LuaSurface::request_path | runtime:LuaSurface::request_path} call completes.
  */
-interface on_script_path_request_finished extends event  {
+interface on_script_path_request_finished extends event {
     /**
      * Handle to associate the callback with a particular call to {@link LuaSurface::request_path | runtime:LuaSurface::request_path}.
      */
@@ -2308,7 +2309,7 @@ interface on_script_path_request_finished extends event  {
 /**
  * Called when a script trigger effect is triggered.
  */
-interface on_script_trigger_effect extends event  {
+interface on_script_trigger_effect extends event {
     /**
      * The effect_id specified in the trigger effect.
      */
@@ -2325,7 +2326,7 @@ interface on_script_trigger_effect extends event  {
 /**
  * Called when an entity of type `radar` finishes scanning a sector. Can be filtered for the radar using {@link LuaSectorScannedEventFilter | runtime:LuaSectorScannedEventFilter}.
  */
-interface on_sector_scanned extends event  {
+interface on_sector_scanned extends event {
     /**
      * Area of the scanned chunk.
      */
@@ -2342,7 +2343,7 @@ interface on_sector_scanned extends event  {
 /**
  * Called after the selected entity changes for a given player.
  */
-interface on_selected_entity_changed extends event  {
+interface on_selected_entity_changed extends event {
     /**
      * The last selected entity if it still exists and there was one.
      */
@@ -2355,7 +2356,7 @@ interface on_selected_entity_changed extends event  {
 /**
  * Called when a spider finishes moving to its autopilot position.
  */
-interface on_spider_command_completed extends event  {
+interface on_spider_command_completed extends event {
     /**
      * Spider vehicle which was requested to move.
      */
@@ -2364,7 +2365,7 @@ interface on_spider_command_completed extends event  {
 /**
  * Called when a translation request generated through {@link LuaPlayer::request_translation | runtime:LuaPlayer::request_translation} or {@link LuaPlayer::request_translations | runtime:LuaPlayer::request_translations} has been completed.
  */
-interface on_string_translated extends event  {
+interface on_string_translated extends event {
     /**
      * The unique id for this translation request.
      */
@@ -2389,7 +2390,7 @@ interface on_string_translated extends event  {
 /**
  * Called just after a surface is cleared (all entities removed and all chunks deleted).
  */
-interface on_surface_cleared extends event  {
+interface on_surface_cleared extends event {
     surface_index: number
 }
 /**
@@ -2398,19 +2399,19 @@ interface on_surface_cleared extends event  {
  * This is not called when the default surface is created as it will always exist.
  *
  */
-interface on_surface_created extends event  {
+interface on_surface_created extends event {
     surface_index: number
 }
 /**
  * Called after a surface is deleted.
  */
-interface on_surface_deleted extends event  {
+interface on_surface_deleted extends event {
     surface_index: number
 }
 /**
  * Called after a surface is imported via the map editor.
  */
-interface on_surface_imported extends event  {
+interface on_surface_imported extends event {
     /**
      * The original surface name.
      */
@@ -2420,7 +2421,7 @@ interface on_surface_imported extends event  {
 /**
  * Called when a surface is renamed.
  */
-interface on_surface_renamed extends event  {
+interface on_surface_renamed extends event {
     new_name: string
     old_name: string
     surface_index: number
@@ -2428,25 +2429,25 @@ interface on_surface_renamed extends event  {
 /**
  * Called when {@link LuaForce::reset_technology_effects | runtime:LuaForce::reset_technology_effects} is finished.
  */
-interface on_technology_effects_reset extends event  {
+interface on_technology_effects_reset extends event {
     force: LuaForce
 }
 /**
  * It is fired once every tick. Since this event is fired every tick, its handler shouldn't include performance heavy code.
  */
-interface on_tick extends event  {
+interface on_tick extends event {
 }
 /**
  * Called when a train changes state (started to stopped and vice versa)
  */
-interface on_train_changed_state extends event  {
+interface on_train_changed_state extends event {
     old_state: defines.train_state
     train: LuaTrain
 }
 /**
  * Called when a new train is created either through disconnecting/connecting an existing one or building a new one.
  */
-interface on_train_created extends event  {
+interface on_train_created extends event {
     /**
      * The first old train id when splitting/merging trains.
      */
@@ -2460,7 +2461,7 @@ interface on_train_created extends event  {
 /**
  * Called when a trains schedule is changed either by the player or through script.
  */
-interface on_train_schedule_changed extends event  {
+interface on_train_schedule_changed extends event {
     /**
      * The player who made the change if any.
      */
@@ -2470,53 +2471,53 @@ interface on_train_schedule_changed extends event  {
 /**
  * Called when an entity with a trigger prototype (such as capsules) create an entity AND that trigger prototype defined `trigger_created_entity="true"`.
  */
-interface on_trigger_created_entity extends event  {
+interface on_trigger_created_entity extends event {
     entity: LuaEntity
     source?: LuaEntity
 }
 /**
  * Called when an entity with a trigger prototype (such as capsules) fire an artillery projectile AND that trigger prototype defined `trigger_fired_artillery="true"`.
  */
-interface on_trigger_fired_artillery extends event  {
+interface on_trigger_fired_artillery extends event {
     entity: LuaEntity
     source?: LuaEntity
 }
 /**
  * Called when a unit is added to a unit group.
  */
-interface on_unit_added_to_group extends event  {
+interface on_unit_added_to_group extends event {
     group: LuaUnitGroup
     unit: LuaEntity
 }
 /**
  * Called when a new unit group is created, before any members are added to it.
  */
-interface on_unit_group_created extends event  {
+interface on_unit_group_created extends event {
     group: LuaUnitGroup
 }
 /**
  * Called when a unit group finishes gathering and starts executing its command.
  */
-interface on_unit_group_finished_gathering extends event  {
+interface on_unit_group_finished_gathering extends event {
     group: LuaUnitGroup
 }
 /**
  * Called when a unit is removed from a unit group.
  */
-interface on_unit_removed_from_group extends event  {
+interface on_unit_removed_from_group extends event {
     group: LuaUnitGroup
     unit: LuaEntity
 }
 /**
  * Called when a worker (construction or logistic) robot expires through a lack of energy.
  */
-interface on_worker_robot_expired extends event  {
+interface on_worker_robot_expired extends event {
     robot: LuaEntity
 }
 /**
  * A static event mods can use to tell other mods they built something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_built | runtime:LuaBootstrap::raise_script_built}, or when `raise_built` is passed to {@link LuaSurface::create_entity | runtime:LuaSurface::create_entity}. Can be filtered using {@link LuaScriptRaisedBuiltEventFilter | runtime:LuaScriptRaisedBuiltEventFilter}.
  */
-interface script_raised_built extends event  {
+interface script_raised_built extends event {
     /**
      * The entity that has been built.
      */
@@ -2525,7 +2526,7 @@ interface script_raised_built extends event  {
 /**
  * A static event mods can use to tell other mods they destroyed something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_destroy | runtime:LuaBootstrap::raise_script_destroy}, or when `raise_destroy` is passed to {@link LuaEntity::destroy | runtime:LuaEntity::destroy}. Can be filtered using {@link LuaScriptRaisedDestroyEventFilter | runtime:LuaScriptRaisedDestroyEventFilter}.
  */
-interface script_raised_destroy extends event  {
+interface script_raised_destroy extends event {
     /**
      * The entity that was destroyed.
      */
@@ -2534,7 +2535,7 @@ interface script_raised_destroy extends event  {
 /**
  * A static event mods can use to tell other mods they revived something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_revive | runtime:LuaBootstrap::raise_script_revive}, or when `raise_revive` is passed to {@link LuaEntity::revive | runtime:LuaEntity::revive}. Can be filtered using {@link LuaScriptRaisedReviveEventFilter | runtime:LuaScriptRaisedReviveEventFilter}.
  */
-interface script_raised_revive extends event  {
+interface script_raised_revive extends event {
     /**
      * The entity that was revived.
      */
@@ -2547,7 +2548,7 @@ interface script_raised_revive extends event  {
 /**
  * A static event mods can use to tell other mods they changed tiles on a surface by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_set_tiles | runtime:LuaBootstrap::raise_script_set_tiles}, or when `raise_event` is passed to {@link LuaSurface::set_tiles | runtime:LuaSurface::set_tiles}.
  */
-interface script_raised_set_tiles extends event  {
+interface script_raised_set_tiles extends event {
     /**
      * The surface whose tiles were changed.
      */
@@ -2560,7 +2561,7 @@ interface script_raised_set_tiles extends event  {
 /**
  * A static event mods can use to tell other mods they teleported something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_teleported | runtime:LuaBootstrap::raise_script_teleported}, or when `raise_teleported` is passed to {@link LuaControl::teleport | runtime:LuaControl::teleport}. Can be filtered using {@link LuaScriptRaisedTeleportedEventFilter | runtime:LuaScriptRaisedTeleportedEventFilter}.
  */
-interface script_raised_teleported extends event  {
+interface script_raised_teleported extends event {
     /**
      * The entity that was teleported.
      */
@@ -2573,4 +2574,6 @@ interface script_raised_teleported extends event  {
      * The entity's surface before the teleportation.
      */
     old_surface_index: number
+}
+
 }
