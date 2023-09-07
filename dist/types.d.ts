@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.89
+// Factorio version 1.1.90
 // API version 4
 
 declare namespace prototype {
@@ -289,7 +289,7 @@ interface AnimationElement {
  *
  * @example
  * ```
- * Complex example - animation contains different layers with different frame counts:
+ * -- Complex example - animation contains different layers with different frame counts:
  * local custom_frame_sequence = { 2, 2, 2, 2, 2, 4, 3, 4, 3 }
  * layers = {
  *   {
@@ -8420,6 +8420,10 @@ interface TriggerItem {
      */
     probability?: number,
     repeat_count?: number,
+    
+    /**
+     * The trigger affects only prototypes with these masks.
+     */
     trigger_target_mask?: TriggerTargetMask
 }
 

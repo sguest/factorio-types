@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.89
+// Factorio version 1.1.90
 // API version 4
 
 declare namespace prototype {
@@ -2221,7 +2221,7 @@ A key binding can contain an unlimited amount of modifier keys (listed above) bu
 
 For a list of all names used in vanilla, see {@link data.raw | https://wiki.factorio.com/Data.raw}.
 
-It is also the name for the event that is raised when they key (combination) is pressed and action is `"lua"`, see {@link Tutorial:Script interfaces | https://wiki.factorio.com/Tutorial:Script_interfaces}.
+It is also the name for the event that is raised when they key (combination) is pressed and action is `"lua"`, see {@link Tutorial:Script interfaces | https://wiki.factorio.com/Tutorial:Script_interfaces#Custom_input}.
      */
     name: string
 }
@@ -2909,6 +2909,10 @@ The selection box is usually a little bit bigger than the collision box, for til
 When the tile width is odd, the center will be in the center of the tile, when it is even, the center is on the tile transition.
      */
     tile_width?: number,
+    
+    /**
+     * Defaults to the mask from {@link UtilityConstants::default_trigger_target_mask_by_type | prototype:UtilityConstants::default_trigger_target_mask_by_type}.
+     */
     trigger_target_mask?: TriggerTargetMask,
     
     /**
@@ -3018,7 +3022,7 @@ interface EntityWithHealthPrototype extends EntityPrototype{
 interface EntityWithOwnerPrototype extends EntityWithHealthPrototype{
     
     /**
-     * If this is true, this entities `is_military_target property` can be changed runtime (on the entity, not on the prototype itself).
+     * If this is true, this entity's `is_military_target` property can be changed during runtime (on the entity, not on the prototype itself).
      */
     allow_run_time_change_of_is_military_target?: boolean,
     
@@ -6798,8 +6802,20 @@ interface RobotWithLogisticInterfacePrototype extends FlyingRobotPrototype{
  * A {@link rocket silo | https://wiki.factorio.com/Rocket_silo}.
  */
 interface RocketSiloPrototype extends AssemblingMachinePrototype{
+    
+    /**
+     * Additional energy used during the following parts of the {@link launch sequence | runtime:defines.rocket_silo_status}: doors_opening, rocket_rising, arms_advance, engine_starting, arms_retract, doors_closing.
+     */
     active_energy_usage: Energy,
+    
+    /**
+     * Played when switching into the {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} state.
+     */
     alarm_sound?: Sound,
+    
+    /**
+     * Applied when switching into the {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} state.
+     */
     alarm_trigger?: TriggerEffect,
     arm_01_back_animation: Animation,
     arm_02_right_animation: Animation,
@@ -6808,33 +6824,94 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype{
     base_engine_light?: LightDefinition,
     base_front_sprite: Sprite,
     base_light?: LightDefinition,
+    
+    /**
+     * Drawn instead of `base_day_sprite` during the night i.e. when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
+     */
     base_night_sprite?: Sprite,
+    
+    /**
+     * Played when switching into the {@link arms_retract | runtime:defines.rocket_silo_status.arms_retract} state.
+     */
     clamps_off_sound?: Sound,
+    
+    /**
+     * Applied when switching into the {@link arms_retract | runtime:defines.rocket_silo_status.arms_retract} state.
+     */
     clamps_off_trigger?: TriggerEffect,
+    
+    /**
+     * Played when switching into the {@link arms_advance | runtime:defines.rocket_silo_status.arms_advance} state.
+     */
     clamps_on_sound?: Sound,
+    
+    /**
+     * Applied when switching into the {@link arms_advance | runtime:defines.rocket_silo_status.arms_advance} state.
+     */
     clamps_on_trigger?: TriggerEffect,
     door_back_open_offset: Vector,
     door_back_sprite: Sprite,
     door_front_open_offset: Vector,
     door_front_sprite: Sprite,
+    
+    /**
+     * The inverse of the duration in ticks of {@link doors_opening | runtime:defines.rocket_silo_status.doors_opening} and {@link closing | runtime:defines.rocket_silo_status.doors_closing}.
+     */
     door_opening_speed: number,
+    
+    /**
+     * Played when switching into the {@link doors_opening | runtime:defines.rocket_silo_status.doors_opening} and {@link doors_closing | runtime:defines.rocket_silo_status.doors_closing} states.
+     */
     doors_sound?: Sound,
+    
+    /**
+     * Applied when switching into the {@link doors_opening | runtime:defines.rocket_silo_status.doors_opening} and {@link doors_closing | runtime:defines.rocket_silo_status.doors_closing} states.
+     */
     doors_trigger?: TriggerEffect,
+    
+    /**
+     * Played when switching into the {@link engine_starting | runtime:defines.rocket_silo_status.engine_starting} state.
+     */
     flying_sound?: Sound,
     hole_clipping_box: BoundingBox,
     hole_light_sprite: Sprite,
     hole_sprite: Sprite,
-    idle_energy_usage: Energy,
     
     /**
      * May be 0.
+
+Additional energy used during the night i.e. when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
      */
     lamp_energy_usage: Energy,
+    
+    /**
+     * The time to wait in the {@link launch_started | runtime:defines.rocket_silo_status.launch_started} state before switching to {@link engine_starting | runtime:defines.rocket_silo_status.engine_starting}.
+     */
     launch_wait_time?: number,
+    
+    /**
+     * The inverse of the duration in ticks of {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} and {@link lights_blinking_close | runtime:defines.rocket_silo_status.lights_blinking_close}.
+     */
     light_blinking_speed: number,
+    
+    /**
+     * Played when switching into the {@link rocket_rising | runtime:defines.rocket_silo_status.rocket_rising} state.
+     */
     raise_rocket_sound?: Sound,
+    
+    /**
+     * Applied when switching into the {@link rocket_rising | runtime:defines.rocket_silo_status.rocket_rising} state.
+     */
     raise_rocket_trigger?: TriggerEffect,
+    
+    /**
+     * Drawn from the start of the {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} state until the end of the {@link lights_blinking_close | runtime:defines.rocket_silo_status.lights_blinking_close} state.
+     */
     red_lights_back_sprites: Sprite,
+    
+    /**
+     * Drawn from the start of the {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} state until the end of the {@link lights_blinking_close | runtime:defines.rocket_silo_status.lights_blinking_close} state.
+     */
     red_lights_front_sprites: Sprite,
     
     /**
@@ -6848,6 +6925,10 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype{
      */
     rocket_parts_required: number,
     rocket_result_inventory_size?: ItemStackIndex,
+    
+    /**
+     * The time to wait in the {@link doors_opened | runtime:defines.rocket_silo_status.doors_opened} state before switching to {@link rocket_rising | runtime:defines.rocket_silo_status.rocket_rising}.
+     */
     rocket_rising_delay?: number,
     rocket_shadow_overlay_sprite: Sprite,
     satellite_animation: Animation,
@@ -6855,6 +6936,12 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype{
     shadow_sprite: Sprite,
     silo_fade_out_end_distance: number,
     silo_fade_out_start_distance: number,
+    
+    /**
+     * How many times the `red_lights_back_sprites` and `red_lights_front_sprites` should blink during {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} and {@link lights_blinking_close | runtime:defines.rocket_silo_status.lights_blinking_close}.
+
+Does not affect the duration of the launch sequence.
+     */
     times_to_blink: number
 }
 
@@ -7143,6 +7230,11 @@ Note: The scale that can be defined in the sprite may not behave as expected bec
      * The item to create when clicking on a shortcut with the action set to `"spawn-item"`. The item must have the {@link spawnable | prototype:ItemPrototypeFlags::spawnable} flag set.
      */
     item_to_spawn?: ItemID,
+    
+    /**
+     * Used to order the shortcuts in the {@link quick panel | https://wiki.factorio.com/Quick_panel}, which replaces the shortcut bar when using a controller (game pad). It {@link is recommended | https://forums.factorio.com/106661} to order modded shortcuts after the vanilla shortcuts.
+     */
+    order?: Order,
     
     /**
      * The icon used in the panel for visible shortcuts, when the shortcut is usable.
@@ -8212,6 +8304,10 @@ Only loaded if `icons` is not defined, or if `icon_size` is not specified for al
      */
     minable?: MinableProperties,
     mined_sound?: Sound,
+    
+    /**
+     * Whether the tile needs tile correction logic applied when it's generated in the world, to prevent graphical artifacts. The tile correction logic disallows 1-wide stripes of the tile, see {@link Friday Facts #346 | https://factorio.com/blog/post/fff-346}.
+     */
     needs_correction?: boolean,
     next_direction?: TileID,
     placeable_by?: ItemToPlace | ItemToPlace[],

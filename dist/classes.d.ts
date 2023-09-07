@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.89
+// Factorio version 1.1.90
 // API version 4
 
 declare namespace runtime {
@@ -291,7 +291,7 @@ interface LuaBootstrap {
      *
      */
     on_event<T extends event>(this: void,
-        event: defines.events | defines.events[] | string,
+        event: defines.events | string | Array<defines.events | string>,
         handler: (this: void, arg0: EventData) => any | null,
         filters?: EventFilter): void
 
@@ -5119,14 +5119,6 @@ interface LuaEntityPrototype {
      *
      */
     readonly height?: number
-
-    /**
-     * The idle energy usage of this rocket silo prototype.
-     * @remarks
-     * Applies to subclasses: RocketSilo
-     *
-     */
-    readonly idle_energy_usage?: number
 
     /**
      * A vector of the gun prototypes of this car, spider vehicle, artillery wagon, or turret.
@@ -17501,7 +17493,7 @@ interface LuaTilePrototype {
     readonly name: string
 
     /**
-     * If this tile needs correction logic applied when it's generated in the world..
+     * If this tile needs correction logic applied when it's generated in the world.
      */
     readonly needs_correction: boolean
 

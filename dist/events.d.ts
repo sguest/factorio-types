@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.89
+// Factorio version 1.1.90
 // API version 4
 
 declare namespace runtime {
@@ -24,6 +24,14 @@ interface event {
 }
 /**
  * Called when a {@link CustomInputPrototype | prototype:CustomInputPrototype} is activated.
+ * @example
+ * This will be raised when a custom input with the name "my-potato-control" and action "lua" is pressed 
+ * ```
+ * script.on_event("my-potato-control", function(event)
+ *   game.print("Keyboard shortcut pressed on tick: " ..tostring(event.tick))
+ * end)
+ * ```
+ *
  */
 interface CustomInputEvent extends event {
     /**
@@ -877,7 +885,7 @@ interface on_land_mine_armed extends event {
     mine: LuaEntity
 }
 /**
- * Called when a custom Lua shortcut is pressed.
+ * Called when a custom {@link Lua shortcut | prototype:ShortcutPrototype} is pressed.
  */
 interface on_lua_shortcut extends event {
     player_index: number
