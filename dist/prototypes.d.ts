@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.90
+// Factorio version 1.1.92
 // API version 4
 
 declare namespace prototype {
@@ -1255,7 +1255,7 @@ interface BlueprintItemPrototype extends SelectionToolPrototype{
 }
 
 /**
- * A {@link boiler | https://wiki.factorio.com/Boiler}.
+ * A {@link boiler | https://wiki.factorio.com/Boiler}. It heats fluid and optionally outputs it as a different fluid.
  */
 interface BoilerPrototype extends EntityWithOwnerPrototype{
     
@@ -1302,14 +1302,14 @@ If `mode` is `"heat-water-inside"`, the fluid is heated up directly in this flui
     /**
      * In the `"heat-water-inside"` mode, fluid in the `fluid_box` is continuously heated from the input temperature up to its {@link FluidPrototype::max_temperature | prototype:FluidPrototype::max_temperature}.
 
-In the `"output-to-separate-pipe"` mode, fluid is transferred from the `fluid_box` to the `output_fluid_box` when enough energy is available to {@link heat | prototype:FluidPrototype::heat_capacity} the fluid to the `target_temperature`. Setting a filter on the `output_fluid_box` allows to specify that the input fluid should be converted to the filtered fluid, instead of it simply being transferred when it can be heated.
+In the `"output-to-separate-pipe"` mode, fluid is transferred from the `fluid_box` to the `output_fluid_box` when enough energy is available to {@link heat | prototype:FluidPrototype::heat_capacity} the input fluid to the `target_temperature`. Setting a filter on the `output_fluid_box` means that instead of the heated input fluid getting moved to the output, it is converted to the filtered fluid in a 1:1 ratio.
      */
     mode?: 'heat-water-inside' | 'output-to-separate-pipe',
     
     /**
      * The output fluid box.
 
-If `mode` is `"output-to-separate-pipe"` and this has a {@link filter | prototype:FluidBox::filter}, the input fluid is converted to the output fluid that is set in the filter (in a 1:1 ratio).
+If `mode` is `"output-to-separate-pipe"` and this has a {@link filter | prototype:FluidBox::filter}, the heated input fluid is converted to the output fluid that is set in the filter (in a 1:1 ratio).
 
 If `mode` is `"heat-water-inside"`, this fluidbox is unused.
      */
@@ -1322,7 +1322,7 @@ If `mode` is `"heat-water-inside"`, this fluidbox is unused.
     structure: BoilerStructure,
     
     /**
-     * When `mode` is `"output-to-separate-pipe"`, this is the temperature that the input fluid must reach to be moved to output fluid box.
+     * When `mode` is `"output-to-separate-pipe"`, this is the temperature that the input fluid must reach to be moved to the output fluid box.
 
 When `mode` is `"heat-water-inside"` this is unused. Instead, the fluid {@link max_temperature | prototype:FluidPrototype::max_temperature} is the target temperature for heating the fluid.
      */
@@ -6244,7 +6244,7 @@ Mandatory if `icons` is not defined, or if `icon_size` is not specified for all 
     /**
      * A table containing ingredient names and counts. Can also contain information about fluid temperature and catalyst amounts. The catalyst amounts are automatically calculated from the recipe, or can be set manually in the IngredientPrototype (see {@link here | https://factorio.com/blog/post/fff-256}).
 
-The maximum ingredient amount is 65535. Can be set to an empty table to create a recipe that needs no ingredients.
+The maximum ingredient amount is 65 535. Can be set to an empty table to create a recipe that needs no ingredients.
 
 Duplicate ingredients, e.g. two entries with the same name, are *not* allowed. In-game, the item ingredients are ordered by {@link ItemGroup::order_in_recipe | prototype:ItemGroup::order_in_recipe}.
 
@@ -6440,6 +6440,11 @@ interface ResourceEntityPrototype extends EntityPrototype{
      * The category for the resource. Available categories in vanilla can be found {@link here | https://wiki.factorio.com/Data.raw#resource-category}.
      */
     category?: ResourceCategoryID,
+    
+    /**
+     * Must be positive.
+     */
+    cliff_removal_probability?: number,
     
     /**
      * Two entities can collide only if they share a layer from the collision mask.

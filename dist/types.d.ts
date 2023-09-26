@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.90
+// Factorio version 1.1.92
 // API version 4
 
 declare namespace prototype {
@@ -2688,7 +2688,7 @@ interface EnemyExpansionSettings {
  * 
  * Supported Multipliers:
  * 
- * - `k/K`: 10^3, or 1'000
+ * - `k/K`: 10^3, or 1 000
  * 
  * - `M`: 10^6
  * 
@@ -2850,7 +2850,7 @@ interface FactorioBasisNoiseArguments {
     output_scale?: ConstantNoiseNumber,
     
     /**
-     * Integer between 0 and 4'294'967'295 (inclusive) used to populate the backing random noise.
+     * Integer between 0 and 4 294 967 295 (inclusive) used to populate the backing random noise.
      */
     seed0: ConstantNoiseNumber,
     
@@ -2885,7 +2885,7 @@ interface FactorioMultioctaveNoiseArguments {
     persistence: ConstantNoiseNumber,
     
     /**
-     * Integer between 0 and 4'294'967'295 (inclusive) used to populate the backing random noise.
+     * Integer between 0 and 4 294 967 295 (inclusive) used to populate the backing random noise.
      */
     seed0: ConstantNoiseNumber,
     
@@ -4412,7 +4412,7 @@ interface MapGenSettings {
     default_enable_all_autoplace_controls?: boolean,
     
     /**
-     * Height of the map in tiles. Silently limited to 2'000'000, ie. +/- 1 million tiles from the center in both directions.
+     * Height of the map in tiles. Silently limited to 2 000 000, ie. +/- 1 million tiles from the center in both directions.
      */
     height?: number,
     peaceful_mode?: boolean,
@@ -4448,7 +4448,7 @@ interface MapGenSettings {
     water?: MapGenSize,
     
     /**
-     * Width of the map in tiles. Silently limited to 2'000'000, ie. +/- 1 million tiles from the center in both directions.
+     * Width of the map in tiles. Silently limited to 2 000 000, ie. +/- 1 million tiles from the center in both directions.
      */
     width?: number
 }
@@ -6252,7 +6252,7 @@ If a recipe is unlocked via technology, this should be set to `false`.
     /**
      * A table containing ingredient names and counts. Can also contain information about fluid temperature and catalyst amounts. The catalyst amounts are automatically calculated from the recipe, or can be set manually in the IngredientPrototype (see {@link here | https://factorio.com/blog/post/fff-256}).
 
-The maximum ingredient amount is 65535. Can be set to an empty table to create a recipe that needs no ingredients.
+The maximum ingredient amount is 65 535. Can be set to an empty table to create a recipe that needs no ingredients.
 
 Duplicate ingredients, e.g. two entries with the same name, are *not* allowed. In-game, the item ingredients are ordered by {@link ItemGroup::order_in_recipe | prototype:ItemGroup::order_in_recipe}.
      */

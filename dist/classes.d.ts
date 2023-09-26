@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.90
+// Factorio version 1.1.92
 // API version 4
 
 declare namespace runtime {
@@ -4217,7 +4217,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The ticks left before a ghost, combat robot, highlight box or smoke with trigger is destroyed.
      * 
-     * - for ghosts set to uint32 max (4'294'967'295) to never expire.
+     * - for ghosts set to uint32 max (4 294 967 295) to never expire.
      * - for ghosts can not be set higher than {@link LuaForce::ghost_time_to_live | runtime:LuaForce::ghost_time_to_live} of the entity's force.
      */
     time_to_live: number
@@ -7921,7 +7921,7 @@ interface LuaGameScript {
     /**
      * Create a new surface.
      * @remarks
-     * The game currently supports a maximum of 4'294'967'295 surfaces, including the default surface.
+     * The game currently supports a maximum of 4 294 967 295 surfaces, including the default surface.
      * Surface names must be unique.
      *
      * @param name - Name of the new surface.
