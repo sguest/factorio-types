@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.92
+// Factorio version 1.1.93
 // API version 4
 
 declare namespace runtime {
@@ -3084,6 +3084,13 @@ interface LuaEntity extends LuaControl {
     update_connections(this: void): void
 
     /**
+     * @remarks
+     * Applies to subclasses: Spawner
+     *
+     */
+    readonly absorbed_pollution: number
+
+    /**
      * Deactivating an entity will stop all its operations (car will stop moving, inserters will stop working, fish will stop moving etc).
      * @remarks
      * Entities that are not active naturally can't be set to be active (setting it to be active will do nothing)
@@ -4095,9 +4102,23 @@ interface LuaEntity extends LuaControl {
     readonly signal_state: defines.signal_state
 
     /**
+     * @remarks
+     * Applies to subclasses: Spawner
+     *
+     */
+    readonly spawn_shift: number
+
+    /**
      * The spawner associated with this unit entity, if any.
      */
     readonly spawner?: LuaEntity
+
+    /**
+     * @remarks
+     * Applies to subclasses: Spawner
+     *
+     */
+    readonly spawning_cooldown: number
 
     /**
      * The current speed if this is a car, rolling stock, projectile or spidertron, or the maximum speed if this is a unit. The speed is in tiles per tick. `nil` if this is not a car, rolling stock, unit, projectile or spidertron.
@@ -4154,6 +4175,14 @@ interface LuaEntity extends LuaControl {
      * The entity this sticker is sticked to.
      */
     readonly sticked_to: LuaEntity
+
+    /**
+     * The vehicle modifiers applied to this entity through the attached stickers.
+     */
+    readonly sticker_vehicle_modifiers?: {
+        friction_modifier: number,
+        speed_modifier: number
+    }
 
     /**
      * The sticker entities attached to this entity, if any.
@@ -4338,6 +4367,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The units associated with this spawner entity.
+     * @remarks
+     * Applies to subclasses: Spawner
+     *
      */
     readonly units: LuaEntity[]
 
@@ -4716,6 +4748,13 @@ interface LuaEntityPrototype {
      * The color of the prototype, if any.
      */
     readonly color?: Color
+
+    /**
+     * @remarks
+     * Applies to subclasses: RollingStock
+     *
+     */
+    readonly connection_distance?: number
 
     /**
      * The construction radius for this roboport prototype.
@@ -5290,6 +5329,13 @@ interface LuaEntityPrototype {
     readonly items_to_place_this?: ItemStackDefinition[]
 
     /**
+     * @remarks
+     * Applies to subclasses: RollingStock
+     *
+     */
+    readonly joint_distance?: number
+
+    /**
      * The item prototype names that are the inputs of this lab prototype.
      * @remarks
      * Applies to subclasses: Lab
@@ -5713,6 +5759,8 @@ interface LuaEntityPrototype {
      */
     readonly radius: number
 
+    readonly radius_visualisation_specification?: RadiusVisualisationSpecification
+
     /**
      * @remarks
      * Applies to subclasses: Character
@@ -5889,6 +5937,20 @@ interface LuaEntityPrototype {
         max: number,
         min: number
     }
+
+    /**
+     * @remarks
+     * Applies to subclasses: Spawner,Turret
+     *
+     */
+    readonly spawn_decoration?: TriggerEffectItem[]
+
+    /**
+     * @remarks
+     * Applies to subclasses: Spawner,Turret
+     *
+     */
+    readonly spawn_decorations_on_expansion?: boolean
 
     /**
      * How far from the spawner can the units be spawned.
@@ -6790,7 +6852,7 @@ interface LuaFluidBox {
      * Gets unique fluid system identifier of selected fluid box. May return nil for fluid wagon, fluid turret's internal buffer or a fluidbox which does not belong to a fluid system
      */
     get_fluid_system_id(this: void,
-        index: number): number
+        index: number): number | null
 
     /**
      * Returns the fluid the fluidbox is locked onto
@@ -7324,6 +7386,14 @@ interface LuaForce {
         position: ChunkPosition): boolean
 
     /**
+     * Has a chunk been requested for charting?
+     * @param position - Position of the chunk.
+     */
+    is_chunk_requested_for_charting(this: void,
+        surface: SurfaceIdentification,
+        position: ChunkPosition): boolean
+
+    /**
      * Is the given chunk currently charted and visible (not covered by fog of war) on the map.
      */
     is_chunk_visible(this: void,
@@ -7370,12 +7440,12 @@ interface LuaForce {
     /**
      * Print text to the chat console of all players on this force.
      * @remarks
-     * Messages that are identical to a message sent in the last 60 ticks are not printed again.
+     * By default, messages that are identical to a message sent in the last 60 ticks are not printed again.
      *
      */
     print(this: void,
         message: LocalisedString,
-        color?: Color): void
+        print_settings?: Color | PrintSettings): void
 
     /**
      * Force a rechart of the whole chart.
@@ -8159,6 +8229,14 @@ interface LuaGameScript {
         surface: number | string): LuaSurface | null
 
     /**
+     * Searches for a train with given ID.
+     * @param train_id - Train ID to search
+     * @returns Train if found
+     */
+    get_train_by_id(this: void,
+        train_id: number): LuaTrain | null
+
+    /**
      * Gets train stops matching the given filters.
      * @param table.force - The force to search. Not providing a force will match stops in any force.
      * @param table.name - The name(s) of the train stops. Not providing names will match any stop.
@@ -8256,12 +8334,12 @@ interface LuaGameScript {
     /**
      * Print text to the chat console all players.
      * @remarks
-     * Messages that are identical to a message sent in the last 60 ticks are not printed again.
+     * By default, messages that are identical to a message sent in the last 60 ticks are not printed again.
      *
      */
     print(this: void,
         message: LocalisedString,
-        color?: Color): void
+        print_settings?: Color | PrintSettings): void
 
     /**
      * Purges the given players messages from the game. Does nothing if the player running this isn't an admin.
@@ -8331,8 +8409,8 @@ interface LuaGameScript {
     save_atlas(this: void): void
 
     /**
-     * Instruct the server to save the map.
-     * @param name - Save name. If not specified, writes into the currently-running save.
+     * Instruct the server to save the map. Only actually saves when in multiplayer.
+     * @param name - Save file name. If not specified, the currently running save is overwritten.
      */
     server_save(this: void,
         name?: string): void
@@ -12986,12 +13064,12 @@ interface LuaPlayer extends LuaControl {
     /**
      * Print text to the chat console.
      * @remarks
-     * Messages that are identical to a message sent in the last 60 ticks are not printed again.
+     * By default, messages that are identical to a message sent in the last 60 ticks are not printed again.
      *
      */
     print(this: void,
         message: LocalisedString,
-        color?: Color): void
+        print_settings?: Color | PrintSettings): void
 
     /**
      * Print entity statistics to the player's console.
@@ -15609,6 +15687,13 @@ interface LuaStyle {
 
     /**
      * @remarks
+     * Applies to subclasses: LuaButtonStyle
+     *
+     */
+    draw_grayscale_picture: boolean
+
+    /**
+     * @remarks
      * Applies to subclasses: ScrollPaneStyle
      *
      */
@@ -16786,12 +16871,12 @@ interface LuaSurface {
     /**
      * Print text to the chat console of all players on this surface.
      * @remarks
-     * Messages that are identical to a message sent in the last 60 ticks are not printed again.
+     * By default, messages that are identical to a message sent in the last 60 ticks are not printed again.
      *
      */
     print(this: void,
         message: LocalisedString,
-        color?: Color): void
+        print_settings?: Color | PrintSettings): void
 
     /**
      * Regenerate autoplacement of some decoratives on this surface. This can be used to autoplace newly-added decoratives.

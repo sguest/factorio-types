@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.92
+// Factorio version 1.1.93
 // API version 4
 
 declare namespace prototype {
@@ -311,7 +311,7 @@ interface AccumulatorPrototype extends EntityWithOwnerPrototype{
      * The capacity of the energy source buffer specifies the capacity of the accumulator.
      */
     energy_source: ElectricEnergySource,
-    picture: Sprite
+    picture?: Sprite
 }
 
 /**
@@ -704,17 +704,17 @@ Vertical position of the animation in the source file in pixels.
  * An {@link arithmetic combinator | https://wiki.factorio.com/Arithmetic_combinator}.
  */
 interface ArithmeticCombinatorPrototype extends CombinatorPrototype{
-    and_symbol_sprites: Sprite4Way,
-    divide_symbol_sprites: Sprite4Way,
-    left_shift_symbol_sprites: Sprite4Way,
-    minus_symbol_sprites: Sprite4Way,
-    modulo_symbol_sprites: Sprite4Way,
-    multiply_symbol_sprites: Sprite4Way,
-    or_symbol_sprites: Sprite4Way,
-    plus_symbol_sprites: Sprite4Way,
-    power_symbol_sprites: Sprite4Way,
-    right_shift_symbol_sprites: Sprite4Way,
-    xor_symbol_sprites: Sprite4Way
+    and_symbol_sprites?: Sprite4Way,
+    divide_symbol_sprites?: Sprite4Way,
+    left_shift_symbol_sprites?: Sprite4Way,
+    minus_symbol_sprites?: Sprite4Way,
+    modulo_symbol_sprites?: Sprite4Way,
+    multiply_symbol_sprites?: Sprite4Way,
+    or_symbol_sprites?: Sprite4Way,
+    plus_symbol_sprites?: Sprite4Way,
+    power_symbol_sprites?: Sprite4Way,
+    right_shift_symbol_sprites?: Sprite4Way,
+    xor_symbol_sprites?: Sprite4Way
 }
 
 /**
@@ -1044,7 +1044,7 @@ The animation for the beacon, when in use.
 
 The picture of the beacon when it is not on.
      */
-    base_picture?: Sprite,
+    base_picture?: Animation,
     
     /**
      * The multiplier of the module's effects, when shared between neighbors.
@@ -1368,7 +1368,7 @@ interface BurnerGeneratorPrototype extends EntityWithOwnerPrototype{
     /**
      * Plays when the generator is active. `idle_animation` must have the same frame count as animation.
      */
-    animation: Animation4Way,
+    animation?: Animation4Way,
     
     /**
      * The input energy source of the generator.
@@ -1701,7 +1701,7 @@ interface CombatRobotPrototype extends FlyingRobotPrototype{
     friction?: number,
     idle: RotatedAnimation,
     in_motion: RotatedAnimation,
-    light: LightDefinition,
+    light?: LightDefinition,
     range_from_player?: number,
     shadow_idle: RotatedAnimation,
     shadow_in_motion: RotatedAnimation,
@@ -1721,7 +1721,7 @@ interface CombinatorPrototype extends EntityWithOwnerPrototype{
     Vector,
     Vector
 ],
-    activity_led_sprites: Sprite4Way,
+    activity_led_sprites?: Sprite4Way,
     
     /**
      * The maximum circuit wire distance for this entity.
@@ -1751,7 +1751,7 @@ interface CombinatorPrototype extends EntityWithOwnerPrototype{
     Vector,
     Vector
 ],
-    sprites: Sprite4Way
+    sprites?: Sprite4Way
 }
 
 /**
@@ -1765,7 +1765,7 @@ interface ConstantCombinatorPrototype extends EntityWithOwnerPrototype{
     Vector,
     Vector
 ],
-    activity_led_sprites: Sprite4Way,
+    activity_led_sprites?: Sprite4Way,
     circuit_wire_connection_points: 
 [    WireConnectionPoint,
     WireConnectionPoint,
@@ -1780,7 +1780,7 @@ interface ConstantCombinatorPrototype extends EntityWithOwnerPrototype{
     draw_circuit_wires?: boolean,
     draw_copper_wires?: boolean,
     item_slot_count: number,
-    sprites: Sprite4Way
+    sprites?: Sprite4Way
 }
 
 /**
@@ -2237,12 +2237,12 @@ interface DamageType extends PrototypeBase{
  * A {@link decider combinator | https://wiki.factorio.com/Decider_combinator}.
  */
 interface DeciderCombinatorPrototype extends CombinatorPrototype{
-    equal_symbol_sprites: Sprite4Way,
-    greater_or_equal_symbol_sprites: Sprite4Way,
-    greater_symbol_sprites: Sprite4Way,
-    less_or_equal_symbol_sprites: Sprite4Way,
-    less_symbol_sprites: Sprite4Way,
-    not_equal_symbol_sprites: Sprite4Way
+    equal_symbol_sprites?: Sprite4Way,
+    greater_or_equal_symbol_sprites?: Sprite4Way,
+    greater_symbol_sprites?: Sprite4Way,
+    less_or_equal_symbol_sprites?: Sprite4Way,
+    less_symbol_sprites?: Sprite4Way,
+    not_equal_symbol_sprites?: Sprite4Way
 }
 
 /**
@@ -2829,6 +2829,10 @@ Either this or `icon` is mandatory for entities that have at least one of these 
      * Used instead of the collision box during map generation. Allows space entities differently during map generation, for example if the box is bigger, the entities will be placed farther apart.
      */
     map_generator_bounding_box?: BoundingBox,
+    
+    /**
+     * The item given to the player when they mine the entity and other properties relevant to mining this entity.
+     */
     minable?: MinableProperties,
     mined_sound?: Sound,
     mining_sound?: Sound,
@@ -3689,6 +3693,11 @@ interface GatePrototype extends EntityWithOwnerPrototype{
     activation_distance: number,
     
     /**
+     * Played when the gate closes.
+     */
+    close_sound: Sound,
+    
+    /**
      * Two entities can collide only if they share a layer from the collision mask.
      */
     collision_mask?: CollisionMask,
@@ -3697,6 +3706,11 @@ interface GatePrototype extends EntityWithOwnerPrototype{
     horizontal_rail_animation_left: Animation,
     horizontal_rail_animation_right: Animation,
     horizontal_rail_base: Animation,
+    
+    /**
+     * Played when the gate opens.
+     */
+    open_sound: Sound,
     
     /**
      * This collision mask is used when the gate is open.
@@ -3749,7 +3763,7 @@ In these cases, this property determines whether the fluid should be destroyed, 
     /**
      * How much energy the generator produces compared to how much energy it consumes. For example, an effectivity of 0.5 means that half of the consumed energy is output as power.
      */
-    effectivity: number,
+    effectivity?: number,
     energy_source: ElectricEnergySource,
     
     /**
@@ -3761,7 +3775,7 @@ In these cases, this property determines whether the fluid should be destroyed, 
      * The number of fluid units the generator uses per tick.
      */
     fluid_usage_per_tick: number,
-    horizontal_animation: Animation,
+    horizontal_animation?: Animation,
     
     /**
      * The power production of the generator is capped to this value. This is also the value that is shown as the maximum power output in the tooltip of the generator.
@@ -3792,7 +3806,7 @@ If scale_fluid_usage is false, the generator consumes the full `fluid_usage_per_
      */
     scale_fluid_usage?: boolean,
     smoke?: SmokeSource[],
-    vertical_animation: Animation
+    vertical_animation?: Animation
 }
 
 /**
@@ -4744,7 +4758,7 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype{
     allow_rail_interaction?: boolean,
     
     /**
-     * How long this loader's belt is. Should be the same as belt_distance, which is hardcoded to `0.5` for {@link Loader1x2Prototype | prototype:Loader1x2Prototype} and to 0 for {@link Loader1x1Prototype | prototype:Loader1x1Prototype}.
+     * How long this loader's belt is. Should be the same as belt_distance, which is hardcoded to `0.5` for {@link Loader1x2Prototype | prototype:Loader1x2Prototype} and to 0 for {@link Loader1x1Prototype | prototype:Loader1x1Prototype}. See the linked prototypes for an explanation of belt_distance.
      */
     belt_length?: number,
     
@@ -5356,7 +5370,7 @@ If set, this specifies whether collision with tiles should (true) or should not 
 
 Deprecated, use `graphics_set` instead.
      */
-    picture?: Sprite4Way,
+    picture?: Animation4Way,
     placeable_position_visualization?: Sprite,
     
     /**
@@ -5611,7 +5625,7 @@ interface ProjectilePrototype extends EntityPrototype{
      * Executed when the projectile hits something.
      */
     action?: Trigger,
-    animation?: Animation,
+    animation?: AnimationVariations,
     
     /**
      * Two entities can collide only if they share a layer from the collision mask.
@@ -5652,7 +5666,7 @@ interface ProjectilePrototype extends EntityPrototype{
      * Whether the animation of the projectile is rotated to match the direction of travel.
      */
     rotatable?: boolean,
-    shadow?: Animation,
+    shadow?: AnimationVariations,
     smoke?: SmokeSource[],
     speed_modifier?: Vector,
     
@@ -6936,8 +6950,8 @@ Additional energy used during the night i.e. when {@link LuaSurface::darkness | 
      */
     rocket_rising_delay?: number,
     rocket_shadow_overlay_sprite: Sprite,
-    satellite_animation: Animation,
-    satellite_shadow_animation: Animation,
+    satellite_animation?: Animation,
+    satellite_shadow_animation?: Animation,
     shadow_sprite: Sprite,
     silo_fade_out_end_distance: number,
     silo_fade_out_start_distance: number,
@@ -7264,10 +7278,6 @@ Note: The scale that can be defined in the sprite may not behave as expected bec
  * An extremely basic entity with no special functionality. Used for minable rocks.
  */
 interface SimpleEntityPrototype extends EntityWithHealthPrototype{
-    
-    /**
-     * Mandatory if both `picture` and `pictures` are not defined.
-     */
     animations?: AnimationVariations,
     
     /**
@@ -7276,12 +7286,12 @@ interface SimpleEntityPrototype extends EntityWithHealthPrototype{
     count_as_rock_for_filtered_deconstruction?: boolean,
     
     /**
-     * Mandatory if both `pictures` and `animations` are not defined. Takes priority over `animations`.
+     * Takes priority over `animations`.
      */
     picture?: Sprite,
     
     /**
-     * Mandatory if both `picture` and `animations` are not defined. Takes priority over `picture` and `animations`.
+     * Takes priority over `picture` and `animations`.
      */
     pictures?: SpriteVariations,
     random_animation_offset?: boolean,
@@ -7313,10 +7323,6 @@ interface SimpleEntityWithForcePrototype extends SimpleEntityWithOwnerPrototype{
  * Has a force, but unlike {@link SimpleEntityWithForcePrototype | prototype:SimpleEntityWithForcePrototype} it is only attacked if the biters get stuck on it (or if {@link EntityWithOwnerPrototype::is_military_target | prototype:EntityWithOwnerPrototype::is_military_target} set to true to make the two entity types equivalent).
  */
 interface SimpleEntityWithOwnerPrototype extends EntityWithOwnerPrototype{
-    
-    /**
-     * Mandatory if both `picture` and `pictures` are not defined.
-     */
     animations?: AnimationVariations,
     
     /**
@@ -7325,12 +7331,12 @@ interface SimpleEntityWithOwnerPrototype extends EntityWithOwnerPrototype{
     force_visibility?: ForceCondition,
     
     /**
-     * Mandatory if both `pictures` and `animations` are not defined.
+     * Takes priority over `animations`.
      */
     picture?: Sprite,
     
     /**
-     * Mandatory if both `picture` and `animations` are not defined.
+     * Takes priority over `picture` and `animations`.
      */
     pictures?: SpriteVariations,
     random_animation_offset?: boolean,
@@ -7476,7 +7482,7 @@ interface SoundPrototype {
     category?: SoundType,
     
     /**
-     * Supported sound file formats are `.ogg`, `.wav` and `.voc`.
+     * Supported sound file formats are `.ogg (Vorbis)` and `.wav`.
 
 Only loaded if `variations` is not defined.
      */
@@ -8415,7 +8421,7 @@ interface TipsAndTricksItemCategory {
 interface ToolPrototype extends ItemPrototype{
     
     /**
-     * The durability of this tool. Must be positive. Mandatory if <code>infinite</code> is false. Ignored if <code>infinite</code> is true.
+     * The durability of this tool. Must be positive. Mandatory if `infinite` is false. Ignored if <code>infinite</code> is true.
      */
     durability?: number,
     
@@ -8446,7 +8452,7 @@ is applied to a tool with 2 remaining durability out of 8 it will be displayed a
     durability_description_value?: string,
     
     /**
-     * Whether this tool has infinite durability. If this is false, <code>durability</code> must be specified.
+     * Whether this tool has infinite durability. If this is false, `durability` must be specified.
      */
     infinite?: boolean
 }
@@ -8615,7 +8621,7 @@ Transport belts must have 12 animations.
     /**
      * Defines how wires visually connect to this transport belt.
      */
-    circuit_wire_connection_point?: WireConnectionPoint[],
+    circuit_wire_connection_points?: WireConnectionPoint[],
     
     /**
      * The maximum circuit wire distance for this entity.
@@ -9832,7 +9838,7 @@ interface VehiclePrototype extends EntityWithOwnerPrototype{
     allow_passengers?: boolean,
     
     /**
-     * Must be positive. There is no difference between the two ways to set braking power/force.
+     * Must be positive. There is no functional difference between the two ways to set braking power/force.
      */
     braking_power: Energy | number,
     
@@ -9853,7 +9859,7 @@ interface VehiclePrototype extends EntityWithOwnerPrototype{
     equipment_grid?: EquipmentGridID,
     
     /**
-     * Must be positive. There is no difference between the two ways to set friction force.
+     * Must be positive. There is no functional difference between the two ways to set friction force.
      */
     friction: number,
     

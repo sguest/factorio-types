@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.92
+// Factorio version 1.1.93
 // API version 4
 
 declare namespace runtime {
@@ -2306,6 +2306,24 @@ interface PollutionMapSettings {
     pollution_with_max_forest_damage: number
 }
 
+interface PrintSettings {
+    
+    /**
+     * Color of the message to print. Defaults to white.
+     */
+    color?: Color,
+    
+    /**
+     * If true and a message with the same text is still visible in the console, it will do nothing. Defaults to `true`.
+     */
+    skip_if_redundant?: boolean,
+    
+    /**
+     * If a sound should be emitted for this message. Defaults to `defines.print_sound.use_player_settings`.
+     */
+    sound?: defines.print_sound
+}
+
 /**
  * @remarks
  * Other attributes may be specified depending on `type`:
@@ -2376,6 +2394,13 @@ interface PrototypeHistory {
      * The mod that created this prototype.
      */
     created: string
+}
+
+interface RadiusVisualisationSpecification {
+    distance: number,
+    draw_in_cursor: boolean,
+    draw_on_selection: boolean,
+    offset: Vector
 }
 
 /**

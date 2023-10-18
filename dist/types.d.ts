@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.92
+// Factorio version 1.1.93
 // API version 4
 
 declare namespace prototype {
@@ -4568,12 +4568,12 @@ How many of result are dropped.
      * How many seconds are required to mine this object at 1 mining speed.
      */
     mining_time: number,
-    mining_trigger: Trigger,
+    mining_trigger?: Trigger,
     
     /**
      * Name of a {@link FluidPrototype | prototype:FluidPrototype}. The fluid that is used up when this object is mined.
      */
-    required_fluid: FluidID,
+    required_fluid?: FluidID,
     
     /**
      * Only loaded if `results` is not defined.
@@ -4763,7 +4763,7 @@ interface NoiseArrayConstruction {
  * 
  * A fragment of a functional program used to generate coherent noise, probably for purposes related to terrain generation.
  * 
- * Noise expressions can be provided as table literals or built using functions in the built-in {@link noise library | https://github.com/wube/factorio-data/blob/master/core/lualib/noise.lua}. The built-in noise library allows writing much more concise code, so its usage will be shown in most examples on this page.
+ * Noise expressions can be provided as table literals or built using functions in the built-in {@link noise library | https://github.com/wube/factorio-data/blob/master/core/lualib/noise.lua}. The built-in noise library allows writing much more concise code, so its usage will be shown in most examples for noise expressions.
  * 
  * {@link noise.define_noise_function | https://github.com/wube/factorio-data/blob/master/core/lualib/noise.lua#L272} allows noise expressions to be defined using a shorthand that's a subset of Lua (see the example for details).
  * 
@@ -6958,7 +6958,7 @@ type Sound = {
     audible_distance_modifier?: number,
     
     /**
-     * Supported sound file formats are `.ogg`, `.wav` and `.voc`.
+     * Supported sound file formats are `.ogg (Vorbis)` and `.wav`.
 
 Only loaded if `variations` is not defined.
      */
@@ -7001,7 +7001,7 @@ Only loaded if `variations` is not defined.
 interface SoundDefinition {
     
     /**
-     * Supported sound file formats are `.ogg`, `.wav` and `.voc`.
+     * Supported sound file formats are `.ogg (Vorbis)` and `.wav`.
      */
     filename: FileName,
     
@@ -7292,7 +7292,7 @@ type Sprite4Way = {
      * Only loaded if `sheets` is not defined.
      */
     sheet?: SpriteNWaySheet,
-    sheets?: SpriteNWaySheet,
+    sheets?: SpriteNWaySheet[],
     
     /**
      * Only loaded if both `sheets` and `sheet` are not defined.
@@ -7334,7 +7334,7 @@ interface Sprite8Way {
      * Only loaded if `sheets` is not defined.
      */
     sheet?: SpriteNWaySheet,
-    sheets?: SpriteNWaySheet,
+    sheets?: SpriteNWaySheet[],
     
     /**
      * Only loaded if both `sheets` and `sheet` are not defined.
@@ -8902,7 +8902,7 @@ interface WorkingVisualisation {
     align_to_waypoint?: boolean,
     always_draw?: boolean,
     animated_shift?: boolean,
-    animation: Animation,
+    animation?: Animation,
     
     /**
      * Used by {@link CraftingMachinePrototype | prototype:CraftingMachinePrototype}.

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.92
+// Factorio version 1.1.93
 // API version 4
 
 declare namespace defines {
@@ -1013,6 +1013,11 @@ declare namespace defines {
         middle,
         none,
         right,
+    }
+    enum print_sound {
+        always,
+        never,
+        use_player_settings,
     }
     /**
      * A dictionary mapping all top-level prototypes by name to a list of their associated subtypes. This list is organized as a lookup table, meaning it maps the sub-prototype names to `0`. As an example, `defines.prototypes['entity']` looks like this: `{furnace=0, inserter=0, container=0, ...}`.
