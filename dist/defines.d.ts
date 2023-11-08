@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.93
+// Factorio version 1.1.95
 // API version 4
 
 declare namespace defines {
@@ -1013,6 +1013,20 @@ declare namespace defines {
         middle,
         none,
         right,
+    }
+    enum print_skip {
+        /**
+         * Print will be skipped if same text was recently printed (within last 60 ticks). Used by most game messages.
+         */
+        if_redundant,
+        /**
+         * Print will be skipped if same text is still visible (printed within last 1152 ticks). Used by some notifications.
+         */
+        if_visible,
+        /**
+         * Print will not be skipped.
+         */
+        never,
     }
     enum print_sound {
         always,

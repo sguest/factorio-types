@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.93
+// Factorio version 1.1.95
 // API version 4
 
 declare namespace runtime {
@@ -2314,14 +2314,29 @@ interface PrintSettings {
     color?: Color,
     
     /**
-     * If true and a message with the same text is still visible in the console, it will do nothing. Defaults to `true`.
+     * If set to false, message will not be part of game state and will dissapear from output console after save-load. Defaults to `true`.
      */
-    skip_if_redundant?: boolean,
+    game_state?: boolean,
+    
+    /**
+     * Condition when to skip adding message. Defaults to `defines.print_skip.if_redundant`.
+     */
+    skip?: defines.print_skip,
     
     /**
      * If a sound should be emitted for this message. Defaults to `defines.print_sound.use_player_settings`.
      */
-    sound?: defines.print_sound
+    sound?: defines.print_sound,
+    
+    /**
+     * The sound to play. If not given, {@link UtilitySounds::console_message | prototype:UtilitySounds::console_message} will be used instead.
+     */
+    sound_path?: SoundPath,
+    
+    /**
+     * The volume of the sound to play. Must be between 0 and 1 inclusive. Defaults to 1.
+     */
+    volume_modifier?: number
 }
 
 /**
