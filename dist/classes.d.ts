@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.93
+// Factorio version 1.1.95
 // API version 4
 
 declare namespace runtime {
@@ -14212,7 +14212,7 @@ interface LuaRendering {
     /**
      * Create a circle.
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
-     * @param table.filled - If the circle should be filled.
+     * @param table.filled - If the circle should be filled. Defaults to false.
      * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
      * @param table.players - The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
@@ -14220,7 +14220,7 @@ interface LuaRendering {
      * @param table.target_offset - Only used if `target` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
-     * @param table.width - Width of the outline, used only if filled = false. Value is in pixels (32 per tile).
+     * @param table.width - Width of the outline, used only if filled = false. Value is in pixels (32 per tile). Defaults to 1.
      * @returns Id of the render object
      */
     draw_circle(this: void,
@@ -14228,7 +14228,7 @@ interface LuaRendering {
             color: Color,
             radius: number,
             width?: number,
-            filled: boolean,
+            filled?: boolean,
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
             surface: SurfaceIdentification,
@@ -14365,7 +14365,7 @@ interface LuaRendering {
     /**
      * Create a rectangle.
      * @param table.draw_on_ground - If this should be drawn below sprites and entities.
-     * @param table.filled - If the rectangle should be filled.
+     * @param table.filled - If the rectangle should be filled. Defaults to false.
      * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.left_top_offset - Only used if `left_top` is a LuaEntity.
      * @param table.only_in_alt_mode - If this should only be rendered in alt mode. Defaults to false.
@@ -14373,14 +14373,20 @@ interface LuaRendering {
      * @param table.right_bottom_offset - Only used if `right_bottom` is a LuaEntity.
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
-     * @param table.width - Width of the outline, used only if filled = false. Value is in pixels (32 per tile).
+     * @param table.width - Width of the outline, used only if filled = false. Value is in pixels (32 per tile). Defaults to 1.
+     * @example
+     * Draw a white and 1 pixel wide square outline with the corners {0, 0} and {2, 2}. 
+     * ```
+     * rendering.draw_rectangle{surface = game.player.surface, left_top = {0, 0}, right_bottom = {2, 2}, color = {1, 1, 1}}
+     * ```
+     *
      * @returns Id of the render object
      */
     draw_rectangle(this: void,
         table: {
             color: Color,
             width?: number,
-            filled: boolean,
+            filled?: boolean,
             left_top: MapPosition | LuaEntity,
             left_top_offset?: Vector,
             right_bottom: MapPosition | LuaEntity,
