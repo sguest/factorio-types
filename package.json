@@ -23,5 +23,6 @@
   "files": [
     "index.d.ts",
     "dist/**/*.d.ts"
-  ]
+  ],
+  "factorioVersion": "1.1.93"
 }

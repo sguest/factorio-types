@@ -45,6 +45,10 @@ function handleRuntimeFile(fileName: string) {
     writeDefines(apiData, apiVersion);
     writeConcepts(apiData, apiVersion);
     writeGlobals(apiData, apiVersion);
+
+    const packageJson = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, 'utf-8'));
+    packageJson.factorioVersion = apiVersion;
+    fs.writeFileSync(`${__dirname}/../package.json`, JSON.stringify(packageJson, null, 2));
 }
 
 function handlePrototypeFile(fileName: string) {
