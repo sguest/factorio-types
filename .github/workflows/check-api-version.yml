@@ -1,0 +1,69 @@
+name: Check Api Version
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 1 * * *'
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  check-for-new-version:
+    runs-on: ubuntu-latest
+    env:
+      SKIP_ALL: 0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: suisei-cn/actions-download-file@v1.4.0
+        name: Download Runtime API
+        id: runtime-api-file
+        with:
+          url: 'https://lua-api.factorio.com/latest/runtime-api.json'
+          target: temp/
+      - name: Read API File
+        id: read-api-file
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./temp/${{ steps.runtime-api-file.outputs.filename }}
+      - name: Get API version
+        id: api-version
+        run: echo "API_VERSION=${{ fromJson(steps.read-api-file.outputs.content).application_version }}" >> "$GITHUB_OUTPUT"
+      - name: Check if release branch exists
+        run: echo "SKIP_ALL=$(git ls-remote --heads https://github.com/sguest/factorio-types refs/heads/release/${{ steps.api-version.outputs.API_VERSION}} | wc -l)" >> "$GITHUB_ENV"
+      - name: Read package.json
+        if: env.SKIP_ALL == 0
+        id: read-package-json
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./package.json
+      - name: Get current version
+        if: env.SKIP_ALL == 0
+        id: current-version
+        run: echo "CURRENT_VERSION=${{ fromJson(steps.read-package-json.outputs.content).factorioVersion}}" >> "$GITHUB_OUTPUT"
+      - name: Check if newer version
+        if: steps.api-version.outputs.API_VERSION == steps.current-version.outputs.CURRENT_VERSION
+        run: echo "SKIP_ALL=1" >> "$GITHUB_ENV"
+      - name: Setup node
+        if: env.SKIP_ALL == 0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+      - name: Run install
+        if: env.SKIP_ALL == 0
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+      - name: npm run rebuild
+        if: env.SKIP_ALL == 0
+        run: npm run rebuild
+      - name: Create pull request
+        if: env.SKIP_ALL == 0
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: 'Factorio API version ${{ steps.api-version.outputs.API_VERSION }}'
+          branch: 'release/${{ steps.api-version.outputs.API_VERSION }}'
+          title: 'Factorio API version ${{ steps.api-version.outputs.API_VERSION }}'
