@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.93
+// Factorio version 1.1.96
 // API version 4
 
 declare namespace prototype {
@@ -525,7 +525,7 @@ Only one of `draw_as_shadow`, `draw_as_glow` and `draw_as_light` can be true. Th
 
 The path to the sprite file to use.
      */
-    filename: FileName,
+    filename?: FileName,
     
     /**
      * Only loaded if `layers` is not defined.
@@ -568,11 +568,11 @@ If this property exists and high resolution sprites are turned on, this is used 
     /**
      * If this property is present, all Animation definitions have to be placed as entries in the array, and they will all be loaded from there. `layers` may not be an empty table. Each definition in the array may also have the `layers` property.
 
-`animation_speed` and `max_advance` only have to be defined in one layer. All layers will run at the same speed.
+`animation_speed` and `max_advance` of the first layer are used for all layers. All layers will run at the same speed.
 
 If this property is present, all other properties besides `name` and `type` are ignored.
      */
-    layers: Animation[],
+    layers?: Animation[],
     
     /**
      * Only loaded if `layers` is not defined.
@@ -591,7 +591,9 @@ Minimal mode is entered when mod loading fails. You are in it when you see the g
     /**
      * Only loaded if `layers` is not defined.
 
-If `layers` are used, `max_advance` only has to be defined in one layer.
+If `layers` are used, `max_advance` of the first layer is used for all layers.
+
+Maximum amount of frames the animation can move forward in one update.
      */
     max_advance?: number,
     
@@ -735,7 +737,7 @@ interface ArmorPrototype extends ToolPrototype{
     /**
      * What amount of damage the armor takes on what type of damage is incoming.
      */
-    resistances?: Resistances
+    resistances?: Resistance[]
 }
 
 /**
@@ -1819,7 +1821,7 @@ interface ConstructionRobotPrototype extends RobotWithLogisticInterfacePrototype
 }
 
 /**
- * A generic container, such as a chest. Can not be rotated.
+ * A generic container, such as a chest. Cannot be rotated.
  */
 interface ContainerPrototype extends EntityWithOwnerPrototype{
     
@@ -2170,12 +2172,18 @@ interface CustomInputPrototype extends PrototypeBase{
     consuming?: ConsumingType,
     
     /**
-     * The alternative controller (game pad) keybinding for this control. See `key_sequence` for the format.
+     * The alternative controller (game pad) keybinding for this control. See `controller_key_sequence` for the format.
      */
     controller_alternative_key_sequence?: string,
     
     /**
-     * The controller (game pad) keybinding for this control. See `key_sequence` for the format.
+     * The controller (game pad) keybinding for this control. Use "" (empty string) for unassigned.
+
+" + " is used to separate modifier buttons from normal buttons: <code>"controller-righttrigger + controller-a"</code>.
+
+For modifier buttons, the following names are used: "controller-righttrigger", "controller-lefttrigger".
+
+A key binding can contain an unlimited amount of modifier buttons (listed above) but only one normal button (listed below).
      */
     controller_key_sequence?: string,
     
@@ -2214,7 +2222,7 @@ A key binding can contain an unlimited amount of modifier keys (listed above) bu
     /**
      * When a custom-input is linked to a game control it won't show up in the control-settings GUI and will fire when the linked control is pressed.
      */
-    linked_game_control?: string,
+    linked_game_control?: LinkedGameControl,
     
     /**
      * Unique textual identification of the prototype. May not contain a dot, nor exceed a length of 200 characters.
@@ -2772,7 +2780,7 @@ Note, that for buildings, it is customary to leave 0.1 wide border between the e
     created_smoke?: CreateTrivialSmokeEffectItem,
     
     /**
-     * Specification of space needed to see the whole entity. This is used to calculate the correct zoom and positioning in the entity info gui.
+     * Specification of space needed to see the whole entity in GUIs. This is used to calculate the correct zoom and positioning in the entity info gui, for example in the entity tooltip.
      */
     drawing_box?: BoundingBox,
     
@@ -2925,7 +2933,7 @@ When the tile width is odd, the center will be in the center of the tile, when i
     vehicle_impact_sound?: Sound,
     
     /**
-     * May also be defined inside `graphics_set` instead of directly in the entity prototype. This is useful for entities that use the a `graphics_set` property to define their graphics, because then all graphics can be defined in one place.
+     * May also be defined inside `graphics_set` instead of directly in the entity prototype. This is useful for entities that use a `graphics_set` property to define their graphics, because then all graphics can be defined in one place.
 
 {@link Currently only renders | https://forums.factorio.com/100703} for {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype}.
      */
@@ -2970,7 +2978,7 @@ When the tile width is odd, the center will be in the center of the tile, when i
  */
 interface EntityWithHealthPrototype extends EntityPrototype{
     alert_when_damaged?: boolean,
-    attack_reaction?: AttackReactionItem[],
+    attack_reaction?: AttackReactionItem | AttackReactionItem[],
     
     /**
      * Specifies the names of the {@link CorpsePrototype | prototype:CorpsePrototype} to be used when this entity dies.
@@ -3017,7 +3025,7 @@ interface EntityWithHealthPrototype extends EntityPrototype{
     /**
      * See {@link damage | https://wiki.factorio.com/Damage}.
      */
-    resistances?: Resistances
+    resistances?: Resistance[]
 }
 
 /**
@@ -3338,7 +3346,7 @@ interface FluidPrototype extends PrototypeBase{
     /**
      * Whether the fluid should be included in the barrel recipes automatically generated by the base mod.
 
-This property is not read by the game engine itself, but the base mod's data-updates.lua script. This means it is not available to read at runtime.
+This property is not read by the game engine itself, but the base mod's data-updates.lua file. This means it is discarded by the game engine after loading finishes.
      */
     auto_barrel?: boolean,
     
@@ -4962,7 +4970,7 @@ interface MapSettings {
 /**
  * Offers can be added to a market and they are shown when opening the entity. Offers allow to spend items to get research bonuses or items.
  */
-interface MarketPrototype {
+interface MarketPrototype extends EntityWithOwnerPrototype{
     
     /**
      * Whether all forces are allowed to open this market.
@@ -6845,7 +6853,7 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype{
     base_light?: LightDefinition,
     
     /**
-     * Drawn instead of `base_day_sprite` during the night i.e. when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
+     * Drawn instead of `base_day_sprite` during the night, that is when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
      */
     base_night_sprite?: Sprite,
     
@@ -6899,7 +6907,7 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype{
     /**
      * May be 0.
 
-Additional energy used during the night i.e. when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
+Additional energy used during the night, that is when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
      */
     lamp_energy_usage: Energy,
     
@@ -7275,7 +7283,7 @@ Note: The scale that can be defined in the sprite may not behave as expected bec
 }
 
 /**
- * An extremely basic entity with no special functionality. Used for minable rocks.
+ * An extremely basic entity with no special functionality. Used for minable rocks. Cannot be rotated.
  */
 interface SimpleEntityPrototype extends EntityWithHealthPrototype{
     animations?: AnimationVariations,
@@ -7286,9 +7294,9 @@ interface SimpleEntityPrototype extends EntityWithHealthPrototype{
     count_as_rock_for_filtered_deconstruction?: boolean,
     
     /**
-     * Takes priority over `animations`.
+     * Takes priority over `animations`. Only the `north` sprite is used because this entity cannot be rotated.
      */
-    picture?: Sprite,
+    picture?: Sprite4Way,
     
     /**
      * Takes priority over `picture` and `animations`.
@@ -7309,7 +7317,7 @@ interface SimpleEntityPrototype extends EntityWithHealthPrototype{
 }
 
 /**
- * By default, this entity will be a priority target for units/turrets, who will choose to attack it even if it does not block their path. Use {@link SimpleEntityWithOwnerPrototype | prototype:SimpleEntityWithOwnerPrototype} for entities that are only attacked when they block enemies.
+ * By default, this entity will be a priority target for units/turrets, who will choose to attack it even if it does not block their path. Setting {@link EntityWithOwnerPrototype::is_military_target | prototype:EntityWithOwnerPrototype::is_military_target} to `false` will turn this off, which then makes this type equivalent to {@link SimpleEntityWithOwnerPrototype | prototype:SimpleEntityWithOwnerPrototype}.
  */
 interface SimpleEntityWithForcePrototype extends SimpleEntityWithOwnerPrototype{
     
@@ -7321,6 +7329,8 @@ interface SimpleEntityWithForcePrototype extends SimpleEntityWithOwnerPrototype{
 
 /**
  * Has a force, but unlike {@link SimpleEntityWithForcePrototype | prototype:SimpleEntityWithForcePrototype} it is only attacked if the biters get stuck on it (or if {@link EntityWithOwnerPrototype::is_military_target | prototype:EntityWithOwnerPrototype::is_military_target} set to true to make the two entity types equivalent).
+ * 
+ * Can be rotated in 4 directions. `picture` can be used to specify different graphics per direction.
  */
 interface SimpleEntityWithOwnerPrototype extends EntityWithOwnerPrototype{
     animations?: AnimationVariations,
@@ -7333,7 +7343,7 @@ interface SimpleEntityWithOwnerPrototype extends EntityWithOwnerPrototype{
     /**
      * Takes priority over `animations`.
      */
-    picture?: Sprite,
+    picture?: Sprite4Way,
     
     /**
      * Takes priority over `picture` and `animations`.
@@ -7484,9 +7494,9 @@ interface SoundPrototype {
     /**
      * Supported sound file formats are `.ogg (Vorbis)` and `.wav`.
 
-Only loaded if `variations` is not defined.
+Only loaded, and mandatory if `variations` is not defined.
      */
-    filename: FileName,
+    filename?: FileName,
     game_controller_vibration_data?: GameControllerVibrationData,
     
     /**
@@ -7738,11 +7748,11 @@ Only one of `draw_as_shadow`, `draw_as_glow` and `draw_as_light` can be true. Th
     draw_as_shadow?: boolean,
     
     /**
-     * Only loaded if `layers` is not defined.
+     * Only loaded, and mandatory if `layers` is not defined.
 
 The path to the sprite file to use.
      */
-    filename: FileName,
+    filename?: FileName,
     
     /**
      * Only loaded if `layers` is not defined.
