@@ -60,6 +60,15 @@ jobs:
       - name: npm run rebuild
         if: env.SKIP_ALL == 0
         run: npm run rebuild
+      - name: update package version
+        if: env.SKIP_ALL == 0
+        run: npm version patch --no-git-tag-version
+      - uses: tibdex/github-app-token@v1
+        if: env.SKIP_ALL == 0
+        id: generate-token
+        with:
+          app_id: ${{ secrets.TOKEN_APP_ID }}
+          private_key: ${{ secrets.TOKEN_APP_SECRET }}
       - name: Create pull request
         if: env.SKIP_ALL == 0
         uses: peter-evans/create-pull-request@v5
@@ -67,3 +76,4 @@ jobs:
           commit-message: 'Factorio API version ${{ steps.api-version.outputs.API_VERSION }}'
           branch: 'release/${{ steps.api-version.outputs.API_VERSION }}'
           title: 'Factorio API version ${{ steps.api-version.outputs.API_VERSION }}'
+          token: ${{ steps.generate-token.outputs.token }}
