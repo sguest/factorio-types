@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.93
+// Factorio version 1.1.96
 // API version 4
 
 declare namespace prototype {
@@ -188,15 +188,67 @@ interface AnimatedVector {
  * Note that if any frame of the animation is specified from the same source as any other {@link Sprite | prototype:Sprite} or frame of other animation, it will be shared.
  * @example
  * ```
- * animation =
+ * -- simple animation
+ * horizontal_animation =
  * {
- *   filename = "__base__/graphics/entity/beacon/beacon-antenna.png",
- *   width = 54,
- *   height = 50,
- *   line_length = 8,
+ *   filename = "__base__/graphics/entity/steam-engine/steam-engine-H.png",
+ *   width = 176,
+ *   height = 128,
  *   frame_count = 32,
- *   shift = { -0.03125, -1.71875},
- *   animation_speed = 0.5
+ *   line_length = 8,
+ *   shift = {0.03125, -0.15625}
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * -- animation with hr version
+ * horizontal_animation =
+ * {
+ *   filename = "__base__/graphics/entity/steam-engine/steam-engine-H.png",
+ *   width = 176,
+ *   height = 128,
+ *   frame_count = 32,
+ *   line_length = 8,
+ *   shift = {0.03125, -0.15625},
+ *   hr_version =
+ *   {
+ *     filename = "__base__/graphics/entity/steam-engine/hr-steam-engine-H.png",
+ *     width = 352,
+ *     height = 257,
+ *     frame_count = 32,
+ *     line_length = 8,
+ *     shift = {0.03125, -0.1484375},
+ *     scale = 0.5
+ *   }
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * -- animation with layers
+ * horizontal_animation =
+ * {
+ *   layers =
+ *   {
+ *     {
+ *       filename = "__base__/graphics/entity/steam-engine/steam-engine-H.png",
+ *       width = 176,
+ *       height = 128,
+ *       frame_count = 32,
+ *       line_length = 8,
+ *       shift = {0.03125, -0.15625}
+ *     },
+ *     {
+ *       filename = "__base__/graphics/entity/steam-engine/steam-engine-H-shadow.png",
+ *       width = 254,
+ *       height = 80,
+ *       frame_count = 32,
+ *       line_length = 8,
+ *       draw_as_shadow = true,
+ *       shift = {1.5, 0.75}
+ *     }
+ *   }
  * }
  * ```
  *
@@ -208,7 +260,7 @@ interface Animation extends AnimationParameters{
 
 The path to the sprite file to use.
      */
-    filename: FileName,
+    filename?: FileName,
     
     /**
      * Only loaded if `layers` is not defined.
@@ -220,11 +272,11 @@ If this property exists and high resolution sprites are turned on, this is used 
     /**
      * If this property is present, all Animation definitions have to be placed as entries in the array, and they will all be loaded from there. `layers` may not be an empty table. Each definition in the array may also have the `layers` property.
 
-`animation_speed` and `max_advance` only have to be defined in one layer. All layers will run at the same speed.
+`animation_speed` and `max_advance` of the first layer are used for all layers. All layers will run at the same speed.
 
 If this property is present, all other properties, including those inherited from AnimationParameters, are ignored.
      */
-    layers: Animation[],
+    layers?: Animation[],
     
     /**
      * Only loaded if `layers` is not defined.
@@ -356,6 +408,10 @@ Height of one frame in pixels, from 0-8192.
      * Specifies how many pictures are on each horizontal line in the image file. `0` means that all the pictures are in one horizontal line. Once the specified number of pictures are loaded from a line, the pictures from the next line are loaded. This is to allow having longer animations loaded in to Factorio's graphics matrix than the game engine's width limit of 8192px per input file. The restriction on input files is to be compatible with most graphics cards.
      */
     line_length?: number,
+    
+    /**
+     * Maximum amount of frames the animation can move forward in one update. Useful to cap the animation speed on entities where it is variable, such as car animations.
+     */
     max_advance?: number,
     
     /**
@@ -403,12 +459,12 @@ type AnimationVariations = {
     /**
      * The variations are arranged vertically in the file, one row for each variation.
      */
-    sheet: AnimationSheet,
+    sheet?: AnimationSheet,
     
     /**
      * Only loaded if `sheet` is not defined.
      */
-    sheets: AnimationSheet[]
+    sheets?: AnimationSheet[]
 } | Animation | Animation[]
 
 interface AreaTriggerItem extends TriggerItem{
@@ -769,7 +825,7 @@ type AutoplaceSpecification = {
     /**
      * Indicates whether the thing should be placed even if {@link MapGenSettings | runtime:MapGenSettings} do not provide frequency/size/richness for it. (either for the specific prototype or for the control named by AutoplaceSpecification.control).
 
-If true, normal frequency/size/richness (`value=1`) are used in that case.  Otherwise it is treated as if 'none' were selected.
+If true, normal frequency/size/richness (`value=1`) are used in that case. Otherwise it is treated as if 'none' were selected.
      */
     default_enabled?: boolean,
     
@@ -899,7 +955,7 @@ For example, an activation_type of "throw" will result in the tooltip category "
     /**
      * Played during the attack.
      */
-    cyclic_sound: CyclicSound,
+    cyclic_sound?: CyclicSound,
     damage_modifier?: number,
     
     /**
@@ -1345,19 +1401,19 @@ interface BoxSpecification {
     is_whole_box?: boolean,
     
     /**
-     * Only read if `is_whole_box` is false.
+     * Only loaded, and mandatory if `is_whole_box` is `false`.
      */
-    max_side_length: number,
+    max_side_length?: number,
     
     /**
-     * Only read if `is_whole_box` is true.
+     * Only loaded, and mandatory if `is_whole_box` is `true`.
      */
-    side_height: number,
+    side_height?: number,
     
     /**
-     * Only read if `is_whole_box` is true.
+     * Only loaded, and mandatory if `is_whole_box` is `true`.
      */
-    side_length: number,
+    side_length?: number,
     sprite: Sprite
 }
 
@@ -1398,7 +1454,11 @@ Only loaded if `fuel_categories` is not defined.
     fuel_inventory_size: ItemStackIndex,
     light_flicker?: LightFlickeringDefinition,
     smoke?: SmokeSource[],
-    type: 'burner'
+    
+    /**
+     * This is mandatory if the energy source can be loaded as multiple energy source types.
+     */
+    type?: 'burner'
 }
 
 interface ButtonStyleSpecificationBase extends StyleWithClickableGraphicalSetSpecification{
@@ -1449,7 +1509,7 @@ interface CameraStyleSpecification extends EmptyWidgetStyleSpecificationBase{
 type CapsuleAction = /* Loaded when the `type` is `"throw"`. */ ThrowCapsuleAction | /* Loaded when the `type` is `"equipment-remote"`. */ ActivateEquipmentCapsuleAction | /* Loaded when the `type` is `"use-on-self"`. */ UseOnSelfCapsuleAction | /* Loaded when the `type` is `"destroy-cliffs"`. */ DestroyCliffsCapsuleAction | /* Loaded when the `type` is `"artillery-remote"`. */ ArtilleryRemoteCapsuleAction
 
 /**
- * The data for one variation of character animations. {@link CharacterPrototype::animations | prototype:CharacterPrototype::animations}.
+ * The data for one variation of {@link character animations | prototype:CharacterPrototype::animations}.
  */
 interface CharacterArmorAnimation {
     
@@ -1644,6 +1704,7 @@ interface ChartUtilityConstants {
 interface CheckBoxStyleSpecification extends StyleWithClickableGraphicalSetSpecification{
     checkmark?: Sprite,
     disabled_checkmark?: Sprite,
+    disabled_font_color?: Color,
     
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
@@ -1786,7 +1847,7 @@ type CollisionMask = Array</* A standard collision mask layer. */ CollisionMaskL
 type CollisionMaskLayer = 'ground-tile' | 'water-tile' | 'resource-layer' | 'doodad-layer' | 'floor-layer' | 'item-layer' | 'ghost-layer' | 'object-layer' | 'player-layer' | 'train-layer' | 'rail-layer' | 'transport-belt-layer'
 
 /**
- * Table of red, green, blue, and alpha float values between 0 and 1.Alternatively, values can be from 0-255, they are interpreted as such if at least one value is `> 1`.
+ * Table of red, green, blue, and alpha float values between 0 and 1. Alternatively, values can be from 0-255, they are interpreted as such if at least one value is `> 1`.
  * 
  * Color allows the short-hand notation of passing an array of exactly 3 or 4 numbers.
  * 
@@ -1891,7 +1952,7 @@ interface ConnectableEntityGraphics {
 }
 
 /**
- * A constant boolean noise expression, such as a literal boolean. When using a constant number,  it evaluates to true for numbers bigger than zero, anything else evaluates to false.
+ * A constant boolean noise expression, such as a literal boolean. When using a constant number, it evaluates to true for numbers bigger than zero, anything else evaluates to false.
  */
 type ConstantNoiseBoolean = NoiseLiteralBoolean | ConstantNoiseNumber
 
@@ -1960,7 +2021,7 @@ interface CreateEntityTriggerEffectItemBase extends TriggerEffectItem{
     /**
      * If multiple offsets are specified, multiple entities are created. The projectile of the {@link Distractor capsule | https://wiki.factorio.com/Distractor_capsule} uses this property to spawn three Distractors.
      */
-    offsets?: Vector[],
+    offsets?: Vector | Vector[],
     show_in_tooltip?: boolean,
     
     /**
@@ -1996,7 +2057,7 @@ interface CreateParticleTriggerEffectItemBase extends TriggerEffectItem{
     initial_vertical_speed?: number,
     initial_vertical_speed_deviation?: number,
     offset_deviation?: BoundingBox,
-    offsets?: Vector[],
+    offsets?: Vector | Vector[],
     particle_name: ParticleID,
     rotate_offsets?: boolean,
     show_in_tooltip?: boolean,
@@ -2050,7 +2111,7 @@ interface CreateTrivialSmokeEffectItem extends TriggerEffectItem{
     initial_height?: number,
     max_radius?: number,
     offset_deviation?: BoundingBox,
-    offsets?: Vector[],
+    offsets?: Vector | Vector[],
     smoke_name: TrivialSmokeID,
     speed?: Vector,
     speed_from_center?: number,
@@ -2191,7 +2252,7 @@ type DamageTypeID = string
  * 
  * If there is only one tuple, it means that the LUT will be used all the time, regardless of the value of the first member of the tuple.
  * 
- * The second member of the tuple is a lookup table (LUT) for the color which maps the original color to a position in the sprite where is the replacement color is found. The file pointed to by the filename must be a sprite of size 256×16 or 16×256.
+ * The second member of the tuple is a lookup table (LUT) for the color which maps the original color to a position in the sprite where is the replacement color is found. The file pointed to by the filename must be a sprite of size 256×16.
  * @example
  * ```
  * color_lookup = {{1, "identity"}}
@@ -2309,7 +2370,7 @@ interface DifficultySettings {
     technology_difficulty: number,
     
     /**
-     * Optional, defaults to 1. - Must be >= 0.001 and <= 1000.
+     * Must be >= 0.001 and <= 1000.
      */
     technology_price_multiplier?: number
 }
@@ -2420,7 +2481,11 @@ interface ElectricEnergySource extends BaseEnergySource{
      * The rate at which energy can be provided, to the network, from the energy buffer. `0` means no transfer.
      */
     output_flow_limit?: Energy,
-    type: 'electric',
+    
+    /**
+     * This is mandatory if the energy source can be loaded as multiple energy source types.
+     */
+    type?: 'electric',
     usage_priority: ElectricUsagePriority
 }
 
@@ -2928,7 +2993,7 @@ interface FastReplaceTipTrigger {
  * 
  * - **core**: A path starting with `__core__` will access the resources in the data/core directory, these resources are always accessible regardless of mod specifications.
  * 
- * - **base**: A path starting with __base__ will access the resources in the base mod in data/base directory. These resources are usually available, as long as the base mod isn't removed/deactivated.
+ * - **base**: A path starting with `__base__` will access the resources in the base mod in data/base directory. These resources are usually available, as long as the base mod isn't removed/deactivated.
  * 
  * - **mod path**: The format `__<mod-name>__` is placeholder for root of any other mod (mods/<mod-name>), and is accessible as long as the mod is active.
  * @example
@@ -2994,19 +3059,9 @@ interface FluidBox {
     /**
      * Base level is the elevation of the invisible fluid box. `0` is ground level.
 
-`-1` puts the top of the fluid box at the bottom of a pipe connection (base_level `0`, height `1`), so fluid "falls" in to it, and can't get out.
+For example, if the base level is `-1` and the height is `1`, it puts the top of the fluid box at the bottom of a pipe connection with base_level `0` and height `1`. This means fluid "falls" in to the fluid box, and can't get out.
 
-`1` puts the bottom of the fluid box at the top of a pipe connection, so fluid "falls" out of it, but fluids already outside cannot get into it.
-
-In other words:
-
-- `1` = output only (and will attempt to empty as fast as possible)
-
-- `-1` = input only (and will attempt to fill as fast as possible)
-
-- `0` means fluids can freely flow in and out (and like a pipe, will balance to the level of the pipe next to it)
-
-Having a `-1` or `1` improperly set on an output or input, respectively, will cause issues like output fluid not leaving the building, or input fluid not entering, regardless of fluid levels in the pipe or fluid box.
+For example, if the base level is `1`, it puts the bottom of the fluid box at the top of a pipe connection with base_level `0` and height `1`. This means fluid "falls" out of the fluid box, but fluids already outside can't get into it.
      */
     base_level?: number,
     
@@ -3102,6 +3157,8 @@ In those cases, this property determines whether the fluid should be destroyed, 
     
     /**
      * `0` means unlimited maximum temperature. If specified while `scale_fluid_usage` is `false` and `fluid_usage_per_tick` is not specified, the game will use this value to calculate `fluid_usage_per_tick`.
+
+Only loaded if `burns_fluid` is `false`.
      */
     maximum_temperature?: number,
     
@@ -3151,7 +3208,7 @@ If this FluidIngredientPrototype is used in a recipe, the `catalyst_amount` is c
     catalyst_amount?: number,
     
     /**
-     * Used to specify which {@link CraftingMachinePrototype::fluid_boxes | prototype:CraftingMachinePrototype::fluid_boxes} this ingredient should use. It will use this one fluidbox.
+     * Used to specify which {@link CraftingMachinePrototype::fluid_boxes | prototype:CraftingMachinePrototype::fluid_boxes} this ingredient should use. It will use this one fluidbox. The index is 1-based and separate for input and output fluidboxes.
      */
     fluidbox_index?: number,
     
@@ -3209,7 +3266,7 @@ If this FluidProductPrototype is used in a recipe, the `catalyst_amount` is calc
     catalyst_amount?: number,
     
     /**
-     * Used to specify which {@link CraftingMachinePrototype::fluid_boxes | prototype:CraftingMachinePrototype::fluid_boxes} this product should use. It will use this one fluidbox.
+     * Used to specify which {@link CraftingMachinePrototype::fluid_boxes | prototype:CraftingMachinePrototype::fluid_boxes} this product should use. It will use this one fluidbox. The index is 1-based and separate for input and output fluidboxes.
      */
     fluidbox_index?: number,
     
@@ -3360,7 +3417,6 @@ interface FrameStyleSpecification extends BaseStyleSpecification{
     background_graphical_set?: ElementImageSet,
     border?: BorderImageSet,
     drag_by_title?: boolean,
-    flow_style?: FlowStyleSpecification,
     graphical_set?: ElementImageSet,
     header_background?: ElementImageSet,
     header_filler_style?: EmptyWidgetStyleSpecification,
@@ -3693,7 +3749,7 @@ Specifies the scale of the icon on the GUI scale. A scale of `2` means that the 
 }
 
 /**
- * Icons of reduced size will be used at decreased scale. 0 or 1 mipmaps is a single image. The file must contain half-size images with a geometric-ratio, for each mipmap level. Each next level is aligned to the upper-left corner. Example sequence: `128x128@(0,0)`, `64x64@(128,0)`, `32x32@(196,0)` is three mipmaps.
+ * Icons of reduced size will be used at decreased scale. 0 or 1 mipmaps is a single image. The file must contain half-size images with a geometric-ratio, for each mipmap level. Each next level is aligned to the upper-left corner, with no extra padding. Example sequence: `128x128@(0,0)`, `64x64@(128,0)`, `32x32@(192,0)` is three mipmaps.
  * 
  * See {@link here | https://factorio.com/blog/post/fff-291} for more about the visual effects of icon mipmaps.
  */
@@ -4036,9 +4092,9 @@ type LightDefinition = {
     minimum_darkness?: number,
     
     /**
-     * Only loaded if `type` is `"oriented"`.
+     * Only loaded, and mandatory if `type` is `"oriented"`.
      */
-    picture: Sprite,
+    picture?: Sprite,
     
     /**
      * Only loaded if `type` is `"oriented"`.
@@ -4067,9 +4123,9 @@ type LightDefinition = {
     minimum_darkness?: number,
     
     /**
-     * Only loaded if `type` is `"oriented"`.
+     * Only loaded, and mandatory if `type` is `"oriented"`.
      */
-    picture: Sprite,
+    picture?: Sprite,
     
     /**
      * Only loaded if `type` is `"oriented"`.
@@ -4168,6 +4224,11 @@ interface LinkedBeltStructure {
     direction_out_side_loading?: Sprite4Way,
     front_patch?: Sprite4Way
 }
+
+/**
+ * The internal name of a game control (key binding).
+ */
+type LinkedGameControl = 'action-bar-select-page-1' | 'action-bar-select-page-10' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'activate-tooltip' | 'add-station' | 'add-temporary-station' | 'alt-zoom-in' | 'alt-zoom-out' | 'build' | 'build-ghost' | 'build-with-obstacle-avoidance' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'clear-cursor' | 'confirm-gui' | 'confirm-message' | 'connect-train' | 'controller-gui-crafting-tab' | 'controller-gui-logistics-tab' | 'copy' | 'copy-entity-settings' | 'craft' | 'craft-5' | 'craft-all' | 'cursor-split' | 'cut' | 'cycle-blueprint-backwards' | 'cycle-blueprint-forwards' | 'cycle-clipboard-backwards' | 'cycle-clipboard-forwards' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'debug-toggle-atlas-gui' | 'debug-toggle-basic' | 'debug-toggle-debug-settings' | 'decrease-ui-scale' | 'disconnect-train' | 'drag-map' | 'drop-cursor' | 'editor-clone-item' | 'editor-delete-item' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-remove-scripting-object' | 'editor-reset-speed' | 'editor-set-clone-brush-destination' | 'editor-set-clone-brush-source' | 'editor-speed-down' | 'editor-speed-up' | 'editor-switch-to-surface' | 'editor-tick-once' | 'editor-toggle-pause' | 'fast-entity-split' | 'fast-entity-transfer' | 'flip-blueprint-horizontal' | 'flip-blueprint-vertical' | 'focus-search' | 'increase-ui-scale' | 'inventory-split' | 'inventory-transfer' | 'larger-terrain-building-area' | 'logistic-networks' | 'mine' | 'move-down' | 'move-left' | 'move-right' | 'move-up' | 'next-active-quick-bar' | 'next-player-in-replay' | 'next-weapon' | 'open-character-gui' | 'open-gui' | 'open-item' | 'open-prototype-explorer-gui' | 'open-prototypes-gui' | 'open-technology-gui' | 'open-trains-gui' | 'order-to-follow' | 'paste' | 'paste-entity-settings' | 'pause-game' | 'pick-item' | 'pick-items' | 'place-in-chat' | 'place-ping' | 'previous-active-quick-bar' | 'previous-mod' | 'previous-technology' | 'production-statistics' | 'quick-bar-button-1' | 'quick-bar-button-1-secondary' | 'quick-bar-button-10' | 'quick-bar-button-10-secondary' | 'quick-bar-button-2' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9' | 'quick-bar-button-9-secondary' | 'remove-pole-cables' | 'reset-ui-scale' | 'reverse-rotate' | 'reverse-select' | 'alt-reverse-select' | 'rotate' | 'rotate-active-quick-bars' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'shoot-enemy' | 'shoot-selected' | 'show-info' | 'smaller-terrain-building-area' | 'smart-pipette' | 'stack-split' | 'stack-transfer' | 'toggle-blueprint-library' | 'toggle-console' | 'toggle-driving' | 'toggle-filter' | 'toggle-gui-debug' | 'toggle-gui-glows' | 'toggle-gui-shadows' | 'toggle-gui-style-view' | 'toggle-map' | 'toggle-menu' | 'undo' | 'zoom-in' | 'zoom-out'
 
 interface ListBoxStyleSpecification extends BaseStyleSpecification{
     item_style?: ButtonStyleSpecification,
@@ -4456,7 +4517,7 @@ interface MapGenSettings {
 /**
  * A floating point number specifying an amount.
  * 
- * For backwards compatibility, MapGenSizes can also be specified as one of the following strings, which will be converted to a number (when queried, a number will always be returned):
+ * For backwards compatibility, MapGenSizes can also be specified as one of the following strings, which will be converted to a number:
  * 
  * Each of the values in a triplet (such as "low", "small", and "poor") are synonymous. In-game the values can be set from `0.166` to `6` via the GUI (respective to the percentages), while `0` is used to disable the autoplace control.
  */
@@ -5197,7 +5258,7 @@ interface NoiseFunctionRandomPenalty {
 interface NoiseFunctionRidge {
     
     /**
-     * The first argument is the  number to be ridged, the second is the lower limit and the third is the upper limit.
+     * The first argument is the number to be ridged, the second is the lower limit and the third is the upper limit.
      */
     arguments: 
 [    NoiseNumber,
@@ -5738,13 +5799,13 @@ interface PipeConnectionDefinition {
     position?: Vector,
     
     /**
-     * Only loaded if `position` is not defined.
+     * Only loaded, and mandatory if `position` is not defined.
 
 Where pipes can connect to this fluidbox, depending on the entity direction.
 
 Table must have 4 members, which are 4 explicit positions corresponding to the 4 directions of entity. Positions must correspond to directions going one after another.
      */
-    positions: Vector[],
+    positions?: Vector[],
     type?: 'input' | 'input-output' | 'output'
 }
 
@@ -5759,10 +5820,26 @@ interface PipePictures {
     ending_right: Sprite,
     ending_up: Sprite,
     fluid_background: Sprite,
+    
+    /**
+     * Visualizes the flow of the fluid in the pipe. Drawn when the fluid's temperature is above {@link FluidPrototype::gas_temperature | prototype:FluidPrototype::gas_temperature}.
+     */
     gas_flow: Animation,
+    
+    /**
+     * Visualizes the flow of the fluid in the pipe. Drawn when `(fluid_temp - fluid_min_temp) / (fluid_max_temp - fluid_min_temp)` is larger than `2/3` and the fluid's temperature is below {@link FluidPrototype::gas_temperature | prototype:FluidPrototype::gas_temperature}.
+     */
     high_temperature_flow: Sprite,
     horizontal_window_background: Sprite,
+    
+    /**
+     * Visualizes the flow of the fluid in the pipe. Drawn when `(fluid_temp - fluid_min_temp) / (fluid_max_temp - fluid_min_temp)` is less than or equal to `1/3` and the fluid's temperature is below {@link FluidPrototype::gas_temperature | prototype:FluidPrototype::gas_temperature}.
+     */
     low_temperature_flow: Sprite,
+    
+    /**
+     * Visualizes the flow of the fluid in the pipe. Drawn when `(fluid_temp - fluid_min_temp) / (fluid_max_temp - fluid_min_temp)` is larger than `1/3` and less than or equal to `2/3` and the fluid's temperature is below {@link FluidPrototype::gas_temperature | prototype:FluidPrototype::gas_temperature}.
+     */
     middle_temperature_flow: Sprite,
     straight_horizontal: Sprite,
     straight_horizontal_window: Sprite,
@@ -5903,6 +5980,7 @@ interface ProgressBarStyleSpecification extends BaseStyleSpecification{
     font?: string,
     font_color?: Color,
     other_colors?: OtherColors[],
+    side_text_padding?: number,
     type: 'progressbar_style'
 }
 
@@ -6360,7 +6438,7 @@ interface ResearchTechnologyTipTrigger {
  * ```
  *
  */
-type Resistances = Array<{
+interface Resistance {
     
     /**
      * The {@link flat resistance | https://wiki.factorio.com/Damage#Decrease.2C_or_.22flat.22_resistance} to the given damage type. (Higher is better)
@@ -6372,7 +6450,7 @@ type Resistances = Array<{
      */
     percent?: number,
     type: DamageTypeID
-}>
+}
 
 /**
  * The name of a {@link ResourceCategory | prototype:ResourceCategory}.
@@ -6428,11 +6506,11 @@ Direction count to {@link Direction | prototype:Direction} (animation sequence n
     direction_count: number,
     
     /**
-     * Only loaded if `layers`, `stripes`, and `filenames` are not defined.
+     * Only loaded, and mandatory if `layers`, `stripes`, and `filenames` are not defined.
 
 The path to the sprite file to use.
      */
-    filename: FileName,
+    filename?: FileName,
     
     /**
      * Only loaded if both `layers` and `stripes` are not defined.
@@ -6615,9 +6693,9 @@ The path to the sprite file to use.
     filename?: FileName,
     
     /**
-     * Only loaded if both `layers` and `filename` are not defined.
+     * Only loaded, and mandatory if both `layers` and `filename` are not defined.
      */
-    filenames: FileName[],
+    filenames?: FileName[],
     
     /**
      * Only loaded if `layers` is not defined.
@@ -6960,9 +7038,9 @@ type Sound = {
     /**
      * Supported sound file formats are `.ogg (Vorbis)` and `.wav`.
 
-Only loaded if `variations` is not defined.
+Only loaded, and mandatory if `variations` is not defined.
      */
-    filename: FileName,
+    filename?: FileName,
     game_controller_vibration_data?: GameControllerVibrationData,
     
     /**
@@ -7225,17 +7303,24 @@ interface SpotNoiseArguments {
  * When there is more than one sprite or {@link Animation | prototype:Animation} frame with the same source file and dimensions/position in the game, they all share the same memory.
  * @example
  * ```
- * picture = {
- *   filename = "__base__/graphics/entity/basic-accumulator/basic-accumulator.png",
- *   priority = "extra-high",
- *   width = 124,
- *   height = 103,
- *   shift = {0.7, -0.2}
+ * picture_set_enemy =
+ * {
+ *   filename = "__base__/graphics/entity/land-mine/land-mine-set-enemy.png",
+ *   priority = "medium",
+ *   width = 32,
+ *   height = 32
  * }
  * ```
  *
  */
 interface Sprite extends SpriteParameters{
+    
+    /**
+     * Only loaded, and mandatory if `layers` is not defined.
+
+The path to the sprite file to use.
+     */
+    filename?: FileName,
     
     /**
      * Only loaded if `layers` is not defined.
@@ -7274,19 +7359,19 @@ Same as `slice`, but this specifies only how many slices there are on the y-axis
 }
 
 /**
- * A map of sprites for all 4 directions of the entity.  If this is loaded as a single Sprite, it applies to all directions.
+ * A map of sprites for all 4 directions of the entity. If this is loaded as a single Sprite, it applies to all directions.
  */
 type Sprite4Way = {
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    east: Sprite,
+    east?: Sprite,
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    north: Sprite,
+    north?: Sprite,
     
     /**
      * Only loaded if `sheets` is not defined.
@@ -7295,14 +7380,14 @@ type Sprite4Way = {
     sheets?: SpriteNWaySheet[],
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    south: Sprite,
+    south?: Sprite,
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    west: Sprite
+    west?: Sprite
 } | Sprite
 
 /**
@@ -7311,24 +7396,24 @@ type Sprite4Way = {
 interface Sprite8Way {
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    east: Sprite,
+    east?: Sprite,
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    north: Sprite,
+    north?: Sprite,
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    north_east: Sprite,
+    north_east?: Sprite,
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    north_west: Sprite,
+    north_west?: Sprite,
     
     /**
      * Only loaded if `sheets` is not defined.
@@ -7337,24 +7422,24 @@ interface Sprite8Way {
     sheets?: SpriteNWaySheet[],
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    south: Sprite,
+    south?: Sprite,
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    south_east: Sprite,
+    south_east?: Sprite,
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    south_west: Sprite,
+    south_west?: Sprite,
     
     /**
-     * Only loaded if both `sheets` and `sheet` are not defined.
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
      */
-    west: Sprite
+    west?: Sprite
 }
 
 /**
@@ -8311,6 +8396,7 @@ interface TransportBeltConnectorFrame {
     frame_main_scanner_vertical_end_shift: Vector,
     frame_main_scanner_vertical_rotation: RealOrientation,
     frame_main_scanner_vertical_start_shift: Vector,
+    frame_main_scanner_vertical_y_scale: number,
     frame_shadow: AnimationVariations
 }
 
@@ -8663,10 +8749,10 @@ interface UsePipetteTipTrigger {
 }
 
 /**
- * A vector is a two-element array containing the x and y components. Unlike Positions, vectors don't use the x, y keys. Positive x goes east, positive y goes south. See also: {@link Runtime Vector | runtime:Vector}.
+ * A vector is a two-element array or dictionary containing the x and y components. Positive x goes east, positive y goes south.
  * @example
  * ```
- * vector = {0, 12}
+ * shift = {0, 12}
  * ```
  *
  * @example
@@ -8674,8 +8760,16 @@ interface UsePipetteTipTrigger {
  * right = {1.0, 0.5}
  * ```
  *
+ * @example
+ * ```
+ * vector = {x = 2.3, y = 3.4}
+ * ```
+ *
  */
-type Vector = 
+type Vector = {
+    x: number,
+    y: number
+} | 
 [    number,
     number
 ]
