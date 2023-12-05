@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.96
+// Factorio version 1.1.100
 // API version 4
 
 declare namespace runtime {
@@ -3198,6 +3198,15 @@ interface LuaEntity extends LuaControl {
     readonly belt_neighbours: {[key: string]: LuaEntity[]}
 
     /**
+     * Gives what is the current shape of a transport-belt.
+     * @remarks
+     * Can also be used on entity ghost if it contains transport-belt
+     * Applies to subclasses: TransportBelt
+     *
+     */
+    readonly belt_shape: 'straight' | 'left' | 'right'
+
+    /**
      * Whether this underground belt goes into or out of the ground.
      * @remarks
      * Applies to subclasses: TransportBeltToGround
@@ -3615,6 +3624,11 @@ interface LuaEntity extends LuaControl {
      *
      */
     readonly ghost_unit_number?: number
+
+    /**
+     * Returns a {@link rich text | https://wiki.factorio.com/Rich_text} string containing this entity's position and surface name as a gps tag. Printing it will ping the location of the entity.
+     */
+    readonly gps_tag: string
 
     /**
      * The graphics variation for this entity. `nil` if this entity doesn't use graphics variations.
