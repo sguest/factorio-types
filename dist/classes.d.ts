@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.100
+// Factorio version 1.1.101
 // API version 4
 
 declare namespace runtime {
@@ -2616,11 +2616,11 @@ interface LuaEntity extends LuaControl {
      * @remarks
      * Applies to subclasses: EntityGhost
      *
-     * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
+     * @param flag - The flag to test.
      * @returns `true` if the entity has the given flag set.
      */
     ghost_has_flag(this: void,
-        flag: string): boolean
+        flag: EntityPrototypeFlag): boolean
 
     /**
      * Has this unit been assigned a command?
@@ -2635,11 +2635,11 @@ interface LuaEntity extends LuaControl {
      * @remarks
      * `entity.has_flag(f)` is a shortcut for `entity.prototype.has_flag(f)`.
      *
-     * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
+     * @param flag - The flag to test.
      * @returns `true` if this entity has the given flag set.
      */
     has_flag(this: void,
-        flag: string): boolean
+        flag: EntityPrototypeFlag): boolean
 
     /**
      * All methods and properties that this object supports.
@@ -3190,12 +3190,23 @@ interface LuaEntity extends LuaControl {
     readonly beacons_count?: number
 
     /**
-     * The belt connectable neighbours of this belt connectable entity. Only entities that input to or are outputs of this entity. Does not contain the other end of an underground belt, see {@link LuaEntity::neighbours | runtime:LuaEntity::neighbours} for that. This is a dictionary with `"inputs"`, `"outputs"` entries that are arrays of transport belt connectable entities, or empty tables if no entities.
+     * The belt connectable neighbours of this belt connectable entity. Only entities that input to or are outputs of this entity. Does not contain the other end of an underground belt, see {@link LuaEntity::neighbours | runtime:LuaEntity::neighbours} for that.
      * @remarks
      * Applies to subclasses: TransportBeltConnectable
      *
      */
-    readonly belt_neighbours: {[key: string]: LuaEntity[]}
+    readonly belt_neighbours: {
+        
+        /**
+         * Array of transport belt connectable entities.
+         */
+        inputs: LuaEntity[],
+        
+        /**
+         * Array of transport belt connectable entities.
+         */
+        outputs: LuaEntity[]
+    }
 
     /**
      * Gives what is the current shape of a transport-belt.
@@ -4414,11 +4425,11 @@ interface LuaEntityPrototype {
 
     /**
      * Test whether this entity prototype has a certain flag set.
-     * @param flag - The flag to test. See [EntityPrototypeFlags](runtime:EntityPrototypeFlags) for a list of flags.
+     * @param flag - The flag to test.
      * @returns `true` if this prototype has the given flag set.
      */
     has_flag(this: void,
-        flag: string): boolean
+        flag: EntityPrototypeFlag): boolean
 
     /**
      * All methods and properties that this object supports.
@@ -4638,6 +4649,14 @@ interface LuaEntityPrototype {
      *
      */
     readonly belt_speed?: number
+
+    /**
+     * The boiler operation mode of this boiler prototype.
+     * @remarks
+     * Applies to subclasses: Boiler
+     *
+     */
+    readonly boiler_mode?: 'heat-water-inside' | 'output-to-separate-pipe'
 
     /**
      * The braking force of this vehicle prototype.
@@ -8405,6 +8424,12 @@ interface LuaGameScript {
         path: string): void
 
     /**
+     * Direct access to Trains Pathfinder. Allows to search rail paths or querying which stops are accessible
+     */
+    request_train_path(this: void,
+        request: TrainPathFinderRequest): TrainPathFinderPathResult | TrainPathAnyGoalResult | TrainPathAllGoalsResult
+
+    /**
      * Reset scenario state (game_finished, player_won, etc.).
      */
     reset_game_state(this: void): void
@@ -9326,8 +9351,8 @@ interface LuaGuiElement {
      * @remarks
      * Applies to subclasses: textfield,text-box
      *
-     * @param end - The index of the last character to select
-     * @param start - The index of the first character to select
+     * @param end_index - The index of the last character to select
+     * @param start_index - The index of the first character to select
      * @example
      * Select the characters `amp` from `example`: 
      * ```
@@ -9342,8 +9367,8 @@ interface LuaGuiElement {
      *
      */
     select(this: void,
-        start: number,
-        end: number): void
+        start_index: number,
+        end_index: number): void
 
     /**
      * Selects all the text in this textbox.
@@ -9577,6 +9602,11 @@ interface LuaGuiElement {
      *
      */
     elem_filters?: ItemPrototypeFilter | TilePrototypeFilter | EntityPrototypeFilter | FluidPrototypeFilter | RecipePrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | TechnologyPrototypeFilter
+
+    /**
+     * The element tooltip to display when hovering over this element, or `nil`.
+     */
+    elem_tooltip?: ElemID
 
     /**
      * The elem type of this choose-elem-button.
@@ -10390,10 +10420,10 @@ interface LuaItemPrototype {
 
     /**
      * Does this prototype have a flag enabled?
-     * @param flag - The flag to check. Can be one of [ItemPrototypeFlags](runtime:ItemPrototypeFlags). Any other value will cause an error.
+     * @param flag - The flag to check.
      */
     has_flag(this: void,
-        flag: string): boolean
+        flag: ItemPrototypeFlag): boolean
 
     /**
      * All methods and properties that this object supports.
@@ -12048,18 +12078,16 @@ interface LuaLogisticNetwork {
     /**
      * Get the amount of items of the given type indexed by the storage member.
      * @param item - Item name to check.
-     * @returns A mapping of member types ("storage", "passive-provider", "buffer", "active-provider") to the number available in the members.
      */
     get_supply_counts(this: void,
-        item: string): {[key: string]: number}
+        item: string): LogisticsNetworkSupplyCounts
 
     /**
      * Gets the logistic points with of the given type indexed by the storage member.
      * @param item - Item name to check.
-     * @returns A mapping of member types ("storage", "passive-provider", "buffer", "active-provider") to an array of LuaLogisticPoint.
      */
     get_supply_points(this: void,
-        item: string): {[key: string]: LuaLogisticPoint[]}
+        item: string): LogisticsNetworkSupplyPoints
 
     /**
      * All methods and properties that this object supports.
@@ -16561,8 +16589,8 @@ interface LuaSurface {
         }): LuaEntity[]
 
     /**
-     * Find an entity of the given type at the given position. This checks both the exact position and the bounding box of the entity.
-     * @param entity - Entity to look for.
+     * Find an entity of the given name at the given position. This checks both the exact position and the bounding box of the entity.
+     * @param entity - Name of the entity to look for.
      * @param position - Coordinates to look at.
      * @example
      * ```
@@ -17778,9 +17806,26 @@ interface LuaTrain {
     readonly killed_players: {[key: number]: number}
 
     /**
-     * Arrays of locomotives. The result is two arrays, indexed by `"front_movers"` and `"back_movers"` containing the locomotives. E.g. `{front_movers={loco1, loco2}, back_movers={loco3}}`.
+     * Locomotives of the train.
+     * @example
+     * ```
+     * -- called on a LuaTrain with 3 locomotives, it returns 3 LuaEntities:
+     * train.locomotives -- => {front_movers = {loco1, loco2}, back_movers = {loco3}}
+     * ```
+     *
      */
-    readonly locomotives: {[key: string]: LuaEntity[]}
+    readonly locomotives: {
+        
+        /**
+         * Array of locomotives.
+         */
+        back_movers: LuaEntity[],
+        
+        /**
+         * Array of locomotives.
+         */
+        front_movers: LuaEntity[]
+    }
 
     /**
      * When `true`, the train is explicitly controlled by the player or script. When `false`, the train moves autonomously according to its schedule.
@@ -18436,6 +18481,11 @@ interface LuaGuiElementAddParams {
      * Text displayed on the child element. For frames, this is their title. For other elements, like buttons or labels, this is the content. Whilst this attribute may be used on all elements, it doesn't make sense for tables and flows as they won't display it.
      */
     'caption'?: LocalisedString
+
+    /**
+     * Elem tooltip of the child element. Will be displayed above `tooltip`.
+     */
+    'elem_tooltip'?: ElemID
 
     /**
      * Whether the child element is enabled. Defaults to `true`.

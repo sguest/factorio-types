@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.100
+// Factorio version 1.1.101
 // API version 4
 
 declare namespace prototype {
@@ -446,7 +446,7 @@ When using an array of AmmoTypes, they have the additional {@link AmmoType::sour
 }
 
 /**
- * A turret that consumes ammo items.
+ * A turret that consumes {@link ammo items | prototype:AmmoItemPrototype}.
  */
 interface AmmoTurretPrototype extends TurretPrototype{
     automated_ammo_count: ItemCountType,
@@ -2563,7 +2563,7 @@ Max value is 64.
 }
 
 /**
- * A turret that consumes electricity as ammo.
+ * A turret that uses electricity as ammunition.
  */
 interface ElectricTurretPrototype extends TurretPrototype{
     energy_source: ElectricEnergySource | VoidEnergySource
@@ -2629,7 +2629,7 @@ interface EnemySpawnerPrototype extends EntityWithOwnerPrototype{
     spawn_decorations_on_expansion?: boolean,
     
     /**
-     * Ticks for cooldown after unit is spawned
+     * Ticks for cooldown after unit is spawned. The first member of the tuple is min, the second member of the tuple is max.
      */
     spawning_cooldown: 
 [    number,
@@ -2890,7 +2890,7 @@ The item count specified here can't be larger than the stack size of that item.
     /**
      * Specification of the entity selection area. When empty the entity will have no selection area (and thus is not selectable).
 
-The selection box is usually a little bit bigger than the collision box, for tileable entities (like buildings) it should match the tile size of the building.
+The selection box is usually a little bit bigger than the collision box. For tileable entities (like buildings) it should match the tile size of the building.
      */
     selection_box?: BoundingBox,
     
@@ -3502,12 +3502,12 @@ interface FluidStreamPrototype extends EntityPrototype{
 }
 
 /**
- * A turret that consumes fluid as ammo.
+ * A turret that uses {@link fluid | prototype:FluidPrototype} as ammunition.
  */
 interface FluidTurretPrototype extends TurretPrototype{
     
     /**
-     * Before an turret that was out of ammo is able to fire again, the `fluid_buffer_size` must fill to this proportion.
+     * Before an turret that was out of fluid ammunition is able to fire again, the `fluid_buffer_size` must fill to this proportion.
      */
     activation_buffer_ratio: number,
     
@@ -3528,6 +3528,10 @@ interface FluidTurretPrototype extends TurretPrototype{
     muzzle_light?: LightDefinition,
     not_enough_fuel_indicator_light?: LightDefinition,
     not_enough_fuel_indicator_picture?: Sprite4Way,
+    
+    /**
+     * The sprite will be drawn on top of fluid turrets that are out of fluid ammunition. If the `out_of_ammo_alert_icon` is not set, {@link UtilitySprites::fluid_icon | prototype:UtilitySprites::fluid_icon} will be used instead.
+     */
     out_of_ammo_alert_icon?: Sprite,
     prepared_muzzle_animation_shift?: AnimatedVector,
     preparing_muzzle_animation_shift?: AnimatedVector,
@@ -4195,7 +4199,9 @@ Mandatory if `icons` is not defined, or if `icon_size` is not specified for all 
     open_sound?: Sound,
     
     /**
-     * Used to give the item multiple different icons so that they look less uniform on belts etc. For inventory icons and similar, `icon/icons` will be used. Maximum number of variations is 16.
+     * Used to give the item multiple different icons so that they look less uniform on belts. For inventory icons and similar, `icon/icons` will be used. Maximum number of variations is 16.
+
+When using sprites of size `64` (same as base game icons), the `scale` should be set to 0.25.
      */
     pictures?: SpriteVariations,
     place_as_tile?: PlaceAsTile,
@@ -8577,7 +8583,7 @@ interface TransportBeltConnectablePrototype extends EntityWithOwnerPrototype{
     ends_with_stopper?: boolean,
     
     /**
-     * Transport belt connectable entities cannot have the "placeable-off-grid" flag specified.
+     * Transport belt connectable entities cannot have any of the following flags: "placeable-off-grid", "building-direction-8-way".
      */
     flags?: EntityPrototypeFlags,
     
@@ -9579,6 +9585,10 @@ interface UtilitySprites extends PrototypeBase{
     export: Sprite,
     export_slot: Sprite,
     favourite_server_icon: Sprite,
+    
+    /**
+     * The sprite will be drawn on top of {@link fluid turrets | prototype:FluidTurretPrototype} that are out of fluid ammunition and don't have {@link FluidTurretPrototype::out_of_ammo_alert_icon | prototype:FluidTurretPrototype::out_of_ammo_alert_icon} set.
+     */
     fluid_icon: Sprite,
     fluid_indication_arrow: Sprite,
     fluid_indication_arrow_both_ways: Sprite,
