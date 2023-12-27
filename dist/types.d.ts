@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.100
+// Factorio version 1.1.101
 // API version 4
 
 declare namespace prototype {
@@ -454,6 +454,67 @@ interface AnimationSheet extends AnimationParameters{
     variation_count: number
 }
 
+/**
+ * @example
+ * ```
+ * -- array of animations
+ * animations =
+ * {
+ *   {
+ *     filename = "__base__/graphics/entity/explosion-gunshot/explosion-gunshot.png",
+ *     draw_as_glow = true,
+ *     priority = "extra-high",
+ *     width = 34,
+ *     height = 38,
+ *     frame_count = 2,
+ *     animation_speed = 1.5,
+ *     shift = {0, 0}
+ *   },
+ *   {
+ *     filename = "__base__/graphics/entity/explosion-gunshot/explosion-gunshot.png",
+ *     draw_as_glow = true,
+ *     priority = "extra-high",
+ *     width = 34,
+ *     height = 38,
+ *     x = 34 * 2,
+ *     frame_count = 2,
+ *     animation_speed = 1.5,
+ *     shift = {0, 0}
+ *   },
+ *   -- [...]
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * -- animation sheet using "sheet"
+ * pictures =
+ * {
+ *   sheet =
+ *   {
+ *     filename = "__base__/graphics/entity/character/footprints.png",
+ *     line_length = 2,
+ *     frame_count = 2,
+ *     width = 15,
+ *     height = 11,
+ *     shift = util.by_pixel(0.5, 0.5),
+ *     variation_count = 8,
+ *     hr_version =
+ *     {
+ *       filename = "__base__/graphics/entity/character/hr-footprints.png",
+ *       line_length = 2,
+ *       frame_count = 2,
+ *       width = 30,
+ *       height = 22,
+ *       shift = util.by_pixel(0.25, 0.25),
+ *       scale = 0.5,
+ *       variation_count = 8
+ *     }
+ *   }
+ * }
+ * ```
+ *
+ */
 type AnimationVariations = {
     
     /**
@@ -1456,7 +1517,7 @@ Only loaded if `fuel_categories` is not defined.
     smoke?: SmokeSource[],
     
     /**
-     * This is mandatory if the energy source can be loaded as multiple energy source types.
+     * This is only loaded, and mandatory if the energy source can be loaded as multiple energy source types.
      */
     type?: 'burner'
 }
@@ -1849,7 +1910,7 @@ type CollisionMaskLayer = 'ground-tile' | 'water-tile' | 'resource-layer' | 'doo
 /**
  * Table of red, green, blue, and alpha float values between 0 and 1. Alternatively, values can be from 0-255, they are interpreted as such if at least one value is `> 1`.
  * 
- * Color allows the short-hand notation of passing an array of exactly 3 or 4 numbers.
+ * Color allows the short-hand notation of passing an array of exactly 3 or 4 numbers. The array items are r, g, b and optionally a, in that order.
  * 
  * The game usually expects colors to be in pre-multiplied form (color channels are pre-multiplied by alpha).
  * @example
@@ -2483,7 +2544,7 @@ interface ElectricEnergySource extends BaseEnergySource{
     output_flow_limit?: Energy,
     
     /**
-     * This is mandatory if the energy source can be loaded as multiple energy source types.
+     * This is only loaded, and mandatory if the energy source can be loaded as multiple energy source types.
      */
     type?: 'electric',
     usage_priority: ElectricUsagePriority
@@ -2799,13 +2860,19 @@ type EntityID = string
 
 /**
  * An array containing the following values.
+ * 
+ * If an entity is a {@link building | runtime:LuaEntityPrototype::is_building} and has the `"player-creation"` flag set, it is considered for multiple enemy/unit behaviors:
+ * 
+ * - Autonomous enemy attacks (usually triggered by pollution) can only attack within chunks that contain at least one entity that is both a building and a player-creation.
+ * 
+ * - Enemy expansion considers entities that are both buildings and player-creations as "enemy" entities that may block expansion.
  * @example
  * ```
  * flags = {"placeable-neutral", "player-creation"}
  * ```
  *
  */
-type EntityPrototypeFlags = Array</* Can't be rotated before or after placing. */ 'not-rotatable' | /* Determines the default force when placing entities in the map editor and using the *AUTO* option for the force. */ 'placeable-neutral' | /* Determines the default force when placing entities in the map editor and using the *AUTO* option for the force. */ 'placeable-player' | /* Determines the default force when placing entities in the map editor and using the *AUTO* option for the force. */ 'placeable-enemy' | /* Refers to the fact that most entities are placed on an invisible 'grid' within the world, entities with this flag do not have to line up with this grid (like trees and land-mines). */ 'placeable-off-grid' | /* Makes it possible for the biter AI to target the entity as a distraction in distraction mode {@link by_anything | runtime:defines.distraction.by_anything}. Makes it possible to blueprint, deconstruct, and repair the entity (can be turned off again using the specific flags). Enables smoke to be created automatically when building the entity. If the entity does not have {@link EntityPrototype::map_color | prototype:EntityPrototype::map_color} set, this flag makes the entity appear on the map/minimap with the default color specified in the {@link UtilityConstants | prototype:UtilityConstants}. Entities that are {@link buildings | runtime:LuaEntityPrototype::is_building} and have this flag set are considered for multiple enemy/unit behaviors: [1] Autonomous enemy attacks (usually triggered by pollution) can only attack within chunks that contain at least one entity that is both a building and a player-creation. [2] Enemy expansion considers entities that are both buildings and player-creations as "enemy" entities that may block expansion. */ 'player-creation' | /* Uses 45 degree angle increments when selecting direction. */ 'building-direction-8-way' | /* Used to automatically detect the proper direction, if possible. Used by base with the pump, train stop, and train signal. */ 'filter-directions' | /* Fast replace will not apply when building while moving. */ 'fast-replaceable-no-build-while-moving' | /* This is used to specify that the entity breathes air, and so is affected by poison (currently {@link poison capsules | https://wiki.factorio.com/Poison_capsule} are the only source). */ 'breaths-air' | /* Used to specify that the entity can not be 'healed' by repair-packs (or construction robots with repair packs) */ 'not-repairable' | /* The entity does not get drawn on the map. */ 'not-on-map' | /* The entity can not be deconstructed. */ 'not-deconstructable' | /* The entity can not be used in blueprints. */ 'not-blueprintable' | /* Hides the entity from the bonus GUI (button above the map) and from the made in property of recipe tooltips. */ 'hidden' | /* Hides the alt-info of an entity in alt-mode, for example the recipe icon. */ 'hide-alt-info' | /* Do not fast replace over other entity types when building while moving. */ 'fast-replaceable-no-cross-type-while-moving' | 'no-gap-fill-while-building' | /* Do not apply fire stickers to the entity. */ 'not-flammable' | /* Prevents inserters and loaders from taking items from this entity. */ 'no-automated-item-removal' | /* Prevents inserters and loaders from inserting items into this entity. */ 'no-automated-item-insertion' | /* This flag does nothing when set in the data stage because it gets overridden by {@link EntityPrototype::allow_copy_paste | prototype:EntityPrototype::allow_copy_paste}. Thus, it must be set on the entity via that property. */ 'no-copy-paste' | /* Disallows selection of the entity even when a selection box is specified for other reasons. For example, selection boxes are used to determine the size of outlines to be shown when highlighting entities inside electric pole ranges. This flag does nothing when set in the data stage because it gets overridden by {@link EntityPrototype::selectable_in_game | prototype:EntityPrototype::selectable_in_game}. Thus, it must be set on the entity via that property. */ 'not-selectable-in-game' | /* The entity can't be selected by the {@link upgrade planner | https://wiki.factorio.com/Upgrade_planner}. */ 'not-upgradable' | /* The entity is not shown in the kill statistics. */ 'not-in-kill-statistics' | /* The entity is not shown in the made in property of recipe tooltips. */ 'not-in-made-in'>
+type EntityPrototypeFlags = Array</* Can't be rotated before or after placing. */ 'not-rotatable' | /* Determines the default force when placing entities in the map editor and using the *AUTO* option for the force. */ 'placeable-neutral' | /* Determines the default force when placing entities in the map editor and using the *AUTO* option for the force. */ 'placeable-player' | /* Determines the default force when placing entities in the map editor and using the *AUTO* option for the force. */ 'placeable-enemy' | /* Refers to the fact that most entities are placed on an invisible 'grid' within the world, entities with this flag do not have to line up with this grid (like trees and land-mines). */ 'placeable-off-grid' | /* Makes it possible for the biter AI to target the entity as a distraction in distraction mode {@link by_anything | runtime:defines.distraction.by_anything}. Makes it possible to blueprint, deconstruct, and repair the entity (can be turned off again using the specific flags). Enables smoke to be created automatically when building the entity. If the entity does not have {@link EntityPrototype::map_color | prototype:EntityPrototype::map_color} set, this flag makes the entity appear on the map/minimap with the default color specified in the {@link UtilityConstants | prototype:UtilityConstants}. */ 'player-creation' | /* Uses 45 degree angle increments when selecting direction. */ 'building-direction-8-way' | /* Used to automatically detect the proper direction, if possible. Used by base with the pump, train stop, and train signal. */ 'filter-directions' | /* Fast replace will not apply when building while moving. */ 'fast-replaceable-no-build-while-moving' | /* This is used to specify that the entity breathes air, and so is affected by poison (currently {@link poison capsules | https://wiki.factorio.com/Poison_capsule} are the only source). */ 'breaths-air' | /* Used to specify that the entity can not be 'healed' by repair-packs (or construction robots with repair packs) */ 'not-repairable' | /* The entity does not get drawn on the map. */ 'not-on-map' | /* The entity can not be deconstructed. */ 'not-deconstructable' | /* The entity can not be used in blueprints. */ 'not-blueprintable' | /* Hides the entity from the bonus GUI (button above the map) and from the made in property of recipe tooltips. */ 'hidden' | /* Hides the alt-info of an entity in alt-mode, for example the recipe icon. */ 'hide-alt-info' | /* Do not fast replace over other entity types when building while moving. */ 'fast-replaceable-no-cross-type-while-moving' | 'no-gap-fill-while-building' | /* Do not apply fire stickers to the entity. */ 'not-flammable' | /* Prevents inserters and loaders from taking items from this entity. */ 'no-automated-item-removal' | /* Prevents inserters and loaders from inserting items into this entity. */ 'no-automated-item-insertion' | /* This flag does nothing when set in the data stage because it gets overridden by {@link EntityPrototype::allow_copy_paste | prototype:EntityPrototype::allow_copy_paste}. Thus, it must be set on the entity via that property. */ 'no-copy-paste' | /* Disallows selection of the entity even when a selection box is specified for other reasons. For example, selection boxes are used to determine the size of outlines to be shown when highlighting entities inside electric pole ranges. This flag does nothing when set in the data stage because it gets overridden by {@link EntityPrototype::selectable_in_game | prototype:EntityPrototype::selectable_in_game}. Thus, it must be set on the entity via that property. */ 'not-selectable-in-game' | /* The entity can't be selected by the {@link upgrade planner | https://wiki.factorio.com/Upgrade_planner}. */ 'not-upgradable' | /* The entity is not shown in the kill statistics. */ 'not-in-kill-statistics' | /* The entity is not shown in the made in property of recipe tooltips. */ 'not-in-made-in'>
 
 /**
  * How far (in tiles) entities should be rendered outside the visible area of the screen.
@@ -3196,7 +3263,7 @@ type FluidID = string
 interface FluidIngredientPrototype {
     
     /**
-     * Can not be `< 0`.
+     * Can not be `<= 0`.
      */
     amount: number,
     
@@ -3859,7 +3926,7 @@ type ItemGroupID = string
 type ItemID = string
 
 /**
- * An item ingredient definition. It can be specified as a table with named or numbered keys, but not a mix of both.
+ * An item ingredient definition. It can be specified as a table with named or numbered keys, but not a mix of both. If this is specified as a table with numbered keys then the first value is the item name and the second is the amount.
  * @example
  * ```
  * {type="item", name="steel-plate", amount=8}
@@ -3888,7 +3955,7 @@ If this fluid is used in a recipe, the `catalyst_amount` is calculated automatic
 ]
 
 /**
- * An item product definition. It can be specified as a table with named or numbered keys, but not a mix of both.
+ * An item product definition. It can be specified as a table with named or numbered keys, but not a mix of both. If this is specified as a table with numbered keys then the first value is the item name and the second is the amount.
  */
 type ItemProductPrototype = {
     amount?: number,
@@ -4292,7 +4359,7 @@ interface LoaderStructure {
  * ```
  *
  */
-type LocalisedString = string | boolean | LocalisedString[]
+type LocalisedString = string | number | boolean | LocalisedString[]
 
 /**
  * The items generated when an {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype} is killed.
@@ -5587,6 +5654,10 @@ type Order = string
 
 interface OrientedCliffPrototype {
     collision_bounding_box: BoundingBox,
+    
+    /**
+     * Unused.
+     */
     fill_volume: number,
     pictures: SpriteVariations
 }
@@ -7113,7 +7184,7 @@ type SoundType = 'game-effect' | 'gui-effect' | 'ambient' | 'environment' | 'wal
 /**
  * The definition of a evolution and probability weights for a {@link spawnable unit | prototype:UnitSpawnDefinition} for a {@link EnemySpawnerPrototype | prototype:EnemySpawnerPrototype}.
  * 
- * It can be specified as a table with named or numbered keys, but not a mix of both.
+ * It can be specified as a table with named or numbered keys, but not a mix of both. If this is specified as a table with numbered keys then the first value is the evolution factor and the second is the spawn weight.
  */
 type SpawnPoint = {
     evolution_factor: number,
@@ -7303,12 +7374,106 @@ interface SpotNoiseArguments {
  * When there is more than one sprite or {@link Animation | prototype:Animation} frame with the same source file and dimensions/position in the game, they all share the same memory.
  * @example
  * ```
+ * -- simple sprite
  * picture_set_enemy =
  * {
  *   filename = "__base__/graphics/entity/land-mine/land-mine-set-enemy.png",
  *   priority = "medium",
  *   width = 32,
  *   height = 32
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * -- sprite with hr version
+ * picture =
+ * {
+ *   filename = "__base__/graphics/entity/wooden-chest/wooden-chest.png",
+ *   priority = "extra-high",
+ *   width = 32,
+ *   height = 36,
+ *   shift = util.by_pixel(0.5, -2),
+ *   hr_version =
+ *   {
+ *     filename = "__base__/graphics/entity/wooden-chest/hr-wooden-chest.png",
+ *     priority = "extra-high",
+ *     width = 62,
+ *     height = 72,
+ *     shift = util.by_pixel(0.5, -2),
+ *     scale = 0.5
+ *   }
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * -- sprite with layers
+ * picture =
+ * {
+ *   layers =
+ *   {
+ *     {
+ *       filename = "__base__/graphics/entity/wooden-chest/wooden-chest.png",
+ *       priority = "extra-high",
+ *       width = 32,
+ *       height = 36,
+ *       shift = util.by_pixel(0.5, -2)
+ *     },
+ *     {
+ *       filename = "__base__/graphics/entity/wooden-chest/wooden-chest-shadow.png",
+ *       priority = "extra-high",
+ *       width = 52,
+ *       height = 20,
+ *       shift = util.by_pixel(10, 6.5),
+ *       draw_as_shadow = true
+ *     }
+ *   }
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * -- sprite with layers and hr version
+ * picture =
+ * {
+ *   layers =
+ *   {
+ *     {
+ *       filename = "__base__/graphics/entity/wooden-chest/wooden-chest.png",
+ *       priority = "extra-high",
+ *       width = 32,
+ *       height = 36,
+ *       shift = util.by_pixel(0.5, -2),
+ *       hr_version =
+ *       {
+ *         filename = "__base__/graphics/entity/wooden-chest/hr-wooden-chest.png",
+ *         priority = "extra-high",
+ *         width = 62,
+ *         height = 72,
+ *         shift = util.by_pixel(0.5, -2),
+ *         scale = 0.5
+ *       }
+ *     },
+ *     {
+ *       filename = "__base__/graphics/entity/wooden-chest/wooden-chest-shadow.png",
+ *       priority = "extra-high",
+ *       width = 52,
+ *       height = 20,
+ *       shift = util.by_pixel(10, 6.5),
+ *       draw_as_shadow = true,
+ *       hr_version =
+ *       {
+ *         filename = "__base__/graphics/entity/wooden-chest/hr-wooden-chest-shadow.png",
+ *         priority = "extra-high",
+ *         width = 104,
+ *         height = 40,
+ *         shift = util.by_pixel(10, 6.5),
+ *         draw_as_shadow = true,
+ *         scale = 0.5
+ *       }
+ *     }
+ *   }
  * }
  * ```
  *
@@ -7625,19 +7790,36 @@ type SpriteSizeType = number
 /**
  * @example
  * ```
+ * -- array of sprites
  * pictures =
  * {
+ *   { size = 64, filename = "__base__/graphics/icons/coal.png",   scale = 0.25, mipmap_count = 4 },
+ *   { size = 64, filename = "__base__/graphics/icons/coal-1.png", scale = 0.25, mipmap_count = 4 },
+ *   { size = 64, filename = "__base__/graphics/icons/coal-2.png", scale = 0.25, mipmap_count = 4 },
+ *   { size = 64, filename = "__base__/graphics/icons/coal-3.png", scale = 0.25, mipmap_count = 4 }
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * -- sprite sheet using "sheet"
+ * connection_patches_connected =
+ * {
+ *   sheet =
  *   {
- *     filename = "__base__/graphics/entity/decorative/green-carpet-grass/green-carpet-grass-01.png",
- *     width = 105,
- *     height = 73
- *   },
- *   {
- *     filename = "__base__/graphics/entity/decorative/green-carpet-grass/green-carpet-grass-02.png",
- *     width = 185,
- *     height = 164
- *   },
- *   [...]
+ *     filename = "__base__/graphics/entity/nuclear-reactor/reactor-connect-patches.png",
+ *     width = 32,
+ *     height = 32,
+ *     variation_count = 12,
+ *     hr_version =
+ *     {
+ *       filename = "__base__/graphics/entity/nuclear-reactor/hr-reactor-connect-patches.png",
+ *       width = 64,
+ *       height = 64,
+ *       variation_count = 12,
+ *       scale = 0.5
+ *     }
+ *   }
  * }
  * ```
  *
@@ -8687,7 +8869,7 @@ interface UnitGroupSettings {
 }
 
 /**
- * It can be specified as a table with named or numbered keys, but not a mix of both.
+ * It can be specified as a table with named or numbered keys, but not a mix of both. If this is specified as a table with numbered keys then the first value is the unit and the second is the spawn points.
  */
 type UnitSpawnDefinition = {
     
@@ -8774,6 +8956,9 @@ type Vector = {
     number
 ]
 
+/**
+ * If this is specified as a three-element array then the array items are x, y and z, in that order.
+ */
 type Vector3D = {
     x: number,
     y: number,

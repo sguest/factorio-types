@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.100
+// Factorio version 1.1.101
 // API version 4
 
 declare namespace runtime {
@@ -772,6 +772,19 @@ interface DragTarget {
     target_wire_id?: defines.wire_connection_id
 }
 
+interface ElemID {
+    
+    /**
+     * Name of a prototype as defined by `type`.
+     */
+    name: string,
+    
+    /**
+     * One of `"achievement"`, `"decorative"`, `"entity"`, `"equipment"`, `"fluid"`, `"item"`, `"item-group"`, `"recipe"`, `"signal"`, or `"technology"`.
+     */
+    type: string
+}
+
 /**
  * These values represent a percentual increase in evolution. This means a value of `0.1` would increase evolution by 10%.
  */
@@ -894,6 +907,11 @@ interface EnemyExpansionMapSettings {
  *
  */
 type EntityPrototypeFilter = EntityPrototypeFilterBuildBaseEvolutionRequirement | EntityPrototypeFilterCollisionMask | EntityPrototypeFilterCraftingCategory | EntityPrototypeFilterEmissions | EntityPrototypeFilterFlag | EntityPrototypeFilterName | EntityPrototypeFilterSelectionPriority | EntityPrototypeFilterType | DefaultEntityPrototypeFilter
+
+/**
+ * A {@link string | runtime:string} specifying an entity prototype flag.
+ */
+type EntityPrototypeFlag = /* Prevents the entity from being rotated before or after placement. */ 'not-rotatable' | /* Determines the default force when placing entities in the map editor and using the "AUTO" option for the force. */ 'placeable-neutral' | /* Determines the default force when placing entities in the map editor and using the "AUTO" option for the force. */ 'placeable-player' | /* Determines the default force when placing entities in the map editor and using the "AUTO" option for the force. */ 'placeable-enemy' | /* Determines whether the entity needs to be aligned with the invisible grid within the world. Most entities are confined in this way, with a few exceptions such as trees and land mines. */ 'placeable-off-grid' | /* Makes it possible to blueprint, deconstruct, and repair the entity (which can be turned off again using the specific flags). Makes it possible for the biter AI to target the entity as a distraction. Enables dust to automatically be created when building the entity. If the entity does not have a `map_color` set, this flag makes the entity appear on the map with the default color specified by the UtilityConstants. */ 'player-creation' | /* Uses 45 degree angle increments when selecting direction. */ 'building-direction-8-way' | /* Used to automatically detect the proper direction of the entity if possible. Used by the pump, train stop, and train signal by default. */ 'filter-directions' | /* Fast replace will not apply when building while moving. */ 'fast-replaceable-no-build-while-moving' | /* Used to specify that the entity breathes air, and is thus affected by poison. */ 'breaths-air' | /* Used to specify that the entity can not be 'healed' by repair packs. */ 'not-repairable' | /* Prevents the entity from being drawn on the map. */ 'not-on-map' | /* Prevents the entity from being deconstructed. */ 'not-deconstructable' | /* Prevents the entity from being part of a blueprint. */ 'not-blueprintable' | /* Hides the entity from the bonus GUI and from the "made in"-property of recipe tooltips. */ 'hidden' | /* Hides the alt-info of this entity when in alt-mode. */ 'hide-alt-info' | /* Does not fast replace this entity over other entity types when building while moving. */ 'fast-replaceable-no-cross-type-while-moving' | 'no-gap-fill-while-building' | /* Does not apply fire stickers to the entity. */ 'not-flammable' | /* Prevents inserters and loaders from taking items from this entity. */ 'no-automated-item-removal' | /* Prevents inserters and loaders from inserting items into this entity. */ 'no-automated-item-insertion' | /* Prevents the entity from being copy-pasted. */ 'no-copy-paste' | /* Disallows selection of the entity even when a selection box is specified for other reasons. For example, selection boxes are used to determine the size of outlines to be shown when highlighting entities inside electric pole ranges. */ 'not-selectable-in-game' | /* Prevents the entity from being selected by the upgrade planner. */ 'not-upgradable' | /* Prevents the entity from being shown in the kill statistics. */ 'not-in-kill-statistics' | /* Prevents the entity from being shown in the "made in" list in recipe tooltips. */ 'not-in-made-in'
 
 /**
  * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
@@ -1194,6 +1212,13 @@ type GuiLocation = {
     y: number
 }
 
+interface GunShift4Way {
+    east: Vector,
+    north: Vector,
+    south: Vector,
+    west: Vector
+}
+
 interface HeatConnection {
     direction: defines.direction,
     position: Vector
@@ -1299,6 +1324,11 @@ interface InventoryFilter {
  *
  */
 type ItemPrototypeFilter = ItemPrototypeFilterBurntResult | ItemPrototypeFilterDefaultRequestAmount | ItemPrototypeFilterFlag | ItemPrototypeFilterFuelAccelerationMultiplier | ItemPrototypeFilterFuelCategory | ItemPrototypeFilterFuelEmissionsMultiplier | ItemPrototypeFilterFuelTopSpeedMultiplier | ItemPrototypeFilterFuelValue | ItemPrototypeFilterName | ItemPrototypeFilterPlaceAsTile | ItemPrototypeFilterPlaceResult | ItemPrototypeFilterPlacedAsEquipmentResult | ItemPrototypeFilterStackSize | ItemPrototypeFilterSubgroup | ItemPrototypeFilterType | ItemPrototypeFilterWireCount | DefaultItemPrototypeFilter
+
+/**
+ * A {@link string | runtime:string} specifying an item prototype flag.
+ */
+type ItemPrototypeFlag = /* Determines whether the logistics areas of roboports should be drawn when holding this item. Used by the deconstruction planner by default. */ 'draw-logistic-overlay' | /* Hides the item in the logistic requests and filters GUIs (among others). */ 'hidden' | /* Always shows the item in the logistic requests and filters GUIs (among others) even when the recipe for that item is locked. */ 'always-show' | /* Hides the item from the bonus GUI. */ 'hide-from-bonus-gui' | /* Hides the item from the tooltip that's shown when hovering over a burner inventory. */ 'hide-from-fuel-tooltip' | /* Prevents the item from being stacked. It also prevents the item from stacking in assembling machine input slots, which can otherwise exceed the item stack size if required by the recipe. Additionally, the item does not show an item count when in the cursor. */ 'not-stackable' | /* Makes the item act as an extension to the inventory that it is placed in. Only has an effect for items with inventory. */ 'can-extend-inventory' | /* Makes construction bots prefer this item when building the entity specified by its `place_result`. */ 'primary-place-result' | /* Allows the item to be opened by the player, firing the `on_mod_item_opened` event. Only has an effect for selection tool items. */ 'mod-openable' | /* Makes it so the item is deleted when clearing the cursor, instead of being put into the player's inventory. The copy-paste tools use this by default, for example. */ 'only-in-cursor' | /* Allows the item to be spawned by a quickbar shortcut or custom input. */ 'spawnable'
 
 /**
  * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
@@ -1427,6 +1457,36 @@ interface LogisticParameters {
      * The item. `nil` clears the filter.
      */
     name?: string
+}
+
+interface LogisticsNetworkSupplyCounts {
+    
+    /**
+     * Number of available items in the active provider members.
+     */
+    'active-provider': number,
+    
+    /**
+     * Number of available items in the buffer members.
+     */
+    buffer: number,
+    
+    /**
+     * Number of available items in the passive provider members.
+     */
+    'passive-provider': number,
+    
+    /**
+     * Number of available items in the storage members.
+     */
+    storage: number
+}
+
+interface LogisticsNetworkSupplyPoints {
+    'active-provider': LuaLogisticPoint[],
+    buffer: LuaLogisticPoint[],
+    'passive-provider': LuaLogisticPoint[],
+    storage: LuaLogisticPoint[]
 }
 
 interface Loot {
@@ -2418,6 +2478,11 @@ interface RadiusVisualisationSpecification {
     offset: Vector
 }
 
+interface RailEnd {
+    direction: defines.rail_direction,
+    rail: LuaEntity
+}
+
 /**
  * The smooth orientation. It is a {@link float | runtime:float} in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise. This means a value of `0` indicates "north", a value of `0.5` indicates "south".
  * 
@@ -2769,6 +2834,144 @@ type TilePosition = {
  */
 type TilePrototypeFilter = TilePrototypeFilterCollisionMask | TilePrototypeFilterDecorativeRemovalProbability | TilePrototypeFilterEmissions | TilePrototypeFilterVehicleFrictionModifier | TilePrototypeFilterWalkingSpeedModifier | DefaultTilePrototypeFilter
 
+interface TrainPathAllGoalsResult {
+    
+    /**
+     * Table of the same length as requested goals: each field will tell if related goal is accessible for the train
+     */
+    accessible: boolean[],
+    
+    /**
+     * Amount of goals that are accessible
+     */
+    amount_accessible: number,
+    
+    /**
+     * Table of the same length as requested goals. Only present if request type was "all-goals-penalties"
+     */
+    penalties?: number[],
+    
+    /**
+     * Amount of steps pathfinder performed. This is a measure of how expensive this search was.
+     */
+    steps_count: number
+}
+
+interface TrainPathAnyGoalResult {
+    
+    /**
+     * True if any goal was accessible
+     */
+    found_path: boolean,
+    
+    /**
+     * If any goal was accessible, this gives index of the particular goal that was found
+     */
+    goal_index?: number,
+    
+    /**
+     * Penalty of the path to goal if a goal was accessible
+     */
+    penalty?: number,
+    
+    /**
+     * Amount of steps pathfinder performed. This is a measure of how expensive this search was.
+     */
+    steps_count: number
+}
+
+interface TrainPathFinderPathResult {
+    
+    /**
+     * True if found path.
+     */
+    found_path: boolean,
+    
+    /**
+     * If path was found, provides index of the specific goal to which the path goes to
+     */
+    goal_index?: number,
+    
+    /**
+     * If path was found, tells if the path was reached from the from_front or train's front end.
+     */
+    is_front?: boolean,
+    
+    /**
+     * Only returned if return_path was set to true and path was found. Contains all rails in order that are part of the found path
+     */
+    path?: LuaEntity[],
+    
+    /**
+     * Penalty of the path to goal if path was found
+     */
+    penalty?: number,
+    
+    /**
+     * Amount of steps pathfinder performed. This is a measure of how expensive this search was.
+     */
+    steps_count: number,
+    
+    /**
+     * If path was found, provides total length of all rails of the path
+     */
+    total_length?: number
+}
+
+interface TrainPathFinderRequest {
+    
+    /**
+     * Only relevant if from_back is given. Defaults to true. Providing false will cause the pathfinder to reject a path that starts on back and ends within the same segment as the path would be too short to provide correct alignment with a goal.
+     */
+    allow_path_within_segment_back?: boolean,
+    
+    /**
+     * Only relevant if from_front is given. Defaults to true. Providing false will cause the pathfinder to reject a path that starts on front and ends within the same segment as the path would be too short to provide correct alignment with a goal.
+     */
+    allow_path_within_segment_front?: boolean,
+    
+    /**
+     * Manually provided starting back of the train.
+     */
+    from_back?: RailEnd,
+    
+    /**
+     * Manually provided starting front of the train.
+     */
+    from_front?: RailEnd,
+    goals: Array<TrainStopGoal | RailEnd>,
+    
+    /**
+     * Defaults to false. If set to true, pathfinder will not return a path that cannot have its beginning immediately reserved causing train to stop inside of intersection.
+     */
+    in_chain_signal_section?: boolean,
+    
+    /**
+     * Only relevant if request type is "path". Returning a full path is expensive due to multiple LuaEntity created. In order for path to be returned, true must be provided here. Defaults to false in which case a path will not be provided.
+     */
+    return_path?: boolean,
+    
+    /**
+     * Only relevant if none of from_front/from_back was provied in which case from_front and from_back are deduced from the train. Selects which train ends should be considered as starts. Possible values: "respect-movement-direction", "any-direction-with-locomotives". Defaults to "any-direction-with-locomotives"
+     */
+    search_direction?: string,
+    
+    /**
+     * Maximum amount of steps pathfinder is allowed to perform
+     */
+    steps_limit?: number,
+    
+    /**
+     * Mandatory if from_front and from_back are not provided, optional otherwise. Selects a context for the pathfinder to decide which train to exclude from penalties and which signals are considered possible to reacquire. If from_front and from_back are not provided, then it is also used to collect front and back ends for the search
+     */
+    train?: LuaTrain,
+    
+    /**
+     * Request type. "path", "any-goal-accessible", "all-goals-accessible" or "all-goals-penalties". Defaults to "path"
+     */
+    type?: string
+}
+
 interface TrainSchedule {
     
     /**
@@ -2800,6 +3003,14 @@ interface TrainScheduleRecord {
      */
     temporary?: boolean,
     wait_conditions?: WaitCondition[]
+}
+
+interface TrainStopGoal {
+    
+    /**
+     * Train stop target. Must be connected to rail (LuaEntity::connected_rail returns valid LuaEntity)
+     */
+    train_stop: LuaEntity
 }
 
 interface TriggerDelivery {
@@ -3146,7 +3357,7 @@ interface AttackParametersStream extends BaseAttackParameters {
     fluid_consumption: number,
     fluids?: AttackParameterFluid[],
     gun_barrel_length: number,
-    gun_center_shift: {[key: string]: Vector},
+    gun_center_shift: GunShift4Way,
     projectile_creation_parameters?: CircularProjectileCreationSpecification[]
 }
 
