@@ -24,6 +24,9 @@ declare const serpent: Serpent;
 // can eventually fix these on a per-case basis
 type Table = any;
 
+// https://lua-api.factorio.com/latest/types/DataExtendMethod.html
+type DataExtendMethod = (data: prototype.Data, ...otherData: any[]) => void;
+
 // The docs and json definition make reference to these types but have no information as to what they are
 type BlueprintCircuitConnection = any;
 type BlueprintControlBehavior = any;
