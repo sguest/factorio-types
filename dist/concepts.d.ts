@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.101
+// Factorio version 1.1.102
 // API version 4
 
 declare namespace runtime {
@@ -67,11 +67,7 @@ interface AmmoType {
      */
     energy_consumption?: number,
     range_modifier?: number,
-    
-    /**
-     * One of `"entity"` (fires at an entity), `"position"` (fires directly at a position), or `"direction"` (fires in a direction).
-     */
-    target_type: string
+    target_type: TargetType
 }
 
 /**
@@ -97,9 +93,9 @@ interface ArithmeticCombinatorParameters {
     first_signal?: SignalID,
     
     /**
-     * Must be one of `"*"`, `"/"`, `"+"`, `"-"`, `"%"`, `"^"`, `"<<"`, `">>"`, `"AND"`, `"OR"`, `"XOR"`. When not specified, defaults to `"*"`.
+     * When not specified, defaults to `"*"`.
      */
-    operation?: string,
+    operation?: '*' | '/' | '+' | '-' | '%' | '^' | '<<' | '>>' | 'AND' | 'OR' | 'XOR',
     
     /**
      * Specifies the signal to output.
@@ -135,7 +131,81 @@ interface AttackParameterFluid {
  * Other attributes may be specified depending on `type`:
  *
  */
-type AttackParameters = AttackParametersProjectile | AttackParametersStream | DefaultAttackParameters
+interface AttackParameters {
+    
+    /**
+     * List of the names of compatible {@link LuaAmmoCategoryPrototypes | runtime:LuaAmmoCategoryPrototype}.
+     */
+    ammo_categories?: string[],
+    
+    /**
+     * Multiplier applied to the ammo consumption of an attack.
+     */
+    ammo_consumption_modifier: number,
+    ammo_type?: AmmoType,
+    
+    /**
+     * Minimum amount of ticks between shots. If this is less than `1`, multiple shots can be performed per tick.
+     */
+    cooldown: number,
+    
+    /**
+     * Multiplier applied to the damage of an attack.
+     */
+    damage_modifier: number,
+    
+    /**
+     * When searching for the nearest enemy to attack, `fire_penalty` is added to the enemy's distance if they are on fire.
+     */
+    fire_penalty: number,
+    
+    /**
+     * When searching for an enemy to attack, a higher `health_penalty` will discourage targeting enemies with high health. A negative penalty will do the opposite.
+     */
+    health_penalty: number,
+    
+    /**
+     * If less than `range`, the entity will choose a random distance between `range` and `min_attack_distance` and attack from that distance. Used for spitters.
+     */
+    min_attack_distance: number,
+    
+    /**
+     * Minimum range of attack. Used with flamethrower turrets to prevent self-immolation.
+     */
+    min_range: number,
+    movement_slow_down_cooldown: number,
+    movement_slow_down_factor: number,
+    
+    /**
+     * Maximum range of attack.
+     */
+    range: number,
+    
+    /**
+     * Defines how the range is determined.
+     */
+    range_mode: 'center-to-center' | 'bounding-box-to-bounding-box',
+    
+    /**
+     * When searching for an enemy to attack, a higher `rotate_penalty` will discourage targeting enemies that would take longer to turn to face.
+     */
+    rotate_penalty: number,
+    
+    /**
+     * The arc that the entity can attack in as a fraction of a circle. A value of `1` means the full 360 degrees.
+     */
+    turn_range: number,
+    
+    /**
+     * The type of AttackParameter.
+     */
+    type: 'projectile' | 'stream' | 'beam',
+    
+    /**
+     * Number of ticks it takes for the weapon to actually shoot after it has been ordered to do so.
+     */
+    warmup: number
+}
 
 interface AutoplaceControl {
     
@@ -349,7 +419,9 @@ type BoundingBox = {
  * Other attributes may be specified depending on `type`:
  *
  */
-type CapsuleAction = CapsuleActionArtilleryRemote | CapsuleActionDestroyCliffs | CapsuleActionEquipmentRemote | CapsuleActionThrow | CapsuleActionUseOnSelf
+interface CapsuleAction {
+    type: 'throw' | 'equipment-remote' | 'use-on-self' | 'artillery-remote' | 'destroy-cliffs'
+}
 
 /**
  * @remarks
@@ -437,7 +509,7 @@ interface CircularParticleCreationSpecification {
     height_deviation: number,
     
     /**
-     * Name of the {@link LuaEntityPrototype | runtime:LuaEntityPrototype}
+     * Name of the {@link LuaEntityPrototype | runtime:LuaEntityPrototype}.
      */
     name: string,
     speed: number,
@@ -450,8 +522,8 @@ interface CircularParticleCreationSpecification {
 }
 
 interface CircularProjectileCreationSpecification {
-    _0: RealOrientation,
-    _1: Vector
+    [1]: RealOrientation,
+    [2]: Vector
 }
 
 type CliffOrientation = 'west-to-east' | 'north-to-south' | 'east-to-west' | 'south-to-north' | 'west-to-north' | 'north-to-east' | 'east-to-south' | 'south-to-west' | 'west-to-south' | 'north-to-west' | 'east-to-north' | 'south-to-east' | 'west-to-none' | 'none-to-east' | 'east-to-none' | 'none-to-west' | 'north-to-none' | 'none-to-south' | 'south-to-none' | 'none-to-north'
@@ -623,7 +695,10 @@ interface CraftingQueueItem {
     recipe: string
 }
 
-type CursorBoxRenderType = /* Yellow box. */ 'entity' | /* Red box. */ 'not-allowed' | /* Light blue box. */ 'electricity' | /* Light blue box. */ 'pair' | /* Green box. */ 'copy' | /* White box. */ 'train-visualization' | /* Light blue box. */ 'logistics' | /* Green box. */ 'blueprint-snap-rectangle'
+/**
+ * One of the following values:
+ */
+type CursorBoxRenderType = /* The normal entity selection box. Yellow by default. */ 'entity' | /* The selection box used to specify electric poles an entity is connected to. Light blue by default. */ 'electricity' | /* The selection box used when doing entity copy-paste. Green by default. */ 'copy' | /* The selection box used when specifying colliding entities. Red by default. */ 'not-allowed' | /* Light blue by default. */ 'pair' | /* Light blue by default. */ 'logistics' | /* White by default. */ 'train-visualization' | /* Green by default. */ 'blueprint-snap-rectangle'
 
 interface CustomCommandData {
     
@@ -674,6 +749,19 @@ interface CutsceneWaypoint {
      * Zoom level to be set when the waypoint is reached. When not specified, the previous waypoint's zoom is used.
      */
     zoom?: number
+}
+
+interface DamageTypeFilters {
+    
+    /**
+     * The damage types to filter for. The value in the dictionary is meaningless and exists just to allow for easy lookup.
+     */
+    types: {[key: string]: true},
+    
+    /**
+     * Whether this is a whitelist or a blacklist of damage types. `true` means whitelist.
+     */
+    whitelist: boolean
 }
 
 interface DeciderCombinatorParameters {
@@ -740,9 +828,9 @@ interface DifficultySettings {
     recipe_difficulty: defines.difficulty_settings.recipe_difficulty
 
     /**
-     * Either `"after-victory"`, `"always"` or `"never"`. Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce | runtime:LuaForce} for that.
+     * Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce::research_queue_enabled | runtime:LuaForce::research_queue_enabled} for that.
      */
-    research_queue_setting: string
+    research_queue_setting: 'after-victory' | 'always' | 'never'
 
     technology_difficulty: defines.difficulty_settings.technology_difficulty
 
@@ -778,12 +866,13 @@ interface ElemID {
      * Name of a prototype as defined by `type`.
      */
     name: string,
-    
-    /**
-     * One of `"achievement"`, `"decorative"`, `"entity"`, `"equipment"`, `"fluid"`, `"item"`, `"item-group"`, `"recipe"`, `"signal"`, or `"technology"`.
-     */
-    type: string
+    type: ElemType
 }
+
+/**
+ * A {@link string | runtime:string} specifying a type for {@link choose elem buttons | runtime:LuaGuiElement::elem_type}. It's also used by {@link ElemID | runtime:ElemID} for {@link LuaGuiElement::elem_tooltip | runtime:LuaGuiElement::elem_tooltip}.
+ */
+type ElemType = 'achievement' | 'decorative' | 'entity' | 'equipment' | 'fluid' | 'item' | 'item-group' | 'recipe' | 'signal' | 'technology' | 'tile'
 
 /**
  * These values represent a percentual increase in evolution. This means a value of `0.1` would increase evolution by 10%.
@@ -1023,11 +1112,7 @@ interface FluidBoxConnection {
      * The 4 cardinal direction connection points for this pipe. This vector is a table with `x` and `y` keys instead of an array.
      */
     positions: Vector[],
-    
-    /**
-     * One of "input", "output", or "input-output".
-     */
-    type: string
+    type: 'input' | 'output' | 'input-output'
 }
 
 interface FluidBoxFilter {
@@ -1198,9 +1283,24 @@ interface GuiAnchor {
  * Other attributes may be specified depending on `type`:
  *
  */
-type GuiArrowSpecification = GuiArrowSpecificationCraftingQueue | GuiArrowSpecificationEntity | GuiArrowSpecificationItemStack | GuiArrowSpecificationPosition | DefaultGuiArrowSpecification
+interface GuiArrowSpecification {
+    margin: number,
+    
+    /**
+     * This determines which of the following fields will be required.
+     */
+    type: GuiArrowType
+}
 
-type GuiArrowType = 'nowhere' | 'goal' | 'entity_info' | 'active_window' | 'entity' | 'position' | 'crafting_queue' | 'item_stack'
+/**
+ * Used by {@link GuiArrowSpecification | runtime:GuiArrowSpecification}.
+ */
+type GuiArrowType = /* Will remove the arrow entirely. */ 'nowhere' | /* Will point to the current goal. */ 'goal' | 'entity_info' | 'active_window' | 'entity' | 'position' | 'crafting_queue' | /* Will point to a given item stack in an inventory. */ 'item_stack'
+
+/**
+ * Direction of a {@link LuaGuiElement's | runtime:LuaGuiElement::direction} layout.
+ */
+type GuiDirection = 'horizontal' | 'vertical'
 
 type GuiElementType = /* A clickable element. Relevant event: {@link on_gui_click | runtime:on_gui_click} */ 'button' | /* A `button` that displays a sprite rather than text. Relevant event: {@link on_gui_click | runtime:on_gui_click} */ 'sprite-button' | /* A clickable element with a check mark that can be turned off or on. Relevant event: {@link on_gui_checked_state_changed | runtime:on_gui_checked_state_changed} */ 'checkbox' | /* An invisible container that lays out its children either horizontally or vertically. */ 'flow' | /* A non-transparent box that contains other elements. It can have a title (set via the `caption` attribute). Just like a `flow`, it lays out its children either horizontally or vertically. Relevant event: {@link on_gui_location_changed | runtime:on_gui_location_changed} */ 'frame' | /* A piece of text. */ 'label' | /* A horizontal or vertical separation line. */ 'line' | /* A partially filled bar that can be used to indicate progress. */ 'progressbar' | /* An invisible container that lays out its children in a specific number of columns. The width of each column is determined by the widest element it contains. */ 'table' | /* A single-line box the user can type into. Relevant events: {@link on_gui_text_changed | runtime:on_gui_text_changed}, {@link on_gui_confirmed | runtime:on_gui_confirmed} */ 'textfield' | /* An element that is similar to a `checkbox`, but with a circular appearance. Clicking a selected radio button will not unselect it. Radio buttons are not linked to each other in any way. Relevant event: {@link on_gui_checked_state_changed | runtime:on_gui_checked_state_changed} */ 'radiobutton' | /* An element that shows an image. */ 'sprite' | /* An invisible element that is similar to a `flow`, but has the ability to show and use scroll bars. */ 'scroll-pane' | /* A drop-down containing strings of text. Relevant event: {@link on_gui_selection_state_changed | runtime:on_gui_selection_state_changed} */ 'drop-down' | /* A list of strings, only one of which can be selected at a time. Shows a scroll bar if necessary. Relevant event: {@link on_gui_selection_state_changed | runtime:on_gui_selection_state_changed} */ 'list-box' | /* A camera that shows the game at the given position on the given surface. It can visually track an {@link entity | runtime:LuaGuiElement::entity} that is set after the element has been created. */ 'camera' | /* A button that lets the player pick from a certain kind of prototype, with optional filtering. Relevant event: {@link on_gui_elem_changed | runtime:on_gui_elem_changed} */ 'choose-elem-button' | /* A multi-line `textfield`. Relevant event: {@link on_gui_text_changed | runtime:on_gui_text_changed} */ 'text-box' | /* A horizontal number line which can be used to choose a number. Relevant event: {@link on_gui_value_changed | runtime:on_gui_value_changed} */ 'slider' | /* A minimap preview, similar to the normal player minimap. It can visually track an {@link entity | runtime:LuaGuiElement::entity} that is set after the element has been created. */ 'minimap' | /* A preview of an entity. The {@link entity | runtime:LuaGuiElement::entity} has to be set after the element has been created. */ 'entity-preview' | /* An empty element that just exists. The root GUI elements `screen` and `relative` are `empty-widget`s. */ 'empty-widget' | /* A collection of `tab`s and their contents. Relevant event: {@link on_gui_selected_tab_changed | runtime:on_gui_selected_tab_changed} */ 'tabbed-pane' | /* A tab for use in a `tabbed-pane`. */ 'tab' | /* A switch with three possible states. Can have labels attached to either side. Relevant event: {@link on_gui_switch_state_changed | runtime:on_gui_switch_state_changed} */ 'switch'
 
@@ -1230,9 +1330,9 @@ interface HeatConnection {
 interface HeatSetting {
     
     /**
-     * `"at-least"`, `"at-most"`, `"exactly"`, `"add"`, or `"remove"`. Defaults to `"at-least"`.
+     * Defaults to `"at-least"`.
      */
-    mode?: string,
+    mode?: 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove',
     
     /**
      * The target temperature. Defaults to the minimum temperature of the heat buffer.
@@ -1256,9 +1356,9 @@ interface InfinityInventoryFilter {
     index: number,
     
     /**
-     * `"at-least"`, `"at-most"`, or `"exactly"`. Defaults to `"at-least"`.
+     * Defaults to `"at-least"`.
      */
-    mode?: string,
+    mode?: 'at-least' | 'at-most' | 'exactly',
     
     /**
      * Name of the item.
@@ -1272,9 +1372,9 @@ interface InfinityInventoryFilter {
 interface InfinityPipeFilter {
     
     /**
-     * `"at-least"`, `"at-most"`, `"exactly"`, `"add"`, or `"remove"`. Defaults to `"at-least"`.
+     * Defaults to `"at-least"`.
      */
-    mode?: string,
+    mode?: 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove',
     
     /**
      * Name of the fluid.
@@ -1282,7 +1382,7 @@ interface InfinityPipeFilter {
     name: string,
     
     /**
-     * The fill percentage the pipe (e.g. 0.5 for 50%). Can't be negative.
+     * The fill percentage the pipe (`0.5` for 50%). Can't be negative.
      */
     percentage?: number,
     
@@ -1297,7 +1397,24 @@ interface InfinityPipeFilter {
  * Other attributes may be specified depending on `type`:
  *
  */
-type Ingredient = IngredientFluid | DefaultIngredient
+interface Ingredient {
+    
+    /**
+     * Amount of the item or fluid.
+     */
+    amount: number,
+    
+    /**
+     * How much of this ingredient is a catalyst.
+     */
+    catalyst_amount?: number,
+    
+    /**
+     * Prototype name of the required item or fluid.
+     */
+    name: string,
+    type: 'item' | 'fluid'
+}
 
 interface InserterCircuitConditions {
     circuit?: CircuitCondition,
@@ -1450,7 +1567,15 @@ interface LogisticFilter {
 }
 
 interface LogisticParameters {
+    
+    /**
+     * Defaults to max uint.
+     */
     max?: number,
+    
+    /**
+     * Defaults to `0`.
+     */
     min?: number,
     
     /**
@@ -1710,9 +1835,9 @@ interface MapDifficultySettings {
     recipe_difficulty: defines.difficulty_settings.recipe_difficulty,
     
     /**
-     * Either `"after-victory"`, `"always"` or `"never"`. Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce | runtime:LuaForce} for that.
+     * Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce::research_queue_enabled | runtime:LuaForce::research_queue_enabled} for that.
      */
-    research_queue_setting: string,
+    research_queue_setting: 'after-victory' | 'always' | 'never',
     technology_difficulty: defines.difficulty_settings.technology_difficulty,
     
     /**
@@ -1775,7 +1900,7 @@ interface MapGenSettings {
     autoplace_controls: {[key: string]: AutoplaceControl},
     
     /**
-     * Each setting in this dictionary maps the string type to the settings for that type. Valid types are `"entity"`, `"tile"` and `"decorative"`.
+     * Each setting in this dictionary maps the string type to the settings for that type.
      */
     autoplace_settings: {[key: string]: AutoplaceSettings},
     
@@ -1951,6 +2076,11 @@ interface ModSetting {
  *
  */
 type ModSettingPrototypeFilter = ModSettingPrototypeFilterMod | ModSettingPrototypeFilterSettingType | ModSettingPrototypeFilterType
+
+/**
+ * Used by {@link TechnologyModifier | runtime:TechnologyModifier}.
+ */
+type ModifierType = 'inserter-stack-size-bonus' | 'stack-inserter-capacity-bonus' | 'laboratory-speed' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' | 'worker-robot-speed' | 'worker-robot-storage' | 'ghost-time-to-live' | 'turret-attack' | 'ammo-damage' | 'give-item' | 'gun-speed' | 'unlock-recipe' | 'character-crafting-speed' | 'character-mining-speed' | 'character-running-speed' | 'character-build-distance' | 'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' | 'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' | 'deconstruction-time-to-live' | 'max-failed-attempts-per-tick-per-construction-queue' | 'max-successful-attempts-per-tick-per-construction-queue' | 'character-health-bonus' | 'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'zoom-to-world-enabled' | 'zoom-to-world-ghost-building-enabled' | 'zoom-to-world-blueprint-enabled' | 'zoom-to-world-deconstruction-planner-enabled' | 'zoom-to-world-upgrade-planner-enabled' | 'zoom-to-world-selection-tool-enabled' | 'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'nothing' | 'character-logistic-requests'
 
 interface ModuleEffectValue {
     
@@ -2248,16 +2378,8 @@ interface PathfinderWaypoint {
  * A single pipe connection for a given fluidbox.
  */
 interface PipeConnection {
-    
-    /**
-     * One of "normal" or "underground".
-     */
-    connection_type: string,
-    
-    /**
-     * One of "input", "output", or "input-output".
-     */
-    flow_direction: string,
+    connection_type: 'normal' | 'underground',
+    flow_direction: 'input' | 'output' | 'input-output',
     
     /**
      * The absolute position of this connection within the entity.
@@ -2424,7 +2546,39 @@ interface PrintSettings {
  * ```
  *
  */
-type Product = ProductFluid | DefaultProduct
+interface Product {
+    
+    /**
+     * Amount of the item or fluid to give. If not specified, `amount_min`, `amount_max` and `probability` must all be specified.
+     */
+    amount?: number,
+    
+    /**
+     * Maximum amount of the item or fluid to give. Has no effect when `amount` is specified.
+     */
+    amount_max?: number,
+    
+    /**
+     * Minimal amount of the item or fluid to give. Has no effect when `amount` is specified.
+     */
+    amount_min?: number,
+    
+    /**
+     * How much of this product is a catalyst.
+     */
+    catalyst_amount?: number,
+    
+    /**
+     * Prototype name of the result.
+     */
+    name: string,
+    
+    /**
+     * A value in range [0, 1]. Item or fluid is only given with this probability; otherwise no product is produced.
+     */
+    probability?: number,
+    type: 'item' | 'fluid'
+}
 
 interface ProgrammableSpeakerAlertParameters {
     alert_message: string,
@@ -2457,6 +2611,11 @@ interface ProgrammableSpeakerParameters {
  *
  */
 type PrototypeFilter = Array</* for type `"item"` */ ItemPrototypeFilter | /* for type `"tile"` */ TilePrototypeFilter | /* for type `"entity"` */ EntityPrototypeFilter | /* for type `"fluid"` */ FluidPrototypeFilter | /* for type `"recipe"` */ RecipePrototypeFilter | /* for type `"decorative"` */ DecorativePrototypeFilter | /* for type `"achievement"` */ AchievementPrototypeFilter | /* for type `"equipment"` */ EquipmentPrototypeFilter | /* for type `"technology"` */ TechnologyPrototypeFilter>
+
+/**
+ * One of the following values:
+ */
+type PrototypeFilterMode = 'none' | 'whitelist' | 'blacklist'
 
 interface PrototypeHistory {
     
@@ -2564,6 +2723,11 @@ interface ScriptRenderVertexTarget {
     target_offset?: Vector
 }
 
+/**
+ * Scroll policy of a {@link scroll pane | runtime:LuaGuiElement}.
+ */
+type ScrollPolicy = 'never' | 'dont-show-but-allow-scrolling' | 'always' | 'auto' | 'auto-and-reserve-space'
+
 interface SelectedPrototypeData {
     
     /**
@@ -2572,12 +2736,12 @@ interface SelectedPrototypeData {
     base_type: string,
     
     /**
-     * E.g. `"tree"`.
+     * The `type` of the prototype. E.g. `"tree"`.
      */
     derived_type: string,
     
     /**
-     * E.g. `"tree-05"`.
+     * The `name` of the prototype. E.g. `"tree-05"`.
      */
     name: string
 }
@@ -2609,11 +2773,7 @@ interface SignalID {
      * Name of the item, fluid or virtual signal.
      */
     name?: string,
-    
-    /**
-     * `"item"`, `"fluid"`, or `"virtual"`.
-     */
-    type: string
+    type: 'item' | 'fluid' | 'virtual'
 }
 
 /**
@@ -2767,6 +2927,11 @@ interface SteeringMapSettings {
  */
 type SurfaceIdentification = /* It will be the index of the surface. `nauvis` has index `1`, the first surface-created surface will have index `2` and so on. */ number | /* It will be the surface name. E.g. `"nauvis"`. */ string | /* A reference to {@link LuaSurface | runtime:LuaSurface} may be passed directly. */ LuaSurface
 
+/**
+ * State of a GUI {@link switch | runtime:LuaGuiElement::switch_state}.
+ */
+type SwitchState = 'left' | 'right' | 'none'
+
 interface TabAndContent {
     content: LuaGuiElement,
     tab: LuaGuiElement
@@ -2785,6 +2950,11 @@ interface TabAndContent {
 type Tags = {[key: string]: AnyBasic}
 
 /**
+ * Target type of an {@link AmmoType | runtime:AmmoType}.
+ */
+type TargetType = /* Fires at an entity. */ 'entity' | /* Fires directly at a position. */ 'position' | /* Fires in a direction. */ 'direction'
+
+/**
  * A technology may be specified in one of three ways.
  */
 type TechnologyIdentification = /* The technology name. */ string | /* A reference to {@link LuaTechnology | runtime:LuaTechnology} may be passed directly. */ LuaTechnology | /* A reference to {@link LuaTechnologyPrototype | runtime:LuaTechnologyPrototype} may be passed directly. */ LuaTechnologyPrototype
@@ -2795,7 +2965,13 @@ type TechnologyIdentification = /* The technology name. */ string | /* A referen
  * Other attributes may be specified depending on `type`:
  *
  */
-type TechnologyModifier = TechnologyModifierOtherTypes | TechnologyModifierAmmoDamage | TechnologyModifierGiveItem | TechnologyModifierGunSpeed | TechnologyModifierNothing | TechnologyModifierTurretAttack | TechnologyModifierUnlockRecipe | DefaultTechnologyModifier
+interface TechnologyModifier {
+    
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    type: ModifierType
+}
 
 /**
  * Depending on the value of `filter`, the table may take additional fields. `filter` may be one of the following:
@@ -2804,6 +2980,13 @@ type TechnologyModifier = TechnologyModifierOtherTypes | TechnologyModifierAmmoD
  *
  */
 type TechnologyPrototypeFilter = TechnologyPrototypeFilterLevel | TechnologyPrototypeFilterMaxLevel | TechnologyPrototypeFilterResearchUnitIngredient | TechnologyPrototypeFilterTime | TechnologyPrototypeFilterUnlocksRecipe | DefaultTechnologyPrototypeFilter
+
+/**
+ * The text is aligned so that the target position is at the given side of the text.
+ * 
+ * For example, `"right"` aligned text means the right side of the text is at the target position. Or in other words, the target is on the right of the text.
+ */
+type TextAlign = 'left' | 'right' | 'center'
 
 interface Tile {
     
@@ -2837,17 +3020,17 @@ type TilePrototypeFilter = TilePrototypeFilterCollisionMask | TilePrototypeFilte
 interface TrainPathAllGoalsResult {
     
     /**
-     * Table of the same length as requested goals: each field will tell if related goal is accessible for the train
+     * Array of the same length as requested goals: each field will tell if related goal is accessible for the train.
      */
     accessible: boolean[],
     
     /**
-     * Amount of goals that are accessible
+     * Amount of goals that are accessible.
      */
     amount_accessible: number,
     
     /**
-     * Table of the same length as requested goals. Only present if request type was "all-goals-penalties"
+     * Array of the same length as requested goals. Only present if request type was `"all-goals-penalties"`.
      */
     penalties?: number[],
     
@@ -2860,17 +3043,17 @@ interface TrainPathAllGoalsResult {
 interface TrainPathAnyGoalResult {
     
     /**
-     * True if any goal was accessible
+     * True if any goal was accessible.
      */
     found_path: boolean,
     
     /**
-     * If any goal was accessible, this gives index of the particular goal that was found
+     * If any goal was accessible, this gives index of the particular goal that was found.
      */
     goal_index?: number,
     
     /**
-     * Penalty of the path to goal if a goal was accessible
+     * Penalty of the path to goal if a goal was accessible.
      */
     penalty?: number,
     
@@ -2888,22 +3071,22 @@ interface TrainPathFinderPathResult {
     found_path: boolean,
     
     /**
-     * If path was found, provides index of the specific goal to which the path goes to
+     * If path was found, provides index of the specific goal to which the path goes to.
      */
     goal_index?: number,
     
     /**
-     * If path was found, tells if the path was reached from the from_front or train's front end.
+     * If path was found, tells if the path was reached from the `from_front` or train's front end.
      */
     is_front?: boolean,
     
     /**
-     * Only returned if return_path was set to true and path was found. Contains all rails in order that are part of the found path
+     * Only returned if `return_path` was set to true and path was found. Contains all rails in order that are part of the found path.
      */
     path?: LuaEntity[],
     
     /**
-     * Penalty of the path to goal if path was found
+     * Penalty of the path to goal if path was found.
      */
     penalty?: number,
     
@@ -2913,64 +3096,15 @@ interface TrainPathFinderPathResult {
     steps_count: number,
     
     /**
-     * If path was found, provides total length of all rails of the path
+     * If path was found, provides total length of all rails of the path.
      */
     total_length?: number
 }
 
-interface TrainPathFinderRequest {
-    
-    /**
-     * Only relevant if from_back is given. Defaults to true. Providing false will cause the pathfinder to reject a path that starts on back and ends within the same segment as the path would be too short to provide correct alignment with a goal.
-     */
-    allow_path_within_segment_back?: boolean,
-    
-    /**
-     * Only relevant if from_front is given. Defaults to true. Providing false will cause the pathfinder to reject a path that starts on front and ends within the same segment as the path would be too short to provide correct alignment with a goal.
-     */
-    allow_path_within_segment_front?: boolean,
-    
-    /**
-     * Manually provided starting back of the train.
-     */
-    from_back?: RailEnd,
-    
-    /**
-     * Manually provided starting front of the train.
-     */
-    from_front?: RailEnd,
-    goals: Array<TrainStopGoal | RailEnd>,
-    
-    /**
-     * Defaults to false. If set to true, pathfinder will not return a path that cannot have its beginning immediately reserved causing train to stop inside of intersection.
-     */
-    in_chain_signal_section?: boolean,
-    
-    /**
-     * Only relevant if request type is "path". Returning a full path is expensive due to multiple LuaEntity created. In order for path to be returned, true must be provided here. Defaults to false in which case a path will not be provided.
-     */
-    return_path?: boolean,
-    
-    /**
-     * Only relevant if none of from_front/from_back was provied in which case from_front and from_back are deduced from the train. Selects which train ends should be considered as starts. Possible values: "respect-movement-direction", "any-direction-with-locomotives". Defaults to "any-direction-with-locomotives"
-     */
-    search_direction?: string,
-    
-    /**
-     * Maximum amount of steps pathfinder is allowed to perform
-     */
-    steps_limit?: number,
-    
-    /**
-     * Mandatory if from_front and from_back are not provided, optional otherwise. Selects a context for the pathfinder to decide which train to exclude from penalties and which signals are considered possible to reacquire. If from_front and from_back are not provided, then it is also used to collect front and back ends for the search
-     */
-    train?: LuaTrain,
-    
-    /**
-     * Request type. "path", "any-goal-accessible", "all-goals-accessible" or "all-goals-penalties". Defaults to "path"
-     */
-    type?: string
-}
+/**
+ * A {@link string | runtime:string} specifying the type of request for {@link LuaGameScript::request_train_path | runtime:LuaGameScript::request_train_path}.
+ */
+type TrainPathRequestType = /* The method will return {@link TrainPathFinderPathResult | runtime:TrainPathFinderPathResult}. */ 'path' | /* The method will return {@link TrainPathAnyGoalResult | runtime:TrainPathAnyGoalResult}. */ 'any-goal-accessible' | /* The method will return {@link TrainPathAllGoalsResult | runtime:TrainPathAllGoalsResult}. */ 'all-goals-accessible' | /* The method will return {@link TrainPathAllGoalsResult | runtime:TrainPathAllGoalsResult} with `penalties`. */ 'all-goals-penalties'
 
 interface TrainSchedule {
     
@@ -3008,7 +3142,7 @@ interface TrainScheduleRecord {
 interface TrainStopGoal {
     
     /**
-     * Train stop target. Must be connected to rail (LuaEntity::connected_rail returns valid LuaEntity)
+     * Train stop target. Must be connected to rail ({@link LuaEntity::connected_rail | runtime:LuaEntity::connected_rail} returns valid LuaEntity).
      */
     train_stop: LuaEntity
 }
@@ -3016,23 +3150,23 @@ interface TrainStopGoal {
 interface TriggerDelivery {
     source_effects: TriggerEffectItem[],
     target_effects: TriggerEffectItem[],
-    
-    /**
-     * One of `"instant"`, `"projectile"`, `"flame-thrower"`, `"beam"`, `"stream"`, `"artillery"`.
-     */
-    type: string
+    type: 'instant' | 'projectile' | 'flame-thrower' | 'beam' | 'stream' | 'artillery'
 }
 
 interface TriggerEffectItem {
     affects_target: boolean,
+    damage_type_filters?: DamageTypeFilters,
+    probability: number,
     repeat_count: number,
+    repeat_count_deviation: number,
     show_in_tooltip: boolean,
-    
-    /**
-     * One of`"damage"`, `"create-entity"`, `"create-explosion"`, `"create-fire"`, `"create-smoke"`, `"create-trivial-smoke"`, `"create-particle"`, `"create-sticker"`, `"nested-result"`, `"play-sound"`, `"push-back"`, `"destroy-cliffs"`, `"show-explosion-on-chart"`, `"insert-item"`, `"script"`.
-     */
-    type: string
+    type: TriggerEffectItemType
 }
+
+/**
+ * Used by {@link TriggerEffectItem | runtime:TriggerEffectItem}.
+ */
+type TriggerEffectItemType = 'damage' | 'create-entity' | 'create-explosion' | 'create-fire' | 'create-smoke' | 'create-trivial-smoke' | 'create-particle' | 'create-sticker' | 'create-decorative' | 'nested-result' | 'play-sound' | 'push-back' | 'destroy-cliffs' | 'show-explosion-on-chart' | 'insert-item' | 'script' | 'set-tile' | 'invoke-tile-trigger' | 'destroy-decoratives' | 'camera-effect'
 
 interface TriggerItem {
     action_delivery?: TriggerDelivery[],
@@ -3052,13 +3186,10 @@ interface TriggerItem {
      */
     force: ForceCondition,
     ignore_collision_condition: boolean,
+    probability: number,
     repeat_count: number,
     trigger_target_mask: TriggerTargetMask,
-    
-    /**
-     * One of `"direct"`, `"area"`, `"line"`, `"cluster"`.
-     */
-    type: string
+    type: 'direct' | 'area' | 'line' | 'cluster'
 }
 
 /**
@@ -3149,11 +3280,7 @@ interface UpgradeFilter {
      * Name of the item, or entity.
      */
     name?: string,
-    
-    /**
-     * `"item"`, or `"entity"`.
-     */
-    type: string
+    type: 'item' | 'entity'
 }
 
 /**
@@ -3174,12 +3301,19 @@ interface VehicleAutomaticTargetingParameters {
     auto_target_without_gunner: boolean
 }
 
+/**
+ * The text is aligned so that the target position is at the given side of the text.
+ * 
+ * For example, `"top"` aligned text means the top of the text is at the target position. Or in other words, the target is at the top of the text.
+ */
+type VerticalTextAlign = 'top' | 'middle' | 'baseline' | 'bottom'
+
 interface WaitCondition {
     
     /**
-     * Either `"and"`, or `"or"`. Tells how this condition is to be compared with the preceding conditions in the corresponding `wait_conditions` array.
+     * Specifies how this condition is to be compared with the preceding conditions in the corresponding `wait_conditions` array.
      */
-    compare_type: string,
+    compare_type: 'and' | 'or',
     
     /**
      * Only present when `type` is `"item_count"`, `"circuit"` or `"fluid_count"`, and a circuit condition is configured.
@@ -3190,12 +3324,13 @@ interface WaitCondition {
      * Number of ticks to wait when `type` is `"time"`, or number of ticks of inactivity when `type` is `"inactivity"`.
      */
     ticks?: number,
-    
-    /**
-     * One of `"time"`, `"inactivity"`, `"full"`, `"empty"`, `"item_count"`, `"circuit"`, `"robots_inactive"`, `"fluid_count"`, `"passenger_present"`, `"passenger_not_present"`.
-     */
-    type: string
+    type: WaitConditionType
 }
+
+/**
+ * Type of a {@link WaitCondition | runtime:WaitCondition}.
+ */
+type WaitConditionType = 'time' | 'full' | 'empty' | 'item_count' | 'circuit' | 'inactivity' | 'robots_inactive' | 'fluid_count' | 'passenger_present' | 'passenger_not_present'
 
 interface WireConnectionDefinition {
     
@@ -3238,9 +3373,9 @@ interface BaseAchievementPrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface AchievementPrototypeFilterType extends BaseAchievementPrototypeFilter {
@@ -3264,83 +3399,12 @@ interface DefaultAchievementPrototypeFilter extends BaseAchievementPrototypeFilt
     filter: 'allowed-without-fight'
 }
 
-interface BaseAttackParameters {
-    
-    /**
-     * List of the names of compatible {@link LuaAmmoCategoryPrototypes | runtime:LuaAmmoCategoryPrototype}.
-     */
-    ammo_categories?: string[],
-    
-    /**
-     * Multiplier applied to the ammo consumption of an attack.
-     */
-    ammo_consumption_modifier: number,
-    ammo_type?: AmmoType,
-    
-    /**
-     * Minimum amount of ticks between shots. If this is less than `1`, multiple shots can be performed per tick.
-     */
-    cooldown: number,
-    
-    /**
-     * Multiplier applied to the damage of an attack.
-     */
-    damage_modifier: number,
-    
-    /**
-     * When searching for the nearest enemy to attack, `fire_penalty` is added to the enemy's distance if they are on fire.
-     */
-    fire_penalty: number,
-    
-    /**
-     * When searching for an enemy to attack, a higher `health_penalty` will discourage targeting enemies with high health. A negative penalty will do the opposite.
-     */
-    health_penalty: number,
-    
-    /**
-     * If less than `range`, the entity will choose a random distance between `range` and `min_attack_distance` and attack from that distance. Used for spitters.
-     */
-    min_attack_distance: number,
-    
-    /**
-     * Minimum range of attack. Used with flamethrower turrets to prevent self-immolation.
-     */
-    min_range: number,
-    movement_slow_down_cooldown: number,
-    movement_slow_down_factor: number,
-    
-    /**
-     * Maximum range of attack.
-     */
-    range: number,
-    
-    /**
-     * Defines how the range is determined. Either `'center-to-center'` or `'bounding-box-to-bounding-box'`.
-     */
-    range_mode: string,
-    
-    /**
-     * When searching for an enemy to attack, a higher `rotate_penalty` will discourage targeting enemies that would take longer to turn to face.
-     */
-    rotate_penalty: number,
-    
-    /**
-     * The arc that the entity can attack in as a fraction of a circle. A value of `1` means the full 360 degrees.
-     */
-    turn_range: number,
-    
-    /**
-     * Number of ticks it takes for the weapon to actually shoot after it has been ordered to do so.
-     */
-    warmup: number
-}
-
-interface AttackParametersProjectile extends BaseAttackParameters {
-    
-    /**
-     * The type of AttackParameter. One of `'projectile'`, `'stream'` or `'beam'`.
-     */
-    type: 'projectile',
+/**
+ * @remarks
+ * Applies to `projectile` variant case
+ *
+ */
+interface AttackParametersProjectile extends AttackParameters {
     projectile_center: Vector,
     projectile_creation_distance: number,
     projectile_creation_parameters?: CircularProjectileCreationSpecification[],
@@ -3348,12 +3412,12 @@ interface AttackParametersProjectile extends BaseAttackParameters {
     shell_particle?: CircularParticleCreationSpecification
 }
 
-interface AttackParametersStream extends BaseAttackParameters {
-    
-    /**
-     * The type of AttackParameter. One of `'projectile'`, `'stream'` or `'beam'`.
-     */
-    type: 'stream',
+/**
+ * @remarks
+ * Applies to `stream` variant case
+ *
+ */
+interface AttackParametersStream extends AttackParameters {
     fluid_consumption: number,
     fluids?: AttackParameterFluid[],
     gun_barrel_length: number,
@@ -3361,24 +3425,12 @@ interface AttackParametersStream extends BaseAttackParameters {
     projectile_creation_parameters?: CircularProjectileCreationSpecification[]
 }
 
-interface DefaultAttackParameters extends BaseAttackParameters {
-    
-    /**
-     * The type of AttackParameter. One of `'projectile'`, `'stream'` or `'beam'`.
-     */
-    type: 'beam'
-}
-
-interface BaseCapsuleAction {
-    
-}
-
-interface CapsuleActionArtilleryRemote extends BaseCapsuleAction {
-    
-    /**
-     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
-     */
-    type: 'artillery-remote',
+/**
+ * @remarks
+ * Applies to `artillery-remote` variant case
+ *
+ */
+interface CapsuleActionArtilleryRemote extends CapsuleAction {
     
     /**
      * Name of the {@link flare prototype | runtime:LuaEntityPrototype}.
@@ -3386,23 +3438,23 @@ interface CapsuleActionArtilleryRemote extends BaseCapsuleAction {
     flare: string
 }
 
-interface CapsuleActionDestroyCliffs extends BaseCapsuleAction {
-    
-    /**
-     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
-     */
-    type: 'destroy-cliffs',
+/**
+ * @remarks
+ * Applies to `destroy-cliffs` variant case
+ *
+ */
+interface CapsuleActionDestroyCliffs extends CapsuleAction {
     attack_parameters: AttackParameters,
     radius: number,
     timeout: number
 }
 
-interface CapsuleActionEquipmentRemote extends BaseCapsuleAction {
-    
-    /**
-     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
-     */
-    type: 'equipment-remote',
+/**
+ * @remarks
+ * Applies to `equipment-remote` variant case
+ *
+ */
+interface CapsuleActionEquipmentRemote extends CapsuleAction {
     
     /**
      * Name of the {@link LuaEquipmentPrototype | runtime:LuaEquipmentPrototype}.
@@ -3410,12 +3462,12 @@ interface CapsuleActionEquipmentRemote extends BaseCapsuleAction {
     equipment: string
 }
 
-interface CapsuleActionThrow extends BaseCapsuleAction {
-    
-    /**
-     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
-     */
-    type: 'throw',
+/**
+ * @remarks
+ * Applies to `throw` variant case
+ *
+ */
+interface CapsuleActionThrow extends CapsuleAction {
     attack_parameters: AttackParameters,
     
     /**
@@ -3424,12 +3476,12 @@ interface CapsuleActionThrow extends BaseCapsuleAction {
     uses_stack: boolean
 }
 
-interface CapsuleActionUseOnSelf extends BaseCapsuleAction {
-    
-    /**
-     * One of `"throw"`, `"equipment-remote"`, `"use-on-self"`, `"artillery-remote"`, `"destroy-cliffs"`.
-     */
-    type: 'use-on-self',
+/**
+ * @remarks
+ * Applies to `use-on-self` variant case
+ *
+ */
+interface CapsuleActionUseOnSelf extends CapsuleAction {
     attack_parameters: AttackParameters
 }
 
@@ -3639,9 +3691,9 @@ interface BaseDecorativePrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface DecorativePrototypeFilterCollisionMask extends BaseDecorativePrototypeFilter {
@@ -3674,9 +3726,9 @@ interface BaseEntityPrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface EntityPrototypeFilterBuildBaseEvolutionRequirement extends BaseEntityPrototypeFilter {
@@ -3700,11 +3752,7 @@ interface EntityPrototypeFilterCollisionMask extends BaseEntityPrototypeFilter {
      */
     filter: 'collision-mask',
     mask: CollisionMask | CollisionMaskWithFlags,
-    
-    /**
-     * How to filter: `"collides"`, `"layers-equals"`, `"contains-any"` or `"contains-all"`
-     */
-    mask_mode: string
+    mask_mode: 'collides' | 'layers-equals' | 'contains-any' | 'contains-all'
 }
 
 interface EntityPrototypeFilterCraftingCategory extends BaseEntityPrototypeFilter {
@@ -3715,7 +3763,7 @@ interface EntityPrototypeFilterCraftingCategory extends BaseEntityPrototypeFilte
     filter: 'crafting-category',
     
     /**
-     * Matches if the prototype is for a crafting machine with this crafting category.
+     * Matches if the prototype is for a crafting machine with this {@link crafting category | runtime:LuaEntityPrototype::crafting_categories}.
      */
     crafting_category: string
 }
@@ -3740,11 +3788,7 @@ interface EntityPrototypeFilterFlag extends BaseEntityPrototypeFilter {
      * The condition to filter on. One of `"flying-robot"`, `"robot-with-logistics-interface"`, `"rail"`, `"ghost"`, `"explosion"`, `"vehicle"`, `"crafting-machine"`, `"rolling-stock"`, `"turret"`, `"transport-belt-connectable"`, `"wall-connectable"`, `"buildable"`, `"placable-in-editor"`, `"clonable"`, `"selectable"`, `"hidden"`, `"entity-with-health"`, `"building"`, `"fast-replaceable"`, `"uses-direction"`, `"minable"`, `"circuit-connectable"`, `"autoplace"`, `"blueprintable"`, `"item-to-place"`, `"name"`, `"type"`, `"collision-mask"`, `"flag"`, `"build-base-evolution-requirement"`, `"selection-priority"`, `"emissions"`, `"crafting-category"`.
      */
     filter: 'flag',
-    
-    /**
-     * One of the values in {@link EntityPrototypeFlags | runtime:EntityPrototypeFlags}.
-     */
-    flag: string
+    flag: EntityPrototypeFlag
 }
 
 interface EntityPrototypeFilterName extends BaseEntityPrototypeFilter {
@@ -3803,9 +3847,9 @@ interface BaseEquipmentPrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface EquipmentPrototypeFilterType extends BaseEquipmentPrototypeFilter {
@@ -3837,9 +3881,9 @@ interface BaseFluidPrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface FluidPrototypeFilterDefaultTemperature extends BaseFluidPrototypeFilter {
@@ -3960,16 +4004,12 @@ interface DefaultFluidPrototypeFilter extends BaseFluidPrototypeFilter {
     filter: 'hidden'
 }
 
-interface BaseGuiArrowSpecification {
-    
-}
-
-interface GuiArrowSpecificationCraftingQueue extends BaseGuiArrowSpecification {
-    
-    /**
-     * This determines which of the following fields will be required. Must be one of `"nowhere"` (will remove the arrow entirely), `"goal"` (will point to the current goal), `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"` or `"item_stack"` (will point to a given item stack in an inventory). Depending on this value, other fields may have to be specified.
-     */
-    type: 'crafting_queue',
+/**
+ * @remarks
+ * Applies to `crafting_queue` variant case
+ *
+ */
+interface GuiArrowSpecificationCraftingQueue extends GuiArrowSpecification {
     
     /**
      * Index in the crafting queue to point to.
@@ -3977,21 +4017,21 @@ interface GuiArrowSpecificationCraftingQueue extends BaseGuiArrowSpecification {
     crafting_queueindex: number
 }
 
-interface GuiArrowSpecificationEntity extends BaseGuiArrowSpecification {
-    
-    /**
-     * This determines which of the following fields will be required. Must be one of `"nowhere"` (will remove the arrow entirely), `"goal"` (will point to the current goal), `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"` or `"item_stack"` (will point to a given item stack in an inventory). Depending on this value, other fields may have to be specified.
-     */
-    type: 'entity',
+/**
+ * @remarks
+ * Applies to `entity` variant case
+ *
+ */
+interface GuiArrowSpecificationEntity extends GuiArrowSpecification {
     entity: LuaEntity
 }
 
-interface GuiArrowSpecificationItemStack extends BaseGuiArrowSpecification {
-    
-    /**
-     * This determines which of the following fields will be required. Must be one of `"nowhere"` (will remove the arrow entirely), `"goal"` (will point to the current goal), `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"` or `"item_stack"` (will point to a given item stack in an inventory). Depending on this value, other fields may have to be specified.
-     */
-    type: 'item_stack',
+/**
+ * @remarks
+ * Applies to `item_stack` variant case
+ *
+ */
+interface GuiArrowSpecificationItemStack extends GuiArrowSpecification {
     
     /**
      * Which inventory the stack is in.
@@ -4002,54 +4042,24 @@ interface GuiArrowSpecificationItemStack extends BaseGuiArrowSpecification {
      * Which stack to point to.
      */
     item_stack_index: number,
-    
-    /**
-     * Must be either `"player"`, `"target"`, `"player-quickbar"` or `"player-equipment-bar"`.
-     */
-    source: string
+    source: 'player' | 'target' | 'player-quickbar' | 'player-equipment-bar'
 }
 
-interface GuiArrowSpecificationPosition extends BaseGuiArrowSpecification {
-    
-    /**
-     * This determines which of the following fields will be required. Must be one of `"nowhere"` (will remove the arrow entirely), `"goal"` (will point to the current goal), `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"` or `"item_stack"` (will point to a given item stack in an inventory). Depending on this value, other fields may have to be specified.
-     */
-    type: 'position',
+/**
+ * @remarks
+ * Applies to `position` variant case
+ *
+ */
+interface GuiArrowSpecificationPosition extends GuiArrowSpecification {
     position: MapPosition
 }
 
-interface DefaultGuiArrowSpecification extends BaseGuiArrowSpecification {
-    
-    /**
-     * This determines which of the following fields will be required. Must be one of `"nowhere"` (will remove the arrow entirely), `"goal"` (will point to the current goal), `"entity_info"`, `"active_window"`, `"entity"`, `"position"`, `"crafting_queue"` or `"item_stack"` (will point to a given item stack in an inventory). Depending on this value, other fields may have to be specified.
-     */
-    type: 'nowhere' | 'goal' | 'entity_info' | 'active_window'
-}
-
-interface BaseIngredient {
-    
-    /**
-     * Amount of the item or fluid.
-     */
-    amount: number,
-    
-    /**
-     * How much of this ingredient is a catalyst.
-     */
-    catalyst_amount?: number,
-    
-    /**
-     * Prototype name of the required item or fluid.
-     */
-    name: string
-}
-
-interface IngredientFluid extends BaseIngredient {
-    
-    /**
-     * `"item"` or `"fluid"`.
-     */
-    type: 'fluid',
+/**
+ * @remarks
+ * Applies to `fluid` variant case
+ *
+ */
+interface IngredientFluid extends Ingredient {
     
     /**
      * The maximum fluid temperature allowed.
@@ -4062,14 +4072,6 @@ interface IngredientFluid extends BaseIngredient {
     minimum_temperature?: number
 }
 
-interface DefaultIngredient extends BaseIngredient {
-    
-    /**
-     * `"item"` or `"fluid"`.
-     */
-    type: 'item'
-}
-
 interface BaseItemPrototypeFilter {
     
     /**
@@ -4078,9 +4080,9 @@ interface BaseItemPrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface ItemPrototypeFilterBurntResult extends BaseItemPrototypeFilter {
@@ -4116,11 +4118,7 @@ interface ItemPrototypeFilterFlag extends BaseItemPrototypeFilter {
      * The condition to filter on. One of `"tool"`, `"mergeable"`, `"item-with-inventory"`, `"selection-tool"`, `"item-with-label"`, `"has-rocket-launch-products"`, `"fuel"`, `"place-result"`, `"burnt-result"`, `"place-as-tile"`, `"placed-as-equipment-result"`, `"name"`, `"type"`, `"flag"`, `"subgroup"`, `"fuel-category"`, `"stack-size"`, `"default-request-amount"`, `"wire-count"`, `"fuel-value"`, `"fuel-acceleration-multiplier"`, `"fuel-top-speed-multiplier"`, `"fuel-emissions-multiplier"`.
      */
     filter: 'flag',
-    
-    /**
-     * One of the values in {@link ItemPrototypeFlags | runtime:ItemPrototypeFlags}.
-     */
-    flag: string
+    flag: ItemPrototypeFlag
 }
 
 interface ItemPrototypeFilterFuelAccelerationMultiplier extends BaseItemPrototypeFilter {
@@ -4314,9 +4312,9 @@ interface BaseLuaEntityClonedEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaEntityClonedEventFilterGhostName extends BaseLuaEntityClonedEventFilter {
@@ -4387,9 +4385,9 @@ interface BaseLuaEntityDamagedEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaEntityDamagedEventFilterDamageType extends BaseLuaEntityDamagedEventFilter {
@@ -4515,9 +4513,9 @@ interface BaseLuaEntityDeconstructionCancelledEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaEntityDeconstructionCancelledEventFilterGhostName extends BaseLuaEntityDeconstructionCancelledEventFilter {
@@ -4588,9 +4586,9 @@ interface BaseLuaEntityDiedEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaEntityDiedEventFilterGhostName extends BaseLuaEntityDiedEventFilter {
@@ -4661,9 +4659,9 @@ interface BaseLuaEntityMarkedForDeconstructionEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaEntityMarkedForDeconstructionEventFilterGhostName extends BaseLuaEntityMarkedForDeconstructionEventFilter {
@@ -4734,9 +4732,9 @@ interface BaseLuaEntityMarkedForUpgradeEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaEntityMarkedForUpgradeEventFilterGhostName extends BaseLuaEntityMarkedForUpgradeEventFilter {
@@ -4807,9 +4805,9 @@ interface BaseLuaPlayerBuiltEntityEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaPlayerBuiltEntityEventFilterForce extends BaseLuaPlayerBuiltEntityEventFilter {
@@ -4893,9 +4891,9 @@ interface BaseLuaPlayerMinedEntityEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaPlayerMinedEntityEventFilterGhostName extends BaseLuaPlayerMinedEntityEventFilter {
@@ -4966,9 +4964,9 @@ interface BaseLuaPlayerRepairedEntityEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaPlayerRepairedEntityEventFilterGhostName extends BaseLuaPlayerRepairedEntityEventFilter {
@@ -5039,9 +5037,9 @@ interface BaseLuaPostEntityDiedEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaPostEntityDiedEventFilterType extends BaseLuaPostEntityDiedEventFilter {
@@ -5065,9 +5063,9 @@ interface BaseLuaPreGhostDeconstructedEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaPreGhostDeconstructedEventFilterGhostName extends BaseLuaPreGhostDeconstructedEventFilter {
@@ -5138,9 +5136,9 @@ interface BaseLuaPreGhostUpgradedEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaPreGhostUpgradedEventFilterGhostName extends BaseLuaPreGhostUpgradedEventFilter {
@@ -5211,9 +5209,9 @@ interface BaseLuaPrePlayerMinedEntityEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaPrePlayerMinedEntityEventFilterGhostName extends BaseLuaPrePlayerMinedEntityEventFilter {
@@ -5284,9 +5282,9 @@ interface BaseLuaPreRobotMinedEntityEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaPreRobotMinedEntityEventFilterGhostName extends BaseLuaPreRobotMinedEntityEventFilter {
@@ -5357,9 +5355,9 @@ interface BaseLuaRobotBuiltEntityEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaRobotBuiltEntityEventFilterForce extends BaseLuaRobotBuiltEntityEventFilter {
@@ -5443,9 +5441,9 @@ interface BaseLuaRobotMinedEntityEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaRobotMinedEntityEventFilterGhostName extends BaseLuaRobotMinedEntityEventFilter {
@@ -5516,9 +5514,9 @@ interface BaseLuaScriptRaisedBuiltEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaScriptRaisedBuiltEventFilterGhostName extends BaseLuaScriptRaisedBuiltEventFilter {
@@ -5589,9 +5587,9 @@ interface BaseLuaScriptRaisedDestroyEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaScriptRaisedDestroyEventFilterGhostName extends BaseLuaScriptRaisedDestroyEventFilter {
@@ -5662,9 +5660,9 @@ interface BaseLuaScriptRaisedReviveEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaScriptRaisedReviveEventFilterGhostName extends BaseLuaScriptRaisedReviveEventFilter {
@@ -5735,9 +5733,9 @@ interface BaseLuaScriptRaisedTeleportedEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaScriptRaisedTeleportedEventFilterGhostName extends BaseLuaScriptRaisedTeleportedEventFilter {
@@ -5808,9 +5806,9 @@ interface BaseLuaSectorScannedEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaSectorScannedEventFilterGhostName extends BaseLuaSectorScannedEventFilter {
@@ -5881,9 +5879,9 @@ interface BaseLuaUpgradeCancelledEventFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface LuaUpgradeCancelledEventFilterGhostName extends BaseLuaUpgradeCancelledEventFilter {
@@ -5954,9 +5952,9 @@ interface BaseModSettingPrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface ModSettingPrototypeFilterMod extends BaseModSettingPrototypeFilter {
@@ -5998,58 +5996,17 @@ interface ModSettingPrototypeFilterType extends BaseModSettingPrototypeFilter {
     type: string | string[]
 }
 
-interface BaseProduct {
-    
-    /**
-     * Amount of the item or fluid to give. If not specified, `amount_min`, `amount_max` and `probability` must all be specified.
-     */
-    amount?: number,
-    
-    /**
-     * Maximum amount of the item or fluid to give. Has no effect when `amount` is specified.
-     */
-    amount_max?: number,
-    
-    /**
-     * Minimal amount of the item or fluid to give. Has no effect when `amount` is specified.
-     */
-    amount_min?: number,
-    
-    /**
-     * How much of this product is a catalyst.
-     */
-    catalyst_amount?: number,
-    
-    /**
-     * Prototype name of the result.
-     */
-    name: string,
-    
-    /**
-     * A value in range [0, 1]. Item or fluid is only given with this probability; otherwise no product is produced.
-     */
-    probability?: number
-}
-
-interface ProductFluid extends BaseProduct {
-    
-    /**
-     * `"item"` or `"fluid"`.
-     */
-    type: 'fluid',
+/**
+ * @remarks
+ * Applies to `fluid` variant case
+ *
+ */
+interface ProductFluid extends Product {
     
     /**
      * The fluid temperature of this product.
      */
     temperature?: number
-}
-
-interface DefaultProduct extends BaseProduct {
-    
-    /**
-     * `"item"` or `"fluid"`.
-     */
-    type: 'item'
 }
 
 interface BaseRecipePrototypeFilter {
@@ -6060,9 +6017,9 @@ interface BaseRecipePrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface RecipePrototypeFilterCategory extends BaseRecipePrototypeFilter {
@@ -6207,16 +6164,12 @@ interface DefaultRecipePrototypeFilter extends BaseRecipePrototypeFilter {
     filter: 'enabled' | 'hidden' | 'hidden-from-flow-stats' | 'hidden-from-player-crafting' | 'allow-as-intermediate' | 'allow-intermediates' | 'allow-decomposition' | 'always-show-made-in' | 'always-show-products' | 'show-amount-in-title' | 'has-ingredients' | 'has-products'
 }
 
-interface BaseTechnologyModifier {
-    
-}
-
-interface TechnologyModifierOtherTypes extends BaseTechnologyModifier {
-    
-    /**
-     * Modifier type. Specifies which of the other fields will be available. Possible values are: `"inserter-stack-size-bonus"`, `"stack-inserter-capacity-bonus"`, `"laboratory-speed"`, `"character-logistic-trash-slots"`, `"maximum-following-robots-count"`, `"worker-robot-speed"`, `"worker-robot-storage"`, `"ghost-time-to-live"`, `"turret-attack"`, `"ammo-damage"`, `"give-item"`, `"gun-speed"`, `"unlock-recipe"`, `"character-crafting-speed"`, `"character-mining-speed"`, `"character-running-speed"`, `"character-build-distance"`, `"character-item-drop-distance"`, `"character-reach-distance"`, `"character-resource-reach-distance"`, `"character-item-pickup-distance"`, `"character-loot-pickup-distance"`, `"character-inventory-slots-bonus"`, `"deconstruction-time-to-live"`, `"max-failed-attempts-per-tick-per-construction-queue"`, `"max-successful-attempts-per-tick-per-construction-queue"`, `"character-health-bonus"`, `"mining-drill-productivity-bonus"`, `"train-braking-force-bonus"`, `"zoom-to-world-enabled"`, `"zoom-to-world-ghost-building-enabled"`, `"zoom-to-world-blueprint-enabled"`, `"zoom-to-world-deconstruction-planner-enabled"`, `"zoom-to-world-upgrade-planner-enabled"`, `"zoom-to-world-selection-tool-enabled"`, `"worker-robot-battery"`, `"laboratory-productivity"`, `"follower-robot-lifetime"`, `"artillery-range"`, `"nothing"`, `"character-additional-mining-categories"`, `"character-logistic-requests"`.
-     */
-    type: 'Other types',
+/**
+ * @remarks
+ * Applies to `Other types` variant case
+ *
+ */
+interface TechnologyModifierOtherTypes extends TechnologyModifier {
     
     /**
      * Modification value. This value will be added to the variable it modifies.
@@ -6224,12 +6177,12 @@ interface TechnologyModifierOtherTypes extends BaseTechnologyModifier {
     modifier: number
 }
 
-interface TechnologyModifierAmmoDamage extends BaseTechnologyModifier {
-    
-    /**
-     * Modifier type. Specifies which of the other fields will be available. Possible values are: `"inserter-stack-size-bonus"`, `"stack-inserter-capacity-bonus"`, `"laboratory-speed"`, `"character-logistic-trash-slots"`, `"maximum-following-robots-count"`, `"worker-robot-speed"`, `"worker-robot-storage"`, `"ghost-time-to-live"`, `"turret-attack"`, `"ammo-damage"`, `"give-item"`, `"gun-speed"`, `"unlock-recipe"`, `"character-crafting-speed"`, `"character-mining-speed"`, `"character-running-speed"`, `"character-build-distance"`, `"character-item-drop-distance"`, `"character-reach-distance"`, `"character-resource-reach-distance"`, `"character-item-pickup-distance"`, `"character-loot-pickup-distance"`, `"character-inventory-slots-bonus"`, `"deconstruction-time-to-live"`, `"max-failed-attempts-per-tick-per-construction-queue"`, `"max-successful-attempts-per-tick-per-construction-queue"`, `"character-health-bonus"`, `"mining-drill-productivity-bonus"`, `"train-braking-force-bonus"`, `"zoom-to-world-enabled"`, `"zoom-to-world-ghost-building-enabled"`, `"zoom-to-world-blueprint-enabled"`, `"zoom-to-world-deconstruction-planner-enabled"`, `"zoom-to-world-upgrade-planner-enabled"`, `"zoom-to-world-selection-tool-enabled"`, `"worker-robot-battery"`, `"laboratory-productivity"`, `"follower-robot-lifetime"`, `"artillery-range"`, `"nothing"`, `"character-additional-mining-categories"`, `"character-logistic-requests"`.
-     */
-    type: 'ammo-damage',
+/**
+ * @remarks
+ * Applies to `ammo-damage` variant case
+ *
+ */
+interface TechnologyModifierAmmoDamage extends TechnologyModifier {
     
     /**
      * Prototype name of the ammunition category that is affected
@@ -6242,12 +6195,12 @@ interface TechnologyModifierAmmoDamage extends BaseTechnologyModifier {
     modifier: number
 }
 
-interface TechnologyModifierGiveItem extends BaseTechnologyModifier {
-    
-    /**
-     * Modifier type. Specifies which of the other fields will be available. Possible values are: `"inserter-stack-size-bonus"`, `"stack-inserter-capacity-bonus"`, `"laboratory-speed"`, `"character-logistic-trash-slots"`, `"maximum-following-robots-count"`, `"worker-robot-speed"`, `"worker-robot-storage"`, `"ghost-time-to-live"`, `"turret-attack"`, `"ammo-damage"`, `"give-item"`, `"gun-speed"`, `"unlock-recipe"`, `"character-crafting-speed"`, `"character-mining-speed"`, `"character-running-speed"`, `"character-build-distance"`, `"character-item-drop-distance"`, `"character-reach-distance"`, `"character-resource-reach-distance"`, `"character-item-pickup-distance"`, `"character-loot-pickup-distance"`, `"character-inventory-slots-bonus"`, `"deconstruction-time-to-live"`, `"max-failed-attempts-per-tick-per-construction-queue"`, `"max-successful-attempts-per-tick-per-construction-queue"`, `"character-health-bonus"`, `"mining-drill-productivity-bonus"`, `"train-braking-force-bonus"`, `"zoom-to-world-enabled"`, `"zoom-to-world-ghost-building-enabled"`, `"zoom-to-world-blueprint-enabled"`, `"zoom-to-world-deconstruction-planner-enabled"`, `"zoom-to-world-upgrade-planner-enabled"`, `"zoom-to-world-selection-tool-enabled"`, `"worker-robot-battery"`, `"laboratory-productivity"`, `"follower-robot-lifetime"`, `"artillery-range"`, `"nothing"`, `"character-additional-mining-categories"`, `"character-logistic-requests"`.
-     */
-    type: 'give-item',
+/**
+ * @remarks
+ * Applies to `give-item` variant case
+ *
+ */
+interface TechnologyModifierGiveItem extends TechnologyModifier {
     
     /**
      * Number of items to give. Defaults to `1`.
@@ -6260,12 +6213,12 @@ interface TechnologyModifierGiveItem extends BaseTechnologyModifier {
     item: string
 }
 
-interface TechnologyModifierGunSpeed extends BaseTechnologyModifier {
-    
-    /**
-     * Modifier type. Specifies which of the other fields will be available. Possible values are: `"inserter-stack-size-bonus"`, `"stack-inserter-capacity-bonus"`, `"laboratory-speed"`, `"character-logistic-trash-slots"`, `"maximum-following-robots-count"`, `"worker-robot-speed"`, `"worker-robot-storage"`, `"ghost-time-to-live"`, `"turret-attack"`, `"ammo-damage"`, `"give-item"`, `"gun-speed"`, `"unlock-recipe"`, `"character-crafting-speed"`, `"character-mining-speed"`, `"character-running-speed"`, `"character-build-distance"`, `"character-item-drop-distance"`, `"character-reach-distance"`, `"character-resource-reach-distance"`, `"character-item-pickup-distance"`, `"character-loot-pickup-distance"`, `"character-inventory-slots-bonus"`, `"deconstruction-time-to-live"`, `"max-failed-attempts-per-tick-per-construction-queue"`, `"max-successful-attempts-per-tick-per-construction-queue"`, `"character-health-bonus"`, `"mining-drill-productivity-bonus"`, `"train-braking-force-bonus"`, `"zoom-to-world-enabled"`, `"zoom-to-world-ghost-building-enabled"`, `"zoom-to-world-blueprint-enabled"`, `"zoom-to-world-deconstruction-planner-enabled"`, `"zoom-to-world-upgrade-planner-enabled"`, `"zoom-to-world-selection-tool-enabled"`, `"worker-robot-battery"`, `"laboratory-productivity"`, `"follower-robot-lifetime"`, `"artillery-range"`, `"nothing"`, `"character-additional-mining-categories"`, `"character-logistic-requests"`.
-     */
-    type: 'gun-speed',
+/**
+ * @remarks
+ * Applies to `gun-speed` variant case
+ *
+ */
+interface TechnologyModifierGunSpeed extends TechnologyModifier {
     
     /**
      * Prototype name of the ammunition category that is affected
@@ -6278,12 +6231,12 @@ interface TechnologyModifierGunSpeed extends BaseTechnologyModifier {
     modifier: number
 }
 
-interface TechnologyModifierNothing extends BaseTechnologyModifier {
-    
-    /**
-     * Modifier type. Specifies which of the other fields will be available. Possible values are: `"inserter-stack-size-bonus"`, `"stack-inserter-capacity-bonus"`, `"laboratory-speed"`, `"character-logistic-trash-slots"`, `"maximum-following-robots-count"`, `"worker-robot-speed"`, `"worker-robot-storage"`, `"ghost-time-to-live"`, `"turret-attack"`, `"ammo-damage"`, `"give-item"`, `"gun-speed"`, `"unlock-recipe"`, `"character-crafting-speed"`, `"character-mining-speed"`, `"character-running-speed"`, `"character-build-distance"`, `"character-item-drop-distance"`, `"character-reach-distance"`, `"character-resource-reach-distance"`, `"character-item-pickup-distance"`, `"character-loot-pickup-distance"`, `"character-inventory-slots-bonus"`, `"deconstruction-time-to-live"`, `"max-failed-attempts-per-tick-per-construction-queue"`, `"max-successful-attempts-per-tick-per-construction-queue"`, `"character-health-bonus"`, `"mining-drill-productivity-bonus"`, `"train-braking-force-bonus"`, `"zoom-to-world-enabled"`, `"zoom-to-world-ghost-building-enabled"`, `"zoom-to-world-blueprint-enabled"`, `"zoom-to-world-deconstruction-planner-enabled"`, `"zoom-to-world-upgrade-planner-enabled"`, `"zoom-to-world-selection-tool-enabled"`, `"worker-robot-battery"`, `"laboratory-productivity"`, `"follower-robot-lifetime"`, `"artillery-range"`, `"nothing"`, `"character-additional-mining-categories"`, `"character-logistic-requests"`.
-     */
-    type: 'nothing',
+/**
+ * @remarks
+ * Applies to `nothing` variant case
+ *
+ */
+interface TechnologyModifierNothing extends TechnologyModifier {
     
     /**
      * Description of this nothing modifier.
@@ -6291,12 +6244,12 @@ interface TechnologyModifierNothing extends BaseTechnologyModifier {
     effect_description: LocalisedString
 }
 
-interface TechnologyModifierTurretAttack extends BaseTechnologyModifier {
-    
-    /**
-     * Modifier type. Specifies which of the other fields will be available. Possible values are: `"inserter-stack-size-bonus"`, `"stack-inserter-capacity-bonus"`, `"laboratory-speed"`, `"character-logistic-trash-slots"`, `"maximum-following-robots-count"`, `"worker-robot-speed"`, `"worker-robot-storage"`, `"ghost-time-to-live"`, `"turret-attack"`, `"ammo-damage"`, `"give-item"`, `"gun-speed"`, `"unlock-recipe"`, `"character-crafting-speed"`, `"character-mining-speed"`, `"character-running-speed"`, `"character-build-distance"`, `"character-item-drop-distance"`, `"character-reach-distance"`, `"character-resource-reach-distance"`, `"character-item-pickup-distance"`, `"character-loot-pickup-distance"`, `"character-inventory-slots-bonus"`, `"deconstruction-time-to-live"`, `"max-failed-attempts-per-tick-per-construction-queue"`, `"max-successful-attempts-per-tick-per-construction-queue"`, `"character-health-bonus"`, `"mining-drill-productivity-bonus"`, `"train-braking-force-bonus"`, `"zoom-to-world-enabled"`, `"zoom-to-world-ghost-building-enabled"`, `"zoom-to-world-blueprint-enabled"`, `"zoom-to-world-deconstruction-planner-enabled"`, `"zoom-to-world-upgrade-planner-enabled"`, `"zoom-to-world-selection-tool-enabled"`, `"worker-robot-battery"`, `"laboratory-productivity"`, `"follower-robot-lifetime"`, `"artillery-range"`, `"nothing"`, `"character-additional-mining-categories"`, `"character-logistic-requests"`.
-     */
-    type: 'turret-attack',
+/**
+ * @remarks
+ * Applies to `turret-attack` variant case
+ *
+ */
+interface TechnologyModifierTurretAttack extends TechnologyModifier {
     
     /**
      * Modification value. This will be added to the current turret damage modifier upon researching.
@@ -6309,25 +6262,17 @@ interface TechnologyModifierTurretAttack extends BaseTechnologyModifier {
     turret_id: string
 }
 
-interface TechnologyModifierUnlockRecipe extends BaseTechnologyModifier {
-    
-    /**
-     * Modifier type. Specifies which of the other fields will be available. Possible values are: `"inserter-stack-size-bonus"`, `"stack-inserter-capacity-bonus"`, `"laboratory-speed"`, `"character-logistic-trash-slots"`, `"maximum-following-robots-count"`, `"worker-robot-speed"`, `"worker-robot-storage"`, `"ghost-time-to-live"`, `"turret-attack"`, `"ammo-damage"`, `"give-item"`, `"gun-speed"`, `"unlock-recipe"`, `"character-crafting-speed"`, `"character-mining-speed"`, `"character-running-speed"`, `"character-build-distance"`, `"character-item-drop-distance"`, `"character-reach-distance"`, `"character-resource-reach-distance"`, `"character-item-pickup-distance"`, `"character-loot-pickup-distance"`, `"character-inventory-slots-bonus"`, `"deconstruction-time-to-live"`, `"max-failed-attempts-per-tick-per-construction-queue"`, `"max-successful-attempts-per-tick-per-construction-queue"`, `"character-health-bonus"`, `"mining-drill-productivity-bonus"`, `"train-braking-force-bonus"`, `"zoom-to-world-enabled"`, `"zoom-to-world-ghost-building-enabled"`, `"zoom-to-world-blueprint-enabled"`, `"zoom-to-world-deconstruction-planner-enabled"`, `"zoom-to-world-upgrade-planner-enabled"`, `"zoom-to-world-selection-tool-enabled"`, `"worker-robot-battery"`, `"laboratory-productivity"`, `"follower-robot-lifetime"`, `"artillery-range"`, `"nothing"`, `"character-additional-mining-categories"`, `"character-logistic-requests"`.
-     */
-    type: 'unlock-recipe',
+/**
+ * @remarks
+ * Applies to `unlock-recipe` variant case
+ *
+ */
+interface TechnologyModifierUnlockRecipe extends TechnologyModifier {
     
     /**
      * Recipe prototype name to unlock.
      */
     recipe: string
-}
-
-interface DefaultTechnologyModifier extends BaseTechnologyModifier {
-    
-    /**
-     * Modifier type. Specifies which of the other fields will be available. Possible values are: `"inserter-stack-size-bonus"`, `"stack-inserter-capacity-bonus"`, `"laboratory-speed"`, `"character-logistic-trash-slots"`, `"maximum-following-robots-count"`, `"worker-robot-speed"`, `"worker-robot-storage"`, `"ghost-time-to-live"`, `"turret-attack"`, `"ammo-damage"`, `"give-item"`, `"gun-speed"`, `"unlock-recipe"`, `"character-crafting-speed"`, `"character-mining-speed"`, `"character-running-speed"`, `"character-build-distance"`, `"character-item-drop-distance"`, `"character-reach-distance"`, `"character-resource-reach-distance"`, `"character-item-pickup-distance"`, `"character-loot-pickup-distance"`, `"character-inventory-slots-bonus"`, `"deconstruction-time-to-live"`, `"max-failed-attempts-per-tick-per-construction-queue"`, `"max-successful-attempts-per-tick-per-construction-queue"`, `"character-health-bonus"`, `"mining-drill-productivity-bonus"`, `"train-braking-force-bonus"`, `"zoom-to-world-enabled"`, `"zoom-to-world-ghost-building-enabled"`, `"zoom-to-world-blueprint-enabled"`, `"zoom-to-world-deconstruction-planner-enabled"`, `"zoom-to-world-upgrade-planner-enabled"`, `"zoom-to-world-selection-tool-enabled"`, `"worker-robot-battery"`, `"laboratory-productivity"`, `"follower-robot-lifetime"`, `"artillery-range"`, `"nothing"`, `"character-additional-mining-categories"`, `"character-logistic-requests"`.
-     */
-    type: 'inserter-stack-size-bonus' | 'stack-inserter-capacity-bonus' | 'laboratory-speed' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' | 'worker-robot-speed' | 'worker-robot-storage' | 'ghost-time-to-live' | 'character-crafting-speed' | 'character-mining-speed' | 'character-running-speed' | 'character-build-distance' | 'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' | 'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' | 'deconstruction-time-to-live' | 'max-failed-attempts-per-tick-per-construction-queue' | 'max-successful-attempts-per-tick-per-construction-queue' | 'character-health-bonus' | 'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'zoom-to-world-enabled' | 'zoom-to-world-ghost-building-enabled' | 'zoom-to-world-blueprint-enabled' | 'zoom-to-world-deconstruction-planner-enabled' | 'zoom-to-world-upgrade-planner-enabled' | 'zoom-to-world-selection-tool-enabled' | 'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'character-additional-mining-categories'
 }
 
 interface BaseTechnologyPrototypeFilter {
@@ -6338,9 +6283,9 @@ interface BaseTechnologyPrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface TechnologyPrototypeFilterLevel extends BaseTechnologyPrototypeFilter {
@@ -6427,9 +6372,9 @@ interface BaseTilePrototypeFilter {
     invert?: boolean,
     
     /**
-     * How to combine this with the previous filter. Must be `"or"` or `"and"`. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
-    mode?: string
+    mode?: 'or' | 'and'
 }
 
 interface TilePrototypeFilterCollisionMask extends BaseTilePrototypeFilter {

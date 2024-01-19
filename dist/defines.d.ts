@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.101
+// Factorio version 1.1.102
 // API version 4
 
 declare namespace defines {
@@ -372,6 +372,10 @@ declare namespace defines {
          * Used by crafting machines.
          */
         fluid_ingredient_shortage,
+        /**
+         * Used by burner energy sources.
+         */
+        full_burnt_result_output,
         /**
          * Used by crafting machines, boilers, burner energy sources and reactors: Reactor/burner has full burnt result inventory, boiler has full output fluidbox.
          */
