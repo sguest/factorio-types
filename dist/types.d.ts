@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.101
+// Factorio version 1.1.102
 // API version 4
 
 declare namespace prototype {
@@ -527,6 +527,13 @@ type AnimationVariations = {
      */
     sheets?: AnimationSheet[]
 } | Animation | Animation[]
+
+/**
+ * A union of all prototypes. A specific prototype is loaded based on the value of the `type` key.
+ * 
+ * See the {@link Prototypes page | prototype:prototypes} for more information.
+ */
+type AnyPrototype = PrototypeBase | AmbientSound | AnimationPrototype | EditorControllerPrototype | FontPrototype | GodControllerPrototype | MapGenPresets | MapSettings | MouseCursor | SoundPrototype | SpectatorControllerPrototype | SpritePrototype | TileEffectDefinition | TipsAndTricksItemCategory | TriggerTargetType | WindSound
 
 interface AreaTriggerItem extends TriggerItem{
     collision_mode?: 'distance-from-collision-box' | 'distance-from-center',
@@ -1115,7 +1122,7 @@ Only loaded if `icons` is not defined.
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Only loaded if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */
@@ -2309,6 +2316,33 @@ type DamageTypeFilters = {
 type DamageTypeID = string
 
 /**
+ * The data table is read by the game to load all prototypes.
+ * 
+ * At the end of the prototype stage, the data table is loaded by the game engine and the format of the prototypes is validated. Any extra properties are ignored. See {@link Data Lifecycle | runtime:data-lifecycle} for more information.
+ * 
+ * The data table and its properties are defined in Lua, so their source code can be viewed in {@link dataloader.lua | https://github.com/wube/factorio-data/blob/master/core/lualib/dataloader.lua}.
+ */
+interface Data {
+    
+    /**
+     * The primary way to add prototypes to the data table.
+     */
+    extend: DataExtendMethod,
+    
+    /**
+     * Set by the game based on whether the demo or retail version is running. Should not be used by mods.
+     */
+    is_demo: boolean,
+    
+    /**
+     * A dictionary of prototype types to values that themselves are dictionaries of prototype names to specific prototypes.
+
+This means that individual prototypes can be accessed with `local prototype = data.raw["prototype-type"]["internal-name"]`.
+     */
+    raw: {[key: string]: {[key: string]: AnyPrototype}}
+}
+
+/**
  * The first member of the tuple states at which time of the day the LUT should be used. If the current game time is between two values defined in the color lookup that have different LUTs, the color is interpolated to create a smooth transition. (Sharp transition can be achieved by having the two values differing only by a small fraction.)
  * 
  * If there is only one tuple, it means that the LUT will be used all the time, regardless of the value of the first member of the tuple.
@@ -2472,6 +2506,17 @@ interface DropDownStyleSpecification extends BaseStyleSpecification{
 
 /**
  * When applied to modules, the resulting effect is a sum of all module affects, multiplied through calculations: `(1 + sum module effects)` or, for productivity `(0 + sum)`.
+ * @example
+ * ```
+ * effect =
+ * {
+ *   productivity = {bonus = 0.04},
+ *   consumption = {bonus = 0.4},
+ *   pollution = {bonus = 0.05},
+ *   speed = {bonus = -0.05}
+ * }
+ * ```
+ *
  */
 interface Effect {
     
@@ -2516,11 +2561,44 @@ type EffectTypeLimitation = /* Modules that increase or decrease the machine's s
 interface EffectValue {
     
     /**
-     * Precision is ignored beyond two decimals - 17.567 results in 17.56 etc.
+     * Precision is ignored beyond two decimals - `0.567` results in `0.56` etc.
      */
     bonus?: number
 }
 
+/**
+ * @example
+ * ```
+ * energy_source = -- energy source of oil pumpjack
+ * {
+ *   type = "electric",
+ *   emissions_per_minute = 10,
+ *   usage_priority = "secondary-input"
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * energy_source = -- energy source of accumulator
+ * {
+ *   type = "electric",
+ *   buffer_capacity = "5MJ",
+ *   usage_priority = "tertiary",
+ *   input_flow_limit = "300kW",
+ *   output_flow_limit = "300kW"
+ * }
+ * ```
+ *
+ * @example
+ * ```
+ * energy_source = -- energy source of steam engine
+ * {
+ *   type = "electric",
+ *   usage_priority = "secondary-output"
+ * }
+ * ```
+ *
+ */
 interface ElectricEnergySource extends BaseEnergySource{
     
     /**
@@ -2810,7 +2888,7 @@ interface EnemyExpansionSettings {
 /**
  * Specifies an amount of electric energy in joules, or electric energy per time in watts.
  * 
- * Internally, the input in `Watt` or `Joule/second` is always converted into `Joule/tick` or `Joule/(1/60)second`, using the following formula: `Power in Joule/tick = Power in Watt / 60`. See {@link Power | https://wiki.factorio.com/Units#Power}.
+ * Internally, the input in `Watt` or `Joule/second` is always converted into `Joule/tick`, where 1 second is equal to 60 ticks. This means it uses the following formula: `Power in Joule/tick = Power in Watt / 60`. See {@link Power | https://wiki.factorio.com/Units#Power}.
  * 
  * Supported Multipliers:
  * 
@@ -2833,6 +2911,9 @@ interface EnemyExpansionSettings {
  * ```
  * buffer_capacity = "5MJ"
  * input_flow_limit = "300W"
+ * -- the following two lines result in the same power consumption:
+ * energy_usage = "60W"
+ * energy_usage = "1J" -- not recommended, Watt is convention for power
  * ```
  *
  */
@@ -3065,7 +3146,12 @@ interface FastReplaceTipTrigger {
  * - **mod path**: The format `__<mod-name>__` is placeholder for root of any other mod (mods/<mod-name>), and is accessible as long as the mod is active.
  * @example
  * ```
- * filename = "__base__/graphics/entity/basic-transport-belt/basic-transport-belt.png"
+ * filename = "__base__/graphics/entity/accumulator/accumulator.png"
+ * ```
+ *
+ * @example
+ * ```
+ * filename = "__a-mod__/animations/assembler.png"
  * ```
  *
  */
@@ -3344,6 +3430,10 @@ If this FluidProductPrototype is used in a recipe, the `catalyst_amount` is calc
     
     /**
      * Value between 0 and 1, `0` for 0% chance and `1` for 100% chance.
+
+The effect of probability is no product, or a linear distribution on [min, max]. For a recipe with probability `p`, amount_min `min`, and amount_max `max`, the Expected Value of this product can be expressed as `p * (0.5 * (max + min))`. This is what will be shown in a recipe tooltip. The effect of `catalyst_amount` on the product is not shown.
+
+When `amount_min` and `amount_max` are not provided, `amount` applies as min and max. The Expected Value simplifies to `p * amount`, providing `0` product, or `amount` product, on recipe completion.
      */
     probability?: number,
     
@@ -3791,11 +3881,11 @@ interface IconData {
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Mandatory if `icon_size` is not specified outside of `icons`.
      */
-    icon_size: SpriteSizeType,
+    icon_size?: SpriteSizeType,
     
     /**
      * Defaults to `32/icon_size` for items and recipes, and `256/icon_size` for technologies.
@@ -4546,7 +4636,7 @@ interface MapGenSettings {
     peaceful_mode?: boolean,
     
     /**
-     * Map of property name (e.g. "elevation") to name of noise expression that will provide it. Entries may be omitted. A notable usage is changing autoplace behavior of an entity based on the preset, which cannot be read from a noise expression.
+     * Map of property name (`"elevation"`, etc) to name of noise expression that will provide it. Entries may be omitted. A notable usage is changing autoplace behavior of an entity based on the preset, which cannot be read from a noise expression.
      */
     property_expression_names?: {[key: string]: string | boolean | number},
     
@@ -4788,11 +4878,44 @@ interface MiningDrillProductivityBonusModifier extends SimpleModifier{
 }
 
 /**
+ * The user-set value of a startup {@link mod setting | https://wiki.factorio.com/Tutorial:Mod_settings}.
+ */
+interface ModSetting {
+    
+    /**
+     * The value of the mod setting. The type depends on the kind of setting.
+     */
+    value: number | boolean | string | Color
+}
+
+/**
  * The effect that is applied when a {@link TechnologyPrototype | prototype:TechnologyPrototype} is researched.
  * 
  * Loaded as one of the {@link BaseModifier | prototype:BaseModifier} extensions, based on the value of the `type` key.
  */
 type Modifier = /* Loaded when the `type` is `"inserter-stack-size-bonus"`. */ InserterStackSizeBonusModifier | /* Loaded when the `type` is `"stack-inserter-capacity-bonus"`. */ StackInserterCapacityBonusModifier | /* Loaded when the `type` is `"laboratory-speed"`. */ LaboratorySpeedModifier | /* Loaded when the `type` is `"laboratory-productivity"`. */ LaboratoryProductivityModifier | /* Loaded when the `type` is `"maximum-following-robots-count"`. */ MaximumFollowingRobotsCountModifier | /* Loaded when the `type` is `"worker-robot-speed"`. */ WorkerRobotSpeedModifier | /* Loaded when the `type` is `"worker-robot-storage"`. */ WorkerRobotStorageModifier | /* Loaded when the `type` is `"worker-robot-battery"`. */ WorkerRobotBatteryModifier | /* Loaded when the `type` is `"follower-robot-lifetime"`. */ FollowerRobotLifetimeModifier | /* Loaded when the `type` is `"ghost-time-to-live"`. */ GhostTimeToLiveModifier | /* Loaded when the `type` is `"deconstruction-time-to-live"`. */ DeconstructionTimeToLiveModifier | /* Loaded when the `type` is `"turret-attack"`. */ TurretAttackModifier | /* Loaded when the `type` is `"ammo-damage"`. */ AmmoDamageModifier | /* Loaded when the `type` is `"artillery-range"`. */ ArtilleryRangeModifier | /* Loaded when the `type` is `"give-item"`. */ GiveItemModifier | /* Loaded when the `type` is `"gun-speed"`. */ GunSpeedModifier | /* Loaded when the `type` is `"unlock-recipe"`. */ UnlockRecipeModifier | /* Loaded when the `type` is `"character-crafting-speed"`. */ CharacterCraftingSpeedModifier | /* Loaded when the `type` is `"character-mining-speed"`. */ CharacterMiningSpeedModifier | /* Loaded when the `type` is `"character-running-speed"`. */ CharacterRunningSpeedModifier | /* Loaded when the `type` is `"character-build-distance"`. */ CharacterBuildDistanceModifier | /* Loaded when the `type` is `"character-item-drop-distance"`. */ CharacterItemDropDistanceModifier | /* Loaded when the `type` is `"character-reach-distance"`. */ CharacterReachDistanceModifier | /* Loaded when the `type` is `"character-resource-reach-distance"`. */ CharacterResourceReachDistanceModifier | /* Loaded when the `type` is `"character-item-pickup-distance"`. */ CharacterItemPickupDistanceModifier | /* Loaded when the `type` is `"character-loot-pickup-distance"`. */ CharacterLootPickupDistanceModifier | /* Loaded when the `type` is `"character-inventory-slots-bonus"`. */ CharacterInventorySlotsBonusModifier | /* Loaded when the `type` is `"character-health-bonus"`. */ CharacterHealthBonusModifier | /* Loaded when the `type` is `"character-logistic-requests"`. */ CharacterLogisticRequestsModifier | /* Loaded when the `type` is `"character-logistic-trash-slots"`. */ CharacterLogisticTrashSlotsModifier | /* Loaded when the `type` is `"max-failed-attempts-per-tick-per-construction-queue"`. */ MaxFailedAttemptsPerTickPerConstructionQueueModifier | /* Loaded when the `type` is `"max-successful-attempts-per-tick-per-construction-queue"`. */ MaxSuccessfulAttemptsPerTickPerConstructionQueueModifier | /* Loaded when the `type` is `"mining-drill-productivity-bonus"`. */ MiningDrillProductivityBonusModifier | /* Loaded when the `type` is `"train-braking-force-bonus"`. */ TrainBrakingForceBonusModifier | /* Loaded when the `type` is `"zoom-to-world-enabled"`. */ ZoomToWorldEnabledModifier | /* Loaded when the `type` is `"zoom-to-world-ghost-building-enabled"`. */ ZoomToWorldGhostBuildingEnabledModifier | /* Loaded when the `type` is `"zoom-to-world-blueprint-enabled"`. */ ZoomToWorldBlueprintEnabledModifier | /* Loaded when the `type` is `"zoom-to-world-deconstruction-planner-enabled"`. */ ZoomToWorldDeconstructionPlannerEnabledModifier | /* Loaded when the `type` is `"zoom-to-world-upgrade-planner-enabled"`. */ ZoomToWorldUpgradePlannerEnabledModifier | /* Loaded when the `type` is `"zoom-to-world-selection-tool-enabled"`. */ ZoomToWorldSelectionToolEnabledModifier | /* Loaded when the `type` is `"nothing"`. */ NothingModifier
+
+/**
+ * A dictionary of mod names to mod versions of all active mods. It can be used to adjust mod functionality based on the presence of other mods.
+ * @example
+ * ```
+ * -- executes pineapple only when the pizza mod is active
+ * if mods["pizza"] then
+ *   pineapple()
+ * end
+ * ```
+ *
+ * @example
+ * ```
+ * -- when the only active mod is the space-age mod with version 1.2.0
+ * -- then this logs
+ * for name, version in pairs(mods) do
+ *   log(name .. " version " .. version) -- => space-age version 1.2.0
+ * end
+ * ```
+ *
+ */
+type Mods = {[key: string]: string}
 
 /**
  * The name of a {@link ModuleCategory | prototype:ModuleCategory}.
@@ -4896,6 +5019,8 @@ interface NoiseArrayConstruction {
  * {@link noise.define_noise_function | https://github.com/wube/factorio-data/blob/master/core/lualib/noise.lua#L272} allows noise expressions to be defined using a shorthand that's a subset of Lua (see the example for details).
  * 
  * See {@link here | https://togos.github.io/togos-example-noise-programs/} for a tutorial on authoring noise expressions.
+ * 
+ * The most frequently used noise functions are loaded via {@link NoiseFunctionApplication | prototype:NoiseFunctionApplication}.
  * @example
  * ```
  * -- "noise" library required beforehand
@@ -6076,7 +6201,7 @@ When used without `projectile_creation_parameters`, this sets the turret's rotat
     projectile_orientation_offset?: number,
     
     /**
-     * Used to show bullet shells/casings being ejected from the gun, e.g. {@link artillery shell casings | https://factorio.com/blog/post/fff-345}.
+     * Used to show bullet shells/casings being ejected from the gun, see {@link artillery shell casings | https://factorio.com/blog/post/fff-345}.
      */
     shell_particle?: CircularParticleCreationSpecification,
     type: 'projectile'
@@ -6444,7 +6569,7 @@ Can be set to an empty table to create a recipe that produces nothing. Duplicate
     results: ProductPrototype[],
     
     /**
-     * Whether the recipe name should have the product amount in front of it, e.g. "2x Transport belt"
+     * Whether the recipe name should have the product amount in front of it. E.g. "2x Transport belt"
      */
     show_amount_in_title?: boolean,
     
@@ -6907,6 +7032,23 @@ interface SetTileTriggerEffectItem extends TriggerEffectItem{
     tile_collision_mask?: CollisionMask,
     tile_name: TileID,
     type: 'set-tile'
+}
+
+/**
+ * A struct that provides access to the user-set values of startup {@link mod settings | https://wiki.factorio.com/Tutorial:Mod_settings}.
+ * @example
+ * ```
+ * -- Accessing the value of a mod setting
+ * local val = settings.startup["my-mod-setting-name"].value
+ * ```
+ *
+ */
+interface Settings {
+    
+    /**
+     * All startup mod settings, indexed by the name of the setting.
+     */
+    startup: {[key: string]: ModSetting}
 }
 
 interface ShiftAnimationWaypoints {
@@ -8064,7 +8206,7 @@ interface TechnologyData {
     hidden?: boolean,
     
     /**
-     * Controls whether the technology cost ignores the tech cost multiplier set in the {@link DifficultySettings | runtime:DifficultySettings}, e.g. `4` for the default expensive difficulty.
+     * Controls whether the technology cost ignores the tech cost multiplier set in the {@link DifficultySettings | runtime:DifficultySettings}. E.g. `4` for the default expensive difficulty.
      */
     ignore_tech_cost_multiplier?: boolean,
     

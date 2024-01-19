@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.101
+// Factorio version 1.1.102
 // API version 4
 
 declare namespace prototype {
@@ -349,7 +349,7 @@ Mandatory if `icons` is not defined.
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */
@@ -1053,6 +1053,10 @@ The picture of the beacon when it is not on.
      */
     distribution_effectivity: number,
     energy_source: ElectricEnergySource | VoidEnergySource,
+    
+    /**
+     * The constant power usage of this beacon.
+     */
     energy_usage: Energy,
     
     /**
@@ -2696,7 +2700,7 @@ interface EntityParticlePrototype extends EntityPrototype{
 }
 
 /**
- * Abstract base of all entities in the game. Entity is nearly everything that can be on the map(except tiles).
+ * Abstract base of all entities in the game. Entity is nearly everything that can be on the map (except tiles).
  * 
  * For in game script access to entity, take a look at {@link LuaEntity | runtime:LuaEntity}.
  * @example
@@ -2819,7 +2823,7 @@ Only loaded if `icons` is not defined.
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Only loaded if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */
@@ -2848,7 +2852,7 @@ Either this or `icon` is mandatory for entities that have at least one of these 
     /**
      * Name of the entity that will be automatically selected as the upgrade of this entity when using the {@link upgrade planner | https://wiki.factorio.com/Upgrade_planner} without configuration.
 
-This entity may not have "not-upgradable" flag set and must be minable. This entity mining result must not contain item product with "hidden" flag set. Mining results with no item products are allowed. The entity may not be a {@link RollingStockPrototype | prototype:RollingStockPrototype}.
+This entity may not have "not-upgradable" flag set and must be minable. This entity mining result must not contain item product with "hidden" flag set. Mining results with no item products are allowed. This entity may not be a {@link RollingStockPrototype | prototype:RollingStockPrototype}.
 
 The upgrade target entity needs to have the same bounding box, collision mask, and fast replaceable group as this entity. The upgrade target entity must have least 1 item that builds it that isn't hidden.
      */
@@ -3399,7 +3403,7 @@ Mandatory if `icons` is not defined.
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */
@@ -3562,9 +3566,17 @@ interface FlyingRobotPrototype extends EntityWithOwnerPrototype{
     collision_mask?: CollisionMask,
     
     /**
-     * How much does it cost to move 1 tile.
+     * How much energy does it cost to move 1 tile.
+
+Used only by {@link robots with logistic interface | prototype:RobotWithLogisticInterfacePrototype}.
      */
     energy_per_move?: Energy,
+    
+    /**
+     * How much energy does it cost to fly for 1 tick.
+
+Used only by {@link robots with logistic interface | prototype:RobotWithLogisticInterfacePrototype}.
+     */
     energy_per_tick?: Energy,
     
     /**
@@ -3574,27 +3586,39 @@ interface FlyingRobotPrototype extends EntityWithOwnerPrototype{
     
     /**
      * How much energy can be stored in the batteries.
+
+Used only by {@link robots with logistic interface | prototype:RobotWithLogisticInterfacePrototype}.
      */
     max_energy?: Energy,
     
     /**
-     * The maximum speed of the robot. Useful to limit the impact of {@link worker robot speed (research) | https://wiki.factorio.com/Worker_robot_speed_(research}).
+     * The maximum flying speed of the robot, in tiles/tick. Useful to limit the impact of {@link worker robot speed (research) | https://wiki.factorio.com/Worker_robot_speed_(research}).
      */
     max_speed?: number,
     
     /**
-     * If the robot has more energy than this, it does not need to charge before stationing.
+     * If the robot's battery fill ratio is more than this, it does not need to charge before stationing.
+
+Used only by {@link robots with logistic interface | prototype:RobotWithLogisticInterfacePrototype}.
      */
     max_to_charge?: number,
     
     /**
-     * The robot will go to charge when it has less energy than this.
+     * The robot will go to charge when its battery fill ratio is less than this.
+
+Used only by {@link robots with logistic interface | prototype:RobotWithLogisticInterfacePrototype}.
      */
     min_to_charge?: number,
+    
+    /**
+     * The flying speed of the robot, in tiles/tick.
+     */
     speed: number,
     
     /**
      * Some robots simply crash, some slowdown but keep going. 0 means crash.
+
+Used only by {@link robots with logistic interface | prototype:RobotWithLogisticInterfacePrototype}.
      */
     speed_multiplier_when_out_of_energy?: number
 }
@@ -3667,6 +3691,14 @@ interface FontPrototype {
 
 /**
  * Each item which has a fuel_value must have a fuel category. The fuel categories are used to allow only certain fuels to be used in {@link EnergySource | prototype:EnergySource}.
+ * @example
+ * ```
+ * {
+ *   type = "fuel-category",
+ *   name = "best-fuel"
+ * }
+ * ```
+ *
  */
 interface FuelCategory extends PrototypeBase{
     
@@ -4082,9 +4114,21 @@ Note, that for buildings, it is customary to leave 0.1 wide border between the e
 }
 
 /**
- * An item group. Item groups are shown above the list of craftable items in the player's inventory. The built-in groups are "logistics", "production", "intermediate-products" and "combat" but mods can define their own.
+ * An item group. Item groups are the tabs shown above the list of craftable items in the player's inventory GUI. The built-in groups are "logistics", "production", "intermediate-products" and "combat" but mods can define their own.
  * 
- * Items are sorted into item groups by sorting them into a {@link subgroup | prototype:ItemPrototype::subgroup} which then belongs to a {@link item group | prototype:ItemSubGroup::group}.
+ * Items are sorted into item groups by sorting them into a {@link subgroup | prototype:ItemPrototype::subgroup} which then belongs to an {@link item group | prototype:ItemSubGroup::group}.
+ * @example
+ * ```
+ * {
+ *   type = "item-group",
+ *   name = "logistics",
+ *   order = "a",
+ *   icon = "__base__/graphics/item-group/logistics.png",
+ *   icon_size = 128,
+ *   icon_mipmaps = 2
+ * }
+ * ```
+ *
  */
 interface ItemGroup extends PrototypeBase{
     
@@ -4101,7 +4145,7 @@ Mandatory if `icons` is not defined.
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */
@@ -4130,7 +4174,9 @@ interface ItemPrototype extends PrototypeBase{
     close_sound?: Sound,
     
     /**
-     * Path to the icon file.
+     * If this is set, it is used to show items in alt-mode instead of the normal item icon. This can be useful to increase the contrast of the icon with the dark alt-mode {@link icon outline | prototype:UtilityConstants::item_outline_color}.
+
+Path to the icon file.
 
 Only loaded if `dark_background_icons` is not defined.
 
@@ -4165,7 +4211,9 @@ Uses the basic `icon_size` and `icon_mipmaps` properties.
     fuel_top_speed_multiplier?: number,
     
     /**
-     * Mandatory when `fuel_acceleration_multiplier`, `fuel_top_speed_multiplier` or `fuel_emissions_multiplier` or `fuel_glow_color` are used. Amount of energy it gives when used as fuel.
+     * Amount of energy the item gives when used as fuel.
+
+Mandatory if `fuel_acceleration_multiplier`, `fuel_top_speed_multiplier` or `fuel_emissions_multiplier` or `fuel_glow_color` are used.
      */
     fuel_value?: Energy,
     
@@ -4184,7 +4232,7 @@ This definition applies to all icon-type properties, both on here and on any chi
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 This definition applies to all icon-type properties, both on here and on any children.
 
@@ -4201,7 +4249,7 @@ Mandatory if `icons` is not defined, or if `icon_size` is not specified for all 
     /**
      * Used to give the item multiple different icons so that they look less uniform on belts. For inventory icons and similar, `icon/icons` will be used. Maximum number of variations is 16.
 
-When using sprites of size `64` (same as base game icons), the `scale` should be set to 0.25.
+The expected size for icons of items on belts is 16px. So when using sprites of size `64` (same as base game icons), the `scale` should be set to 0.25.
      */
     pictures?: SpriteVariations,
     place_as_tile?: PlaceAsTile,
@@ -4250,7 +4298,19 @@ interface ItemRequestProxyPrototype extends EntityPrototype{
 }
 
 /**
- * An item subgroup. The built-in subgroups can be found {@link here | https://wiki.factorio.com/Data.raw#item-subgroup}. See {@link ItemPrototype::subgroup | prototype:ItemPrototype::subgroup}.
+ * An item subgroup. Item subgroups are the rows in the recipe list in the player's inventory GUI. The subgroup of a prototype also determines its item {@link group | prototype:ItemGroup::group} (tab in the recipe list).
+ * 
+ * The built-in subgroups can be found {@link here | https://wiki.factorio.com/Data.raw#item-subgroup}. See {@link ItemPrototype::subgroup | prototype:ItemPrototype::subgroup} for setting the subgroup of an item.
+ * @example
+ * ```
+ * {
+ *   type = "item-subgroup",
+ *   name = "train-transport",
+ *   group = "logistics",
+ *   order = "e"
+ * }
+ * ```
+ *
  */
 interface ItemSubGroup extends PrototypeBase{
     
@@ -5210,7 +5270,7 @@ interface MovementBonusEquipmentPrototype extends EquipmentPrototype{
  * 
  * Alternate expressions can be made available in the map generator GUI by setting their `intended_property` to the name of the property they should override.
  * 
- * Named noise expressions can also be used by {@link noise variables | prototype:NoiseExpression::variable}, e.g. `noise.var("my-named-expression")`.
+ * Named noise expressions can also be used by {@link noise variables | prototype:NoiseVariable}, e.g. `noise.var("my-named-expression")`.
  */
 interface NamedNoiseExpression extends PrototypeBase{
     
@@ -5224,7 +5284,7 @@ interface NamedNoiseExpression extends PrototypeBase{
 
 Note that the "Map type" dropdown in the map generation GUI is actually a selector for "elevation" generators. If generators are available for other properties, the "Map type" dropdown in the GUI will be renamed to "elevation" and shown along with selectors for the other selectable properties.
 
-For example if a noise expression is intended to be used as an alternative temperature generator, `intended_property` should be "temperature". The base game uses the intended_properties elevation, temperature, moisture and aux. For how the named noise expression with those intended_properties are used in the base game see the notable named noise expression list on {@link NoiseExpression::variable | prototype:NoiseExpression::variable}. Mods may add any other intended_property or modify the existing noise expressions to change/remove their intended properties. Furthermore, mods may remove the use of those named noise expressions from the map generation code or change what they affect.
+For example if a noise expression is intended to be used as an alternative temperature generator, `intended_property` should be "temperature". The base game uses the intended_properties elevation, temperature, moisture and aux. For how the named noise expression with those intended_properties are used in the base game see the notable named noise expression list on {@link BaseNamedNoiseExpressions | prototype:BaseNamedNoiseExpressions}. Mods may add any other intended_property or modify the existing noise expressions to change/remove their intended properties. Furthermore, mods may remove the use of those named noise expressions from the map generation code or change what they affect.
 
 **intended_property in the base game:** The base game defines two named noise expressions that have the `intended_property` "elevation" so that are selectable via the "Map type" dropdown (which actually selects elevation generators)
 
@@ -5249,7 +5309,7 @@ data:extend{
 
 **Mods can define any intended_property with any name**. This examples aims to show what this is useful for.
 
-A {@link NoiseExpression::variable | prototype:NoiseExpression::variable} can reference a named noise expression, so by defining the "test" named noise expression, `noise.var("test")` may be used in other {@link noise expressions | prototype:NoiseExpression}. Intended_property allows to override what the variable references: With the example, if "more-test" is selected in the dropdown in the map generator GUI, its `expression` (`noise.ridge(noise.var("y"), -10, 6`) will provide the value for the noise variable "test" instead.
+A {@link NoiseVariable | prototype:NoiseVariable} can reference a named noise expression, so by defining the "test" named noise expression, `noise.var("test")` may be used in other {@link noise expressions | prototype:NoiseExpression}. Intended_property allows to override what the variable references: With the example, if "more-test" is selected in the dropdown in the map generator GUI, its `expression` (`noise.ridge(noise.var("y"), -10, 6`) will provide the value for the noise variable "test" instead.
 
 For easy demonstration, that value is assigned to the "elevation" named noise expression, so changing the "test" generator changes the `noise.var("test")` which in turn is used by the "elevation" named noise expression. The "elevation" noise variable is used by water generation, so changing the test generators is immediately visible in the map generation preview.
 
@@ -5794,7 +5854,7 @@ interface RadarPrototype extends EntityWithOwnerPrototype{
     /**
      * The amount of energy the radar has to consume for nearby scan to be performed. This value doesn't have any effect on sector scanning.
 
-Performance warning: nearby scan causes re-charting of many chunks, which is expensive operation. If you want to make a radar that updates map more in real time, you should keep its range low. If you are making radar with high range, you should set this value such that nearby scan is performed once a second or so. For example if you set `energy_usage` to 100kW, setting` energy_per_nearby_scan` to 100kJ will cause nearby scan happen once per second.
+Performance warning: nearby scan causes re-charting of many chunks, which is expensive operation. If you want to make a radar that updates map more in real time, you should keep its range low. If you are making radar with high range, you should set this value such that nearby scan is performed once a second or so. For example if you set `energy_usage` to 100kW, setting `energy_per_nearby_scan` to 100kJ will cause nearby scan to happen once per second.
      */
     energy_per_nearby_scan: Energy,
     
@@ -6044,6 +6104,14 @@ The input energy source, in vanilla it is a burner energy source.
  * A recipe category. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#recipe-category}. See {@link RecipePrototype::category | prototype:RecipePrototype::category}. Recipe categories can be used to specify which {@link machine | prototype:CraftingMachinePrototype::crafting_categories} can craft which {@link recipes | prototype:RecipePrototype}.
  * 
  * The recipe category with the name "crafting" cannot contain recipes with fluid ingredients or products.
+ * @example
+ * ```
+ * {
+ *   type = "recipe-category",
+ *   name = "my-category"
+ * }
+ * ```
+ *
  */
 interface RecipeCategory extends PrototypeBase{
     
@@ -6258,9 +6326,9 @@ Mandatory if `icons` is not defined for a recipe with more than one product and 
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
-Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+Only loaded if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */
     icon_size?: SpriteSizeType,
     
@@ -6334,7 +6402,7 @@ Mandatory if neither `normal` nor `expensive` are defined.
     results?: ProductPrototype[],
     
     /**
-     * Whether the recipe name should have the product amount in front of it, e.g. "2x Transport belt".
+     * Whether the recipe name should have the product amount in front of it. E.g. "2x Transport belt".
 
 Only loaded if neither `normal` nor `expensive` are defined.
      */
@@ -8123,7 +8191,7 @@ Mandatory if `icons` is not defined.
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */
@@ -8135,7 +8203,7 @@ Mandatory if `icons` is not defined, or if `icon_size` is not specified for all 
     icons?: IconData[],
     
     /**
-     * Controls whether the technology cost ignores the tech cost multiplier set in the {@link DifficultySettings | runtime:DifficultySettings}, e.g. `4` for the default expensive difficulty.
+     * Controls whether the technology cost ignores the tech cost multiplier set in the {@link DifficultySettings | runtime:DifficultySettings}. E.g. `4` for the default expensive difficulty.
 
 Only loaded if neither `normal` nor `expensive` are defined.
      */
@@ -8308,7 +8376,7 @@ Only loaded if `icons` is not defined.
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Only loaded if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */
@@ -8886,12 +8954,12 @@ Controls the speed of the prepared_animation: `1 ÷ prepared_speed_secondary = d
 }
 
 /**
- * The definition of the tutorial to be used in the tips and tricks, see {@link TipsAndTricksItem | prototype:TipsAndTricksItem}. The actual tutorial code is defined in the tutorials folder, in the folder that has the name of the scenario property.
+ * The definition of the tutorial to be used in the tips and tricks, see {@link TipsAndTricksItem | prototype:TipsAndTricksItem}. The actual tutorial scripting code is defined in the tutorial scenario. The scenario must be placed in the `tutorials` folder in the mod.
  */
 interface TutorialDefinition extends PrototypeBase{
     
     /**
-     * Name of the folder for this tutorial in the tutorials folder.
+     * Name of the folder for this tutorial scenario in the {@link `tutorials` folder | https://wiki.factorio.com/Tutorial:Mod_structure#Subfolders}.
      */
     scenario: string
 }
@@ -9934,7 +10002,7 @@ Mandatory if `icons` is not defined.
     icon_mipmaps?: IconMipMapType,
     
     /**
-     * The size of the square icon, in pixels, e.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
 
 Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
      */

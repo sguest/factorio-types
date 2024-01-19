@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.101
+// Factorio version 1.1.102
 // API version 4
 
 declare namespace runtime {
@@ -1679,9 +1679,9 @@ interface LuaCustomInputPrototype {
     readonly alternative_key_sequence?: string
 
     /**
-     * The consuming type: `"none"` or `"game-only"`.
+     * The consuming type.
      */
-    readonly consuming: string
+    readonly consuming: 'none' | 'game-only'
 
     /**
      * The default controller alternative key sequence for this custom input, if any
@@ -2140,7 +2140,7 @@ interface LuaEntity extends LuaControl {
      * @param damage - The amount of damage to be done.
      * @param dealer - The entity to consider as the damage dealer. Needs to be on the same surface as the entity being damaged.
      * @param force - The force that will be doing the damage.
-     * @param type - The type of damage to be done, defaults to "impact". Can't be `nil`.
+     * @param type - The type of damage to be done, defaults to `"impact"`. Can't be `nil`.
      * @returns the total damage actually applied after resistances.
      */
     damage(this: void,
@@ -2893,7 +2893,7 @@ interface LuaEntity extends LuaControl {
             by_player?: PlayerIdentification,
             spill_items?: boolean,
             enable_looted?: boolean,
-            force?: LuaForce | string
+            force?: ForceIdentification
         }): LuaMultiReturn<[boolean, {[key: string]: number} | null]>
 
     /**
@@ -3007,7 +3007,7 @@ interface LuaEntity extends LuaControl {
      * @returns Any items removed from this entity as a result of setting the recipe.
      */
     set_recipe(this: void,
-        recipe?: string | LuaRecipe): {[key: string]: number}
+        recipe: string | LuaRecipe | null): {[key: string]: number}
 
     /**
      * Set a logistic requester slot.
@@ -3211,7 +3211,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Gives what is the current shape of a transport-belt.
      * @remarks
-     * Can also be used on entity ghost if it contains transport-belt
+     * Can also be used on entity ghost if it contains transport-belt.
      * Applies to subclasses: TransportBelt
      *
      */
@@ -3427,7 +3427,7 @@ interface LuaEntity extends LuaControl {
     readonly distraction_command?: Command
 
     /**
-     * Gives a draw data of the given entity if it supports such data
+     * Gives a draw data of the given entity if it supports such data.
      * @remarks
      * Applies to subclasses: RollingStock
      *
@@ -3637,7 +3637,16 @@ interface LuaEntity extends LuaControl {
     readonly ghost_unit_number?: number
 
     /**
-     * Returns a {@link rich text | https://wiki.factorio.com/Rich_text} string containing this entity's position and surface name as a gps tag. Printing it will ping the location of the entity.
+     * Returns a {@link rich text | https://wiki.factorio.com/Rich_text} string containing this entity's position and surface name as a gps tag. {@link Printing | runtime:LuaGameScript::print} it will ping the location of the entity.
+     * @example
+     * ```
+     * -- called on a LuaEntity on the default surface it returns:
+     * entity.gps_tag -- => "[gps=-4,-9]"
+     * 
+     * -- called on a LuaEntity on "custom-surface" it returns:
+     * different_entity.gps_tag -- => "[gps=1,-5,custom-surface]"
+     * ```
+     *
      */
     readonly gps_tag: string
 
@@ -3689,7 +3698,7 @@ interface LuaEntity extends LuaControl {
      * Applies to subclasses: HighlightBox
      *
      */
-    highlight_box_type: string
+    highlight_box_type: CursorBoxRenderType
 
     /**
      * The filters for this infinity container.
@@ -3709,12 +3718,12 @@ interface LuaEntity extends LuaControl {
     initial_amount?: number
 
     /**
-     * The filter mode for this filter inserter. Either `"whitelist"` or `"blacklist"`. `nil` if this inserter doesn't use filters.
+     * The filter mode for this filter inserter. `nil` if this inserter doesn't use filters.
      * @remarks
      * Applies to subclasses: Inserter
      *
      */
-    inserter_filter_mode?: string
+    inserter_filter_mode?: 'whitelist' | 'blacklist'
 
     /**
      * Sets the stack size limit on this inserter. If the stack size is > than the force stack size limit the value is ignored.
@@ -3748,7 +3757,7 @@ interface LuaEntity extends LuaControl {
     readonly is_entity_with_owner: boolean
 
     /**
-     * If the rolling stock is facing train's front
+     * If the rolling stock is facing train's front.
      * @remarks
      * Applies to subclasses: RollingStock
      *
@@ -3778,7 +3787,7 @@ interface LuaEntity extends LuaControl {
      * 
      * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
      * @remarks
-     * Applies to subclasses: EntityWithOwner
+     * Applies to subclasses: EntityWithOwner,DeconstructibleTileProxy,TileGhost
      *
      */
     last_user?: LuaPlayer | PlayerIdentification
@@ -3791,22 +3800,22 @@ interface LuaEntity extends LuaControl {
     /**
      * Neighbour to which this linked belt is connected to, if any.
      * @remarks
-     * Can also be used on entity ghost if it contains linked-belt
-     * May return entity ghost which contains linked belt to which connection is made
+     * Can also be used on entity ghost if it contains linked-belt.
+     * May return entity ghost which contains linked belt to which connection is made.
      * Applies to subclasses: LinkedBelt
      *
      */
     readonly linked_belt_neighbour?: LuaEntity
 
     /**
-     * Type of linked belt: it is either `"input"` or `"output"`. Changing type will also flip direction so the belt is out of the same side
+     * Type of linked belt. Changing type will also flip direction so the belt is out of the same side.
      * @remarks
-     * Can only be changed when linked belt is disconnected (has no neighbour set)
-     * Can also be used on entity ghost if it contains linked-belt
+     * Can only be changed when linked belt is disconnected (has no neighbour set).
+     * Can also be used on entity ghost if it contains linked-belt.
      * Applies to subclasses: LinkedBelt
      *
      */
-    linked_belt_type: string
+    linked_belt_type: 'input' | 'output'
 
     /**
      * The container entity this loader is pointing at/pulling from depending on the {@link LuaEntity::loader_type | runtime:LuaEntity::loader_type}, if any.
@@ -4169,20 +4178,20 @@ interface LuaEntity extends LuaControl {
     splitter_filter?: LuaItemPrototype
 
     /**
-     * The input priority for this splitter. Either `"left"`, `"none"`, or `"right"`.
+     * The input priority for this splitter.
      * @remarks
      * Applies to subclasses: Splitter
      *
      */
-    splitter_input_priority: string
+    splitter_input_priority: 'left' | 'none' | 'right'
 
     /**
-     * The output priority for this splitter. Either `"left"`, `"none"`, or `"right"`.
+     * The output priority for this splitter.
      * @remarks
      * Applies to subclasses: Splitter
      *
      */
-    splitter_output_priority: string
+    splitter_output_priority: 'left' | 'none' | 'right'
 
     /**
      * @remarks
@@ -4829,16 +4838,16 @@ interface LuaEntityPrototype {
     readonly count_as_rock_for_filtered_deconstruction?: boolean
 
     /**
-     * The crafting categories this entity prototype supports.
+     * The {@link crafting categories | runtime:LuaRecipeCategoryPrototype} this entity prototype supports.
      * @remarks
      * The value in the dictionary is meaningless and exists just to allow for easy lookup.
-     * Applies to subclasses: CraftingMachine Character
+     * Applies to subclasses: CraftingMachine,Character
      *
      */
     readonly crafting_categories?: {[key: string]: boolean}
 
     /**
-     * The crafting speed..
+     * The crafting speed.
      * @remarks
      * Applies to subclasses: CraftingMachine
      *
@@ -5405,12 +5414,12 @@ interface LuaEntityPrototype {
     readonly localised_name: LocalisedString
 
     /**
-     * The logistic mode of this logistic container. One of `"requester"`, `"active-provider"`, `"passive-provider"`, `"buffer"`, `"storage"`, `"none"`.
+     * The logistic mode of this logistic container.
      * @remarks
      * Applies to subclasses: LogisticContainer
      *
      */
-    readonly logistic_mode?: string
+    readonly logistic_mode?: 'requester' | 'active-provider' | 'passive-provider' | 'buffer' | 'storage' | 'none'
 
     /**
      * The logistic parameters for this roboport.
@@ -5820,6 +5829,9 @@ interface LuaEntityPrototype {
      */
     readonly remains_when_mined: LuaEntityPrototype[]
 
+    /**
+     * Whether this entity should remove decoratives that collide with it when this entity is built. Possible values are `"automatic"`, `"true"` and `"false"`.
+     */
     readonly remove_decoratives: string
 
     /**
@@ -5847,7 +5859,7 @@ interface LuaEntityPrototype {
     readonly resistances?: {[key: string]: Resistance}
 
     /**
-     * The resource categories this character or mining drill supports.
+     * The {@link resource categories | runtime:LuaResourceCategoryPrototype} this character or mining drill supports.
      * @remarks
      * The value in the dictionary is meaningless and exists just to allow for easy lookup.
      * Applies to subclasses: MiningDrill,Character
@@ -7007,9 +7019,9 @@ interface LuaFluidBoxPrototype {
     readonly pipe_connections: FluidBoxConnection[]
 
     /**
-     * The production type. "input", "output", "input-output", or "none".
+     * The production type.
      */
-    readonly production_type: string
+    readonly production_type: 'input' | 'input-output' | 'output' | 'none'
 
     /**
      * The render layer.
@@ -7457,6 +7469,9 @@ interface LuaForce {
 
     /**
      * Play a sound for every player in this force.
+     * @remarks
+     * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for this force.
+     *
      * @param table.override_sound_type - The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      * @param table.path - The sound to play.
      * @param table.position - Where the sound should be played. If not given, it's played at the current position of each player.
@@ -8048,7 +8063,7 @@ interface LuaGameScript {
      * @param surface - The surface to be deleted. Currently the primary surface (1, 'nauvis') cannot be deleted.
      */
     delete_surface(this: void,
-        surface: string | LuaSurface): void
+        surface: SurfaceIdentification): void
 
     /**
      * Converts the given direction into the string version of the direction.
@@ -8105,6 +8120,9 @@ interface LuaGameScript {
     get_active_entities_count(this: void,
         surface?: SurfaceIdentification): number
 
+    /**
+     * Gets an entity by its name tag. Entity name tags can be set in the entity "extra settings" GUI in the map editor.
+     */
     get_entity_by_tag(this: void,
         tag: string): LuaEntity | null
 
@@ -8351,6 +8369,9 @@ interface LuaGameScript {
 
     /**
      * Play a sound for every player in the game.
+     * @remarks
+     * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for that player.
+     *
      * @param table.override_sound_type - The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      * @param table.path - The sound to play.
      * @param table.position - Where the sound should be played. If not given, it's played at the current position of each player.
@@ -8414,7 +8435,7 @@ interface LuaGameScript {
      * @param players - List of players to remove. If not specified, remove all offline players.
      */
     remove_offline_players(this: void,
-        players?: Array<LuaPlayer | string>): void
+        players?: PlayerIdentification[]): void
 
     /**
      * Remove a file or directory in the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. Can be used to remove files created by {@link LuaGameScript::write_file | runtime:LuaGameScript::write_file}.
@@ -8425,9 +8446,32 @@ interface LuaGameScript {
 
     /**
      * Direct access to Trains Pathfinder. Allows to search rail paths or querying which stops are accessible
+     * @param table.allow_path_within_segment_back - Only relevant if `from_back` is given. Defaults to `true`. Providing false will cause the pathfinder to reject a path that starts on back and ends within the same segment as the path would be too short to provide correct alignment with a goal.
+     * @param table.allow_path_within_segment_front - Only relevant if `from_front` is given. Defaults to `true`. Providing false will cause the pathfinder to reject a path that starts on front and ends within the same segment as the path would be too short to provide correct alignment with a goal.
+     * @param table.from_back - Manually provided starting back of the train.
+     * @param table.from_front - Manually provided starting front of the train.
+     * @param table.in_chain_signal_section - Defaults to `false`. If set to true, pathfinder will not return a path that cannot have its beginning immediately reserved. A path that cannot have its beginning immediately reserved could cause a train to stop inside of an intersection.
+     * @param table.return_path - Only relevant if request type is `"path"`. Returning a full path is expensive due to multiple LuaEntity created. In order for path to be returned, true must be provided here. Defaults to false in which case a path will not be provided.
+     * @param table.search_direction - Only relevant if none of `from_front`/`from_back` was provided in which case `from_front` and `from_back` are deduced from the train. Selects which train ends should be considered as starts. Defaults to `"any-direction-with-locomotives"`.
+     * @param table.steps_limit - Maximum amount of steps pathfinder is allowed to perform.
+     * @param table.train - Mandatory if `from_front` and `from_back` are not provided, optional otherwise. Selects a context for the pathfinder to decide which train to exclude from penalties and which signals are considered possible to reacquire. If `from_front` and `from_back` are not provided, then it is also used to collect front and back ends for the search
+     * @param table.type - Request type. Determines the return type of the method. Defaults to `"path"`.
+     * @returns The type of the returned value depends on `type`.
      */
     request_train_path(this: void,
-        request: TrainPathFinderRequest): TrainPathFinderPathResult | TrainPathAnyGoalResult | TrainPathAllGoalsResult
+        table: {
+            goals: Array<TrainStopGoal | RailEnd>,
+            in_chain_signal_section?: boolean,
+            train?: LuaTrain,
+            type?: TrainPathRequestType,
+            return_path?: boolean,
+            from_front?: RailEnd,
+            allow_path_within_segment_front?: boolean,
+            from_back?: RailEnd,
+            allow_path_within_segment_back?: boolean,
+            search_direction?: 'respect-movement-direction' | 'any-direction-with-locomotives',
+            steps_limit?: number
+        }): TrainPathFinderPathResult | TrainPathAnyGoalResult | TrainPathAllGoalsResult
 
     /**
      * Reset scenario state (game_finished, player_won, etc.).
@@ -8928,7 +8972,7 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
     /**
      * The circuit condition. Writing `nil` clears the circuit condition.
      * @example
-     * Tell an entity to be active (e.g. a lamp to be lit) when it receives a circuit signal of more than 4 chain signals. 
+     * Tell an entity to be active (for example a lamp to be lit) when it receives a circuit signal of more than 4 chain signals. 
      * ```
      * a_behavior.circuit_condition = {condition={comparator=">",
      *                                            first_signal={type="item", name="rail-chain-signal"},
@@ -8951,7 +8995,7 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
     /**
      * The logistic condition. Writing `nil` clears the logistic condition.
      * @example
-     * Tell an entity to be active (e.g. a lamp to be lit) when the logistics network it's connected to has more than four chain signals. 
+     * Tell an entity to be active (for example a lamp to be lit) when the logistics network it's connected to has more than four chain signals. 
      * ```
      * a_behavior.logistic_condition = {condition={comparator=">",
      *                                             first_signal={type="item", name="rail-chain-signal"},
@@ -8983,16 +9027,19 @@ interface LuaGroup {
     help(this: void): string
 
     /**
-     * The parent group, if any.
+     * The parent group.
+     * @remarks
+     * Applies to subclasses: ItemSubGroup
+     *
      */
-    readonly group?: LuaGroup
+    readonly group: LuaGroup
 
     /**
      * Localised name of the group.
      */
-    readonly localised_name?: LocalisedString
+    readonly localised_name: LocalisedString
 
-    readonly name?: string
+    readonly name: string
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -9005,16 +9052,22 @@ interface LuaGroup {
     readonly order: string
 
     /**
-     * The additional order value used in recipe ordering. Can only be used on groups, not on subgroups.
+     * The additional order value used in recipe ordering.
+     * @remarks
+     * Applies to subclasses: ItemGroup
+     *
      */
-    readonly order_in_recipe?: string
+    readonly order_in_recipe: string
 
     /**
-     * Subgroups of this group. Can only be used on groups, not on subgroups.
+     * Subgroups of this group.
+     * @remarks
+     * Applies to subclasses: ItemGroup
+     *
      */
-    readonly subgroups?: LuaGroup[]
+    readonly subgroups: LuaGroup[]
 
-    readonly type?: string
+    readonly type: string
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -9304,11 +9357,11 @@ interface LuaGuiElement {
      * Applies to subclasses: scroll-pane
      *
      * @param element - The element to scroll to.
-     * @param scroll_mode - Where the element should be positioned in the scroll-pane. Must be either `"in-view"` or `"top-third"`. Defaults to `"in-view"`.
+     * @param scroll_mode - Where the element should be positioned in the scroll-pane. Defaults to `"in-view"`.
      */
     scroll_to_element(this: void,
         element: LuaGuiElement,
-        scroll_mode?: string): void
+        scroll_mode?: 'in-view' | 'top-third'): void
 
     /**
      * Scrolls the scroll bar such that the specified listbox item is visible to the player.
@@ -9316,11 +9369,11 @@ interface LuaGuiElement {
      * Applies to subclasses: list-box
      *
      * @param index - The item index to scroll to.
-     * @param scroll_mode - Where the item should be positioned in the list-box. Must be either `"in-view"` or `"top-third"`. Defaults to `"in-view"`.
+     * @param scroll_mode - Where the item should be positioned in the list-box. Defaults to `"in-view"`.
      */
     scroll_to_item(this: void,
         index: number,
-        scroll_mode?: string): void
+        scroll_mode?: 'in-view' | 'top-third'): void
 
     /**
      * Scrolls this scroll bar to the left.
@@ -9527,12 +9580,12 @@ interface LuaGuiElement {
     readonly column_count: number
 
     /**
-     * Direction of this element's layout. May be either `"horizontal"` or `"vertical"`.
+     * Direction of this element's layout.
      * @remarks
      * Applies to subclasses: frame,flow,line
      *
      */
-    readonly direction: string
+    readonly direction: GuiDirection
 
     /**
      * The `frame` that is being moved when dragging this GUI element, if any. This element needs to be a child of the `drag_target` at some level.
@@ -9614,7 +9667,7 @@ interface LuaGuiElement {
      * Applies to subclasses: choose-elem-button
      *
      */
-    readonly elem_type: string
+    readonly elem_type: ElemType
 
     /**
      * The elem value of this choose-elem-button, if any.
@@ -9657,12 +9710,12 @@ interface LuaGuiElement {
     readonly gui: LuaGui
 
     /**
-     * Policy of the horizontal scroll bar. Possible values are `"auto"`, `"never"`, `"always"`, `"auto-and-reserve-space"`, `"dont-show-but-allow-scrolling"`.
+     * Policy of the horizontal scroll bar.
      * @remarks
      * Applies to subclasses: scroll-pane
      *
      */
-    horizontal_scroll_policy: string
+    horizontal_scroll_policy: ScrollPolicy
 
     /**
      * The sprite to display on this sprite-button when it is hovered.
@@ -9907,13 +9960,13 @@ interface LuaGuiElement {
     surface_index: number
 
     /**
-     * The switch state (left, none, right) for this switch.
+     * The switch state for this switch.
      * @remarks
      * If {@link LuaGuiElement::allow_none_state | runtime:LuaGuiElement::allow_none_state} is false this can't be set to `"none"`.
      * Applies to subclasses: switch
      *
      */
-    switch_state: string
+    switch_state: SwitchState
 
     /**
      * The tabs and contents being shown in this tabbed-pane.
@@ -9976,12 +10029,12 @@ interface LuaGuiElement {
     vertical_centering: boolean
 
     /**
-     * Policy of the vertical scroll bar. Possible values are `"auto"`, `"never"`, `"always"`, `"auto-and-reserve-space"`, `"dont-show-but-allow-scrolling"`.
+     * Policy of the vertical scroll bar.
      * @remarks
      * Applies to subclasses: scroll-pane
      *
      */
-    vertical_scroll_policy: string
+    vertical_scroll_policy: ScrollPolicy
 
     /**
      * Sets whether this GUI element is visible or completely hidden, taking no space in the layout.
@@ -10240,7 +10293,7 @@ interface LuaInventory {
      * @param item - The item to check.
      */
     get_insertable_count(this: void,
-        item: string): void
+        item: string): number
 
     /**
      * Get the number of all or some items in this inventory.
@@ -10413,10 +10466,10 @@ interface LuaItemPrototype {
      * @remarks
      * Applies to subclasses: AmmoItem
      *
-     * @param ammo_source_type - One of `"default"`, `"player"`, `"turret"`, or `"vehicle"`. Defaults to `"default"`.
+     * @param ammo_source_type - Defaults to `"default"`.
      */
     get_ammo_type(this: void,
-        ammo_source_type?: string): AmmoType | null
+        ammo_source_type?: 'default' | 'player' | 'turret' | 'vehicle'): AmmoType | null
 
     /**
      * Does this prototype have a flag enabled?
@@ -10436,7 +10489,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly alt_entity_filter_mode?: string
+    readonly alt_entity_filter_mode?: PrototypeFilterMode
 
     /**
      * The alt entity filters used by this selection tool indexed by entity name.
@@ -10461,7 +10514,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly alt_reverse_alt_entity_filter_mode?: string
+    readonly alt_reverse_alt_entity_filter_mode?: PrototypeFilterMode
 
     /**
      * The alt reverse entity filters used by this selection tool indexed by entity name.
@@ -10493,7 +10546,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly alt_reverse_selection_cursor_box_type?: string
+    readonly alt_reverse_selection_cursor_box_type?: CursorBoxRenderType
 
     /**
      * Flags that affect which entities will be selected during alt reverse selection.
@@ -10509,7 +10562,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly alt_reverse_tile_filter_mode?: string
+    readonly alt_reverse_tile_filter_mode?: PrototypeFilterMode
 
     /**
      * The alt reverse tile filters used by this selection tool indexed by tile name.
@@ -10532,7 +10585,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly alt_selection_cursor_box_type?: string
+    readonly alt_selection_cursor_box_type?: CursorBoxRenderType
 
     /**
      * Flags that affect which entities will be selected during alternate selection.
@@ -10548,7 +10601,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly alt_tile_filter_mode?: string
+    readonly alt_tile_filter_mode?: PrototypeFilterMode
 
     /**
      * The alt tile filters used by this selection tool indexed by tile name.
@@ -10651,7 +10704,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly entity_filter_mode?: string
+    readonly entity_filter_mode?: PrototypeFilterMode
 
     /**
      * The number of entity filters this deconstruction item has.
@@ -10679,7 +10732,7 @@ interface LuaItemPrototype {
     readonly entity_type_filters?: {[key: string]: boolean}
 
     /**
-     * The prototype of this armor equipment grid, if any.
+     * The prototype of this armor's equipment grid, if any.
      * @remarks
      * Applies to subclasses: Armor
      *
@@ -10700,7 +10753,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: ItemWithInventory
      *
      */
-    readonly filter_mode?: string
+    readonly filter_mode?: 'none' | 'whitelist' | 'blacklist'
 
     /**
      * The flags for this item prototype.
@@ -10751,7 +10804,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: ItemWithInventory
      *
      */
-    readonly insertion_priority_mode?: string
+    readonly insertion_priority_mode?: 'default' | 'never' | 'always' | 'when-manually-filtered'
 
     /**
      * The main inventory size for item-with-inventory-prototype.
@@ -10902,7 +10955,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly reverse_alt_entity_filter_mode?: string
+    readonly reverse_alt_entity_filter_mode?: PrototypeFilterMode
 
     /**
      * The reverse entity filters used by this selection tool indexed by entity name.
@@ -10934,7 +10987,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly reverse_selection_cursor_box_type?: string
+    readonly reverse_selection_cursor_box_type?: CursorBoxRenderType
 
     /**
      * Flags that affect which entities will be selected during reverse selection.
@@ -10950,7 +11003,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly reverse_tile_filter_mode?: string
+    readonly reverse_tile_filter_mode?: PrototypeFilterMode
 
     /**
      * The reverse tile filters used by this selection tool indexed by tile name.
@@ -10978,7 +11031,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly selection_cursor_box_type?: string
+    readonly selection_cursor_box_type?: CursorBoxRenderType
 
     /**
      * Flags that affect which entities will be selected.
@@ -11033,7 +11086,7 @@ interface LuaItemPrototype {
      * Applies to subclasses: SelectionTool
      *
      */
-    readonly tile_filter_mode?: string
+    readonly tile_filter_mode?: PrototypeFilterMode
 
     /**
      * The number of tile filters this deconstruction item has.
@@ -11320,11 +11373,10 @@ interface LuaItemStack {
      * Applies to subclasses: UpgradeItem
      *
      * @param index - The index of the mapper to read.
-     * @param type - `"from"` or `"to"`.
      */
     get_mapper(this: void,
         index: number,
-        type: string): UpgradeFilter
+        type: 'from' | 'to'): UpgradeFilter
 
     /**
      * Gets the tag with the given name or returns `nil` if it doesn't exist.
@@ -11423,7 +11475,7 @@ interface LuaItemStack {
      * Applies to subclasses: DeconstructionItem
      *
      * @param filter - Writing `nil` removes the filter.
-     * @returns Whether the new filter was successfully set (ie. was valid).
+     * @returns Whether the new filter was successfully set (meaning it was valid).
      */
     set_entity_filter(this: void,
         index: number,
@@ -11436,12 +11488,11 @@ interface LuaItemStack {
      *
      * @param filter - The filter to set or `nil`
      * @param index - The index of the mapper to set.
-     * @param type - `from` or `to`.
      */
     set_mapper(this: void,
         index: number,
-        type: string,
-        filter: UpgradeFilter): void
+        type: 'from' | 'to',
+        filter: UpgradeFilter | null): void
 
     /**
      * Set this item stack to another item stack.
@@ -11466,12 +11517,12 @@ interface LuaItemStack {
      * @remarks
      * Applies to subclasses: DeconstructionItem
      *
-     * @param filter - Setting to nil erases the filter.
-     * @returns Whether the new filter was successfully set (ie. was valid).
+     * @param filter - Writing `nil` removes the filter.
+     * @returns Whether the new filter was successfully set (meaning was valid).
      */
     set_tile_filter(this: void,
         index: number,
-        filter: string | LuaTilePrototype | LuaTile): boolean
+        filter: string | LuaTilePrototype | LuaTile | null): boolean
 
     /**
      * Swaps this item stack with the given item stack if allowed.
@@ -11770,7 +11821,7 @@ interface LuaItemStack {
      * Applies to subclasses: ItemWithInventory
      *
      */
-    prioritize_insertion_mode: string
+    prioritize_insertion_mode: 'default' | 'never' | 'always' | 'when-manually-filtered'
 
     /**
      * Prototype of the item held in this stack.
@@ -12069,11 +12120,11 @@ interface LuaLogisticNetwork {
     /**
      * Count given or all items in the network or given members.
      * @param item - Item name to count. If not given, gives counts of all items in the network.
-     * @param member - Logistic members to check, must be either `"storage"` or `"providers"`. If not given, gives count in the entire network.
+     * @param member - Logistic members to check. If not given, gives count in the entire network.
      */
     get_item_count(this: void,
         item?: string,
-        member?: string): number
+        member?: 'storage' | 'providers'): number
 
     /**
      * Get the amount of items of the given type indexed by the storage member.
@@ -12097,40 +12148,40 @@ interface LuaLogisticNetwork {
     /**
      * Insert items into the logistic network. This will actually insert the items into some logistic chests.
      * @param item - What to insert.
-     * @param members - Which logistic members to insert the items to. Must be `"storage"`, `"storage-empty"` (storage chests that are completely empty), `"storage-empty-slot"` (storage chests that have an empty slot), or `"requester"`. If not specified, inserts items into the logistic network in the usual order.
+     * @param members - Which logistic members to insert the items to. `"storage-empty"` inserts into storage chests that are completely empty, `"storage-empty-slot"` inserts into storage chests that have an empty slot. If not specified, inserts items into the logistic network in the usual order.
      * @returns Number of items actually inserted.
      */
     insert(this: void,
         item: ItemStackIdentification,
-        members?: string): number
+        members?: 'storage' | 'storage-empty' | 'storage-empty-slot' | 'requester'): number
 
     /**
      * Remove items from the logistic network. This will actually remove the items from some logistic chests.
      * @param item - What to remove.
-     * @param members - Which logistic members to remove from. Must be `"storage"`, `"passive-provider"`, `"buffer"`, or `"active-provider"`. If not specified, removes from the network in the usual order.
+     * @param members - Which logistic members to remove from. If not specified, removes from the network in the usual order.
      * @returns Number of items removed.
      */
     remove_item(this: void,
         item: ItemStackIdentification,
-        members?: string): number
+        members?: 'active-provider' | 'passive-provider' | 'buffer' | 'storage'): number
 
     /**
      * Find a logistic point to drop the specific item stack.
-     * @param table.members - When given, it will find from only the specific type of member. Must be `"storage"`, `"storage-empty"`, `"storage-empty-slot"` or `"requester"`. If not specified, selects with normal priorities.
-     * @param table.stack - Name of the item to select.
+     * @param table.members - When given, it will find from only the specific type of member. If not specified, selects with normal priorities.
+     * @param table.stack - Name of the item to drop off.
      * @returns `nil` if no point was found.
      */
     select_drop_point(this: void,
         table: {
             stack: ItemStackIdentification,
-            members?: string
+            members?: 'storage' | 'storage-empty' | 'storage-empty-slot' | 'requester'
         }): LuaLogisticPoint | null
 
     /**
      * Find the 'best' logistic point with this item ID and from the given position or from given chest type.
      * @param table.include_buffers - Whether to consider buffer chests or not. Defaults to false. Only considered if selecting with position.
-     * @param table.members - When given, it will find from only the specific type of member. Must be `"storage"`, `"passive-provider"`, `"buffer"` or `"active-provider"`. If not specified, selects with normal priorities. Not considered if position is specified.
-     * @param table.name - Name of the item to select.
+     * @param table.members - When given, it will find from only the specific type of member. If not specified, selects with normal priorities. Not considered if position is specified.
+     * @param table.name - Name of the item to pick up.
      * @param table.position - When given, it will find the storage 'best' storage point from this position.
      * @returns `nil` if no point was found.
      */
@@ -12139,7 +12190,7 @@ interface LuaLogisticNetwork {
             name: string,
             position?: MapPosition,
             include_buffers?: boolean,
-            members?: string
+            members?: 'active-provider' | 'passive-provider' | 'buffer' | 'storage'
         }): LuaLogisticPoint | null
 
     /**
@@ -13090,6 +13141,9 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Play a sound for this player.
+     * @remarks
+     * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for this player.
+     *
      * @param table.override_sound_type - The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      * @param table.path - The sound to play.
      * @param table.position - Where the sound should be played. If not given, it's played at the current position of the player.
@@ -14160,7 +14214,7 @@ interface LuaRendering {
         id: number): void
 
     /**
-     * Destroys all render objects. Passing an empty string (`""`)
+     * Destroys all render objects.
      * @param mod_name - If provided, only the render objects created by this mod are destroyed. An empty string (`""`) refers to all objects not belonging to a mod, such as those created using console commands.
      */
     clear(this: void,
@@ -14500,7 +14554,7 @@ interface LuaRendering {
      * @remarks
      * Not all fonts support scaling.
      *
-     * @param table.alignment - Defaults to "left". Other options are "right" and "center".
+     * @param table.alignment - Defaults to "left".
      * @param table.draw_on_ground - If this should be drawn below sprites and entities. Rich text does not support this option.
      * @param table.font - Name of font to use. Defaults to the same font as flying-text.
      * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
@@ -14512,7 +14566,7 @@ interface LuaRendering {
      * @param table.text - The text to display.
      * @param table.time_to_live - In ticks. Defaults to living forever.
      * @param table.use_rich_text - If rich text rendering is enabled. Defaults to false.
-     * @param table.vertical_alignment - Defaults to "top". Other options are "middle", "baseline" and "bottom".
+     * @param table.vertical_alignment - Defaults to "top".
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      * @returns Id of the render object
      */
@@ -14531,8 +14585,8 @@ interface LuaRendering {
             visible?: boolean,
             draw_on_ground?: boolean,
             orientation?: RealOrientation,
-            alignment?: string,
-            vertical_alignment?: string,
+            alignment?: TextAlign,
+            vertical_alignment?: VerticalTextAlign,
             scale_with_zoom?: boolean,
             only_in_alt_mode?: boolean,
             use_rich_text?: boolean
@@ -14546,7 +14600,7 @@ interface LuaRendering {
      * @returns `nil` if the object is not a text.
      */
     get_alignment(this: void,
-        id: number): string | null
+        id: number): TextAlign | null
 
     /**
      * Gets an array of all valid object ids.
@@ -14888,10 +14942,10 @@ interface LuaRendering {
         id: number): ScriptRenderTarget | null
 
     /**
-     * Gets the type of the given object. The types are "text", "line", "circle", "rectangle", "arc", "polygon", "sprite", "light" and "animation".
+     * Gets the type of the given object.
      */
     get_type(this: void,
-        id: number): string
+        id: number): 'text' | 'line' | 'circle' | 'rectangle' | 'arc' | 'polygon' | 'sprite' | 'light' | 'animation'
 
     /**
      * Get if the text with this id parses rich text tags.
@@ -14918,7 +14972,7 @@ interface LuaRendering {
      * @returns `nil` if the object is not a text.
      */
     get_vertical_alignment(this: void,
-        id: number): string | null
+        id: number): VerticalTextAlign | null
 
     /**
      * Get the vertices of the polygon with this id.
@@ -14983,11 +15037,10 @@ interface LuaRendering {
      * @remarks
      * Applies to subclasses: Text
      *
-     * @param alignment - "left", "right" or "center".
      */
     set_alignment(this: void,
         id: number,
-        alignment: string): void
+        alignment: TextAlign): void
 
     /**
      * Set the angle of the arc with this id. Does nothing if this object is not a arc.
@@ -15378,11 +15431,10 @@ interface LuaRendering {
      * @remarks
      * Applies to subclasses: Text
      *
-     * @param alignment - "top", "middle", "baseline" or "bottom"
      */
     set_vertical_alignment(this: void,
         id: number,
-        alignment: string): void
+        alignment: VerticalTextAlign): void
 
     /**
      * Set the vertices of the polygon with this id. Does nothing if this object is not a polygon.
@@ -15821,9 +15873,9 @@ interface LuaStyle {
     height: number
 
     /**
-     * Horizontal align of the inner content of the widget, if any. Possible values are "left", "center" or "right".
+     * Horizontal align of the inner content of the widget, if any.
      */
-    horizontal_align?: string
+    horizontal_align?: 'left' | 'center' | 'right'
 
     /**
      * Horizontal space between individual cells.
@@ -16018,9 +16070,9 @@ interface LuaStyle {
     readonly valid: boolean
 
     /**
-     * Vertical align of the inner content of the widget, if any. Possible values are "top", "center" or "bottom".
+     * Vertical align of the inner content of the widget, if any.
      */
-    vertical_align?: string
+    vertical_align?: 'top' | 'center' | 'bottom'
 
     /**
      * Vertical space between individual cells.
@@ -16088,7 +16140,7 @@ interface LuaSurface {
 
     /**
      * @param positions - Positions for which to calculate property values
-     * @param property_names - Names of properties (e.g. "elevation") to calculate
+     * @param property_names - Names of properties (`"elevation"`, etc) to calculate.
      * @returns Table of property value lists, keyed by property name
      */
     calculate_tile_properties(this: void,
@@ -16195,7 +16247,7 @@ interface LuaSurface {
             source_area: BoundingBox,
             destination_area: BoundingBox,
             destination_surface?: SurfaceIdentification,
-            destination_force?: LuaForce | string,
+            destination_force?: ForceIdentification,
             clone_tiles?: boolean,
             clone_entities?: boolean,
             clone_decoratives?: boolean,
@@ -16530,7 +16582,7 @@ interface LuaSurface {
     find_enemy_units(this: void,
         center: MapPosition,
         radius: number,
-        force?: LuaForce | string): LuaEntity[]
+        force?: ForceIdentification): LuaEntity[]
 
     /**
      * Find entities in a given area.
@@ -16732,7 +16784,7 @@ interface LuaSurface {
     find_units(this: void,
         table: {
             area: BoundingBox,
-            force: LuaForce | string,
+            force: ForceIdentification,
             condition: ForceCondition
         }): LuaEntity[]
 
@@ -16778,7 +16830,7 @@ interface LuaSurface {
      */
     get_entities_with_force(this: void,
         position: ChunkPosition,
-        force: LuaForce | string): LuaEntity[]
+        force: ForceIdentification): LuaEntity[]
 
     /**
      * The hidden tile name.
@@ -16894,6 +16946,9 @@ interface LuaSurface {
 
     /**
      * Play a sound for every player on this surface.
+     * @remarks
+     * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for that player.
+     *
      * @param table.override_sound_type - The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      * @param table.path - The sound to play.
      * @param table.position - Where the sound should be played. If not given, it's played at the current position of each player.
@@ -16995,13 +17050,13 @@ interface LuaSurface {
         }): number
 
     /**
-     * Request that the game's map generator generate chunks at the given position for the given radius on this surface.
+     * Request that the game's map generator generate chunks at the given position for the given radius on this surface. If the radius is `0`, then only the chunk at the given position is generated.
      * @param position - Where to generate the new chunks.
-     * @param radius - The chunk radius from `position` to generate new chunks in.
+     * @param radius - The chunk radius from `position` to generate new chunks in. Defaults to `0`.
      */
     request_to_generate_chunks(this: void,
         position: MapPosition,
-        radius: number): void
+        radius?: number): void
 
     /**
      * Set generated status of a chunk. Useful when copying chunks.
@@ -17044,14 +17099,14 @@ interface LuaSurface {
      * It is recommended to call this method once for all the tiles you want to change rather than calling it individually for every tile. As the tile correction is used after every step, calling it one by one could cause the tile correction logic to redo some of the changes. Also, many small API calls are generally more performance intensive than one big one.
      *
      * @param correct_tiles - If `false`, the correction logic is not applied to the changed tiles. Defaults to `true`.
-     * @param raise_event - `true` or `false`. Defaults to `false`.
-     * @param remove_colliding_decoratives - `true` or `false`. Defaults to `true`.
-     * @param remove_colliding_entities - `true`, `false`, or `abort_on_collision`. Defaults to `true`.
+     * @param raise_event - Defaults to `false`.
+     * @param remove_colliding_decoratives - Defaults to `true`.
+     * @param remove_colliding_entities - Defaults to `true`.
      */
     set_tiles(this: void,
         tiles: Tile[],
         correct_tiles?: boolean,
-        remove_colliding_entities?: boolean | string,
+        remove_colliding_entities?: boolean | 'abort_on_collision',
         remove_colliding_decoratives?: boolean,
         raise_event?: boolean): void
 
@@ -17068,7 +17123,7 @@ interface LuaSurface {
         position: MapPosition,
         items: ItemStackIdentification,
         enable_looted?: boolean,
-        force?: LuaForce | string,
+        force?: ForceIdentification,
         allow_belts?: boolean): LuaEntity[]
 
     /**
@@ -17191,9 +17246,6 @@ interface LuaSurface {
 
     /**
      * The multiplier of solar power on this surface. Cannot be less than 0.
-     * @remarks
-     * Solar equipment is still limited to its maximum power output.
-     *
      */
     solar_power_multiplier: number
 
@@ -18412,6 +18464,8 @@ interface LuaWallControlBehavior extends LuaControlBehavior {
  *
  */
 interface LuaControlSetGuiArrowParams {
+    'margin': number
+
     /**
      * Where to point to. This field determines what other fields are mandatory.
      */
@@ -18425,6 +18479,9 @@ interface LuaControlSetGuiArrowParams {
  *
  */
 interface LuaControlSetGuiArrowParamsCraftingQueue extends LuaControlSetGuiArrowParams {
+    /**
+     * Index in the crafting queue to point to.
+     */
     'crafting_queueindex': number
 
 }
@@ -18445,14 +18502,17 @@ interface LuaControlSetGuiArrowParamsEntity extends LuaControlSetGuiArrowParams 
  *
  */
 interface LuaControlSetGuiArrowParamsItemStack extends LuaControlSetGuiArrowParams {
+    /**
+     * Which inventory the stack is in.
+     */
     'inventory_index': defines.inventory
 
+    /**
+     * Which stack to point to.
+     */
     'item_stack_index': number
 
-    /**
-     * May be either `"player"` or `"target"`.
-     */
-    'source': string
+    'source': 'player' | 'target' | 'player-quickbar' | 'player-equipment-bar'
 
 }
 
@@ -18627,7 +18687,7 @@ interface LuaGuiElementAddParamsChooseElemButton extends LuaGuiElementAddParams 
     /**
      * The type of the button - one of the following values.
      */
-    'elem_type': string
+    'elem_type': ElemType
 
     /**
      * If type is `"entity"` - the default value for the button.
@@ -18701,9 +18761,9 @@ interface LuaGuiElementAddParamsDropDown extends LuaGuiElementAddParams {
  */
 interface LuaGuiElementAddParamsFlow extends LuaGuiElementAddParams {
     /**
-     * The initial direction of the flow's layout. See {@link LuaGuiElement::direction | runtime:LuaGuiElement::direction}. Defaults to `"horizontal"`.
+     * The initial direction of the flow's layout. Defaults to `"horizontal"`.
      */
-    'direction'?: string
+    'direction'?: GuiDirection
 
 }
 
@@ -18714,9 +18774,9 @@ interface LuaGuiElementAddParamsFlow extends LuaGuiElementAddParams {
  */
 interface LuaGuiElementAddParamsFrame extends LuaGuiElementAddParams {
     /**
-     * The initial direction of the frame's layout. See {@link LuaGuiElement::direction | runtime:LuaGuiElement::direction}. Defaults to `"horizontal"`.
+     * The initial direction of the frame's layout. Defaults to `"horizontal"`.
      */
-    'direction'?: string
+    'direction'?: GuiDirection
 
 }
 
@@ -18729,7 +18789,7 @@ interface LuaGuiElementAddParamsLine extends LuaGuiElementAddParams {
     /**
      * The initial direction of the line. Defaults to `"horizontal"`.
      */
-    'direction'?: string
+    'direction'?: GuiDirection
 
 }
 
@@ -18817,14 +18877,14 @@ interface LuaGuiElementAddParamsRadiobutton extends LuaGuiElementAddParams {
  */
 interface LuaGuiElementAddParamsScrollPane extends LuaGuiElementAddParams {
     /**
-     * Policy of the horizontal scroll bar. Possible values are `"auto"`, `"never"`, `"always"`, `"auto-and-reserve-space"`, `"dont-show-but-allow-scrolling"`. Defaults to `"auto"`.
+     * Policy of the horizontal scroll bar. Defaults to `"auto"`.
      */
-    'horizontal_scroll_policy'?: string
+    'horizontal_scroll_policy'?: ScrollPolicy
 
     /**
-     * Policy of the vertical scroll bar. Possible values are `"auto"`, `"never"`, `"always"`, `"auto-and-reserve-space"`, `"dont-show-but-allow-scrolling"`. Defaults to `"auto"`.
+     * Policy of the vertical scroll bar. Defaults to `"auto"`.
      */
-    'vertical_scroll_policy'?: string
+    'vertical_scroll_policy'?: ScrollPolicy
 
 }
 
@@ -18952,9 +19012,9 @@ interface LuaGuiElementAddParamsSwitch extends LuaGuiElementAddParams {
     'right_label_tooltip'?: LocalisedString
 
     /**
-     * Possible values are `"left"`, `"right"`, or `"none"`. If set to "none", `allow_none_state` must be `true`. Defaults to `"left"`.
+     * If set to "none", `allow_none_state` must be `true`. Defaults to `"left"`.
      */
-    'switch_state'?: string
+    'switch_state'?: SwitchState
 
 }
 
@@ -19552,9 +19612,9 @@ interface LuaSurfaceCreateEntityParamsStream extends LuaSurfaceCreateEntityParam
  */
 interface LuaSurfaceCreateEntityParamsUndergroundBelt extends LuaSurfaceCreateEntityParams {
     /**
-     * `"output"` or `"input"`; default is `"input"`.
+     * Defaults to `"input"`.
      */
-    'type'?: string
+    'type'?: 'output' | 'input'
 
 }
 

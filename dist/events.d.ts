@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.101
+// Factorio version 1.1.102
 // API version 4
 
 declare namespace runtime {
@@ -1283,7 +1283,7 @@ interface on_player_created extends event {
     player_index: number
 }
 /**
- * Called after a player's {@link cursor stack | runtime:LuaControl::cursor_stack} changed in some way.
+ * Called after a player's {@link cursor stack | runtime:LuaControl::cursor_stack} changed in some way. This is fired in the same tick that the change happens, but not instantly.
  */
 interface on_player_cursor_stack_changed extends event {
     player_index: number
@@ -1907,7 +1907,7 @@ interface on_pre_entity_settings_pasted extends event {
     source: LuaEntity
 }
 /**
- * Called before a ghost entity is destroyed as a result of being marked for deconstruction. Can be filtered using {@link LuaPreGhostDeconstructedEventFilter | runtime:LuaPreGhostDeconstructedEventFilter}.
+ * Called before a ghost entity is destroyed as a result of being marked for deconstruction. Also called for item request proxies before they are destroyed as a result of being marked for deconstruction. Can be filtered using {@link LuaPreGhostDeconstructedEventFilter | runtime:LuaPreGhostDeconstructedEventFilter}.
  */
 interface on_pre_ghost_deconstructed extends event {
     ghost: LuaEntity
