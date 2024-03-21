@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.102
+// Factorio version 1.1.105
 // API version 4
 
 declare namespace runtime {
@@ -1382,7 +1382,7 @@ interface InfinityPipeFilter {
     name: string,
     
     /**
-     * The fill percentage the pipe (`0.5` for 50%). Can't be negative.
+     * The fill percentage the pipe (for example `0.5` for 50%). Can't be negative.
      */
     percentage?: number,
     
@@ -2044,8 +2044,12 @@ interface MapViewSettings {
     'show-non-standard-map-info'?: boolean,
     'show-player-names'?: boolean,
     'show-pollution'?: boolean,
+    'show-rail-signal-states'?: boolean,
+    'show-recipe-icons'?: boolean,
+    'show-tags'?: boolean,
     'show-train-station-names'?: boolean,
-    'show-turret-range'?: boolean
+    'show-turret-range'?: boolean,
+    'show-worker-robots'?: boolean
 }
 
 interface ModChangeData {
@@ -2428,7 +2432,7 @@ type PlayerIdentification = /* The player index. */ number | /* The player name.
 interface PollutionMapSettings {
     
     /**
-     * The amount of pollution eaten by a chunk's tiles as a percentage of 1. Defaults to `1`.
+     * The amount of pollution eaten by a chunk's tiles as a percentage of 1. Also known as absorption modifier. Defaults to `1`.
      */
     ageing: number,
     

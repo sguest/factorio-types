@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.102
+// Factorio version 1.1.105
 // API version 4
 
 declare namespace defines {
@@ -701,11 +701,11 @@ declare namespace defines {
          */
         always,
         /**
-         * Hover according to the element type and implementation.
+         * Never hover this element with a game controller.
          */
         never,
         /**
-         * Never hover this element with a game controller.
+         * Hover according to the element type and implementation.
          */
         normal,
     }

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.102
+// Factorio version 1.1.105
 // API version 4
 
 declare namespace prototype {
@@ -2475,6 +2475,9 @@ interface DirectTriggerItem extends TriggerItem{
     type: 'direct'
 }
 
+/**
+ * Usually specified by using {@link defines.direction | runtime:defines.direction}.
+ */
 type Direction = /* North */ 0 | /* Northeast */ 1 | /* East */ 2 | /* Southeast */ 3 | /* South */ 4 | /* Southwest */ 5 | /* West */ 6 | /* Northwest */ 7
 
 interface DirectionShift {
@@ -2505,7 +2508,7 @@ interface DropDownStyleSpecification extends BaseStyleSpecification{
 }
 
 /**
- * When applied to modules, the resulting effect is a sum of all module affects, multiplied through calculations: `(1 + sum module effects)` or, for productivity `(0 + sum)`.
+ * When applied to {@link modules | prototype:ModulePrototype}, the resulting effect is a sum of all module effects, multiplied through calculations: `(1 + sum module effects)` or, for productivity `(0 + sum)`.
  * @example
  * ```
  * effect =
@@ -2542,7 +2545,7 @@ interface Effect {
 }
 
 /**
- * A list of module effects, or just a single effect. Modules with other effects cannot be used on the machine. This means that both effects from modules and from surrounding beacons are restricted to the listed effects. If `allowed_effects` is set to `nil`, the machine cannot be affected by modules or beacons.
+ * A list of {@link module | prototype:ModulePrototype} effects, or just a single effect. Modules with other effects cannot be used on the machine. This means that both effects from modules and from surrounding beacons are restricted to the listed effects. If `allowed_effects` is an empty array, the machine cannot be affected by modules or beacons.
  * @example
  * ```
  * -- Allow all module types
@@ -2561,7 +2564,7 @@ type EffectTypeLimitation = /* Modules that increase or decrease the machine's s
 interface EffectValue {
     
     /**
-     * Precision is ignored beyond two decimals - `0.567` results in `0.56` etc.
+     * Precision is ignored beyond two decimals - `0.567` results in `0.56` and means 56% etc.
      */
     bonus?: number
 }
@@ -3931,15 +3934,20 @@ interface ImageStyleSpecification extends BaseStyleSpecification{
 }
 
 /**
- * Defaults to loading ingredients as items.
+ * Defaults to loading ingredients as items. This allows {@link ItemIngredientPrototype | prototype:ItemIngredientPrototype} to load in a shorthand array format.
  * @example
  * ```
- * {type="item", name="steel-plate", amount=8}
+ * {"electronic-circuit", 5} -- short format used for item ingredients
  * ```
  *
  * @example
  * ```
- * {type="fluid", name="water", amount=50}
+ * {type="item", name="steel-plate", amount=8} -- long format used for item ingredients
+ * ```
+ *
+ * @example
+ * ```
+ * {type="fluid", name="water", amount=50} -- fluid ingredients must use the long format
  * ```
  *
  */
@@ -4117,16 +4125,21 @@ type ItemSubGroupID = string
 
 /**
  * Item that when placed creates this entity/tile.
+ * @example
+ * ```
+ * {item = "iron-chest", count = 1}
+ * ```
+ *
  */
 interface ItemToPlace {
     
     /**
-     * How many items are used to place one of this entity. Can't be larger than the stack size of the item.
+     * How many items are used to place one of this entity/tile. Can't be larger than the stack size of the item.
      */
     count: number,
     
     /**
-     * The item used to place this entity.
+     * The item used to place this entity/tile.
      */
     item: ItemID
 }
@@ -4597,7 +4610,7 @@ interface MapGenPresetEnemyExpansionSettings {
 interface MapGenPresetPollutionSettings {
     
     /**
-     * Must be >= 0.1. Also known as dissipation rate.
+     * Must be >= 0.1. Also known as absorption modifier and previously dissipation rate.
      */
     ageing?: number,
     
@@ -5686,6 +5699,7 @@ type NoiseVariableConstants = /* Additional constants are generated for all {@li
 
 interface NothingModifier extends BaseModifier{
     effect_description?: LocalisedString,
+    type: 'nothing',
     
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
@@ -6113,7 +6127,7 @@ type PlayerInputMethodFilter = 'all' | 'keyboard_and_mouse' | 'game_controller'
 interface PollutionSettings {
     
     /**
-     * Constant modifier a percentage of 1; the pollution eaten by a chunks tiles.
+     * Constant modifier a percentage of 1; the pollution eaten by a chunks tiles. Also known as absorption modifier.
      */
     ageing: number,
     
@@ -6993,7 +7007,7 @@ interface ScrollPaneStyleSpecification extends BaseStyleSpecification{
 /**
  * An array containing the following values.
  */
-type SelectionModeFlags = Array</* Selects entities and tiles as if selecting them for a blueprint. */ 'blueprint' | /* Selects entities and tiles as if selecting them for deconstruction. */ 'deconstruct' | /* Selects entities and tiles as if selecting them for deconstruction cancellation. */ 'cancel-deconstruct' | /* Selects items on the ground. */ 'items' | /* Selects trees. */ 'trees' | /* Selects entities which are considered {@link a building | runtime:LuaEntityPrototype::is_building}, plus landmines. */ 'buildable-type' | /* Selects no entities or tiles, but is useful to select an area. */ 'nothing' | /* Selects entities and tiles that can be built by an item. */ 'items-to-place' | /* Selects all entities. */ 'any-entity' | /* Selects all tiles. */ 'any-tile' | /* Selects entities with the same force as the selecting player. */ 'same-force' | /* Selects entities with a different force as the selecting player. */ 'not-same-force' | /* Selects entities from a friendly force. */ 'friend' | /* Selects entities from an enemy force. */ 'enemy' | /* Selects entities as if selecting them for upgrading. */ 'upgrade' | /* Selects entities as if selecting them for upgrade cancellation. */ 'cancel-upgrade' | /* Selects entities as if selecting them for downgrading. */ 'downgrade' | /* Selects entities that are an {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype}. */ 'entity-with-health' | /* Deprecated. Replaced by "is-military-target". */ 'entity-with-force' | /* Selects entities which are {@link EntityWithOwnerPrototype::is_military_target | prototype:EntityWithOwnerPrototype::is_military_target}. */ 'is-military-target' | /* Selects entities that are an {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}. */ 'entity-with-owner' | /* Selects entities that are not a {@link RollingStockPrototype | prototype:RollingStockPrototype}. */ 'avoid-rolling-stock' | /* Selects entities that are an {@link EntityGhostPrototype | prototype:EntityGhostPrototype}. */ 'entity-ghost' | /* Selects entities that are a {@link TileGhostPrototype | prototype:TileGhostPrototype}. */ 'tile-ghost'>
+type SelectionModeFlags = /* Selects entities and tiles as if selecting them for a blueprint. */ 'blueprint' | /* Selects entities and tiles as if selecting them for deconstruction. */ 'deconstruct' | /* Selects entities and tiles as if selecting them for deconstruction cancellation. */ 'cancel-deconstruct' | /* Selects items on the ground. */ 'items' | /* Selects trees. */ 'trees' | /* Selects entities which are considered {@link a building | runtime:LuaEntityPrototype::is_building}, plus landmines. */ 'buildable-type' | /* Selects no entities or tiles, but is useful to select an area. */ 'nothing' | /* Selects entities and tiles that can be built by an item. */ 'items-to-place' | /* Selects all entities. */ 'any-entity' | /* Selects all tiles. */ 'any-tile' | /* Selects entities with the same force as the selecting player. */ 'same-force' | /* Selects entities with a different force as the selecting player. */ 'not-same-force' | /* Selects entities from a friendly force. */ 'friend' | /* Selects entities from an enemy force. */ 'enemy' | /* Selects entities as if selecting them for upgrading. */ 'upgrade' | /* Selects entities as if selecting them for upgrade cancellation. */ 'cancel-upgrade' | /* Selects entities as if selecting them for downgrading. */ 'downgrade' | /* Selects entities that are an {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype}. */ 'entity-with-health' | /* Deprecated. Replaced by "is-military-target". */ 'entity-with-force' | /* Selects entities which are {@link EntityWithOwnerPrototype::is_military_target | prototype:EntityWithOwnerPrototype::is_military_target}. */ 'is-military-target' | /* Selects entities that are an {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}. */ 'entity-with-owner' | /* Selects entities that are not a {@link RollingStockPrototype | prototype:RollingStockPrototype}. */ 'avoid-rolling-stock' | /* Selects entities that are an {@link EntityGhostPrototype | prototype:EntityGhostPrototype}. */ 'entity-ghost' | /* Selects entities that are a {@link TileGhostPrototype | prototype:TileGhostPrototype}. */ 'tile-ghost' | Array</* Selects entities and tiles as if selecting them for a blueprint. */ 'blueprint' | /* Selects entities and tiles as if selecting them for deconstruction. */ 'deconstruct' | /* Selects entities and tiles as if selecting them for deconstruction cancellation. */ 'cancel-deconstruct' | /* Selects items on the ground. */ 'items' | /* Selects trees. */ 'trees' | /* Selects entities which are considered {@link a building | runtime:LuaEntityPrototype::is_building}, plus landmines. */ 'buildable-type' | /* Selects no entities or tiles, but is useful to select an area. */ 'nothing' | /* Selects entities and tiles that can be built by an item. */ 'items-to-place' | /* Selects all entities. */ 'any-entity' | /* Selects all tiles. */ 'any-tile' | /* Selects entities with the same force as the selecting player. */ 'same-force' | /* Selects entities with a different force as the selecting player. */ 'not-same-force' | /* Selects entities from a friendly force. */ 'friend' | /* Selects entities from an enemy force. */ 'enemy' | /* Selects entities as if selecting them for upgrading. */ 'upgrade' | /* Selects entities as if selecting them for upgrade cancellation. */ 'cancel-upgrade' | /* Selects entities as if selecting them for downgrading. */ 'downgrade' | /* Selects entities that are an {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype}. */ 'entity-with-health' | /* Deprecated. Replaced by "is-military-target". */ 'entity-with-force' | /* Selects entities which are {@link EntityWithOwnerPrototype::is_military_target | prototype:EntityWithOwnerPrototype::is_military_target}. */ 'is-military-target' | /* Selects entities that are an {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}. */ 'entity-with-owner' | /* Selects entities that are not a {@link RollingStockPrototype | prototype:RollingStockPrototype}. */ 'avoid-rolling-stock' | /* Selects entities that are an {@link EntityGhostPrototype | prototype:EntityGhostPrototype}. */ 'entity-ghost' | /* Selects entities that are a {@link TileGhostPrototype | prototype:TileGhostPrototype}. */ 'tile-ghost'>
 
 interface SequenceTipTrigger {
     
@@ -7667,6 +7681,45 @@ Same as `slice`, but this specifies only how many slices there are on the y-axis
 
 /**
  * A map of sprites for all 4 directions of the entity. If this is loaded as a single Sprite, it applies to all directions.
+ * @example
+ * ```
+ * -- separate sprites per direction
+ * {
+ *   north =
+ *   {
+ *     filename = "__base__/graphics/entity/assembling-machine-3/assembling-machine-3-pipe-N.png",
+ *     priority = "extra-high",
+ *     width = 35,
+ *     height = 18,
+ *     shift = util.by_pixel(2.5, 14)
+ *   },
+ *   east =
+ *   {
+ *     filename = "__base__/graphics/entity/assembling-machine-3/assembling-machine-3-pipe-E.png",
+ *     priority = "extra-high",
+ *     width = 20,
+ *     height = 38,
+ *     shift = util.by_pixel(-25, 1)
+ *   },
+ *   south =
+ *   {
+ *     filename = "__base__/graphics/entity/assembling-machine-3/assembling-machine-3-pipe-S.png",
+ *     priority = "extra-high",
+ *     width = 44,
+ *     height = 31,
+ *     shift = util.by_pixel(0, -31.5)
+ *   },
+ *   west =
+ *   {
+ *     filename = "__base__/graphics/entity/assembling-machine-3/assembling-machine-3-pipe-W.png",
+ *     priority = "extra-high",
+ *     width = 19,
+ *     height = 37,
+ *     shift = util.by_pixel(25.5, 1.5)
+ *   }
+ * }
+ * ```
+ *
  */
 type Sprite4Way = {
     
@@ -8444,11 +8497,15 @@ interface TileSprite {
     
     /**
      * Frame count.
+
+Optional if it is loaded inside of a `hr_version`, see that property for more information.
      */
     count: number,
     
     /**
      * If this property exists and high resolution sprites are turned on, its contents are used to load the tile sprite.
+
+`count` in `hr_version` has to be either unspecified or the same as for normal resolution definition.
      */
     hr_version?: TileSprite,
     
