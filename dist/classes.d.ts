@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.102
+// Factorio version 1.1.105
 // API version 4
 
 declare namespace runtime {
@@ -2019,6 +2019,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Whether this character can shoot the given entity or position.
+     * @remarks
+     * Applies to subclasses: Character
+     *
      */
     can_shoot(this: void,
         target: LuaEntity,
@@ -2113,6 +2116,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Connects the rolling stock in the given direction.
+     * @remarks
+     * Applies to subclasses: RollingStock
+     *
      * @returns Whether any connection was made
      */
     connect_rolling_stock(this: void,
@@ -2213,6 +2219,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Tries to disconnect this rolling stock in the given direction.
+     * @remarks
+     * Applies to subclasses: RollingStock
+     *
      * @returns If anything was disconnected
      */
     disconnect_rolling_stock(this: void,
@@ -2294,6 +2303,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Gets rolling stock connected to the given end of this stock.
+     * @remarks
+     * Applies to subclasses: RollingStock
+     *
      * @returns multiple values
      *  [0] - The rolling stock connected at the given end, `nil` if none is connected there.
      *  [1] - The rail direction of the connected rolling stock if any.
@@ -2863,6 +2875,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Revive a ghost. I.e. turn it from a ghost to a real entity or tile.
+     * @remarks
+     * Applies to subclasses: Ghost
+     *
      * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](runtime:script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](runtime:script_raised_set_tiles) will be called.
      * @param table.return_item_request_proxy - If `true` the function will return item request proxy as the third return value.
      * @returns multiple values
@@ -3024,6 +3039,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Revives a ghost silently.
+     * @remarks
+     * Applies to subclasses: Ghost
+     *
      * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](runtime:script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](runtime:script_raised_set_tiles) will be called.
      * @param table.return_item_request_proxy - If `true` the function will return item request proxy as the third parameter.
      * @returns multiple values
@@ -3044,6 +3062,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Only works if the entity is a speech-bubble, with an "effect" defined in its wrapper_flow_style. Starts animating the opacity of the speech bubble towards zero, and destroys the entity when it hits zero.
+     * @remarks
+     * Applies to subclasses: SpeechBubble
+     *
      */
     start_fading_out(this: void): void
 
@@ -3220,7 +3241,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Whether this underground belt goes into or out of the ground.
      * @remarks
-     * Applies to subclasses: TransportBeltToGround
+     * Applies to subclasses: UndergroundBelt
      *
      */
     readonly belt_to_ground_type: 'input' | 'output'
@@ -3304,6 +3325,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The orientation of this cliff.
+     * @remarks
+     * Applies to subclasses: Cliff
+     *
      */
     readonly cliff_orientation: CliffOrientation
 
@@ -3317,6 +3341,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The owner of this combat robot, if any.
+     * @remarks
+     * Applies to subclasses: CombatRobot
+     *
      */
     combat_robot_owner?: LuaEntity
 
@@ -3368,15 +3395,15 @@ interface LuaEntity extends LuaControl {
     /**
      * Whether this corpse will ever fade away.
      * @remarks
-     * Useable only on corpses.
+     * Applies to subclasses: Corpse
      *
      */
     corpse_expires: boolean
 
     /**
-     * If true, corpse won't be destroyed when entities are placed over it. If false, whether corpse will be removed or not depends on value of CorpsePrototype::remove_on_entity_placement.
+     * If true, corpse won't be destroyed when entities are placed over it. If false, whether corpse will be removed or not depends on value of {@link CorpsePrototype::remove_on_entity_placement | prototype:CorpsePrototype::remove_on_entity_placement}.
      * @remarks
-     * Useable only on corpses.
+     * Applies to subclasses: Corpse
      *
      */
     corpse_immune_to_entity_placement: boolean
@@ -3729,6 +3756,7 @@ interface LuaEntity extends LuaControl {
      * Sets the stack size limit on this inserter. If the stack size is > than the force stack size limit the value is ignored.
      * @remarks
      * Set to 0 to reset.
+     * Applies to subclasses: Inserter
      *
      */
     inserter_stack_size_override: number
@@ -3737,6 +3765,7 @@ interface LuaEntity extends LuaControl {
      * Returns the current target pickup count of the inserter.
      * @remarks
      * This considers the circuit network, manual override and the inserter stack size limit based on technology.
+     * Applies to subclasses: Inserter
      *
      */
     readonly inserter_target_pickup_count: number
@@ -3794,6 +3823,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The link ID this linked container is using.
+     * @remarks
+     * Applies to subclasses: LinkedContainer
+     *
      */
     link_id: number
 
@@ -3965,6 +3997,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The state of this power switch.
+     * @remarks
+     * Applies to subclasses: PowerSwitch
+     *
      */
     power_switch_state: boolean
 
@@ -4007,6 +4042,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The target entity for this item-request-proxy, if any.
+     * @remarks
+     * Applies to subclasses: ItemRequestProxy
+     *
      */
     readonly proxy_target?: LuaEntity
 
@@ -4088,6 +4126,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The status of this rocket silo entity.
+     * @remarks
+     * Applies to subclasses: RocketSilo
+     *
      */
     readonly rocket_silo_status: defines.rocket_silo_status
 
@@ -4124,6 +4165,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The shooting target for this turret, if any. Can't be set to `nil` via script.
+     * @remarks
+     * Applies to subclasses: Turret
+     *
      */
     shooting_target?: LuaEntity
 
@@ -4144,6 +4188,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The spawner associated with this unit entity, if any.
+     * @remarks
+     * Applies to subclasses: Unit
+     *
      */
     readonly spawner?: LuaEntity
 
@@ -4207,6 +4254,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The entity this sticker is sticked to.
+     * @remarks
+     * Applies to subclasses: Sticker
+     *
      */
     readonly sticked_to: LuaEntity
 
@@ -4278,10 +4328,13 @@ interface LuaEntity extends LuaControl {
     readonly tile_width: number
 
     /**
-     * The ticks left before a ghost, combat robot, highlight box or smoke with trigger is destroyed.
+     * The ticks left before a ghost, combat robot, highlight box, smoke with trigger or sticker is destroyed.
      * 
      * - for ghosts set to uint32 max (4 294 967 295) to never expire.
      * - for ghosts can not be set higher than {@link LuaForce::ghost_time_to_live | runtime:LuaForce::ghost_time_to_live} of the entity's force.
+     * @remarks
+     * Applies to subclasses: Ghost,CombatRobot,HighlightBox,SmokeWithTrigger,Sticker
+     *
      */
     time_to_live: number
 
@@ -4351,31 +4404,49 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Index of the tree color.
+     * @remarks
+     * Applies to subclasses: Tree
+     *
      */
     tree_color_index: number
 
     /**
      * Maximum index of the tree colors.
+     * @remarks
+     * Applies to subclasses: Tree
+     *
      */
     readonly tree_color_index_max: number
 
     /**
      * Index of the tree gray stage
+     * @remarks
+     * Applies to subclasses: Tree
+     *
      */
     tree_gray_stage_index: number
 
     /**
      * Maximum index of the tree gray stages.
+     * @remarks
+     * Applies to subclasses: Tree
+     *
      */
     readonly tree_gray_stage_index_max: number
 
     /**
      * Index of the tree stage.
+     * @remarks
+     * Applies to subclasses: Tree
+     *
      */
     tree_stage_index: number
 
     /**
      * Maximum index of the tree stages.
+     * @remarks
+     * Applies to subclasses: Tree
+     *
      */
     readonly tree_stage_index_max: number
 
@@ -5471,8 +5542,9 @@ interface LuaEntityPrototype {
 
     /**
      * The manual range modifier for this artillery turret or wagon prototype.
-     * 
-     * subclass(ArtilleryWagon, ArtilleryTurret)
+     * @remarks
+     * Applies to subclasses: ArtilleryWagon,ArtilleryTurret
+     *
      */
     readonly manual_range_modifier?: number
 
@@ -8555,7 +8627,7 @@ interface LuaGameScript {
      * @param table.player - The player to focus on. Defaults to the local player.
      * @param table.position - If defined, the screenshot will be centered on this position. Otherwise, the screenshot will center on `player`.
      * @param table.quality - The `.jpg` render quality as a percentage (from 0% to 100% inclusive), if used. A lower value means a more compressed image. Defaults to `80`.
-     * @param table.resolution - The maximum allowed resolution is 16384x16384 (8192x8192 when `anti_alias` is `true`), but the maximum recommended resolution is 4096x4096 (resp. 2048x2048).
+     * @param table.resolution - The maximum allowed resolution is 16384x16384 (8192x8192 when `anti_alias` is `true`), but the maximum recommended resolution is 4096x4096 (resp. 2048x2048). The `x` value of the position is used as the width, the `y` value as the height.
      * @param table.show_cursor_building_preview - When `true` and when `player` is specified, the building preview for the item in the player's cursor will also be rendered. Defaults to `false`.
      * @param table.show_entity_info - Whether to include entity info ("Alt mode") or not. Defaults to `false`.
      * @param table.show_gui - Whether to include GUIs in the screenshot or not. Defaults to `false`.
@@ -10005,7 +10077,7 @@ interface LuaGuiElement {
     /**
      * The type of this GUI element.
      */
-    readonly type: string
+    readonly type: GuiElementType
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -11518,7 +11590,7 @@ interface LuaItemStack {
      * Applies to subclasses: DeconstructionItem
      *
      * @param filter - Writing `nil` removes the filter.
-     * @returns Whether the new filter was successfully set (meaning was valid).
+     * @returns Whether the new filter was successfully set (meaning it was valid).
      */
     set_tile_filter(this: void,
         index: number,
@@ -11700,6 +11772,11 @@ interface LuaItemStack {
      * How much health the item has, as a number in range [0, 1].
      */
     health: number
+
+    /**
+     * If this is an ammo item.
+     */
+    readonly is_ammo: boolean
 
     /**
      * If this is an armor item.
@@ -13307,11 +13384,11 @@ interface LuaPlayer extends LuaControl {
     /**
      * Starts selection with selection tool from the specified position. Does nothing if the players cursor is not a selection tool.
      * @param position - The position to start selection from.
-     * @param selection_mode - The type of selection to start. Can be `select`, `alternative-select`, `reverse-select`.
+     * @param selection_mode - The type of selection to start.
      */
     start_selection(this: void,
         position: MapPosition,
-        selection_mode: string): void
+        selection_mode: 'select' | 'alternative-select' | 'reverse-select'): void
 
     /**
      * Toggles this player into or out of the map editor. Does nothing if this player isn't an admin or if the player doesn't have permission to use the map editor.
@@ -14221,7 +14298,7 @@ interface LuaRendering {
         mod_name?: string): void
 
     /**
-     * Destroy the object with the given id.
+     * Destroy the object with the given id. Does not error when the object is invalid.
      */
     destroy(this: void,
         id: number): void
@@ -15031,6 +15108,12 @@ interface LuaRendering {
      */
     is_valid(this: void,
         id: number): boolean
+
+    /**
+     * Reorder this object so that it is drawn in the back of the already existing objects.
+     */
+    move_to_back(this: void,
+        id: number): void
 
     /**
      * Set the alignment of the text with this id. Does nothing if this object is not a text.
@@ -16219,7 +16302,7 @@ interface LuaSurface {
 
     /**
      * Clears this surface deleting all entities and chunks on it.
-     * @param ignore_characters - Whether characters on this surface that are connected to or associated with players should be ignored (not destroyed).
+     * @param ignore_characters - Whether characters on this surface that are connected to or associated with players should be ignored (not destroyed). Defaults to `false`.
      */
     clear(this: void,
         ignore_characters?: boolean): void

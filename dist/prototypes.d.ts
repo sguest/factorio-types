@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.102
+// Factorio version 1.1.105
 // API version 4
 
 declare namespace prototype {
@@ -1025,12 +1025,12 @@ interface BatteryEquipmentPrototype extends EquipmentPrototype{
 }
 
 /**
- * Entity with the ability to transfer module's effects to its neighboring entities.
+ * Entity with the ability to transfer {@link module | prototype:ModulePrototype} effects to its neighboring entities.
  */
 interface BeaconPrototype extends EntityWithOwnerPrototype{
     
     /**
-     * The types of modules that a player can place inside of the beacon.
+     * The types of {@link modules | prototype:ModulePrototype} that a player can place inside of the beacon.
      */
     allowed_effects?: EffectTypeLimitation,
     
@@ -2012,7 +2012,7 @@ Controls the speed of the animation: `1 ÷ dying_speed = duration of the animati
 interface CraftingMachinePrototype extends EntityWithOwnerPrototype{
     
     /**
-     * Sets the module effects that are allowed to be used on this machine.
+     * Sets the {@link modules | prototype:ModulePrototype} and {@link beacon | prototype:BeaconPrototype} effects that are allowed to be used on this machine.
 
 Note: If the time to complete a recipe is shorter than one tick, only one craft can be completed per tick, but productivity bonus is applied to the non-limited ''completable'' work. For a simple example, if a recipe were to take half a tick, only one recipe would be completed, but twice the productivity bonus would occur. The surplus production from productivity is **not** limited to one craft per tick.
      */
@@ -3416,7 +3416,7 @@ Mandatory if `icons` is not defined, or if `icon_size` is not specified for all 
     max_temperature?: number,
     
     /**
-     * The value of this property may not be an empty string. It either has to be nil, or a non-empty string.
+     * The name of the {@link subgroup | prototype:ItemSubGroup} of this fluid. The value of this property may not be an empty string. It either has to be `nil`, or a non-empty string.
      */
     subgroup?: ItemSubGroupID
 }
@@ -4274,7 +4274,9 @@ The localised name of the entity will be used as the in-game item name. This beh
     stack_size: ItemCountType,
     
     /**
-     * Empty text of subgroup is not allowed. (You can omit the definition to get the default "other").
+     * The name of the {@link subgroup | prototype:ItemSubGroup} this item should be sorted into in item selection GUIs like logistic requests.
+
+Empty text of subgroup is not allowed. (You can omit the definition to get the default "other").
      */
     subgroup?: ItemSubGroupID,
     
@@ -4403,7 +4405,7 @@ interface ItemWithInventoryPrototype extends ItemWithLabelPrototype{
     item_group_filters?: ItemGroupID[],
     
     /**
-     * A list of explicit item subgroup names to be used as filters.
+     * A list of explicit {@link item subgroup | prototype:ItemSubGroup} names to be used as filters.
      */
     item_subgroup_filters?: ItemSubGroupID[],
     
@@ -4473,12 +4475,12 @@ interface KillAchievementPrototype extends AchievementPrototype{
 }
 
 /**
- * A {@link lab | https://wiki.factorio.com/Lab}.
+ * A {@link lab | https://wiki.factorio.com/Lab}. It consumes {@link science packs | prototype:ToolPrototype} to research {@link technologies | prototype:TechnologyPrototype}.
  */
 interface LabPrototype extends EntityWithOwnerPrototype{
     
     /**
-     * Sets the module effects that are allowed to be used on this lab.
+     * Sets the {@link modules | prototype:ModulePrototype} and {@link beacon | prototype:BeaconPrototype} effects that are allowed to be used on this lab.
      */
     allowed_effects?: EffectTypeLimitation,
     
@@ -5049,6 +5051,10 @@ interface MarketPrototype extends EntityWithOwnerPrototype{
  * A mining drill for automatically extracting resources from {@link resource entities | prototype:ResourceEntityPrototype}. This prototype type is used by {@link burner mining drill | https://wiki.factorio.com/Burner_mining_drill}, {@link electric mining drill | https://wiki.factorio.com/Electric_mining_drill} and {@link pumpjack | https://wiki.factorio.com/Pumpjack} in vanilla.
  */
 interface MiningDrillPrototype extends EntityWithOwnerPrototype{
+    
+    /**
+     * Sets the {@link modules | prototype:ModulePrototype} and {@link beacon | prototype:BeaconPrototype} effects that are allowed to be used on this mining drill.
+     */
     allowed_effects?: EffectTypeLimitation,
     
     /**
@@ -5159,12 +5165,12 @@ interface ModuleCategory extends PrototypeBase{
 }
 
 /**
- * A {@link module | https://wiki.factorio.com/Module}.
+ * A {@link module | https://wiki.factorio.com/Module}. They are used to affect the capabilities of existing machines, for example by increasing the crafting speed of a {@link crafting machine | prototype:CraftingMachinePrototype}.
  */
 interface ModulePrototype extends ItemPrototype{
     
     /**
-     * Chooses with what art style the module is shown inside beacons. See {@link BeaconModuleVisualizations::art_style | prototype:BeaconModuleVisualizations::art_style}. Vanilla uses "vanilla" here.
+     * Chooses with what art style the module is shown inside {@link beacons | prototype:BeaconPrototype}. See {@link BeaconModuleVisualizations::art_style | prototype:BeaconModuleVisualizations::art_style}. Vanilla uses `"vanilla"` here.
      */
     art_style?: string,
     beacon_tint?: BeaconVisualizationTints,
@@ -5173,15 +5179,19 @@ interface ModulePrototype extends ItemPrototype{
      * Used when upgrading modules: Ctrl + click modules into an entity and it will replace lower tier modules of the same category with higher tier modules.
      */
     category: ModuleCategoryID,
+    
+    /**
+     * The effect of the module on the machine it's inserted in, such as increased pollution.
+     */
     effect: Effect,
     
     /**
-     * Array of recipe names this module can be used on. If empty, the module can be used on all recipes.
+     * Array of {@link recipe names | prototype:RecipePrototype} this module can be used on. If empty, the module can be used on all recipes.
      */
     limitation?: RecipeID[],
     
     /**
-     * Array of recipe names this module can **not** be used on, implicitly allowing its use on all other recipes. This property has no effect if set to an empty table.
+     * Array of {@link recipe names | prototype:RecipePrototype} this module can **not** be used on, implicitly allowing its use on all other recipes. This property has no effect if set to an empty table.
 
 Note that the game converts this into a normal list of limitations internally, so reading {@link LuaItemPrototype::limitations | runtime:LuaItemPrototype::limitations} at runtime will be the product of both ways of defining limitations.
      */
@@ -5540,6 +5550,10 @@ interface PipePrototype extends EntityWithOwnerPrototype{
      */
     fluid_box: FluidBox,
     horizontal_window_bounding_box: BoundingBox,
+    
+    /**
+     * All graphics for this pipe.
+     */
     pictures: PipePictures,
     vertical_window_bounding_box: BoundingBox
 }
@@ -6253,7 +6267,7 @@ Only loaded if neither `normal` nor `expensive` are defined.
     always_show_products?: boolean,
     
     /**
-     * Controls which category of machines can craft this recipe.
+     * The {@link category | prototype:RecipeCategory} of this recipe. Controls which machines can craft this recipe.
 
 The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#recipe-category}. The base `"crafting"` category can not contain recipes with fluid ingredients or products.
      */
@@ -6409,7 +6423,7 @@ Only loaded if neither `normal` nor `expensive` are defined.
     show_amount_in_title?: boolean,
     
     /**
-     * The subgroup of this recipe. If not specified, it defaults to the subgroup of the product if there is only one, or of the `main_product` if multiple products exist.
+     * The name of the {@link subgroup | prototype:ItemSubGroup} of this recipe. If not specified, it defaults to the subgroup of the product if there is only one, or of the `main_product` if multiple products exist.
 
 Mandatory if multiple products exist and no `main_product` is specified, or if there is no product.
      */
@@ -8651,7 +8665,7 @@ interface TransportBeltConnectablePrototype extends EntityWithOwnerPrototype{
     ends_with_stopper?: boolean,
     
     /**
-     * Transport belt connectable entities cannot have any of the following flags: "placeable-off-grid", "building-direction-8-way".
+     * Transport belt connectable entities cannot have the `"building-direction-8-way"` flag.
      */
     flags?: EntityPrototypeFlags,
     
@@ -10014,7 +10028,7 @@ Mandatory if `icons` is not defined, or if `icon_size` is not specified for all 
     icons?: IconData[],
     
     /**
-     * The name of a {@link ItemSubGroup | prototype:ItemSubGroup}.
+     * The name of an {@link ItemSubGroup | prototype:ItemSubGroup}.
      */
     subgroup?: ItemSubGroupID
 }
