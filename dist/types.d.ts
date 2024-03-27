@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.105
+// Factorio version 1.1.106
 // API version 4
 
 declare namespace prototype {
@@ -7263,7 +7263,7 @@ type Sound = {
     audible_distance_modifier?: number,
     
     /**
-     * Supported sound file formats are `.ogg (Vorbis)` and `.wav`.
+     * Supported sound file formats are `.ogg` (Vorbis) and `.wav`.
 
 Only loaded, and mandatory if `variations` is not defined.
      */
@@ -7306,7 +7306,7 @@ Only loaded if `variations` is not defined.
 interface SoundDefinition {
     
     /**
-     * Supported sound file formats are `.ogg (Vorbis)` and `.wav`.
+     * Supported sound file formats are `.ogg` (Vorbis) and `.wav`.
      */
     filename: FileName,
     

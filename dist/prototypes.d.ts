@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.105
+// Factorio version 1.1.106
 // API version 4
 
 declare namespace prototype {
@@ -7580,7 +7580,7 @@ interface SoundPrototype {
     category?: SoundType,
     
     /**
-     * Supported sound file formats are `.ogg (Vorbis)` and `.wav`.
+     * Supported sound file formats are `.ogg` (Vorbis) and `.wav`.
 
 Only loaded, and mandatory if `variations` is not defined.
      */
@@ -8115,6 +8115,11 @@ The x position of the sprite will be `((game.tick % flow_length_in_ticks) ÷ flo
      * If the icons of fluids shown in alt-mode should be scaled to the storage tank's size.
      */
     scale_info_icons?: boolean,
+    
+    /**
+     * Whether the "alt-mode icon" should be drawn at all.
+     */
+    show_fluid_icon?: boolean,
     two_direction_only?: boolean,
     
     /**

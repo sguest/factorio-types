@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.105
+// Factorio version 1.1.106
 // API version 4
 
 declare namespace runtime {
@@ -6273,6 +6273,13 @@ interface LuaEntityPrototype {
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean
+
+    /**
+     * @remarks
+     * Applies to subclasses: MiningDrill
+     *
+     */
+    readonly vector_to_place_result?: Vector
 
     /**
      * Vertical selection shift used by rolling stocks. It affects selection box vertical position but is also used to shift rolling stock graphics along the rails to fine tune train's look.
@@ -16393,8 +16400,12 @@ interface LuaSurface {
      * Count entities of given type or name in a given area. Works just like {@link LuaSurface::find_entities_filtered | runtime:LuaSurface::find_entities_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of entities.
      * 
      * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns entities in the radius of the position. If `area` is specified, this returns entities colliding with that area.
+     * @param table.ghost_name - An empty array means the same as providing nothing (`nil`).
+     * @param table.ghost_type - An empty array means the same as providing nothing (`nil`).
      * @param table.invert - Whether the filters should be inverted.
+     * @param table.name - An empty array means the same as providing nothing (`nil`).
      * @param table.radius - If given with position, will count all entities within the radius of the position.
+     * @param table.type - An empty array means the same as providing nothing (`nil`).
      */
     count_entities_filtered(this: void,
         table: {
@@ -16421,8 +16432,9 @@ interface LuaSurface {
      * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
      * @param table.has_tile_ghost - Can be further filtered by supplying a `force` filter.
      * @param table.invert - If the filters should be inverted.
+     * @param table.name - An empty array means the same as providing nothing (`nil`).
      * @param table.position - Ignored if not given with radius.
-     * @param table.radius - If given with position, will return all entities within the radius of the position.
+     * @param table.radius - If given with position, will return all tiles within the radius of the position.
      * @param table.to_be_deconstructed - Can be further filtered by supplying a `force` filter.
      */
     count_tiles_filtered(this: void,
@@ -16690,8 +16702,12 @@ interface LuaSurface {
      * - If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box).
      * - If `position` and `radius` are given, this returns the entities within the radius of the position. Looks for the center of entities.
      * - If `area` is specified, this returns the entities colliding with that area.
+     * @param table.ghost_name - An empty array means the same as providing nothing (`nil`).
+     * @param table.ghost_type - An empty array means the same as providing nothing (`nil`).
      * @param table.invert - Whether the filters should be inverted.
+     * @param table.name - An empty array means the same as providing nothing (`nil`).
      * @param table.position - Has precedence over area field.
+     * @param table.type - An empty array means the same as providing nothing (`nil`).
      * @example
      * ```
      * game.surfaces[1].find_entities_filtered{area = {{-10, -10}, {10, 10}}, type = "resource"} -- gets all resources in the rectangle
@@ -16824,8 +16840,9 @@ interface LuaSurface {
      * If no `area` or `position` and `radius` is given, the entire surface is searched. If `position` and `radius` are given, only tiles within the radius of the position are included.
      * @param table.has_tile_ghost - Can be further filtered by supplying a `force` filter.
      * @param table.invert - Whether the filters should be inverted.
+     * @param table.name - An empty array means the same as providing nothing (`nil`).
      * @param table.position - Ignored if not given with radius.
-     * @param table.radius - If given with position, will return all entities within the radius of the position.
+     * @param table.radius - If given with position, will return all tiles within the radius of the position.
      * @param table.to_be_deconstructed - Can be further filtered by supplying a `force` filter.
      */
     find_tiles_filtered(this: void,
