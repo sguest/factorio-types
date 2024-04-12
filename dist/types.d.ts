@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.106
+// Factorio version 1.1.107
 // API version 4
 
 declare namespace prototype {
@@ -7169,6 +7169,11 @@ This code is run as a (silent) console command inside the simulation when it is 
      * How long this simulation takes. In the main menu simulations, another simulation will start after this simulation ends.
      */
     length?: number,
+    
+    /**
+     * An array of mods that will be run in this simulation if they are present and enabled.
+     */
+    mods?: string[],
     
     /**
      * If true, overrides the simulation volume set by the player in the sound settings, simply setting the volume modifier to `1`.

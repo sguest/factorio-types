@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.106
+// Factorio version 1.1.107
 // API version 4
 
 declare namespace prototype {
@@ -2867,7 +2867,7 @@ The order string is taken from the items in `placeable_by` if they exist, or fro
     order?: Order,
     
     /**
-     * Item that when placed creates this entity. Determines which item is picked when "Q" (smart pipette) is used on the entity, determines which item is needed in a blueprint of this entity.
+     * Item that when placed creates this entity. Determines which item is picked when "Q" (smart pipette) is used on this entity. Determines which item and item amount is needed in a blueprint of this entity and to revive a ghost of this entity.
 
 The item count specified here can't be larger than the stack size of that item.
      */
