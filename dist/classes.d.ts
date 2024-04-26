@@ -272,6 +272,4790 @@ interface LuaBootstrap {
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_ai_command_completed,
+        handler: (this: void, arg0: runtime.on_ai_command_completed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_area_cloned,
+        handler: (this: void, arg0: runtime.on_area_cloned) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_biter_base_built,
+        handler: (this: void, arg0: runtime.on_biter_base_built) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_brush_cloned,
+        handler: (this: void, arg0: runtime.on_brush_cloned) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_build_base_arrived,
+        handler: (this: void, arg0: runtime.on_build_base_arrived) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_built_entity,
+        handler: (this: void, arg0: runtime.on_built_entity) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_cancelled_deconstruction,
+        handler: (this: void, arg0: runtime.on_cancelled_deconstruction) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_cancelled_upgrade,
+        handler: (this: void, arg0: runtime.on_cancelled_upgrade) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_character_corpse_expired,
+        handler: (this: void, arg0: runtime.on_character_corpse_expired) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_chart_tag_added,
+        handler: (this: void, arg0: runtime.on_chart_tag_added) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_chart_tag_modified,
+        handler: (this: void, arg0: runtime.on_chart_tag_modified) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_chart_tag_removed,
+        handler: (this: void, arg0: runtime.on_chart_tag_removed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_chunk_charted,
+        handler: (this: void, arg0: runtime.on_chunk_charted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_chunk_deleted,
+        handler: (this: void, arg0: runtime.on_chunk_deleted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_chunk_generated,
+        handler: (this: void, arg0: runtime.on_chunk_generated) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_combat_robot_expired,
+        handler: (this: void, arg0: runtime.on_combat_robot_expired) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_console_chat,
+        handler: (this: void, arg0: runtime.on_console_chat) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_console_command,
+        handler: (this: void, arg0: runtime.on_console_command) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_cutscene_cancelled,
+        handler: (this: void, arg0: runtime.on_cutscene_cancelled) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_cutscene_finished,
+        handler: (this: void, arg0: runtime.on_cutscene_finished) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_cutscene_started,
+        handler: (this: void, arg0: runtime.on_cutscene_started) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_cutscene_waypoint_reached,
+        handler: (this: void, arg0: runtime.on_cutscene_waypoint_reached) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_difficulty_settings_changed,
+        handler: (this: void, arg0: runtime.on_difficulty_settings_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_cloned,
+        handler: (this: void, arg0: runtime.on_entity_cloned) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_color_changed,
+        handler: (this: void, arg0: runtime.on_entity_color_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_damaged,
+        handler: (this: void, arg0: runtime.on_entity_damaged) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_destroyed,
+        handler: (this: void, arg0: runtime.on_entity_destroyed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_died,
+        handler: (this: void, arg0: runtime.on_entity_died) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_logistic_slot_changed,
+        handler: (this: void, arg0: runtime.on_entity_logistic_slot_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_renamed,
+        handler: (this: void, arg0: runtime.on_entity_renamed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_settings_pasted,
+        handler: (this: void, arg0: runtime.on_entity_settings_pasted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_entity_spawned,
+        handler: (this: void, arg0: runtime.on_entity_spawned) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_equipment_inserted,
+        handler: (this: void, arg0: runtime.on_equipment_inserted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_equipment_removed,
+        handler: (this: void, arg0: runtime.on_equipment_removed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_force_cease_fire_changed,
+        handler: (this: void, arg0: runtime.on_force_cease_fire_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_force_created,
+        handler: (this: void, arg0: runtime.on_force_created) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_force_friends_changed,
+        handler: (this: void, arg0: runtime.on_force_friends_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_force_reset,
+        handler: (this: void, arg0: runtime.on_force_reset) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_forces_merged,
+        handler: (this: void, arg0: runtime.on_forces_merged) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_forces_merging,
+        handler: (this: void, arg0: runtime.on_forces_merging) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_game_created_from_scenario,
+        handler: (this: void, arg0: runtime.on_game_created_from_scenario) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_checked_state_changed,
+        handler: (this: void, arg0: runtime.on_gui_checked_state_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_click,
+        handler: (this: void, arg0: runtime.on_gui_click) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_closed,
+        handler: (this: void, arg0: runtime.on_gui_closed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_confirmed,
+        handler: (this: void, arg0: runtime.on_gui_confirmed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_elem_changed,
+        handler: (this: void, arg0: runtime.on_gui_elem_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_hover,
+        handler: (this: void, arg0: runtime.on_gui_hover) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_leave,
+        handler: (this: void, arg0: runtime.on_gui_leave) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_location_changed,
+        handler: (this: void, arg0: runtime.on_gui_location_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_opened,
+        handler: (this: void, arg0: runtime.on_gui_opened) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_selected_tab_changed,
+        handler: (this: void, arg0: runtime.on_gui_selected_tab_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_selection_state_changed,
+        handler: (this: void, arg0: runtime.on_gui_selection_state_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_switch_state_changed,
+        handler: (this: void, arg0: runtime.on_gui_switch_state_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_text_changed,
+        handler: (this: void, arg0: runtime.on_gui_text_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_gui_value_changed,
+        handler: (this: void, arg0: runtime.on_gui_value_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_land_mine_armed,
+        handler: (this: void, arg0: runtime.on_land_mine_armed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_lua_shortcut,
+        handler: (this: void, arg0: runtime.on_lua_shortcut) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_marked_for_deconstruction,
+        handler: (this: void, arg0: runtime.on_marked_for_deconstruction) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_marked_for_upgrade,
+        handler: (this: void, arg0: runtime.on_marked_for_upgrade) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_market_item_purchased,
+        handler: (this: void, arg0: runtime.on_market_item_purchased) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_mod_item_opened,
+        handler: (this: void, arg0: runtime.on_mod_item_opened) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_permission_group_added,
+        handler: (this: void, arg0: runtime.on_permission_group_added) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_permission_group_deleted,
+        handler: (this: void, arg0: runtime.on_permission_group_deleted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_permission_group_edited,
+        handler: (this: void, arg0: runtime.on_permission_group_edited) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_permission_string_imported,
+        handler: (this: void, arg0: runtime.on_permission_string_imported) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_picked_up_item,
+        handler: (this: void, arg0: runtime.on_picked_up_item) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_alt_reverse_selected_area,
+        handler: (this: void, arg0: runtime.on_player_alt_reverse_selected_area) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_alt_selected_area,
+        handler: (this: void, arg0: runtime.on_player_alt_selected_area) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_ammo_inventory_changed,
+        handler: (this: void, arg0: runtime.on_player_ammo_inventory_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_armor_inventory_changed,
+        handler: (this: void, arg0: runtime.on_player_armor_inventory_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_banned,
+        handler: (this: void, arg0: runtime.on_player_banned) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_built_tile,
+        handler: (this: void, arg0: runtime.on_player_built_tile) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_cancelled_crafting,
+        handler: (this: void, arg0: runtime.on_player_cancelled_crafting) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_changed_force,
+        handler: (this: void, arg0: runtime.on_player_changed_force) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_changed_position,
+        handler: (this: void, arg0: runtime.on_player_changed_position) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_changed_surface,
+        handler: (this: void, arg0: runtime.on_player_changed_surface) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_cheat_mode_disabled,
+        handler: (this: void, arg0: runtime.on_player_cheat_mode_disabled) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_cheat_mode_enabled,
+        handler: (this: void, arg0: runtime.on_player_cheat_mode_enabled) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_clicked_gps_tag,
+        handler: (this: void, arg0: runtime.on_player_clicked_gps_tag) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_configured_blueprint,
+        handler: (this: void, arg0: runtime.on_player_configured_blueprint) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_configured_spider_remote,
+        handler: (this: void, arg0: runtime.on_player_configured_spider_remote) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_crafted_item,
+        handler: (this: void, arg0: runtime.on_player_crafted_item) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_created,
+        handler: (this: void, arg0: runtime.on_player_created) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_cursor_stack_changed,
+        handler: (this: void, arg0: runtime.on_player_cursor_stack_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_deconstructed_area,
+        handler: (this: void, arg0: runtime.on_player_deconstructed_area) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_demoted,
+        handler: (this: void, arg0: runtime.on_player_demoted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_died,
+        handler: (this: void, arg0: runtime.on_player_died) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_display_resolution_changed,
+        handler: (this: void, arg0: runtime.on_player_display_resolution_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_display_scale_changed,
+        handler: (this: void, arg0: runtime.on_player_display_scale_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_driving_changed_state,
+        handler: (this: void, arg0: runtime.on_player_driving_changed_state) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_dropped_item,
+        handler: (this: void, arg0: runtime.on_player_dropped_item) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_fast_transferred,
+        handler: (this: void, arg0: runtime.on_player_fast_transferred) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_flushed_fluid,
+        handler: (this: void, arg0: runtime.on_player_flushed_fluid) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_gun_inventory_changed,
+        handler: (this: void, arg0: runtime.on_player_gun_inventory_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_input_method_changed,
+        handler: (this: void, arg0: runtime.on_player_input_method_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_joined_game,
+        handler: (this: void, arg0: runtime.on_player_joined_game) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_kicked,
+        handler: (this: void, arg0: runtime.on_player_kicked) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_left_game,
+        handler: (this: void, arg0: runtime.on_player_left_game) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_main_inventory_changed,
+        handler: (this: void, arg0: runtime.on_player_main_inventory_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_mined_entity,
+        handler: (this: void, arg0: runtime.on_player_mined_entity) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_mined_item,
+        handler: (this: void, arg0: runtime.on_player_mined_item) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_mined_tile,
+        handler: (this: void, arg0: runtime.on_player_mined_tile) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_muted,
+        handler: (this: void, arg0: runtime.on_player_muted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_pipette,
+        handler: (this: void, arg0: runtime.on_player_pipette) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_placed_equipment,
+        handler: (this: void, arg0: runtime.on_player_placed_equipment) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_promoted,
+        handler: (this: void, arg0: runtime.on_player_promoted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_removed,
+        handler: (this: void, arg0: runtime.on_player_removed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_removed_equipment,
+        handler: (this: void, arg0: runtime.on_player_removed_equipment) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_repaired_entity,
+        handler: (this: void, arg0: runtime.on_player_repaired_entity) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_respawned,
+        handler: (this: void, arg0: runtime.on_player_respawned) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_reverse_selected_area,
+        handler: (this: void, arg0: runtime.on_player_reverse_selected_area) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_rotated_entity,
+        handler: (this: void, arg0: runtime.on_player_rotated_entity) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_selected_area,
+        handler: (this: void, arg0: runtime.on_player_selected_area) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_set_quick_bar_slot,
+        handler: (this: void, arg0: runtime.on_player_set_quick_bar_slot) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_setup_blueprint,
+        handler: (this: void, arg0: runtime.on_player_setup_blueprint) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_toggled_alt_mode,
+        handler: (this: void, arg0: runtime.on_player_toggled_alt_mode) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_toggled_map_editor,
+        handler: (this: void, arg0: runtime.on_player_toggled_map_editor) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_trash_inventory_changed,
+        handler: (this: void, arg0: runtime.on_player_trash_inventory_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_unbanned,
+        handler: (this: void, arg0: runtime.on_player_unbanned) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_unmuted,
+        handler: (this: void, arg0: runtime.on_player_unmuted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_used_capsule,
+        handler: (this: void, arg0: runtime.on_player_used_capsule) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_player_used_spider_remote,
+        handler: (this: void, arg0: runtime.on_player_used_spider_remote) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_post_entity_died,
+        handler: (this: void, arg0: runtime.on_post_entity_died) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_build,
+        handler: (this: void, arg0: runtime.on_pre_build) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_chunk_deleted,
+        handler: (this: void, arg0: runtime.on_pre_chunk_deleted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_entity_settings_pasted,
+        handler: (this: void, arg0: runtime.on_pre_entity_settings_pasted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_ghost_deconstructed,
+        handler: (this: void, arg0: runtime.on_pre_ghost_deconstructed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_ghost_upgraded,
+        handler: (this: void, arg0: runtime.on_pre_ghost_upgraded) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_permission_group_deleted,
+        handler: (this: void, arg0: runtime.on_pre_permission_group_deleted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_permission_string_imported,
+        handler: (this: void, arg0: runtime.on_pre_permission_string_imported) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_player_crafted_item,
+        handler: (this: void, arg0: runtime.on_pre_player_crafted_item) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_player_died,
+        handler: (this: void, arg0: runtime.on_pre_player_died) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_player_left_game,
+        handler: (this: void, arg0: runtime.on_pre_player_left_game) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_player_mined_item,
+        handler: (this: void, arg0: runtime.on_pre_player_mined_item) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_player_removed,
+        handler: (this: void, arg0: runtime.on_pre_player_removed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_player_toggled_map_editor,
+        handler: (this: void, arg0: runtime.on_pre_player_toggled_map_editor) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_robot_exploded_cliff,
+        handler: (this: void, arg0: runtime.on_pre_robot_exploded_cliff) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_script_inventory_resized,
+        handler: (this: void, arg0: runtime.on_pre_script_inventory_resized) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_surface_cleared,
+        handler: (this: void, arg0: runtime.on_pre_surface_cleared) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_pre_surface_deleted,
+        handler: (this: void, arg0: runtime.on_pre_surface_deleted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_research_cancelled,
+        handler: (this: void, arg0: runtime.on_research_cancelled) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_research_finished,
+        handler: (this: void, arg0: runtime.on_research_finished) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_research_reversed,
+        handler: (this: void, arg0: runtime.on_research_reversed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_research_started,
+        handler: (this: void, arg0: runtime.on_research_started) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_resource_depleted,
+        handler: (this: void, arg0: runtime.on_resource_depleted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_robot_built_entity,
+        handler: (this: void, arg0: runtime.on_robot_built_entity) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_robot_built_tile,
+        handler: (this: void, arg0: runtime.on_robot_built_tile) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_robot_exploded_cliff,
+        handler: (this: void, arg0: runtime.on_robot_exploded_cliff) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_robot_mined,
+        handler: (this: void, arg0: runtime.on_robot_mined) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_robot_mined_entity,
+        handler: (this: void, arg0: runtime.on_robot_mined_entity) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_robot_mined_tile,
+        handler: (this: void, arg0: runtime.on_robot_mined_tile) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_robot_pre_mined,
+        handler: (this: void, arg0: runtime.on_robot_pre_mined) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_rocket_launch_ordered,
+        handler: (this: void, arg0: runtime.on_rocket_launch_ordered) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_rocket_launched,
+        handler: (this: void, arg0: runtime.on_rocket_launched) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_runtime_mod_setting_changed,
+        handler: (this: void, arg0: runtime.on_runtime_mod_setting_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_script_inventory_resized,
+        handler: (this: void, arg0: runtime.on_script_inventory_resized) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_script_path_request_finished,
+        handler: (this: void, arg0: runtime.on_script_path_request_finished) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_script_trigger_effect,
+        handler: (this: void, arg0: runtime.on_script_trigger_effect) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_sector_scanned,
+        handler: (this: void, arg0: runtime.on_sector_scanned) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_selected_entity_changed,
+        handler: (this: void, arg0: runtime.on_selected_entity_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_spider_command_completed,
+        handler: (this: void, arg0: runtime.on_spider_command_completed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_string_translated,
+        handler: (this: void, arg0: runtime.on_string_translated) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_surface_cleared,
+        handler: (this: void, arg0: runtime.on_surface_cleared) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_surface_created,
+        handler: (this: void, arg0: runtime.on_surface_created) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_surface_deleted,
+        handler: (this: void, arg0: runtime.on_surface_deleted) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_surface_imported,
+        handler: (this: void, arg0: runtime.on_surface_imported) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_surface_renamed,
+        handler: (this: void, arg0: runtime.on_surface_renamed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_technology_effects_reset,
+        handler: (this: void, arg0: runtime.on_technology_effects_reset) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_tick,
+        handler: (this: void, arg0: runtime.on_tick) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_train_changed_state,
+        handler: (this: void, arg0: runtime.on_train_changed_state) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_train_created,
+        handler: (this: void, arg0: runtime.on_train_created) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_train_schedule_changed,
+        handler: (this: void, arg0: runtime.on_train_schedule_changed) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_trigger_created_entity,
+        handler: (this: void, arg0: runtime.on_trigger_created_entity) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_trigger_fired_artillery,
+        handler: (this: void, arg0: runtime.on_trigger_fired_artillery) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_unit_added_to_group,
+        handler: (this: void, arg0: runtime.on_unit_added_to_group) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_unit_group_created,
+        handler: (this: void, arg0: runtime.on_unit_group_created) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_unit_group_finished_gathering,
+        handler: (this: void, arg0: runtime.on_unit_group_finished_gathering) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_unit_removed_from_group,
+        handler: (this: void, arg0: runtime.on_unit_removed_from_group) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.on_worker_robot_expired,
+        handler: (this: void, arg0: runtime.on_worker_robot_expired) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.script_raised_built,
+        handler: (this: void, arg0: runtime.script_raised_built) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.script_raised_destroy,
+        handler: (this: void, arg0: runtime.script_raised_destroy) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.script_raised_revive,
+        handler: (this: void, arg0: runtime.script_raised_revive) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.script_raised_set_tiles,
+        handler: (this: void, arg0: runtime.script_raised_set_tiles) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
+     * @param handler - The handler for this event. Passing `nil` will unregister it.
+     * @param filters - The filters for this event. Can only be used when registering for individual events.
+     * @example
+     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
+     * ```
+     * script.on_event(defines.events.on_tick,
+     * function(event) game.print(event.tick) end)
+     * ```
+     *
+     * @example
+     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
+     * ```
+     * script.on_event(defines.events.on_built_entity,
+     * function(event) game.print("Gotta go fast!") end,
+     * {{filter = "name", name = "fast-inserter"}})
+     * ```
+     *
+     */
+    on_event(this: void,
+        event: defines.events.script_raised_teleported,
+        handler: (this: void, arg0: runtime.script_raised_teleported) => any | null,
+        filters?: EventFilter): void
+
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event - The event(s) or custom-input to invoke the handler on.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @example
@@ -290,7 +5074,7 @@ interface LuaBootstrap {
      * ```
      *
      */
-    on_event<T extends event>(this: void,
+    on_event(this: void,
         event: defines.events | string | Array<defines.events | string>,
         handler: (this: void, arg0: EventData) => any | null,
         filters?: EventFilter): void
