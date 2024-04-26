@@ -573,6 +573,8 @@ function writePrototypes(apiData: PrototypeData, apiVersion: string) {
 
     parseParentStructure(apiData.prototypes);
 
+    let dataExtensions: string[] = [];
+
     for(let prototype of apiData.prototypes) {
         // Ugly hack, but this is a weird one-off where a property in a sub-class is a more generic union than the superclass
         // a truly dynamic fix probably isn't worth it for this one case, so just "fix" it manually by maknig the parent accept the union
@@ -599,8 +601,20 @@ function writePrototypes(apiData: PrototypeData, apiVersion: string) {
         if(prototype.parent) {
             output += `extends ${prototype.parent}`;
         }
+
+        if(prototype.typename) {
+            /*
+             * using an intersection type to add the "type" property instead of putting it directly on the type itself
+             * because inheritance relationships have different types.
+             * For example ArmorPrototype (type: 'armor') extends ToolPrototype (type: 'tool')
+             * this would make an invalid inheritance hierarchy.
+             */
+            dataExtensions.push(`({ type: '${prototype.typename}' } & ${prototype.name})`)
+        }
         output += parseType({ complex_type: 'struct' }, '', prototype) + '\n\n';
     }
+
+    output += 'type dataExtendType = ' + dataExtensions.join(' | ') + ' | PrototypeBase';
 
     output += '\n}'
 
@@ -732,17 +746,54 @@ function writeClasses(apiData: RuntimeData, apiVersion: string) {
             }
         }
 
+        // Generate a specific `on_event` definition for each event type, so that the handler function can correctly type the event
         if(classData.name === 'LuaBootstrap') {
+            const newMethods: Method[] = [];
+            let eventIndex = 0;
             for(let method of classData.methods!) {
                 if(method.name === 'on_event') {
-                    method.name = 'on_event<T extends event>'
-                    for(let parameter of method.parameters) {
-                        if(parameter.name === 'f') {
-                            ((parameter.type as UnionType).options[0] as FunctionType).parameters = ['T'];
-                        }
+                    const eventDefine = apiData.defines.find(d => d.name === 'events');
+                    for(let eventName of eventDefine!.values!.map(e => e.name)) {
+                        newMethods.push({
+                            name: 'on_event',
+                            order: 0,
+                            description: method.description,
+                            examples: method.examples,
+                            parameters: [
+                                {
+                                    name: 'event',
+                                    order: 0,
+                                    description: method.parameters.find(p => p.name === 'event')!.description,
+                                    optional: false,
+                                    type: 'defines.events.' + eventName,
+                                },
+                                {
+                                    name: 'handler',
+                                    order: 1,
+                                    description: method.parameters.find(p => p.name === 'handler')!.description,
+                                    optional: false,
+                                    type: {
+                                        complex_type: 'union',
+                                        options: [
+                                            {
+                                                complex_type: 'function',
+                                                parameters: ['runtime.' + eventName],
+                                            },
+                                            'nil'
+                                        ]
+                                    },
+                                },
+                                method.parameters.find(p => p.name === 'filters')!,
+                            ],
+                            takes_table: method.takes_table,
+                            return_values: method.return_values,
+                        })
                     }
+
+                    eventIndex = classData.methods?.findIndex(m => m.name === 'on_event')!;
                 }
             }
+            classData.methods?.splice(eventIndex, 0, ...newMethods);
         }
 
         output += writeDocs(classData, '');
@@ -866,7 +917,7 @@ function writeDefine(define: Define, indent: string) {
         if(define.values) {
             for(let value of define.values) {
                 output += writeDocs(value, indent + '    ');
-                output += `${indent}    ${value.name},\n`;
+                output += `${indent}    ${value.name} = ${value.order},\n`;
             }
         }
     }

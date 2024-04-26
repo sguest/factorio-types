@@ -12,3 +12,4 @@
 /// <reference path="./dist/serpent.d.ts" />
 /// <reference path="./dist/prototypes.d.ts" />
 /// <reference path="./dist/types.d.ts" />
+/// <reference types="lua-types/jit" />

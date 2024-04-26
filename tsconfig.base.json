@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+    "compilerOptions": {
+        "target": "esnext",
+        "lib": ["esnext"],
+        "strict": true,
+        "types": ["@typescript-to-lua/language-extensions"],
+        "strictNullChecks": false
+    },
+    "tstl": {
+        "luaTarget": "JIT",
+        "noImplicitSelf": true,
+        "noImplicitGlobalVariables": true,
+    },
+}

@@ -1,7 +1,7 @@
 {
   "name": "factorio-types",
-  "version": "0.0.50",
-  "description": "Typescript declarations for the factorio mod API",
+  "version": "1.0.0",
+  "description": "Typescript declarations for the Factorio mod API",
   "main": "index.d.ts",
   "repository": "https://github.com/sguest/factorio-types.git",
   "author": "Spencer Guest",
@@ -17,12 +17,19 @@
     "cpy-cli": "^3.1.1",
     "node-html-parser": "^1.1.16",
     "ts-node": "^10.0.0",
-    "typescript": "4.7.4",
-    "typescript-to-lua": "^1.17.0"
+    "typescript": "^5.4.2",
+    "typescript-to-lua": "^1.25.1"
   },
   "files": [
     "index.d.ts",
+    "tsconfig.base.json",
     "dist/**/*.d.ts"
   ],
-  "factorioVersion": "1.1.107"
+  "factorioVersion": "1.1.107",
+  "dependencies": {
+    "lua-types": "^2.13.1"
+  },
+  "peerDependencies": {
+    "typescript-to-lua": "^1.25.1"
+  }
 }

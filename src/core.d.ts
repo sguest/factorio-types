@@ -3,13 +3,13 @@
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
 
-declare const table: {
-    deepcopy<T>(this: void, value: T): T,
-};
+declare namespace table {
+    function deepcopy<T>(this: void, value: T): T;
+}
 
 declare const data: {
     raw: prototype.dataCollection,
-    extend(values: any[]): void,
+    extend(values: prototype.dataExtendType[]): void,
 };
 
 declare const global: { [key: string]: any };
