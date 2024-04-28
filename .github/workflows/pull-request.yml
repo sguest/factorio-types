@@ -3,6 +3,9 @@ name: Pull Request CI
 on:
   workflow_dispatch:
   pull_request:
+    paths:
+      - index.d.ts
+      - dist/*.d.ts
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
