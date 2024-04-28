@@ -25,6 +25,8 @@ This library includes [tsconfig.base.json](./tsconfig.base.json) in the root of 
 
 A very minimal proof-of-concept showing basic toolchain setup can be found [Here](https://github.com/sguest/factorio-fire-armor-typescript)
 
+A slightly more in-depth and realistic mode can be found [Here](https://github.com/sguest/basic-seablock)
+
 ## Noise library
 
 A note on using the `noise` library from within Factorio: Several mods (typically those that deal with terrain generation) will `require('noise')`. While this seems to work, this is not an officially documented part of the Factorio modding API and is not expressed in these types. If you want to use it, you'll want to add the following to your configuration
