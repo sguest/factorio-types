@@ -41,12 +41,4 @@ A note on using the `noise` library from within Factorio: Several mods (typicall
 }
 ```
 
-Then, include a definition file at the root of your project
-
-`noise.d.ts`:
-
-```typescript
-declare module 'noise' {
-    // declare any functions from the noise library that you are using
-}
-```
+You can then optionally write your own custom type definitions for these types, or leave them as `any`
