@@ -12,6 +12,11 @@ declare const data: {
     extend(values: prototype.dataExtendType[]): void,
 };
 
+/**
+ * Mapping of currently loaded mods to their version. Only exists at the data stage.
+ */
+declare const mods: { [key: string] : string}
+
 declare const global: { [key: string]: any };
 
 declare function log(str: runtime.LocalisedString): void;
