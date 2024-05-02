@@ -8,6 +8,7 @@ on:
     paths:
       - index.d.ts
       - dist/*.d.ts
+      - src/*.d.ts
       - tsconfig.base.json
 
 concurrency:
