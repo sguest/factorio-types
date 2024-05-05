@@ -6,6 +6,6 @@
         "types": ["@typescript-to-lua/language-extensions"],
     },
     "include": [
-        "dist/*.d.ts",
+        "dist/**/*.d.ts",
     ]
 }

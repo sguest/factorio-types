@@ -25,5 +25,6 @@ jobs:
           cmd: install
       - name: npm run copy-source
         run: npm run copy-source
+      - run: ls -R dist
       - name: npm run validate
         run: npm run validate

@@ -1,6 +1,6 @@
 {
   "name": "factorio-types",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Typescript declarations for the Factorio mod API",
   "main": "index.d.ts",
   "repository": "https://github.com/sguest/factorio-types.git",
@@ -8,13 +8,13 @@
   "license": "MIT",
   "scripts": {
     "validate": "tsc -p tsconfig.json",
-    "copy-source": "cpy src/*.d.ts dist",
+    "copy-source": "cpx src/**/*.* dist",
     "build": "ts-node json_parser/parser.ts && yarn run copy-source",
     "rebuild": "ts-node json_parser/parser.ts -clean && yarn run copy-source"
   },
   "devDependencies": {
     "@types/node": "^15.12.2",
-    "cpy-cli": "^3.1.1",
+    "cpx": "^1.5.0",
     "node-html-parser": "^1.1.16",
     "ts-node": "^10.0.0",
     "typescript": "^5.4.2",
