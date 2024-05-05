@@ -5,6 +5,7 @@
 
 declare namespace table {
     function deepcopy<T>(this: void, value: T): T;
+    function compare(this: void, table1: object | [], table2: object | []): boolean;
 }
 
 declare const data: {

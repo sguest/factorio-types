@@ -23,7 +23,5 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: install
-      - name: npm run copy-source
-        run: npm run copy-source
       - name: npm run validate
         run: npm run validate
