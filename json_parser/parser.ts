@@ -614,7 +614,7 @@ function writePrototypes(apiData: PrototypeData, apiVersion: string) {
         output += parseType({ complex_type: 'struct' }, '', prototype) + '\n\n';
     }
 
-    output += 'type dataExtendType = ' + dataExtensions.join(' | ') + ' | PrototypeBase';
+    output += 'type dataExtendType = ' + dataExtensions.join(' | ') + ' | settings.dataExtendType | PrototypeBase';
 
     output += '\n}'
 

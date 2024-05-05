@@ -4,7 +4,7 @@
         "target": "esnext",
         "lib": ["esnext"],
         "strict": true,
-        "types": ["@typescript-to-lua/language-extensions"],
+        "types": ["factorio-types", "@typescript-to-lua/language-extensions"],
         "strictNullChecks": false
     },
     "tstl": {
