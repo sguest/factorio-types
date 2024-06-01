@@ -91,26 +91,23 @@ function writeDocs(itemData: FactorioClass | FactorioEvent | Concept | Method | 
     if(itemData.description) {
         output += `${indent} * ${formatLinks(formatDocLines(itemData.description, indent))}\n`;
     }
-    if('notes' in itemData && itemData.notes) {
-        output += `${indent} * @remarks\n`;
-        for(let note of itemData.notes)
-        {
-            output += `${indent} * ${formatLinks(note)}\n`;
+    if('lists' in itemData && itemData.lists) {
+        for(let list of itemData.lists) {
+            output += `${indent} * ${formatLinks(formatDocLines(list, indent))}\n`;
         }
-        output += `${indent} *\n`;
     }
     if('parameters' in itemData) {
         for(let parameter of itemData.parameters) {
             let prepend = '';
-            if('takes_table' in itemData && itemData.takes_table) {
+            if('format' in itemData && 'takes_table' in itemData.format && itemData.format.takes_table) {
                 prepend = 'table.';
             }
             if(parameter.description) {
                 output += `${indent} * @param ${prepend}${fixName(parameter.name)} - ${parameter.description}\n`;
             }
         }
-        if('variadic_description' in itemData && itemData.variadic_description) {
-            output += `${indent} * @param ...args - ${itemData.variadic_description}\n`;
+        if('variadic_parameter' in itemData && itemData.variadic_parameter?.description) {
+            output += `${indent} * @param ...args - ${itemData.variadic_parameter.description}\n`;
         }
     }
     // Would be really cool to parse the lua examples and display them as TS instead, but that's out of scope for now at least
@@ -118,12 +115,6 @@ function writeDocs(itemData: FactorioClass | FactorioEvent | Concept | Method | 
         for(let example of itemData.examples)
         {
             output += `${indent} * @example\n${indent} * ${formatDocLines(example, indent)}\n${indent} *\n`;
-        }
-    }
-    if('see_also' in itemData && itemData.see_also) {
-        for(let see of itemData['see_also'])
-        {
-            output += `${indent} * @see {@link ${see}}\n`;
         }
     }
     if('return_values' in itemData && itemData.return_values?.length > 0)
@@ -155,28 +146,17 @@ function parseType(type: FactorioType | undefined, indent: string, parent?: Fact
     }
 
     if(typeof type === 'string') {
-        if(/^u?int(\d*)$/.test(type) || type === 'float' || type === 'double') {
-            return 'number';
-        }
-        if(type === 'Any') {
-            return 'any';
-        }
-        if(type === 'table') {
-            return 'Table';
-        }
-        if(type === 'LuaObject') {
-            return 'object';
-        }
-        if(type === 'nil') {
-            return 'null';
-        }
-        if(type === 'bool') {
-            return 'boolean';
-        }
-
         if(type === 'PrototypeFilter') {
             return 'ItemPrototypeFilter | TilePrototypeFilter | EntityPrototypeFilter | FluidPrototypeFilter | RecipePrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | TechnologyPrototypeFilter';
         }
+
+        // workaround for a LuaControlBehavior.type
+        // 1.1.108 hoisted the `type` subkey from `control_behavior` to its own root define type, but it is still referenced in this type
+        // seems like a bug in the spec docs. Check back on this in future versions.
+        if(type === 'defines.control_behavior.type') {
+            return 'defines.type';
+        }
+
         return type;
     }
     else {
@@ -219,18 +199,8 @@ function parseType(type: FactorioType | undefined, indent: string, parent?: Fact
                     return `\n[${indent}    ${type.values.map(t => parseType(t, indent + '    ')).join(`,\n${indent}    `)}\n${indent}]`;
                 }
                 else {
-                    if(type.variant_parameter_groups) {
-                        // The docs say this can exist, but currently the json data doesn't have any instance of it
-                        // I'm not sure exactly what this would look like, so for now throw in case it's ever introduced
-                        //throw new Error('Found table type with variant parameters');
-                    }
-                    let paramStrings = type.parameters.map((p, index) => {
+                    let paramStrings = type.parameters.map(p => {
                         let str = p.name;
-                        
-                        // at least one type (CircularProjectileCreationSpecification) has multiple properties named _, so differentiate them since that's not valid TS
-                        if(str === '_') {
-                            str = '_' + index;
-                        }
 
                         if(/-/.test(str)) {
                             str = `'${str}'`
@@ -292,6 +262,8 @@ function parseType(type: FactorioType | undefined, indent: string, parent?: Fact
                     return str + `: ${parseType(p.type, indent)}`;
                 })
                 return `{\n${indent}    ` + paramStrings.join(`,\n${indent}    `) + `\n${indent}}`;
+            case 'builtin':
+                return 'builtin';
         }
 
         //Unreachable assuming the current types are exhaustive, but leaving this here so that future added types will throw instead of being silently ignored
@@ -301,20 +273,15 @@ function parseType(type: FactorioType | undefined, indent: string, parent?: Fact
 
 function writeMethod(method: Method, indent: string = '    ') {
     if(method.subclasses) {
-        let notes = method.notes || [];
-        notes.push('Applies to subclasses: ' + method.subclasses.join(','));
-        method.notes = notes;
+        method.description += '\nApplies to subclasses: ' + method.subclasses.join(',')
     }
     let output = writeDocs(method, indent);
     output += `${indent}${method.name}(this: void`;
 
     let paramIndent = `${indent}    `;
     let useComma = true;
-    if(method.takes_table) {
+    if(method.format.takes_table) {
         output += `,\n${indent}    table`
-        if(method.table_is_optional) {
-            output += '?';
-        }
         output += ': {\n';
         paramIndent += '    ';
         useComma = false;
@@ -333,10 +300,10 @@ function writeMethod(method: Method, indent: string = '    ') {
         }
         output += `: ${parseType(parameter.type, indent + '    ')}`;
     }
-    if(method.variadic_type) {
-        output += `,\n${paramIndent}...args: ${parseType({ complex_type: 'array', value: method.variadic_type }, '')}`;
+    if(method.variadic_parameter) {
+        output += `,\n${paramIndent}...args: ${parseType({ complex_type: 'array', value: method.variadic_parameter.type }, '')}`;
     }
-    if(method.takes_table) {
+    if(method.format.takes_table) {
         output += `\n${indent}    }`;
     }
 
@@ -360,9 +327,7 @@ function writeMethod(method: Method, indent: string = '    ') {
 
 function writeAttribute(attribute: Attribute, indent: string): string {
     if(attribute.subclasses) {
-        let notes = attribute.notes || [];
-        notes.push('Applies to subclasses: ' + attribute.subclasses.join(','));
-        attribute.notes = notes;
+        attribute.description += '\nApplies to subclasses: ' + attribute.subclasses.join(',');
     }
     let output = writeDocs(attribute, '    ');
     output += '    ';
@@ -392,10 +357,7 @@ function writeOperator(operator: Method | Attribute): string {
             let returnType = parseType((operator as Attribute).type, '');
             (operator as Attribute).type = 'any';
             (operator as Attribute).optional = false;
-            let notes = operator.notes;
-            notes = notes || [];
-            notes.push(`This will return a [${returnType}](${returnType}). The return type is any due to typescript limitations.`);
-            operator.notes = notes;
+            operator.description += `\nThis will return a [${returnType}](${returnType}). The return type is any due to typescript limitations.`;
 
             break;
         case 'call':
@@ -474,15 +436,14 @@ function parseVariantClasses(classes: FactorioClass[]) {
                                         let unionTypeNames: string[] = [];
 
                                         for(let group of method.variant_parameter_groups) {
-                                            let variantClass = {
+                                            let variantClass: FactorioClass = {
                                                 name: variantRootName + formatTypeName(group.name),
                                                 order: 0,
-                                                description: group.description,
+                                                description: group.description + `\nApplies to variant case \`${group.name}\``,
                                                 attributes: group.parameters.map(parameterToAttribute),
-                                                notes: [`Applies to variant case \`${group.name}\``],
-                                                base_classes: [variantBaseName],
+                                                parent: variantBaseName,
                                             };
-                                            variantClass.attributes.unshift({
+                                            variantClass.attributes!.unshift({
                                                 name: variantParamName,
                                                 order: -1,
                                                 description: param.description,
@@ -510,7 +471,7 @@ function parseVariantClasses(classes: FactorioClass[]) {
                                                     write: true,
                                                     optional: param.optional,
                                                 }],
-                                                base_classes: [variantBaseName],
+                                                parent: variantBaseName,
                                             });
                                             unionTypeNames.push('Default' + variantRootName);
                                         }
@@ -527,16 +488,14 @@ function parseVariantClasses(classes: FactorioClass[]) {
                             order: 0,
                             description: '',
                             attributes: method.parameters.map(parameterToAttribute),
-                            notes: method.variant_parameter_description ? [method.variant_parameter_description] : [],
                         });
                         for(let group of method.variant_parameter_groups) {
                             variantClasses.push({
                                 name: variantRootName + formatTypeName(group.name),
                                 order: 0,
-                                description: group.description,
+                                description: group.description + `\nApplies to variant case \`${group.name}\``,
                                 attributes: group.parameters.map(parameterToAttribute),
-                                notes: [`Applies to variant case \`${group.name}\``],
-                                base_classes: [variantRootName],
+                                parent: variantRootName,
                             })
                         }
                     }
@@ -545,9 +504,9 @@ function parseVariantClasses(classes: FactorioClass[]) {
                         order: 0,
                         description: '',
                         type: variantRootName,
-                        optional: method.table_is_optional || false,
+                        optional: false,
                     }];
-                    method.takes_table = false;
+                    method.format.takes_table = false;
                 }
             }
         }
@@ -621,6 +580,29 @@ function writePrototypes(apiData: PrototypeData, apiVersion: string) {
     fs.writeFileSync(__dirname + '/../dist/prototypes.d.ts', output);
 }
 
+function mapBuiltin(type: string): string | null {
+    if(/^u?int(\d*)$/.test(type) || type === 'float' || type === 'double') {
+        return 'number';
+    }
+    if(type === 'Any') {
+        return 'any';
+    }
+    if(type === 'table') {
+        return 'Table';
+    }
+    if(type === 'LuaObject') {
+        return 'object';
+    }
+    if(type === 'nil') {
+        return 'null';
+    }
+    if(type === 'bool') {
+        return 'boolean';
+    }
+
+    return null;
+}
+
 function writePrototypeTypes(apiData: PrototypeData, apiVersion: string) {
     let output = '// Factorio type definitions for prototypes\n';
     output += writeHeaders(apiData);
@@ -669,8 +651,16 @@ function writePrototypeTypes(apiData: PrototypeData, apiVersion: string) {
             typeData.type = { complex_type: 'array', value: typeData.type };
         }
 
-        if(typeData.type !== 'builtin')
+        if(typeData.type === 'builtin')
         {
+            var mapped = mapBuiltin(typeData.name);
+
+            if(mapped) {
+                output += writeDocs(typeData, '');
+                output += `type ${typeData.name} = ${mapped};\n\n`
+            }
+        }
+        else {
             output += writeDocs(typeData, '');
             if(typeof typeData.type === 'object' && 'complex_type' in typeData.type && typeData.type.complex_type === 'struct') {
                 output += `interface ${typeData.name} `;
@@ -785,7 +775,9 @@ function writeClasses(apiData: RuntimeData, apiVersion: string) {
                                 },
                                 method.parameters.find(p => p.name === 'filters')!,
                             ],
-                            takes_table: method.takes_table,
+                            format: {
+                                takes_table: method.format.takes_table,
+                            },
                             return_values: method.return_values,
                         })
                     }
@@ -800,8 +792,8 @@ function writeClasses(apiData: RuntimeData, apiVersion: string) {
 
         output += `interface ${classData.name}`;
 
-        if(classData['base_classes']) {
-            output += ' extends ' + classData.base_classes.join(', ');
+        if(classData['parent']) {
+            output += ' extends ' + classData.parent;
         }
 
         output += ' {\n';
@@ -865,8 +857,7 @@ function writeEvents(apiData: RuntimeData, apiVersion: string) {
     output += writeEvent({
         name: 'event',
         order: 0,
-        description: 'Base type for all events',
-        notes: ['Not a member of the factorio API, added to type definitions for ease of use'],
+        description: 'Base type for all events\nNot a member of the factorio API, added to type definitions for ease of use',
         data: [
             {
                 name: 'name',
@@ -950,9 +941,7 @@ function parseVariantConcepts(concepts: Concept[]) {
             if(concept.type.variant_parameter_groups && concept.type.variant_parameter_groups.length) {
                 let variantsCreated = false;
                 if(concept.type.variant_parameter_description) {
-                    let notes = concept.notes || [];
-                    notes.push(concept.type.variant_parameter_description);
-                    concept.notes = notes;
+                    concept.description += '\n' + concept.type.variant_parameter_description;
                     let variantPropertyNameList = extractTypeNames(concept.type.variant_parameter_description);
                     if(variantPropertyNameList.length === 1) {
                         let variantPropertyName = variantPropertyNameList[0];
@@ -1013,7 +1002,7 @@ function parseVariantConcepts(concepts: Concept[]) {
                                         unionNames.push('Default' + concept.name);
                                     }
                                     // Dirty type hacks to "convert" the base concept to a union type
-                                    // The parser will ignore the old table properties, we want to preserve description, notes, etc
+                                    // The parser will ignore the old table properties, we want to preserve description etc
                                     (concept as any).type.complex_type = 'union';
                                     (concept.type as any as UnionType).options = unionNames;
                                 }
@@ -1031,8 +1020,7 @@ function parseVariantConcepts(concepts: Concept[]) {
                             },
                             name: `${concept.name}${formatTypeName(group.name)} extends ${concept.name}`,
                             order: 0,
-                            description: '',
-                            notes: [`Applies to \`${group.name}\` variant case`],
+                            description: `Applies to \`${group.name}\` variant case`,
                         });
                     }
                 }
@@ -1064,14 +1052,20 @@ function writeConcepts(apiData: RuntimeData, apiVersion: string) {
 
     concepts.push(...parseVariantConcepts(concepts));
     for(let concept of concepts) {
-        output += writeDocs(concept, '');
-        if(typeof concept.type === 'object' && 'complex_type' in concept.type && (concept.type.complex_type === 'table' || concept.type.complex_type === 'tuple' || concept.type.complex_type === 'LuaStruct')) {
-            output += `interface ${concept.name} `;
+        let parsed: string | null = parseType(concept.type, '');
+        if(parsed === 'builtin') {
+            parsed = mapBuiltin(concept.name)
         }
-        else {
-            output += `type ${concept.name} = `
+        if(parsed) {
+            output += writeDocs(concept, '');
+            if(typeof concept.type === 'object' && 'complex_type' in concept.type && (concept.type.complex_type === 'table' || concept.type.complex_type === 'LuaStruct')) {
+                output += `interface ${concept.name} `;
+            }
+            else {
+                output += `type ${concept.name} = `
+            }
+            output += `${parsed}\n\n`;
         }
-        output += `${parseType(concept.type, '')}\n\n`;
     }
 
     output += '\n}';
@@ -1092,9 +1086,7 @@ function writeGlobals(apiData: RuntimeData, apiVersion: string) {
 
     for(let globalFunction of apiData.global_functions) {
         for(let parameter of globalFunction.parameters) {
-            if(parameter.type !== 'table') {
-                parameter.type = 'runtime.' + parameter.type;
-            }
+            parameter.type = 'runtime.' + parameter.type;
         }
 
         let fnOutput = writeMethod(globalFunction, '');

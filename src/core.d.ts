@@ -30,7 +30,46 @@ declare const serpent: Serpent;
 // can eventually fix these on a per-case basis
 type Table = any;
 
-// https://lua-api.factorio.com/latest/types/DataExtendMethod.html
+type uint = number;
+
+/*
+ * The data.extend method. It's the primary way to add prototypes to the data table.
+ * 
+ * The method has two positional function parameters:
+ * 
+ * - `self` :: [Data](prototype:Data): Usually provided by calling `data:extend(otherdata)`, which is syntax sugar for `data.extend(data, otherdata)`.
+ * 
+ * - `otherdata` :: array[[AnyPrototype](prototype:AnyPrototype)]: A continuous array of non-abstract prototypes.",
+ * @example
+ * ```
+ * data:extend({\n  {\n    type = \"item\",
+ *     name = \"a-thing\",
+ *     icon = \"__base__/graphics/icons/coal.png\",
+ *     icon_size = 64,
+ *     stack_size = 2
+ *   }
+ * })
+ * ```,
+ * @example
+ * ```
+ * local recipe_cat =
+ * {
+ *   type = \"recipe-category\",
+ *   name = \"my-category\"
+ * }
+ * local assembler =
+ * {
+ *   type = \"assembling-machine\",
+ *   name = \"cool-assembler\",
+ *   energy_usage = \"30kW\",
+ *   energy_source = {type = \"void\"},
+ *   crafting_speed = 1,
+ *   crafting_categories = {\"crafting\"}
+ * }
+ * 
+ * data:extend({recipe_cat, assembler})
+ * ```
+ */
 type DataExtendMethod = (data: prototype.Data, ...otherData: any[]) => void;
 
 // The docs and json definition make reference to these types but have no information as to what they are
