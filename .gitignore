@@ -1,5 +1,6 @@
 json_parser/runtime-api.json
 json_parser/prototype-api.json
+temp/**
 
 # Logs
 logs
