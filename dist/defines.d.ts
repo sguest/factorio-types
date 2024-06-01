@@ -2,20 +2,20 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.107
-// API version 4
+// Factorio version 1.1.108
+// API version 5
 
 declare namespace defines {
     enum alert_type {
-        custom = 6,
-        entity_destroyed = 0,
-        entity_under_attack = 1,
+        custom = 0,
+        entity_destroyed = 1,
+        entity_under_attack = 2,
         no_material_for_construction = 3,
-        no_storage = 7,
-        not_enough_construction_robots = 2,
-        not_enough_repair_packs = 4,
-        train_out_of_fuel = 8,
-        turret_fire = 5,
+        no_storage = 4,
+        not_enough_construction_robots = 5,
+        not_enough_repair_packs = 6,
+        train_out_of_fuel = 7,
+        turret_fire = 8,
     }
     /**
      * AI command exit status. See {@link LuaEntity::set_command | runtime:LuaEntity::set_command}
@@ -174,80 +174,6 @@ declare namespace defines {
                 hold = 1,
                 pulse = 0,
             }
-        }
-        enum type {
-            /**
-             * {@link LuaAccumulatorControlBehavior | runtime:LuaAccumulatorControlBehavior}
-             */
-            accumulator = 12,
-            /**
-             * {@link LuaArithmeticCombinatorControlBehavior | runtime:LuaArithmeticCombinatorControlBehavior}
-             */
-            arithmetic_combinator = 9,
-            /**
-             * {@link LuaConstantCombinatorControlBehavior | runtime:LuaConstantCombinatorControlBehavior}
-             */
-            constant_combinator = 10,
-            /**
-             * {@link LuaContainerControlBehavior | runtime:LuaContainerControlBehavior}
-             */
-            container = 0,
-            /**
-             * {@link LuaDeciderCombinatorControlBehavior | runtime:LuaDeciderCombinatorControlBehavior}
-             */
-            decider_combinator = 8,
-            /**
-             * {@link LuaGenericOnOffControlBehavior | runtime:LuaGenericOnOffControlBehavior}
-             */
-            generic_on_off = 1,
-            /**
-             * {@link LuaInserterControlBehavior | runtime:LuaInserterControlBehavior}
-             */
-            inserter = 2,
-            /**
-             * {@link LuaLampControlBehavior | runtime:LuaLampControlBehavior}
-             */
-            lamp = 3,
-            /**
-             * {@link LuaLogisticContainerControlBehavior | runtime:LuaLogisticContainerControlBehavior}
-             */
-            logistic_container = 4,
-            /**
-             * {@link LuaMiningDrillControlBehavior | runtime:LuaMiningDrillControlBehavior}
-             */
-            mining_drill = 16,
-            /**
-             * {@link LuaProgrammableSpeakerControlBehavior | runtime:LuaProgrammableSpeakerControlBehavior}
-             */
-            programmable_speaker = 17,
-            /**
-             * {@link LuaRailChainSignalControlBehavior | runtime:LuaRailChainSignalControlBehavior}
-             */
-            rail_chain_signal = 14,
-            /**
-             * {@link LuaRailSignalControlBehavior | runtime:LuaRailSignalControlBehavior}
-             */
-            rail_signal = 13,
-            /**
-             * {@link LuaRoboportControlBehavior | runtime:LuaRoboportControlBehavior}
-             */
-            roboport = 5,
-            /**
-             * {@link LuaStorageTankControlBehavior | runtime:LuaStorageTankControlBehavior}
-             */
-            storage_tank = 6,
-            /**
-             * {@link LuaTrainStopControlBehavior | runtime:LuaTrainStopControlBehavior}
-             */
-            train_stop = 7,
-            /**
-             * {@link LuaTransportBeltControlBehavior | runtime:LuaTransportBeltControlBehavior}
-             */
-            transport_belt = 11,
-            /**
-             * {@link LuaWallControlBehavior | runtime:LuaWallControlBehavior}
-             */
-            wall = 15,
         }
     }
     enum controllers {
@@ -500,190 +426,190 @@ declare namespace defines {
      * See the {@link events page | runtime:events} for more info on what events contain and when they get raised.
      */
     enum events {
-        on_ai_command_completed = 123,
-        on_area_cloned = 128,
-        on_biter_base_built = 59,
-        on_brush_cloned = 129,
-        on_build_base_arrived = 144,
-        on_built_entity = 9,
-        on_cancelled_deconstruction = 26,
-        on_cancelled_upgrade = 125,
-        on_character_corpse_expired = 98,
-        on_chart_tag_added = 145,
-        on_chart_tag_modified = 146,
-        on_chart_tag_removed = 147,
-        on_chunk_charted = 106,
-        on_chunk_deleted = 115,
-        on_chunk_generated = 15,
-        on_combat_robot_expired = 87,
-        on_console_chat = 75,
-        on_console_command = 76,
-        on_cutscene_cancelled = 169,
-        on_cutscene_finished = 182,
-        on_cutscene_started = 181,
-        on_cutscene_waypoint_reached = 139,
-        on_difficulty_settings_changed = 64,
-        on_entity_cloned = 127,
-        on_entity_color_changed = 180,
-        on_entity_damaged = 7,
-        on_entity_destroyed = 160,
-        on_entity_died = 5,
-        on_entity_logistic_slot_changed = 173,
-        on_entity_renamed = 61,
-        on_entity_settings_pasted = 37,
-        on_entity_spawned = 138,
-        on_equipment_inserted = 174,
-        on_equipment_removed = 175,
-        on_force_cease_fire_changed = 152,
-        on_force_created = 33,
-        on_force_friends_changed = 153,
-        on_force_reset = 108,
-        on_forces_merged = 110,
-        on_forces_merging = 34,
-        on_game_created_from_scenario = 130,
-        on_gui_checked_state_changed = 4,
-        on_gui_click = 1,
-        on_gui_closed = 92,
-        on_gui_confirmed = 2,
-        on_gui_elem_changed = 71,
-        on_gui_hover = 178,
-        on_gui_leave = 179,
-        on_gui_location_changed = 149,
-        on_gui_opened = 91,
-        on_gui_selected_tab_changed = 150,
-        on_gui_selection_state_changed = 62,
-        on_gui_switch_state_changed = 151,
-        on_gui_text_changed = 3,
-        on_gui_value_changed = 93,
-        on_land_mine_armed = 109,
-        on_lua_shortcut = 148,
-        on_marked_for_deconstruction = 25,
-        on_marked_for_upgrade = 124,
-        on_market_item_purchased = 57,
-        on_mod_item_opened = 90,
-        on_permission_group_added = 168,
-        on_permission_group_deleted = 167,
-        on_permission_group_edited = 163,
-        on_permission_string_imported = 165,
-        on_picked_up_item = 8,
-        on_player_alt_reverse_selected_area = 177,
-        on_player_alt_selected_area = 54,
-        on_player_ammo_inventory_changed = 40,
-        on_player_armor_inventory_changed = 39,
-        on_player_banned = 118,
-        on_player_built_tile = 49,
-        on_player_cancelled_crafting = 105,
-        on_player_changed_force = 60,
-        on_player_changed_position = 89,
-        on_player_changed_surface = 55,
-        on_player_cheat_mode_disabled = 97,
-        on_player_cheat_mode_enabled = 96,
-        on_player_clicked_gps_tag = 161,
-        on_player_configured_blueprint = 74,
-        on_player_configured_spider_remote = 170,
-        on_player_crafted_item = 16,
-        on_player_created = 30,
-        on_player_cursor_stack_changed = 35,
-        on_player_deconstructed_area = 73,
-        on_player_demoted = 86,
-        on_player_died = 45,
-        on_player_display_resolution_changed = 102,
-        on_player_display_scale_changed = 103,
-        on_player_driving_changed_state = 32,
-        on_player_dropped_item = 58,
-        on_player_fast_transferred = 135,
-        on_player_flushed_fluid = 162,
-        on_player_gun_inventory_changed = 41,
-        on_player_input_method_changed = 183,
-        on_player_joined_game = 47,
-        on_player_kicked = 119,
-        on_player_left_game = 48,
-        on_player_main_inventory_changed = 38,
-        on_player_mined_entity = 68,
-        on_player_mined_item = 11,
-        on_player_mined_tile = 50,
-        on_player_muted = 94,
-        on_player_pipette = 101,
-        on_player_placed_equipment = 42,
-        on_player_promoted = 85,
-        on_player_removed = 77,
-        on_player_removed_equipment = 43,
-        on_player_repaired_entity = 134,
-        on_player_respawned = 46,
-        on_player_reverse_selected_area = 176,
-        on_player_rotated_entity = 24,
-        on_player_selected_area = 53,
-        on_player_set_quick_bar_slot = 156,
-        on_player_setup_blueprint = 72,
-        on_player_toggled_alt_mode = 133,
-        on_player_toggled_map_editor = 126,
-        on_player_trash_inventory_changed = 111,
-        on_player_unbanned = 120,
-        on_player_unmuted = 95,
-        on_player_used_capsule = 79,
-        on_player_used_spider_remote = 171,
-        on_post_entity_died = 6,
-        on_pre_build = 12,
-        on_pre_chunk_deleted = 116,
-        on_pre_entity_settings_pasted = 36,
-        on_pre_ghost_deconstructed = 99,
-        on_pre_ghost_upgraded = 100,
-        on_pre_permission_group_deleted = 166,
-        on_pre_permission_string_imported = 164,
-        on_pre_player_crafted_item = 104,
-        on_pre_player_died = 44,
-        on_pre_player_left_game = 112,
-        on_pre_player_mined_item = 14,
-        on_pre_player_removed = 78,
-        on_pre_player_toggled_map_editor = 157,
+        on_ai_command_completed = 0,
+        on_area_cloned = 1,
+        on_biter_base_built = 2,
+        on_brush_cloned = 3,
+        on_build_base_arrived = 4,
+        on_built_entity = 5,
+        on_cancelled_deconstruction = 6,
+        on_cancelled_upgrade = 7,
+        on_character_corpse_expired = 8,
+        on_chart_tag_added = 9,
+        on_chart_tag_modified = 10,
+        on_chart_tag_removed = 11,
+        on_chunk_charted = 12,
+        on_chunk_deleted = 13,
+        on_chunk_generated = 14,
+        on_combat_robot_expired = 15,
+        on_console_chat = 16,
+        on_console_command = 17,
+        on_cutscene_cancelled = 18,
+        on_cutscene_finished = 19,
+        on_cutscene_started = 20,
+        on_cutscene_waypoint_reached = 21,
+        on_difficulty_settings_changed = 22,
+        on_entity_cloned = 23,
+        on_entity_color_changed = 24,
+        on_entity_damaged = 25,
+        on_entity_destroyed = 26,
+        on_entity_died = 27,
+        on_entity_logistic_slot_changed = 28,
+        on_entity_renamed = 29,
+        on_entity_settings_pasted = 30,
+        on_entity_spawned = 31,
+        on_equipment_inserted = 32,
+        on_equipment_removed = 33,
+        on_force_cease_fire_changed = 34,
+        on_force_created = 35,
+        on_force_friends_changed = 36,
+        on_force_reset = 37,
+        on_forces_merged = 38,
+        on_forces_merging = 39,
+        on_game_created_from_scenario = 40,
+        on_gui_checked_state_changed = 41,
+        on_gui_click = 42,
+        on_gui_closed = 43,
+        on_gui_confirmed = 44,
+        on_gui_elem_changed = 45,
+        on_gui_hover = 46,
+        on_gui_leave = 47,
+        on_gui_location_changed = 48,
+        on_gui_opened = 49,
+        on_gui_selected_tab_changed = 50,
+        on_gui_selection_state_changed = 51,
+        on_gui_switch_state_changed = 52,
+        on_gui_text_changed = 53,
+        on_gui_value_changed = 54,
+        on_land_mine_armed = 55,
+        on_lua_shortcut = 56,
+        on_marked_for_deconstruction = 57,
+        on_marked_for_upgrade = 58,
+        on_market_item_purchased = 59,
+        on_mod_item_opened = 60,
+        on_permission_group_added = 61,
+        on_permission_group_deleted = 62,
+        on_permission_group_edited = 63,
+        on_permission_string_imported = 64,
+        on_picked_up_item = 65,
+        on_player_alt_reverse_selected_area = 66,
+        on_player_alt_selected_area = 67,
+        on_player_ammo_inventory_changed = 68,
+        on_player_armor_inventory_changed = 69,
+        on_player_banned = 70,
+        on_player_built_tile = 71,
+        on_player_cancelled_crafting = 72,
+        on_player_changed_force = 73,
+        on_player_changed_position = 74,
+        on_player_changed_surface = 75,
+        on_player_cheat_mode_disabled = 76,
+        on_player_cheat_mode_enabled = 77,
+        on_player_clicked_gps_tag = 78,
+        on_player_configured_blueprint = 79,
+        on_player_configured_spider_remote = 80,
+        on_player_crafted_item = 81,
+        on_player_created = 82,
+        on_player_cursor_stack_changed = 83,
+        on_player_deconstructed_area = 84,
+        on_player_demoted = 85,
+        on_player_died = 86,
+        on_player_display_resolution_changed = 87,
+        on_player_display_scale_changed = 88,
+        on_player_driving_changed_state = 89,
+        on_player_dropped_item = 90,
+        on_player_fast_transferred = 91,
+        on_player_flushed_fluid = 92,
+        on_player_gun_inventory_changed = 93,
+        on_player_input_method_changed = 94,
+        on_player_joined_game = 95,
+        on_player_kicked = 96,
+        on_player_left_game = 97,
+        on_player_main_inventory_changed = 98,
+        on_player_mined_entity = 99,
+        on_player_mined_item = 100,
+        on_player_mined_tile = 101,
+        on_player_muted = 102,
+        on_player_pipette = 103,
+        on_player_placed_equipment = 104,
+        on_player_promoted = 105,
+        on_player_removed = 106,
+        on_player_removed_equipment = 107,
+        on_player_repaired_entity = 108,
+        on_player_respawned = 109,
+        on_player_reverse_selected_area = 110,
+        on_player_rotated_entity = 111,
+        on_player_selected_area = 112,
+        on_player_set_quick_bar_slot = 113,
+        on_player_setup_blueprint = 114,
+        on_player_toggled_alt_mode = 115,
+        on_player_toggled_map_editor = 116,
+        on_player_trash_inventory_changed = 117,
+        on_player_unbanned = 118,
+        on_player_unmuted = 119,
+        on_player_used_capsule = 120,
+        on_player_used_spider_remote = 121,
+        on_post_entity_died = 122,
+        on_pre_build = 123,
+        on_pre_chunk_deleted = 124,
+        on_pre_entity_settings_pasted = 125,
+        on_pre_ghost_deconstructed = 126,
+        on_pre_ghost_upgraded = 127,
+        on_pre_permission_group_deleted = 128,
+        on_pre_permission_string_imported = 129,
+        on_pre_player_crafted_item = 130,
+        on_pre_player_died = 131,
+        on_pre_player_left_game = 132,
+        on_pre_player_mined_item = 133,
+        on_pre_player_removed = 134,
+        on_pre_player_toggled_map_editor = 135,
         on_pre_robot_exploded_cliff = 136,
-        on_pre_script_inventory_resized = 158,
-        on_pre_surface_cleared = 113,
-        on_pre_surface_deleted = 67,
-        on_research_cancelled = 23,
-        on_research_finished = 21,
-        on_research_reversed = 22,
-        on_research_started = 20,
-        on_resource_depleted = 31,
-        on_robot_built_entity = 17,
-        on_robot_built_tile = 51,
-        on_robot_exploded_cliff = 137,
-        on_robot_mined = 19,
-        on_robot_mined_entity = 69,
-        on_robot_mined_tile = 52,
-        on_robot_pre_mined = 18,
-        on_rocket_launch_ordered = 121,
-        on_rocket_launched = 13,
-        on_runtime_mod_setting_changed = 63,
-        on_script_inventory_resized = 159,
-        on_script_path_request_finished = 122,
-        on_script_trigger_effect = 155,
-        on_sector_scanned = 10,
-        on_selected_entity_changed = 56,
-        on_spider_command_completed = 172,
-        on_string_translated = 154,
-        on_surface_cleared = 114,
-        on_surface_created = 65,
-        on_surface_deleted = 66,
-        on_surface_imported = 131,
-        on_surface_renamed = 132,
-        on_technology_effects_reset = 107,
-        on_tick = 0,
-        on_train_changed_state = 29,
-        on_train_created = 70,
-        on_train_schedule_changed = 117,
-        on_trigger_created_entity = 27,
-        on_trigger_fired_artillery = 28,
-        on_unit_added_to_group = 141,
-        on_unit_group_created = 140,
-        on_unit_group_finished_gathering = 143,
-        on_unit_removed_from_group = 142,
-        on_worker_robot_expired = 88,
-        script_raised_built = 80,
-        script_raised_destroy = 81,
-        script_raised_revive = 82,
-        script_raised_set_tiles = 84,
-        script_raised_teleported = 83,
+        on_pre_script_inventory_resized = 137,
+        on_pre_surface_cleared = 138,
+        on_pre_surface_deleted = 139,
+        on_research_cancelled = 140,
+        on_research_finished = 141,
+        on_research_reversed = 142,
+        on_research_started = 143,
+        on_resource_depleted = 144,
+        on_robot_built_entity = 145,
+        on_robot_built_tile = 146,
+        on_robot_exploded_cliff = 147,
+        on_robot_mined = 148,
+        on_robot_mined_entity = 149,
+        on_robot_mined_tile = 150,
+        on_robot_pre_mined = 151,
+        on_rocket_launch_ordered = 152,
+        on_rocket_launched = 153,
+        on_runtime_mod_setting_changed = 154,
+        on_script_inventory_resized = 155,
+        on_script_path_request_finished = 156,
+        on_script_trigger_effect = 157,
+        on_sector_scanned = 158,
+        on_selected_entity_changed = 159,
+        on_spider_command_completed = 160,
+        on_string_translated = 161,
+        on_surface_cleared = 162,
+        on_surface_created = 163,
+        on_surface_deleted = 164,
+        on_surface_imported = 165,
+        on_surface_renamed = 166,
+        on_technology_effects_reset = 167,
+        on_tick = 168,
+        on_train_changed_state = 169,
+        on_train_created = 170,
+        on_train_schedule_changed = 171,
+        on_trigger_created_entity = 172,
+        on_trigger_fired_artillery = 173,
+        on_unit_added_to_group = 174,
+        on_unit_group_created = 175,
+        on_unit_group_finished_gathering = 176,
+        on_unit_removed_from_group = 177,
+        on_worker_robot_expired = 178,
+        script_raised_built = 179,
+        script_raised_destroy = 180,
+        script_raised_revive = 181,
+        script_raised_set_tiles = 182,
+        script_raised_teleported = 183,
     }
     enum flow_precision_index {
         fifty_hours = 5,
@@ -719,26 +645,26 @@ declare namespace defines {
         wander_in_group = 6,
     }
     enum gui_type {
-        achievement = 8,
-        blueprint_library = 9,
-        bonus = 6,
+        achievement = 0,
+        blueprint_library = 1,
+        bonus = 2,
         controller = 3,
-        custom = 15,
-        entity = 1,
-        equipment = 10,
-        item = 5,
-        logistic = 11,
-        none = 0,
-        other_player = 12,
-        permissions = 13,
-        player_management = 17,
-        production = 4,
-        research = 2,
-        script_inventory = 19,
+        custom = 4,
+        entity = 5,
+        equipment = 6,
+        item = 7,
+        logistic = 8,
+        none = 9,
+        other_player = 10,
+        permissions = 11,
+        player_management = 12,
+        production = 13,
+        research = 14,
+        script_inventory = 15,
         server_management = 16,
-        tile = 18,
-        trains = 7,
-        tutorials = 14,
+        tile = 17,
+        trains = 18,
+        tutorials = 19,
     }
     enum input_action {
         activate_copy = 0,
@@ -1295,6 +1221,80 @@ declare namespace defines {
         secondary_left_split_line = 8,
         secondary_right_line = 5,
         secondary_right_split_line = 9,
+    }
+    enum type {
+        /**
+         * {@link LuaAccumulatorControlBehavior | runtime:LuaAccumulatorControlBehavior}
+         */
+        accumulator = 12,
+        /**
+         * {@link LuaArithmeticCombinatorControlBehavior | runtime:LuaArithmeticCombinatorControlBehavior}
+         */
+        arithmetic_combinator = 9,
+        /**
+         * {@link LuaConstantCombinatorControlBehavior | runtime:LuaConstantCombinatorControlBehavior}
+         */
+        constant_combinator = 10,
+        /**
+         * {@link LuaContainerControlBehavior | runtime:LuaContainerControlBehavior}
+         */
+        container = 0,
+        /**
+         * {@link LuaDeciderCombinatorControlBehavior | runtime:LuaDeciderCombinatorControlBehavior}
+         */
+        decider_combinator = 8,
+        /**
+         * {@link LuaGenericOnOffControlBehavior | runtime:LuaGenericOnOffControlBehavior}
+         */
+        generic_on_off = 1,
+        /**
+         * {@link LuaInserterControlBehavior | runtime:LuaInserterControlBehavior}
+         */
+        inserter = 2,
+        /**
+         * {@link LuaLampControlBehavior | runtime:LuaLampControlBehavior}
+         */
+        lamp = 3,
+        /**
+         * {@link LuaLogisticContainerControlBehavior | runtime:LuaLogisticContainerControlBehavior}
+         */
+        logistic_container = 4,
+        /**
+         * {@link LuaMiningDrillControlBehavior | runtime:LuaMiningDrillControlBehavior}
+         */
+        mining_drill = 16,
+        /**
+         * {@link LuaProgrammableSpeakerControlBehavior | runtime:LuaProgrammableSpeakerControlBehavior}
+         */
+        programmable_speaker = 17,
+        /**
+         * {@link LuaRailChainSignalControlBehavior | runtime:LuaRailChainSignalControlBehavior}
+         */
+        rail_chain_signal = 14,
+        /**
+         * {@link LuaRailSignalControlBehavior | runtime:LuaRailSignalControlBehavior}
+         */
+        rail_signal = 13,
+        /**
+         * {@link LuaRoboportControlBehavior | runtime:LuaRoboportControlBehavior}
+         */
+        roboport = 5,
+        /**
+         * {@link LuaStorageTankControlBehavior | runtime:LuaStorageTankControlBehavior}
+         */
+        storage_tank = 6,
+        /**
+         * {@link LuaTrainStopControlBehavior | runtime:LuaTrainStopControlBehavior}
+         */
+        train_stop = 7,
+        /**
+         * {@link LuaTransportBeltControlBehavior | runtime:LuaTransportBeltControlBehavior}
+         */
+        transport_belt = 11,
+        /**
+         * {@link LuaWallControlBehavior | runtime:LuaWallControlBehavior}
+         */
+        wall = 15,
     }
     enum wire_connection_id {
         electric_pole = 0,

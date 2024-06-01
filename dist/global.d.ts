@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.107
-// API version 4
+// Factorio version 1.1.108
+// API version 5
 
 /**
  * Allows registration of custom commands for the in-game console.
@@ -50,16 +50,16 @@ declare function log(this: void,
  * 
  * ```
  * local function size(t)
- *     local count = 0
- *     for k,v in pairs(t) do
- *         count = count + 1
- *     end
- *     return count
+ *   local count = 0
+ *   for k,v in pairs(t) do
+ *     count = count + 1
+ *   end
+ *   return count
  * end
  * ```
  * 
  * Note that `table_size()` does not work correctly for {@link LuaCustomTable | runtime:LuaCustomTable}, their size has to be determined with {@link LuaCustomTable::length_operator | runtime:LuaCustomTable::length_operator} instead.
  */
 declare function table_size(this: void,
-    table: Table): number
+    table: runtime.table): uint
 
