@@ -33,6 +33,12 @@ A very minimal proof-of-concept showing basic toolchain setup can be found [Here
 
 A slightly more in-depth and realistic mode can be found [Here](https://github.com/sguest/basic-seablock)
 
+## Primitives
+
+Primitive types like `uint8` or `nil` are preserved from the docs to better represent expected data formats, and are aliased as typescript types, so `nil` is `null`, and the various numeric formats such as `uint8`, `float`, etc are aliases for `number`.
+
+Note that since typescript has a single `number` type, the compiler will **not** prevent things like passing a `float` to a method that expects `uint8` because these are both just `number` types under the hood.
+
 ## Lualib
 
 Factorio makes various lua functions available to mods via [LuaLib](https://github.com/wube/factorio-data/tree/master/core/lualib)

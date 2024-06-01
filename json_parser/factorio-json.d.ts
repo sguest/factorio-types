@@ -40,7 +40,6 @@ interface RuntimeData extends ApiData{
     classes: FactorioClass[];
     events: FactorioEvent[];
     defines: Define[];
-    builtin_types: BuiltinType[];
     concepts: Concept[];
     global_objects: GlobalObject[];
     global_functions: Method[];
@@ -50,13 +49,11 @@ interface FactorioClass {
     name: string;
     order: number;
     description: string;
-    notes?: string[];
     examples?: string[];
-    see_also?: string[];
     methods?: Method[];
     attributes?: Attribute[];
     operators?: Array<Method | Attribute>;
-    base_classes?: string[];
+    parent?: string;
     // Currently ignored by the parser since factorio classes are being used as interfaces
     abstract?: boolean;
 }
@@ -65,9 +62,7 @@ interface FactorioEvent {
     name: string;
     order: number;
     description: string;
-    notes?: string[];
     examples?: string[];
-    see_also?: string[];
     data: Parameter[];
 }
 
@@ -79,18 +74,12 @@ interface Define {
     subkeys?: Define[];
 }
 
-interface BuiltinType {
-    name: string;
-    order: number;
-    description: string;
-}
-
 interface Concept {
     name: string;
     order: number;
     description: string;
-    notes?: string[];
     examples?: string[];
+    lists?: string[];
     type: FactorioType;
 }
 
@@ -107,7 +96,7 @@ interface BasicMember {
     description: string;
 }
 
-type FactorioType = string | UnionType | ArrayType | DictionaryType | FunctionType | LuaLazyLoadedValueType | TableType | LiteralType | TypeType | StructType | StructParentType | TupleType;
+type FactorioType = string | UnionType | ArrayType | DictionaryType | FunctionType | LuaLazyLoadedValueType | TableType | LiteralType | TypeType | StructType | StructParentType | TupleType | BuiltinType;
 
 interface UnionType {
     complex_type: 'union';
@@ -168,6 +157,10 @@ interface StructType {
     attributes: Attribute[];
 }
 
+interface BuiltinType {
+    complex_type: 'builtin';
+}
+
 interface Parameter {
     name: string;
     order: number;
@@ -187,18 +180,24 @@ interface Method {
     name: string;
     order: number;
     description: string;
-    notes?: string[];
     examples?: string[];
-    see_also?: string[];
+    lists?: string[];
     subclasses?: string[];
     parameters: Parameter[];
     variant_parameter_groups?: ParameterGroup[];
     variant_parameter_description?: string;
-    variadic_type?: FactorioType;
-    variadic_description?: string;
-    takes_table: boolean;
-    table_is_optional?: boolean;
+    variadic_parameter?: MethodVariadicParameter;
+    format: MethodFormat;
     return_values: MethodReturnValue[];
+}
+
+interface MethodVariadicParameter {
+    type: FactorioType;
+    description?: string;
+}
+
+interface MethodFormat {
+    takes_table: boolean;
 }
 
 interface MethodReturnValue {
@@ -212,9 +211,8 @@ interface Attribute {
     name: string;
     order: number;
     description: string;
-    notes?: string[];
     examples?: string[];
-    see_also?: string[];
+    lists?: string[];
     subclasses?: string[];
     type: FactorioType;
     read: boolean;
