@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.107
-// API version 4
+// Factorio version 1.1.108
+// API version 5
 
 declare namespace runtime {
 /**
@@ -38,7 +38,7 @@ interface LuaAISettings {
     /**
      * Defines how coarse the pathfinder's grid is, where smaller values mean a coarser grid. Defaults to `0`, which equals a resolution of `1x1` tiles, centered on tile centers. Values range from `-8` to `8` inclusive, where each integer increment doubles/halves the resolution. So, a resolution of `-8` equals a grid of `256x256` tiles, and a resolution of `8` equals `1/256` of a tile.
      */
-    path_resolution_modifier: number
+    path_resolution_modifier: int8
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -162,9 +162,8 @@ interface LuaArithmeticCombinatorControlBehavior extends LuaCombinatorControlBeh
 
     /**
      * This arithmetic combinator's parameters.
-     * @remarks
+     * 
      * Writing `nil` clears the combinator's parameters.
-     *
      */
     parameters: ArithmeticCombinatorParameters
 
@@ -229,7 +228,7 @@ interface LuaBootstrap {
      * Generate a new, unique event ID that can be used to raise custom events with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}.
      * @returns The newly generated event ID.
      */
-    generate_event_name(this: void): number
+    generate_event_name(this: void): uint
 
     /**
      * Gets the filters for the given event.
@@ -237,7 +236,7 @@ interface LuaBootstrap {
      * @returns The filters or `nil` if none are defined.
      */
     get_event_filter(this: void,
-        event: number): EventFilter | null
+        event: uint): EventFilter | null
 
     /**
      * Find the event handler for an event.
@@ -245,7 +244,7 @@ interface LuaBootstrap {
      * @returns Reference to the function currently registered as the handler, if it was found.
      */
     get_event_handler(this: void,
-        event: number): (this: void, arg0: EventData) => any | null
+        event: uint): (this: void, arg0: EventData) => any | null
 
     /**
      * Gets the mod event order as a string.
@@ -260,14 +259,20 @@ interface LuaBootstrap {
         name: string): PrototypeHistory
 
     /**
-     * Register a function to be run when mod configuration changes. This is called when the game version or any mod version changed, when any mod was added or removed, when a startup setting has changed, when any prototypes have been added or removed, or when a migration was applied. It allows the mod to make any changes it deems appropriate to both the data structures in its {@link global | runtime:global} table or to the game state through {@link LuaGameScript | runtime:LuaGameScript}.
-     * @remarks
+     * All methods and properties that this object supports.
+     */
+    help(this: void): string
+
+    /**
+     * Register a function to be run when mod configuration changes.
+     * 
+     * This is called when the game version or any mod version changed, when any mod was added or removed, when a startup setting has changed, when any prototypes have been added or removed, or when a migration was applied. It allows the mod to make any changes it deems appropriate to both the data structures in its {@link global | runtime:global} table or to the game state through {@link LuaGameScript | runtime:LuaGameScript}.
+     * 
      * For more context, refer to the {@link Data Lifecycle | runtime:data-lifecycle} page.
-     *
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      */
     on_configuration_changed(this: void,
-        handler: (this: void, arg0: ConfigurationChangedData) => any | null): void
+        handler: (this: void, arg0: ConfigurationChangedData) => any | nil): void
 
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
@@ -275,15 +280,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -292,7 +297,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_ai_command_completed,
-        handler: (this: void, arg0: runtime.on_ai_command_completed) => any | null,
+        handler: (this: void, arg0: runtime.on_ai_command_completed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -301,15 +306,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -318,7 +323,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_area_cloned,
-        handler: (this: void, arg0: runtime.on_area_cloned) => any | null,
+        handler: (this: void, arg0: runtime.on_area_cloned) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -327,15 +332,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -344,7 +349,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_biter_base_built,
-        handler: (this: void, arg0: runtime.on_biter_base_built) => any | null,
+        handler: (this: void, arg0: runtime.on_biter_base_built) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -353,15 +358,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -370,7 +375,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_brush_cloned,
-        handler: (this: void, arg0: runtime.on_brush_cloned) => any | null,
+        handler: (this: void, arg0: runtime.on_brush_cloned) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -379,15 +384,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -396,7 +401,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_build_base_arrived,
-        handler: (this: void, arg0: runtime.on_build_base_arrived) => any | null,
+        handler: (this: void, arg0: runtime.on_build_base_arrived) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -405,15 +410,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -422,7 +427,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_built_entity,
-        handler: (this: void, arg0: runtime.on_built_entity) => any | null,
+        handler: (this: void, arg0: runtime.on_built_entity) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -431,15 +436,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -448,7 +453,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_cancelled_deconstruction,
-        handler: (this: void, arg0: runtime.on_cancelled_deconstruction) => any | null,
+        handler: (this: void, arg0: runtime.on_cancelled_deconstruction) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -457,15 +462,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -474,7 +479,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_cancelled_upgrade,
-        handler: (this: void, arg0: runtime.on_cancelled_upgrade) => any | null,
+        handler: (this: void, arg0: runtime.on_cancelled_upgrade) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -483,15 +488,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -500,7 +505,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_character_corpse_expired,
-        handler: (this: void, arg0: runtime.on_character_corpse_expired) => any | null,
+        handler: (this: void, arg0: runtime.on_character_corpse_expired) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -509,15 +514,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -526,7 +531,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_chart_tag_added,
-        handler: (this: void, arg0: runtime.on_chart_tag_added) => any | null,
+        handler: (this: void, arg0: runtime.on_chart_tag_added) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -535,15 +540,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -552,7 +557,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_chart_tag_modified,
-        handler: (this: void, arg0: runtime.on_chart_tag_modified) => any | null,
+        handler: (this: void, arg0: runtime.on_chart_tag_modified) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -561,15 +566,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -578,7 +583,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_chart_tag_removed,
-        handler: (this: void, arg0: runtime.on_chart_tag_removed) => any | null,
+        handler: (this: void, arg0: runtime.on_chart_tag_removed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -587,15 +592,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -604,7 +609,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_chunk_charted,
-        handler: (this: void, arg0: runtime.on_chunk_charted) => any | null,
+        handler: (this: void, arg0: runtime.on_chunk_charted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -613,15 +618,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -630,7 +635,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_chunk_deleted,
-        handler: (this: void, arg0: runtime.on_chunk_deleted) => any | null,
+        handler: (this: void, arg0: runtime.on_chunk_deleted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -639,15 +644,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -656,7 +661,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_chunk_generated,
-        handler: (this: void, arg0: runtime.on_chunk_generated) => any | null,
+        handler: (this: void, arg0: runtime.on_chunk_generated) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -665,15 +670,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -682,7 +687,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_combat_robot_expired,
-        handler: (this: void, arg0: runtime.on_combat_robot_expired) => any | null,
+        handler: (this: void, arg0: runtime.on_combat_robot_expired) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -691,15 +696,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -708,7 +713,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_console_chat,
-        handler: (this: void, arg0: runtime.on_console_chat) => any | null,
+        handler: (this: void, arg0: runtime.on_console_chat) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -717,15 +722,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -734,7 +739,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_console_command,
-        handler: (this: void, arg0: runtime.on_console_command) => any | null,
+        handler: (this: void, arg0: runtime.on_console_command) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -743,15 +748,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -760,7 +765,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_cutscene_cancelled,
-        handler: (this: void, arg0: runtime.on_cutscene_cancelled) => any | null,
+        handler: (this: void, arg0: runtime.on_cutscene_cancelled) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -769,15 +774,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -786,7 +791,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_cutscene_finished,
-        handler: (this: void, arg0: runtime.on_cutscene_finished) => any | null,
+        handler: (this: void, arg0: runtime.on_cutscene_finished) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -795,15 +800,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -812,7 +817,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_cutscene_started,
-        handler: (this: void, arg0: runtime.on_cutscene_started) => any | null,
+        handler: (this: void, arg0: runtime.on_cutscene_started) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -821,15 +826,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -838,7 +843,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_cutscene_waypoint_reached,
-        handler: (this: void, arg0: runtime.on_cutscene_waypoint_reached) => any | null,
+        handler: (this: void, arg0: runtime.on_cutscene_waypoint_reached) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -847,15 +852,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -864,7 +869,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_difficulty_settings_changed,
-        handler: (this: void, arg0: runtime.on_difficulty_settings_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_difficulty_settings_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -873,15 +878,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -890,7 +895,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_cloned,
-        handler: (this: void, arg0: runtime.on_entity_cloned) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_cloned) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -899,15 +904,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -916,7 +921,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_color_changed,
-        handler: (this: void, arg0: runtime.on_entity_color_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_color_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -925,15 +930,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -942,7 +947,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_damaged,
-        handler: (this: void, arg0: runtime.on_entity_damaged) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_damaged) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -951,15 +956,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -968,7 +973,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_destroyed,
-        handler: (this: void, arg0: runtime.on_entity_destroyed) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_destroyed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -977,15 +982,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -994,7 +999,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_died,
-        handler: (this: void, arg0: runtime.on_entity_died) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_died) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1003,15 +1008,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1020,7 +1025,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_logistic_slot_changed,
-        handler: (this: void, arg0: runtime.on_entity_logistic_slot_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_logistic_slot_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1029,15 +1034,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1046,7 +1051,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_renamed,
-        handler: (this: void, arg0: runtime.on_entity_renamed) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_renamed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1055,15 +1060,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1072,7 +1077,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_settings_pasted,
-        handler: (this: void, arg0: runtime.on_entity_settings_pasted) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_settings_pasted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1081,15 +1086,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1098,7 +1103,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_entity_spawned,
-        handler: (this: void, arg0: runtime.on_entity_spawned) => any | null,
+        handler: (this: void, arg0: runtime.on_entity_spawned) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1107,15 +1112,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1124,7 +1129,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_equipment_inserted,
-        handler: (this: void, arg0: runtime.on_equipment_inserted) => any | null,
+        handler: (this: void, arg0: runtime.on_equipment_inserted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1133,15 +1138,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1150,7 +1155,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_equipment_removed,
-        handler: (this: void, arg0: runtime.on_equipment_removed) => any | null,
+        handler: (this: void, arg0: runtime.on_equipment_removed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1159,15 +1164,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1176,7 +1181,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_force_cease_fire_changed,
-        handler: (this: void, arg0: runtime.on_force_cease_fire_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_force_cease_fire_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1185,15 +1190,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1202,7 +1207,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_force_created,
-        handler: (this: void, arg0: runtime.on_force_created) => any | null,
+        handler: (this: void, arg0: runtime.on_force_created) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1211,15 +1216,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1228,7 +1233,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_force_friends_changed,
-        handler: (this: void, arg0: runtime.on_force_friends_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_force_friends_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1237,15 +1242,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1254,7 +1259,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_force_reset,
-        handler: (this: void, arg0: runtime.on_force_reset) => any | null,
+        handler: (this: void, arg0: runtime.on_force_reset) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1263,15 +1268,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1280,7 +1285,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_forces_merged,
-        handler: (this: void, arg0: runtime.on_forces_merged) => any | null,
+        handler: (this: void, arg0: runtime.on_forces_merged) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1289,15 +1294,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1306,7 +1311,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_forces_merging,
-        handler: (this: void, arg0: runtime.on_forces_merging) => any | null,
+        handler: (this: void, arg0: runtime.on_forces_merging) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1315,15 +1320,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1332,7 +1337,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_game_created_from_scenario,
-        handler: (this: void, arg0: runtime.on_game_created_from_scenario) => any | null,
+        handler: (this: void, arg0: runtime.on_game_created_from_scenario) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1341,15 +1346,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1358,7 +1363,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_checked_state_changed,
-        handler: (this: void, arg0: runtime.on_gui_checked_state_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_checked_state_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1367,15 +1372,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1384,7 +1389,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_click,
-        handler: (this: void, arg0: runtime.on_gui_click) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_click) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1393,15 +1398,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1410,7 +1415,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_closed,
-        handler: (this: void, arg0: runtime.on_gui_closed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_closed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1419,15 +1424,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1436,7 +1441,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_confirmed,
-        handler: (this: void, arg0: runtime.on_gui_confirmed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_confirmed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1445,15 +1450,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1462,7 +1467,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_elem_changed,
-        handler: (this: void, arg0: runtime.on_gui_elem_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_elem_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1471,15 +1476,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1488,7 +1493,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_hover,
-        handler: (this: void, arg0: runtime.on_gui_hover) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_hover) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1497,15 +1502,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1514,7 +1519,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_leave,
-        handler: (this: void, arg0: runtime.on_gui_leave) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_leave) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1523,15 +1528,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1540,7 +1545,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_location_changed,
-        handler: (this: void, arg0: runtime.on_gui_location_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_location_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1549,15 +1554,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1566,7 +1571,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_opened,
-        handler: (this: void, arg0: runtime.on_gui_opened) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_opened) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1575,15 +1580,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1592,7 +1597,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_selected_tab_changed,
-        handler: (this: void, arg0: runtime.on_gui_selected_tab_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_selected_tab_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1601,15 +1606,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1618,7 +1623,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_selection_state_changed,
-        handler: (this: void, arg0: runtime.on_gui_selection_state_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_selection_state_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1627,15 +1632,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1644,7 +1649,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_switch_state_changed,
-        handler: (this: void, arg0: runtime.on_gui_switch_state_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_switch_state_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1653,15 +1658,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1670,7 +1675,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_text_changed,
-        handler: (this: void, arg0: runtime.on_gui_text_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_text_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1679,15 +1684,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1696,7 +1701,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_gui_value_changed,
-        handler: (this: void, arg0: runtime.on_gui_value_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_gui_value_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1705,15 +1710,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1722,7 +1727,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_land_mine_armed,
-        handler: (this: void, arg0: runtime.on_land_mine_armed) => any | null,
+        handler: (this: void, arg0: runtime.on_land_mine_armed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1731,15 +1736,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1748,7 +1753,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_lua_shortcut,
-        handler: (this: void, arg0: runtime.on_lua_shortcut) => any | null,
+        handler: (this: void, arg0: runtime.on_lua_shortcut) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1757,15 +1762,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1774,7 +1779,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_marked_for_deconstruction,
-        handler: (this: void, arg0: runtime.on_marked_for_deconstruction) => any | null,
+        handler: (this: void, arg0: runtime.on_marked_for_deconstruction) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1783,15 +1788,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1800,7 +1805,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_marked_for_upgrade,
-        handler: (this: void, arg0: runtime.on_marked_for_upgrade) => any | null,
+        handler: (this: void, arg0: runtime.on_marked_for_upgrade) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1809,15 +1814,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1826,7 +1831,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_market_item_purchased,
-        handler: (this: void, arg0: runtime.on_market_item_purchased) => any | null,
+        handler: (this: void, arg0: runtime.on_market_item_purchased) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1835,15 +1840,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1852,7 +1857,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_mod_item_opened,
-        handler: (this: void, arg0: runtime.on_mod_item_opened) => any | null,
+        handler: (this: void, arg0: runtime.on_mod_item_opened) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1861,15 +1866,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1878,7 +1883,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_permission_group_added,
-        handler: (this: void, arg0: runtime.on_permission_group_added) => any | null,
+        handler: (this: void, arg0: runtime.on_permission_group_added) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1887,15 +1892,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1904,7 +1909,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_permission_group_deleted,
-        handler: (this: void, arg0: runtime.on_permission_group_deleted) => any | null,
+        handler: (this: void, arg0: runtime.on_permission_group_deleted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1913,15 +1918,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1930,7 +1935,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_permission_group_edited,
-        handler: (this: void, arg0: runtime.on_permission_group_edited) => any | null,
+        handler: (this: void, arg0: runtime.on_permission_group_edited) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1939,15 +1944,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1956,7 +1961,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_permission_string_imported,
-        handler: (this: void, arg0: runtime.on_permission_string_imported) => any | null,
+        handler: (this: void, arg0: runtime.on_permission_string_imported) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1965,15 +1970,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1982,7 +1987,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_picked_up_item,
-        handler: (this: void, arg0: runtime.on_picked_up_item) => any | null,
+        handler: (this: void, arg0: runtime.on_picked_up_item) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -1991,15 +1996,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2008,7 +2013,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_alt_reverse_selected_area,
-        handler: (this: void, arg0: runtime.on_player_alt_reverse_selected_area) => any | null,
+        handler: (this: void, arg0: runtime.on_player_alt_reverse_selected_area) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2017,15 +2022,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2034,7 +2039,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_alt_selected_area,
-        handler: (this: void, arg0: runtime.on_player_alt_selected_area) => any | null,
+        handler: (this: void, arg0: runtime.on_player_alt_selected_area) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2043,15 +2048,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2060,7 +2065,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_ammo_inventory_changed,
-        handler: (this: void, arg0: runtime.on_player_ammo_inventory_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_ammo_inventory_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2069,15 +2074,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2086,7 +2091,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_armor_inventory_changed,
-        handler: (this: void, arg0: runtime.on_player_armor_inventory_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_armor_inventory_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2095,15 +2100,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2112,7 +2117,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_banned,
-        handler: (this: void, arg0: runtime.on_player_banned) => any | null,
+        handler: (this: void, arg0: runtime.on_player_banned) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2121,15 +2126,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2138,7 +2143,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_built_tile,
-        handler: (this: void, arg0: runtime.on_player_built_tile) => any | null,
+        handler: (this: void, arg0: runtime.on_player_built_tile) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2147,15 +2152,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2164,7 +2169,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_cancelled_crafting,
-        handler: (this: void, arg0: runtime.on_player_cancelled_crafting) => any | null,
+        handler: (this: void, arg0: runtime.on_player_cancelled_crafting) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2173,15 +2178,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2190,7 +2195,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_changed_force,
-        handler: (this: void, arg0: runtime.on_player_changed_force) => any | null,
+        handler: (this: void, arg0: runtime.on_player_changed_force) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2199,15 +2204,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2216,7 +2221,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_changed_position,
-        handler: (this: void, arg0: runtime.on_player_changed_position) => any | null,
+        handler: (this: void, arg0: runtime.on_player_changed_position) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2225,15 +2230,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2242,7 +2247,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_changed_surface,
-        handler: (this: void, arg0: runtime.on_player_changed_surface) => any | null,
+        handler: (this: void, arg0: runtime.on_player_changed_surface) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2251,15 +2256,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2268,7 +2273,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_cheat_mode_disabled,
-        handler: (this: void, arg0: runtime.on_player_cheat_mode_disabled) => any | null,
+        handler: (this: void, arg0: runtime.on_player_cheat_mode_disabled) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2277,15 +2282,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2294,7 +2299,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_cheat_mode_enabled,
-        handler: (this: void, arg0: runtime.on_player_cheat_mode_enabled) => any | null,
+        handler: (this: void, arg0: runtime.on_player_cheat_mode_enabled) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2303,15 +2308,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2320,7 +2325,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_clicked_gps_tag,
-        handler: (this: void, arg0: runtime.on_player_clicked_gps_tag) => any | null,
+        handler: (this: void, arg0: runtime.on_player_clicked_gps_tag) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2329,15 +2334,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2346,7 +2351,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_configured_blueprint,
-        handler: (this: void, arg0: runtime.on_player_configured_blueprint) => any | null,
+        handler: (this: void, arg0: runtime.on_player_configured_blueprint) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2355,15 +2360,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2372,7 +2377,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_configured_spider_remote,
-        handler: (this: void, arg0: runtime.on_player_configured_spider_remote) => any | null,
+        handler: (this: void, arg0: runtime.on_player_configured_spider_remote) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2381,15 +2386,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2398,7 +2403,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_crafted_item,
-        handler: (this: void, arg0: runtime.on_player_crafted_item) => any | null,
+        handler: (this: void, arg0: runtime.on_player_crafted_item) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2407,15 +2412,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2424,7 +2429,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_created,
-        handler: (this: void, arg0: runtime.on_player_created) => any | null,
+        handler: (this: void, arg0: runtime.on_player_created) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2433,15 +2438,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2450,7 +2455,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_cursor_stack_changed,
-        handler: (this: void, arg0: runtime.on_player_cursor_stack_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_cursor_stack_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2459,15 +2464,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2476,7 +2481,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_deconstructed_area,
-        handler: (this: void, arg0: runtime.on_player_deconstructed_area) => any | null,
+        handler: (this: void, arg0: runtime.on_player_deconstructed_area) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2485,15 +2490,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2502,7 +2507,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_demoted,
-        handler: (this: void, arg0: runtime.on_player_demoted) => any | null,
+        handler: (this: void, arg0: runtime.on_player_demoted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2511,15 +2516,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2528,7 +2533,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_died,
-        handler: (this: void, arg0: runtime.on_player_died) => any | null,
+        handler: (this: void, arg0: runtime.on_player_died) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2537,15 +2542,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2554,7 +2559,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_display_resolution_changed,
-        handler: (this: void, arg0: runtime.on_player_display_resolution_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_display_resolution_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2563,15 +2568,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2580,7 +2585,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_display_scale_changed,
-        handler: (this: void, arg0: runtime.on_player_display_scale_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_display_scale_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2589,15 +2594,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2606,7 +2611,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_driving_changed_state,
-        handler: (this: void, arg0: runtime.on_player_driving_changed_state) => any | null,
+        handler: (this: void, arg0: runtime.on_player_driving_changed_state) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2615,15 +2620,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2632,7 +2637,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_dropped_item,
-        handler: (this: void, arg0: runtime.on_player_dropped_item) => any | null,
+        handler: (this: void, arg0: runtime.on_player_dropped_item) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2641,15 +2646,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2658,7 +2663,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_fast_transferred,
-        handler: (this: void, arg0: runtime.on_player_fast_transferred) => any | null,
+        handler: (this: void, arg0: runtime.on_player_fast_transferred) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2667,15 +2672,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2684,7 +2689,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_flushed_fluid,
-        handler: (this: void, arg0: runtime.on_player_flushed_fluid) => any | null,
+        handler: (this: void, arg0: runtime.on_player_flushed_fluid) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2693,15 +2698,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2710,7 +2715,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_gun_inventory_changed,
-        handler: (this: void, arg0: runtime.on_player_gun_inventory_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_gun_inventory_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2719,15 +2724,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2736,7 +2741,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_input_method_changed,
-        handler: (this: void, arg0: runtime.on_player_input_method_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_input_method_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2745,15 +2750,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2762,7 +2767,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_joined_game,
-        handler: (this: void, arg0: runtime.on_player_joined_game) => any | null,
+        handler: (this: void, arg0: runtime.on_player_joined_game) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2771,15 +2776,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2788,7 +2793,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_kicked,
-        handler: (this: void, arg0: runtime.on_player_kicked) => any | null,
+        handler: (this: void, arg0: runtime.on_player_kicked) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2797,15 +2802,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2814,7 +2819,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_left_game,
-        handler: (this: void, arg0: runtime.on_player_left_game) => any | null,
+        handler: (this: void, arg0: runtime.on_player_left_game) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2823,15 +2828,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2840,7 +2845,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_main_inventory_changed,
-        handler: (this: void, arg0: runtime.on_player_main_inventory_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_main_inventory_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2849,15 +2854,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2866,7 +2871,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_mined_entity,
-        handler: (this: void, arg0: runtime.on_player_mined_entity) => any | null,
+        handler: (this: void, arg0: runtime.on_player_mined_entity) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2875,15 +2880,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2892,7 +2897,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_mined_item,
-        handler: (this: void, arg0: runtime.on_player_mined_item) => any | null,
+        handler: (this: void, arg0: runtime.on_player_mined_item) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2901,15 +2906,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2918,7 +2923,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_mined_tile,
-        handler: (this: void, arg0: runtime.on_player_mined_tile) => any | null,
+        handler: (this: void, arg0: runtime.on_player_mined_tile) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2927,15 +2932,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2944,7 +2949,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_muted,
-        handler: (this: void, arg0: runtime.on_player_muted) => any | null,
+        handler: (this: void, arg0: runtime.on_player_muted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2953,15 +2958,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2970,7 +2975,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_pipette,
-        handler: (this: void, arg0: runtime.on_player_pipette) => any | null,
+        handler: (this: void, arg0: runtime.on_player_pipette) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -2979,15 +2984,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2996,7 +3001,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_placed_equipment,
-        handler: (this: void, arg0: runtime.on_player_placed_equipment) => any | null,
+        handler: (this: void, arg0: runtime.on_player_placed_equipment) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3005,15 +3010,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3022,7 +3027,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_promoted,
-        handler: (this: void, arg0: runtime.on_player_promoted) => any | null,
+        handler: (this: void, arg0: runtime.on_player_promoted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3031,15 +3036,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3048,7 +3053,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_removed,
-        handler: (this: void, arg0: runtime.on_player_removed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_removed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3057,15 +3062,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3074,7 +3079,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_removed_equipment,
-        handler: (this: void, arg0: runtime.on_player_removed_equipment) => any | null,
+        handler: (this: void, arg0: runtime.on_player_removed_equipment) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3083,15 +3088,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3100,7 +3105,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_repaired_entity,
-        handler: (this: void, arg0: runtime.on_player_repaired_entity) => any | null,
+        handler: (this: void, arg0: runtime.on_player_repaired_entity) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3109,15 +3114,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3126,7 +3131,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_respawned,
-        handler: (this: void, arg0: runtime.on_player_respawned) => any | null,
+        handler: (this: void, arg0: runtime.on_player_respawned) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3135,15 +3140,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3152,7 +3157,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_reverse_selected_area,
-        handler: (this: void, arg0: runtime.on_player_reverse_selected_area) => any | null,
+        handler: (this: void, arg0: runtime.on_player_reverse_selected_area) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3161,15 +3166,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3178,7 +3183,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_rotated_entity,
-        handler: (this: void, arg0: runtime.on_player_rotated_entity) => any | null,
+        handler: (this: void, arg0: runtime.on_player_rotated_entity) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3187,15 +3192,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3204,7 +3209,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_selected_area,
-        handler: (this: void, arg0: runtime.on_player_selected_area) => any | null,
+        handler: (this: void, arg0: runtime.on_player_selected_area) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3213,15 +3218,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3230,7 +3235,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_set_quick_bar_slot,
-        handler: (this: void, arg0: runtime.on_player_set_quick_bar_slot) => any | null,
+        handler: (this: void, arg0: runtime.on_player_set_quick_bar_slot) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3239,15 +3244,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3256,7 +3261,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_setup_blueprint,
-        handler: (this: void, arg0: runtime.on_player_setup_blueprint) => any | null,
+        handler: (this: void, arg0: runtime.on_player_setup_blueprint) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3265,15 +3270,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3282,7 +3287,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_toggled_alt_mode,
-        handler: (this: void, arg0: runtime.on_player_toggled_alt_mode) => any | null,
+        handler: (this: void, arg0: runtime.on_player_toggled_alt_mode) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3291,15 +3296,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3308,7 +3313,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_toggled_map_editor,
-        handler: (this: void, arg0: runtime.on_player_toggled_map_editor) => any | null,
+        handler: (this: void, arg0: runtime.on_player_toggled_map_editor) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3317,15 +3322,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3334,7 +3339,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_trash_inventory_changed,
-        handler: (this: void, arg0: runtime.on_player_trash_inventory_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_player_trash_inventory_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3343,15 +3348,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3360,7 +3365,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_unbanned,
-        handler: (this: void, arg0: runtime.on_player_unbanned) => any | null,
+        handler: (this: void, arg0: runtime.on_player_unbanned) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3369,15 +3374,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3386,7 +3391,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_unmuted,
-        handler: (this: void, arg0: runtime.on_player_unmuted) => any | null,
+        handler: (this: void, arg0: runtime.on_player_unmuted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3395,15 +3400,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3412,7 +3417,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_used_capsule,
-        handler: (this: void, arg0: runtime.on_player_used_capsule) => any | null,
+        handler: (this: void, arg0: runtime.on_player_used_capsule) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3421,15 +3426,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3438,7 +3443,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_player_used_spider_remote,
-        handler: (this: void, arg0: runtime.on_player_used_spider_remote) => any | null,
+        handler: (this: void, arg0: runtime.on_player_used_spider_remote) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3447,15 +3452,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3464,7 +3469,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_post_entity_died,
-        handler: (this: void, arg0: runtime.on_post_entity_died) => any | null,
+        handler: (this: void, arg0: runtime.on_post_entity_died) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3473,15 +3478,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3490,7 +3495,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_build,
-        handler: (this: void, arg0: runtime.on_pre_build) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_build) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3499,15 +3504,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3516,7 +3521,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_chunk_deleted,
-        handler: (this: void, arg0: runtime.on_pre_chunk_deleted) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_chunk_deleted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3525,15 +3530,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3542,7 +3547,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_entity_settings_pasted,
-        handler: (this: void, arg0: runtime.on_pre_entity_settings_pasted) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_entity_settings_pasted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3551,15 +3556,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3568,7 +3573,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_ghost_deconstructed,
-        handler: (this: void, arg0: runtime.on_pre_ghost_deconstructed) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_ghost_deconstructed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3577,15 +3582,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3594,7 +3599,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_ghost_upgraded,
-        handler: (this: void, arg0: runtime.on_pre_ghost_upgraded) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_ghost_upgraded) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3603,15 +3608,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3620,7 +3625,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_permission_group_deleted,
-        handler: (this: void, arg0: runtime.on_pre_permission_group_deleted) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_permission_group_deleted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3629,15 +3634,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3646,7 +3651,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_permission_string_imported,
-        handler: (this: void, arg0: runtime.on_pre_permission_string_imported) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_permission_string_imported) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3655,15 +3660,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3672,7 +3677,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_player_crafted_item,
-        handler: (this: void, arg0: runtime.on_pre_player_crafted_item) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_player_crafted_item) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3681,15 +3686,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3698,7 +3703,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_player_died,
-        handler: (this: void, arg0: runtime.on_pre_player_died) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_player_died) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3707,15 +3712,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3724,7 +3729,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_player_left_game,
-        handler: (this: void, arg0: runtime.on_pre_player_left_game) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_player_left_game) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3733,15 +3738,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3750,7 +3755,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_player_mined_item,
-        handler: (this: void, arg0: runtime.on_pre_player_mined_item) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_player_mined_item) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3759,15 +3764,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3776,7 +3781,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_player_removed,
-        handler: (this: void, arg0: runtime.on_pre_player_removed) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_player_removed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3785,15 +3790,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3802,7 +3807,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_player_toggled_map_editor,
-        handler: (this: void, arg0: runtime.on_pre_player_toggled_map_editor) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_player_toggled_map_editor) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3811,15 +3816,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3828,7 +3833,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_robot_exploded_cliff,
-        handler: (this: void, arg0: runtime.on_pre_robot_exploded_cliff) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_robot_exploded_cliff) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3837,15 +3842,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3854,7 +3859,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_script_inventory_resized,
-        handler: (this: void, arg0: runtime.on_pre_script_inventory_resized) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_script_inventory_resized) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3863,15 +3868,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3880,7 +3885,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_surface_cleared,
-        handler: (this: void, arg0: runtime.on_pre_surface_cleared) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_surface_cleared) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3889,15 +3894,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3906,7 +3911,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_pre_surface_deleted,
-        handler: (this: void, arg0: runtime.on_pre_surface_deleted) => any | null,
+        handler: (this: void, arg0: runtime.on_pre_surface_deleted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3915,15 +3920,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3932,7 +3937,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_research_cancelled,
-        handler: (this: void, arg0: runtime.on_research_cancelled) => any | null,
+        handler: (this: void, arg0: runtime.on_research_cancelled) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3941,15 +3946,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3958,7 +3963,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_research_finished,
-        handler: (this: void, arg0: runtime.on_research_finished) => any | null,
+        handler: (this: void, arg0: runtime.on_research_finished) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3967,15 +3972,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3984,7 +3989,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_research_reversed,
-        handler: (this: void, arg0: runtime.on_research_reversed) => any | null,
+        handler: (this: void, arg0: runtime.on_research_reversed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -3993,15 +3998,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4010,7 +4015,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_research_started,
-        handler: (this: void, arg0: runtime.on_research_started) => any | null,
+        handler: (this: void, arg0: runtime.on_research_started) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4019,15 +4024,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4036,7 +4041,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_resource_depleted,
-        handler: (this: void, arg0: runtime.on_resource_depleted) => any | null,
+        handler: (this: void, arg0: runtime.on_resource_depleted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4045,15 +4050,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4062,7 +4067,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_robot_built_entity,
-        handler: (this: void, arg0: runtime.on_robot_built_entity) => any | null,
+        handler: (this: void, arg0: runtime.on_robot_built_entity) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4071,15 +4076,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4088,7 +4093,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_robot_built_tile,
-        handler: (this: void, arg0: runtime.on_robot_built_tile) => any | null,
+        handler: (this: void, arg0: runtime.on_robot_built_tile) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4097,15 +4102,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4114,7 +4119,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_robot_exploded_cliff,
-        handler: (this: void, arg0: runtime.on_robot_exploded_cliff) => any | null,
+        handler: (this: void, arg0: runtime.on_robot_exploded_cliff) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4123,15 +4128,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4140,7 +4145,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_robot_mined,
-        handler: (this: void, arg0: runtime.on_robot_mined) => any | null,
+        handler: (this: void, arg0: runtime.on_robot_mined) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4149,15 +4154,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4166,7 +4171,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_robot_mined_entity,
-        handler: (this: void, arg0: runtime.on_robot_mined_entity) => any | null,
+        handler: (this: void, arg0: runtime.on_robot_mined_entity) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4175,15 +4180,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4192,7 +4197,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_robot_mined_tile,
-        handler: (this: void, arg0: runtime.on_robot_mined_tile) => any | null,
+        handler: (this: void, arg0: runtime.on_robot_mined_tile) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4201,15 +4206,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4218,7 +4223,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_robot_pre_mined,
-        handler: (this: void, arg0: runtime.on_robot_pre_mined) => any | null,
+        handler: (this: void, arg0: runtime.on_robot_pre_mined) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4227,15 +4232,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4244,7 +4249,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_rocket_launch_ordered,
-        handler: (this: void, arg0: runtime.on_rocket_launch_ordered) => any | null,
+        handler: (this: void, arg0: runtime.on_rocket_launch_ordered) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4253,15 +4258,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4270,7 +4275,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_rocket_launched,
-        handler: (this: void, arg0: runtime.on_rocket_launched) => any | null,
+        handler: (this: void, arg0: runtime.on_rocket_launched) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4279,15 +4284,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4296,7 +4301,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_runtime_mod_setting_changed,
-        handler: (this: void, arg0: runtime.on_runtime_mod_setting_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_runtime_mod_setting_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4305,15 +4310,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4322,7 +4327,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_script_inventory_resized,
-        handler: (this: void, arg0: runtime.on_script_inventory_resized) => any | null,
+        handler: (this: void, arg0: runtime.on_script_inventory_resized) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4331,15 +4336,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4348,7 +4353,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_script_path_request_finished,
-        handler: (this: void, arg0: runtime.on_script_path_request_finished) => any | null,
+        handler: (this: void, arg0: runtime.on_script_path_request_finished) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4357,15 +4362,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4374,7 +4379,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_script_trigger_effect,
-        handler: (this: void, arg0: runtime.on_script_trigger_effect) => any | null,
+        handler: (this: void, arg0: runtime.on_script_trigger_effect) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4383,15 +4388,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4400,7 +4405,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_sector_scanned,
-        handler: (this: void, arg0: runtime.on_sector_scanned) => any | null,
+        handler: (this: void, arg0: runtime.on_sector_scanned) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4409,15 +4414,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4426,7 +4431,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_selected_entity_changed,
-        handler: (this: void, arg0: runtime.on_selected_entity_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_selected_entity_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4435,15 +4440,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4452,7 +4457,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_spider_command_completed,
-        handler: (this: void, arg0: runtime.on_spider_command_completed) => any | null,
+        handler: (this: void, arg0: runtime.on_spider_command_completed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4461,15 +4466,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4478,7 +4483,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_string_translated,
-        handler: (this: void, arg0: runtime.on_string_translated) => any | null,
+        handler: (this: void, arg0: runtime.on_string_translated) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4487,15 +4492,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4504,7 +4509,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_surface_cleared,
-        handler: (this: void, arg0: runtime.on_surface_cleared) => any | null,
+        handler: (this: void, arg0: runtime.on_surface_cleared) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4513,15 +4518,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4530,7 +4535,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_surface_created,
-        handler: (this: void, arg0: runtime.on_surface_created) => any | null,
+        handler: (this: void, arg0: runtime.on_surface_created) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4539,15 +4544,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4556,7 +4561,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_surface_deleted,
-        handler: (this: void, arg0: runtime.on_surface_deleted) => any | null,
+        handler: (this: void, arg0: runtime.on_surface_deleted) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4565,15 +4570,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4582,7 +4587,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_surface_imported,
-        handler: (this: void, arg0: runtime.on_surface_imported) => any | null,
+        handler: (this: void, arg0: runtime.on_surface_imported) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4591,15 +4596,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4608,7 +4613,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_surface_renamed,
-        handler: (this: void, arg0: runtime.on_surface_renamed) => any | null,
+        handler: (this: void, arg0: runtime.on_surface_renamed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4617,15 +4622,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4634,7 +4639,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_technology_effects_reset,
-        handler: (this: void, arg0: runtime.on_technology_effects_reset) => any | null,
+        handler: (this: void, arg0: runtime.on_technology_effects_reset) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4643,15 +4648,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4660,7 +4665,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_tick,
-        handler: (this: void, arg0: runtime.on_tick) => any | null,
+        handler: (this: void, arg0: runtime.on_tick) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4669,15 +4674,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4686,7 +4691,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_train_changed_state,
-        handler: (this: void, arg0: runtime.on_train_changed_state) => any | null,
+        handler: (this: void, arg0: runtime.on_train_changed_state) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4695,15 +4700,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4712,7 +4717,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_train_created,
-        handler: (this: void, arg0: runtime.on_train_created) => any | null,
+        handler: (this: void, arg0: runtime.on_train_created) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4721,15 +4726,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4738,7 +4743,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_train_schedule_changed,
-        handler: (this: void, arg0: runtime.on_train_schedule_changed) => any | null,
+        handler: (this: void, arg0: runtime.on_train_schedule_changed) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4747,15 +4752,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4764,7 +4769,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_trigger_created_entity,
-        handler: (this: void, arg0: runtime.on_trigger_created_entity) => any | null,
+        handler: (this: void, arg0: runtime.on_trigger_created_entity) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4773,15 +4778,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4790,7 +4795,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_trigger_fired_artillery,
-        handler: (this: void, arg0: runtime.on_trigger_fired_artillery) => any | null,
+        handler: (this: void, arg0: runtime.on_trigger_fired_artillery) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4799,15 +4804,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4816,7 +4821,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_unit_added_to_group,
-        handler: (this: void, arg0: runtime.on_unit_added_to_group) => any | null,
+        handler: (this: void, arg0: runtime.on_unit_added_to_group) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4825,15 +4830,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4842,7 +4847,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_unit_group_created,
-        handler: (this: void, arg0: runtime.on_unit_group_created) => any | null,
+        handler: (this: void, arg0: runtime.on_unit_group_created) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4851,15 +4856,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4868,7 +4873,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_unit_group_finished_gathering,
-        handler: (this: void, arg0: runtime.on_unit_group_finished_gathering) => any | null,
+        handler: (this: void, arg0: runtime.on_unit_group_finished_gathering) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4877,15 +4882,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4894,7 +4899,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_unit_removed_from_group,
-        handler: (this: void, arg0: runtime.on_unit_removed_from_group) => any | null,
+        handler: (this: void, arg0: runtime.on_unit_removed_from_group) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4903,15 +4908,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4920,7 +4925,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.on_worker_robot_expired,
-        handler: (this: void, arg0: runtime.on_worker_robot_expired) => any | null,
+        handler: (this: void, arg0: runtime.on_worker_robot_expired) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4929,15 +4934,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4946,7 +4951,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.script_raised_built,
-        handler: (this: void, arg0: runtime.script_raised_built) => any | null,
+        handler: (this: void, arg0: runtime.script_raised_built) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4955,15 +4960,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4972,7 +4977,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.script_raised_destroy,
-        handler: (this: void, arg0: runtime.script_raised_destroy) => any | null,
+        handler: (this: void, arg0: runtime.script_raised_destroy) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -4981,15 +4986,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4998,7 +5003,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.script_raised_revive,
-        handler: (this: void, arg0: runtime.script_raised_revive) => any | null,
+        handler: (this: void, arg0: runtime.script_raised_revive) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -5007,15 +5012,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -5024,7 +5029,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.script_raised_set_tiles,
-        handler: (this: void, arg0: runtime.script_raised_set_tiles) => any | null,
+        handler: (this: void, arg0: runtime.script_raised_set_tiles) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -5033,15 +5038,15 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -5050,7 +5055,7 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events.script_raised_teleported,
-        handler: (this: void, arg0: runtime.script_raised_teleported) => any | null,
+        handler: (this: void, arg0: runtime.script_raised_teleported) => any | nil,
         filters?: EventFilter): void
 
     /**
@@ -5059,15 +5064,15 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @example
-     * Register for the [on_tick](runtime:on_tick) event to print the current tick to console each tick. 
      * ```
+     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
-     * Register for the [on_built_entity](runtime:on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built. 
      * ```
+     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -5076,18 +5081,19 @@ interface LuaBootstrap {
      */
     on_event(this: void,
         event: defines.events | string | Array<defines.events | string>,
-        handler: (this: void, arg0: EventData) => any | null,
+        handler: (this: void, arg0: EventData) => any | nil,
         filters?: EventFilter): void
 
     /**
-     * Register a function to be run on mod initialization. This is only called when a new save game is created or when a save file is loaded that previously didn't contain the mod. During it, the mod gets the chance to set up initial values that it will use for its lifetime. It has full access to {@link LuaGameScript | runtime:LuaGameScript} and the {@link global | runtime:global} table and can change anything about them that it deems appropriate. No other events will be raised for the mod until it has finished this step.
-     * @remarks
+     * Register a function to be run on mod initialization.
+     * 
+     * This is only called when a new save game is created or when a save file is loaded that previously didn't contain the mod. During it, the mod gets the chance to set up initial values that it will use for its lifetime. It has full access to {@link LuaGameScript | runtime:LuaGameScript} and the {@link global | runtime:global} table and can change anything about them that it deems appropriate. No other events will be raised for the mod until it has finished this step.
+     * 
      * For more context, refer to the {@link Data Lifecycle | runtime:data-lifecycle} page.
-     *
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @example
-     * Initialize a `players` table in `global` for later use. 
      * ```
+     * -- Initialize a `players` table in `global` for later use
      * script.on_init(function()
      *   global.players = {}
      * end)
@@ -5095,7 +5101,7 @@ interface LuaBootstrap {
      *
      */
     on_init(this: void,
-        handler: (this: void) => any | null): void
+        handler: (this: void) => any | nil): void
 
     /**
      * Register a function to be run on save load. This is only called for mods that have been part of the save previously, or for players connecting to a running multiplayer session.
@@ -5103,18 +5109,20 @@ interface LuaBootstrap {
      * It gives the mod the opportunity to rectify potential differences in local state introduced by the save/load cycle. Doing anything other than the following three will lead to desyncs, breaking multiplayer and replay functionality. Access to {@link LuaGameScript | runtime:LuaGameScript} is not available. The {@link global | runtime:global} table can be accessed and is safe to read from, but not write to, as doing so will lead to an error.
      * 
      * The only legitimate uses of this event are these:
+     * 
      * - Re-setup {@link metatables | https://www.lua.org/pil/13.html} as they are not persisted through the save/load cycle.
+     * 
      * - Re-setup conditional event handlers, meaning subscribing to an event only when some condition is met to save processing time.
+     * 
      * - Create local references to data stored in the {@link global | runtime:global} table.
      * 
      * For all other purposes, {@link LuaBootstrap::on_init | runtime:LuaBootstrap::on_init}, {@link LuaBootstrap::on_configuration_changed | runtime:LuaBootstrap::on_configuration_changed} or {@link migrations | runtime:migrations} should be used instead.
-     * @remarks
+     * 
      * For more context, refer to the {@link Data Lifecycle | runtime:data-lifecycle} page.
-     *
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      */
     on_load(this: void,
-        handler: (this: void) => any | null): void
+        handler: (this: void) => any | nil): void
 
     /**
      * Register a handler to run every nth-tick(s). When the game is on tick 0 it will trigger all registered handlers.
@@ -5122,8 +5130,8 @@ interface LuaBootstrap {
      * @param tick - The nth-tick(s) to invoke the handler on. Passing `nil` as the only parameter will unregister all nth-tick handlers.
      */
     on_nth_tick(this: void,
-        tick: number | number[] | null,
-        handler: (this: void, arg0: NthTickEventData) => any | null): void
+        tick: uint | uint[] | nil,
+        handler: (this: void, arg0: NthTickEventData) => any | nil): void
 
     /**
      * @param table.entity - The entity that was built.
@@ -5139,12 +5147,13 @@ interface LuaBootstrap {
      */
     raise_console_chat(this: void,
         table: {
-            player_index: number,
+            player_index: uint,
             message: string
         }): void
 
     /**
-     * Raise an event. Only events generated with {@link LuaBootstrap::generate_event_name | runtime:LuaBootstrap::generate_event_name} and the following can be raised:
+     * Raise an event. Only events generated with {@link LuaBootstrap::generate_event_name | runtime:LuaBootstrap::generate_event_name} and the following can be raised.
+     * Events that can be raised manually:
      * 
      * - {@link on_console_chat | runtime:on_console_chat}
      * - {@link on_player_crafted_item | runtime:on_player_crafted_item}
@@ -5159,16 +5168,16 @@ interface LuaBootstrap {
      * @param data - Table with extra data that will be passed to the event handler. Any invalid LuaObjects will silently stop the event from being raised.
      * @param event - ID of the event to raise.
      * @example
-     * Raise the [on_console_chat](runtime:on_console_chat) event with the desired message 'from' the first player. 
      * ```
+     * -- Raise the $ref($runtime, on_console_chat) event with the desired message 'from' the first player
      * local data = {player_index = 1, message = "Hello friends!"}
      * script.raise_event(defines.events.on_console_chat, data)
      * ```
      *
      */
     raise_event(this: void,
-        event: number,
-        data: Table): void
+        event: uint,
+        data: table): void
 
     /**
      * @param table.count - The amount of offers purchased.
@@ -5178,10 +5187,10 @@ interface LuaBootstrap {
      */
     raise_market_item_purchased(this: void,
         table: {
-            player_index: number,
+            player_index: uint,
             market: LuaEntity,
-            offer_index: number,
-            count: number
+            offer_index: uint,
+            count: uint
         }): void
 
     /**
@@ -5192,7 +5201,7 @@ interface LuaBootstrap {
     raise_player_crafted_item(this: void,
         table: {
             item_stack: LuaItemStack,
-            player_index: number,
+            player_index: uint,
             recipe: LuaRecipe
         }): void
 
@@ -5204,7 +5213,7 @@ interface LuaBootstrap {
      */
     raise_player_fast_transferred(this: void,
         table: {
-            player_index: number,
+            player_index: uint,
             entity: LuaEntity,
             from_player: boolean,
             is_split: boolean
@@ -5242,7 +5251,7 @@ interface LuaBootstrap {
      */
     raise_script_set_tiles(this: void,
         table: {
-            surface_index: number,
+            surface_index: uint,
             tiles: Tile[]
         }): void
 
@@ -5254,81 +5263,85 @@ interface LuaBootstrap {
     raise_script_teleported(this: void,
         table: {
             entity: LuaEntity,
-            old_surface_index: number,
+            old_surface_index: uint8,
             old_position: MapPosition
         }): void
 
     /**
-     * Register a metatable to have linkage recorded and restored when saving/loading. The metatable itself will not be saved. Instead, only the linkage to a registered metatable is saved, and the metatable registered under that name will be used when loading the table.
-     * @remarks
+     * Register a metatable to have linkage recorded and restored when saving/loading.
+     * 
+     * The metatable itself will not be saved. Instead, only the linkage to a registered metatable is saved, and the metatable registered under that name will be used when loading the table.
+     * 
      * `register_metatable()` can not be used in the console, in event listeners or during a `remote.call()`.
-     *
-     * @param metatable - The metatable to register.
-     * @param name - The name of this metatable. Names must be unique per mod.
-     * @example
-     * The metatable first needs to be defined in the mod's root scope, then registered using this method. From then on, it will be properly restored for tables in [global](runtime:global). 
+     * 
+     * The metatable first needs to be defined in the mod's root scope, then registered using this method. From then on, it will be properly restored for tables in {@link global | runtime:global}.
+     * 
      * ```
      * local metatable = {
-     *    __index = function(key)
-     *       return "no value for key " .. key
-     *    end
+     *   __index = function(key)
+     *     return "no value for key " .. key
+     *   end
      * }
      * script.register_metatable("my_metatable", metatable)
      * ```
-     *  This previously defined `metatable` can then be set on any table as usual: 
+     * 
+     * This previously defined `metatable` can then be set on any table as usual:
+     * 
      * ```
      * local table = {key="value"}
      * setmetatable(table, metatable)
      * ```
-     *
+     * @param metatable - The metatable to register.
+     * @param name - The name of this metatable. Names must be unique per mod.
      */
     register_metatable(this: void,
         name: string,
-        metatable: Table): void
+        metatable: table): void
 
     /**
-     * Registers an entity so that after it's destroyed, {@link on_entity_destroyed | runtime:on_entity_destroyed} is called. Once an entity is registered, it stays registered until it is actually destroyed, even through save/load cycles. The registration is global across all mods, meaning once one mod registers an entity, all mods listening to {@link on_entity_destroyed | runtime:on_entity_destroyed} will receive the event when it is destroyed. Registering the same entity multiple times will still only fire the destruction event once, and will return the same registration number.
-     * @remarks
+     * Registers an entity so that after it's destroyed, {@link on_entity_destroyed | runtime:on_entity_destroyed} is called.
+     * 
+     * Once an entity is registered, it stays registered until it is actually destroyed, even through save/load cycles. The registration is global across all mods, meaning once one mod registers an entity, all mods listening to {@link on_entity_destroyed | runtime:on_entity_destroyed} will receive the event when it is destroyed. Registering the same entity multiple times will still only fire the destruction event once, and will return the same registration number.
+     * 
      * Depending on when a given entity is destroyed, {@link on_entity_destroyed | runtime:on_entity_destroyed} will either be fired at the end of the current tick or at the end of the next tick.
-     *
      * @param entity - The entity to register.
      * @returns The registration number. It is used to identify the entity in the [on_entity_destroyed](runtime:on_entity_destroyed) event.
      */
     register_on_entity_destroyed(this: void,
-        entity: LuaEntity): number
+        entity: LuaEntity): uint64
 
     /**
      * Sets the filters for the given event. The filters are only retained when set after the actual event registration, because registering for an event with different or no filters will overwrite previously set ones.
-     * @param event - ID of the event to filter.
-     * @param filters - The filters or `nil` to clear them.
-     * @example
-     * Limit the [on_marked_for_deconstruction](runtime:on_marked_for_deconstruction) event to only be received when a non-ghost entity is marked for deconstruction. 
+     * 
+     * Limit the {@link on_marked_for_deconstruction | runtime:on_marked_for_deconstruction} event to only be received when a non-ghost entity is marked for deconstruction.
+     * 
      * ```
      * script.set_event_filter(defines.events.on_marked_for_deconstruction, {{filter = "ghost", invert = true}})
      * ```
-     *
-     * @example
-     * Limit the [on_built_entity](runtime:on_built_entity) event to only be received when either a `unit` or a `unit-spawner` is built. 
+     * 
+     * Limit the {@link on_built_entity | runtime:on_built_entity} event to only be received when either a `unit` or a `unit-spawner` is built.
+     * 
      * ```
      * script.set_event_filter(defines.events.on_built_entity, {{filter = "type", type = "unit"}, {filter = "type", type = "unit-spawner"}})
      * ```
-     *
-     * @example
-     * Limit the [on_entity_damaged](runtime:on_entity_damaged) event to only be received when a `rail` is damaged by an `acid` attack. 
+     * 
+     * Limit the {@link on_entity_damaged | runtime:on_entity_damaged} event to only be received when a `rail` is damaged by an `acid` attack.
+     * 
      * ```
      * script.set_event_filter(defines.events.on_entity_damaged, {{filter = "rail"}, {filter = "damage-type", type = "acid", mode = "and"}})
      * ```
-     *
+     * @param event - ID of the event to filter.
+     * @param filters - The filters or `nil` to clear them.
      */
     set_event_filter(this: void,
-        event: number,
+        event: uint,
         filters?: EventFilter): void
 
     /**
      * A dictionary listing the names of all currently active mods and mapping them to their version.
      * @example
-     * This will print the names and versions of all active mods to the console. 
      * ```
+     * -- This will print the names and versions of all active mods to the console.
      * for name, version in pairs(script.active_mods) do
      *   game.print(name .. " version " .. version)
      * end
@@ -5374,7 +5387,7 @@ interface LuaBootstrap {
     readonly mod_name: string
 
     /**
-     * This object's name.
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
@@ -5396,29 +5409,27 @@ interface LuaBurner {
 
     /**
      * The currently burning item. Writing `nil` will void the currently burning item without producing a {@link LuaBurner::burnt_result | runtime:LuaBurner::burnt_result}.
-     * @remarks
+     * 
      * Writing to this automatically handles correcting {@link LuaBurner::remaining_burning_fuel | runtime:LuaBurner::remaining_burning_fuel}.
-     *
      */
     currently_burning?: LuaItemPrototype
 
     /**
      * The fuel categories this burner uses.
-     * @remarks
+     * 
      * The value in the dictionary is meaningless and exists just to allow for easy lookup.
-     *
      */
-    readonly fuel_categories: {[key: string]: boolean}
+    readonly fuel_categories: {[key: string]: true}
 
     /**
      * The current heat (energy) stored in this burner.
      */
-    heat: number
+    heat: double
 
     /**
      * The maximum heat (maximum energy) that this burner can store.
      */
-    readonly heat_capacity: number
+    readonly heat_capacity: double
 
     /**
      * The fuel inventory.
@@ -5437,11 +5448,10 @@ interface LuaBurner {
 
     /**
      * The amount of energy left in the currently-burning fuel item.
-     * @remarks
+     * 
      * Writing to this will silently do nothing if there's no {@link LuaBurner::currently_burning | runtime:LuaBurner::currently_burning} set.
-     *
      */
-    remaining_burning_fuel: number
+    remaining_burning_fuel: double
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -5459,36 +5469,34 @@ interface LuaBurnerPrototype {
      */
     help(this: void): string
 
-    readonly burnt_inventory_size: number
+    readonly burnt_inventory_size: uint
 
-    readonly effectivity: number
+    readonly effectivity: double
 
     /**
      * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
      */
-    readonly emissions: number
+    readonly emissions: double
 
     /**
-     * @remarks
      * The value in the dictionary is meaningless and exists just to allow for easy lookup.
-     *
      */
-    readonly fuel_categories: {[key: string]: boolean}
+    readonly fuel_categories: {[key: string]: true}
 
-    readonly fuel_inventory_size: number
+    readonly fuel_inventory_size: uint
 
     /**
      * The light flicker definition for this burner prototype.
      */
     readonly light_flicker?: {
-        border_fix_speed: number,
+        border_fix_speed: float,
         color: Color,
-        derivation_change_deviation: number,
-        derivation_change_frequency: number,
-        light_intensity_to_size_coefficient: number,
-        maximum_intensity: number,
-        minimum_intensity: number,
-        minimum_light_size: number
+        derivation_change_deviation: float,
+        derivation_change_frequency: float,
+        light_intensity_to_size_coefficient: float,
+        maximum_intensity: float,
+        minimum_intensity: float,
+        minimum_light_size: float
     }
 
     /**
@@ -5542,7 +5550,7 @@ interface LuaChunkIterator {
     readonly valid: boolean
 
     /**
-     * Gets the next chunk position if the iterator is not yet done and increments the it.
+     * Gets the next chunk position if the iterator is not yet done and increments the iterator.
      */
     (this: void): ChunkPositionAndArea | null
 
@@ -5557,7 +5565,7 @@ interface LuaCircuitNetwork {
      * @returns The current value of the signal.
      */
     get_signal(this: void,
-        signal: SignalID): number
+        signal: SignalID): int
 
     /**
      * All methods and properties that this object supports.
@@ -5572,7 +5580,7 @@ interface LuaCircuitNetwork {
     /**
      * The number of circuits connected to this network.
      */
-    readonly connected_circuit_count: number
+    readonly connected_circuit_count: uint
 
     /**
      * The entity this circuit network reference is associated with.
@@ -5582,7 +5590,7 @@ interface LuaCircuitNetwork {
     /**
      * The circuit networks ID.
      */
-    readonly network_id: number
+    readonly network_id: uint
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -5612,7 +5620,7 @@ interface LuaCombinatorControlBehavior extends LuaControlBehavior {
      * @param signal - The signal to get
      */
     get_signal_last_tick(this: void,
-        signal: SignalID): number | null
+        signal: SignalID): int | null
 
     /**
      * The circuit network signals sent by this combinator last tick.
@@ -5627,14 +5635,11 @@ interface LuaCombinatorControlBehavior extends LuaControlBehavior {
 interface LuaCommandProcessor {
     /**
      * Add a custom console command.
-     * @remarks
+     * 
      * Trying to add a command with the `name` of a game command or the name of a custom command that is already in use will result in an error.
-     *
-     * @param fn - The function that will be called when this command is invoked.
-     * @param help - The localised help message. It will be shown to players using the `/help` command.
-     * @param name - The desired name of the command (case sensitive).
-     * @example
-     * This will register a custom event called `print_tick` that prints the current tick to either the player issuing the command or to everyone on the server, depending on the command parameter. It shows the usage of the table that gets passed to any function handling a custom command. This specific example makes use of the `tick` and the optional `player_index` and `parameter` fields. The user is supposed to either call it without any parameter (`"/print_tick"`) or with the `"me"` parameter (`"/print_tick me"`). 
+     * 
+     * This example command will register a custom event called `print_tick` that prints the current tick to either the player issuing the command or to everyone on the server, depending on the command parameter:
+     * 
      * ```
      * commands.add_command("print_tick", nil, function(command)
      *   if command.player_index ~= nil and command.parameter == "me" then
@@ -5644,12 +5649,21 @@ interface LuaCommandProcessor {
      *   end
      * end)
      * ```
-     *
+     * 
+     * This shows the usage of the table that gets passed to any function handling a custom command. This specific example makes use of the `tick` and the optional `player_index` and `parameter` fields. The user is supposed to either call it without any parameter (`"/print_tick"`) or with the `"me"` parameter (`"/print_tick me"`).
+     * @param fn - The function that will be called when this command is invoked.
+     * @param help - The localised help message. It will be shown to players using the `/help` command.
+     * @param name - The desired name of the command (case sensitive).
      */
     add_command(this: void,
         name: string,
         help: LocalisedString,
         fn: (this: void, arg0: CustomCommandData) => any): void
+
+    /**
+     * All methods and properties that this object supports.
+     */
+    help(this: void): string
 
     /**
      * Remove a custom console command.
@@ -5670,7 +5684,7 @@ interface LuaCommandProcessor {
     readonly game_commands: {[key: string]: LocalisedString}
 
     /**
-     * This object's name.
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
@@ -5684,7 +5698,7 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
      * Gets the signal at the given index. Returned {@link Signal | runtime:Signal} will not contain signal if none is set for the index.
      */
     get_signal(this: void,
-        index: number): Signal
+        index: uint): Signal
 
     /**
      * All methods and properties that this object supports.
@@ -5696,7 +5710,7 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
      * @param signal - Passing `nil` clears the signal.
      */
     set_signal(this: void,
-        index: number,
+        index: uint,
         signal?: Signal): void
 
     /**
@@ -5719,7 +5733,7 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
     /**
      * The number of signals this constant combinator supports.
      */
-    readonly signals_count: number
+    readonly signals_count: uint
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -5762,10 +5776,10 @@ interface LuaControl {
      */
     begin_crafting(this: void,
         table: {
-            count: number,
+            count: uint,
             recipe: string | LuaRecipe,
             silent?: boolean
-        }): number
+        }): uint
 
     /**
      * Can at least some items be inserted?
@@ -5788,8 +5802,8 @@ interface LuaControl {
      */
     cancel_crafting(this: void,
         table: {
-            index: number,
-            count: number
+            index: uint,
+            count: uint
         }): void
 
     /**
@@ -5803,13 +5817,11 @@ interface LuaControl {
     clear_items_inside(this: void): void
 
     /**
-     * @remarks
      * This will silently fail if personal logistics are not researched yet.
-     *
      * @param slot_index - The slot to clear.
      */
     clear_personal_logistic_slot(this: void,
-        slot_index: number): void
+        slot_index: uint): void
 
     /**
      * Unselect any selected entity.
@@ -5817,13 +5829,11 @@ interface LuaControl {
     clear_selected_entity(this: void): void
 
     /**
-     * @remarks
      * This will silently fail if the vehicle does not use logistics.
-     *
      * @param slot_index - The slot to clear.
      */
     clear_vehicle_logistic_slot(this: void,
-        slot_index: number): void
+        slot_index: uint): void
 
     /**
      * Disable the flashlight.
@@ -5847,13 +5857,12 @@ interface LuaControl {
      * @returns The count that can be crafted.
      */
     get_craftable_count(this: void,
-        recipe: string | LuaRecipe): number
+        recipe: string | LuaRecipe): uint
 
     /**
      * Get an inventory belonging to this entity. This can be either the "main" inventory or some auxiliary one, like the module slots or logistic trash slots.
-     * @remarks
+     * 
      * A given {@link defines.inventory | runtime:defines.inventory} is only meaningful for the corresponding LuaObject type. EG: get_inventory(defines.inventory.character_main) is only meaningful if 'this' is a player character. You may get a value back but if the type of 'this' isn't the type referred to by the {@link defines.inventory | runtime:defines.inventory} it's almost guaranteed to not be the inventory asked for.
-     *
      * @returns The inventory or `nil` if none with the given index was found.
      */
     get_inventory(this: void,
@@ -5864,7 +5873,7 @@ interface LuaControl {
      * @param item - Prototype name of the item to count. If not specified, count all items.
      */
     get_item_count(this: void,
-        item?: string): number
+        item?: string): uint
 
     /**
      * Gets the main inventory for this character or player if this is a character or player.
@@ -5876,7 +5885,7 @@ interface LuaControl {
      * The highest index of all inventories this entity can use. Allows iteration over all of them if desired.
      * @example
      * ```
-     *  for k = 1, entity.get_max_inventory_index() do [...] end
+     * for k = 1, entity.get_max_inventory_index() do [...] end
      * ```
      *
      */
@@ -5888,7 +5897,7 @@ interface LuaControl {
      * @returns The logistic parameters. If personal logistics are not researched yet, their `name` will be `nil`.
      */
     get_personal_logistic_slot(this: void,
-        slot_index: number): LogisticParameters
+        slot_index: uint): LogisticParameters
 
     /**
      * Gets the parameters of a vehicle logistic request and auto-trash slot. Only used on `spider-vehicle`.
@@ -5896,7 +5905,7 @@ interface LuaControl {
      * @returns The logistic parameters. If the vehicle does not use logistics, their `name` will be `nil`.
      */
     get_vehicle_logistic_slot(this: void,
-        slot_index: number): LogisticParameters
+        slot_index: uint): LogisticParameters
 
     /**
      * Does this entity have any item inside it?
@@ -5909,7 +5918,7 @@ interface LuaControl {
      * @returns The number of items that were actually inserted.
      */
     insert(this: void,
-        items: ItemStackIdentification): number
+        items: ItemStackIdentification): uint
 
     /**
      * Returns whether the player is holding a blueprint. This takes both blueprint items as well as blueprint records from the blueprint library into account.
@@ -5919,7 +5928,7 @@ interface LuaControl {
     is_cursor_blueprint(this: void): boolean
 
     /**
-     * Returns whether the player is holding something in the cursor. It takes into account items from the blueprint library, as well as items and ghost cursor.
+     * Returns whether the player is holding something in the cursor. Takes into account items from the blueprint library, as well as items and ghost cursor.
      */
     is_cursor_empty(this: void): boolean
 
@@ -5964,7 +5973,7 @@ interface LuaControl {
      * @returns The number of items that were actually removed.
      */
     remove_item(this: void,
-        items: ItemStackIdentification): number
+        items: ItemStackIdentification): uint
 
     /**
      * Create an arrow which points at this entity. This is used in the tutorial. For examples, see `control.lua` in the campaign missions.
@@ -5974,15 +5983,14 @@ interface LuaControl {
 
     /**
      * Sets a personal logistic request and auto-trash slot to the given value.
-     * @remarks
+     * 
      * This will silently fail if personal logistics are not researched yet.
-     *
      * @param slot_index - The slot to set.
      * @param value - The logistic request parameters.
      * @returns Whether the slot was set successfully. `false` if personal logistics are not researched yet.
      */
     set_personal_logistic_slot(this: void,
-        slot_index: number,
+        slot_index: uint,
         value: LogisticParameters): boolean
 
     /**
@@ -5992,16 +6000,15 @@ interface LuaControl {
      * @returns Whether the slot was set successfully. `false` if the vehicle does not use logistics.
      */
     set_vehicle_logistic_slot(this: void,
-        slot_index: number,
+        slot_index: uint,
         value: LogisticParameters): boolean
 
     /**
      * Teleport the entity to a given position, possibly on another surface.
-     * @remarks
+     * 
      * Some entities may not be teleported. For instance, transport belts won't allow teleportation and this method will always return `false` when used on any such entity.
+     * 
      * You can also pass 1 or 2 numbers as the parameters and they will be used as relative teleport coordinates `'teleport(0, 1)'` to move the entity 1 tile positive y. `'teleport(4)'` to move the entity 4 tiles to the positive x.
-     * `script_raised_teleported` will not be raised if teleporting a player with no character.
-     *
      * @param position - Where to teleport to.
      * @param raise_teleported - If true, [defines.events.script_raised_teleported](runtime:defines.events.script_raised_teleported) will be fired on successful entity teleportation.
      * @param surface - Surface to teleport to. If not given, will teleport to the entity's current surface. Only players, cars, and spidertrons can be teleported cross-surface.
@@ -6022,82 +6029,62 @@ interface LuaControl {
     /**
      * The build distance of this character or max uint when not a character or player connected to a character.
      */
-    readonly build_distance: number
+    readonly build_distance: uint
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
     character_additional_mining_categories: string[]
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_build_distance_bonus: number
+    character_build_distance_bonus: uint
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_crafting_speed_modifier: number
+    character_crafting_speed_modifier: double
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_health_bonus: number
+    character_health_bonus: float
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_inventory_slots_bonus: number
+    character_inventory_slots_bonus: uint
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_item_drop_distance_bonus: number
+    character_item_drop_distance_bonus: uint
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_item_pickup_distance_bonus: number
+    character_item_pickup_distance_bonus: uint
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_loot_pickup_distance_bonus: number
+    character_loot_pickup_distance_bonus: uint
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_maximum_following_robot_count_bonus: number
+    character_maximum_following_robot_count_bonus: uint
 
     /**
      * The current mining progress between 0 and 1 of this character, or 0 if they aren't mining.
      */
-    readonly character_mining_progress: number
+    readonly character_mining_progress: double
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_mining_speed_modifier: number
+    character_mining_speed_modifier: double
 
     /**
      * If personal logistic requests are enabled for this character or players character.
@@ -6105,38 +6092,31 @@ interface LuaControl {
     character_personal_logistic_requests_enabled: boolean
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_reach_distance_bonus: number
+    character_reach_distance_bonus: uint
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_resource_reach_distance_bonus: number
+    character_resource_reach_distance_bonus: uint
 
     /**
      * The current movement speed of this character, including effects from exoskeletons, tiles, stickers and shooting.
      */
-    readonly character_running_speed: number
+    readonly character_running_speed: double
 
     /**
      * Modifies the running speed of this character by the given value as a percentage. Setting the running modifier to `0.5` makes the character run 50% faster. The minimum value of `-1` reduces the movement speed by 100%, resulting in a speed of `0`.
-     * @remarks
+     * 
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_running_speed_modifier: number
+    character_running_speed_modifier: double
 
     /**
-     * @remarks
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
      */
-    character_trash_slot_count_bonus: number
+    character_trash_slot_count_bonus: uint
 
     /**
      * When `true` hand crafting is free and instant.
@@ -6151,26 +6131,26 @@ interface LuaControl {
     /**
      * The crafting queue progress in the range `[0-1]`. `0` when no recipe is being crafted.
      */
-    crafting_queue_progress: number
+    crafting_queue_progress: double
 
     /**
      * Size of the crafting queue.
      */
-    readonly crafting_queue_size: number
+    readonly crafting_queue_size: uint
 
     /**
      * The ghost prototype in the player's cursor. When read, it will be a {@link LuaItemPrototype | runtime:LuaItemPrototype}.
-     * @remarks
+     * 
      * Items in the cursor stack will take priority over the cursor ghost.
-     *
      */
     cursor_ghost?: ItemPrototypeIdentification
 
     /**
      * The player's cursor stack. `nil` if the player controller is a spectator.
      * @example
-     * Even though this property is marked as read-only, it returns a [LuaItemStack](runtime:LuaItemStack), meaning it can be manipulated like so: 
      * ```
+     * -- Even though this property is marked as read-only, it returns a LuaItemStack,
+     * -- meaning it can be manipulated like so:
      * player.cursor_stack.clear()
      * ```
      *
@@ -6185,13 +6165,12 @@ interface LuaControl {
     /**
      * The item drop distance of this character or max uint when not a character or player connected to a character.
      */
-    readonly drop_item_distance: number
+    readonly drop_item_distance: uint
 
     /**
      * The current combat robots following the character.
-     * @remarks
-     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character(see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
-     *
+     * 
+     * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      */
     readonly following_robots: LuaEntity[]
 
@@ -6203,7 +6182,7 @@ interface LuaControl {
     /**
      * Unique {@link index | runtime:LuaForce::index} (ID) associated with the force of this entity.
      */
-    readonly force_index: number
+    readonly force_index: uint
 
     /**
      * Whether this character entity is in combat.
@@ -6213,18 +6192,17 @@ interface LuaControl {
     /**
      * The item pickup distance of this character or max double when not a character or player connected to a character.
      */
-    readonly item_pickup_distance: number
+    readonly item_pickup_distance: double
 
     /**
      * The loot pickup distance of this character or max double when not a character or player connected to a character.
      */
-    readonly loot_pickup_distance: number
+    readonly loot_pickup_distance: double
 
     /**
      * Current mining state.
-     * @remarks
+     * 
      * When the player isn't mining tiles the player will mine whatever entity is currently selected. See {@link LuaControl::selected | runtime:LuaControl::selected} and {@link LuaControl::update_selected_entity | runtime:LuaControl::update_selected_entity}.
-     *
      */
     mining_state: {
         
@@ -6242,10 +6220,9 @@ interface LuaControl {
     /**
      * The GUI the player currently has open.
      * 
-     * This is the GUI that will asked to close (by firing the {@link on_gui_closed | runtime:on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is not `nil`, and a new GUI is written to it, the existing one will be asked to close.
-     * @remarks
+     * This is the GUI that will asked to close (by firing the {@link on_gui_closed | runtime:on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is non-nil, then writing `nil` or a new GUI to it will ask the existing GUI to close.
+     * 
      * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory`, `technology`, or `nil`.
-     *
      */
     opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaTechnology | defines.gui_type
 
@@ -6264,7 +6241,7 @@ interface LuaControl {
     /**
      * The reach distance of this character or max uint when not a character or player connected to a character.
      */
-    readonly reach_distance: number
+    readonly reach_distance: uint
 
     /**
      * Current repair state.
@@ -6285,7 +6262,7 @@ interface LuaControl {
     /**
      * The resource reach distance of this character or max double when not a character or player connected to a character.
      */
-    readonly resource_reach_distance: number
+    readonly resource_reach_distance: double
 
     /**
      * Current riding state of this car, or of the car this player is riding in.
@@ -6321,7 +6298,7 @@ interface LuaControl {
     /**
      * Unique {@link index | runtime:LuaSurface::index} (ID) associated with the surface this entity is currently on.
      */
-    readonly surface_index: number
+    readonly surface_index: uint
 
     /**
      * The vehicle the player is currently sitting in.
@@ -6336,8 +6313,8 @@ interface LuaControl {
     /**
      * Current walking state.
      * @example
-     * Make the player go north. Note that a one-shot action like this will only make the player walk for one tick. 
      * ```
+     * -- Make the player go north. Note that a one-shot action like this will only make the player walk for one tick.
      * game.player.walking_state = {walking = true, direction = defines.direction.north}
      * ```
      *
@@ -6359,9 +6336,8 @@ interface LuaControl {
 
 /**
  * The control behavior for an entity. Inserters have logistic network and circuit network behavior logic, lamps have circuit logic and so on. This is an abstract base class that concrete control behaviors inherit.
- * @remarks
- * An control reference becomes invalid once the control behavior is removed or the entity (see {@link LuaEntity | runtime:LuaEntity}) it resides in is destroyed.
- *
+ * 
+ * A control reference becomes invalid once the control behavior is removed or the entity (see {@link LuaEntity | runtime:LuaEntity}) it resides in is destroyed.
  */
 interface LuaControlBehavior {
     /**
@@ -6381,7 +6357,7 @@ interface LuaControlBehavior {
     /**
      * The concrete type of this control behavior.
      */
-    readonly type: defines.control_behavior.type
+    readonly type: defines.type
 
 }
 
@@ -6432,7 +6408,7 @@ interface LuaCustomChartTag {
     /**
      * The unique ID for this tag on this force.
      */
-    readonly tag_number: number
+    readonly tag_number: uint
 
     text: string
 
@@ -6542,28 +6518,28 @@ interface LuaCustomInputPrototype {
  * Lazily evaluated table. For performance reasons, we sometimes return a custom table-like type instead of a native Lua table. This custom type lazily constructs the necessary Lua wrappers of the corresponding C++ objects, therefore preventing their unnecessary construction in some cases.
  * 
  * There are some notable consequences to the usage of a custom table type rather than the native Lua table type: Iterating a custom table is only possible using the `pairs` Lua function; `ipairs` won't work. Another key difference is that custom tables cannot be serialised into a game save file -- if saving the game would require serialisation of a custom table, an error will be displayed and the game will not be saved.
- * @example
- * In previous versions of Factorio, this would create a [LuaPlayer](runtime:LuaPlayer) instance for every player in the game, even though only one such wrapper is needed. In the current version, accessing [game.players](runtime:LuaGameScript::players) by itself does not create any [LuaPlayer](runtime:LuaPlayer) instances; they are created lazily when accessed. Therefore, this example only constructs one [LuaPlayer](runtime:LuaPlayer) instance, no matter how many elements there are in `game.players`. 
+ * 
+ * In previous versions of Factorio, this would create a {@link LuaPlayer | runtime:LuaPlayer} instance for every player in the game, even though only one such wrapper is needed. In the current version, accessing {@link game.players | runtime:LuaGameScript::players} by itself does not create any {@link LuaPlayer | runtime:LuaPlayer} instances; they are created lazily when accessed. Therefore, this example only constructs one {@link LuaPlayer | runtime:LuaPlayer} instance, no matter how many elements there are in `game.players`.
+ * 
  * ```
  * game.players["Oxyd"].character.die()
  * ```
- *
- * @example
- * Custom tables may be iterated using `pairs`. 
+ * 
+ * This statement will execute successfully and `global.p` will be useable as one might expect. However, as soon as the user tries to save the game, a "LuaCustomTable cannot be serialized" error will be shown. The game will remain unsaveable so long as `global.p` refers to an instance of a custom table.
+ * 
  * ```
- * for _, p in pairs(game.players) do game.player.print(p.name); end
+ * global.p = game.players  -- This has high potential to make the game unsaveable
  * ```
- *
- * @example
- * The following will produce no output because `ipairs` is not supported with custom tables. 
+ * 
+ * The following will produce no output because `ipairs` is not supported with custom tables.
+ * 
  * ```
  * for _, p in ipairs(game.players) do game.player.print(p.name); end  -- incorrect; use pairs instead
  * ```
- *
  * @example
- * This statement will execute successfully and `global.p` will be useable as one might expect. However, as soon as the user tries to save the game, a "LuaCustomTable cannot be serialized" error will be shown. The game will remain unsaveable so long as `global.p` refers to an instance of a custom table. 
  * ```
- * global.p = game.players  -- This has high potential to make the game unsaveable
+ * -- Custom tables may be iterated using `pairs`.
+ * for _, p in pairs(game.players) do game.player.print(p.name); end
  * ```
  *
  */
@@ -6585,16 +6561,14 @@ interface LuaCustomTable {
 
     /**
      * Access an element of this custom table.
-     * @remarks
-     * This will return a {@link any | any}. The return type is any due to typescript limitations.
-     *
+     * This will return a {@link Any | Any}. The return type is any due to typescript limitations.
      */
-    [key: string]: any
+    readonly [key: string]: any
 
     /**
      * Number of elements in this table.
      */
-    readonly '#': number
+    readonly '#': uint
 
 }
 
@@ -6654,9 +6628,8 @@ interface LuaDeciderCombinatorControlBehavior extends LuaCombinatorControlBehavi
 
     /**
      * This decider combinator's parameters.
-     * @remarks
+     * 
      * Writing `nil` clears the combinator's parameters.
-     *
      */
     parameters: DeciderCombinatorParameters
 
@@ -6728,23 +6701,23 @@ interface LuaElectricEnergySourcePrototype {
      */
     help(this: void): string
 
-    readonly buffer_capacity: number
+    readonly buffer_capacity: double
 
-    readonly drain: number
+    readonly drain: double
 
     /**
      * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
      */
-    readonly emissions: number
+    readonly emissions: double
 
-    readonly input_flow_limit: number
+    readonly input_flow_limit: double
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
-    readonly output_flow_limit: number
+    readonly output_flow_limit: double
 
     readonly render_no_network_icon: boolean
 
@@ -6767,9 +6740,7 @@ interface LuaElectricEnergySourcePrototype {
 interface LuaEntity extends LuaControl {
     /**
      * Adds the given position to this spidertron's autopilot's queue of destinations.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      * @param position - The position the spidertron should move to.
      */
     add_autopilot_destination(this: void,
@@ -6777,18 +6748,16 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Offer a thing on the market.
-     * @remarks
      * Applies to subclasses: Market
-     *
      * @example
-     * Adds market offer, 1 copper ore for 10 iron ore. 
      * ```
+     * -- Adds market offer, 1 copper ore for 10 iron ore
      * market.add_market_item{price={{"iron-ore", 10}}, offer={type="give-item", item="copper-ore"}}
      * ```
      *
      * @example
-     * Adds market offer, 1 copper ore for 5 iron ore and 5 stone ore. 
      * ```
+     * -- Adds market offer, 1 copper ore for 5 iron ore and 5 stone ore
      * market.add_market_item{price={{"iron-ore", 5}, {"stone", 5}}, offer={type="give-item", item="copper-ore"}}
      * ```
      *
@@ -6803,9 +6772,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Whether this character can shoot the given entity or position.
-     * @remarks
      * Applies to subclasses: Character
-     *
      */
     can_shoot(this: void,
         target: LuaEntity,
@@ -6843,21 +6810,16 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Removes all offers from a market.
-     * @remarks
      * Applies to subclasses: Market
-     *
      */
     clear_market_items(this: void): void
 
     /**
-     * Clear a logistic requester slot.
-     * @remarks
-     * Useable only on entities that have requester slots.
-     *
+     * Clear a logistic requester slot. Only useable on entities that have requester slots.
      * @param slot - The slot index.
      */
     clear_request_slot(this: void,
-        slot: number): void
+        slot: uint): void
 
     /**
      * Clones this entity.
@@ -6877,11 +6839,12 @@ interface LuaEntity extends LuaControl {
     /**
      * Connects current linked belt with another one.
      * 
-     * Neighbours have to be of different type. If given linked belt is connected to something else it will be disconnected first. If provided neighbour is connected to something else it will also be disconnected first. Automatically updates neighbour to be connected back to this one.
-     * @remarks
-     * Can also be used on entity ghost if it contains linked-belt
+     * Neighbours have to be of different type. If given linked belt is connected to something else it will be disconnected first. If provided neighbour is connected to something else it will also be disconnected first.
+     * 
+     * Automatically updates neighbour to be connected back to this one.
+     * 
+     * Can also be used on entity ghost if it contains linked-belt.
      * Applies to subclasses: LinkedBelt
-     *
      * @param neighbour - Another linked belt or entity ghost containing linked belt to connect or nil to disconnect
      */
     connect_linked_belts(this: void,
@@ -6890,8 +6853,9 @@ interface LuaEntity extends LuaControl {
     /**
      * Connect two devices with a circuit wire or copper cable. Depending on which type of connection should be made, there are different procedures:
      * 
-     * - To connect two electric poles, `target` must be a {@link LuaEntity | runtime:LuaEntity} that specifies another electric pole. This will connect them with copper cable.
-     * - To connect two devices with circuit wire, `target` must be a table of type {@link WireConnectionDefinition | runtime:WireConnectionDefinition}.
+     * To connect two electric poles, `target` must be a {@link LuaEntity | runtime:LuaEntity} that specifies another electric pole. This will connect them with copper cable.
+     * 
+     * To connect two devices with circuit wire, `target` must be a table of type {@link WireConnectionDefinition | runtime:WireConnectionDefinition}.
      * @param target - The target with which to establish a connection.
      * @returns Whether the connection was successfully formed.
      */
@@ -6900,9 +6864,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Connects the rolling stock in the given direction.
-     * @remarks
      * Applies to subclasses: RollingStock
-     *
      * @returns Whether any connection was made
      */
     connect_rolling_stock(this: void,
@@ -6915,18 +6877,18 @@ interface LuaEntity extends LuaControl {
      */
     copy_settings(this: void,
         entity: LuaEntity,
-        by_player?: PlayerIdentification): {[key: string]: number}
+        by_player?: PlayerIdentification): {[key: string]: uint}
 
     /**
-     * Creates the same smoke that is created when you place a building by hand. You can play the building sound to go with it by using {@link LuaSurface::play_sound | runtime:LuaSurface::play_sound}, eg: entity.surface.play_sound{path="entity-build/"..entity.prototype.name, position=entity.position}
+     * Creates the same smoke that is created when you place a building by hand.
+     * 
+     * You can play the building sound to go with it by using {@link LuaSurface::play_sound | runtime:LuaSurface::play_sound}, eg: `entity.surface.play_sound{path="entity-build/"..entity.prototype.name, position=entity.position}`
      */
     create_build_effect_smoke(this: void): void
 
     /**
      * Damages the entity.
-     * @remarks
      * Applies to subclasses: EntityWithHealth
-     *
      * @param damage - The amount of damage to be done.
      * @param dealer - The entity to consider as the damage dealer. Needs to be on the same surface as the entity being damaged.
      * @param force - The force that will be doing the damage.
@@ -6934,30 +6896,27 @@ interface LuaEntity extends LuaControl {
      * @returns the total damage actually applied after resistances.
      */
     damage(this: void,
-        damage: number,
+        damage: float,
         force: ForceIdentification,
         type?: string,
-        dealer?: LuaEntity): number
+        dealer?: LuaEntity): float
 
     /**
      * Depletes and destroys this resource entity.
-     * @remarks
      * Applies to subclasses: ResourceEntity
-     *
      */
     deplete(this: void): void
 
     /**
      * Destroys the entity.
-     * @remarks
+     * 
      * Not all entities can be destroyed - things such as rails under trains cannot be destroyed until the train is moved or destroyed.
-     *
      * @param table.do_cliff_correction - Whether neighbouring cliffs should be corrected. Defaults to `false`.
      * @param table.raise_destroy - If `true`, [script_raised_destroy](runtime:script_raised_destroy) will be called. Defaults to `false`.
      * @returns Returns `false` if the entity was valid and destruction failed, `true` in all other cases.
      */
     destroy(this: void,
-        table?: {
+        table: {
             do_cliff_correction?: boolean,
             raise_destroy?: boolean
         }): boolean
@@ -6969,8 +6928,8 @@ interface LuaEntity extends LuaControl {
      * @param cause - The cause to attribute the kill to.
      * @param force - The force to attribute the kill to.
      * @example
-     * This function can be called with only the `cause` argument and no `force`: 
      * ```
+     * -- This function can be called with only the `cause` argument and no `force`:
      * entity.die(nil, killer_entity)
      * ```
      *
@@ -6982,15 +6941,15 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Disconnects linked belt from its neighbour.
-     * @remarks
-     * Can also be used on entity ghost if it contains linked-belt
+     * 
+     * Can also be used on entity ghost if it contains linked-belt.
      * Applies to subclasses: LinkedBelt
-     *
      */
     disconnect_linked_belts(this: void): void
 
     /**
      * Disconnect circuit wires or copper cables between devices. Depending on which type of connection should be cut, there are different procedures:
+     * Wires can be selectively removed in different ways:
      * 
      * - To remove all copper cables, leave the `target` parameter blank: `pole.disconnect_neighbour()`.
      * - To remove all wires of a specific color, set `target` to {@link defines.wire_type.red | runtime:defines.wire_type.red} or {@link defines.wire_type.green | runtime:defines.wire_type.green}.
@@ -7003,9 +6962,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Tries to disconnect this rolling stock in the given direction.
-     * @remarks
      * Applies to subclasses: RollingStock
-     *
      * @returns If anything was disconnected
      */
     disconnect_rolling_stock(this: void,
@@ -7013,9 +6970,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Returns a table with all entities affected by this beacon
-     * @remarks
      * Applies to subclasses: Beacon
-     *
      */
     get_beacon_effect_receivers(this: void): LuaEntity[]
 
@@ -7026,17 +6981,13 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Get the source of this beam.
-     * @remarks
      * Applies to subclasses: Beam
-     *
      */
     get_beam_source(this: void): BeamTarget | null
 
     /**
      * Get the target of this beam.
-     * @remarks
      * Applies to subclasses: Beam
-     *
      */
     get_beam_target(this: void): BeamTarget | null
 
@@ -7047,9 +6998,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Returns all child signals. Child signals can be either RailSignal or RailChainSignal. Child signals are signals which are checked by this signal to determine a chain state.
-     * @remarks
      * Applies to subclasses: RailChainSignal
-     *
      */
     get_child_signals(this: void): LuaEntity[]
 
@@ -7063,9 +7012,8 @@ interface LuaEntity extends LuaControl {
         circuit_connector?: defines.circuit_connector_id): LuaCircuitNetwork | null
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Rail
-     *
      * @returns multiple values
      *  [0] - Rail connected in the specified manner to this one, `nil` if unsuccessful.
      *  [1] - Rail direction of the returned rail which points to origin rail
@@ -7079,17 +7027,13 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Get the rails that this signal is connected to.
-     * @remarks
      * Applies to subclasses: RailSignal,RailChainSignal
-     *
      */
     get_connected_rails(this: void): LuaEntity[]
 
     /**
      * Gets rolling stock connected to the given end of this stock.
-     * @remarks
      * Applies to subclasses: RollingStock
-     *
      * @returns multiple values
      *  [0] - The rolling stock connected at the given end, `nil` if none is connected there.
      *  [1] - The rail direction of the connected rolling stock if any.
@@ -7107,46 +7051,39 @@ interface LuaEntity extends LuaControl {
      * Returns the amount of damage to be taken by this entity.
      * @returns `nil` if this entity does not have health.
      */
-    get_damage_to_be_taken(this: void): number | null
+    get_damage_to_be_taken(this: void): float | null
 
     /**
      * Gets the driver of this vehicle if any.
-     * @remarks
      * Applies to subclasses: Vehicle
-     *
      * @returns `nil` if the vehicle contains no driver. To check if there's a passenger see [LuaEntity::get_passenger](runtime:LuaEntity::get_passenger).
      */
     get_driver(this: void): LuaEntity | LuaPlayer | null
 
     /**
-     * Get the filter for a slot in an inserter, loader, or logistic storage container.
-     * @remarks
-     * The entity must allow filters.
-     *
+     * Get the filter for a slot in an inserter, loader, or logistic storage container. The entity must allow filters.
      * @param slot_index - Index of the slot to get the filter for.
      * @returns Prototype name of the item being filtered. `nil` if the given slot has no filter.
      */
     get_filter(this: void,
-        slot_index: number): string | null
+        slot_index: uint): string | null
 
     /**
      * Get amounts of all fluids in this entity.
-     * @remarks
+     * 
      * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | runtime:LuaEntity::fluidbox} should be used instead.
-     *
      * @returns The amounts, indexed by fluid names.
      */
-    get_fluid_contents(this: void): {[key: string]: number}
+    get_fluid_contents(this: void): {[key: string]: double}
 
     /**
      * Get the amount of all or some fluid in this entity.
-     * @remarks
+     * 
      * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | runtime:LuaEntity::fluidbox} should be used instead.
-     *
      * @param fluid - Prototype name of the fluid to count. If not specified, count all fluids.
      */
     get_fluid_count(this: void,
-        fluid?: string): number
+        fluid?: string): double
 
     /**
      * The fuel inventory for this entity or `nil` if this entity doesn't have a fuel inventory.
@@ -7157,47 +7094,38 @@ interface LuaEntity extends LuaControl {
      * The health ratio of this entity between 1 and 0 (for full health and no health respectively).
      * @returns `nil` if this entity doesn't have health.
      */
-    get_health_ratio(this: void): number | null
+    get_health_ratio(this: void): float | null
 
     /**
      * Gets the heat setting for this heat interface.
-     * @remarks
      * Applies to subclasses: HeatInterface
-     *
      */
     get_heat_setting(this: void): HeatSetting
 
     /**
      * Returns all signals guarding entrance to a rail block this rail belongs to.
-     * @remarks
      * Applies to subclasses: Rail
-     *
      */
     get_inbound_signals(this: void): LuaEntity[]
 
     /**
      * Gets the filter for this infinity container at the given index, or `nil` if the filter index doesn't exist or is empty.
-     * @remarks
      * Applies to subclasses: InfinityContainer
-     *
      * @param index - The index to get.
      */
     get_infinity_container_filter(this: void,
-        index: number): InfinityInventoryFilter | null
+        index: uint): InfinityInventoryFilter | null
 
     /**
      * Gets the filter for this infinity pipe, or `nil` if the filter is empty.
-     * @remarks
      * Applies to subclasses: InfinityPipe
-     *
      */
     get_infinity_pipe_filter(this: void): InfinityPipeFilter | null
 
     /**
      * Gets all the `LuaLogisticPoint`s that this entity owns. Optionally returns only the point specified by the index parameter.
-     * @remarks
+     * 
      * When `index` is not given, this will be a single `LuaLogisticPoint` for most entities. For some (such as the player character), it can be zero or more.
-     *
      * @param index - If provided, only returns the `LuaLogisticPoint` specified by this index.
      */
     get_logistic_point(this: void,
@@ -7205,19 +7133,15 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Get all offers in a market as an array.
-     * @remarks
      * Applies to subclasses: Market
-     *
      */
     get_market_items(this: void): Offer[]
 
     /**
      * Get the maximum transport line index of a belt or belt connectable entity.
-     * @remarks
      * Applies to subclasses: TransportBeltConnectable
-     *
      */
-    get_max_transport_line_index(this: void): number
+    get_max_transport_line_index(this: void): uint
 
     /**
      * Read a single signal from the combined circuit networks.
@@ -7227,7 +7151,7 @@ interface LuaEntity extends LuaControl {
      */
     get_merged_signal(this: void,
         signal: SignalID,
-        circuit_connector?: defines.circuit_connector_id): number
+        circuit_connector?: defines.circuit_connector_id): int
 
     /**
      * The merged circuit network signals or `nil` if there are no signals.
@@ -7250,9 +7174,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Returns all signals guarding exit from a rail block this rail belongs to.
-     * @remarks
      * Applies to subclasses: Rail
-     *
      */
     get_outbound_signals(this: void): LuaEntity[]
 
@@ -7264,18 +7186,15 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Returns all parent signals. Parent signals are always RailChainSignal. Parent signals are those signals that are checking state of this signal to determine their own chain state.
-     * @remarks
      * Applies to subclasses: RailSignal,RailChainSignal
-     *
      */
     get_parent_signals(this: void): LuaEntity[]
 
     /**
      * Gets the passenger of this car or spidertron if any.
-     * @remarks
+     * 
      * This differs over {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that the passenger can't drive the car.
      * Applies to subclasses: Car,SpiderVehicle
-     *
      * @returns `nil` if the vehicle contains no passenger. To check if there's a driver see [LuaEntity::get_driver](runtime:LuaEntity::get_driver).
      */
     get_passenger(this: void): LuaEntity | LuaPlayer | null
@@ -7283,14 +7202,13 @@ interface LuaEntity extends LuaControl {
     /**
      * The radius of this entity.
      */
-    get_radius(this: void): number
+    get_radius(this: void): double
 
     /**
      * Get the rail at the end of the rail segment this rail is in.
-     * @remarks
+     * 
      * A rail segment is a continuous section of rail with no branches, signals, nor train stops.
      * Applies to subclasses: Rail
-     *
      * @returns multiple values
      *  [0] - The rail entity.
      *  [1] - A rail direction pointing out of the rail segment from the end rail.
@@ -7300,10 +7218,9 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Get the rail signal or train stop at the start/end of the rail segment this rail is in.
-     * @remarks
+     * 
      * A rail segment is a continuous section of rail with no branches, signals, nor train stops.
      * Applies to subclasses: Rail
-     *
      * @param direction - The direction of travel relative to this rail.
      * @param in_else_out - If true, gets the entity at the entrance of the rail segment, otherwise gets the entity at the exit of the rail segment.
      * @returns `nil` if the rail segment doesn't start/end with a signal nor a train stop.
@@ -7314,28 +7231,25 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Get the length of the rail segment this rail is in.
-     * @remarks
+     * 
      * A rail segment is a continuous section of rail with no branches, signals, nor train stops.
      * Applies to subclasses: Rail
-     *
      */
-    get_rail_segment_length(this: void): number
+    get_rail_segment_length(this: void): double
 
     /**
      * Get a rail from each rail segment that overlaps with this rail's rail segment.
-     * @remarks
+     * 
      * A rail segment is a continuous section of rail with no branches, signals, nor train stops.
      * Applies to subclasses: Rail
-     *
      */
     get_rail_segment_overlaps(this: void): LuaEntity[]
 
     /**
-     * Get all rails of a rail segment this rail is in
-     * @remarks
+     * Get all rails of a rail segment this rail is in.
+     * 
      * A rail segment is a continuous section of rail with no branches, signals, nor train stops.
      * Applies to subclasses: Rail
-     *
      * @param direction - Selects end of this rail that points to a rail segment end from which to start returning rails
      * @returns Rails of this rail segment
      */
@@ -7344,56 +7258,43 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Current recipe being assembled by this machine, if any.
-     * @remarks
      * Applies to subclasses: CraftingMachine
-     *
      */
     get_recipe(this: void): LuaRecipe | null
 
     /**
-     * Get a logistic requester slot.
-     * @remarks
-     * Useable only on entities that have requester slots.
-     *
+     * Get a logistic requester slot. Only useable on entities that have requester slots.
      * @param slot - The slot index.
      * @returns Contents of the specified slot; `nil` if the given slot contains no request.
      */
     get_request_slot(this: void,
-        slot: number): SimpleItemStack | null
+        slot: uint): SimpleItemStack | null
 
     /**
      * Gets legs of given SpiderVehicle.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     get_spider_legs(this: void): LuaEntity[]
 
     /**
      * The train currently stopped at this train stop, if any.
-     * @remarks
      * Applies to subclasses: TrainStop
-     *
      */
     get_stopped_train(this: void): LuaTrain | null
 
     /**
      * The trains scheduled to stop at this train stop.
-     * @remarks
      * Applies to subclasses: TrainStop
-     *
      */
     get_train_stop_trains(this: void): LuaTrain[]
 
     /**
      * Get a transport line of a belt or belt connectable entity.
-     * @remarks
      * Applies to subclasses: TransportBeltConnectable
-     *
      * @param index - Index of the requested transport line. Transport lines are 1-indexed.
      */
     get_transport_line(this: void,
-        index: number): LuaTransportLine
+        index: uint): LuaTransportLine
 
     /**
      * Returns the new entity direction after upgrading.
@@ -7409,9 +7310,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Same as {@link LuaEntity::has_flag | runtime:LuaEntity::has_flag}, but targets the inner entity on a entity ghost.
-     * @remarks
      * Applies to subclasses: EntityGhost
-     *
      * @param flag - The flag to test.
      * @returns `true` if the entity has the given flag set.
      */
@@ -7420,17 +7319,14 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Has this unit been assigned a command?
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     has_command(this: void): boolean
 
     /**
      * Test whether this entity's prototype has a certain flag set.
-     * @remarks
+     * 
      * `entity.has_flag(f)` is a shortcut for `entity.prototype.has_flag(f)`.
-     *
      * @param flag - The flag to test.
      * @returns `true` if this entity has the given flag set.
      */
@@ -7443,25 +7339,23 @@ interface LuaEntity extends LuaControl {
     help(this: void): string
 
     /**
-     * Insert fluid into this entity. Fluidbox is chosen automatically.
+     * Insert fluid into this entity. The fluidbox is chosen automatically.
      * @param fluid - Fluid to insert.
      * @returns Amount of fluid actually inserted.
      */
     insert_fluid(this: void,
-        fluid: Fluid): number
+        fluid: Fluid): double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Gate
-     *
      * @returns `true` if this gate is currently closed.
      */
     is_closed(this: void): boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Gate
-     *
      * @returns `true` if this gate is currently closing
      */
     is_closing(this: void): boolean
@@ -7473,82 +7367,87 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Returns whether a craft is currently in process. It does not indicate whether progress is currently being made, but whether a crafting process has been started in this machine.
-     * @remarks
      * Applies to subclasses: CraftingMachine
-     *
      */
     is_crafting(this: void): boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Gate
-     *
      * @returns `true` if this gate is currently opened.
      */
     is_opened(this: void): boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Gate
-     *
      * @returns `true` if this gate is currently opening.
      */
     is_opening(this: void): boolean
 
     /**
      * Checks if this rail and other rail both belong to the same rail block.
-     * @remarks
      * Applies to subclasses: Rail
-     *
      */
     is_rail_in_same_rail_block_as(this: void,
         other_rail: LuaEntity): boolean
 
     /**
      * Checks if this rail and other rail both belong to the same rail segment.
-     * @remarks
      * Applies to subclasses: Rail
-     *
      */
     is_rail_in_same_rail_segment_as(this: void,
         other_rail: LuaEntity): boolean
 
     /**
-     * Is this entity or tile ghost or item request proxy registered for construction? If false, it means a construction robot has been dispatched to build the entity, or it is not an entity that can be constructed.
+     * Is this entity or tile ghost or item request proxy registered for construction?
+     * 
+     * If false, it means a construction robot has been dispatched to build the entity, or it is not an entity that can be constructed.
      */
     is_registered_for_construction(this: void): boolean
 
     /**
-     * Is this entity registered for deconstruction with this force? If false, it means a construction robot has been dispatched to deconstruct it, or it is not marked for deconstruction. The complexity is effectively O(1) - it depends on the number of objects targeting this entity which should be small enough.
+     * Is this entity registered for deconstruction with this force?
+     * 
+     * If false, it means a construction robot has been dispatched to deconstruct it, or it is not marked for deconstruction.
+     * 
+     * The complexity is effectively O(1) - it depends on the number of objects targeting this entity which should be small enough.
      * @param force - The force construction manager to check.
      */
     is_registered_for_deconstruction(this: void,
         force: ForceIdentification): boolean
 
     /**
-     * Is this entity registered for repair? If false, it means a construction robot has been dispatched to upgrade it, or it is not damaged. This is worst-case O(N) complexity where N is the current number of things in the repair queue.
+     * Is this entity registered for repair?
+     * 
+     * If false, it means a construction robot has been dispatched to upgrade it, or it is not damaged.
+     * 
+     * This is worst-case O(N) complexity where N is the current number of things in the repair queue.
      */
     is_registered_for_repair(this: void): boolean
 
     /**
-     * Is this entity registered for upgrade? If false, it means a construction robot has been dispatched to upgrade it, or it is not marked for upgrade. This is worst-case O(N) complexity where N is the current number of things in the upgrade queue.
+     * Is this entity registered for upgrade?
+     * 
+     * If false, it means a construction robot has been dispatched to upgrade it, or it is not marked for upgrade.
+     * 
+     * This is worst-case O(N) complexity where N is the current number of things in the upgrade queue.
      */
     is_registered_for_upgrade(this: void): boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: RocketSilo
-     *
      * @returns `true` if the rocket was successfully launched. Return value of `false` means the silo is not ready for launch.
      */
     launch_rocket(this: void): boolean
 
     /**
      * Mines this entity.
-     * @remarks
+     * 
      * 'Standard' operation is to keep calling `LuaEntity.mine` with an inventory until all items are transferred and the items dealt with.
+     * 
      * The result of mining the entity (the item(s) it produces when mined) will be dropped on the ground if they don't fit into the provided inventory.
-     *
      * @param table.force - If true, when the item(s) don't fit into the given inventory the entity is force mined. If false, the mining operation fails when there isn't enough room to transfer all of the items into the inventory. Defaults to false. This is ignored and acts as `true` if no inventory is provided.
      * @param table.ignore_minable - If true, the minable state of the entity is ignored. Defaults to `false`. If false, an entity that isn't minable (set as not-minable in the prototype or isn't minable for other reasons) will fail to be mined.
      * @param table.inventory - If provided the item(s) will be transferred into this inventory. If provided, this must be an inventory created with [LuaGameScript::create_inventory](runtime:LuaGameScript::create_inventory) or be a basic inventory owned by some entity.
@@ -7556,7 +7455,7 @@ interface LuaEntity extends LuaControl {
      * @returns Whether mining succeeded.
      */
     mine(this: void,
-        table?: {
+        table: {
             inventory?: LuaInventory,
             force?: boolean,
             raise_destroyed?: boolean,
@@ -7590,28 +7489,23 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Plays a note with the given instrument and note.
-     * @remarks
      * Applies to subclasses: ProgrammableSpeaker
-     *
      * @returns Whether the request is valid. The sound may or may not be played depending on polyphony settings.
      */
     play_note(this: void,
-        instrument: number,
-        note: number): boolean
+        instrument: uint,
+        note: uint): boolean
 
     /**
      * Release the unit from the spawner which spawned it. This allows the spawner to continue spawning additional units.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     release_from_spawner(this: void): void
 
     /**
      * Remove fluid from this entity.
-     * @remarks
+     * 
      * If temperature is given only fluid matching that exact temperature is removed. If minimum and maximum is given fluid within that range is removed.
-     *
      * @param table.amount - Amount to remove
      * @param table.name - Fluid prototype name.
      * @returns Amount of fluid actually removed.
@@ -7619,49 +7513,44 @@ interface LuaEntity extends LuaControl {
     remove_fluid(this: void,
         table: {
             name: string,
-            amount: number,
-            minimum_temperature?: number,
-            maximum_temperature?: number,
-            temperature?: number
-        }): number
+            amount: double,
+            minimum_temperature?: double,
+            maximum_temperature?: double,
+            temperature?: double
+        }): double
 
     /**
      * Remove an offer from a market.
-     * @remarks
+     * 
      * The other offers are moved down to fill the gap created by removing the offer, which decrements the overall size of the offer array.
      * Applies to subclasses: Market
-     *
      * @param offer - Index of offer to remove.
      * @returns `true` if the offer was successfully removed; `false` when the given index was not valid.
      */
     remove_market_item(this: void,
-        offer: number): boolean
+        offer: uint): boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Gate
-     *
      * @param force - The force that requests the gate to be closed.
      */
     request_to_close(this: void,
         force: ForceIdentification): void
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Gate
-     *
      * @param extra_time - Extra ticks to stay open.
      * @param force - The force that requests the gate to be open.
      */
     request_to_open(this: void,
         force: ForceIdentification,
-        extra_time?: number): void
+        extra_time?: uint): void
 
     /**
-     * Revive a ghost. I.e. turn it from a ghost to a real entity or tile.
-     * @remarks
+     * Revive a ghost, which turns it from a ghost into a real entity or tile.
      * Applies to subclasses: Ghost
-     *
      * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](runtime:script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](runtime:script_raised_set_tiles) will be called.
      * @param table.return_item_request_proxy - If `true` the function will return item request proxy as the third return value.
      * @returns multiple values
@@ -7670,10 +7559,10 @@ interface LuaEntity extends LuaControl {
      *  [2] - The item request proxy if it was requested with `return_item_request_proxy`.
      */
     revive(this: void,
-        table?: {
+        table: {
             return_item_request_proxy?: boolean,
             raise_revive?: boolean
-        }): LuaMultiReturn<[{[key: string]: number} | null, LuaEntity | null, LuaEntity | null]>
+        }): LuaMultiReturn<[{[key: string]: uint} | null, LuaEntity | null, LuaEntity | null]>
 
     /**
      * Rotates this entity as if the player rotated it.
@@ -7687,78 +7576,64 @@ interface LuaEntity extends LuaControl {
      *  [1] - Count of spilled items indexed by their prototype names if `spill_items` was `true`.
      */
     rotate(this: void,
-        table?: {
+        table: {
             reverse?: boolean,
             by_player?: PlayerIdentification,
             spill_items?: boolean,
             enable_looted?: boolean,
             force?: ForceIdentification
-        }): LuaMultiReturn<[boolean, {[key: string]: number} | null]>
+        }): LuaMultiReturn<[boolean, {[key: string]: uint} | null]>
 
     /**
      * Set the source of this beam.
-     * @remarks
      * Applies to subclasses: Beam
-     *
      */
     set_beam_source(this: void,
         source: LuaEntity | MapPosition): void
 
     /**
      * Set the target of this beam.
-     * @remarks
      * Applies to subclasses: Beam
-     *
      */
     set_beam_target(this: void,
         target: LuaEntity | MapPosition): void
 
     /**
      * Give the entity a command.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     set_command(this: void,
         command: Command): void
 
     /**
      * Give the entity a distraction command.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     set_distraction_command(this: void,
         command: Command): void
 
     /**
      * Sets the driver of this vehicle.
-     * @remarks
+     * 
      * This differs from {@link LuaEntity::set_passenger | runtime:LuaEntity::set_passenger} in that the passenger can't drive the vehicle.
      * Applies to subclasses: Vehicle
-     *
      * @param driver - The new driver. Writing `nil` ejects the current driver, if any.
      */
     set_driver(this: void,
         driver?: LuaEntity | PlayerIdentification): void
 
     /**
-     * Set the filter for a slot in an inserter, loader, or logistic storage container.
-     * @remarks
-     * The entity must allow filters.
-     *
+     * Set the filter for a slot in an inserter, loader, or logistic storage container. The entity must allow filters.
      * @param item - Prototype name of the item to filter, or `nil` to clear the filter.
      * @param slot_index - Index of the slot to set the filter for.
      */
     set_filter(this: void,
-        slot_index: number,
-        item: string | null): void
+        slot_index: uint,
+        item: string | nil): void
 
     /**
      * Sets the heat setting for this heat interface.
-     * @remarks
      * Applies to subclasses: HeatInterface
-     *
      * @param filter - The new setting.
      */
     set_heat_setting(this: void,
@@ -7766,32 +7641,27 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Sets the filter for this infinity container at the given index.
-     * @remarks
      * Applies to subclasses: InfinityContainer
-     *
      * @param filter - The new filter, or `nil` to clear the filter.
      * @param index - The index to set.
      */
     set_infinity_container_filter(this: void,
-        index: number,
-        filter: InfinityInventoryFilter | null): void
+        index: uint,
+        filter: InfinityInventoryFilter | nil): void
 
     /**
      * Sets the filter for this infinity pipe.
-     * @remarks
      * Applies to subclasses: InfinityPipe
-     *
      * @param filter - The new filter, or `nil` to clear the filter.
      */
     set_infinity_pipe_filter(this: void,
-        filter: InfinityPipeFilter | null): void
+        filter: InfinityPipeFilter | nil): void
 
     /**
      * Sets the passenger of this car or spidertron.
-     * @remarks
+     * 
      * This differs from {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that the passenger can't drive the car.
      * Applies to subclasses: Car,SpiderVehicle
-     *
      * @param passenger - The new passenger. Writing `nil` ejects the current passenger, if any.
      */
     set_passenger(this: void,
@@ -7799,33 +7669,26 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Sets the given recipe in this assembly machine.
-     * @remarks
      * Applies to subclasses: AssemblingMachine
-     *
      * @param recipe - The new recipe. Writing `nil` clears the recipe, if any.
      * @returns Any items removed from this entity as a result of setting the recipe.
      */
     set_recipe(this: void,
-        recipe: string | LuaRecipe | null): {[key: string]: number}
+        recipe: string | LuaRecipe | nil): {[key: string]: uint}
 
     /**
-     * Set a logistic requester slot.
-     * @remarks
-     * Useable only on entities that have requester slots.
-     *
+     * Set a logistic requester slot. Only useable on entities that have requester slots.
      * @param request - What to request.
      * @param slot - The slot index.
      * @returns Whether the slot was set.
      */
     set_request_slot(this: void,
         request: ItemStackIdentification,
-        slot: number): boolean
+        slot: uint): boolean
 
     /**
-     * Revives a ghost silently.
-     * @remarks
+     * Revives a ghost silently, so the revival makes no sound and no smoke is created.
      * Applies to subclasses: Ghost
-     *
      * @param table.raise_revive - If true, and an entity ghost; [script_raised_revive](runtime:script_raised_revive) will be called. Else if true, and a tile ghost; [script_raised_set_tiles](runtime:script_raised_set_tiles) will be called.
      * @param table.return_item_request_proxy - If `true` the function will return item request proxy as the third parameter.
      * @returns multiple values
@@ -7834,10 +7697,10 @@ interface LuaEntity extends LuaControl {
      *  [2] - The item request proxy if it was requested with `return_item_request_proxy`.
      */
     silent_revive(this: void,
-        table?: {
+        table: {
             return_item_request_proxy?: boolean,
             raise_revive?: boolean
-        }): LuaMultiReturn<[{[key: string]: number} | null, LuaEntity | null, LuaEntity | null]>
+        }): LuaMultiReturn<[{[key: string]: uint} | null, LuaEntity | null, LuaEntity | null]>
 
     /**
      * Triggers spawn_decoration actions defined in the entity prototype or does nothing if entity is not "turret" or "unit-spawner".
@@ -7845,18 +7708,16 @@ interface LuaEntity extends LuaControl {
     spawn_decorations(this: void): void
 
     /**
-     * Only works if the entity is a speech-bubble, with an "effect" defined in its wrapper_flow_style. Starts animating the opacity of the speech bubble towards zero, and destroys the entity when it hits zero.
-     * @remarks
+     * Only works if the entity is a speech-bubble, with an "effect" defined in its wrapper_flow_style.
+     * 
+     * Starts animating the opacity of the speech bubble towards zero, and destroys the entity when it hits zero.
      * Applies to subclasses: SpeechBubble
-     *
      */
     start_fading_out(this: void): void
 
     /**
      * Sets the {@link speed | runtime:LuaEntity::speed} of the given SpiderVehicle to zero. Notably does not clear its {@link autopilot_destination | runtime:LuaEntity::autopilot_destination}, which it will continue moving towards if set.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     stop_spider(this: void): void
 
@@ -7877,9 +7738,8 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Toggle this entity's equipment movement bonus. Does nothing if the entity does not have an equipment grid.
-     * @remarks
+     * 
      * This property can also be read and written on the equipment grid of this entity.
-     *
      */
     toggle_equipment_movement_bonus(this: void): void
 
@@ -7889,58 +7749,49 @@ interface LuaEntity extends LuaControl {
     update_connections(this: void): void
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Spawner
-     *
      */
-    readonly absorbed_pollution: number
+    readonly absorbed_pollution: double
 
     /**
      * Deactivating an entity will stop all its operations (car will stop moving, inserters will stop working, fish will stop moving etc).
-     * @remarks
+     * 
      * Entities that are not active naturally can't be set to be active (setting it to be active will do nothing)
+     * 
      * Ghosts, simple smoke, and corpses can't be modified at this time.
+     * 
      * It is even possible to set the character to not be active, so he can't move and perform most of the tasks.
-     *
      */
     active: boolean
 
     /**
      * The ai settings of this unit.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly ai_settings: LuaAISettings
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ProgrammableSpeaker
-     *
      */
     alert_parameters: ProgrammableSpeakerAlertParameters
 
     /**
      * Whether this character's personal roboports are allowed to dispatch robots.
-     * @remarks
      * Applies to subclasses: Character
-     *
      */
     allow_dispatching_robots: boolean
 
     /**
      * Count of resource units contained.
-     * @remarks
      * Applies to subclasses: ResourceEntity
-     *
      */
-    amount: number
+    amount: uint
 
     /**
      * Whether this land mine is armed.
-     * @remarks
      * Applies to subclasses: LandMine
-     *
      */
     readonly armed: boolean
 
@@ -7950,55 +7801,47 @@ interface LuaEntity extends LuaControl {
      * The player will be automatically disassociated when a controller is set on the character. Also, all characters associated to a player will be logged off when the player logs off in multiplayer.
      * 
      * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
-     * @remarks
+     * 
      * A character associated with a player is not directly controlled by any player.
      * Applies to subclasses: Character
-     *
      */
     associated_player?: LuaPlayer | PlayerIdentification
 
     /**
      * Whether this rocket silo automatically launches the rocket when cargo is inserted.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
     auto_launch: boolean
 
     /**
      * Destination of this spidertron's autopilot, if any. Writing `nil` clears all destinations.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     autopilot_destination?: MapPosition
 
     /**
      * The queued destination positions of spidertron's autopilot.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     readonly autopilot_destinations: MapPosition[]
 
     /**
      * The backer name assigned to this entity. Entities that support backer names are labs, locomotives, radars, roboports, and train stops. `nil` if this entity doesn't support backer names.
-     * @remarks
+     * 
      * While train stops get the name of a backer when placed down, players can rename them if they want to. In this case, `backer_name` returns the player-given name of the entity.
-     *
      */
     backer_name?: string
 
     /**
      * Number of beacons affecting this effect receiver. Can only be used when the entity has an effect receiver (AssemblingMachine, Furnace, Lab, MiningDrills)
      */
-    readonly beacons_count?: number
+    readonly beacons_count?: uint
 
     /**
-     * The belt connectable neighbours of this belt connectable entity. Only entities that input to or are outputs of this entity. Does not contain the other end of an underground belt, see {@link LuaEntity::neighbours | runtime:LuaEntity::neighbours} for that.
-     * @remarks
+     * The belt connectable neighbours of this belt connectable entity. Only entities that input to or are outputs of this entity.
+     * 
+     * Does not contain the other end of an underground belt, see {@link LuaEntity::neighbours | runtime:LuaEntity::neighbours} for that.
      * Applies to subclasses: TransportBeltConnectable
-     *
      */
     readonly belt_neighbours: {
         
@@ -8015,33 +7858,28 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Gives what is the current shape of a transport-belt.
-     * @remarks
+     * 
      * Can also be used on entity ghost if it contains transport-belt.
      * Applies to subclasses: TransportBelt
-     *
      */
     readonly belt_shape: 'straight' | 'left' | 'right'
 
     /**
      * Whether this underground belt goes into or out of the ground.
-     * @remarks
      * Applies to subclasses: UndergroundBelt
-     *
      */
     readonly belt_to_ground_type: 'input' | 'output'
 
     /**
      * The bonus mining progress for this mining drill. Read yields a number in range [0, mining_target.prototype.mineable_properties.mining_time]. `nil` if this isn't a mining drill.
      */
-    bonus_mining_progress?: number
+    bonus_mining_progress?: double
 
     /**
      * The current productivity bonus progress, as a number in range [0, 1].
-     * @remarks
      * Applies to subclasses: CraftingMachine
-     *
      */
-    bonus_progress: number
+    bonus_progress: double
 
     /**
      * {@link LuaEntityPrototype::collision_box | runtime:LuaEntityPrototype::collision_box} around entity's given position and respecting the current entity orientation.
@@ -8055,36 +7893,29 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The state of this chain signal.
-     * @remarks
      * Applies to subclasses: RailChainSignal
-     *
      */
     readonly chain_signal_state: defines.chain_signal_state
 
     /**
      * The reason this character corpse character died. `""` if there is no reason.
-     * @remarks
      * Applies to subclasses: CharacterCorpse
-     *
      */
     character_corpse_death_cause: LocalisedString
 
     /**
      * The player index associated with this character corpse.
-     * @remarks
+     * 
      * The index is not guaranteed to be valid so it should always be checked first if a player with that index actually exists.
      * Applies to subclasses: CharacterCorpse
-     *
      */
-    character_corpse_player_index: number
+    character_corpse_player_index: uint
 
     /**
      * The tick this character corpse died at.
-     * @remarks
      * Applies to subclasses: CharacterCorpse
-     *
      */
-    character_corpse_tick_of_death: number
+    character_corpse_tick_of_death: uint
 
     /**
      * Entities that are directly connected to this entity via the circuit network. `nil` if this entity can't be connected to the circuit network.
@@ -8109,118 +7940,93 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The orientation of this cliff.
-     * @remarks
      * Applies to subclasses: Cliff
-     *
      */
     readonly cliff_orientation: CliffOrientation
 
     /**
      * The color of this character, rolling stock, train stop, car, spider-vehicle, flying text, corpse or simple-entity-with-owner. `nil` if this entity doesn't use custom colors.
-     * @remarks
+     * 
      * Car color is overridden by the color of the current driver/passenger, if there is one.
-     *
      */
     color?: Color
 
     /**
      * The owner of this combat robot, if any.
-     * @remarks
      * Applies to subclasses: CombatRobot
-     *
      */
     combat_robot_owner?: LuaEntity
 
     /**
      * The command given to this unit, if any.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly command?: Command
 
     /**
      * The rail entity this train stop is connected to, if any.
-     * @remarks
      * Applies to subclasses: TrainStop
-     *
      */
     readonly connected_rail?: LuaEntity
 
     /**
      * Rail direction to which this train stop is binding. This returns a value even when no rails are present.
-     * @remarks
      * Applies to subclasses: TrainStop
-     *
      */
     readonly connected_rail_direction: defines.rail_direction
 
     /**
      * The consumption bonus of this entity.
      */
-    readonly consumption_bonus: number
+    readonly consumption_bonus: double
 
     /**
      * Multiplies the energy consumption.
-     * @remarks
      * Applies to subclasses: Car
-     *
      */
-    consumption_modifier: number
+    consumption_modifier: float
 
     /**
      * The connection definition for entities that are directly connected to this entity via copper cables.
-     * @remarks
-     * This function is temporary in 1.1.x, it will not be available in 1.2
-     *
+     * 
+     * This function is temporary in 1.1.x, it will not be available in 2.0.
      */
     readonly copper_connection_definitions: CopperConnectionDefinition[]
 
     /**
      * Whether this corpse will ever fade away.
-     * @remarks
      * Applies to subclasses: Corpse
-     *
      */
     corpse_expires: boolean
 
     /**
      * If true, corpse won't be destroyed when entities are placed over it. If false, whether corpse will be removed or not depends on value of {@link CorpsePrototype::remove_on_entity_placement | prototype:CorpsePrototype::remove_on_entity_placement}.
-     * @remarks
      * Applies to subclasses: Corpse
-     *
      */
     corpse_immune_to_entity_placement: boolean
 
     /**
      * The current crafting progress, as a number in range [0, 1].
-     * @remarks
      * Applies to subclasses: CraftingMachine
-     *
      */
-    crafting_progress: number
+    crafting_progress: float
 
     /**
      * The current crafting speed, including speed bonuses from modules and beacons.
-     * @remarks
      * Applies to subclasses: CraftingMachine
-     *
      */
-    readonly crafting_speed: number
+    readonly crafting_speed: double
 
     /**
      * The damage dealt by this turret, artillery turret, or artillery wagon.
-     * @remarks
      * Applies to subclasses: Turret
-     *
      */
-    damage_dealt: number
+    damage_dealt: double
 
     /**
      * If set to `false`, this entity can't be damaged and won't be attacked automatically. It can however still be mined.
-     * @remarks
+     * 
      * Entities that are indestructible naturally (they have no health, like smoke, resource etc) can't be set to be destructible.
-     *
      */
     destructible: boolean
 
@@ -8231,33 +8037,26 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The distraction command given to this unit, if any.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly distraction_command?: Command
 
     /**
      * Gives a draw data of the given entity if it supports such data.
-     * @remarks
      * Applies to subclasses: RollingStock
-     *
      */
     readonly draw_data: RollingStockDrawData
 
     /**
      * Whether the driver of this car or spidertron is the gunner. If `false`, the passenger is the gunner. `nil` if this is neither a car or a spidertron.
-     * @remarks
      * Applies to subclasses: Car,SpiderVehicle
-     *
      */
     driver_is_gunner?: boolean
 
     /**
      * Position where the entity puts its stuff.
-     * @remarks
+     * 
      * Meaningful only for entities that put stuff somewhere, such as mining drills or inserters. Mining drills can't have their drop position changed; inserters must have `allow_custom_vectors` set to true on their prototype to allow changing the drop position.
-     *
      */
     drop_position: MapPosition
 
@@ -8268,19 +8067,15 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The current speed of this unit in tiles per tick, taking into account any walking speed modifier given by the tile the unit is standing on. `nil` if this is not a unit.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
-    readonly effective_speed?: number
+    readonly effective_speed?: float
 
     /**
      * Multiplies the acceleration the vehicle can create for one unit of energy. Defaults to `1`.
-     * @remarks
      * Applies to subclasses: Car
-     *
      */
-    effectivity_modifier: number
+    effectivity_modifier: float
 
     /**
      * The effects being applied to this entity, if any. For beacons, this is the effect the beacon is broadcasting.
@@ -8289,55 +8084,50 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The buffer size for the electric energy source. `nil` if the entity doesn't have an electric energy source.
-     * @remarks
-     * Write access is limited to the ElectricEnergyInterface type
-     *
+     * 
+     * Write access is limited to the ElectricEnergyInterface type.
      */
-    electric_buffer_size?: number
+    electric_buffer_size?: double
 
     /**
      * The electric drain for the electric energy source. `nil` if the entity doesn't have an electric energy source.
      */
-    readonly electric_drain?: number
+    readonly electric_drain?: double
 
     /**
      * The emissions for the electric energy source. `nil` if the entity doesn't have an electric energy source.
      */
-    readonly electric_emissions?: number
+    readonly electric_emissions?: double
 
     /**
      * The input flow limit for the electric energy source. `nil` if the entity doesn't have an electric energy source.
      */
-    readonly electric_input_flow_limit?: number
+    readonly electric_input_flow_limit?: double
 
     /**
      * Returns the id of the electric network that this entity is connected to, if any.
      */
-    readonly electric_network_id?: number
+    readonly electric_network_id?: uint
 
     /**
      * The electric network statistics for this electric pole.
-     * @remarks
      * Applies to subclasses: ElectricPole
-     *
      */
     readonly electric_network_statistics: LuaFlowStatistics
 
     /**
      * The output flow limit for the electric energy source. `nil` if the entity doesn't have an electric energy source.
      */
-    readonly electric_output_flow_limit?: number
+    readonly electric_output_flow_limit?: double
 
     /**
      * Whether equipment grid logistics are enabled while this vehicle is moving.
-     * @remarks
      * Applies to subclasses: Vehicle
-     *
      */
     enable_logistics_while_moving: boolean
 
     /**
-     * Energy stored in the entity (heat in furnace, energy stored in electrical devices etc.). always 0 for entities that don't have the concept of energy stored inside.
+     * Energy stored in the entity (heat in furnace, energy stored in electrical devices etc.). Always 0 for entities that don't have the concept of energy stored inside.
      * @example
      * ```
      * game.player.print("Machine energy: " .. game.player.selected.energy .. "J")
@@ -8345,15 +8135,13 @@ interface LuaEntity extends LuaControl {
      * ```
      *
      */
-    energy: number
+    energy: double
 
     /**
      * How much energy this generator generated in the last tick.
-     * @remarks
      * Applies to subclasses: Generator
-     *
      */
-    readonly energy_generated_last_tick: number
+    readonly energy_generated_last_tick: double
 
     /**
      * The label on this spider-vehicle entity, if any. `nil` if this is not a spider-vehicle.
@@ -8363,7 +8151,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The number of filter slots this inserter, loader, or logistic storage container has. 0 if not one of those entities.
      */
-    readonly filter_slot_count: number
+    readonly filter_slot_count: uint
 
     /**
      * Fluidboxes of this entity.
@@ -8372,80 +8160,63 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The follow offset of this spidertron, if any entity is being followed. This is randomized each time the follow entity is set.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     follow_offset?: Vector
 
     /**
      * The follow target of this spidertron, if any.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     follow_target?: LuaEntity
 
     /**
      * Multiplies the car friction rate.
-     * @remarks
      * Applies to subclasses: Car
-     *
      * @example
-     * This will allow the car to go much faster 
      * ```
+     * -- This will allow the car to go much faster
      * game.player.vehicle.friction_modifier = 0.5
      * ```
      *
      */
-    friction_modifier: number
+    friction_modifier: float
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Ghost
-     *
      */
     readonly ghost_localised_description: LocalisedString
 
     /**
      * Localised name of the entity or tile contained in this ghost.
-     * @remarks
      * Applies to subclasses: Ghost
-     *
      */
     readonly ghost_localised_name: LocalisedString
 
     /**
      * Name of the entity or tile contained in this ghost
-     * @remarks
      * Applies to subclasses: Ghost
-     *
      */
     readonly ghost_name: string
 
     /**
      * The prototype of the entity or tile contained in this ghost.
-     * @remarks
      * Applies to subclasses: Ghost
-     *
      */
     readonly ghost_prototype: LuaEntityPrototype | LuaTilePrototype
 
     /**
      * The prototype type of the entity or tile contained in this ghost.
-     * @remarks
      * Applies to subclasses: Ghost
-     *
      */
     readonly ghost_type: string
 
     /**
      * The {@link unit_number | runtime:LuaEntity::unit_number} of the entity contained in this ghost. It is the same as the unit number of the {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype} that was destroyed to create this ghost. If it was created by other means, or if the inner entity does not support unit numbers, this property is `nil`.
-     * @remarks
      * Applies to subclasses: EntityGhost
-     *
      */
-    readonly ghost_unit_number?: number
+    readonly ghost_unit_number?: uint
 
     /**
      * Returns a {@link rich text | https://wiki.factorio.com/Rich_text} string containing this entity's position and surface name as a gps tag. {@link Printing | runtime:LuaGameScript::print} it will ping the location of the entity.
@@ -8464,7 +8235,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The graphics variation for this entity. `nil` if this entity doesn't use graphics variations.
      */
-    graphics_variation?: number
+    graphics_variation?: uint8
 
     /**
      * This entity's equipment grid, if any.
@@ -8473,86 +8244,70 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The current health of the entity, if any. Health is automatically clamped to be between `0` and max health (inclusive). Entities with a health of `0` can not be attacked.
-     * @remarks
+     * 
      * To get the maximum possible health of this entity, see {@link LuaEntityPrototype::max_health | runtime:LuaEntityPrototype::max_health} on its prototype.
-     *
      */
-    health?: number
+    health?: float
 
     /**
      * The item stack currently held in an inserter's hand.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     readonly held_stack: LuaItemStack
 
     /**
      * Current position of the inserter's "hand".
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     readonly held_stack_position: MapPosition
 
     /**
-     * The blink interval of this highlight box entity. 0 indicates no blink.
-     * @remarks
+     * The blink interval of this highlight box entity. `0` indicates no blink.
      * Applies to subclasses: HighlightBox
-     *
      */
-    highlight_box_blink_interval: number
+    highlight_box_blink_interval: uint
 
     /**
-     * The hightlight box type of this highlight box entity.
-     * @remarks
+     * The highlight box type of this highlight box entity.
      * Applies to subclasses: HighlightBox
-     *
      */
     highlight_box_type: CursorBoxRenderType
 
     /**
      * The filters for this infinity container.
-     * @remarks
      * Applies to subclasses: InfinityContainer
-     *
      */
     infinity_container_filters: InfinityInventoryFilter[]
 
     /**
      * Count of initial resource units contained. `nil` if this is not an infinite resource.
-     * @remarks
+     * 
      * If this is not an infinite resource, writing will produce an error.
      * Applies to subclasses: ResourceEntity
-     *
      */
-    initial_amount?: number
+    initial_amount?: uint
 
     /**
      * The filter mode for this filter inserter. `nil` if this inserter doesn't use filters.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     inserter_filter_mode?: 'whitelist' | 'blacklist'
 
     /**
      * Sets the stack size limit on this inserter. If the stack size is > than the force stack size limit the value is ignored.
-     * @remarks
-     * Set to 0 to reset.
+     * 
+     * Set to `0` to reset.
      * Applies to subclasses: Inserter
-     *
      */
-    inserter_stack_size_override: number
+    inserter_stack_size_override: uint
 
     /**
      * Returns the current target pickup count of the inserter.
-     * @remarks
+     * 
      * This considers the circuit network, manual override and the inserter stack size limit based on technology.
      * Applies to subclasses: Inserter
-     *
      */
-    readonly inserter_target_pickup_count: number
+    readonly inserter_target_pickup_count: uint
 
     /**
      * (deprecated by 1.1.51) If this entity is a MilitaryTarget. Returns same value as LuaEntity::is_military_target
@@ -8571,81 +8326,73 @@ interface LuaEntity extends LuaControl {
 
     /**
      * If the rolling stock is facing train's front.
-     * @remarks
      * Applies to subclasses: RollingStock
-     *
      */
     readonly is_headed_to_trains_front: boolean
 
     /**
-     * Whether this entity is a MilitaryTarget. Can be written to if {@link LuaEntityPrototype::allow_run_time_change_of_is_military_target | runtime:LuaEntityPrototype::allow_run_time_change_of_is_military_target} returns `true`.
+     * Whether this entity is a MilitaryTarget.
+     * 
+     * Can be written to if {@link LuaEntityPrototype::allow_run_time_change_of_is_military_target | runtime:LuaEntityPrototype::allow_run_time_change_of_is_military_target} returns `true`.
      */
     is_military_target: boolean
 
     /**
-     * Items this ghost will request when revived or items this item request proxy is requesting. Result is a dictionary mapping each item prototype name to the required count.
+     * Items this ghost will request when revived or items this item request proxy is requesting.
+     * 
+     * The result is a dictionary mapping each item prototype name to the required count.
      */
-    item_requests: {[key: string]: number}
+    item_requests: {[key: string]: uint}
 
     /**
      * The number of units killed by this turret, artillery turret, or artillery wagon.
-     * @remarks
      * Applies to subclasses: Turret
-     *
      */
-    kills: number
+    kills: uint
 
     /**
      * The last player that changed any setting on this entity. This includes building the entity, changing its color, or configuring its circuit network. `nil` if the last user is not part of the save anymore.
      * 
      * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
-     * @remarks
      * Applies to subclasses: EntityWithOwner,DeconstructibleTileProxy,TileGhost
-     *
      */
     last_user?: LuaPlayer | PlayerIdentification
 
     /**
      * The link ID this linked container is using.
-     * @remarks
      * Applies to subclasses: LinkedContainer
-     *
      */
-    link_id: number
+    link_id: uint
 
     /**
      * Neighbour to which this linked belt is connected to, if any.
-     * @remarks
+     * 
      * Can also be used on entity ghost if it contains linked-belt.
+     * 
      * May return entity ghost which contains linked belt to which connection is made.
      * Applies to subclasses: LinkedBelt
-     *
      */
     readonly linked_belt_neighbour?: LuaEntity
 
     /**
      * Type of linked belt. Changing type will also flip direction so the belt is out of the same side.
-     * @remarks
+     * 
      * Can only be changed when linked belt is disconnected (has no neighbour set).
+     * 
      * Can also be used on entity ghost if it contains linked-belt.
      * Applies to subclasses: LinkedBelt
-     *
      */
     linked_belt_type: 'input' | 'output'
 
     /**
      * The container entity this loader is pointing at/pulling from depending on the {@link LuaEntity::loader_type | runtime:LuaEntity::loader_type}, if any.
-     * @remarks
      * Applies to subclasses: Loader
-     *
      */
     readonly loader_container?: LuaEntity
 
     /**
      * Whether this loader gets items from or puts item into a container.
-     * @remarks
      * Applies to subclasses: Loader
-     *
      */
     loader_type: 'input' | 'output'
 
@@ -8667,31 +8414,26 @@ interface LuaEntity extends LuaControl {
     logistic_network?: LuaLogisticNetwork
 
     /**
-     * @remarks
      * Not minable entities can still be destroyed.
+     * 
      * Entities that are not minable naturally (like smoke, character, enemy units etc) can't be set to minable.
-     *
      */
     minable: boolean
 
     /**
      * The mining progress for this mining drill. Is a number in range [0, mining_target.prototype.mineable_properties.mining_time]. `nil` if this isn't a mining drill.
      */
-    mining_progress?: number
+    mining_progress?: double
 
     /**
      * The mining target, if any.
-     * @remarks
      * Applies to subclasses: MiningDrill
-     *
      */
     readonly mining_target?: LuaEntity
 
     /**
      * Returns true if this unit is moving.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly moving: boolean
 
@@ -8702,14 +8444,13 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The current total neighbour bonus of this reactor.
-     * @remarks
      * Applies to subclasses: Reactor
-     *
      */
-    readonly neighbour_bonus: number
+    readonly neighbour_bonus: double
 
     /**
      * A list of neighbours for certain types of entities. Applies to electric poles, power switches, underground belts, walls, gates, reactors, cliffs, and pipe-connectable entities.
+     * Differs depending on the type of entity:
      * 
      * - When called on an electric pole, this is a dictionary of all connections, indexed by the strings `"copper"`, `"red"`, and `"green"`.
      * - When called on a pipe-connectable entity, this is an array of entity arrays of all entities a given fluidbox is connected to.
@@ -8717,7 +8458,7 @@ interface LuaEntity extends LuaControl {
      * - When called on a wall-connectable entity or reactor, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
      * - When called on a cliff entity, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
      */
-    readonly neighbours?: {[key: string]: LuaEntity[]} | Array<LuaEntity[]> | LuaEntity
+    readonly neighbours: {[key: string]: LuaEntity[]} | Array<LuaEntity[]> | LuaEntity
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -8735,89 +8476,72 @@ interface LuaEntity extends LuaControl {
     orientation: RealOrientation
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ProgrammableSpeaker
-     *
      */
     parameters: ProgrammableSpeakerParameters
 
     /**
      * Where the inserter will pick up items from.
-     * @remarks
+     * 
      * Inserters must have `allow_custom_vectors` set to true on their prototype to allow changing the pickup position.
      * Applies to subclasses: Inserter
-     *
      */
     pickup_position: MapPosition
 
     /**
      * The entity this inserter will attempt to pick up items from. If there are multiple possible entities at the pick-up point, writing to this attribute allows a mod to choose which one to pick up items from. The entity needs to collide with the tile box under the pick-up position. `nil` if there is no entity to pull items from.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     pickup_target?: LuaEntity
 
     /**
      * The player connected to this character, if any.
-     * @remarks
      * Applies to subclasses: Character
-     *
      */
     readonly player?: LuaPlayer
 
     /**
      * The pollution bonus of this entity.
      */
-    readonly pollution_bonus: number
+    readonly pollution_bonus: double
 
     /**
      * The power production specific to the ElectricEnergyInterface entity type.
-     * @remarks
      * Applies to subclasses: ElectricEnergyInterface
-     *
      */
-    power_production: number
+    power_production: double
 
     /**
      * The state of this power switch.
-     * @remarks
      * Applies to subclasses: PowerSwitch
-     *
      */
     power_switch_state: boolean
 
     /**
      * The power usage specific to the ElectricEnergyInterface entity type.
-     * @remarks
      * Applies to subclasses: ElectricEnergyInterface
-     *
      */
-    power_usage: number
+    power_usage: double
 
     /**
      * The previous recipe this furnace was using, if any.
-     * @remarks
      * Applies to subclasses: Furnace
-     *
      */
     readonly previous_recipe?: LuaRecipe
 
     /**
      * The productivity bonus of this entity.
-     * @remarks
+     * 
      * This includes force based bonuses as well as beacon/module bonuses.
-     *
      */
-    readonly productivity_bonus: number
+    readonly productivity_bonus: double
 
     /**
      * The number of products this machine finished crafting in its lifetime.
-     * @remarks
      * Applies to subclasses: CraftingMachine
-     *
      */
-    products_finished: number
+    products_finished: uint
 
     /**
      * The entity prototype of this entity.
@@ -8826,49 +8550,38 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The target entity for this item-request-proxy, if any.
-     * @remarks
      * Applies to subclasses: ItemRequestProxy
-     *
      */
     readonly proxy_target?: LuaEntity
 
     /**
      * The rail target of this pump, if any.
-     * @remarks
      * Applies to subclasses: Pump
-     *
      */
     readonly pump_rail_target?: LuaEntity
 
     /**
      * The current radar scan progress, as a number in range [0, 1].
-     * @remarks
      * Applies to subclasses: Radar
-     *
      */
-    readonly radar_scan_progress: number
+    readonly radar_scan_progress: float
 
     /**
      * When locked; the recipe in this assembling machine can't be changed by the player.
-     * @remarks
      * Applies to subclasses: AssemblingMachine
-     *
      */
     recipe_locked: boolean
 
     /**
      * The relative orientation of the vehicle turret, artillery turret, artillery wagon. `nil` if this entity isn't a vehicle with a vehicle turret or artillery turret/wagon.
-     * @remarks
+     * 
      * Writing does nothing if the vehicle doesn't have a turret.
-     *
      */
     relative_turret_orientation?: RealOrientation
 
     /**
      * Whether items not included in this infinity container filters should be removed from the container.
-     * @remarks
      * Applies to subclasses: InfinityContainer
-     *
      */
     remove_unfiltered_items: boolean
 
@@ -8881,66 +8594,61 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The forces that this `simple-entity-with-owner`, `simple-entity-with-force`, or `flying-text` is visible to. `nil` or an empty array when this entity is rendered for all forces.
-     * @remarks
+     * 
      * Reading will always give an array of {@link LuaForce | runtime:LuaForce}
-     *
      */
     render_to_forces?: ForceIdentification[]
 
     /**
      * Whether this requester chest is set to also request from buffer chests.
-     * @remarks
+     * 
      * Useable only on entities that have requester slots.
-     *
      */
     request_from_buffers: boolean
 
     /**
      * The index of the configured request with the highest index for this entity. This means 0 if no requests are set and e.g. 20 if the 20th request slot is configured.
      */
-    readonly request_slot_count: number
+    readonly request_slot_count: uint
 
     /**
      * Number of rocket parts in the silo.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
-    rocket_parts: number
+    rocket_parts: uint
 
     /**
      * The status of this rocket silo entity.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
     readonly rocket_silo_status: defines.rocket_silo_status
 
     /**
      * When entity is not to be rotatable (inserter, transport belt etc), it can't be rotated by player using the R key.
-     * @remarks
+     * 
      * Entities that are not rotatable naturally (like chest or furnace) can't be set to be rotatable.
-     *
      */
     rotatable: boolean
 
     /**
-     * The secondary bounding box of this entity or `nil` if it doesn't have one. This only exists for curved rails, and is automatically determined by the game.
+     * The secondary bounding box of this entity or `nil` if it doesn't have one.
+     * 
+     * This only exists for curved rails, and is automatically determined by the game.
      */
     readonly secondary_bounding_box?: BoundingBox
 
     /**
-     * The secondary selection box of this entity or `nil` if it doesn't have one. This only exists for curved rails, and is automatically determined by the game.
+     * The secondary selection box of this entity or `nil` if it doesn't have one.
+     * 
+     * This only exists for curved rails, and is automatically determined by the game.
      */
     readonly secondary_selection_box?: BoundingBox
 
     /**
      * Index of the currently selected weapon slot of this character, car, or spidertron. `nil` if this entity doesn't have guns.
-     * @remarks
      * Applies to subclasses: Character,Car,SpiderVehicle
-     *
      */
-    selected_gun_index?: number
+    selected_gun_index?: uint
 
     /**
      * {@link LuaEntityPrototype::selection_box | runtime:LuaEntityPrototype::selection_box} around entity's given position and respecting the current entity orientation.
@@ -8949,85 +8657,67 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The shooting target for this turret, if any. Can't be set to `nil` via script.
-     * @remarks
      * Applies to subclasses: Turret
-     *
      */
     shooting_target?: LuaEntity
 
     /**
      * The state of this rail signal.
-     * @remarks
      * Applies to subclasses: RailSignal,RailChainSignal
-     *
      */
     readonly signal_state: defines.signal_state
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Spawner
-     *
      */
-    readonly spawn_shift: number
+    readonly spawn_shift: double
 
     /**
      * The spawner associated with this unit entity, if any.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly spawner?: LuaEntity
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Spawner
-     *
      */
-    readonly spawning_cooldown: number
+    readonly spawning_cooldown: double
 
     /**
      * The current speed if this is a car, rolling stock, projectile or spidertron, or the maximum speed if this is a unit. The speed is in tiles per tick. `nil` if this is not a car, rolling stock, unit, projectile or spidertron.
      * 
      * Only the speed of units, cars, and projectiles are writable.
      */
-    speed?: number
+    speed?: float
 
     /**
-     * The speed bonus of this entity.
-     * @remarks
-     * This includes force based bonuses as well as beacon/module bonuses.
-     *
+     * The speed bonus of this entity. This includes force based bonuses as well as beacon/module bonuses.
      */
-    readonly speed_bonus: number
+    readonly speed_bonus: double
 
     /**
      * The filter for this splitter, if any is set.
-     * @remarks
      * Applies to subclasses: Splitter
-     *
      */
     splitter_filter?: LuaItemPrototype
 
     /**
      * The input priority for this splitter.
-     * @remarks
      * Applies to subclasses: Splitter
-     *
      */
     splitter_input_priority: 'left' | 'none' | 'right'
 
     /**
      * The output priority for this splitter.
-     * @remarks
      * Applies to subclasses: Splitter
-     *
      */
     splitter_output_priority: 'left' | 'none' | 'right'
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ItemEntity
-     *
      */
     readonly stack: LuaItemStack
 
@@ -9038,9 +8728,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The entity this sticker is sticked to.
-     * @remarks
      * Applies to subclasses: Sticker
-     *
      */
     readonly sticked_to: LuaEntity
 
@@ -9048,8 +8736,8 @@ interface LuaEntity extends LuaControl {
      * The vehicle modifiers applied to this entity through the attached stickers.
      */
     readonly sticker_vehicle_modifiers?: {
-        friction_modifier: number,
-        speed_modifier: number
+        friction_modifier: double,
+        speed_modifier: double
     }
 
     /**
@@ -9075,82 +8763,71 @@ interface LuaEntity extends LuaControl {
     /**
      * The temperature of this entity's heat energy source. `nil` if this entity does not use a heat energy source.
      */
-    temperature?: number
+    temperature?: double
 
     /**
      * The text of this flying-text entity.
-     * @remarks
      * Applies to subclasses: FlyingText
-     *
      */
     text: LocalisedString
 
     /**
      * The last tick this character entity was attacked.
-     * @remarks
      * Applies to subclasses: Character
-     *
      */
-    tick_of_last_attack: number
+    tick_of_last_attack: uint
 
     /**
      * The last tick this character entity was damaged.
-     * @remarks
      * Applies to subclasses: Character
-     *
      */
-    tick_of_last_damage: number
+    tick_of_last_damage: uint
 
     /**
-     * Specifies the tiling size of the entity, is used to decide, if the center should be in the center of the tile (odd tile size dimension) or on the tile border (even tile size dimension). Uses the current direction of the entity.
+     * Specifies the tiling size of the entity, is used to decide, if the center should be in the center of the tile (odd tile size dimension) or on the tile border (even tile size dimension).
+     * 
+     * Uses the current direction of the entity.
      */
-    readonly tile_height: number
+    readonly tile_height: uint
 
     /**
-     * Specifies the tiling size of the entity, is used to decide, if the center should be in the center of the tile (odd tile size dimension) or on the tile border (even tile size dimension). Uses the current direction of the entity.
+     * Specifies the tiling size of the entity, is used to decide, if the center should be in the center of the tile (odd tile size dimension) or on the tile border (even tile size dimension).
+     * 
+     * Uses the current direction of the entity.
      */
-    readonly tile_width: number
+    readonly tile_width: uint
 
     /**
      * The ticks left before a ghost, combat robot, highlight box, smoke with trigger or sticker is destroyed.
      * 
-     * - for ghosts set to uint32 max (4 294 967 295) to never expire.
-     * - for ghosts can not be set higher than {@link LuaForce::ghost_time_to_live | runtime:LuaForce::ghost_time_to_live} of the entity's force.
-     * @remarks
+     * For ghosts set to uint32 max (4 294 967 295) to never expire.
+     * 
+     * For ghosts can not be set higher than {@link LuaForce::ghost_time_to_live | runtime:LuaForce::ghost_time_to_live} of the entity's force.
      * Applies to subclasses: Ghost,CombatRobot,HighlightBox,SmokeWithTrigger,Sticker
-     *
      */
-    time_to_live: number
+    time_to_live: uint
 
     /**
      * The ticks until the next trigger effect of this smoke-with-trigger.
-     * @remarks
      * Applies to subclasses: SmokeWithTrigger
-     *
      */
-    time_to_next_effect: number
+    time_to_next_effect: uint
 
     /**
      * The timeout that's left on this landmine in ticks. It describes the time between the landmine being placed and it being armed.
-     * @remarks
      * Applies to subclasses: LandMine
-     *
      */
-    timeout: number
+    timeout: uint
 
     /**
      * Will this entity be picked up automatically when the player walks over it?
-     * @remarks
      * Applies to subclasses: ItemEntity
-     *
      */
     to_be_looted: boolean
 
     /**
      * The torso orientation of this spider vehicle.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     torso_orientation: RealOrientation
 
@@ -9161,78 +8838,65 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Amount of trains related to this particular train stop. Includes train stopped at this train stop (until it finds a path to next target) and trains having this train stop as goal or waypoint.
-     * @remarks
-     * Train may be included multiple times when braking distance covers this train stop multiple times
-     * Value may be read even when train stop has no control behavior
+     * 
+     * Train may be included multiple times when braking distance covers this train stop multiple times.
+     * 
+     * Value may be read even when train stop has no control behavior.
      * Applies to subclasses: TrainStop
-     *
      */
-    readonly trains_count: number
+    readonly trains_count: uint
 
     /**
      * The number of trains in this rail block for this rail entity.
-     * @remarks
      * Applies to subclasses: Rail
-     *
      */
-    readonly trains_in_block: number
+    readonly trains_in_block: uint
 
     /**
-     * Amount of trains above which no new trains will be sent to this train stop. Writing nil will disable the limit (will set a maximum possible value).
-     * @remarks
-     * When a train stop has a control behavior with wire connected and set_trains_limit enabled, this value will be overwritten by it
+     * Amount of trains above which no new trains will be sent to this train stop.
+     * 
+     * Writing nil will disable the limit (will set a maximum possible value).
+     * 
+     * When a train stop has a control behavior with wire connected and set_trains_limit enabled, this value will be overwritten by it.
      * Applies to subclasses: TrainStop
-     *
      */
-    trains_limit: number
+    trains_limit: uint
 
     /**
      * Index of the tree color.
-     * @remarks
      * Applies to subclasses: Tree
-     *
      */
-    tree_color_index: number
+    tree_color_index: uint8
 
     /**
      * Maximum index of the tree colors.
-     * @remarks
      * Applies to subclasses: Tree
-     *
      */
-    readonly tree_color_index_max: number
+    readonly tree_color_index_max: uint8
 
     /**
      * Index of the tree gray stage
-     * @remarks
      * Applies to subclasses: Tree
-     *
      */
-    tree_gray_stage_index: number
+    tree_gray_stage_index: uint8
 
     /**
      * Maximum index of the tree gray stages.
-     * @remarks
      * Applies to subclasses: Tree
-     *
      */
-    readonly tree_gray_stage_index_max: number
+    readonly tree_gray_stage_index_max: uint8
 
     /**
      * Index of the tree stage.
-     * @remarks
      * Applies to subclasses: Tree
-     *
      */
-    tree_stage_index: number
+    tree_stage_index: uint8
 
     /**
      * Maximum index of the tree stages.
-     * @remarks
      * Applies to subclasses: Tree
-     *
      */
-    readonly tree_stage_index_max: number
+    readonly tree_stage_index_max: uint8
 
     /**
      * The entity prototype type of this entity.
@@ -9241,9 +8905,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * The unit group this unit is a member of, if any.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly unit_group?: LuaUnitGroup
 
@@ -9252,13 +8914,11 @@ interface LuaEntity extends LuaControl {
      * 
      * Only entities inheriting from {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}, as well as {@link ItemRequestProxyPrototype | prototype:ItemRequestProxyPrototype} and {@link EntityGhostPrototype | prototype:EntityGhostPrototype} are assigned a unit number. Returns `nil` otherwise.
      */
-    readonly unit_number?: number
+    readonly unit_number?: uint
 
     /**
      * The units associated with this spawner entity.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
     readonly units: LuaEntity[]
 
@@ -9269,9 +8929,7 @@ interface LuaEntity extends LuaControl {
 
     /**
      * Read when this spidertron auto-targets enemies
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     vehicle_automatic_targeting_parameters: VehicleAutomaticTargetingParameters
 
@@ -9285,7 +8943,7 @@ interface LuaEntityPrototype {
      * Gets the base size of the given inventory on this entity or `nil` if the given inventory doesn't exist.
      */
     get_inventory_size(this: void,
-        index: defines.inventory): number | null
+        index: defines.inventory): uint | null
 
     /**
      * Test whether this entity prototype has a certain flag set.
@@ -9302,11 +8960,9 @@ interface LuaEntityPrototype {
 
     /**
      * The active energy usage of this rocket silo or combinator prototype.
-     * @remarks
      * Applies to subclasses: RocketSilo,Combinator
-     *
      */
-    readonly active_energy_usage?: number
+    readonly active_energy_usage?: double
 
     /**
      * Entities this entity can be pasted onto in addition to the normal allowed ones.
@@ -9315,48 +8971,38 @@ interface LuaEntityPrototype {
 
     /**
      * The bounding box that specifies which tiles adjacent to the offshore pump should be checked.
-     * @remarks
      * Applies to subclasses: OffshorePump
-     *
      */
     readonly adjacent_tile_collision_box?: BoundingBox
 
     /**
      * Tiles adjacent to the offshore pump must not collide with this collision mask.
-     * @remarks
      * Applies to subclasses: OffshorePump
-     *
      */
     readonly adjacent_tile_collision_mask?: CollisionMask
 
     /**
      * If this mask is not empty, tiles adjacent to the offshore pump must not collide with this collision mask.
-     * @remarks
      * Applies to subclasses: OffshorePump
-     *
      */
     readonly adjacent_tile_collision_test?: CollisionMask
 
     /**
      * Whether this unit prototype is affected by tile walking speed modifiers.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly affected_by_tiles?: boolean
 
     /**
      * The air resistance of this rolling stock prototype.
-     * @remarks
      * Applies to subclasses: RollingStock
-     *
      */
-    readonly air_resistance?: number
+    readonly air_resistance?: double
 
     /**
      * The alert icon scale of this entity prototype.
      */
-    readonly alert_icon_scale: number
+    readonly alert_icon_scale: float
 
     /**
      * The alert icon shift of this entity prototype.
@@ -9365,33 +9011,25 @@ interface LuaEntityPrototype {
 
     /**
      * Whether this turret raises an alert when attacking
-     * @remarks
      * Applies to subclasses: Turret
-     *
      */
     readonly alert_when_attacking?: boolean
 
     /**
      * Whether this entity raises an alert when damaged.
-     * @remarks
      * Applies to subclasses: EntityWithHealth
-     *
      */
     readonly alert_when_damaged?: boolean
 
     /**
      * Whether this market allows access to all forces or just friendly ones.
-     * @remarks
      * Applies to subclasses: Market
-     *
      */
     readonly allow_access_to_all_forces?: boolean
 
     /**
      * Whether this inserter allows burner leeching.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     readonly allow_burner_leech?: boolean
 
@@ -9402,25 +9040,19 @@ interface LuaEntityPrototype {
 
     /**
      * Whether this inserter allows custom pickup and drop vectors.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     readonly allow_custom_vectors?: boolean
 
     /**
      * Whether this vehicle allows passengers.
-     * @remarks
      * Applies to subclasses: Vehicle
-     *
      */
     readonly allow_passengers?: boolean
 
     /**
      * True if this entity-with-owner's is_military_target can be changed run-time (on the entity, not on the prototype itself)
-     * @remarks
      * Applies to subclasses: EntityWithOwner
-     *
      */
     readonly allow_run_time_change_of_is_military_target?: boolean
 
@@ -9431,27 +9063,21 @@ interface LuaEntityPrototype {
 
     /**
      * Whether the lamp is always on (except when out of power or turned off by the circuit network).
-     * @remarks
      * Applies to subclasses: Lamp
-     *
      */
     readonly always_on?: boolean
 
     /**
      * Name of the ammo category of this land mine.
-     * @remarks
      * Applies to subclasses: LandMine
-     *
      */
     readonly ammo_category?: string
 
     /**
      * The animation speed coefficient of this belt connectable prototype.
-     * @remarks
      * Applies to subclasses: BeltConnectable
-     *
      */
-    readonly animation_speed_coefficient?: number
+    readonly animation_speed_coefficient?: double
 
     /**
      * The attack parameters for this entity, if any.
@@ -9465,17 +9091,13 @@ interface LuaEntityPrototype {
 
     /**
      * The amount of ammo that inserters automatically insert into this ammo-turret or artillery-turret.
-     * @remarks
      * Applies to subclasses: ArtilleryTurret,AmmoTurret
-     *
      */
-    readonly automated_ammo_count?: number
+    readonly automated_ammo_count?: uint
 
     /**
      * Whether this spider vehicle prototype automatically cycles weapons.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
     readonly automatic_weapon_cycling?: boolean
 
@@ -9486,66 +9108,55 @@ interface LuaEntityPrototype {
 
     /**
      * The base productivity of this crafting machine, lab, or mining drill.
-     * @remarks
      * Applies to subclasses: CraftingMachine,Lab,MiningDrill
-     *
      */
-    readonly base_productivity?: number
+    readonly base_productivity?: double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Loader
-     *
      */
-    readonly belt_distance?: number
+    readonly belt_distance?: double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Loader
-     *
      */
-    readonly belt_length?: number
+    readonly belt_length?: double
 
     /**
      * The speed of this transport belt.
-     * @remarks
      * Applies to subclasses: TransportBeltConnectable
-     *
      */
-    readonly belt_speed?: number
+    readonly belt_speed?: double
 
     /**
      * The boiler operation mode of this boiler prototype.
-     * @remarks
      * Applies to subclasses: Boiler
-     *
      */
     readonly boiler_mode?: 'heat-water-inside' | 'output-to-separate-pipe'
 
     /**
      * The braking force of this vehicle prototype.
-     * @remarks
      * Applies to subclasses: Vehicle
-     *
      */
-    readonly braking_force?: number
+    readonly braking_force?: double
 
     /**
      * The evolution requirement to build this entity as a base when expanding enemy bases.
      */
-    readonly build_base_evolution_requirement: number
+    readonly build_base_evolution_requirement: double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly build_distance?: number
+    readonly build_distance?: uint
 
     /**
      * The log2 of grid size of the building
      */
-    readonly building_grid_bit_shift: number
+    readonly building_grid_bit_shift: uint
 
     /**
      * The burner energy source prototype this entity uses, if any.
@@ -9554,63 +9165,49 @@ interface LuaEntityPrototype {
 
     /**
      * Whether this generator prototype burns fluid.
-     * @remarks
      * Applies to subclasses: Generator
-     *
      */
     readonly burns_fluid?: boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Spawner
-     *
      */
-    readonly call_for_help_radius?: number
+    readonly call_for_help_radius?: double
 
     /**
      * Whether this unit prototype can open gates.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly can_open_gates?: boolean
 
     /**
      * The collision mask used only for collision test with tile directly at offshore pump position.
-     * @remarks
      * Applies to subclasses: OffshorePump
-     *
      */
     readonly center_collision_mask?: CollisionMask
 
     /**
      * The chain shooting cooldown modifier of this spider vehicle prototype.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
-    readonly chain_shooting_cooldown_modifier?: number
+    readonly chain_shooting_cooldown_modifier?: double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
     readonly character_corpse?: LuaEntityPrototype
 
     /**
      * The chunk exploration radius of this spider vehicle prototype.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
-    readonly chunk_exploration_radius?: number
+    readonly chunk_exploration_radius?: double
 
     /**
      * The item prototype name used to destroy this cliff.
-     * @remarks
      * Applies to subclasses: Cliff
-     *
      */
     readonly cliff_explosive_prototype?: string
 
@@ -9647,73 +9244,59 @@ interface LuaEntityPrototype {
     readonly color?: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: RollingStock
-     *
      */
-    readonly connection_distance?: number
+    readonly connection_distance?: double
 
     /**
      * The construction radius for this roboport prototype.
-     * @remarks
      * Applies to subclasses: Roboport
-     *
      */
-    readonly construction_radius?: number
+    readonly construction_radius?: double
 
     /**
      * The energy consumption of this car prototype.
-     * @remarks
      * Applies to subclasses: Car
-     *
      */
-    readonly consumption?: number
+    readonly consumption?: double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Loader
-     *
      */
-    readonly container_distance?: number
+    readonly container_distance?: double
 
     /**
      * Corpses used when this entity is destroyed. It is a dictionary indexed by the corpse's prototype name.
-     * @remarks
      * Applies to subclasses: EntityWithHealth
-     *
      */
     readonly corpses?: {[key: string]: LuaEntityPrototype}
 
     /**
      * If this simple-entity is counted as a rock for the deconstruction planner "trees and rocks only" filter.
-     * @remarks
      * Applies to subclasses: SimpleEntity
-     *
      */
     readonly count_as_rock_for_filtered_deconstruction?: boolean
 
     /**
      * The {@link crafting categories | runtime:LuaRecipeCategoryPrototype} this entity prototype supports.
-     * @remarks
+     * 
      * The value in the dictionary is meaningless and exists just to allow for easy lookup.
      * Applies to subclasses: CraftingMachine,Character
-     *
      */
-    readonly crafting_categories?: {[key: string]: boolean}
+    readonly crafting_categories?: {[key: string]: true}
 
     /**
      * The crafting speed.
-     * @remarks
      * Applies to subclasses: CraftingMachine
-     *
      */
-    readonly crafting_speed?: number
+    readonly crafting_speed?: double
 
     /**
      * If this prototype will attempt to create a ghost of itself on death.
-     * @remarks
+     * 
      * If this is false then a ghost will never be made, if it's true a ghost may be made.
-     *
      */
     readonly create_ghost_on_death: boolean
 
@@ -9726,44 +9309,39 @@ interface LuaEntityPrototype {
      * The smoke trigger run when this entity is built, if any.
      */
     readonly created_smoke?: {
-        initial_height: number,
-        max_radius?: number,
+        initial_height: float,
+        max_radius?: float,
         offset_deviation: BoundingBox,
         offsets: Vector[],
         smoke_name: string,
         speed: Vector,
-        speed_from_center: number,
-        speed_from_center_deviation: number,
-        speed_multiplier: number,
-        speed_multiplier_deviation: number,
-        starting_frame: number,
-        starting_frame_deviation: number,
-        starting_frame_speed: number,
-        starting_frame_speed_deviation: number
+        speed_from_center: float,
+        speed_from_center_deviation: float,
+        speed_multiplier: float,
+        speed_multiplier_deviation: float,
+        starting_frame: float,
+        starting_frame_deviation: float,
+        starting_frame_speed: float,
+        starting_frame_speed_deviation: float
     }
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
     readonly damage_hit_tint?: Color
 
     /**
      * Value between 0 and 1 darkness where all lamps of this lamp prototype are off.
-     * @remarks
      * Applies to subclasses: Lamp
-     *
      */
-    readonly darkness_for_all_lamps_off?: number
+    readonly darkness_for_all_lamps_off?: float
 
     /**
      * Value between 0 and 1 darkness where all lamps of this lamp prototype are on.
-     * @remarks
      * Applies to subclasses: Lamp
-     *
      */
-    readonly darkness_for_all_lamps_on?: number
+    readonly darkness_for_all_lamps_on?: float
 
     /**
      * The hardcoded default collision mask (with flags) for this entity prototype type.
@@ -9772,41 +9350,31 @@ interface LuaEntityPrototype {
 
     /**
      * Whether this generator prototype destroys non-fuel fluids.
-     * @remarks
      * Applies to subclasses: Generator
-     *
      */
     readonly destroy_non_fuel_fluid?: boolean
 
     /**
      * The distraction cooldown of this unit prototype.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
-    readonly distraction_cooldown?: number
+    readonly distraction_cooldown?: uint
 
     /**
      * The distribution effectivity for this beacon prototype.
-     * @remarks
      * Applies to subclasses: Beacon
-     *
      */
-    readonly distribution_effectivity?: number
+    readonly distribution_effectivity?: double
 
     /**
      * The door opening speed for this rocket silo prototype.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
-    readonly door_opening_speed?: number
+    readonly door_opening_speed?: double
 
     /**
      * Whether this logistics or construction robot renders its cargo when flying.
-     * @remarks
      * Applies to subclasses: RobotWithLogisticsInterface
-     *
      */
     readonly draw_cargo?: boolean
 
@@ -9816,27 +9384,22 @@ interface LuaEntityPrototype {
     readonly drawing_box: BoundingBox
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly drop_item_distance?: number
+    readonly drop_item_distance?: uint
 
     /**
      * The dying time of this corpse prototype.
-     * @remarks
      * Applies to subclasses: Corpse
-     *
      */
-    readonly dying_speed?: number
+    readonly dying_speed?: float
 
     /**
      * The effectivity of this car prototype, generator prototype.
-     * @remarks
      * Applies to subclasses: Car,Generator
-     *
      */
-    readonly effectivity?: number
+    readonly effectivity?: double
 
     /**
      * The electric energy source prototype this entity uses, if any.
@@ -9846,7 +9409,7 @@ interface LuaEntityPrototype {
     /**
      * Amount of pollution emissions per second this entity will create.
      */
-    readonly emissions_per_second: number
+    readonly emissions_per_second: double
 
     /**
      * The enemy map color used when charting this entity.
@@ -9855,63 +9418,50 @@ interface LuaEntityPrototype {
 
     /**
      * The energy used per hitpoint taken for this vehicle during collisions.
-     * @remarks
      * Applies to subclasses: Vehicle
-     *
      */
-    readonly energy_per_hit_point?: number
+    readonly energy_per_hit_point?: double
 
     /**
      * The energy consumed per tile moved for this flying robot.
-     * @remarks
      * Applies to subclasses: FlyingRobot
-     *
      */
-    readonly energy_per_move?: number
+    readonly energy_per_move?: double
 
     /**
      * The energy consumed per tick for this flying robot.
-     * @remarks
      * Applies to subclasses: FlyingRobot
-     *
      */
-    readonly energy_per_tick?: number
+    readonly energy_per_tick?: double
 
     /**
      * The direct energy usage of this entity, if any.
      */
-    readonly energy_usage?: number
+    readonly energy_usage?: double
 
     /**
      * The engine starting speed for this rocket silo rocket prototype.
-     * @remarks
      * Applies to subclasses: RocketSiloRocket
-     *
      */
-    readonly engine_starting_speed?: number
+    readonly engine_starting_speed?: double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly enter_vehicle_distance?: number
+    readonly enter_vehicle_distance?: double
 
     /**
      * Whether this explosion has a beam.
-     * @remarks
      * Applies to subclasses: Explosion
-     *
      */
-    readonly explosion_beam?: number
+    readonly explosion_beam?: double
 
     /**
      * Whether this explosion rotates.
-     * @remarks
      * Applies to subclasses: Explosion
-     *
      */
-    readonly explosion_rotate?: number
+    readonly explosion_rotate?: double
 
     /**
      * The group of mutually fast-replaceable entities, if any.
@@ -9920,25 +9470,19 @@ interface LuaEntityPrototype {
 
     /**
      * The filter count of this inserter, loader, or logistic chest. For logistic containers, `nil` means no limit.
-     * @remarks
      * Applies to subclasses: Inserter,Loader,LogisticContainer
-     *
      */
-    readonly filter_count?: number
+    readonly filter_count?: uint
 
     /**
      * The final attack result for this projectile.
-     * @remarks
      * Applies to subclasses: Projectile
-     *
      */
     readonly final_attack_result?: TriggerItem[]
 
     /**
      * The fixed recipe name for this assembling machine prototype, if any.
-     * @remarks
      * Applies to subclasses: AssemblingMachine
-     *
      */
     readonly fixed_recipe?: string
 
@@ -9949,19 +9493,16 @@ interface LuaEntityPrototype {
 
     /**
      * The fluid this offshore pump produces.
-     * @remarks
      * Applies to subclasses: OffshorePump
-     *
      */
     readonly fluid?: LuaFluidPrototype
 
     /**
      * The fluid capacity of this entity or 0 if this entity doesn't support fluids.
-     * @remarks
+     * 
      * Crafting machines will report 0 due to their fluid capacity being whatever a given recipe needs.
-     *
      */
-    readonly fluid_capacity: number
+    readonly fluid_capacity: double
 
     /**
      * The fluid energy source prototype this entity uses, if any.
@@ -9970,11 +9511,9 @@ interface LuaEntityPrototype {
 
     /**
      * The fluid usage of this generator prototype.
-     * @remarks
      * Applies to subclasses: Generator
-     *
      */
-    readonly fluid_usage_per_tick?: number
+    readonly fluid_usage_per_tick?: double
 
     /**
      * The fluidbox prototypes for this entity.
@@ -9983,27 +9522,21 @@ interface LuaEntityPrototype {
 
     /**
      * The flying acceleration for this rocket silo rocket prototype.
-     * @remarks
      * Applies to subclasses: RocketSiloRocket
-     *
      */
-    readonly flying_acceleration?: number
+    readonly flying_acceleration?: double
 
     /**
      * The flying speed for this rocket silo rocket prototype.
-     * @remarks
      * Applies to subclasses: RocketSiloRocket
-     *
      */
-    readonly flying_speed?: number
+    readonly flying_speed?: double
 
     /**
      * The friction of this vehicle prototype.
-     * @remarks
      * Applies to subclasses: Vehicle
-     *
      */
-    readonly friction_force?: number
+    readonly friction_force?: double
 
     /**
      * The friendly map color used when charting this entity.
@@ -10027,16 +9560,14 @@ interface LuaEntityPrototype {
 
     /**
      * Whether this unit, car, or character prototype has belt immunity.
-     * @remarks
      * Applies to subclasses: Unit,Car,Character
-     *
      */
     readonly has_belt_immunity?: boolean
 
     /**
      * Amount this entity can heal per tick, if any.
      */
-    readonly healing_per_tick?: number
+    readonly healing_per_tick?: float
 
     /**
      * The heat buffer prototype this entity uses, if any.
@@ -10050,102 +9581,78 @@ interface LuaEntityPrototype {
 
     /**
      * The height of this spider vehicle prototype.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
-    readonly height?: number
+    readonly height?: double
 
     /**
      * A vector of the gun prototypes of this car, spider vehicle, artillery wagon, or turret.
-     * @remarks
      * Applies to subclasses: Car,SpiderVehicle,ArtilleryTurret,ArtilleryWagon
-     *
      */
     readonly indexed_guns?: LuaItemPrototype[]
 
     /**
      * Every time this infinite resource 'ticks' down, it is reduced by this amount. Meaningless if this isn't an infinite resource.
-     * @remarks
      * Applies to subclasses: ResourceEntity
-     *
      */
-    readonly infinite_depletion_resource_amount?: number
+    readonly infinite_depletion_resource_amount?: uint
 
     /**
      * Whether this resource is infinite.
-     * @remarks
      * Applies to subclasses: ResourceEntity
-     *
      */
     readonly infinite_resource?: boolean
 
     /**
      * The max number of ingredients this crafting machine prototype supports.
-     * @remarks
      * Applies to subclasses: CraftingMachine
-     *
      */
-    readonly ingredient_count?: number
+    readonly ingredient_count?: uint
 
     /**
      * True if this inserter chases items on belts for pickup.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     readonly inserter_chases_belt_items?: boolean
 
     /**
      * The drop position for this inserter.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     readonly inserter_drop_position?: Vector
 
     /**
      * The extension speed of this inserter.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
-    readonly inserter_extension_speed?: number
+    readonly inserter_extension_speed?: double
 
     /**
      * The pickup position for this inserter.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     readonly inserter_pickup_position?: Vector
 
     /**
      * The rotation speed of this inserter.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
-    readonly inserter_rotation_speed?: number
+    readonly inserter_rotation_speed?: double
 
     /**
      * The built-in stack size bonus of this inserter prototype.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
-    readonly inserter_stack_size_bonus?: number
+    readonly inserter_stack_size_bonus?: uint
 
     /**
      * The instruments for this programmable speaker.
-     * @remarks
      * Applies to subclasses: ProgrammableSpeaker
-     *
      */
     readonly instruments?: ProgrammableSpeakerInstrument[]
 
     /**
-     * Everything in the following list is considered a building.
+     * These are the objects that are considered buildings:
      * 
      * - AccumulatorPrototype
      * - ArtilleryTurretPrototype
@@ -10199,26 +9706,21 @@ interface LuaEntityPrototype {
 
     /**
      * True if this entity-with-owner is military target
-     * @remarks
      * Applies to subclasses: EntityWithOwner
-     *
      */
     readonly is_military_target?: boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly item_pickup_distance?: number
+    readonly item_pickup_distance?: double
 
     /**
      * The item slot count of this constant combinator prototype.
-     * @remarks
      * Applies to subclasses: ConstantCombinator
-     *
      */
-    readonly item_slot_count?: number
+    readonly item_slot_count?: uint
 
     /**
      * Items that when placed will produce this entity, if any. Construction bots will choose the first item in the list to build this entity.
@@ -10226,43 +9728,34 @@ interface LuaEntityPrototype {
     readonly items_to_place_this?: ItemStackDefinition[]
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: RollingStock
-     *
      */
-    readonly joint_distance?: number
+    readonly joint_distance?: double
 
     /**
      * The item prototype names that are the inputs of this lab prototype.
-     * @remarks
      * Applies to subclasses: Lab
-     *
      */
     readonly lab_inputs?: string[]
 
     /**
      * The lamp energy usage of this rocket silo prototype.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
-    readonly lamp_energy_usage?: number
+    readonly lamp_energy_usage?: double
 
     /**
      * The rocket launch delay for this rocket silo prototype.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
-    readonly launch_wait_time?: number
+    readonly launch_wait_time?: uint8
 
     /**
      * The light blinking speed for this rocket silo prototype.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
-    readonly light_blinking_speed?: number
+    readonly light_blinking_speed?: double
 
     readonly localised_description: LocalisedString
 
@@ -10270,67 +9763,57 @@ interface LuaEntityPrototype {
 
     /**
      * The logistic mode of this logistic container.
-     * @remarks
      * Applies to subclasses: LogisticContainer
-     *
      */
     readonly logistic_mode?: 'requester' | 'active-provider' | 'passive-provider' | 'buffer' | 'storage' | 'none'
 
     /**
      * The logistic parameters for this roboport.
-     * @remarks
+     * 
      * Both the `charging_station_shift` and `stationing_offset` vectors are tables with `x` and `y` keys instead of an array.
      * Applies to subclasses: Roboport
-     *
      */
     readonly logistic_parameters?: {
-        charge_approach_distance: number,
-        charging_distance: number,
-        charging_energy: number,
-        charging_station_count: number,
+        charge_approach_distance: float,
+        charging_distance: float,
+        charging_energy: double,
+        charging_station_count: uint,
         charging_station_shift: Vector,
-        charging_threshold_distance: number,
-        construction_radius: number,
-        logistic_radius: number,
-        logistics_connection_distance: number,
-        robot_limit: number,
-        robot_vertical_acceleration: number,
+        charging_threshold_distance: float,
+        construction_radius: float,
+        logistic_radius: float,
+        logistics_connection_distance: float,
+        robot_limit: uint,
+        robot_vertical_acceleration: float,
         robots_shrink_when_entering_and_exiting: boolean,
-        spawn_and_station_height: number,
-        spawn_and_station_shadow_height_offset: number,
+        spawn_and_station_height: float,
+        spawn_and_station_shadow_height_offset: float,
         stationing_offset: Vector
     }
 
     /**
      * The logistic radius for this roboport prototype.
-     * @remarks
      * Applies to subclasses: Roboport
-     *
      */
-    readonly logistic_radius?: number
+    readonly logistic_radius?: double
 
     /**
      * Loot that will be dropped when this entity is killed, if any.
-     * @remarks
      * Applies to subclasses: EntityWithHealth
-     *
      */
     readonly loot?: Loot[]
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly loot_pickup_distance?: number
+    readonly loot_pickup_distance?: double
 
     /**
      * The manual range modifier for this artillery turret or wagon prototype.
-     * @remarks
      * Applies to subclasses: ArtilleryWagon,ArtilleryTurret
-     *
      */
-    readonly manual_range_modifier?: number
+    readonly manual_range_modifier?: double
 
     /**
      * The map color used when charting this entity if a friendly or enemy color isn't defined, if any.
@@ -10345,170 +9828,135 @@ interface LuaEntityPrototype {
     /**
      * The maximum circuit wire distance for this entity. 0 if the entity doesn't support circuit wires.
      */
-    readonly max_circuit_wire_distance: number
+    readonly max_circuit_wire_distance: double
 
     /**
      * Count of enemies this spawner can sustain.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
-    readonly max_count_of_owned_units?: number
+    readonly max_count_of_owned_units?: double
 
     /**
      * The maximum darkness at which this unit spawner can spawn entities.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
-    readonly max_darkness_to_spawn?: number
+    readonly max_darkness_to_spawn?: float
 
     /**
      * The radius of the area constantly revealed by this radar, in chunks.
-     * @remarks
      * Applies to subclasses: Radar
-     *
      */
-    readonly max_distance_of_nearby_sector_revealed?: number
+    readonly max_distance_of_nearby_sector_revealed?: uint
 
     /**
      * The radius of the area this radar can chart, in chunks.
-     * @remarks
      * Applies to subclasses: Radar
-     *
      */
-    readonly max_distance_of_sector_revealed?: number
+    readonly max_distance_of_sector_revealed?: uint
 
     /**
      * The max energy for this flying robot.
-     * @remarks
      * Applies to subclasses: FlyingRobot
-     *
      */
-    readonly max_energy?: number
+    readonly max_energy?: double
 
     /**
      * The theoretical maximum energy production for this this entity.
      */
-    readonly max_energy_production: number
+    readonly max_energy_production: double
 
     /**
      * The theoretical maximum energy usage for this entity.
      */
-    readonly max_energy_usage: number
+    readonly max_energy_usage: double
 
     /**
      * How many friendly units are required within the spawning_radius of this spawner for it to stop producing more units.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
-    readonly max_friends_around_to_spawn?: number
+    readonly max_friends_around_to_spawn?: double
 
     /**
      * Max health of this entity. Will be `0` if this is not an entity with health.
      */
-    readonly max_health: number
+    readonly max_health: float
 
     /**
      * The max payload size of this logistics or construction robot.
-     * @remarks
      * Applies to subclasses: RobotWithLogisticsInterface
-     *
      */
-    readonly max_payload_size?: number
+    readonly max_payload_size?: uint
 
     /**
      * The maximum polyphony for this programmable speaker.
-     * @remarks
      * Applies to subclasses: ProgrammableSpeaker
-     *
      */
-    readonly max_polyphony?: number
+    readonly max_polyphony?: uint
 
     /**
      * The default maximum power output of this generator prototype.
-     * @remarks
      * Applies to subclasses: BurnerGenerator,Generator
-     *
      */
-    readonly max_power_output?: number
+    readonly max_power_output?: double
 
     /**
      * The maximum pursue distance of this unit prototype.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
-    readonly max_pursue_distance?: number
+    readonly max_pursue_distance?: double
 
     /**
      * The max speed of this projectile or flying robot prototype.
-     * @remarks
      * Applies to subclasses: Projectile,FlyingRobot
-     *
      */
-    readonly max_speed?: number
+    readonly max_speed?: double
 
     /**
      * The maximum energy for this flying robot above which it won't try to recharge when stationing.
-     * @remarks
      * Applies to subclasses: FlyingRobot
-     *
      */
-    readonly max_to_charge?: number
+    readonly max_to_charge?: float
 
     /**
      * The max underground distance for underground belts and underground pipes.
-     * @remarks
      * Applies to subclasses: UndergroundBelt,PipeToGround
-     *
      */
-    readonly max_underground_distance?: number
+    readonly max_underground_distance?: uint8
 
     /**
      * The maximum wire distance for this entity. 0 if the entity doesn't support wires.
      */
-    readonly max_wire_distance: number
+    readonly max_wire_distance: double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly maximum_corner_sliding_distance?: number
+    readonly maximum_corner_sliding_distance?: double
 
     /**
      * The maximum fluid temperature of this generator prototype.
-     * @remarks
      * Applies to subclasses: Generator
-     *
      */
-    readonly maximum_temperature?: number
+    readonly maximum_temperature?: double
 
     /**
      * The minimum darkness at which this unit spawner can spawn entities.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
-    readonly min_darkness_to_spawn?: number
+    readonly min_darkness_to_spawn?: float
 
     /**
      * The minimum pursue time of this unit prototype.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
-    readonly min_pursue_time?: number
+    readonly min_pursue_time?: uint
 
     /**
      * The minimum energy for this flying robot before it tries to recharge.
-     * @remarks
      * Applies to subclasses: FlyingRobot
-     *
      */
-    readonly min_to_charge?: number
+    readonly min_to_charge?: float
 
     /**
      * Whether this entity is minable and what can be obtained by mining it.
@@ -10518,7 +9966,7 @@ interface LuaEntityPrototype {
         /**
          * The required fluid amount if any.
          */
-        fluid_amount?: number,
+        fluid_amount?: double,
         
         /**
          * Is this entity mineable at all?
@@ -10533,7 +9981,7 @@ interface LuaEntityPrototype {
         /**
          * Energy required to mine an entity.
          */
-        mining_time: number,
+        mining_time: double,
         
         /**
          * The mining trigger if any.
@@ -10553,38 +10001,30 @@ interface LuaEntityPrototype {
 
     /**
      * Minimum amount of this resource.
-     * @remarks
      * Applies to subclasses: ResourceEntity
-     *
      */
-    readonly minimum_resource_amount?: number
+    readonly minimum_resource_amount?: uint
 
     /**
      * The mining radius of this mining drill prototype.
-     * @remarks
      * Applies to subclasses: MiningDrill
-     *
      */
-    readonly mining_drill_radius?: number
+    readonly mining_drill_radius?: double
 
     /**
      * The mining speed of this mining drill/character prototype.
-     * @remarks
      * Applies to subclasses: MiningDrill,Character
-     *
      */
-    readonly mining_speed?: number
+    readonly mining_speed?: double
 
     /**
      * The module inventory size. `nil` if this entity doesn't support modules.
      */
-    readonly module_inventory_size?: number
+    readonly module_inventory_size?: uint
 
     /**
      * Whether this unit prototype can move while shooting.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
     readonly move_while_shooting?: boolean
 
@@ -10594,11 +10034,10 @@ interface LuaEntityPrototype {
     readonly name: string
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Reactor
-     *
      */
-    readonly neighbour_bonus?: number
+    readonly neighbour_bonus?: double
 
     /**
      * The next upgrade for this entity, if any.
@@ -10607,11 +10046,9 @@ interface LuaEntityPrototype {
 
     /**
      * The normal amount for this resource.
-     * @remarks
      * Applies to subclasses: ResourceEntity
-     *
      */
-    readonly normal_resource_amount?: number
+    readonly normal_resource_amount?: uint
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -10625,11 +10062,9 @@ interface LuaEntityPrototype {
 
     /**
      * The amount of pollution that has to be absorbed by the unit's spawner before the unit will leave the spawner and attack the source of the pollution.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
-    readonly pollution_to_join_attack?: number
+    readonly pollution_to_join_attack?: float
 
     /**
      * True if this entity prototype should be included during tile collision checks with {@link LuaTilePrototype::check_collision_with_entities | runtime:LuaTilePrototype::check_collision_with_entities} enabled.
@@ -10638,45 +10073,38 @@ interface LuaEntityPrototype {
 
     /**
      * The pumping speed of this offshore or normal pump.
-     * @remarks
      * Applies to subclasses: OffshorePump,Pump
-     *
      */
-    readonly pumping_speed?: number
+    readonly pumping_speed?: double
 
     /**
      * The radar range of this unit prototype.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
-    readonly radar_range?: number
+    readonly radar_range?: uint
 
     /**
      * The radius of this entity prototype.
      */
-    readonly radius: number
+    readonly radius: double
 
     readonly radius_visualisation_specification?: RadiusVisualisationSpecification
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly reach_distance?: number
+    readonly reach_distance?: uint
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly reach_resource_distance?: number
+    readonly reach_resource_distance?: double
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: TransportBelt
-     *
      */
     readonly related_underground_belt?: LuaEntityPrototype
 
@@ -10686,120 +10114,95 @@ interface LuaEntityPrototype {
     readonly remains_when_mined: LuaEntityPrototype[]
 
     /**
-     * Whether this entity should remove decoratives that collide with it when this entity is built. Possible values are `"automatic"`, `"true"` and `"false"`.
+     * Whether this entity should remove decoratives that collide with it when this entity is built.
      */
-    readonly remove_decoratives: string
+    readonly remove_decoratives: 'automatic' | 'true' | 'false'
 
     /**
      * Repair-speed modifier for this entity, if any. Actual repair speed will be `tool_repair_speed * entity_repair_speed_modifier`.
-     * @remarks
      * Applies to subclasses: EntityWithHealth
-     *
      */
-    readonly repair_speed_modifier?: number
+    readonly repair_speed_modifier?: uint
 
     /**
      * The base researching speed of this lab prototype.
-     * @remarks
      * Applies to subclasses: Lab
-     *
      */
-    readonly researching_speed?: number
+    readonly researching_speed?: double
 
     /**
      * List of resistances towards each damage type. It is a dictionary indexed by damage type names (see `data/base/prototypes/damage-type.lua`).
-     * @remarks
      * Applies to subclasses: EntityWithHealth
-     *
      */
     readonly resistances?: {[key: string]: Resistance}
 
     /**
      * The {@link resource categories | runtime:LuaResourceCategoryPrototype} this character or mining drill supports.
-     * @remarks
+     * 
      * The value in the dictionary is meaningless and exists just to allow for easy lookup.
      * Applies to subclasses: MiningDrill,Character
-     *
      */
-    readonly resource_categories?: {[key: string]: boolean}
+    readonly resource_categories?: {[key: string]: true}
 
     /**
      * Name of the category of this resource.
-     * @remarks
+     * 
      * During data stage, this property is named "category".
      * Applies to subclasses: ResourceEntity
-     *
      */
     readonly resource_category?: string
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly respawn_time?: number
+    readonly respawn_time?: uint
 
     /**
      * The result units and spawn points with weight and evolution factor for a biter spawner entity.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
     readonly result_units?: UnitSpawnDefinition[]
 
     /**
      * The rising speed for this rocket silo rocket prototype.
-     * @remarks
      * Applies to subclasses: RocketSiloRocket
-     *
      */
-    readonly rising_speed?: number
+    readonly rising_speed?: double
 
     /**
      * The rocket entity prototype associated with this rocket silo prototype.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
     readonly rocket_entity_prototype?: LuaEntityPrototype
 
     /**
      * The rocket parts required for this rocket silo prototype.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
-    readonly rocket_parts_required?: number
+    readonly rocket_parts_required?: uint
 
     /**
      * The rocket rising delay for this rocket silo prototype.
-     * @remarks
      * Applies to subclasses: RocketSilo
-     *
      */
-    readonly rocket_rising_delay?: number
+    readonly rocket_rising_delay?: uint8
 
     /**
      * The rotation speed of this car prototype.
-     * @remarks
      * Applies to subclasses: Car
-     *
      */
-    readonly rotation_speed?: number
+    readonly rotation_speed?: double
 
     /**
      * The current movement speed of this character, including effects from exoskeletons, tiles, stickers and shooting.
-     * @remarks
      * Applies to subclasses: Character
-     *
      */
-    readonly running_speed?: number
+    readonly running_speed?: double
 
     /**
      * Whether this generator prototype scales fluid usage.
-     * @remarks
      * Applies to subclasses: Generator
-     *
      */
     readonly scale_fluid_usage?: boolean
 
@@ -10821,83 +10224,67 @@ interface LuaEntityPrototype {
     /**
      * The selection priority of this entity - a value between 0 and 255
      */
-    readonly selection_priority: number
+    readonly selection_priority: uint
 
     /**
      * The cursor size used when shooting at this entity.
      */
-    readonly shooting_cursor_size: number
+    readonly shooting_cursor_size: float
 
     /**
      * The spawning cooldown for this enemy spawner prototype.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
     readonly spawn_cooldown?: {
-        max: number,
-        min: number
+        max: double,
+        min: double
     }
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Spawner,Turret
-     *
      */
     readonly spawn_decoration?: TriggerEffectItem[]
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Spawner,Turret
-     *
      */
     readonly spawn_decorations_on_expansion?: boolean
 
     /**
      * How far from the spawner can the units be spawned.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
-    readonly spawning_radius?: number
+    readonly spawning_radius?: double
 
     /**
      * What spaces should be between the spawned units.
-     * @remarks
      * Applies to subclasses: Spawner
-     *
      */
-    readonly spawning_spacing?: number
+    readonly spawning_spacing?: double
 
     /**
      * The spawning time modifier of this unit prototype.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
-    readonly spawning_time_modifier?: number
+    readonly spawning_time_modifier?: double
 
     /**
      * The default speed of this flying robot, rolling stock or unit. For rolling stocks, this is their `max_speed`.
-     * @remarks
      * Applies to subclasses: FlyingRobot,RollingStock,Unit
-     *
      */
-    readonly speed?: number
+    readonly speed?: double
 
     /**
      * The speed multiplier when this flying robot is out of energy.
-     * @remarks
      * Applies to subclasses: FlyingRobot
-     *
      */
-    readonly speed_multiplier_when_out_of_energy?: number
+    readonly speed_multiplier_when_out_of_energy?: float
 
     /**
      * Whether this inserter is a stack-type.
-     * @remarks
      * Applies to subclasses: Inserter
-     *
      */
     readonly stack?: boolean
 
@@ -10913,11 +10300,9 @@ interface LuaEntityPrototype {
 
     /**
      * The supply area of this electric pole or beacon prototype.
-     * @remarks
      * Applies to subclasses: ElectricPole,Beacon
-     *
      */
-    readonly supply_area_distance?: number
+    readonly supply_area_distance?: double
 
     /**
      * Whether this entity prototype could possibly ever be rotated.
@@ -10926,119 +10311,96 @@ interface LuaEntityPrototype {
 
     /**
      * If this car prototype uses tank controls to drive.
-     * @remarks
      * Applies to subclasses: Car
-     *
      */
     readonly tank_driving?: boolean
 
     /**
      * The target temperature of this boiler prototype.
-     * @remarks
      * Applies to subclasses: Boiler
-     *
      */
-    readonly target_temperature?: number
+    readonly target_temperature?: double
 
     /**
      * The terrain friction modifier for this vehicle.
-     * @remarks
      * Applies to subclasses: Vehicle
-     *
      */
-    readonly terrain_friction_modifier?: number
+    readonly terrain_friction_modifier?: float
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly ticks_to_keep_aiming_direction?: number
+    readonly ticks_to_keep_aiming_direction?: uint
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly ticks_to_keep_gun?: number
+    readonly ticks_to_keep_gun?: uint
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: Character
-     *
      */
-    readonly ticks_to_stay_in_combat?: number
+    readonly ticks_to_stay_in_combat?: uint
 
     /**
      * Specifies the tiling size of the entity, is used to decide, if the center should be in the center of the tile (odd tile size dimension) or on the tile border (even tile size dimension)
      */
-    readonly tile_height: number
+    readonly tile_height: uint
 
     /**
      * Specifies the tiling size of the entity, is used to decide, if the center should be in the center of the tile (odd tile size dimension) or on the tile border (even tile size dimension)
      */
-    readonly tile_width: number
+    readonly tile_width: uint
 
     /**
      * The time to live for this prototype or `0` if prototype doesn't have time_to_live or time_before_removed.
      */
-    readonly time_to_live: number
+    readonly time_to_live: uint
 
     /**
      * The time it takes this land mine to arm.
-     * @remarks
      * Applies to subclasses: LandMine
-     *
      */
-    readonly timeout?: number
+    readonly timeout?: uint
 
     /**
      * The torso bob speed of this spider vehicle prototype.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
-    readonly torso_bob_speed?: number
+    readonly torso_bob_speed?: double
 
     /**
      * The torso rotation speed of this spider vehicle prototype.
-     * @remarks
      * Applies to subclasses: SpiderVehicle
-     *
      */
-    readonly torso_rotation_speed?: number
+    readonly torso_rotation_speed?: double
 
     /**
      * If it is a tree, return the number of colors it supports.
-     * @remarks
      * Applies to subclasses: Tree
-     *
      */
-    readonly tree_color_count?: number
+    readonly tree_color_count?: uint8
 
     /**
      * The collision mask entities must collide with to make this landmine blow up.
-     * @remarks
      * Applies to subclasses: LandMine
-     *
      */
     readonly trigger_collision_mask?: CollisionMaskWithFlags
 
     /**
      * The range of this turret.
-     * @remarks
      * Applies to subclasses: Turret
-     *
      */
-    readonly turret_range?: number
+    readonly turret_range?: uint
 
     /**
      * The turret rotation speed of this car prototype.
-     * @remarks
      * Applies to subclasses: Car
-     *
      */
-    readonly turret_rotation_speed?: number
+    readonly turret_rotation_speed?: float
 
     /**
      * Type of this prototype.
@@ -11047,9 +10409,7 @@ interface LuaEntityPrototype {
 
     /**
      * Whether this logistic container prototype uses exact mode
-     * @remarks
      * Applies to subclasses: LogisticContainer
-     *
      */
     readonly use_exact_mode?: boolean
 
@@ -11059,27 +10419,22 @@ interface LuaEntityPrototype {
     readonly valid: boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: MiningDrill
-     *
      */
     readonly vector_to_place_result?: Vector
 
     /**
      * Vertical selection shift used by rolling stocks. It affects selection box vertical position but is also used to shift rolling stock graphics along the rails to fine tune train's look.
-     * @remarks
      * Applies to subclasses: RollingStock
-     *
      */
-    readonly vertical_selection_shift?: number
+    readonly vertical_selection_shift?: double
 
     /**
      * The vision distance of this unit prototype.
-     * @remarks
      * Applies to subclasses: Unit
-     *
      */
-    readonly vision_distance?: number
+    readonly vision_distance?: double
 
     /**
      * The void energy source prototype this entity uses, if any.
@@ -11088,11 +10443,9 @@ interface LuaEntityPrototype {
 
     /**
      * The weight of this vehicle prototype.
-     * @remarks
      * Applies to subclasses: Vehicle
-     *
      */
-    readonly weight?: number
+    readonly weight?: double
 
 }
 
@@ -11115,32 +10468,32 @@ interface LuaEquipment {
     /**
      * Current available energy.
      */
-    energy: number
+    energy: double
 
     /**
      * Energy generated per tick.
      */
-    readonly generator_power: number
+    readonly generator_power: double
 
     /**
      * Maximum amount of energy that can be stored in this equipment.
      */
-    readonly max_energy: number
+    readonly max_energy: double
 
     /**
      * Maximum shield value.
      */
-    readonly max_shield: number
+    readonly max_shield: double
 
     /**
      * Maximum solar power generated.
      */
-    readonly max_solar_power: number
+    readonly max_solar_power: double
 
     /**
      * Movement speed bonus.
      */
-    readonly movement_bonus: number
+    readonly movement_bonus: double
 
     /**
      * Name of this equipment.
@@ -11163,17 +10516,16 @@ interface LuaEquipment {
      * Shape of this equipment.
      */
     readonly shape: {
-        height: number,
-        width: number
+        height: uint,
+        width: uint
     }
 
     /**
      * Current shield value of the equipment.
-     * @remarks
+     * 
      * Can't be set higher than {@link LuaEquipment::max_shield | runtime:LuaEquipment::max_shield}.
-     *
      */
-    shield: number
+    shield: double
 
     /**
      * Type of this equipment.
@@ -11249,7 +10601,7 @@ interface LuaEquipmentGrid {
      * @param equipment - Prototype name of the equipment to count. If not specified, count all equipment.
      */
     count(this: void,
-        equipment?: string): number
+        equipment?: string): uint
 
     /**
      * Find equipment by name.
@@ -11271,7 +10623,7 @@ interface LuaEquipmentGrid {
      * Get counts of all equipment in this grid.
      * @returns The counts, indexed by equipment names.
      */
-    get_contents(this: void): {[key: string]: number}
+    get_contents(this: void): {[key: string]: uint}
 
     /**
      * All methods and properties that this object supports.
@@ -11324,17 +10676,17 @@ interface LuaEquipmentGrid {
      * @returns Count of each removed equipment, indexed by their prototype names.
      */
     take_all(this: void,
-        by_player?: PlayerIdentification): {[key: string]: number}
+        by_player?: PlayerIdentification): {[key: string]: uint}
 
     /**
      * The total energy stored in all batteries in the equipment grid.
      */
-    readonly available_in_batteries: number
+    readonly available_in_batteries: double
 
     /**
      * Total energy storage capacity of all batteries in the equipment grid.
      */
-    readonly battery_capacity: number
+    readonly battery_capacity: double
 
     /**
      * All the equipment in this grid.
@@ -11344,12 +10696,12 @@ interface LuaEquipmentGrid {
     /**
      * Total energy per tick generated by the equipment inside this grid.
      */
-    readonly generator_energy: number
+    readonly generator_energy: double
 
     /**
      * Height of the equipment grid.
      */
-    readonly height: number
+    readonly height: uint
 
     /**
      * Whether this grid's equipment movement bonus is active.
@@ -11359,12 +10711,12 @@ interface LuaEquipmentGrid {
     /**
      * The maximum amount of shields this equipment grid has.
      */
-    readonly max_shield: number
+    readonly max_shield: float
 
     /**
      * Maximum energy per tick that can be created by any solar panels in the equipment grid. Actual generated energy varies depending on the daylight levels.
      */
-    readonly max_solar_energy: number
+    readonly max_solar_energy: double
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -11376,12 +10728,12 @@ interface LuaEquipmentGrid {
     /**
      * The amount of shields this equipment grid has.
      */
-    readonly shield: number
+    readonly shield: float
 
     /**
      * Unique identifier of this equipment grid.
      */
-    readonly unique_id: number
+    readonly unique_id: uint
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -11391,7 +10743,7 @@ interface LuaEquipmentGrid {
     /**
      * Width of the equipment grid.
      */
-    readonly width: number
+    readonly width: uint
 
 }
 
@@ -11409,7 +10761,7 @@ interface LuaEquipmentGridPrototype {
      */
     readonly equipment_categories: string[]
 
-    readonly height: number
+    readonly height: uint
 
     readonly localised_description: LocalisedString
 
@@ -11440,7 +10792,7 @@ interface LuaEquipmentGridPrototype {
      */
     readonly valid: boolean
 
-    readonly width: number
+    readonly width: uint
 
 }
 
@@ -11455,9 +10807,7 @@ interface LuaEquipmentPrototype {
 
     /**
      * The equipment attack parameters.
-     * @remarks
      * Applies to subclasses: ActiveDefenseEquipment
-     *
      */
     readonly attack_parameters?: AttackParameters
 
@@ -11481,17 +10831,17 @@ interface LuaEquipmentPrototype {
      */
     readonly electric_energy_source_prototype?: LuaElectricEnergySourcePrototype
 
-    readonly energy_consumption: number
+    readonly energy_consumption: double
 
     /**
      * The energy per shield point restored. 0 for non-shield equipment.
      */
-    readonly energy_per_shield: number
+    readonly energy_per_shield: double
 
     /**
      * The max power generated by this equipment.
      */
-    readonly energy_production: number
+    readonly energy_production: double
 
     /**
      * The energy source prototype for the equipment.
@@ -11509,35 +10859,33 @@ interface LuaEquipmentPrototype {
 
     /**
      * The logistic parameters for this roboport equipment.
-     * @remarks
+     * 
      * Both the `charging_station_shift` and `stationing_offset` vectors are tables with `x` and `y` keys instead of an array.
      * Applies to subclasses: RoboportEquipment
-     *
      */
     readonly logistic_parameters?: {
-        charge_approach_distance: number,
-        charging_distance: number,
-        charging_energy: number,
-        charging_station_count: number,
+        charge_approach_distance: float,
+        charging_distance: float,
+        charging_energy: double,
+        charging_station_count: uint,
         charging_station_shift: Vector,
-        charging_threshold_distance: number,
-        construction_radius: number,
-        logistic_radius: number,
-        logistics_connection_distance: number,
-        robot_limit: number,
-        robot_vertical_acceleration: number,
+        charging_threshold_distance: float,
+        construction_radius: float,
+        logistic_radius: float,
+        logistics_connection_distance: float,
+        robot_limit: uint,
+        robot_vertical_acceleration: float,
         robots_shrink_when_entering_and_exiting: boolean,
-        spawn_and_station_height: number,
-        spawn_and_station_shadow_height_offset: number,
+        spawn_and_station_height: float,
+        spawn_and_station_shadow_height_offset: float,
         stationing_offset: Vector
     }
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: MovementBonusEquipment
-     *
      */
-    readonly movement_bonus?: number
+    readonly movement_bonus?: float
 
     /**
      * Name of this prototype.
@@ -11558,19 +10906,19 @@ interface LuaEquipmentPrototype {
      * Shape of this equipment prototype.
      */
     readonly shape: {
-        height: number,
+        height: uint,
         
         /**
          * Only set when the shape is "manual"
          */
         points?: EquipmentPoint[],
-        width: number
+        width: uint
     }
 
     /**
      * The shield value of this equipment. 0 for non-shield equipment.
      */
-    readonly shield: number
+    readonly shield: float
 
     /**
      * The result item when taking this equipment out of an equipment grid, if any.
@@ -11590,11 +10938,14 @@ interface LuaEquipmentPrototype {
 }
 
 /**
- * Encapsulates statistic data for different parts of the game. In the context of flow statistics, `input` and `output` describe on which side of the associated GUI the values are shown. Input values are shown on the left side, output values on the right side.
+ * Encapsulates statistic data for different parts of the game.
  * 
- * Examples:
+ * In the context of flow statistics, `input` and `output` describe on which side of the associated GUI the values are shown. Input values are shown on the left side, output values on the right side.
+ * 
  * - The item production GUI shows "consumption" on the right, thus `output` describes the item consumption numbers. The same goes for fluid consumption.
+ * 
  * - The kills GUI shows "losses" on the right, so `output` describes how many of the force's entities were killed by enemies.
+ * 
  * - The electric network GUI shows "power consumption" on the left side, so in this case `input` describes the power consumption numbers.
  */
 interface LuaFlowStatistics {
@@ -11620,23 +10971,23 @@ interface LuaFlowStatistics {
             name: string,
             input: boolean,
             precision_index: defines.flow_precision_index,
-            sample_index?: number,
+            sample_index?: uint16,
             count?: boolean
-        }): number
+        }): double
 
     /**
      * Gets the total input count for a given prototype.
      * @param name - The prototype name.
      */
     get_input_count(this: void,
-        name: string): number
+        name: string): uint64 | double
 
     /**
      * Gets the total output count for a given prototype.
      * @param name - The prototype name.
      */
     get_output_count(this: void,
-        name: string): number
+        name: string): uint64 | double
 
     /**
      * All methods and properties that this object supports.
@@ -11650,7 +11001,7 @@ interface LuaFlowStatistics {
      */
     on_flow(this: void,
         name: string,
-        count: number): void
+        count: float): void
 
     /**
      * Sets the total input count for a given prototype.
@@ -11659,7 +11010,7 @@ interface LuaFlowStatistics {
      */
     set_input_count(this: void,
         name: string,
-        count: number): void
+        count: uint64 | double): void
 
     /**
      * Sets the total output count for a given prototype.
@@ -11668,7 +11019,7 @@ interface LuaFlowStatistics {
      */
     set_output_count(this: void,
         name: string,
-        count: number): void
+        count: uint64 | double): void
 
     /**
      * The force these statistics belong to. `nil` for pollution statistics.
@@ -11678,7 +11029,7 @@ interface LuaFlowStatistics {
     /**
      * List of input counts indexed by prototype name. Represents the data that is shown on the left side of the GUI for the given statistics.
      */
-    readonly input_counts: {[key: string]: number}
+    readonly input_counts: {[key: string]: uint64 | double}
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -11688,7 +11039,7 @@ interface LuaFlowStatistics {
     /**
      * List of output counts indexed by prototype name. Represents the data that is shown on the right side of the GUI for the given statistics.
      */
-    readonly output_counts: {[key: string]: number}
+    readonly output_counts: {[key: string]: uint64 | double}
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -11702,8 +11053,8 @@ interface LuaFlowStatistics {
  * 
  * Do note that reading from a {@link LuaFluidBox | runtime:LuaFluidBox} creates a new table and writing will copy the given fields from the table into the engine's own fluid box structure. Therefore, the correct way to update a fluidbox of an entity is to read it first, modify the table, then write the modified table back. Directly accessing the returned table's attributes won't have the desired effect.
  * @example
- * Double the temperature of the fluid in `entity`'s first fluid box. 
  * ```
+ * -- Double the temperature of the fluid in entity's first fluid box.
  * fluid = entity.fluidbox[1]
  * fluid.temperature = fluid.temperature * 2
  * entity.fluidbox[1] = fluid
@@ -11717,20 +11068,20 @@ interface LuaFluidBox {
      * @returns The removed fluid.
      */
     flush(this: void,
-        index: number,
-        fluid?: FluidIdentification): {[key: string]: number}
+        index: uint,
+        fluid?: FluidIdentification): {[key: string]: float}
 
     /**
      * The capacity of the given fluidbox index.
      */
     get_capacity(this: void,
-        index: number): number
+        index: uint): double
 
     /**
      * The fluidboxes to which the fluidbox at the given index is connected.
      */
     get_connections(this: void,
-        index: number): LuaFluidBox[]
+        index: uint): LuaFluidBox[]
 
     /**
      * Get a fluid box filter
@@ -11738,48 +11089,47 @@ interface LuaFluidBox {
      * @returns The filter at the requested index, or `nil` if there isn't one.
      */
     get_filter(this: void,
-        index: number): FluidBoxFilter | null
+        index: uint): FluidBoxFilter | null
 
     /**
      * Flow through the fluidbox in the last tick. It is the larger of in-flow and out-flow.
-     * @remarks
+     * 
      * Fluid wagons do not track it and will return 0.
-     *
      */
     get_flow(this: void,
-        index: number): number
+        index: uint): double
 
     /**
      * Gets counts of all fluids in the fluid system. May return `nil` for fluid wagon, fluid turret's internal buffer, or a fluidbox which does not belong to a fluid system.
      * @returns The counts, indexed by fluid name.
      */
     get_fluid_system_contents(this: void,
-        index: number): {[key: string]: number} | null
+        index: uint): {[key: string]: uint} | null
 
     /**
      * Gets unique fluid system identifier of selected fluid box. May return nil for fluid wagon, fluid turret's internal buffer or a fluidbox which does not belong to a fluid system
      */
     get_fluid_system_id(this: void,
-        index: number): number | null
+        index: uint): uint | null
 
     /**
-     * Returns the fluid the fluidbox is locked onto
+     * Returns the fluid the fluidbox is locked onto.
      * @returns `nil` if the fluidbox is not locked to any fluid.
      */
     get_locked_fluid(this: void,
-        index: number): string | null
+        index: uint): string | null
 
     /**
      * Get the fluid box's connections and associated data.
      */
     get_pipe_connections(this: void,
-        index: number): PipeConnection[]
+        index: uint): PipeConnection[]
 
     /**
      * The prototype of this fluidbox index. If this is used on a fluidbox of a crafting machine which due to recipe was created by merging multiple prototypes, a table of prototypes that were merged will be returned instead
      */
     get_prototype(this: void,
-        index: number): LuaFluidBoxPrototype | LuaFluidBoxPrototype[]
+        index: uint): LuaFluidBoxPrototype | LuaFluidBoxPrototype[]
 
     /**
      * All methods and properties that this object supports.
@@ -11788,16 +11138,15 @@ interface LuaFluidBox {
 
     /**
      * Set a fluid box filter.
-     * @remarks
+     * 
      * Some entities cannot have their fluidbox filter set, notably fluid wagons and crafting machines.
-     *
      * @param filter - The filter to set. Setting `nil` clears the filter.
      * @param index - The index of the filter to set.
      * @returns Whether the filter was set successfully.
      */
     set_filter(this: void,
-        index: number,
-        filter: FluidBoxFilterSpec | null): boolean
+        index: uint,
+        filter: FluidBoxFilterSpec | nil): boolean
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -11818,16 +11167,14 @@ interface LuaFluidBox {
      * Access, set or clear a fluid box. The index must always be in bounds (see {@link LuaFluidBox::length_operator | runtime:LuaFluidBox::length_operator}). New fluidboxes may not be added or removed using this operator.
      * 
      * Is `nil` if the given fluid box does not contain any fluid. Writing `nil` removes all fluid from the fluid box.
-     * @remarks
      * This will return a {@link Fluid | Fluid}. The return type is any due to typescript limitations.
-     *
      */
     readonly [key: string]: any
 
     /**
      * Number of fluid boxes.
      */
-    readonly '#': number
+    readonly '#': uint
 
 }
 
@@ -11840,9 +11187,9 @@ interface LuaFluidBoxPrototype {
      */
     help(this: void): string
 
-    readonly base_area: number
+    readonly base_area: double
 
-    readonly base_level: number
+    readonly base_level: float
 
     /**
      * The entity that this belongs to.
@@ -11854,22 +11201,22 @@ interface LuaFluidBoxPrototype {
      */
     readonly filter?: LuaFluidPrototype
 
-    readonly height: number
+    readonly height: double
 
     /**
      * The index of this fluidbox prototype in the owning entity.
      */
-    readonly index: number
+    readonly index: uint
 
     /**
      * The maximum temperature, if any is set.
      */
-    readonly maximum_temperature?: number
+    readonly maximum_temperature?: double
 
     /**
      * The minimum temperature, if any is set.
      */
-    readonly minimum_temperature?: number
+    readonly minimum_temperature?: double
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -11894,14 +11241,14 @@ interface LuaFluidBoxPrototype {
     /**
      * The secondary draw orders for the 4 possible connection directions.
      */
-    readonly secondary_draw_orders: number[]
+    readonly secondary_draw_orders: int[]
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean
 
-    readonly volume: number
+    readonly volume: double
 
 }
 
@@ -11918,21 +11265,21 @@ interface LuaFluidEnergySourcePrototype {
 
     readonly destroy_non_fuel_fluid: boolean
 
-    readonly effectivity: number
+    readonly effectivity: double
 
     /**
      * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
      */
-    readonly emissions: number
+    readonly emissions: double
 
     /**
      * The fluid box for this energy source.
      */
     readonly fluid_box: LuaFluidBoxPrototype
 
-    readonly fluid_usage_per_tick: number
+    readonly fluid_usage_per_tick: double
 
-    readonly maximum_temperature: number
+    readonly maximum_temperature: double
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -11971,24 +11318,24 @@ interface LuaFluidPrototype {
     /**
      * Default temperature of this fluid.
      */
-    readonly default_temperature: number
+    readonly default_temperature: double
 
     /**
      * A multiplier on the amount of emissions produced when this fluid is burnt in a generator. A value above `1.0` increases emissions and vice versa. The multiplier can't be negative.
      */
-    readonly emissions_multiplier: number
+    readonly emissions_multiplier: double
 
     readonly flow_color: Color
 
     /**
      * The amount of energy in Joules one unit of this fluid will produce when burnt in a generator. A value of `0` means this fluid can't be used for energy generation. The value can't be negative.
      */
-    readonly fuel_value: number
+    readonly fuel_value: double
 
     /**
      * The temperature above which this fluid will be shown as gaseous inside tanks and pipes.
      */
-    readonly gas_temperature: number
+    readonly gas_temperature: double
 
     /**
      * Group of this prototype.
@@ -11998,7 +11345,7 @@ interface LuaFluidPrototype {
     /**
      * The amount of energy in Joules required to heat one unit of this fluid by 1°C.
      */
-    readonly heat_capacity: number
+    readonly heat_capacity: double
 
     /**
      * Whether this fluid is hidden from the fluid and signal selectors.
@@ -12012,7 +11359,7 @@ interface LuaFluidPrototype {
     /**
      * Maximum temperature this fluid can reach.
      */
-    readonly max_temperature: number
+    readonly max_temperature: double
 
     /**
      * Name of this prototype.
@@ -12071,9 +11418,9 @@ interface LuaFontPrototype {
      */
     readonly object_name: string
 
-    readonly size: number
+    readonly size: int
 
-    readonly spacing: number
+    readonly spacing: float
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -12088,9 +11435,8 @@ interface LuaFontPrototype {
 interface LuaForce {
     /**
      * Adds a custom chart tag to the given surface and returns the new tag or `nil` if the given position isn't valid for a chart tag.
-     * @remarks
+     * 
      * The chunk must be charted for a tag to be valid at that location.
-     *
      * @param surface - Which surface to add the tag to.
      * @param tag - The tag to add.
      */
@@ -12120,8 +11466,8 @@ interface LuaForce {
      * Chart a portion of the map. The chart for the given area is refreshed; it creates chart for any parts of the given area that haven't been charted yet.
      * @param area - The area on the given surface to chart.
      * @example
-     * Charts a 2048x2048 rectangle centered around the origin. 
      * ```
+     * -- Charts a 2048x2048 rectangle centered around the origin.
      * game.player.force.chart(game.player.surface, {{x = -1024, y = -1024}, {x = 1024, y = 1024}})
      * ```
      *
@@ -12155,7 +11501,7 @@ interface LuaForce {
     disable_research(this: void): void
 
     /**
-     * Enables all recipes and technologies. The opposite of {@link LuaForce::disable_all_prototypes | runtime:LuaForce::disable_all_prototypes}
+     * Enables all recipes and technologies. The opposite of {@link LuaForce::disable_all_prototypes | runtime:LuaForce::disable_all_prototypes}.
      */
     enable_all_prototypes(this: void): void
 
@@ -12194,7 +11540,7 @@ interface LuaForce {
      * @param ammo - Ammo category
      */
     get_ammo_damage_modifier(this: void,
-        ammo: string): number
+        ammo: string): double
 
     /**
      * Is `other` force in this force's cease fire list?
@@ -12204,14 +11550,13 @@ interface LuaForce {
 
     /**
      * Count entities of given type.
-     * @remarks
+     * 
      * This function has O(1) time complexity as entity counts are kept and maintained in the game engine.
-     *
      * @param name - Prototype name of the entity.
      * @returns Number of entities of given prototype belonging to this force.
      */
     get_entity_count(this: void,
-        name: string): number
+        name: string): uint
 
     /**
      * Is `other` force in this force's friends list.
@@ -12223,7 +11568,7 @@ interface LuaForce {
      * @param ammo - Ammo category
      */
     get_gun_speed_modifier(this: void,
-        ammo: string): number
+        ammo: string): double
 
     /**
      * Gets if the given recipe is explicitly disabled from being hand crafted.
@@ -12237,14 +11582,14 @@ interface LuaForce {
      * @returns The count of the item that has been launched.
      */
     get_item_launched(this: void,
-        item: string): number
+        item: string): uint
 
     /**
      * Gets the linked inventory for the given prototype and link ID if it exists or `nil`.
      */
     get_linked_inventory(this: void,
         prototype: EntityPrototypeIdentification,
-        link_id: number): LuaInventory | null
+        link_id: uint): LuaInventory | null
 
     /**
      * Gets the saved progress for the given technology or `nil` if there is no saved progress.
@@ -12252,7 +11597,7 @@ interface LuaForce {
      * @returns The progress as a percent.
      */
     get_saved_technology_progress(this: void,
-        technology: TechnologyIdentification): number | null
+        technology: TechnologyIdentification): double | null
 
     get_spawn_position(this: void,
         surface: SurfaceIdentification): MapPosition
@@ -12263,7 +11608,7 @@ interface LuaForce {
      * @param table.surface - The surface to search. Not providing a surface will match stops on any surface.
      */
     get_train_stops(this: void,
-        table?: {
+        table: {
             name?: string | string[],
             surface?: SurfaceIdentification
         }): LuaEntity[]
@@ -12278,7 +11623,7 @@ interface LuaForce {
      * @param turret - Turret prototype name
      */
     get_turret_attack_modifier(this: void,
-        turret: string): number
+        turret: string): double
 
     /**
      * All methods and properties that this object supports.
@@ -12332,9 +11677,8 @@ interface LuaForce {
 
     /**
      * Play a sound for every player in this force.
-     * @remarks
+     * 
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for this force.
-     *
      * @param table.override_sound_type - The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      * @param table.path - The sound to play.
      * @param table.position - Where the sound should be played. If not given, it's played at the current position of each player.
@@ -12344,15 +11688,14 @@ interface LuaForce {
         table: {
             path: SoundPath,
             position?: MapPosition,
-            volume_modifier?: number,
+            volume_modifier?: double,
             override_sound_type?: SoundType
         }): void
 
     /**
      * Print text to the chat console of all players on this force.
-     * @remarks
+     * 
      * By default, messages that are identical to a message sent in the last 60 ticks are not printed again.
-     *
      */
     print(this: void,
         message: LocalisedString,
@@ -12402,7 +11745,7 @@ interface LuaForce {
      */
     set_ammo_damage_modifier(this: void,
         ammo: string,
-        modifier: number): void
+        modifier: double): void
 
     /**
      * Add `other` force to this force's cease fire list. Forces on the cease fire list won't be targeted for attack.
@@ -12423,7 +11766,7 @@ interface LuaForce {
      */
     set_gun_speed_modifier(this: void,
         ammo: string,
-        modifier: number): void
+        modifier: double): void
 
     /**
      * Sets if the given recipe can be hand-crafted. This is used to explicitly disable hand crafting a recipe - it won't allow hand-crafting otherwise not hand-craftable recipes.
@@ -12439,7 +11782,7 @@ interface LuaForce {
      */
     set_item_launched(this: void,
         item: string,
-        count: number): void
+        count: uint): void
 
     /**
      * Sets the saved progress for the given technology. The technology must not be in progress, must not be completed, and the new progress must be < 100%.
@@ -12448,7 +11791,7 @@ interface LuaForce {
      */
     set_saved_technology_progress(this: void,
         technology: TechnologyIdentification,
-        progress: number): void
+        progress: double): void
 
     /**
      * @param position - The new position on the given surface.
@@ -12463,7 +11806,7 @@ interface LuaForce {
      */
     set_turret_attack_modifier(this: void,
         turret: string,
-        modifier: number): void
+        modifier: double): void
 
     /**
      * @param position - The chunk position to unchart.
@@ -12475,48 +11818,48 @@ interface LuaForce {
 
     /**
      * Enables some higher-level AI behaviour for this force. When set to `true`, biters belonging to this force will automatically expand into new territories, build new spawners, and form unit groups. By default, this value is `true` for the enemy force and `false` for all others.
-     * @remarks
+     * 
      * Setting this to `false` does not turn off biters' AI. They will still move around and attack players who come close.
+     * 
      * It is necessary for a force to be AI controllable in order to be able to create unit groups or build bases from scripts.
-     *
      */
     ai_controllable: boolean
 
-    artillery_range_modifier: number
+    artillery_range_modifier: double
 
-    character_build_distance_bonus: number
+    character_build_distance_bonus: uint
 
-    character_health_bonus: number
+    character_health_bonus: double
 
     /**
-     * the number of additional inventory slots the character main inventory has.
+     * The number of additional inventory slots the character main inventory has.
      */
-    character_inventory_slots_bonus: number
+    character_inventory_slots_bonus: uint
 
-    character_item_drop_distance_bonus: number
+    character_item_drop_distance_bonus: uint
 
-    character_item_pickup_distance_bonus: number
+    character_item_pickup_distance_bonus: double
 
     /**
      * `true` if character requester logistics is enabled.
      */
     character_logistic_requests: boolean
 
-    character_loot_pickup_distance_bonus: number
+    character_loot_pickup_distance_bonus: double
 
-    character_reach_distance_bonus: number
+    character_reach_distance_bonus: uint
 
-    character_resource_reach_distance_bonus: number
+    character_resource_reach_distance_bonus: double
 
     /**
      * Modifies the running speed of all characters in this force by the given value as a percentage. Setting the running modifier to `0.5` makes the character run 50% faster. The minimum value of `-1` reduces the movement speed by 100%, resulting in a speed of `0`.
      */
-    character_running_speed_modifier: number
+    character_running_speed_modifier: double
 
     /**
      * Number of character trash slots.
      */
-    character_trash_slot_count: number
+    character_trash_slot_count: double
 
     /**
      * Effective color of this force.
@@ -12527,9 +11870,8 @@ interface LuaForce {
      * The connected players belonging to this force.
      * 
      * This is primarily useful when you want to do some action against all online players of this force.
-     * @remarks
+     * 
      * This does *not* index using player index. See {@link LuaPlayer::index | runtime:LuaPlayer::index} on each player instance for the player index.
-     *
      */
     readonly connected_players: LuaPlayer[]
 
@@ -12539,14 +11881,14 @@ interface LuaForce {
     readonly current_research?: LuaTechnology
 
     /**
-     * Custom color for this force. If specified, will take priority over other sources of the force color. Writing nil clears custom color. Will return nil if it was not specified or if was set to {0,0,0,0}
+     * Custom color for this force. If specified, will take priority over other sources of the force color. Writing `nil` clears custom color. Will return `nil` if it was not specified or if was set to `{0,0,0,0}`.
      */
     custom_color?: Color
 
     /**
      * The time, in ticks, before a deconstruction order is removed.
      */
-    deconstruction_time_to_live: number
+    deconstruction_time_to_live: uint
 
     /**
      * The entity build statistics for this force (built and mined)
@@ -12556,13 +11898,13 @@ interface LuaForce {
     /**
      * Evolution factor of this force.
      */
-    evolution_factor: number
+    evolution_factor: double
 
-    evolution_factor_by_killing_spawners: number
+    evolution_factor_by_killing_spawners: double
 
-    evolution_factor_by_pollution: number
+    evolution_factor_by_pollution: double
 
-    evolution_factor_by_time: number
+    evolution_factor_by_time: double
 
     /**
      * The fluid production statistics for this force.
@@ -12572,7 +11914,7 @@ interface LuaForce {
     /**
      * Additional lifetime for following robots.
      */
-    following_robots_lifetime_modifier: number
+    following_robots_lifetime_modifier: double
 
     /**
      * If friendly fire is enabled for this force.
@@ -12582,17 +11924,17 @@ interface LuaForce {
     /**
      * The time, in ticks, before a placed ghost disappears.
      */
-    ghost_time_to_live: number
+    ghost_time_to_live: uint
 
     /**
      * This force's index in {@link LuaGameScript::forces | runtime:LuaGameScript::forces} (unique ID). It is assigned when a force is created, and remains so until it is {@link merged | runtime:on_forces_merged} (ie. deleted). Indexes of merged forces can be reused.
      */
-    readonly index: number
+    readonly index: uint
 
     /**
      * The inserter stack size bonus for non stack inserters
      */
-    inserter_stack_size_bonus: number
+    inserter_stack_size_bonus: double
 
     /**
      * The item production statistics for this force.
@@ -12602,16 +11944,16 @@ interface LuaForce {
     /**
      * All of the items that have been launched in rockets. The attribute is a dictionary mapping the item prototype names to the launched amounts.
      */
-    readonly items_launched: {[key: string]: number}
+    readonly items_launched: {[key: string]: uint}
 
     /**
      * The kill counter statistics for this force.
      */
     readonly kill_count_statistics: LuaFlowStatistics
 
-    laboratory_productivity_bonus: number
+    laboratory_productivity_bonus: double
 
-    laboratory_speed_modifier: number
+    laboratory_speed_modifier: double
 
     /**
      * List of logistic networks, grouped by surface.
@@ -12621,42 +11963,41 @@ interface LuaForce {
     /**
      * Multiplier of the manual crafting speed. Default value is `0`. The actual crafting speed will be multiplied by `1 + manual_crafting_speed_modifier`.
      * @example
-     * Double the player's crafting speed 
      * ```
+     * -- Double the player's crafting speed
      * game.player.force.manual_crafting_speed_modifier = 1
      * ```
      *
      */
-    manual_crafting_speed_modifier: number
+    manual_crafting_speed_modifier: double
 
     /**
      * Multiplier of the manual mining speed. Default value is `0`. The actual mining speed will be multiplied by `1 + manual_mining_speed_modifier`.
      * @example
-     * Double the player's mining speed 
      * ```
+     * -- Double the player's mining speed
      * game.player.force.manual_mining_speed_modifier = 1
      * ```
      *
      */
-    manual_mining_speed_modifier: number
+    manual_mining_speed_modifier: double
 
-    max_failed_attempts_per_tick_per_construction_queue: number
+    max_failed_attempts_per_tick_per_construction_queue: uint
 
-    max_successful_attempts_per_tick_per_construction_queue: number
+    max_successful_attempts_per_tick_per_construction_queue: uint
 
     /**
      * Maximum number of follower robots.
      */
-    maximum_following_robot_count: number
+    maximum_following_robot_count: uint
 
-    mining_drill_productivity_bonus: number
+    mining_drill_productivity_bonus: double
 
     /**
      * Name of the force.
      * @example
-     * Prints "`player`" 
      * ```
-     * game.player.print(game.player.force.name)
+     * game.player.print(game.player.force.name) -- => "player"
      * ```
      *
      */
@@ -12680,8 +12021,8 @@ interface LuaForce {
     /**
      * Recipes available to this force, indexed by `name`.
      * @example
-     * Prints the category of the given recipe 
      * ```
+     * -- Prints the category of the given recipe
      * game.player.print(game.player.force.recipes["transport-belt"].category)
      * ```
      *
@@ -12694,17 +12035,16 @@ interface LuaForce {
     readonly research_enabled: boolean
 
     /**
-     * Progress of current research, as a number in range [0, 1].
+     * Progress of current research, as a number in range `[0, 1]`.
      */
-    research_progress: number
+    research_progress: double
 
     /**
      * The research queue of this force. The first technology in the array is the currently active one. Reading this attribute gives an array of {@link LuaTechnology | runtime:LuaTechnology}.
      * 
-     * To write to this, the entire table must be written. Providing an empty table or `nil` will empty the research queue and cancel the current research. Writing to this when the research queue is disabled will simply set the last research in the table as the current research.
-     * @remarks
+     * To write to this, the entire table must be written. Providing an empty table or `nil` will empty the research queue and cancel the current research.  Writing to this when the research queue is disabled will simply set the last research in the table as the current research.
+     * 
      * This only allows mods to queue research that this force is able to research in the first place. As an example, an already researched technology or one whose prerequisites are not fulfilled will not be queued, but dropped silently instead.
-     *
      */
     research_queue?: TechnologyIdentification[]
 
@@ -12716,7 +12056,7 @@ interface LuaForce {
     /**
      * The number of rockets launched.
      */
-    rockets_launched: number
+    rockets_launched: uint
 
     /**
      * If sharing chart data is enabled for this force.
@@ -12726,31 +12066,31 @@ interface LuaForce {
     /**
      * Number of items that can be transferred by stack inserters. When writing to this value, it must be >= 0 and <= 254.
      */
-    stack_inserter_capacity_bonus: number
+    stack_inserter_capacity_bonus: uint
 
     /**
      * Technologies owned by this force, indexed by `name`.
      * @example
-     * Researches the technology for the player's force 
      * ```
+     * -- Researches the technology for the player's force
      * game.player.force.technologies["steel-processing"].researched = true
      * ```
      *
      */
     readonly technologies: {[key: string]: LuaTechnology}
 
-    train_braking_force_bonus: number
+    train_braking_force_bonus: double
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean
 
-    worker_robots_battery_modifier: number
+    worker_robots_battery_modifier: double
 
-    worker_robots_speed_modifier: number
+    worker_robots_speed_modifier: double
 
-    worker_robots_storage_bonus: number
+    worker_robots_storage_bonus: double
 
     /**
      * Ability to create new blueprints using empty blueprint item when using zoom-to-world.
@@ -12820,9 +12160,8 @@ interface LuaFuelCategoryPrototype {
 interface LuaGameScript {
     /**
      * Instruct the game to perform an auto-save.
-     * @remarks
+     * 
      * Only the server will save in multiplayer. In single player a standard auto-save is triggered.
-     *
      * @param name - The autosave name if any. Saves will be named _autosave-*name* when provided.
      */
     auto_save(this: void,
@@ -12839,17 +12178,15 @@ interface LuaGameScript {
 
     /**
      * Run internal consistency checks. Allegedly prints any errors it finds.
-     * @remarks
+     * 
      * Exists mainly for debugging reasons.
-     *
      */
     check_consistency(this: void): void
 
     /**
      * Goes over all items, entities, tiles, recipes, technologies among other things and logs if the locale is incorrect.
-     * @remarks
+     * 
      * Also prints true/false if called from the console.
-     *
      */
     check_prototype_translations(this: void): void
 
@@ -12860,10 +12197,8 @@ interface LuaGameScript {
 
     /**
      * Create a new force.
-     * @remarks
-     * The game currently supports a maximum of 64 forces, including the three built-in forces. This means that a maximum of 61 new forces may be created.
-     * Force names must be unique.
-     *
+     * 
+     * The game currently supports a maximum of 64 forces, including the three built-in forces. This means that a maximum of 61 new forces may be created. Force names must be unique.
      * @param force - Name of the new force
      * @returns The force that was just created
      */
@@ -12871,20 +12206,20 @@ interface LuaGameScript {
         force: string): LuaForce
 
     /**
-     * Creates an inventory that is not owned by any game object. It can be resized later with {@link LuaInventory::resize | runtime:LuaInventory::resize}.
-     * @remarks
+     * Creates an inventory that is not owned by any game object.
+     * 
+     * It can be resized later with {@link LuaInventory::resize | runtime:LuaInventory::resize}.
+     * 
      * Make sure to destroy it when you are done with it using {@link LuaInventory::destroy | runtime:LuaInventory::destroy}.
-     *
      * @param size - The number of slots the inventory initially has.
      */
     create_inventory(this: void,
-        size: number): LuaInventory
+        size: uint16): LuaInventory
 
     /**
      * Creates a {@link LuaProfiler | runtime:LuaProfiler}, which is used for measuring script performance.
-     * @remarks
+     * 
      * LuaProfiler cannot be serialized.
-     *
      * @param stopped - Create the timer stopped
      */
     create_profiler(this: void,
@@ -12892,19 +12227,16 @@ interface LuaGameScript {
 
     /**
      * Creates a deterministic standalone random generator with the given seed or if a seed is not provided the initial map seed is used.
-     * @remarks
+     * 
      * *Make sure* you actually want to use this over math.random(...) as this provides entirely different functionality over math.random(...).
-     *
      */
     create_random_generator(this: void,
-        seed?: number): LuaRandomGenerator
+        seed?: uint): LuaRandomGenerator
 
     /**
      * Create a new surface.
-     * @remarks
-     * The game currently supports a maximum of 4 294 967 295 surfaces, including the default surface.
-     * Surface names must be unique.
-     *
+     * 
+     * The game currently supports a maximum of 4 294 967 295 surfaces, including the default surface. Surface names must be unique.
      * @param name - Name of the new surface.
      * @param settings - Map generation settings.
      * @returns The surface that was just created.
@@ -12932,7 +12264,7 @@ interface LuaGameScript {
      * Converts the given direction into the string version of the direction.
      */
     direction_to_string(this: void,
-        direction: defines.direction): void
+        direction: defines.direction): string
 
     /**
      * Disables replay saving for the current save file. Once done there's no way to re-enable replay saving for the save file without loading an old save.
@@ -12953,12 +12285,14 @@ interface LuaGameScript {
         string: string): string | null
 
     /**
-     * Evaluate an expression, substituting variables as provided. For details on the formula, see {@link TechnologyPrototype::unit | prototype:TechnologyPrototype::unit}.
+     * Evaluate an expression, substituting variables as provided.
+     * 
+     * For details on the formula, see {@link TechnologyPrototype::unit | prototype:TechnologyPrototype::unit}.
      * @param expression - The expression to evaluate.
      * @param variables - Variables to be substituted.
      * @example
-     * Calculate the number of research units required to unlock mining productivity level 10. 
      * ```
+     * -- Calculate the number of research units required to unlock mining productivity level 10
      * local formula = game.forces["player"].technologies["mining-productivity-4"].research_unit_count_formula
      * local units = game.evaluate_expression(formula, { L = 10, l = 10 })
      * ```
@@ -12966,7 +12300,7 @@ interface LuaGameScript {
      */
     evaluate_expression(this: void,
         expression: string,
-        variables?: {[key: string]: number}): number
+        variables?: {[key: string]: double}): double
 
     /**
      * Force a CRC check. Tells all peers to calculate their current CRC, which are then compared to each other. If a mismatch is detected, the game desyncs and some peers are forced to reconnect.
@@ -12975,13 +12309,12 @@ interface LuaGameScript {
 
     /**
      * Gets the number of entities that are active (updated each tick).
-     * @remarks
+     * 
      * This is very expensive to determine.
-     *
      * @param surface - If given, only the entities active on this surface are counted.
      */
     get_active_entities_count(this: void,
-        surface?: SurfaceIdentification): number
+        surface?: SurfaceIdentification): uint
 
     /**
      * Gets an entity by its name tag. Entity name tags can be set in the entity "extra settings" GUI in the map editor.
@@ -12992,8 +12325,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaAchievementPrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every achievement prototype that is not allowed to be completed on the peaceful difficulty setting. 
      * ```
+     * -- Get every achievement prototype that is not allowed to be completed on the peaceful difficulty setting.
      * local prototypes = game.get_filtered_achievement_prototypes{{filter="allowed-without-fight", invert=true}}
      * ```
      *
@@ -13004,8 +12337,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaDecorativePrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every decorative prototype that is auto-placed. 
      * ```
+     * -- Get every decorative prototype that is auto-placed.
      * local prototypes = game.get_filtered_decorative_prototypes{{filter="autoplace"}}
      * ```
      *
@@ -13016,8 +12349,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaEntityPrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every entity prototype that can craft recipes involving fluids in the way some assembling machines can. 
      * ```
+     * -- Get every entity prototype that can craft recipes involving fluids in the way some assembling machines can
      * local prototypes = game.get_filtered_entity_prototypes{{filter="crafting-category", crafting_category="crafting-with-fluid"}}
      * ```
      *
@@ -13028,8 +12361,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaEquipmentPrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every equipment prototype that functions as a battery. 
      * ```
+     * -- Get every equipment prototype that functions as a battery.
      * local prototypes = game.get_filtered_equipment_prototypes{{filter="type", type="battery-equipment"}}
      * ```
      *
@@ -13040,8 +12373,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaFluidPrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every fluid prototype that has a heat capacity of exactly `100`. 
      * ```
+     * -- Get every fluid prototype that has a heat capacity of exactly `100`.
      * local prototypes = game.get_filtered_fluid_prototypes{{filter="heat-capacity", comparison="=", value=100}}
      * ```
      *
@@ -13052,8 +12385,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaItemPrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every item prototype that, when launched with a rocket, produces a result. 
      * ```
+     * -- Get every item prototype that, when launched with a rocket, produces a result.
      * local prototypes = game.get_filtered_item_prototypes{{filter="has-rocket-launch-products"}}
      * ```
      *
@@ -13064,8 +12397,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaModSettingPrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every mod setting prototype that belongs to the specified mod. 
      * ```
+     * -- Get every mod setting prototype that belongs to the specified mod.
      * local prototypes = game.get_filtered_mod_setting_prototypes{{filter="mod", mod="space-exploration"}}
      * ```
      *
@@ -13076,8 +12409,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaRecipePrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every recipe prototype that takes less than half a second to craft (at crafting speed `1`). 
      * ```
+     * -- Get every recipe prototype that takes less than half a second to craft (at crafting speed `1`).
      * local prototypes = game.get_filtered_recipe_prototypes{{filter="energy", comparison="<", value=0.5}}
      * ```
      *
@@ -13088,8 +12421,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaTechnologyPrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every technology prototype that can be researched at the start of the game. 
      * ```
+     * -- Get every technology prototype that can be researched at the start of the game.
      * local prototypes = game.get_filtered_technology_prototypes{{filter="has-prerequisites", invert=true}}
      * ```
      *
@@ -13100,8 +12433,8 @@ interface LuaGameScript {
     /**
      * Returns a dictionary of all LuaTilePrototypes that fit the given filters. The prototypes are indexed by `name`.
      * @example
-     * Get every tile prototype that improves a player's walking speed by at least 50%. 
      * ```
+     * -- Get every tile prototype that improves a player's walking speed by at least 50%.
      * local prototypes = game.get_filtered_tile_prototypes{{filter="walking-speed-modifier", comparison="≥", value=1.5}}
      * ```
      *
@@ -13119,14 +12452,13 @@ interface LuaGameScript {
      * @param player - The player index or name.
      */
     get_player(this: void,
-        player: number | string): LuaPlayer | null
+        player: uint | string): LuaPlayer | null
 
     /**
-     * Gets the inventories created through {@link LuaGameScript::create_inventory | runtime:LuaGameScript::create_inventory}
-     * @remarks
+     * Gets the inventories created through {@link LuaGameScript::create_inventory | runtime:LuaGameScript::create_inventory}.
+     * 
      * Inventories created through console commands will be owned by `"core"`.
-     *
-     * @param mod - The mod who's inventories to get. If not provided all inventories are returned.
+     * @param mod - The mod whose inventories to get. If not provided all inventories are returned.
      * @returns A mapping of mod name to array of inventories owned by that mod.
      */
     get_script_inventories(this: void,
@@ -13134,13 +12466,12 @@ interface LuaGameScript {
 
     /**
      * Gets the given surface or returns `nil` if no surface is found.
-     * @remarks
-     * This is a shortcut for game.surfaces[...]
-     *
+     * 
+     * This is a shortcut for {@link LuaGameScript::surfaces | runtime:LuaGameScript::surfaces}.
      * @param surface - The surface index or name.
      */
     get_surface(this: void,
-        surface: number | string): LuaSurface | null
+        surface: uint | string): LuaSurface | null
 
     /**
      * Searches for a train with given ID.
@@ -13148,7 +12479,7 @@ interface LuaGameScript {
      * @returns Train if found
      */
     get_train_by_id(this: void,
-        train_id: number): LuaTrain | null
+        train_id: uint): LuaTrain | null
 
     /**
      * Gets train stops matching the given filters.
@@ -13157,11 +12488,16 @@ interface LuaGameScript {
      * @param table.surface - The surface to search. Not providing a surface will match stops on any surface.
      */
     get_train_stops(this: void,
-        table?: {
+        table: {
             name?: string | string[],
             surface?: SurfaceIdentification,
             force?: ForceIdentification
         }): LuaEntity[]
+
+    /**
+     * All methods and properties that this object supports.
+     */
+    help(this: void): string
 
     /**
      * Is this the demo version of Factorio?
@@ -13206,10 +12542,10 @@ interface LuaGameScript {
 
     /**
      * Marks two forces to be merged together. All players and entities in the source force will be reassigned to the target force. The source force will then be destroyed. Importantly, this does not merge technologies or bonuses, which are instead retained from the target force.
-     * @remarks
+     * 
      * The three built-in forces (player, enemy and neutral) can't be destroyed, meaning they can't be used as the source argument to this function.
+     * 
      * The source force is not removed until the end of the current tick, or if called during the {@link on_forces_merging | runtime:on_forces_merging} or {@link on_forces_merged | runtime:on_forces_merged} event, the end of the next tick.
-     *
      * @param destination - The force to reassign all entities to.
      * @param source - The force to remove.
      */
@@ -13232,9 +12568,8 @@ interface LuaGameScript {
 
     /**
      * Play a sound for every player in the game.
-     * @remarks
+     * 
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for that player.
-     *
      * @param table.override_sound_type - The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      * @param table.path - The sound to play.
      * @param table.position - Where the sound should be played. If not given, it's played at the current position of each player.
@@ -13244,15 +12579,14 @@ interface LuaGameScript {
         table: {
             path: SoundPath,
             position?: MapPosition,
-            volume_modifier?: number,
+            volume_modifier?: double,
             override_sound_type?: SoundType
         }): void
 
     /**
      * Print text to the chat console all players.
-     * @remarks
+     * 
      * By default, messages that are identical to a message sent in the last 60 ticks are not printed again.
-     *
      */
     print(this: void,
         message: LocalisedString,
@@ -13267,9 +12601,8 @@ interface LuaGameScript {
 
     /**
      * Regenerate autoplacement of some entities on all surfaces. This can be used to autoplace newly-added entities.
-     * @remarks
+     * 
      * All specified entity prototypes must be autoplacable.
-     *
      * @param entities - Prototype names of entity or entities to autoplace.
      */
     regenerate_entity(this: void,
@@ -13277,19 +12610,19 @@ interface LuaGameScript {
 
     /**
      * Forces a reload of all mods.
-     * @remarks
+     * 
      * This will act like saving and loading from the mod(s) perspective.
+     * 
      * This will do nothing if run in multiplayer.
+     * 
      * This disables the replay if replay is enabled.
-     *
      */
     reload_mods(this: void): void
 
     /**
      * Forces a reload of the scenario script from the original scenario location.
-     * @remarks
+     * 
      * This disables the replay if replay is enabled.
-     *
      */
     reload_script(this: void): void
 
@@ -13333,7 +12666,7 @@ interface LuaGameScript {
             from_back?: RailEnd,
             allow_path_within_segment_back?: boolean,
             search_direction?: 'respect-movement-direction' | 'any-direction-with-locomotives',
-            steps_limit?: number
+            steps_limit?: uint
         }): TrainPathFinderPathResult | TrainPathAnyGoalResult | TrainPathAllGoalsResult
 
     /**
@@ -13348,9 +12681,8 @@ interface LuaGameScript {
 
     /**
      * Saves the current configuration of Atlas to a file. This will result in huge file containing all of the game graphics moved to as small space as possible.
-     * @remarks
+     * 
      * Exists mainly for debugging reasons.
-     *
      */
     save_atlas(this: void): void
 
@@ -13380,9 +12712,8 @@ interface LuaGameScript {
 
     /**
      * Show an in-game message dialog.
-     * @remarks
+     * 
      * Can only be used when the map contains exactly one player.
-     *
      * @param table.image - Path to an image to show on the dialog
      * @param table.point_to - If specified, dialog will show an arrow pointing to this place. When not specified, the arrow will point to the player's position. (Use `point_to={type="nowhere"}` to remove the arrow entirely.) The dialog itself will be placed near the arrow's target.
      * @param table.style - The gui style to use for this speech bubble. Must be of type speech_bubble.
@@ -13402,13 +12733,12 @@ interface LuaGameScript {
      * Convert a table to a JSON string
      */
     table_to_json(this: void,
-        data: Table): string
+        data: table): string
 
     /**
      * Take a screenshot of the game and save it to the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. The name of the image file can be specified via the `path` parameter.
-     * @remarks
+     * 
      * If Factorio is running headless, this function will do nothing.
-     *
      * @param table.allow_in_replay - Whether to save the screenshot even during replay playback. Defaults to `false`.
      * @param table.anti_alias - Whether to render in double resolution and downscale the result (including GUI). Defaults to `false`.
      * @param table.by_player - If defined, the screenshot will only be taken for this player.
@@ -13433,16 +12763,16 @@ interface LuaGameScript {
             surface?: SurfaceIdentification,
             position?: MapPosition,
             resolution?: TilePosition,
-            zoom?: number,
+            zoom?: double,
             path?: string,
             show_gui?: boolean,
             show_entity_info?: boolean,
             show_cursor_building_preview?: boolean,
             anti_alias?: boolean,
-            quality?: number,
+            quality?: int,
             allow_in_replay?: boolean,
-            daytime?: number,
-            water_tick?: number,
+            daytime?: double,
+            water_tick?: uint,
             force_render?: boolean
         }): void
 
@@ -13462,7 +12792,7 @@ interface LuaGameScript {
             by_player?: PlayerIdentification,
             selected_technology?: TechnologyIdentification,
             skip_disabled?: boolean,
-            quality?: number
+            quality?: int
         }): void
 
     /**
@@ -13490,7 +12820,7 @@ interface LuaGameScript {
         filename: string,
         data: LocalisedString,
         append?: boolean,
-        for_player?: number): void
+        for_player?: uint): void
 
     /**
      * A dictionary containing every LuaAchievementPrototype indexed by `name`.
@@ -13500,8 +12830,8 @@ interface LuaGameScript {
     /**
      * The active mods versions. The keys are mod names, the values are the versions.
      * @example
-     * This will print the names and versions of active mods to player p's console. 
      * ```
+     * -- This will print the names and versions of active mods to player p's console.
      * for name, version in pairs(game.active_mods) do
      *   p.print(name .. " version " .. version)
      * end
@@ -13528,15 +12858,14 @@ interface LuaGameScript {
     /**
      * Array of the names of all the backers that supported the game development early on. These are used as names for labs, locomotives, radars, roboports, and train stops.
      */
-    readonly backer_names: {[key: number]: string}
+    readonly backer_names: {[key: string]: string}
 
     /**
      * The players that are currently online.
      * 
-     * This is primarily useful when you want to do some action against all online players.
-     * @remarks
      * This does *not* index using player index. See {@link LuaPlayer::index | runtime:LuaPlayer::index} on each player instance for the player index.
-     *
+     * 
+     * This is primarily useful when you want to do some action against all online players.
      */
     readonly connected_players: LuaPlayer[]
 
@@ -13573,8 +12902,8 @@ interface LuaGameScript {
     /**
      * The currently active set of difficulty settings. Even though this property is marked as read-only, the members of the dictionary that is returned can be modified mid-game. This is however not recommended as different difficulties can have differing technology and recipe trees, which can cause problems for players.
      * @example
-     * This will set the technology price multiplier to 12. 
      * ```
+     * -- This will set the technology price multiplier to 12.
      * game.difficulty_settings.technology_price_multiplier = 12
      * ```
      *
@@ -13658,37 +12987,35 @@ interface LuaGameScript {
 
     /**
      * A dictionary containing every MapGenPreset indexed by `name`.
-     * @remarks
+     * 
      * A MapGenPreset is an exact copy of the prototype table provided from the data stage.
-     *
      */
     readonly map_gen_presets: {[key: string]: MapGenPreset}
 
     /**
      * The currently active set of map settings. Even though this property is marked as read-only, the members of the dictionary that is returned can be modified mid-game.
-     * @remarks
+     * 
      * This does not contain difficulty settings, use {@link LuaGameScript::difficulty_settings | runtime:LuaGameScript::difficulty_settings} instead.
-     *
      */
     readonly map_settings: MapSettings
 
-    readonly max_beacon_supply_area_distance: number
+    readonly max_beacon_supply_area_distance: double
 
-    readonly max_electric_pole_connection_distance: number
+    readonly max_electric_pole_connection_distance: double
 
-    readonly max_electric_pole_supply_area_distance: number
+    readonly max_electric_pole_supply_area_distance: float
 
-    readonly max_force_distraction_chunk_distance: number
+    readonly max_force_distraction_chunk_distance: uint
 
-    readonly max_force_distraction_distance: number
+    readonly max_force_distraction_distance: double
 
-    readonly max_gate_activation_distance: number
+    readonly max_gate_activation_distance: double
 
-    readonly max_inserter_reach_distance: number
+    readonly max_inserter_reach_distance: double
 
-    readonly max_pipe_to_ground_distance: number
+    readonly max_pipe_to_ground_distance: uint8
 
-    readonly max_underground_belt_distance: number
+    readonly max_underground_belt_distance: uint8
 
     /**
      * A dictionary containing every LuaModSettingPrototype indexed by `name`.
@@ -13711,7 +13038,7 @@ interface LuaGameScript {
     readonly noise_layer_prototypes: {[key: string]: LuaNoiseLayerPrototype}
 
     /**
-     * This object's name.
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
@@ -13762,12 +13089,9 @@ interface LuaGameScript {
     readonly shortcut_prototypes: {[key: string]: LuaShortcutPrototype}
 
     /**
-     * Speed to update the map at. 1.0 is normal speed -- 60 UPS.
-     * @remarks
-     * Minimum value is 0.01.
-     *
+     * Speed to update the map at. 1.0 is normal speed -- 60 UPS. Minimum value is 0.01.
      */
-    speed: number
+    speed: float
 
     /**
      * The styles that {@link LuaGuiElement | runtime:LuaGuiElement} can use, indexed by `name`.
@@ -13787,7 +13111,7 @@ interface LuaGameScript {
     /**
      * Current map tick.
      */
-    readonly tick: number
+    readonly tick: uint
 
     /**
      * If the tick has been paused. This means that entity update has been paused.
@@ -13799,12 +13123,16 @@ interface LuaGameScript {
      * 
      * This differs from {@link LuaGameScript::tick | runtime:LuaGameScript::tick} in that creating a game from a scenario always starts with this value at `0`, even if the scenario has its own level data where the `tick` has progressed past `0`.
      */
-    readonly ticks_played: number
+    readonly ticks_played: uint
 
     /**
-     * The number of ticks to be run while the tick is paused. When {@link LuaGameScript::tick_paused | runtime:LuaGameScript::tick_paused} is true, ticks_to_run behaves the following way: While this is > 0, the entity update is running normally and this value is decremented every tick. When this reaches 0, the game will pause again.
+     * The number of ticks to be run while the tick is paused.
+     * 
+     * When {@link LuaGameScript::tick_paused | runtime:LuaGameScript::tick_paused} is true, ticks_to_run behaves the following way:
+     * 
+     * While this is > 0, the entity update is running normally and this value is decremented every tick. When this reaches 0, the game will pause again.
      */
-    ticks_to_run: number
+    ticks_to_run: uint
 
     /**
      * A dictionary containing every LuaTilePrototype indexed by `name`.
@@ -13828,18 +13156,16 @@ interface LuaGameScript {
  */
 interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
     /**
-     * All methods and properties that this object supports.
-     */
-    help(this: void): string
-
-    /**
      * The circuit condition. Writing `nil` clears the circuit condition.
      * @example
-     * Tell an entity to be active (for example a lamp to be lit) when it receives a circuit signal of more than 4 chain signals. 
      * ```
-     * a_behavior.circuit_condition = {condition={comparator=">",
-     *                                            first_signal={type="item", name="rail-chain-signal"},
-     *                                            constant=4}}
+     * -- Tell an entity to be active (for example a lamp to be lit) when it receives a
+     * -- circuit signal of more than 4 chain signals.
+     * a_behavior.circuit_condition = {condition={
+     *   comparator=">",
+     *   first_signal={type="item", name="rail-chain-signal"},
+     *   constant=4}
+     * }
      * ```
      *
      */
@@ -13858,25 +13184,18 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
     /**
      * The logistic condition. Writing `nil` clears the logistic condition.
      * @example
-     * Tell an entity to be active (for example a lamp to be lit) when the logistics network it's connected to has more than four chain signals. 
      * ```
-     * a_behavior.logistic_condition = {condition={comparator=">",
-     *                                             first_signal={type="item", name="rail-chain-signal"},
-     *                                             constant=4}}
+     * -- Tell an entity to be active (for example a lamp to be lit) when the logistics
+     * -- network it's connected to has more than four chain signals.
+     * a_behavior.logistic_condition = {condition={
+     *   comparator=">",
+     *   first_signal={type="item", name="rail-chain-signal"},
+     *   constant=4}
+     * }
      * ```
      *
      */
     logistic_condition: CircuitConditionDefinition
-
-    /**
-     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
-     */
-    readonly object_name: string
-
-    /**
-     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
-     */
-    readonly valid: boolean
 
 }
 
@@ -13891,9 +13210,7 @@ interface LuaGroup {
 
     /**
      * The parent group.
-     * @remarks
      * Applies to subclasses: ItemSubGroup
-     *
      */
     readonly group: LuaGroup
 
@@ -13916,17 +13233,13 @@ interface LuaGroup {
 
     /**
      * The additional order value used in recipe ordering.
-     * @remarks
      * Applies to subclasses: ItemGroup
-     *
      */
     readonly order_in_recipe: string
 
     /**
      * Subgroups of this group.
-     * @remarks
      * Applies to subclasses: ItemGroup
-     *
      */
     readonly subgroups: LuaGroup[]
 
@@ -13940,10 +13253,9 @@ interface LuaGroup {
 }
 
 /**
- * The root of the GUI. This type houses the root elements, `top`, `left`, `center`, `goal`, and `screen`, to which other elements can be added to be displayed on screen.
- * @remarks
+ * The root of the GUI. This type houses the root elements, `top`, `left`, `center`,  `goal`, and `screen`, to which other elements can be added to be displayed on screen.
+ * 
  * Every player can have a different GUI state.
- *
  */
 interface LuaGui {
     /**
@@ -14019,16 +13331,17 @@ interface LuaGui {
  * 
  * Each GUI element allows access to its children by having them as attributes. Thus, one can use the `parent.child` syntax to refer to children. Lua also supports the `parent["child"]` syntax to refer to the same element. This can be used in cases where the child has a name that isn't a valid Lua identifier.
  * @example
- * This will add a label called `greeting` to the top flow. Immediately after, it will change its text to illustrate accessing child elements. 
  * ```
+ * -- This will add a label called "greeting" to the top flow.
+ * -- Immediately after, it will change its text to illustrate accessing child elements.
  * game.player.gui.top.add{type="label", name="greeting", caption="Hi"}
  * game.player.gui.top.greeting.caption = "Hello there!"
  * game.player.gui.top["greeting"].caption = "Actually, never mind, I don't like your face"
  * ```
  *
  * @example
- * This will add a tabbed-pane and 2 tabs with contents. 
  * ```
+ * -- This will add a tabbed-pane and 2 tabs with contents.
  * local tabbed_pane = game.player.gui.top.add{type="tabbed-pane"}
  * local tab1 = tabbed_pane.add{type="tab", caption="Tab 1"}
  * local tab2 = tabbed_pane.add{type="tab", caption="Tab 2"}
@@ -14049,21 +13362,17 @@ interface LuaGuiElement {
 
     /**
      * Inserts a string at the end or at the given index of this dropdown or listbox.
-     * @remarks
      * Applies to subclasses: drop-down,list-box
-     *
      * @param index - The index at which to insert the item.
      * @param string - The text to insert.
      */
     add_item(this: void,
         string: LocalisedString,
-        index?: number): void
+        index?: uint): void
 
     /**
      * Adds the given tab and content widgets to this tabbed pane as a new tab.
-     * @remarks
      * Applies to subclasses: tabbed-pane
-     *
      * @param content - The content to show when this tab is selected. Can be any type of GUI element.
      * @param tab - The tab to add, must be a GUI element of type "tab".
      */
@@ -14073,9 +13382,8 @@ interface LuaGuiElement {
 
     /**
      * Moves this GUI element to the "front" so it will draw over other elements.
-     * @remarks
-     * Only works for elements in {@link LuaGui::screen | runtime:LuaGui::screen}
-     *
+     * 
+     * Only works for elements in {@link LuaGui::screen | runtime:LuaGui::screen}.
      */
     bring_to_front(this: void): void
 
@@ -14091,9 +13399,7 @@ interface LuaGuiElement {
 
     /**
      * Removes the items in this dropdown or listbox.
-     * @remarks
      * Applies to subclasses: drop-down,list-box
-     *
      */
     clear_items(this: void): void
 
@@ -14104,9 +13410,8 @@ interface LuaGuiElement {
 
     /**
      * Remove this element, along with its children. Any {@link LuaGuiElement | runtime:LuaGuiElement} objects referring to the destroyed elements become invalid after this operation.
-     * @remarks
+     * 
      * The top-level GUI elements - {@link LuaGui::top | runtime:LuaGui::top}, {@link LuaGui::left | runtime:LuaGui::left}, {@link LuaGui::center | runtime:LuaGui::center} and {@link LuaGui::screen | runtime:LuaGui::screen} - can't be destroyed.
-     *
      * @example
      * ```
      * game.player.gui.top.greeting.destroy()
@@ -14122,35 +13427,29 @@ interface LuaGuiElement {
 
     /**
      * Forces this frame to re-auto-center. Only works on frames stored directly in {@link LuaGui::screen | runtime:LuaGui::screen}.
-     * @remarks
      * Applies to subclasses: frame
-     *
      */
     force_auto_center(this: void): void
 
     /**
      * Gets the index that this element has in its parent element.
-     * @remarks
+     * 
      * This iterates through the children of the parent of this element, meaning this has a non-free cost to get, but is faster than doing the equivalent in Lua.
-     *
      */
-    get_index_in_parent(this: void): number
+    get_index_in_parent(this: void): uint
 
     /**
      * Gets the item at the given index from this dropdown or listbox.
-     * @remarks
      * Applies to subclasses: drop-down,list-box
-     *
      * @param index - The index to get
      */
     get_item(this: void,
-        index: number): LocalisedString
+        index: uint): LocalisedString
 
     /**
      * The mod that owns this Gui element or `nil` if it's owned by the scenario script.
-     * @remarks
+     * 
      * This has a not-super-expensive, but non-free cost to get.
-     *
      */
     get_mod(this: void): string | null
 
@@ -14167,17 +13466,17 @@ interface LuaGuiElement {
     /**
      * Gets this sliders maximum value.
      */
-    get_slider_maximum(this: void): number
+    get_slider_maximum(this: void): double
 
     /**
      * Gets this sliders minimum value.
      */
-    get_slider_minimum(this: void): number
+    get_slider_minimum(this: void): double
 
     /**
      * Gets the minimum distance this slider can move.
      */
-    get_slider_value_step(this: void): number
+    get_slider_value_step(this: void): double
 
     /**
      * All methods and properties that this object supports.
@@ -14186,39 +13485,31 @@ interface LuaGuiElement {
 
     /**
      * Removes the item at the given index from this dropdown or listbox.
-     * @remarks
      * Applies to subclasses: drop-down,list-box
-     *
      * @param index - The index
      */
     remove_item(this: void,
-        index: number): void
+        index: uint): void
 
     /**
      * Removes the given tab and its associated content from this tabbed pane.
-     * @remarks
-     * Removing a tab does not destroy the tab or the tab contents. It just removes them from the view.
-     * When removing tabs, {@link LuaGuiElement::selected_tab_index | runtime:LuaGuiElement::selected_tab_index} needs to be manually updated.
+     * 
+     * Removing a tab does not destroy the tab or the tab contents. It just removes them from the view. When removing tabs, {@link LuaGuiElement::selected_tab_index | runtime:LuaGuiElement::selected_tab_index} needs to be manually updated.
      * Applies to subclasses: tabbed-pane
-     *
-     * @param tab - The tab to remove. If not given, it removes all tabs.
+     * @param tab - The tab to remove or `nil` to remove all tabs.
      */
     remove_tab(this: void,
-        tab: LuaGuiElement): void
+        tab: LuaGuiElement | nil): void
 
     /**
      * Scrolls this scroll bar to the bottom.
-     * @remarks
      * Applies to subclasses: scroll-pane,text-box
-     *
      */
     scroll_to_bottom(this: void): void
 
     /**
      * Scrolls this scroll bar such that the specified GUI element is visible to the player.
-     * @remarks
      * Applies to subclasses: scroll-pane
-     *
      * @param element - The element to scroll to.
      * @param scroll_mode - Where the element should be positioned in the scroll-pane. Defaults to `"in-view"`.
      */
@@ -14228,82 +13519,68 @@ interface LuaGuiElement {
 
     /**
      * Scrolls the scroll bar such that the specified listbox item is visible to the player.
-     * @remarks
      * Applies to subclasses: list-box
-     *
      * @param index - The item index to scroll to.
      * @param scroll_mode - Where the item should be positioned in the list-box. Defaults to `"in-view"`.
      */
     scroll_to_item(this: void,
-        index: number,
+        index: int,
         scroll_mode?: 'in-view' | 'top-third'): void
 
     /**
      * Scrolls this scroll bar to the left.
-     * @remarks
      * Applies to subclasses: scroll-pane,text-box
-     *
      */
     scroll_to_left(this: void): void
 
     /**
      * Scrolls this scroll bar to the right.
-     * @remarks
      * Applies to subclasses: scroll-pane,text-box
-     *
      */
     scroll_to_right(this: void): void
 
     /**
      * Scrolls this scroll bar to the top.
-     * @remarks
      * Applies to subclasses: scroll-pane,text-box
-     *
      */
     scroll_to_top(this: void): void
 
     /**
      * Selects a range of text in this textbox.
-     * @remarks
      * Applies to subclasses: textfield,text-box
-     *
      * @param end_index - The index of the last character to select
      * @param start_index - The index of the first character to select
      * @example
-     * Select the characters `amp` from `example`: 
      * ```
+     * -- Select the characters "amp" from "example":
      * textbox.select(3, 5)
      * ```
      *
      * @example
-     * Move the cursor to the start of the text box: 
      * ```
+     * -- Move the cursor to the start of the text box:
      * textbox.select(1, 0)
      * ```
      *
      */
     select(this: void,
-        start_index: number,
-        end_index: number): void
+        start_index: int,
+        end_index: int): void
 
     /**
      * Selects all the text in this textbox.
-     * @remarks
      * Applies to subclasses: textfield,text-box
-     *
      */
     select_all(this: void): void
 
     /**
      * Sets the given string at the given index in this dropdown or listbox.
-     * @remarks
      * Applies to subclasses: drop-down,list-box
-     *
      * @param index - The index whose text to replace.
      * @param string - The text to set at the given index.
      */
     set_item(this: void,
-        index: number,
+        index: uint,
         string: LocalisedString): void
 
     /**
@@ -14319,23 +13596,17 @@ interface LuaGuiElement {
         value: boolean): void
 
     /**
-     * Sets this sliders minimum and maximum values.
-     * @remarks
-     * The minimum can't be >= the maximum.
-     *
+     * Sets this sliders minimum and maximum values. The minimum can't be >= the maximum.
      */
     set_slider_minimum_maximum(this: void,
-        minimum: number,
-        maximum: number): void
+        minimum: double,
+        maximum: double): void
 
     /**
-     * Sets the minimum distance this slider can move.
-     * @remarks
-     * The minimum distance can't be > (max - min).
-     *
+     * Sets the minimum distance this slider can move. The minimum distance can't be > (max - min).
      */
     set_slider_value_step(this: void,
-        value: number): void
+        value: double): void
 
     /**
      * Swaps the children at the given indices in this element.
@@ -14343,31 +13614,26 @@ interface LuaGuiElement {
      * @param index_2 - The index of the second child.
      */
     swap_children(this: void,
-        index_1: number,
-        index_2: number): void
+        index_1: uint,
+        index_2: uint): void
 
     /**
      * Whether this textfield (when in numeric mode) allows decimal numbers.
-     * @remarks
      * Applies to subclasses: textfield
-     *
      */
     allow_decimal: boolean
 
     /**
      * Whether this textfield (when in numeric mode) allows negative numbers.
-     * @remarks
      * Applies to subclasses: textfield
-     *
      */
     allow_negative: boolean
 
     /**
      * Whether the `"none"` state is allowed for this switch.
-     * @remarks
-     * This can't be set to false if the current switch_state is 'none'.
+     * 
+     * This can't be set to false if the current `switch_state` is `"none"`.
      * Applies to subclasses: switch
-     *
      */
     allow_none_state: boolean
 
@@ -14378,33 +13644,26 @@ interface LuaGuiElement {
 
     /**
      * Whether this frame auto-centers on window resize when stored in {@link LuaGui::screen | runtime:LuaGui::screen}.
-     * @remarks
      * Applies to subclasses: frame
-     *
      */
     auto_center: boolean
 
     /**
      * Whether this button will automatically toggle when clicked.
-     * @remarks
      * Applies to subclasses: button,sprite-button
-     *
      */
     auto_toggle: boolean
 
     /**
      * The text to display after the normal tab text (designed to work with numbers)
-     * @remarks
      * Applies to subclasses: tab
-     *
      */
     badge_text: LocalisedString
 
     /**
      * The text displayed on this element. For frames, this is the "heading". For other elements, like buttons or labels, this is the content.
-     * @remarks
+     * 
      * Whilst this attribute may be used on all elements without producing an error, it doesn't make sense for tables and flows as they won't display it.
-     *
      */
     caption: LocalisedString
 
@@ -14420,45 +13679,36 @@ interface LuaGuiElement {
 
     /**
      * Makes it so right-clicking on this textfield clears and focuses it.
-     * @remarks
      * Applies to subclasses: textfield,text-box
-     *
      */
     clear_and_focus_on_right_click: boolean
 
     /**
      * The sprite to display on this sprite-button when it is clicked.
-     * @remarks
      * Applies to subclasses: sprite-button
-     *
      */
     clicked_sprite: SpritePath
 
     /**
      * The number of columns in this table.
-     * @remarks
      * Applies to subclasses: table
-     *
      */
-    readonly column_count: number
+    readonly column_count: uint
 
     /**
      * Direction of this element's layout.
-     * @remarks
      * Applies to subclasses: frame,flow,line
-     *
      */
     readonly direction: GuiDirection
 
     /**
      * The `frame` that is being moved when dragging this GUI element, if any. This element needs to be a child of the `drag_target` at some level.
-     * @remarks
+     * 
      * Only top-level elements in {@link LuaGui::screen | runtime:LuaGui::screen} can be `drag_target`s.
      * Applies to subclasses: flow,frame,label,table,empty-widget
-     *
      * @example
-     * This creates a frame that contains a dragging handle which can move the frame. 
      * ```
+     * -- This creates a frame that contains a dragging handle which can move the frame.
      * local frame = player.gui.screen.add{type="frame", direction="vertical"}
      * local dragger = frame.add{type="empty-widget", style="draggable_space"}
      * dragger.style.size = {128, 24}
@@ -14470,49 +13720,44 @@ interface LuaGuiElement {
 
     /**
      * Whether this table should draw a horizontal grid line below the first table row.
-     * @remarks
      * Applies to subclasses: table
-     *
      */
     draw_horizontal_line_after_headers: boolean
 
     /**
      * Whether this table should draw horizontal grid lines.
-     * @remarks
      * Applies to subclasses: table
-     *
      */
     draw_horizontal_lines: boolean
 
     /**
      * Whether this table should draw vertical grid lines.
-     * @remarks
      * Applies to subclasses: table
-     *
      */
     draw_vertical_lines: boolean
 
     /**
      * The elem filters of this choose-elem-button, if any. The compatible type of filter is determined by `elem_type`.
-     * @remarks
+     * 
      * Writing to this field does not change or clear the currently selected element.
      * Applies to subclasses: choose-elem-button
-     *
      * @example
-     * This will configure a choose-elem-button of type `"entity"` to only show items of type `"furnace"`. 
      * ```
+     * -- This will configure a choose-elem-button of type "entity" to only show items of type "furnace".
      * button.elem_filters = {{filter = "type", type = "furnace"}}
      * ```
      *
      * @example
-     * Then, there are some types of filters that work on a specific kind of attribute. The following will configure a choose-elem-button of type `"entity"` to only show entities that have their `"hidden"` [flags](runtime:EntityPrototypeFlags) set. 
      * ```
+     * -- Then, there are some types of filters that work on a specific kind of attribute. The following will configure a
+     * --   choose-elem-button of type "entity" to only show entities that have their "hidden" flags set.
      * button.elem_filters = {{filter = "hidden"}}
      * ```
      *
      * @example
-     * Lastly, these filters can be combined at will, taking care to specify how they should be combined (either `"and"` or `"or"`. The following will filter for any `"entities"` that are `"furnaces"` and that are not `"hidden"`. 
      * ```
+     * -- Lastly, these filters can be combined at will, taking care to specify how they should be combined (either "and" or "or").
+     * --   The following will filter for any entities that are "furnaces" and that are not "hidden".
      * button.elem_filters = {{filter = "type", type = "furnace"}, {filter = "hidden", invert = true, mode = "and"}}
      * ```
      *
@@ -14526,18 +13771,15 @@ interface LuaGuiElement {
 
     /**
      * The elem type of this choose-elem-button.
-     * @remarks
      * Applies to subclasses: choose-elem-button
-     *
      */
     readonly elem_type: ElemType
 
     /**
      * The elem value of this choose-elem-button, if any.
-     * @remarks
+     * 
      * The `"signal"` type operates with {@link SignalID | runtime:SignalID}, while all other types use strings.
      * Applies to subclasses: choose-elem-button
-     *
      */
     elem_value?: string | SignalID
 
@@ -14548,17 +13790,13 @@ interface LuaGuiElement {
 
     /**
      * The entity associated with this entity-preview, camera, minimap, if any.
-     * @remarks
      * Applies to subclasses: entity-preview,camera,minimap
-     *
      */
     entity?: LuaEntity
 
     /**
      * The force this minimap is using, if any.
-     * @remarks
      * Applies to subclasses: minimap
-     *
      */
     force?: string
 
@@ -14574,17 +13812,13 @@ interface LuaGuiElement {
 
     /**
      * Policy of the horizontal scroll bar.
-     * @remarks
      * Applies to subclasses: scroll-pane
-     *
      */
     horizontal_scroll_policy: ScrollPolicy
 
     /**
      * The sprite to display on this sprite-button when it is hovered.
-     * @remarks
      * Applies to subclasses: sprite-button
-     *
      */
     hovered_sprite: SpritePath
 
@@ -14596,37 +13830,29 @@ interface LuaGuiElement {
     /**
      * The index of this GUI element (unique amongst the GUI elements of a LuaPlayer).
      */
-    readonly index: number
+    readonly index: uint
 
     /**
      * Whether this textfield displays as a password field, which renders all characters as `*`.
-     * @remarks
      * Applies to subclasses: textfield
-     *
      */
     is_password: boolean
 
     /**
      * The items in this dropdown or listbox.
-     * @remarks
      * Applies to subclasses: drop-down,list-box
-     *
      */
     items: LocalisedString[]
 
     /**
      * The text shown for the left switch label.
-     * @remarks
      * Applies to subclasses: switch
-     *
      */
     left_label_caption: LocalisedString
 
     /**
      * The tooltip shown on the left switch label.
-     * @remarks
      * Applies to subclasses: switch
-     *
      */
     left_label_tooltip: LocalisedString
 
@@ -14637,33 +13863,25 @@ interface LuaGuiElement {
 
     /**
      * Whether this choose-elem-button can be changed by the player.
-     * @remarks
      * Applies to subclasses: choose-elem-button
-     *
      */
     locked: boolean
 
     /**
      * Whether this textfield loses focus after {@link defines.events.on_gui_confirmed | runtime:defines.events.on_gui_confirmed} is fired.
-     * @remarks
      * Applies to subclasses: textfield
-     *
      */
     lose_focus_on_confirm: boolean
 
     /**
      * The player index this minimap is using.
-     * @remarks
      * Applies to subclasses: minimap
-     *
      */
-    minimap_player_index: number
+    minimap_player_index: uint
 
     /**
      * The mouse button filters for this button or sprite-button.
-     * @remarks
      * Applies to subclasses: button,sprite-button
-     *
      */
     mouse_button_filter: MouseButtonFlags
 
@@ -14679,17 +13897,13 @@ interface LuaGuiElement {
 
     /**
      * The number to be shown in the bottom right corner of this sprite-button. Set this to `nil` to show nothing.
-     * @remarks
      * Applies to subclasses: sprite-button
-     *
      */
-    number: number
+    number: double
 
     /**
-     * Whether this textfield is limited to only numberic characters.
-     * @remarks
+     * Whether this textfield is limited to only numeric characters.
      * Applies to subclasses: textfield
-     *
      */
     numeric: boolean
 
@@ -14706,13 +13920,11 @@ interface LuaGuiElement {
     /**
      * Index into {@link LuaGameScript::players | runtime:LuaGameScript::players} specifying the player who owns this element.
      */
-    readonly player_index: number
+    readonly player_index: uint
 
     /**
      * The position this camera or minimap is focused on, if any.
-     * @remarks
      * Applies to subclasses: camera,minimap
-     *
      */
     position: MapPosition
 
@@ -14723,89 +13935,67 @@ interface LuaGuiElement {
 
     /**
      * Whether this text-box is read-only. Defaults to `false`.
-     * @remarks
      * Applies to subclasses: text-box
-     *
      */
     read_only: boolean
 
     /**
      * Whether the sprite widget should resize according to the sprite in it. Defaults to `true`.
-     * @remarks
      * Applies to subclasses: sprite
-     *
      */
     resize_to_sprite: boolean
 
     /**
      * The text shown for the right switch label.
-     * @remarks
      * Applies to subclasses: switch
-     *
      */
     right_label_caption: LocalisedString
 
     /**
      * The tooltip shown on the right switch label.
-     * @remarks
      * Applies to subclasses: switch
-     *
      */
     right_label_tooltip: LocalisedString
 
     /**
      * Whether the contents of this text-box are selectable. Defaults to `true`.
-     * @remarks
      * Applies to subclasses: text-box
-     *
      */
     selectable: boolean
 
     /**
      * The selected index for this dropdown or listbox. Returns `0` if none is selected.
-     * @remarks
      * Applies to subclasses: drop-down,list-box
-     *
      */
-    selected_index: number
+    selected_index: uint
 
     /**
      * The selected tab index for this tabbed pane, if any.
-     * @remarks
      * Applies to subclasses: tabbed-pane
-     *
      */
-    selected_tab_index?: number
+    selected_tab_index?: uint
 
     /**
      * Related to the number to be shown in the bottom right corner of this sprite-button. When set to `true`, numbers that are non-zero and smaller than one are shown as a percentage rather than the value. For example, `0.5` will be shown as `50%` instead.
-     * @remarks
      * Applies to subclasses: sprite-button
-     *
      */
     show_percent_for_small_numbers: boolean
 
     /**
      * The value of this slider element.
-     * @remarks
      * Applies to subclasses: slider
-     *
      */
-    slider_value: number
+    slider_value: double
 
     /**
      * The sprite to display on this sprite-button or sprite in the default state.
-     * @remarks
      * Applies to subclasses: sprite-button,sprite
-     *
      */
     sprite: SpritePath
 
     /**
      * Is this checkbox or radiobutton checked?
-     * @remarks
      * Applies to subclasses: checkbox,radiobutton
-     *
      */
     state: boolean
 
@@ -14816,26 +14006,21 @@ interface LuaGuiElement {
 
     /**
      * The surface index this camera or minimap is using.
-     * @remarks
      * Applies to subclasses: camera,minimap
-     *
      */
-    surface_index: number
+    surface_index: uint
 
     /**
      * The switch state for this switch.
-     * @remarks
+     * 
      * If {@link LuaGuiElement::allow_none_state | runtime:LuaGuiElement::allow_none_state} is false this can't be set to `"none"`.
      * Applies to subclasses: switch
-     *
      */
     switch_state: SwitchState
 
     /**
      * The tabs and contents being shown in this tabbed-pane.
-     * @remarks
      * Applies to subclasses: tabbed-pane
-     *
      */
     readonly tabs: TabAndContent[]
 
@@ -14846,17 +14031,13 @@ interface LuaGuiElement {
 
     /**
      * The text contained in this textfield or text-box.
-     * @remarks
      * Applies to subclasses: textfield,text-box
-     *
      */
     text: string
 
     /**
      * Whether this button is currently toggled. When a button is toggled, it will use the `selected_graphical_set` and `selected_font_color` defined in its style.
-     * @remarks
      * Applies to subclasses: button,sprite-button
-     *
      */
     toggled: boolean
 
@@ -14876,26 +14057,20 @@ interface LuaGuiElement {
     readonly valid: boolean
 
     /**
-     * How much this progress bar is filled. It is a value in the range [0, 1].
-     * @remarks
+     * How much this progress bar is filled. It is a value in the range `[0, 1]`.
      * Applies to subclasses: progressbar
-     *
      */
-    value: number
+    value: double
 
     /**
      * Whether the content of this table should be vertically centered. Overrides {@link LuaStyle::column_alignments | runtime:LuaStyle::column_alignments}. Defaults to `true`.
-     * @remarks
      * Applies to subclasses: table
-     *
      */
     vertical_centering: boolean
 
     /**
      * Policy of the vertical scroll bar.
-     * @remarks
      * Applies to subclasses: scroll-pane
-     *
      */
     vertical_scroll_policy: ScrollPolicy
 
@@ -14906,25 +14081,19 @@ interface LuaGuiElement {
 
     /**
      * Whether this text-box will word-wrap automatically. Defaults to `false`.
-     * @remarks
      * Applies to subclasses: text-box
-     *
      */
     word_wrap: boolean
 
     /**
      * The zoom this camera or minimap is using. This value must be positive.
-     * @remarks
      * Applies to subclasses: camera,minimap
-     *
      */
-    zoom: number
+    zoom: double
 
     /**
      * The indexing operator. Gets children by name.
-     * @remarks
      * This will return a {@link LuaGuiElement | LuaGuiElement}. The return type is any due to typescript limitations.
-     *
      */
     readonly [key: string]: any
 
@@ -14941,24 +14110,24 @@ interface LuaHeatBufferPrototype {
 
     readonly connections: HeatConnection[]
 
-    readonly default_temperature: number
+    readonly default_temperature: double
 
-    readonly max_temperature: number
+    readonly max_temperature: double
 
-    readonly max_transfer: number
+    readonly max_transfer: double
 
-    readonly min_temperature_gradient: number
+    readonly min_temperature_gradient: double
 
-    readonly min_working_temperature: number
+    readonly min_working_temperature: double
 
-    readonly minimum_glow_temperature: number
+    readonly minimum_glow_temperature: double
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
-    readonly specific_heat: number
+    readonly specific_heat: double
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -14978,24 +14147,24 @@ interface LuaHeatEnergySourcePrototype {
 
     readonly connections: HeatConnection[]
 
-    readonly default_temperature: number
+    readonly default_temperature: double
 
     /**
      * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
      */
-    readonly emissions: number
+    readonly emissions: double
 
     readonly heat_buffer_prototype: LuaHeatBufferPrototype
 
-    readonly max_temperature: number
+    readonly max_temperature: double
 
-    readonly max_transfer: number
+    readonly max_transfer: double
 
-    readonly min_temperature_gradient: number
+    readonly min_temperature_gradient: double
 
-    readonly min_working_temperature: number
+    readonly min_working_temperature: double
 
-    readonly minimum_glow_temperature: number
+    readonly minimum_glow_temperature: double
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -15006,7 +14175,7 @@ interface LuaHeatEnergySourcePrototype {
 
     readonly render_no_power_icon: boolean
 
-    readonly specific_heat: number
+    readonly specific_heat: double
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -15079,7 +14248,7 @@ interface LuaInventory {
      * @param index - The item stack index
      */
     can_set_filter(this: void,
-        index: number,
+        index: uint,
         filter: string): boolean
 
     /**
@@ -15094,13 +14263,12 @@ interface LuaInventory {
      */
     count_empty_stacks(this: void,
         include_filtered?: boolean,
-        include_bar?: boolean): number
+        include_bar?: boolean): uint
 
     /**
      * Destroys this inventory.
-     * @remarks
+     * 
      * Only inventories created by {@link LuaGameScript::create_inventory | runtime:LuaGameScript::create_inventory} can be destroyed this way.
-     *
      */
     destroy(this: void): void
 
@@ -15112,7 +14280,7 @@ interface LuaInventory {
      *  [1] - The stack index of the matching stack, if any is found.
      */
     find_empty_stack(this: void,
-        item?: string): LuaMultiReturn<[LuaItemStack | null, number | null]>
+        item?: string): LuaMultiReturn<[LuaItemStack | null, uint | null]>
 
     /**
      * Finds the first LuaItemStack in the inventory that matches the given item name.
@@ -15122,21 +14290,20 @@ interface LuaInventory {
      *  [1] - The stack index of the matching stack, if any is found.
      */
     find_item_stack(this: void,
-        item: string): LuaMultiReturn<[LuaItemStack | null, number | null]>
+        item: string): LuaMultiReturn<[LuaItemStack | null, uint | null]>
 
     /**
      * Get the current bar. This is the index at which the red area starts.
-     * @remarks
+     * 
      * Only useable if this inventory supports having a bar.
-     *
      */
-    get_bar(this: void): number
+    get_bar(this: void): uint
 
     /**
      * Get counts of all items in this inventory.
      * @returns The counts, indexed by item names.
      */
-    get_contents(this: void): {[key: string]: number}
+    get_contents(this: void): {[key: string]: uint}
 
     /**
      * Gets the filter for the given item stack index.
@@ -15144,26 +14311,25 @@ interface LuaInventory {
      * @returns The current filter or `nil` if none.
      */
     get_filter(this: void,
-        index: number): string | null
+        index: uint): string | null
 
     /**
      * Gets the number of the given item that can be inserted into this inventory.
-     * @remarks
-     * This is a "best guess" number; things like assembling machine filtered slots, module slots, items with durability, and items with mixed health will cause the result to be inaccurate.
-     * The main use for this is in checking how many of a basic item can fit into a basic inventory.
+     * 
+     * This is a "best guess" number; things like assembling machine filtered slots, module slots, items with durability, and items with mixed health will cause the result to be inaccurate. The main use for this is in checking how many of a basic item can fit into a basic inventory.
+     * 
      * This accounts for the 'bar' on the inventory.
-     *
      * @param item - The item to check.
      */
     get_insertable_count(this: void,
-        item: string): number
+        item: string): uint
 
     /**
      * Get the number of all or some items in this inventory.
      * @param item - Prototype name of the item to count. If not specified, count all items.
      */
     get_item_count(this: void,
-        item?: string): number
+        item?: string): uint
 
     /**
      * All methods and properties that this object supports.
@@ -15176,7 +14342,7 @@ interface LuaInventory {
      * @returns Number of items actually inserted.
      */
     insert(this: void,
-        items: ItemStackIdentification): number
+        items: ItemStackIdentification): uint
 
     /**
      * Does this inventory contain nothing?
@@ -15199,41 +14365,39 @@ interface LuaInventory {
      * @returns Number of items actually removed.
      */
     remove(this: void,
-        items: ItemStackIdentification): number
+        items: ItemStackIdentification): uint
 
     /**
      * Resizes the inventory.
-     * @remarks
+     * 
      * Items in slots beyond the new capacity are deleted.
+     * 
      * Only inventories created by {@link LuaGameScript::create_inventory | runtime:LuaGameScript::create_inventory} can be resized.
-     *
      * @param size - New size of a inventory
      */
     resize(this: void,
-        size: number): void
+        size: uint16): void
 
     /**
      * Set the current bar.
-     * @remarks
+     * 
      * Only useable if this inventory supports having a bar.
-     *
      * @param bar - The new limit. Omitting this parameter will clear the limit.
      */
     set_bar(this: void,
-        bar?: number): void
+        bar?: uint): void
 
     /**
      * Sets the filter for the given item stack index.
-     * @remarks
+     * 
      * Some inventory slots don't allow some filters (gun ammo can't be filtered for non-ammo).
-     *
      * @param filter - The new filter. `nil` erases any existing filter.
      * @param index - The item stack index.
      * @returns If the filter was allowed to be set.
      */
     set_filter(this: void,
-        index: number,
-        filter: string | null): boolean
+        index: uint,
+        filter: string | nil): boolean
 
     /**
      * Sorts and merges the items in this inventory.
@@ -15242,9 +14406,8 @@ interface LuaInventory {
 
     /**
      * Does this inventory support a bar? Bar is the draggable red thing, found for example on chests, that limits the portion of the inventory that may be manipulated by machines.
-     * @remarks
+     * 
      * "Supporting a bar" doesn't mean that the bar is set to some nontrivial value. Supporting a bar means the inventory supports having this limit at all. The character's inventory is an example of an inventory without a bar; the wooden chest's inventory is an example of one with a bar.
-     *
      */
     supports_bar(this: void): boolean
 
@@ -15290,12 +14453,10 @@ interface LuaInventory {
 
     /**
      * The indexing operator.
-     * @remarks
      * This will return a {@link LuaItemStack | LuaItemStack}. The return type is any due to typescript limitations.
-     *
      * @example
-     * Will get the first item in the player's inventory. 
      * ```
+     * -- Will get the first item in the player's inventory.
      * game.player.get_main_inventory()[1]
      * ```
      *
@@ -15305,30 +14466,23 @@ interface LuaInventory {
     /**
      * Get the number of slots in this inventory.
      * @example
-     * Will print the number of slots in the player's main inventory. 
      * ```
+     * -- Will print the number of slots in the player's main inventory.
      * game.player.print(#game.player.get_main_inventory())
      * ```
      *
      */
-    readonly '#': number
+    readonly '#': uint
 
 }
 
 /**
- * Prototype of an item.
- * @example
- * ```
- * game.item_prototypes["iron-plate"]
- * ```
- *
+ * Prototype of an item. For example, an item prototype can be obtained from {@link LuaGameScript::item_prototypes | runtime:LuaGameScript::item_prototypes} by its name: `game.item_prototypes["iron-plate"]`.
  */
 interface LuaItemPrototype {
     /**
      * The type of this ammo prototype.
-     * @remarks
      * Applies to subclasses: AmmoItem
-     *
      * @param ammo_source_type - Defaults to `"default"`.
      */
     get_ammo_type(this: void,
@@ -15348,145 +14502,113 @@ interface LuaItemPrototype {
 
     /**
      * The alt entity filter mode used by this selection tool.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_entity_filter_mode?: PrototypeFilterMode
 
     /**
      * The alt entity filters used by this selection tool indexed by entity name.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_entity_filters?: {[key: string]: LuaEntityPrototype}
 
     /**
      * The alt entity type filters used by this selection tool indexed by entity type.
-     * @remarks
+     * 
      * The boolean value is meaningless and is used to allow easy lookup if a type exists in the dictionary.
      * Applies to subclasses: SelectionTool
-     *
      */
-    readonly alt_entity_type_filters?: {[key: string]: boolean}
+    readonly alt_entity_type_filters?: {[key: string]: true}
 
     /**
      * The alt reverse entity filter mode used by this selection tool.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_reverse_alt_entity_filter_mode?: PrototypeFilterMode
 
     /**
      * The alt reverse entity filters used by this selection tool indexed by entity name.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_reverse_entity_filters?: {[key: string]: LuaEntityPrototype}
 
     /**
      * The alt reverse entity type filters used by this selection tool indexed by entity type.
-     * @remarks
+     * 
      * The boolean value is meaningless and is used to allow easy lookup if a type exists in the dictionary.
      * Applies to subclasses: SelectionTool
-     *
      */
-    readonly alt_reverse_entity_type_filters?: {[key: string]: boolean}
+    readonly alt_reverse_entity_type_filters?: {[key: string]: true}
 
     /**
      * The color used when doing alt reverse selection with this selection tool prototype.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_reverse_selection_border_color?: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_reverse_selection_cursor_box_type?: CursorBoxRenderType
 
     /**
      * Flags that affect which entities will be selected during alt reverse selection.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_reverse_selection_mode_flags?: SelectionModeFlags
 
     /**
      * The alt reverse tile filter mode used by this selection tool.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_reverse_tile_filter_mode?: PrototypeFilterMode
 
     /**
      * The alt reverse tile filters used by this selection tool indexed by tile name.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_reverse_tile_filters?: {[key: string]: LuaTilePrototype}
 
     /**
      * The color used when doing alt selection with this selection tool prototype.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_selection_border_color?: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_selection_cursor_box_type?: CursorBoxRenderType
 
     /**
      * Flags that affect which entities will be selected during alternate selection.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_selection_mode_flags?: SelectionModeFlags
 
     /**
      * The alt tile filter mode used by this selection tool.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_tile_filter_mode?: PrototypeFilterMode
 
     /**
      * The alt tile filters used by this selection tool indexed by tile name.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly alt_tile_filters?: {[key: string]: LuaTilePrototype}
 
     /**
      * If tiles area always included when doing selection with this selection tool prototype.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly always_include_tiles?: boolean
 
     /**
      * The gun attack parameters.
-     * @remarks
      * Applies to subclasses: Gun
-     *
      */
     readonly attack_parameters?: AttackParameters
 
@@ -15502,119 +14624,92 @@ interface LuaItemPrototype {
 
     /**
      * The capsule action for this capsule item prototype.
-     * @remarks
      * Applies to subclasses: Capsule
-     *
      */
     readonly capsule_action?: CapsuleAction
 
     /**
      * The name of a {@link LuaModuleCategoryPrototype | runtime:LuaModuleCategoryPrototype}. Used when upgrading modules: Ctrl + click modules into an entity and it will replace lower tier modules of the same category with higher tier modules.
-     * @remarks
      * Applies to subclasses: ModuleItem
-     *
      */
     readonly category?: string
 
     /**
      * The curved rail prototype used for this rail planner prototype.
-     * @remarks
      * Applies to subclasses: RailPlanner
-     *
      */
     readonly curved_rail?: LuaEntityPrototype
 
     /**
      * The default label color used for this item with label, if any.
-     * @remarks
      * Applies to subclasses: ItemWithLabel
-     *
      */
     readonly default_label_color?: Color
 
     /**
      * The default request value.
      */
-    readonly default_request_amount: number
+    readonly default_request_amount: uint
 
     /**
      * If true, and this item with label has a label it is drawn in place of the normal number when held in the cursor.
-     * @remarks
      * Applies to subclasses: ItemWithLabel
-     *
      */
     readonly draw_label_for_cursor_render?: boolean
 
     /**
      * The durability of this tool item.
-     * @remarks
      * Applies to subclasses: ToolItem
-     *
      */
-    readonly durability?: number
+    readonly durability?: double
 
     /**
      * The durability message key used when displaying the durability of this tool.
-     * @remarks
      * Applies to subclasses: ToolItem
-     *
      */
     readonly durability_description_key?: string
 
     /**
      * The entity filter mode used by this selection tool.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly entity_filter_mode?: PrototypeFilterMode
 
     /**
      * The number of entity filters this deconstruction item has.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
-    readonly entity_filter_slots?: number
+    readonly entity_filter_slots?: uint
 
     /**
      * The entity filters used by this selection tool indexed by entity name.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly entity_filters?: {[key: string]: LuaEntityPrototype}
 
     /**
      * The entity type filters used by this selection tool indexed by entity type.
-     * @remarks
+     * 
      * The boolean value is meaningless and is used to allow easy lookup if a type exists in the dictionary.
      * Applies to subclasses: SelectionTool
-     *
      */
-    readonly entity_type_filters?: {[key: string]: boolean}
+    readonly entity_type_filters?: {[key: string]: true}
 
     /**
      * The prototype of this armor's equipment grid, if any.
-     * @remarks
      * Applies to subclasses: Armor
-     *
      */
     readonly equipment_grid?: LuaEquipmentGridPrototype
 
     /**
      * If this item with inventory extends the inventory it resides in by default.
-     * @remarks
      * Applies to subclasses: ItemWithInventory
-     *
      */
     readonly extend_inventory_by_default?: boolean
 
     /**
      * The filter mode used by this item with inventory.
-     * @remarks
      * Applies to subclasses: ItemWithInventory
-     *
      */
     readonly filter_mode?: 'none' | 'whitelist' | 'blacklist'
 
@@ -15626,7 +14721,7 @@ interface LuaItemPrototype {
     /**
      * The acceleration multiplier when this item is used as fuel in a vehicle.
      */
-    readonly fuel_acceleration_multiplier: number
+    readonly fuel_acceleration_multiplier: double
 
     /**
      * The fuel category of this item prototype, if any.
@@ -15636,17 +14731,17 @@ interface LuaItemPrototype {
     /**
      * The emissions multiplier if this is used as fuel.
      */
-    readonly fuel_emissions_multiplier: number
+    readonly fuel_emissions_multiplier: double
 
     /**
      * The fuel top speed multiplier when this item is used as fuel in a vehicle.
      */
-    readonly fuel_top_speed_multiplier: number
+    readonly fuel_top_speed_multiplier: double
 
     /**
      * Fuel value when burned.
      */
-    readonly fuel_value: number
+    readonly fuel_value: float
 
     /**
      * The group this prototype belongs to.
@@ -15655,70 +14750,55 @@ interface LuaItemPrototype {
 
     /**
      * If this tool item has infinite durability.
-     * @remarks
      * Applies to subclasses: ToolItem
-     *
      */
     readonly infinite?: boolean
 
     /**
      * The insertion priority mode used by this item with inventory.
-     * @remarks
      * Applies to subclasses: ItemWithInventory
-     *
      */
     readonly insertion_priority_mode?: 'default' | 'never' | 'always' | 'when-manually-filtered'
 
     /**
      * The main inventory size for item-with-inventory-prototype.
-     * @remarks
      * Applies to subclasses: ItemWithInventoryPrototype
-     *
      */
-    readonly inventory_size?: number
+    readonly inventory_size?: uint
 
     /**
      * The inventory size bonus for this armor prototype.
-     * @remarks
      * Applies to subclasses: ArmorPrototype
-     *
      */
-    readonly inventory_size_bonus?: number
+    readonly inventory_size_bonus?: uint
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ItemWithInventory
-     *
      */
     readonly item_filters?: {[key: string]: LuaItemPrototype}
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ItemWithInventory
-     *
      */
     readonly item_group_filters?: {[key: string]: LuaGroup}
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ItemWithInventory
-     *
      */
     readonly item_subgroup_filters?: {[key: string]: LuaGroup}
 
     /**
      * The limitation message key used when the player attempts to use this modules in some place it's not allowed.
-     * @remarks
      * Applies to subclasses: ModuleItem
-     *
      */
     readonly limitation_message_key?: string
 
     /**
      * An array of recipe names this module is allowed to work with. Empty when all recipes are allowed.
-     * @remarks
      * Applies to subclasses: ModuleItem
-     *
      */
     readonly limitations?: string[]
 
@@ -15726,9 +14806,7 @@ interface LuaItemPrototype {
 
     /**
      * The localised string used when the player attempts to put items into this item with inventory that aren't allowed.
-     * @remarks
      * Applies to subclasses: ItemWithInventory
-     *
      */
     readonly localised_filter_message?: LocalisedString
 
@@ -15736,25 +14814,19 @@ interface LuaItemPrototype {
 
     /**
      * Size of full magazine.
-     * @remarks
      * Applies to subclasses: AmmoItem
-     *
      */
-    readonly magazine_size?: number
+    readonly magazine_size?: float
 
     /**
      * How many filters an upgrade item has.
-     * @remarks
      * Applies to subclasses: UpgradeItem
-     *
      */
-    readonly mapper_count?: number
+    readonly mapper_count?: uint
 
     /**
      * Effects of this module.
-     * @remarks
      * Applies to subclasses: ModuleItem
-     *
      */
     readonly module_effects?: ModuleEffects
 
@@ -15790,89 +14862,69 @@ interface LuaItemPrototype {
 
     /**
      * Amount of extra time (in ticks) it takes to reload the weapon after depleting the magazine.
-     * @remarks
      * Applies to subclasses: AmmoItem
-     *
      */
-    readonly reload_time?: number
+    readonly reload_time?: float
 
     /**
      * The repair result of this repair tool prototype.
-     * @remarks
      * Applies to subclasses: RepairTool
-     *
      */
     readonly repair_result?: TriggerItem[]
 
     /**
      * Resistances of this armor item, if any, indexed by damage type name.
-     * @remarks
      * Applies to subclasses: Armor
-     *
      */
     readonly resistances?: {[key: string]: Resistance}
 
     /**
      * The reverse entity filter mode used by this selection tool.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly reverse_alt_entity_filter_mode?: PrototypeFilterMode
 
     /**
      * The reverse entity filters used by this selection tool indexed by entity name.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly reverse_entity_filters?: {[key: string]: LuaEntityPrototype}
 
     /**
      * The reverse entity type filters used by this selection tool indexed by entity type.
-     * @remarks
+     * 
      * The boolean value is meaningless and is used to allow easy lookup if a type exists in the dictionary.
      * Applies to subclasses: SelectionTool
-     *
      */
-    readonly reverse_entity_type_filters?: {[key: string]: boolean}
+    readonly reverse_entity_type_filters?: {[key: string]: true}
 
     /**
      * The color used when doing reverse selection with this selection tool prototype.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly reverse_selection_border_color?: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly reverse_selection_cursor_box_type?: CursorBoxRenderType
 
     /**
      * Flags that affect which entities will be selected during reverse selection.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly reverse_selection_mode_flags?: SelectionModeFlags
 
     /**
      * The reverse tile filter mode used by this selection tool.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly reverse_tile_filter_mode?: PrototypeFilterMode
 
     /**
      * The reverse tile filters used by this selection tool indexed by tile name.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly reverse_tile_filters?: {[key: string]: LuaTilePrototype}
 
@@ -15883,39 +14935,32 @@ interface LuaItemPrototype {
 
     /**
      * The color used when doing normal selection with this selection tool prototype.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly selection_border_color?: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly selection_cursor_box_type?: CursorBoxRenderType
 
     /**
      * Flags that affect which entities will be selected.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly selection_mode_flags?: SelectionModeFlags
 
     /**
      * The repairing speed if this is a repairing tool.
-     * @remarks
      * Applies to subclasses: RepairTool
-     *
      */
-    readonly speed?: number
+    readonly speed?: float
 
     /**
      * Maximum stack size of the item specified by this prototype.
      */
-    readonly stack_size: number
+    readonly stack_size: uint
 
     /**
      * Is this item allowed to stack at all?
@@ -15924,9 +14969,7 @@ interface LuaItemPrototype {
 
     /**
      * The straight rail prototype used for this rail planner prototype.
-     * @remarks
      * Applies to subclasses: RailPlanner
-     *
      */
     readonly straight_rail?: LuaEntityPrototype
 
@@ -15937,33 +14980,25 @@ interface LuaItemPrototype {
 
     /**
      * Tier of the module inside its category. Used when upgrading modules: Ctrl + click modules into an entity and it will replace lower tier modules with higher tier modules if they have the same category.
-     * @remarks
      * Applies to subclasses: ModuleItem
-     *
      */
-    readonly tier?: number
+    readonly tier?: uint
 
     /**
      * The tile filter mode used by this selection tool.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly tile_filter_mode?: PrototypeFilterMode
 
     /**
      * The number of tile filters this deconstruction item has.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
-    readonly tile_filter_slots?: number
+    readonly tile_filter_slots?: uint
 
     /**
      * The tile filters used by this selection tool indexed by tile name.
-     * @remarks
      * Applies to subclasses: SelectionTool
-     *
      */
     readonly tile_filters?: {[key: string]: LuaTilePrototype}
 
@@ -15980,42 +15015,38 @@ interface LuaItemPrototype {
     /**
      * The number of items needed to connect two entities with this as wire.
      */
-    readonly wire_count: number
+    readonly wire_count: uint
 
 }
 
 /**
  * A reference to an item and count owned by some external entity.
- * @remarks
+ * 
  * In most instances this is a simple reference as in: it points at a specific slot in an inventory and not the item in the slot.
+ * 
  * In the instance this references an item on a {@link LuaTransportLine | runtime:LuaTransportLine} the reference is only guaranteed to stay valid (and refer to the same item) as long as nothing changes the transport line.
- *
  */
 interface LuaItemStack {
     /**
      * Add ammo to this ammo item.
-     * @remarks
      * Applies to subclasses: AmmoItem
-     *
      * @param amount - Amount of ammo to add.
      */
     add_ammo(this: void,
-        amount: number): void
+        amount: float): void
 
     /**
      * Add durability to this tool item.
-     * @remarks
      * Applies to subclasses: ToolItem
-     *
      * @param amount - Amount of durability to add.
      */
     add_durability(this: void,
-        amount: number): void
+        amount: double): void
 
     /**
-     * @remarks
+     * Build this blueprint or blueprint book at the given location.
+     * 
      * Built entities can be come invalid between the building of the blueprint and the function returning if by_player or raise_built is used and one of those events invalidates the entity.
-     *
      * @param table.by_player - The player to use if any. If provided [defines.events.on_built_entity](runtime:defines.events.on_built_entity) will also be fired on successful entity creation.
      * @param table.direction - The direction to use when building
      * @param table.force - Force to use for the building
@@ -16069,25 +15100,19 @@ interface LuaItemStack {
 
     /**
      * Clears this blueprint item.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     clear_blueprint(this: void): void
 
     /**
      * Clears all settings/filters on this deconstruction item resetting it to default values.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
     clear_deconstruction_item(this: void): void
 
     /**
      * Clears all settings/filters on this upgrade item resetting it to default values.
-     * @remarks
      * Applies to subclasses: UpgradeItem
-     *
      */
     clear_upgrade_item(this: void): void
 
@@ -16115,13 +15140,11 @@ interface LuaItemStack {
             include_station_names?: boolean,
             include_trains?: boolean,
             include_fuel?: boolean
-        }): {[key: number]: LuaEntity}
+        }): {[key: string]: LuaEntity}
 
     /**
      * Creates the equipment grid for this item if it doesn't exist and this is an item-with-entity-data that supports equipment grids.
-     * @remarks
      * Applies to subclasses: ItemWithEntityData
-     *
      */
     create_grid(this: void): LuaEquipmentGrid
 
@@ -16144,23 +15167,19 @@ interface LuaItemStack {
 
     /**
      * Remove ammo from this ammo item.
-     * @remarks
      * Applies to subclasses: AmmoItem
-     *
      * @param amount - Amount of ammo to remove.
      */
     drain_ammo(this: void,
-        amount: number): void
+        amount: float): void
 
     /**
      * Remove durability from this tool item.
-     * @remarks
      * Applies to subclasses: ToolItem
-     *
      * @param amount - Amount of durability to remove.
      */
     drain_durability(this: void,
-        amount: number): void
+        amount: double): void
 
     /**
      * Export a supported item (blueprint, blueprint-book, deconstruction-planner, upgrade-planner, item-with-tags) to a string.
@@ -16170,57 +15189,45 @@ interface LuaItemStack {
 
     /**
      * The entities in this blueprint.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     get_blueprint_entities(this: void): BlueprintEntity[] | null
 
     /**
      * Gets the number of entities in this blueprint item.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
-    get_blueprint_entity_count(this: void): number
+    get_blueprint_entity_count(this: void): uint
 
     /**
      * Gets the given tag on the given blueprint entity index in this blueprint item.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      * @param index - The entity index.
      * @param tag - The tag to get.
      */
     get_blueprint_entity_tag(this: void,
-        index: number,
+        index: uint,
         tag: string): AnyBasic | null
 
     /**
      * Gets the tags for the given blueprint entity index in this blueprint item.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     get_blueprint_entity_tags(this: void,
-        index: number): Tags
+        index: uint): Tags
 
     /**
      * A list of the tiles in this blueprint.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     get_blueprint_tiles(this: void): Tile[] | null
 
     /**
      * Gets the entity filter at the given index for this deconstruction item.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
     get_entity_filter(this: void,
-        index: number): string | null
+        index: uint): string | null
 
     /**
      * Access the inner inventory of an item.
@@ -16232,32 +15239,26 @@ interface LuaItemStack {
 
     /**
      * Gets the filter at the given index for this upgrade item.
-     * @remarks
      * Applies to subclasses: UpgradeItem
-     *
      * @param index - The index of the mapper to read.
      */
     get_mapper(this: void,
-        index: number,
+        index: uint,
         type: 'from' | 'to'): UpgradeFilter
 
     /**
      * Gets the tag with the given name or returns `nil` if it doesn't exist.
-     * @remarks
      * Applies to subclasses: ItemWithTags
-     *
      */
     get_tag(this: void,
         tag_name: string): AnyBasic | null
 
     /**
      * Gets the tile filter at the given index for this deconstruction item.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
     get_tile_filter(this: void,
-        index: number): string | null
+        index: uint): string | null
 
     /**
      * All methods and properties that this object supports.
@@ -16270,7 +15271,7 @@ interface LuaItemStack {
      * @returns 0 if the import succeeded with no errors. -1 if the import succeeded with errors. 1 if the import failed.
      */
     import_stack(this: void,
-        data: string): number
+        data: string): int
 
     /**
      * Is this blueprint item setup? I.e. is it a non-empty blueprint?
@@ -16279,9 +15280,7 @@ interface LuaItemStack {
 
     /**
      * Removes a tag with the given name.
-     * @remarks
      * Applies to subclasses: ItemWithTags
-     *
      * @returns If the tag existed and was removed.
      */
     remove_tag(this: void,
@@ -16289,9 +15288,7 @@ interface LuaItemStack {
 
     /**
      * Set new entities to be a part of this blueprint.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      * @param entities - The new blueprint entities.
      */
     set_blueprint_entities(this: void,
@@ -16299,34 +15296,28 @@ interface LuaItemStack {
 
     /**
      * Sets the given tag on the given blueprint entity index in this blueprint item.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      * @param index - The entity index.
      * @param tag - The tag to set.
      * @param value - The tag value to set or `nil` to clear the tag.
      */
     set_blueprint_entity_tag(this: void,
-        index: number,
+        index: uint,
         tag: string,
         value: AnyBasic): void
 
     /**
      * Sets the tags on the given blueprint entity index in this blueprint item.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      * @param index - The entity index
      */
     set_blueprint_entity_tags(this: void,
-        index: number,
+        index: uint,
         tags: Tags): void
 
     /**
      * Set specific tiles in this blueprint.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      * @param tiles - Tiles to be a part of the blueprint.
      */
     set_blueprint_tiles(this: void,
@@ -16334,28 +15325,24 @@ interface LuaItemStack {
 
     /**
      * Sets the entity filter at the given index for this deconstruction item.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      * @param filter - Writing `nil` removes the filter.
      * @returns Whether the new filter was successfully set (meaning it was valid).
      */
     set_entity_filter(this: void,
-        index: number,
-        filter: string | LuaEntityPrototype | LuaEntity | null): boolean
+        index: uint,
+        filter: string | LuaEntityPrototype | LuaEntity | nil): boolean
 
     /**
      * Sets the module filter at the given index for this upgrade item.
-     * @remarks
      * Applies to subclasses: UpgradeItem
-     *
      * @param filter - The filter to set or `nil`
      * @param index - The index of the mapper to set.
      */
     set_mapper(this: void,
-        index: number,
+        index: uint,
         type: 'from' | 'to',
-        filter: UpgradeFilter | null): void
+        filter: UpgradeFilter | nil): void
 
     /**
      * Set this item stack to another item stack.
@@ -16367,9 +15354,7 @@ interface LuaItemStack {
 
     /**
      * Sets the tag with the given name and value.
-     * @remarks
      * Applies to subclasses: ItemWithTags
-     *
      */
     set_tag(this: void,
         tag_name: string,
@@ -16377,15 +15362,13 @@ interface LuaItemStack {
 
     /**
      * Sets the tile filter at the given index for this deconstruction item.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      * @param filter - Writing `nil` removes the filter.
      * @returns Whether the new filter was successfully set (meaning it was valid).
      */
     set_tile_filter(this: void,
-        index: number,
-        filter: string | LuaTilePrototype | LuaTile | null): boolean
+        index: uint,
+        filter: string | LuaTilePrototype | LuaTile | nil): boolean
 
     /**
      * Swaps this item stack with the given item stack if allowed.
@@ -16413,80 +15396,62 @@ interface LuaItemStack {
 
     /**
      * The active blueprint index for this blueprint book. `nil` if this blueprint book is empty.
-     * @remarks
      * Applies to subclasses: BlueprintBookItem
-     *
      */
-    active_index?: number
+    active_index?: uint
 
     /**
      * Whether the label for this item can be manually changed. When false the label can only be changed through the API.
-     * @remarks
      * Applies to subclasses: ItemWithLabel
-     *
      */
     allow_manual_label_change: boolean
 
     /**
      * Number of bullets left in the magazine.
-     * @remarks
      * Applies to subclasses: AmmoItem
-     *
      */
-    ammo: number
+    ammo: uint
 
     /**
      * If absolute snapping is enabled on this blueprint item.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     blueprint_absolute_snapping: boolean
 
     /**
      * Icons of this blueprint item, blueprint book, deconstruction item or upgrade planner. An item that doesn't have icons returns `nil` on read and throws error on write.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     blueprint_icons?: BlueprintSignalIcon[]
 
     /**
      * The offset from the absolute grid. `nil` if absolute snapping is not enabled.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     blueprint_position_relative_to_grid?: TilePosition
 
     /**
      * The snapping grid size in this blueprint item. `nil` if snapping is not enabled.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     blueprint_snap_to_grid?: TilePosition
 
     /**
      * If this item is a spidertron remote that has a spidertron bound to it, it returns the connected spider-vehicle entity.
-     * @remarks
      * Applies to subclasses: SpidertronRemote
-     *
      */
     connected_entity?: LuaEntity
 
     /**
      * Raw materials required to build this blueprint. Result is a dictionary mapping each item prototype name to the required count.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
-    readonly cost_to_build: {[key: string]: number}
+    readonly cost_to_build: {[key: string]: uint}
 
     /**
      * Number of items in this stack.
      */
-    count: number
+    count: uint
 
     /**
      * The custom description this item-with-tags. This is shown over the normal item description if this is set to a non-empty value.
@@ -16495,41 +15460,31 @@ interface LuaItemStack {
 
     /**
      * The default icons for a blueprint item.
-     * @remarks
      * Applies to subclasses: BlueprintItem
-     *
      */
     readonly default_icons: BlueprintSignalIcon[]
 
     /**
      * Durability of the contained item. Automatically capped at the item's maximum durability.
-     * @remarks
      * Applies to subclasses: Tool
-     *
      */
-    durability?: number
+    durability?: double
 
     /**
      * If this is an item with entity data, get the stored entity color.
-     * @remarks
      * Applies to subclasses: ItemWithEntityData
-     *
      */
     entity_color?: Color
 
     /**
      * The number of entity filters this deconstruction item supports.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
-    readonly entity_filter_count: number
+    readonly entity_filter_count: uint
 
     /**
      * The blacklist/whitelist entity filter mode for this deconstruction item.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
     entity_filter_mode: defines.deconstruction_item.entity_filter_mode
 
@@ -16540,17 +15495,13 @@ interface LuaItemStack {
 
     /**
      * If this is an item with entity data, get the stored entity label.
-     * @remarks
      * Applies to subclasses: ItemWithEntityData
-     *
      */
     entity_label?: string
 
     /**
      * If this item extends the inventory it resides in (provides its contents for counts, crafting, insertion). Only callable on items with inventories.
-     * @remarks
      * Applies to subclasses: ItemWithInventory
-     *
      */
     extends_inventory: boolean
 
@@ -16560,9 +15511,9 @@ interface LuaItemStack {
     readonly grid?: LuaEquipmentGrid
 
     /**
-     * How much health the item has, as a number in range [0, 1].
+     * How much health the item has, as a number in range `[0, 1]`.
      */
-    health: number
+    health: float
 
     /**
      * If this is an ammo item.
@@ -16641,8 +15592,8 @@ interface LuaItemStack {
 
     /**
      * The unique identifier for this item , if any. Note that this ID stays the same no matter where the item is moved to.
-     * 
      * Only these types of items have unique IDs:
+     * 
      * - `"armor"`
      * - `"spidertron-remote"`
      * - `"selection-tool"`
@@ -16655,21 +15606,17 @@ interface LuaItemStack {
      * - `"item-with-inventory"`
      * - `"item-with-tags"`
      */
-    readonly item_number?: number
+    readonly item_number?: uint
 
     /**
      * The current label for this item, if any.
-     * @remarks
      * Applies to subclasses: ItemWithLabel
-     *
      */
     label?: string
 
     /**
      * The current label color for this item, if any.
-     * @remarks
      * Applies to subclasses: ItemWithLabel
-     *
      */
     label_color?: Color
 
@@ -16685,9 +15632,7 @@ interface LuaItemStack {
 
     /**
      * The insertion mode priority this ItemWithInventory uses when items are inserted into an inventory it resides in. Only callable on items with inventories.
-     * @remarks
      * Applies to subclasses: ItemWithInventory
-     *
      */
     prioritize_insertion_mode: 'default' | 'never' | 'always' | 'when-manually-filtered'
 
@@ -16697,25 +15642,20 @@ interface LuaItemStack {
     readonly prototype: LuaItemPrototype
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ItemWithTags
-     *
      */
     tags: Tags
 
     /**
      * The number of tile filters this deconstruction item supports.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
-    readonly tile_filter_count: number
+    readonly tile_filter_count: uint
 
     /**
      * The blacklist/whitelist tile filter mode for this deconstruction item.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
     tile_filter_mode: defines.deconstruction_item.tile_filter_mode
 
@@ -16726,17 +15666,13 @@ interface LuaItemStack {
 
     /**
      * The tile selection mode for this deconstruction item.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
     tile_selection_mode: defines.deconstruction_item.tile_selection_mode
 
     /**
      * If this deconstruction item is set to allow trees and rocks only.
-     * @remarks
      * Applies to subclasses: DeconstructionItem
-     *
      */
     trees_and_rocks_only: boolean
 
@@ -16751,7 +15687,9 @@ interface LuaItemStack {
     readonly valid: boolean
 
     /**
-     * Is this valid for reading? Differs from the usual `valid` in that `valid` will be `true` even if the item stack is blank but the entity that holds it is still valid.
+     * Is this valid for reading? Differs from the usual `valid` in that `valid` will be `true` even if
+     * 
+     * the item stack is blank but the entity that holds it is still valid.
      */
     readonly valid_for_read: boolean
 
@@ -16846,12 +15784,12 @@ interface LuaLogisticCell {
     /**
      * Radius at which the robots hover when waiting to be charged.
      */
-    readonly charge_approach_distance: number
+    readonly charge_approach_distance: float
 
     /**
      * Number of robots currently charging.
      */
-    readonly charging_robot_count: number
+    readonly charging_robot_count: uint
 
     /**
      * Robots currently being charged.
@@ -16861,7 +15799,7 @@ interface LuaLogisticCell {
     /**
      * Construction radius of this cell.
      */
-    readonly construction_radius: number
+    readonly construction_radius: float
 
     /**
      * The network that owns this cell, if any.
@@ -16871,12 +15809,12 @@ interface LuaLogisticCell {
     /**
      * Logistic radius of this cell.
      */
-    readonly logistic_radius: number
+    readonly logistic_radius: float
 
     /**
      * Logistic connection distance of this cell.
      */
-    readonly logistics_connection_distance: number
+    readonly logistics_connection_distance: float
 
     /**
      * `true` if this is a mobile cell. In vanilla, only the logistic cell created by a character's personal roboport is mobile.
@@ -16901,17 +15839,17 @@ interface LuaLogisticCell {
     /**
      * Number of stationed construction robots in this cell.
      */
-    readonly stationed_construction_robot_count: number
+    readonly stationed_construction_robot_count: uint
 
     /**
      * Number of stationed logistic robots in this cell.
      */
-    readonly stationed_logistic_robot_count: number
+    readonly stationed_logistic_robot_count: uint
 
     /**
      * Number of robots waiting to charge.
      */
-    readonly to_charge_robot_count: number
+    readonly to_charge_robot_count: uint
 
     /**
      * Robots waiting to charge.
@@ -16969,7 +15907,7 @@ interface LuaLogisticNetwork {
      */
     can_satisfy_request(this: void,
         item: string,
-        count?: number,
+        count?: uint,
         include_buffers?: boolean): boolean
 
     /**
@@ -16983,7 +15921,7 @@ interface LuaLogisticNetwork {
      * Get item counts for the entire network, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      * @returns A mapping of item prototype names to the number available in the network.
      */
-    get_contents(this: void): {[key: string]: number}
+    get_contents(this: void): {[key: string]: uint}
 
     /**
      * Count given or all items in the network or given members.
@@ -16992,7 +15930,7 @@ interface LuaLogisticNetwork {
      */
     get_item_count(this: void,
         item?: string,
-        member?: 'storage' | 'providers'): number
+        member?: 'storage' | 'providers'): int
 
     /**
      * Get the amount of items of the given type indexed by the storage member.
@@ -17021,7 +15959,7 @@ interface LuaLogisticNetwork {
      */
     insert(this: void,
         item: ItemStackIdentification,
-        members?: 'storage' | 'storage-empty' | 'storage-empty-slot' | 'requester'): number
+        members?: 'storage' | 'storage-empty' | 'storage-empty-slot' | 'requester'): uint
 
     /**
      * Remove items from the logistic network. This will actually remove the items from some logistic chests.
@@ -17031,7 +15969,7 @@ interface LuaLogisticNetwork {
      */
     remove_item(this: void,
         item: ItemStackIdentification,
-        members?: 'active-provider' | 'passive-provider' | 'buffer' | 'storage'): number
+        members?: 'active-provider' | 'passive-provider' | 'buffer' | 'storage'): uint
 
     /**
      * Find a logistic point to drop the specific item stack.
@@ -17069,22 +16007,22 @@ interface LuaLogisticNetwork {
     /**
      * The total number of construction robots in the network (idle and active + in roboports).
      */
-    readonly all_construction_robots: number
+    readonly all_construction_robots: uint
 
     /**
      * The total number of logistic robots in the network (idle and active + in roboports).
      */
-    readonly all_logistic_robots: number
+    readonly all_logistic_robots: uint
 
     /**
      * Number of construction robots available for a job.
      */
-    readonly available_construction_robots: number
+    readonly available_construction_robots: uint
 
     /**
      * Number of logistic robots available for a job.
      */
-    readonly available_logistic_robots: number
+    readonly available_logistic_robots: uint
 
     /**
      * All cells in this network.
@@ -17154,7 +16092,7 @@ interface LuaLogisticNetwork {
     /**
      * Maximum number of robots the network can work with. Currently only used for the personal roboport.
      */
-    readonly robot_limit: number
+    readonly robot_limit: uint
 
     /**
      * All robots in this logistic network.
@@ -17194,24 +16132,22 @@ interface LuaLogisticPoint {
 
     /**
      * The logistic filters for this logistic point, if this uses any.
-     * @remarks
+     * 
      * The returned array will always have an entry for each filter and will be indexed in sequence when not nil.
-     *
      */
     readonly filters?: LogisticFilter[]
 
     /**
      * The force of this logistic point.
-     * @remarks
+     * 
      * This will always be the same as the {@link LuaLogisticPoint::owner | runtime:LuaLogisticPoint::owner} force.
-     *
      */
     readonly force: LuaForce
 
     /**
      * The Logistic member index of this logistic point.
      */
-    readonly logistic_member_index: number
+    readonly logistic_member_index: uint
 
     readonly logistic_network: LuaLogisticNetwork
 
@@ -17233,12 +16169,12 @@ interface LuaLogisticPoint {
     /**
      * Items targeted to be dropped off into this logistic point by robots. The attribute is a dictionary mapping the item prototype names to their item counts.
      */
-    readonly targeted_items_deliver: {[key: string]: number}
+    readonly targeted_items_deliver: {[key: string]: uint}
 
     /**
      * Items targeted to be picked up from this logistic point by robots. The attribute is a dictionary mapping the item prototype names to their item counts.
      */
-    readonly targeted_items_pickup: {[key: string]: number}
+    readonly targeted_items_pickup: {[key: string]: uint}
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -17305,7 +16241,7 @@ interface LuaModSettingPrototype {
     /**
      * The allowed values for this setting. `nil` if this setting doesn't use the a fixed set of values.
      */
-    readonly allowed_values?: string[] | number[]
+    readonly allowed_values?: string[] | int[] | double[]
 
     /**
      * Whether this string setting auto-trims values. `nil` if not a string setting
@@ -17315,7 +16251,7 @@ interface LuaModSettingPrototype {
     /**
      * The default value of this setting.
      */
-    readonly default_value: boolean | number | string
+    readonly default_value: boolean | double | int | string
 
     /**
      * Whether this setting is hidden from the GUI.
@@ -17329,12 +16265,12 @@ interface LuaModSettingPrototype {
     /**
      * The maximum value for this setting. `nil` if this setting type doesn't support a maximum.
      */
-    readonly maximum_value?: number
+    readonly maximum_value?: double | int
 
     /**
      * The minimum value for this setting. `nil` if this setting type doesn't support a minimum.
      */
-    readonly minimum_value?: number
+    readonly minimum_value?: double | int
 
     /**
      * The mod that owns this setting.
@@ -17496,17 +16432,17 @@ interface LuaParticlePrototype {
 
     readonly ended_in_water_trigger_effect: TriggerEffectItem
 
-    readonly life_time: number
+    readonly life_time: uint
 
     readonly localised_description: LocalisedString
 
     readonly localised_name: LocalisedString
 
-    readonly mining_particle_frame_speed: number
+    readonly mining_particle_frame_speed: float
 
-    readonly movement_modifier: number
+    readonly movement_modifier: float
 
-    readonly movement_modifier_when_on_ground: number
+    readonly movement_modifier_when_on_ground: float
 
     /**
      * Name of this prototype.
@@ -17525,7 +16461,7 @@ interface LuaParticlePrototype {
 
     readonly regular_trigger_effect: TriggerEffectItem
 
-    readonly regular_trigger_effect_frequency: number
+    readonly regular_trigger_effect_frequency: uint
 
     readonly render_layer: RenderLayer
 
@@ -17585,15 +16521,14 @@ interface LuaPermissionGroup {
         allow_action: boolean): boolean
 
     /**
-     * The group ID
+     * The group ID.
      */
-    readonly group_id: number
+    readonly group_id: uint
 
     /**
      * The name of this group.
-     * @remarks
+     * 
      * Setting the name to `nil` or an empty string sets the name to the default value.
-     *
      */
     name: string
 
@@ -17630,7 +16565,7 @@ interface LuaPermissionGroups {
      * @returns `nil` if there is no matching group.
      */
     get_group(this: void,
-        group: string | number): LuaPermissionGroup | null
+        group: string | uint): LuaPermissionGroup | null
 
     /**
      * All methods and properties that this object supports.
@@ -17696,11 +16631,10 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Associates a character with this player.
-     * @remarks
+     * 
      * The character must not be connected to any controller.
-     * If this player is currently disconnected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}) the character will be immediately "logged off".
-     * See {@link LuaPlayer::get_associated_characters | runtime:LuaPlayer::get_associated_characters} for more information.
-     *
+     * 
+     * If this player is currently disconnected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}) the character will be immediately "logged off". See {@link LuaPlayer::get_associated_characters | runtime:LuaPlayer::get_associated_characters} for more information.
      * @param character - The character entity.
      */
     associate_character(this: void,
@@ -17719,7 +16653,7 @@ interface LuaPlayer extends LuaControl {
             position: MapPosition,
             direction?: defines.direction,
             alt?: boolean,
-            terrain_building_size?: number,
+            terrain_building_size?: uint,
             skip_fog_of_war?: boolean
         }): void
 
@@ -17736,7 +16670,7 @@ interface LuaPlayer extends LuaControl {
             position: MapPosition,
             direction?: defines.direction,
             alt?: boolean,
-            terrain_building_size?: number,
+            terrain_building_size?: uint,
             skip_fog_of_war?: boolean
         }): boolean
 
@@ -17781,9 +16715,8 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Asks the player if they would like to connect to the given server.
-     * @remarks
+     * 
      * This only does anything when used on a multiplayer peer. Single player and server hosts will ignore the prompt.
-     *
      * @param table.address - The server (address:port) if port is not given the default Factorio port is used.
      * @param table.name - The name of the server.
      * @param table.password - The password if different from the one used to join this game. Note, if the current password is not empty but the one required to join the new server is an empty string should be given for this field.
@@ -17798,9 +16731,8 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Creates and attaches a character entity to this player.
-     * @remarks
+     * 
      * The player must not have a character already connected and must be online (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
-     *
      * @param character - The character to create else the default is used.
      * @returns Whether the character was created.
      */
@@ -17809,10 +16741,10 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Spawn flying text that is only visible to this player. Either `position` or `create_at_cursor` are required. When `create_at_cursor` is `true`, all parameters other than `text` are ignored.
-     * @remarks
+     * 
      * If no custom `speed` is set and the text is longer than 25 characters, its `time_to_live` and `speed` are dynamically adjusted to give players more time to read it.
+     * 
      * Local flying text is not saved, which means it will disappear after a save/load-cycle.
-     *
      * @param table.color - The color of the flying text. Defaults to white text.
      * @param table.create_at_cursor - If `true`, the flying text is created at the player's cursor. Defaults to `false`.
      * @param table.position - The location on the map at which to show the flying text.
@@ -17826,8 +16758,8 @@ interface LuaPlayer extends LuaControl {
             position?: MapPosition,
             create_at_cursor?: boolean,
             color?: Color,
-            time_to_live?: number,
-            speed?: number
+            time_to_live?: uint,
+            speed?: double
         }): void
 
     /**
@@ -17849,9 +16781,8 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Disassociates a character from this player. This is functionally the same as setting {@link LuaEntity::associated_player | runtime:LuaEntity::associated_player} to `nil`.
-     * @remarks
+     * 
      * See {@link LuaPlayer::get_associated_characters | runtime:LuaPlayer::get_associated_characters} for more information.
-     *
      * @param character - The character entity
      */
     disassociate_character(this: void,
@@ -17894,7 +16825,7 @@ interface LuaPlayer extends LuaControl {
      * @param index - The screen page. Index 1 is the top row in the gui. Index can go beyond the visible number of bars on the screen to account for the interface config setting change.
      */
     get_active_quick_bar_page(this: void,
-        index: number): number | null
+        index: uint): uint8 | null
 
     /**
      * Get all alerts matching the given filters, or all alerts if no filters are given.
@@ -17907,14 +16838,14 @@ interface LuaPlayer extends LuaControl {
             position?: MapPosition,
             type?: defines.alert_type,
             surface?: SurfaceIdentification
-        }): {[key: number]: {[key: string]: Alert[]}}
+        }): {[key: string]: {[key: string]: Alert[]}}
 
     /**
      * The characters associated with this player.
-     * @remarks
+     * 
      * The array will always be empty when the player is disconnected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}) regardless of there being associated characters.
+     * 
      * Characters associated with this player will be logged off when this player disconnects but are not controlled by any player.
-     *
      */
     get_associated_characters(this: void): LuaEntity[]
 
@@ -17928,14 +16859,14 @@ interface LuaPlayer extends LuaControl {
      * @param index - The index to get.
      */
     get_infinity_inventory_filter(this: void,
-        index: number): InfinityInventoryFilter | null
+        index: uint): InfinityInventoryFilter | null
 
     /**
      * Gets the quick bar filter for the given slot or `nil`.
      * @param index - The slot index. 1 for the first slot of page one, 2 for slot two of page one, 11 for the first slot of page 2, etc.
      */
     get_quick_bar_slot(this: void,
-        index: number): LuaItemPrototype | null
+        index: uint): LuaItemPrototype | null
 
     /**
      * All methods and properties that this object supports.
@@ -17972,7 +16903,7 @@ interface LuaPlayer extends LuaControl {
      * Jump to the specified cutscene waypoint. Only works when the player is viewing a cutscene.
      */
     jump_to_cutscene_waypoint(this: void,
-        waypoint_index: number): void
+        waypoint_index: uint): void
 
     /**
      * Logs a dictionary of chunks -> active entities for the surface this player is on.
@@ -17997,7 +16928,7 @@ interface LuaPlayer extends LuaControl {
      */
     open_map(this: void,
         position: MapPosition,
-        scale?: number,
+        scale?: double,
         entity?: LuaEntity): void
 
     /**
@@ -18009,9 +16940,8 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Play a sound for this player.
-     * @remarks
+     * 
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for this player.
-     *
      * @param table.override_sound_type - The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      * @param table.path - The sound to play.
      * @param table.position - Where the sound should be played. If not given, it's played at the current position of the player.
@@ -18021,15 +16951,14 @@ interface LuaPlayer extends LuaControl {
         table: {
             path: SoundPath,
             position?: MapPosition,
-            volume_modifier?: number,
+            volume_modifier?: double,
             override_sound_type?: SoundType
         }): void
 
     /**
      * Print text to the chat console.
-     * @remarks
+     * 
      * By default, messages that are identical to a message sent in the last 60 ticks are not printed again.
-     *
      */
     print(this: void,
         message: LocalisedString,
@@ -18068,23 +16997,21 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * Requests a translation for the given localised string. If the request is successful, the {@link on_string_translated | runtime:on_string_translated} event will be fired with the results.
-     * @remarks
+     * 
      * Does nothing if this player is not connected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
-     *
      * @returns The unique ID for the requested translation.
      */
     request_translation(this: void,
-        localised_string: LocalisedString): number | null
+        localised_string: LocalisedString): uint | null
 
     /**
      * Requests translation for the given set of localised strings. If the request is successful, a {@link on_string_translated | runtime:on_string_translated} event will be fired for each string with the results.
-     * @remarks
+     * 
      * Does nothing if this player is not connected (see {@link LuaPlayer::connected | runtime:LuaPlayer::connected}).
-     *
      * @returns The unique IDs for the requested translations.
      */
     request_translations(this: void,
-        localised_strings: LocalisedString[]): number[] | null
+        localised_strings: LocalisedString[]): uint[] | null
 
     /**
      * Sets which quick bar page is being used for the given screen page.
@@ -18092,15 +17019,13 @@ interface LuaPlayer extends LuaControl {
      * @param screen_index - The screen page. Index 1 is the top row in the gui. Index can go beyond the visible number of bars on the screen to account for the interface config setting change.
      */
     set_active_quick_bar_page(this: void,
-        screen_index: number,
-        page_index: number): void
+        screen_index: uint,
+        page_index: uint): void
 
     /**
      * Set the controller type of the player.
-     * @remarks
-     * Setting a player to {@link defines.controllers.editor | runtime:defines.controllers.editor} auto promotes the player to admin and enables cheat mode.
-     * Setting a player to {@link defines.controllers.editor | runtime:defines.controllers.editor} also requires the calling player be an admin.
-     *
+     * 
+     * Setting a player to {@link defines.controllers.editor | runtime:defines.controllers.editor} auto promotes the player to admin and enables cheat mode. Setting a player to {@link defines.controllers.editor | runtime:defines.controllers.editor} also requires the calling player be an admin.
      * @param table.character - Entity to control. Mandatory when `type` is [defines.controllers.character](runtime:defines.controllers.character), ignored otherwise.
      * @param table.chart_mode_cutoff - If specified and `type` is [defines.controllers.cutscene](runtime:defines.controllers.cutscene), the game will switch to chart-mode (map zoomed out) rendering when the zoom level is less than this value.
      * @param table.final_transition_time - If specified and `type` is [defines.controllers.cutscene](runtime:defines.controllers.cutscene), it is the time in ticks it will take for the camera to pan from the final waypoint back to the starting position. If not given the camera will not pan back to the start position/zoom.
@@ -18115,9 +17040,9 @@ interface LuaPlayer extends LuaControl {
             character?: LuaEntity,
             waypoints?: CutsceneWaypoint,
             start_position?: MapPosition,
-            start_zoom?: number,
-            final_transition_time?: number,
-            chart_mode_cutoff?: number
+            start_zoom?: double,
+            final_transition_time?: uint,
+            chart_mode_cutoff?: double
         }): void
 
     /**
@@ -18144,17 +17069,17 @@ interface LuaPlayer extends LuaControl {
      * @param index - The index to set.
      */
     set_infinity_inventory_filter(this: void,
-        index: number,
-        filter: InfinityInventoryFilter | null): void
+        index: uint,
+        filter: InfinityInventoryFilter | nil): void
 
     /**
-     * Sets the quick bar filter for the given slot.
-     * @param filter - The filter or `nil`.
+     * Sets the quick bar filter for the given slot. If a {@link LuaItemStack | runtime:LuaItemStack} is provided, the slot will be set to that particular item instance if it has extra data, for example a specific blueprint or spidertron remote.
+     * @param filter - The filter or `nil` to clear it.
      * @param index - The slot index. 1 for the first slot of page one, 2 for slot two of page one, 11 for the first slot of page 2, etc.
      */
     set_quick_bar_slot(this: void,
-        index: number,
-        filter: string | LuaItemPrototype | LuaItemStack): void
+        index: uint,
+        filter: LuaItemStack | ItemPrototypeIdentification | nil): void
 
     /**
      * Make a custom Lua shortcut available or unavailable.
@@ -18213,21 +17138,20 @@ interface LuaPlayer extends LuaControl {
      */
     zoom_to_world(this: void,
         position: MapPosition,
-        scale?: number,
+        scale?: double,
         entity?: LuaEntity): void
 
     /**
      * `true` if the player is an admin.
-     * @remarks
+     * 
      * Trying to change player admin status from the console when you aren't an admin does nothing.
-     *
      */
     admin: boolean
 
     /**
      * How many ticks since the last action of this player
      */
-    readonly afk_time: number
+    readonly afk_time: uint
 
     /**
      * If the main inventory will be auto sorted.
@@ -18273,19 +17197,17 @@ interface LuaPlayer extends LuaControl {
 
     /**
      * The display resolution for this player.
-     * @remarks
+     * 
      * During {@link on_player_created | runtime:on_player_created}, this attribute will always return a resolution of `{width=1920, height=1080}`. To get the actual resolution, listen to the {@link on_player_display_resolution_changed | runtime:on_player_display_resolution_changed} event raised shortly afterwards.
-     *
      */
     readonly display_resolution: DisplayResolution
 
     /**
      * The display scale for this player.
-     * @remarks
+     * 
      * During {@link on_player_created | runtime:on_player_created}, this attribute will always return a scale of `1`. To get the actual scale, listen to the {@link on_player_display_scale_changed | runtime:on_player_display_scale_changed} event raised shortly afterwards.
-     *
      */
-    readonly display_scale: number
+    readonly display_scale: double
 
     /**
      * The wire drag target for this player, if any.
@@ -18310,9 +17232,9 @@ interface LuaPlayer extends LuaControl {
     hand_location?: ItemStackLocation
 
     /**
-     * This player's index in {@link LuaGameScript::players | runtime:LuaGameScript::players} (unique ID). It is assigned when a player is created, and remains so (even when the player is not {@link connected | runtime:LuaPlayer::connected}) until the player is irreversably {@link removed | runtime:on_player_removed}. Indexes of removed players can be reused.
+     * This player's index in {@link LuaGameScript::players | runtime:LuaGameScript::players} (unique ID). It is assigned when a player is created, and remains so (even when the player is not {@link connected | runtime:LuaPlayer::connected}) until the player is irreversibly {@link removed | runtime:on_player_removed}. Indexes of removed players can be reused.
      */
-    readonly index: number
+    readonly index: uint
 
     /**
      * The filters for this map editor infinity inventory settings.
@@ -18327,7 +17249,7 @@ interface LuaPlayer extends LuaControl {
     /**
      * At what tick this player was last online.
      */
-    readonly last_online: number
+    readonly last_online: uint
 
     /**
      * The player's map view settings. To write to this, use a table containing the fields that should be changed.
@@ -18365,7 +17287,7 @@ interface LuaPlayer extends LuaControl {
     /**
      * How many ticks did this player spend playing this save (all sessions combined)
      */
-    readonly online_time: number
+    readonly online_time: uint
 
     /**
      * `true` if the player opened itself. I.e. if they opened the character or god-controller GUI.
@@ -18398,10 +17320,7 @@ interface LuaPlayer extends LuaControl {
     spectator: boolean
 
     /**
-     * The stashed controller type, if any.
-     * @remarks
-     * This is mainly useful when a player is in the map editor.
-     *
+     * The stashed controller type, if any. This is mainly useful when a player is in the map editor.
      */
     readonly stashed_controller_type?: defines.controllers
 
@@ -18414,11 +17333,10 @@ interface LuaPlayer extends LuaControl {
      * The number of ticks until this player will respawn. `nil` if this player is not waiting to respawn.
      * 
      * Set to `nil` to immediately respawn the player.
-     * @remarks
+     * 
      * Set to any positive value to trigger the respawn state for this player.
-     *
      */
-    ticks_to_respawn?: number
+    ticks_to_respawn?: uint
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -18428,22 +17346,20 @@ interface LuaPlayer extends LuaControl {
     /**
      * The player's zoom-level.
      */
-    zoom: number
+    zoom: double
 
 }
 
 /**
  * An object used to measure script performance.
- * @remarks
+ * 
  * Since performance is non-deterministic, these objects don't allow reading the raw time values from Lua. They can be used anywhere a {@link LocalisedString | runtime:LocalisedString} is used, except for {@link LuaGuiElement::add | runtime:LuaGuiElement::add}'s LocalisedString arguments, {@link LuaSurface::create_entity | runtime:LuaSurface::create_entity}'s `text` argument, and {@link LuaEntity::add_market_item | runtime:LuaEntity::add_market_item}.
- *
  */
 interface LuaProfiler {
     /**
      * Add the duration of another timer to this timer. Useful to reduce start/stop overhead when accumulating time onto many timers at once.
-     * @remarks
+     * 
      * If other is running, the time to now will be added.
-     *
      * @param other - The timer to add to this timer.
      */
     add(this: void,
@@ -18451,13 +17367,12 @@ interface LuaProfiler {
 
     /**
      * Divides the current duration by a set value. Useful for calculating the average of many iterations.
-     * @remarks
+     * 
      * Does nothing if this isn't stopped.
-     *
      * @param number - The number to divide by. Must be > 0.
      */
     divide(this: void,
-        number: number): void
+        number: double): void
 
     /**
      * All methods and properties that this object supports.
@@ -18521,13 +17436,18 @@ interface LuaProgrammableSpeakerControlBehavior extends LuaControlBehavior {
  */
 interface LuaRCON {
     /**
+     * All methods and properties that this object supports.
+     */
+    help(this: void): string
+
+    /**
      * Print text to the calling RCON interface if any.
      */
     print(this: void,
         message: LocalisedString): void
 
     /**
-     * This object's name.
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
@@ -18574,7 +17494,7 @@ interface LuaRailPath {
     /**
      * The current rail index.
      */
-    readonly current: number
+    readonly current: uint
 
     /**
      * If the path goes from the front of the train
@@ -18589,22 +17509,22 @@ interface LuaRailPath {
     /**
      * Array of the rails that this path travels over.
      */
-    readonly rails: {[key: number]: LuaEntity}
+    readonly rails: {[key: string]: LuaEntity}
 
     /**
      * The total number of rails in this path.
      */
-    readonly size: number
+    readonly size: uint
 
     /**
      * The total path distance.
      */
-    readonly total_distance: number
+    readonly total_distance: double
 
     /**
-     * The total distance travelled.
+     * The total distance traveled.
      */
-    readonly travelled_distance: number
+    readonly travelled_distance: double
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -18656,10 +17576,12 @@ interface LuaRailSignalControlBehavior extends LuaControlBehavior {
 }
 
 /**
- * A deterministic random generator independent from the core games random generator that can be seeded and re-seeded at will. This random generator can be saved and loaded and will maintain its state. Note this is entirely different from calling {@link math.random | libraries.html}() and you should be sure you actually want to use this over calling `math.random()`. If you aren't sure if you need to use this over calling `math.random()` then you probably don't need to use this.
+ * A deterministic random generator independent from the core games random generator that can be seeded and re-seeded at will. This random generator can be saved and loaded and will maintain its state.
+ * 
+ * Note this is entirely different from calling {@link math.random() | libraries.html} and you should be sure you actually want to use this over calling `math.random()`. If you aren't sure if you need to use this over calling `math.random()`, then you probably don't need to use this.
  * @example
- * Create a generator and use it to print a random number. 
  * ```
+ * -- Create a generator and use it to print a random number.
  * global.generator = game.create_random_generator()
  * game.player.print(global.generator())
  * ```
@@ -18673,12 +17595,11 @@ interface LuaRandomGenerator {
 
     /**
      * Re-seeds the random generator with the given value.
-     * @remarks
+     * 
      * Seeds that are close together will produce similar results. Seeds from 0 to 341 will produce the same results.
-     *
      */
     re_seed(this: void,
-        seed: number): void
+        seed: uint): void
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -18691,13 +17612,13 @@ interface LuaRandomGenerator {
     readonly valid: boolean
 
     /**
-     * Generates a random number. If no parameters are given a number in the [0, 1) range is returned. If a single parameter is given a floored number in the [1, N] range is returned. If 2 parameters are given a floored number in the [N1, N2] range is returned.
+     * Generates a random number. If no parameters are given a number in the `[0, 1)` range is returned. If a single parameter is given a floored number in the [1, N] range is returned. If 2 parameters are given a floored number in the [N1, N2] range is returned.
      * @param lower - Inclusive lower bound on the result
      * @param upper - Inclusive upper bound on the result
      */
     (this: void,
-        lower?: number,
-        upper?: number): number
+        lower?: int,
+        upper?: int): double
 
 }
 
@@ -18728,7 +17649,7 @@ interface LuaRecipe {
     /**
      * Energy required to execute this recipe. This directly affects the crafting time: Recipe's energy is exactly its crafting time in seconds, when crafted in an assembling machine with crafting speed exactly equal to one.
      */
-    readonly energy: number
+    readonly energy: double
 
     /**
      * The force that owns this recipe.
@@ -18753,8 +17674,8 @@ interface LuaRecipe {
     /**
      * The ingredients to this recipe.
      * @example
-     * The ingredients of `"advanced-oil-processing"` would look like this: 
      * ```
+     * -- The ingredients of "advanced-oil-processing" would look like this:
      * {{type="fluid", name="crude-oil", amount=100}, {type="fluid", name="water", amount=50}}
      * ```
      *
@@ -18786,8 +17707,8 @@ interface LuaRecipe {
     /**
      * The results/products of this recipe.
      * @example
-     * The products of `"advanced-oil-processing"` would look like this: 
      * ```
+     * -- The products of "advanced-oil-processing" would look like this:
      * {{type="fluid", name="heavy-oil", amount=25}, {type="fluid", name="light-oil", amount=45}, {type="fluid", name="petroleum-gas", amount=55}}
      * ```
      *
@@ -18893,7 +17814,7 @@ interface LuaRecipePrototype {
     /**
      * The emissions multiplier for this recipe.
      */
-    readonly emissions_multiplier: number
+    readonly emissions_multiplier: double
 
     /**
      * If this recipe prototype is enabled by default (enabled at the beginning of a game).
@@ -18903,7 +17824,7 @@ interface LuaRecipePrototype {
     /**
      * Energy required to execute this recipe. This directly affects the crafting time: Recipe's energy is exactly its crafting time in seconds, when crafted in an assembling machine with crafting speed exactly equal to one.
      */
-    readonly energy: number
+    readonly energy: double
 
     /**
      * Group of this recipe.
@@ -18928,8 +17849,8 @@ interface LuaRecipePrototype {
     /**
      * The ingredients to this recipe.
      * @example
-     * The ingredients of `"advanced-oil-processing"` would look like this: 
      * ```
+     * -- The ingredients of "advanced-oil-processing" would look like this
      * {{type="fluid", name="crude-oil", amount=100}, {type="fluid", name="water", amount=50}}
      * ```
      *
@@ -18966,13 +17887,13 @@ interface LuaRecipePrototype {
     /**
      * Used to determine how many extra items are put into an assembling machine before it's considered "full enough".
      */
-    readonly overload_multiplier: number
+    readonly overload_multiplier: uint
 
     /**
      * The results/products of this recipe.
      * @example
-     * The products of `"advanced-oil-processing"` would look like this: 
      * ```
+     * -- The products of "advanced-oil-processing" would look like this:
      * {{type="fluid", name="heavy-oil", amount=25}, {type="fluid", name="light-oil", amount=45}, {type="fluid", name="petroleum-gas", amount=55}}
      * ```
      *
@@ -18982,7 +17903,7 @@ interface LuaRecipePrototype {
     /**
      * The multiplier used when this recipe is copied from an assembling machine to a requester chest. For each item in the recipe the item count * this value is set in the requester chest.
      */
-    readonly request_paste_multiplier: number
+    readonly request_paste_multiplier: uint
 
     /**
      * If the amount is shown in the recipe tooltip title when the recipe produces more than 1 product.
@@ -19009,11 +17930,13 @@ interface LuaRecipePrototype {
 /**
  * Registry of interfaces between scripts. An interface is simply a dictionary mapping names to functions. A script or mod can then register an interface with {@link LuaRemote | runtime:LuaRemote}, after that any script can call the registered functions, provided it knows the interface name and the desired function name. An instance of LuaRemote is available through the global object named `remote`.
  * @example
- * Will register a remote interface containing two functions. Later, it will call these functions through `remote`. 
  * ```
+ * -- Will register a remote interface containing two functions. Later, it will call these functions through `remote`.
  * remote.add_interface("human interactor",
- *                      {hello = function() game.player.print("Hi!") end,
- *                       bye = function(name) game.player.print("Bye " .. name) end})
+ *   {
+ *     hello = function() game.player.print("Hi!") end,
+ *     bye = function(name) game.player.print("Bye " .. name) end
+ *   })
  * -- Some time later, possibly in a different mod...
  * remote.call("human interactor", "hello")
  * remote.call("human interactor", "bye", "dear reader")
@@ -19032,6 +17955,8 @@ interface LuaRemote {
 
     /**
      * Call a function of an interface.
+     * 
+     * Providing an unknown interface or function name will result in a script error.
      * @param fn - Function name that belongs to the `interface`.
      * @param interface - Interface to look up `function` in.
      * @param ...args - Arguments to pass to the called function. Note that any arguments passed through the interface are a copy of the original, not a reference. Metatables are not retained, while references to LuaObjects stay intact.
@@ -19039,7 +17964,12 @@ interface LuaRemote {
     call(this: void,
         interface: string,
         fn: string,
-        ...args: any[]): any | null
+        ...args: Any[]): Any | null
+
+    /**
+     * All methods and properties that this object supports.
+     */
+    help(this: void): string
 
     /**
      * Removes an interface with the given name.
@@ -19052,8 +17982,8 @@ interface LuaRemote {
     /**
      * List of all registered interfaces. For each interface name, `remote.interfaces[name]` is a dictionary mapping the interface's registered functions to `true`.
      * @example
-     * Assuming the "human interactor" interface is registered as above 
      * ```
+     * -- Assuming the "human interactor" interface is registered as above
      * game.player.print(tostring(remote.interfaces["human interactor"]["hello"]))        -- prints true
      * game.player.print(tostring(remote.interfaces["human interactor"]["nonexistent"]))  -- prints nil
      * ```
@@ -19062,7 +17992,7 @@ interface LuaRemote {
     readonly interfaces: {[key: string]: {[key: string]: true}}
 
     /**
-     * This object's name.
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
@@ -19070,16 +18000,15 @@ interface LuaRemote {
 
 /**
  * Allows rendering of geometric shapes, text and sprites in the game world through the global object named `rendering`. Each render object is identified by an id that is universally unique for the lifetime of a whole game.
- * @remarks
+ * 
  * If an entity target of an object is destroyed or changes surface, then the object is also destroyed.
- *
  */
 interface LuaRendering {
     /**
      * Reorder this object so that it is drawn in front of the already existing objects.
      */
     bring_to_front(this: void,
-        id: number): void
+        id: uint64): void
 
     /**
      * Destroys all render objects.
@@ -19092,7 +18021,7 @@ interface LuaRendering {
      * Destroy the object with the given id. Does not error when the object is invalid.
      */
     destroy(this: void,
-        id: number): void
+        id: uint64): void
 
     /**
      * Create an animation.
@@ -19120,12 +18049,12 @@ interface LuaRendering {
         table: {
             animation: string,
             orientation?: RealOrientation,
-            x_scale?: number,
-            y_scale?: number,
+            x_scale?: double,
+            y_scale?: double,
             tint?: Color,
             render_layer?: RenderLayer,
-            animation_speed?: number,
-            animation_offset?: number,
+            animation_speed?: double,
+            animation_offset?: double,
             orientation_target?: MapPosition | LuaEntity,
             orientation_target_offset?: Vector,
             use_target_orientation?: boolean,
@@ -19133,12 +18062,12 @@ interface LuaRendering {
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
             surface: SurfaceIdentification,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
             only_in_alt_mode?: boolean
-        }): number
+        }): uint64
 
     /**
      * Create an arc.
@@ -19158,20 +18087,20 @@ interface LuaRendering {
     draw_arc(this: void,
         table: {
             color: Color,
-            max_radius: number,
-            min_radius: number,
-            start_angle: number,
-            angle: number,
+            max_radius: double,
+            min_radius: double,
+            start_angle: float,
+            angle: float,
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
             surface: SurfaceIdentification,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): number
+        }): uint64
 
     /**
      * Create a circle.
@@ -19190,25 +18119,24 @@ interface LuaRendering {
     draw_circle(this: void,
         table: {
             color: Color,
-            radius: number,
-            width?: number,
+            radius: double,
+            width?: float,
             filled?: boolean,
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
             surface: SurfaceIdentification,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): number
+        }): uint64
 
     /**
      * Create a light.
-     * @remarks
+     * 
      * The base game uses the utility sprites `light_medium` and `light_small` for lights.
-     *
      * @param table.color - Defaults to white (no tint).
      * @param table.forces - The forces that this object is rendered to. Passing `nil` or an empty table will render it to all forces.
      * @param table.intensity - Default is 1.
@@ -19228,20 +18156,20 @@ interface LuaRendering {
         table: {
             sprite: SpritePath,
             orientation?: RealOrientation,
-            scale?: number,
-            intensity?: number,
-            minimum_darkness?: number,
+            scale?: float,
+            intensity?: float,
+            minimum_darkness?: float,
             oriented?: boolean,
             color?: Color,
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
             surface: SurfaceIdentification,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
             only_in_alt_mode?: boolean
-        }): number
+        }): uint64
 
     /**
      * Create a line.
@@ -19258,14 +18186,14 @@ interface LuaRendering {
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      * @param table.width - In pixels (32 per tile).
      * @example
-     * Draw a white and 2 pixel wide line from {0, 0} to {2, 2}. 
      * ```
+     * -- Draw a white and 2 pixel wide line from {0, 0} to {2, 2}.
      * rendering.draw_line{surface = game.player.surface, from = {0, 0}, to = {2, 2}, color = {1, 1, 1}, width = 2}
      * ```
      *
      * @example
-     * Draw a red and 3 pixel wide line from {0, 0} to {0, 5}. The line has 1 tile long dashes and gaps. 
      * ```
+     * -- Draw a red and 3 pixel wide line from {0, 0} to {0, 5}. The line has 1 tile long dashes and gaps.
      * rendering.draw_line{surface = game.player.surface, from = {0, 0}, to = {0, 5}, color = {r = 1}, width = 3, gap_length = 1, dash_length = 1}
      * ```
      *
@@ -19274,22 +18202,22 @@ interface LuaRendering {
     draw_line(this: void,
         table: {
             color: Color,
-            width: number,
-            gap_length?: number,
-            dash_length?: number,
-            dash_offset?: number,
+            width: float,
+            gap_length?: double,
+            dash_length?: double,
+            dash_offset?: double,
             from: MapPosition | LuaEntity,
             from_offset?: Vector,
             to: MapPosition | LuaEntity,
             to_offset?: Vector,
             surface: SurfaceIdentification,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): number
+        }): uint64
 
     /**
      * Create a triangle mesh defined by a triangle strip.
@@ -19318,13 +18246,13 @@ interface LuaRendering {
             orientation_target_offset?: Vector,
             use_target_orientation?: boolean,
             surface: SurfaceIdentification,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): number
+        }): uint64
 
     /**
      * Create a rectangle.
@@ -19339,8 +18267,8 @@ interface LuaRendering {
      * @param table.visible - If this is rendered to anyone at all. Defaults to true.
      * @param table.width - Width of the outline, used only if filled = false. Value is in pixels (32 per tile). Defaults to 1.
      * @example
-     * Draw a white and 1 pixel wide square outline with the corners {0, 0} and {2, 2}. 
      * ```
+     * -- Draw a white and 1 pixel wide square outline with the corners {0, 0} and {2, 2}.
      * rendering.draw_rectangle{surface = game.player.surface, left_top = {0, 0}, right_bottom = {2, 2}, color = {1, 1, 1}}
      * ```
      *
@@ -19349,20 +18277,20 @@ interface LuaRendering {
     draw_rectangle(this: void,
         table: {
             color: Color,
-            width?: number,
+            width?: float,
             filled?: boolean,
             left_top: MapPosition | LuaEntity,
             left_top_offset?: Vector,
             right_bottom: MapPosition | LuaEntity,
             right_bottom_offset?: Vector,
             surface: SurfaceIdentification,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
             draw_on_ground?: boolean,
             only_in_alt_mode?: boolean
-        }): number
+        }): uint64
 
     /**
      * Create a sprite.
@@ -19382,14 +18310,14 @@ interface LuaRendering {
      * @param table.x_scale - Horizontal scale of the sprite. Default is 1.
      * @param table.y_scale - Vertical scale of the sprite. Default is 1.
      * @example
-     * This will draw an iron plate icon at the character's feet. The sprite will move together with the character. 
      * ```
+     * -- This will draw an iron plate icon at the character's feet. The sprite will move together with the character.
      * rendering.draw_sprite{sprite = "item.iron-plate", target = game.player.character, surface = game.player.surface}
      * ```
      *
      * @example
-     * This will draw an iron plate icon at the character's head. The sprite will move together with the character. 
      * ```
+     * -- This will draw an iron plate icon at the character's head. The sprite will move together with the character.
      * rendering.draw_sprite{sprite = "item.iron-plate", target = game.player.character, target_offset = {0, -2}, surface = game.player.surface}
      * ```
      *
@@ -19399,8 +18327,8 @@ interface LuaRendering {
         table: {
             sprite: SpritePath,
             orientation?: RealOrientation,
-            x_scale?: number,
-            y_scale?: number,
+            x_scale?: double,
+            y_scale?: double,
             tint?: Color,
             render_layer?: RenderLayer,
             orientation_target?: MapPosition | LuaEntity,
@@ -19410,18 +18338,17 @@ interface LuaRendering {
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
             surface: SurfaceIdentification,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
             only_in_alt_mode?: boolean
-        }): number
+        }): uint64
 
     /**
      * Create a text.
-     * @remarks
-     * Not all fonts support scaling.
-     *
+     * 
+     * Note that not all fonts support scaling.
      * @param table.alignment - Defaults to "left".
      * @param table.draw_on_ground - If this should be drawn below sprites and entities. Rich text does not support this option.
      * @param table.font - Name of font to use. Defaults to the same font as flying-text.
@@ -19445,9 +18372,9 @@ interface LuaRendering {
             target: MapPosition | LuaEntity,
             target_offset?: Vector,
             color: Color,
-            scale?: number,
+            scale?: double,
             font?: string,
-            time_to_live?: number,
+            time_to_live?: uint,
             forces?: ForceIdentification[],
             players?: PlayerIdentification[],
             visible?: boolean,
@@ -19458,435 +18385,369 @@ interface LuaRendering {
             scale_with_zoom?: boolean,
             only_in_alt_mode?: boolean,
             use_rich_text?: boolean
-        }): number
+        }): uint64
 
     /**
      * Get the alignment of the text with this id.
-     * @remarks
      * Applies to subclasses: Text
-     *
      * @returns `nil` if the object is not a text.
      */
     get_alignment(this: void,
-        id: number): TextAlign | null
+        id: uint64): TextAlign | null
 
     /**
      * Gets an array of all valid object ids.
      * @param mod_name - If provided, get only the render objects created by this mod. An empty string (`""`) refers to all objects not belonging to a mod, such as those created using console commands.
      */
     get_all_ids(this: void,
-        mod_name?: string): number[]
+        mod_name?: string): uint64[]
 
     /**
      * Get the angle of the arc with this id.
-     * @remarks
      * Applies to subclasses: Arc
-     *
      * @returns Angle in radian. `nil` if the object is not a arc.
      */
     get_angle(this: void,
-        id: number): number | null
+        id: uint64): float | null
 
     /**
      * Get the animation prototype name of the animation with this id.
-     * @remarks
      * Applies to subclasses: Animation
-     *
      * @returns `nil` if the object is not an animation.
      */
     get_animation(this: void,
-        id: number): string | null
+        id: uint64): string | null
 
     /**
      * Get the animation offset of the animation with this id.
-     * @remarks
      * Applies to subclasses: Animation
-     *
      * @returns Animation offset in frames. `nil` if the object is not an animation.
      */
     get_animation_offset(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get the animation speed of the animation with this id.
-     * @remarks
      * Applies to subclasses: Animation
-     *
      * @returns Animation speed in frames per tick. `nil` if the object is not an animation.
      */
     get_animation_speed(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get the color or tint of the object with this id.
-     * @remarks
      * Applies to subclasses: Text,Line,Circle,Rectangle,Arc,Polygon,Sprite,Light,Animation
-     *
      * @returns `nil` if the object does not support color.
      */
     get_color(this: void,
-        id: number): Color | null
+        id: uint64): Color | null
 
     /**
      * Get the dash length of the line with this id.
-     * @remarks
      * Applies to subclasses: Line
-     *
      * @returns `nil` if the object is not a line.
      */
     get_dash_length(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get whether this is being drawn on the ground, under most entities and sprites.
-     * @remarks
      * Applies to subclasses: Text,Line,Circle,Rectangle,Arc,Polygon
-     *
      */
     get_draw_on_ground(this: void,
-        id: number): boolean
+        id: uint64): boolean
 
     /**
      * Get if the circle or rectangle with this id is filled.
-     * @remarks
      * Applies to subclasses: Circle,Rectangle
-     *
      * @returns `nil` if the object is not a circle or rectangle.
      */
     get_filled(this: void,
-        id: number): boolean | null
+        id: uint64): boolean | null
 
     /**
      * Get the font of the text with this id.
-     * @remarks
      * Applies to subclasses: Text
-     *
      * @returns `nil` if the object is not a text.
      */
     get_font(this: void,
-        id: number): string | null
+        id: uint64): string | null
 
     /**
      * Get the forces that the object with this id is rendered to or `nil` if visible to all forces.
      */
     get_forces(this: void,
-        id: number): LuaForce[] | null
+        id: uint64): LuaForce[] | null
 
     /**
      * Get from where the line with this id is drawn.
-     * @remarks
      * Applies to subclasses: Line
-     *
      * @returns `nil` if this object is not a line.
      */
     get_from(this: void,
-        id: number): ScriptRenderTarget | null
+        id: uint64): ScriptRenderTarget | null
 
     /**
      * Get the length of the gaps in the line with this id.
-     * @remarks
      * Applies to subclasses: Line
-     *
      * @returns `nil` if the object is not a line.
      */
     get_gap_length(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get the intensity of the light with this id.
-     * @remarks
      * Applies to subclasses: Light
-     *
      * @returns `nil` if the object is not a light.
      */
     get_intensity(this: void,
-        id: number): number | null
+        id: uint64): float | null
 
     /**
      * Get where top left corner of the rectangle with this id is drawn.
-     * @remarks
      * Applies to subclasses: Rectangle
-     *
      * @returns `nil` if the object is not a rectangle.
      */
     get_left_top(this: void,
-        id: number): ScriptRenderTarget | null
+        id: uint64): ScriptRenderTarget | null
 
     /**
      * Get the radius of the outer edge of the arc with this id.
-     * @remarks
      * Applies to subclasses: Arc
-     *
      * @returns `nil` if the object is not a arc.
      */
     get_max_radius(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get the radius of the inner edge of the arc with this id.
-     * @remarks
      * Applies to subclasses: Arc
-     *
      * @returns `nil` if the object is not a arc.
      */
     get_min_radius(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get the minimum darkness at which the light with this id is rendered.
-     * @remarks
      * Applies to subclasses: Light
-     *
      * @returns `nil` if the object is not a light.
      */
     get_minimum_darkness(this: void,
-        id: number): number | null
+        id: uint64): float | null
 
     /**
      * Get whether this is only rendered in alt-mode.
      */
     get_only_in_alt_mode(this: void,
-        id: number): boolean
+        id: uint64): boolean
 
     /**
      * Get the orientation of the object with this id.
-     * @remarks
+     * 
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Text,Polygon,Sprite,Light,Animation
-     *
      * @returns `nil` if the object is not a text, polygon, sprite, light or animation.
      */
     get_orientation(this: void,
-        id: number): RealOrientation | null
+        id: uint64): RealOrientation | null
 
     /**
-     * The object rotates so that it faces this target. Note that `orientation` is still applied to the object. Get the orientation_target of the object with this id.
-     * @remarks
+     * Get the orientation_target of the object with this id. The object rotates so that it faces this target. Note that `orientation` is still applied to the object.
+     * 
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Polygon,Sprite,Animation
-     *
      * @returns `nil` if no target or if this object is not a polygon, sprite, or animation.
      */
     get_orientation_target(this: void,
-        id: number): ScriptRenderTarget | null
+        id: uint64): ScriptRenderTarget | null
 
     /**
      * Get if the light with this id is rendered has the same orientation as the target entity. Note that `orientation` is still applied to the sprite.
-     * @remarks
      * Applies to subclasses: Light
-     *
      * @returns `nil` if the object is not a light.
      */
     get_oriented(this: void,
-        id: number): boolean | null
+        id: uint64): boolean | null
 
     /**
-     * Offsets the center of the sprite or animation if `orientation_target` is given. This offset will rotate together with the sprite or animation. Get the oriented_offset of the sprite or animation with this id.
-     * @remarks
+     * Get the oriented_offset of the sprite or animation with this id. Offsets the center of the sprite or animation if `orientation_target` is given. This offset will rotate together with the sprite or animation.
      * Applies to subclasses: Sprite,Animation
-     *
      * @returns `nil` if this object is not a sprite or animation.
      */
     get_oriented_offset(this: void,
-        id: number): Vector | null
+        id: uint64): Vector | null
 
     /**
      * Get the players that the object with this id is rendered to or `nil` if visible to all players.
      */
     get_players(this: void,
-        id: number): LuaPlayer[] | null
+        id: uint64): LuaPlayer[] | null
 
     /**
      * Get the radius of the circle with this id.
-     * @remarks
      * Applies to subclasses: Circle
-     *
      * @returns `nil` if the object is not a circle.
      */
     get_radius(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get the render layer of the sprite or animation with this id.
-     * @remarks
      * Applies to subclasses: Sprite,Animation
-     *
      * @returns `nil` if the object is not a sprite or animation.
      */
     get_render_layer(this: void,
-        id: number): RenderLayer | null
+        id: uint64): RenderLayer | null
 
     /**
      * Get where bottom right corner of the rectangle with this id is drawn.
-     * @remarks
      * Applies to subclasses: Rectangle
-     *
      * @returns `nil` if the object is not a rectangle.
      */
     get_right_bottom(this: void,
-        id: number): ScriptRenderTarget | null
+        id: uint64): ScriptRenderTarget | null
 
     /**
      * Get the scale of the text or light with this id.
-     * @remarks
      * Applies to subclasses: Text,Light
-     *
      * @returns `nil` if the object is not a text or light.
      */
     get_scale(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get if the text with this id scales with player zoom.
-     * @remarks
      * Applies to subclasses: Text
-     *
      * @returns `nil` if the object is not a text.
      */
     get_scale_with_zoom(this: void,
-        id: number): boolean | null
+        id: uint64): boolean | null
 
     /**
      * Get the sprite of the sprite or light with this id.
-     * @remarks
      * Applies to subclasses: Sprite,Light
-     *
      * @returns `nil` if the object is not a sprite or light.
      */
     get_sprite(this: void,
-        id: number): SpritePath | null
+        id: uint64): SpritePath | null
 
     /**
      * Get where the arc with this id starts.
-     * @remarks
      * Applies to subclasses: Arc
-     *
      * @returns Angle in radian. `nil` if the object is not a arc.
      */
     get_start_angle(this: void,
-        id: number): number | null
+        id: uint64): float | null
 
     /**
      * The surface the object with this id is rendered on.
      */
     get_surface(this: void,
-        id: number): LuaSurface
+        id: uint64): LuaSurface
 
     /**
      * Get where the object with this id is drawn.
-     * @remarks
+     * 
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Text,Circle,Arc,Polygon,Sprite,Light,Animation
-     *
      * @returns `nil` if the object does not support target.
      */
     get_target(this: void,
-        id: number): ScriptRenderTarget | null
+        id: uint64): ScriptRenderTarget | null
 
     /**
      * Get the text that is displayed by the text with this id.
-     * @remarks
      * Applies to subclasses: Text
-     *
      * @returns `nil` if the object is not a text.
      */
     get_text(this: void,
-        id: number): LocalisedString | null
+        id: uint64): LocalisedString | null
 
     /**
      * Get the time to live of the object with this id. This will be 0 if the object does not expire.
      */
     get_time_to_live(this: void,
-        id: number): number
+        id: uint64): uint
 
     /**
      * Get where the line with this id is drawn to.
-     * @remarks
      * Applies to subclasses: Line
-     *
      * @returns `nil` if the object is not a line.
      */
     get_to(this: void,
-        id: number): ScriptRenderTarget | null
+        id: uint64): ScriptRenderTarget | null
 
     /**
      * Gets the type of the given object.
      */
     get_type(this: void,
-        id: number): 'text' | 'line' | 'circle' | 'rectangle' | 'arc' | 'polygon' | 'sprite' | 'light' | 'animation'
+        id: uint64): 'text' | 'line' | 'circle' | 'rectangle' | 'arc' | 'polygon' | 'sprite' | 'light' | 'animation'
 
     /**
      * Get if the text with this id parses rich text tags.
-     * @remarks
      * Applies to subclasses: Text
-     *
      * @returns `nil` if the object is not a text.
      */
     get_use_rich_text(this: void,
-        id: number): boolean | null
+        id: uint64): boolean | null
 
     /**
      * Get whether this uses the target orientation.
      * @returns `nil` if the object is not a sprite, polygon, or animation.
      */
     get_use_target_orientation(this: void,
-        id: number): boolean
+        id: uint64): boolean
 
     /**
      * Get the vertical alignment of the text with this id.
-     * @remarks
      * Applies to subclasses: Text
-     *
      * @returns `nil` if the object is not a text.
      */
     get_vertical_alignment(this: void,
-        id: number): VerticalTextAlign | null
+        id: uint64): VerticalTextAlign | null
 
     /**
      * Get the vertices of the polygon with this id.
-     * @remarks
      * Applies to subclasses: Polygon
-     *
      * @returns `nil` if the object is not a polygon.
      */
     get_vertices(this: void,
-        id: number): ScriptRenderTarget[] | null
+        id: uint64): ScriptRenderTarget[] | null
 
     /**
      * Get whether this is rendered to anyone at all.
      */
     get_visible(this: void,
-        id: number): boolean
+        id: uint64): boolean
 
     /**
      * Get the width of the object with this id. Value is in pixels (32 per tile).
-     * @remarks
      * Applies to subclasses: Line,Circle,Rectangle
-     *
      * @returns `nil` if the object does not support width.
      */
     get_width(this: void,
-        id: number): number | null
+        id: uint64): float | null
 
     /**
      * Get the horizontal scale of the sprite or animation with this id.
-     * @remarks
      * Applies to subclasses: Sprite,Animation
-     *
      * @returns `nil` if the object is not a sprite or animation.
      */
     get_x_scale(this: void,
-        id: number): number | null
+        id: uint64): double | null
 
     /**
      * Get the vertical scale of the sprite or animation with this id.
-     * @remarks
      * Applies to subclasses: Sprite,Animation
-     *
      * @returns `nil` if the object is not a sprite or animation.
      */
     get_y_scale(this: void,
-        id: number): number | null
+        id: uint64): double | null
+
+    /**
+     * All methods and properties that this object supports.
+     */
+    help(this: void): string
 
     /**
      * Does a font with this name exist?
@@ -19898,85 +18759,71 @@ interface LuaRendering {
      * Does a valid object with this id exist?
      */
     is_valid(this: void,
-        id: number): boolean
+        id: uint64): boolean
 
     /**
      * Reorder this object so that it is drawn in the back of the already existing objects.
      */
     move_to_back(this: void,
-        id: number): void
+        id: uint64): void
 
     /**
      * Set the alignment of the text with this id. Does nothing if this object is not a text.
-     * @remarks
      * Applies to subclasses: Text
-     *
      */
     set_alignment(this: void,
-        id: number,
+        id: uint64,
         alignment: TextAlign): void
 
     /**
      * Set the angle of the arc with this id. Does nothing if this object is not a arc.
-     * @remarks
      * Applies to subclasses: Arc
-     *
      * @param angle - angle in radian
      */
     set_angle(this: void,
-        id: number,
-        angle: number): void
+        id: uint64,
+        angle: float): void
 
     /**
      * Set the animation prototype name of the animation with this id. Does nothing if this object is not an animation.
-     * @remarks
      * Applies to subclasses: Animation
-     *
      */
     set_animation(this: void,
-        id: number,
+        id: uint64,
         animation: string): void
 
     /**
      * Set the animation offset of the animation with this id. Does nothing if this object is not an animation.
-     * @remarks
      * Applies to subclasses: Animation
-     *
      * @param animation_offset - Animation offset in frames.
      */
     set_animation_offset(this: void,
-        id: number,
-        animation_offset: number): void
+        id: uint64,
+        animation_offset: double): void
 
     /**
      * Set the animation speed of the animation with this id. Does nothing if this object is not an animation.
-     * @remarks
      * Applies to subclasses: Animation
-     *
      * @param animation_speed - Animation speed in frames per tick.
      */
     set_animation_speed(this: void,
-        id: number,
-        animation_speed: number): void
+        id: uint64,
+        animation_speed: double): void
 
     /**
      * Set the color or tint of the object with this id. Does nothing if this object does not support color.
-     * @remarks
      * Applies to subclasses: Text,Line,Circle,Rectangle,Arc,Polygon,Sprite,Light,Animation
-     *
      */
     set_color(this: void,
-        id: number,
+        id: uint64,
         color: Color): void
 
     /**
      * Set the corners of the rectangle with this id. Does nothing if this object is not a rectangle.
-     * @remarks
      * Applies to subclasses: Rectangle
-     *
      */
     set_corners(this: void,
-        id: number,
+        id: uint64,
         left_top: MapPosition | LuaEntity,
         left_top_offset: Vector,
         right_bottom: MapPosition | LuaEntity,
@@ -19984,53 +18831,43 @@ interface LuaRendering {
 
     /**
      * Set the dash length of the line with this id. Does nothing if this object is not a line.
-     * @remarks
      * Applies to subclasses: Line
-     *
      */
     set_dash_length(this: void,
-        id: number,
-        dash_length: number): void
+        id: uint64,
+        dash_length: double): void
 
     /**
      * Set the length of the dashes and the length of the gaps in the line with this id. Does nothing if this object is not a line.
-     * @remarks
      * Applies to subclasses: Line
-     *
      */
     set_dashes(this: void,
-        id: number,
-        dash_length: number,
-        gap_length: number): void
+        id: uint64,
+        dash_length: double,
+        gap_length: double): void
 
     /**
      * Set whether this is being drawn on the ground, under most entities and sprites.
-     * @remarks
      * Applies to subclasses: Text,Line,Circle,Rectangle,Arc,Polygon
-     *
      */
     set_draw_on_ground(this: void,
-        id: number,
+        id: uint64,
         draw_on_ground: boolean): void
 
     /**
      * Set if the circle or rectangle with this id is filled. Does nothing if this object is not a circle or rectangle.
-     * @remarks
      * Applies to subclasses: Circle,Rectangle
-     *
      */
     set_filled(this: void,
-        id: number,
+        id: uint64,
         filled: boolean): void
 
     /**
      * Set the font of the text with this id. Does nothing if this object is not a text.
-     * @remarks
      * Applies to subclasses: Text
-     *
      */
     set_font(this: void,
-        id: number,
+        id: uint64,
         font: string): void
 
     /**
@@ -20038,129 +18875,109 @@ interface LuaRendering {
      * @param forces - Providing an empty array will set the object to be visible to all forces.
      */
     set_forces(this: void,
-        id: number,
+        id: uint64,
         forces: ForceIdentification[]): void
 
     /**
      * Set from where the line with this id is drawn. Does nothing if the object is not a line.
-     * @remarks
      * Applies to subclasses: Line
-     *
      */
     set_from(this: void,
-        id: number,
+        id: uint64,
         from: MapPosition | LuaEntity,
         from_offset?: Vector): void
 
     /**
      * Set the length of the gaps in the line with this id. Does nothing if this object is not a line.
-     * @remarks
      * Applies to subclasses: Line
-     *
      */
     set_gap_length(this: void,
-        id: number,
-        gap_length: number): void
+        id: uint64,
+        gap_length: double): void
 
     /**
      * Set the intensity of the light with this id. Does nothing if this object is not a light.
-     * @remarks
      * Applies to subclasses: Light
-     *
      */
     set_intensity(this: void,
-        id: number,
-        intensity: number): void
+        id: uint64,
+        intensity: float): void
 
     /**
      * Set where top left corner of the rectangle with this id is drawn. Does nothing if this object is not a rectangle.
-     * @remarks
      * Applies to subclasses: Rectangle
-     *
      */
     set_left_top(this: void,
-        id: number,
+        id: uint64,
         left_top: MapPosition | LuaEntity,
         left_top_offset?: Vector): void
 
     /**
      * Set the radius of the outer edge of the arc with this id. Does nothing if this object is not a arc.
-     * @remarks
      * Applies to subclasses: Arc
-     *
      */
     set_max_radius(this: void,
-        id: number,
-        max_radius: number): void
+        id: uint64,
+        max_radius: double): void
 
     /**
      * Set the radius of the inner edge of the arc with this id. Does nothing if this object is not a arc.
-     * @remarks
      * Applies to subclasses: Arc
-     *
      */
     set_min_radius(this: void,
-        id: number,
-        min_radius: number): void
+        id: uint64,
+        min_radius: double): void
 
     /**
      * Set the minimum darkness at which the light with this id is rendered. Does nothing if this object is not a light.
-     * @remarks
      * Applies to subclasses: Light
-     *
      */
     set_minimum_darkness(this: void,
-        id: number,
-        minimum_darkness: number): void
+        id: uint64,
+        minimum_darkness: float): void
 
     /**
      * Set whether this is only rendered in alt-mode.
      */
     set_only_in_alt_mode(this: void,
-        id: number,
+        id: uint64,
         only_in_alt_mode: boolean): void
 
     /**
      * Set the orientation of the object with this id. Does nothing if this object is not a text, polygon, sprite, light or animation.
-     * @remarks
+     * 
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Text,Polygon,Sprite,Light,Animation
-     *
      */
     set_orientation(this: void,
-        id: number,
+        id: uint64,
         orientation: RealOrientation): void
 
     /**
-     * The object rotates so that it faces this target. Note that `orientation` is still applied to the object. Set the orientation_target of the object with this id. Does nothing if this object is not a polygon, sprite, or animation. Set to `nil` if the object should not have an orientation_target.
-     * @remarks
+     * Set the orientation_target of the object with this id. Does nothing if this object is not a polygon, sprite, or animation. The object rotates so that it faces this target. Note that `orientation` is still applied to the object. Set to `nil` if the object should not have an orientation_target.
+     * 
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Polygon,Sprite,Animation
-     *
      */
     set_orientation_target(this: void,
-        id: number,
+        id: uint64,
         orientation_target: MapPosition | LuaEntity,
         orientation_target_offset?: Vector): void
 
     /**
      * Set if the light with this id is rendered has the same orientation as the target entity. Does nothing if this object is not a light. Note that `orientation` is still applied to the sprite.
-     * @remarks
      * Applies to subclasses: Light
-     *
      */
     set_oriented(this: void,
-        id: number,
+        id: uint64,
         oriented: boolean): void
 
     /**
-     * Offsets the center of the sprite or animation if `orientation_target` is given. This offset will rotate together with the sprite or animation. Set the oriented_offset of the sprite or animation with this id. Does nothing if this object is not a sprite or animation.
-     * @remarks
+     * Set the oriented_offset of the sprite or animation with this id. Does nothing if this object is not a sprite or animation. Offsets the center of the sprite or animation if `orientation_target` is given. This offset will rotate together with the sprite or animation.
      * Applies to subclasses: Sprite,Animation
-     *
      */
     set_oriented_offset(this: void,
-        id: number,
+        id: uint64,
         oriented_offset: Vector): void
 
     /**
@@ -20168,197 +18985,166 @@ interface LuaRendering {
      * @param players - Providing an empty array will set the object to be visible to all players.
      */
     set_players(this: void,
-        id: number,
+        id: uint64,
         players: PlayerIdentification[]): void
 
     /**
      * Set the radius of the circle with this id. Does nothing if this object is not a circle.
-     * @remarks
      * Applies to subclasses: Circle
-     *
      */
     set_radius(this: void,
-        id: number,
-        radius: number): void
+        id: uint64,
+        radius: double): void
 
     /**
      * Set the render layer of the sprite or animation with this id. Does nothing if this object is not a sprite or animation.
-     * @remarks
      * Applies to subclasses: Sprite,Animation
-     *
      */
     set_render_layer(this: void,
-        id: number,
+        id: uint64,
         render_layer: RenderLayer): void
 
     /**
      * Set where top bottom right of the rectangle with this id is drawn. Does nothing if this object is not a rectangle.
-     * @remarks
      * Applies to subclasses: Rectangle
-     *
      */
     set_right_bottom(this: void,
-        id: number,
+        id: uint64,
         right_bottom: MapPosition | LuaEntity,
         right_bottom_offset?: Vector): void
 
     /**
      * Set the scale of the text or light with this id. Does nothing if this object is not a text or light.
-     * @remarks
      * Applies to subclasses: Text,Light
-     *
      */
     set_scale(this: void,
-        id: number,
-        scale: number): void
+        id: uint64,
+        scale: double): void
 
     /**
      * Set if the text with this id scales with player zoom, resulting in it always being the same size on screen, and the size compared to the game world changes. Does nothing if this object is not a text.
-     * @remarks
      * Applies to subclasses: Text
-     *
      */
     set_scale_with_zoom(this: void,
-        id: number,
+        id: uint64,
         scale_with_zoom: boolean): void
 
     /**
      * Set the sprite of the sprite or light with this id. Does nothing if this object is not a sprite or light.
-     * @remarks
      * Applies to subclasses: Sprite,Light
-     *
      */
     set_sprite(this: void,
-        id: number,
+        id: uint64,
         sprite: SpritePath): void
 
     /**
      * Set where the arc with this id starts. Does nothing if this object is not a arc.
-     * @remarks
      * Applies to subclasses: Arc
-     *
      * @param start_angle - angle in radian
      */
     set_start_angle(this: void,
-        id: number,
-        start_angle: number): void
+        id: uint64,
+        start_angle: float): void
 
     /**
      * Set where the object with this id is drawn. Does nothing if this object does not support target.
-     * @remarks
+     * 
      * Polygon vertices that are set to an entity will ignore this.
      * Applies to subclasses: Text,Circle,Arc,Polygon,Sprite,Light,Animation
-     *
      */
     set_target(this: void,
-        id: number,
+        id: uint64,
         target: MapPosition | LuaEntity,
         target_offset?: Vector): void
 
     /**
      * Set the text that is displayed by the text with this id. Does nothing if this object is not a text.
-     * @remarks
      * Applies to subclasses: Text
-     *
      */
     set_text(this: void,
-        id: number,
+        id: uint64,
         text: LocalisedString): void
 
     /**
      * Set the time to live of the object with this id. Set to 0 if the object should not expire.
      */
     set_time_to_live(this: void,
-        id: number,
-        time_to_live: number): void
+        id: uint64,
+        time_to_live: uint): void
 
     /**
      * Set where the line with this id is drawn to. Does nothing if this object is not a line.
-     * @remarks
      * Applies to subclasses: Line
-     *
      */
     set_to(this: void,
-        id: number,
+        id: uint64,
         to: MapPosition | LuaEntity,
         to_offset?: Vector): void
 
     /**
      * Set if the text with this id parses rich text tags.
-     * @remarks
      * Applies to subclasses: Text
-     *
      */
     set_use_rich_text(this: void,
-        id: number,
+        id: uint64,
         use_rich_text: boolean): void
 
     /**
      * Set whether this uses the target orientation.
      */
     set_use_target_orientation(this: void,
-        id: number,
+        id: uint64,
         use_target_orientation: boolean): void
 
     /**
      * Set the vertical alignment of the text with this id. Does nothing if this object is not a text.
-     * @remarks
      * Applies to subclasses: Text
-     *
      */
     set_vertical_alignment(this: void,
-        id: number,
+        id: uint64,
         alignment: VerticalTextAlign): void
 
     /**
      * Set the vertices of the polygon with this id. Does nothing if this object is not a polygon.
-     * @remarks
      * Applies to subclasses: Polygon
-     *
      */
     set_vertices(this: void,
-        id: number,
+        id: uint64,
         vertices: ScriptRenderVertexTarget[]): void
 
     /**
      * Set whether this is rendered to anyone at all.
      */
     set_visible(this: void,
-        id: number,
+        id: uint64,
         visible: boolean): void
 
     /**
      * Set the width of the object with this id. Does nothing if this object does not support width. Value is in pixels (32 per tile).
-     * @remarks
      * Applies to subclasses: Line,Circle,Rectangle
-     *
      */
     set_width(this: void,
-        id: number,
-        width: number): void
+        id: uint64,
+        width: float): void
 
     /**
      * Set the horizontal scale of the sprite or animation with this id. Does nothing if this object is not a sprite or animation.
-     * @remarks
      * Applies to subclasses: Sprite,Animation
-     *
      */
     set_x_scale(this: void,
-        id: number,
-        x_scale: number): void
+        id: uint64,
+        x_scale: double): void
 
     /**
      * Set the vertical scale of the sprite or animation with this id. Does nothing if this object is not a sprite or animation.
-     * @remarks
      * Applies to subclasses: Sprite,Animation
-     *
      */
     set_y_scale(this: void,
-        id: number,
-        y_scale: number): void
+        id: uint64,
+        y_scale: double): void
 
     /**
-     * This object's name.
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
@@ -20457,6 +19243,11 @@ interface LuaSettings {
         player: PlayerIdentification): {[key: string]: ModSetting}
 
     /**
+     * All methods and properties that this object supports.
+     */
+    help(this: void): string
+
+    /**
      * The current global mod settings, indexed by prototype name.
      * 
      * Even though this attribute is marked as read-only, individual settings can be changed by overwriting their {@link ModSetting | runtime:ModSetting} table. Mods can only change their own settings. Using the in-game console, all player settings can be changed.
@@ -20464,7 +19255,7 @@ interface LuaSettings {
     readonly global: {[key: string]: ModSetting}
 
     /**
-     * This object's name.
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string
 
@@ -20567,170 +19358,148 @@ interface LuaStyle {
     help(this: void): string
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: TabStyle
-     *
      */
     badge_font: string
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: TabStyle
-     *
      */
-    badge_horizontal_spacing: number
+    badge_horizontal_spacing: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaProgressBarStyle
-     *
      */
-    bar_width: number
+    bar_width: uint
 
     /**
      * Space between the table cell contents bottom and border.
-     * @remarks
      * Applies to subclasses: LuaTableStyle
-     *
      */
-    bottom_cell_padding: number
+    bottom_cell_padding: int
 
-    bottom_margin: number
+    bottom_margin: int
 
-    bottom_padding: number
+    bottom_padding: int
 
     /**
      * Space between the table cell contents and border. Sets top/right/bottom/left cell paddings to this value.
-     * @remarks
      * Applies to subclasses: LuaTableStyle
-     *
      */
-    cell_padding: number
+    cell_padding: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
     clicked_font_color: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
-    clicked_vertical_offset: number
+    clicked_vertical_offset: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaProgressBarStyle
-     *
      */
     color: Color
 
     /**
-     * Array containing the alignment for every column of this table element. Even though this property is marked as read-only, the alignment can be changed by indexing the LuaCustomTable, like so:
+     * Array containing the alignment for every column of this table element. Even though this property is marked as read-only, the alignment can be changed by indexing the LuaCustomTable.
      * @example
      * ```
      * table_element.style.column_alignments[1] = "center"
      * ```
      *
      */
-    readonly column_alignments: {[key: number]: Alignment}
+    readonly column_alignments: {[key: string]: Alignment}
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: TabStyle
-     *
      */
     default_badge_font_color: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: TabStyle
-     *
      */
     disabled_badge_font_color: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle,LuaTabStyle
-     *
      */
     disabled_font_color: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
     draw_grayscale_picture: boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ScrollPaneStyle
-     *
      */
-    extra_bottom_margin_when_activated: number
+    extra_bottom_margin_when_activated: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ScrollPaneStyle
-     *
      */
-    extra_bottom_padding_when_activated: number
+    extra_bottom_padding_when_activated: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ScrollPaneStyle
-     *
      */
-    extra_left_margin_when_activated: number
+    extra_left_margin_when_activated: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ScrollPaneStyle
-     *
      */
-    extra_left_padding_when_activated: number
+    extra_left_padding_when_activated: int
 
     /**
      * Sets `extra_top/right/bottom/left_margin_when_activated` to this value. An array with two values sets top/bottom margin to the first value and left/right margin to the second value. An array with four values sets top, right, bottom, left margin respectively.
      */
-    extra_margin_when_activated: number | number[]
+    extra_margin_when_activated: int | int[]
 
     /**
      * Sets `extra_top/right/bottom/left_padding_when_activated` to this value. An array with two values sets top/bottom padding to the first value and left/right padding to the second value. An array with four values sets top, right, bottom, left padding respectively.
      */
-    extra_padding_when_activated: number | number[]
+    extra_padding_when_activated: int | int[]
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ScrollPaneStyle
-     *
      */
-    extra_right_margin_when_activated: number
+    extra_right_margin_when_activated: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ScrollPaneStyle
-     *
      */
-    extra_right_padding_when_activated: number
+    extra_right_padding_when_activated: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ScrollPaneStyle
-     *
      */
-    extra_top_margin_when_activated: number
+    extra_top_margin_when_activated: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ScrollPaneStyle
-     *
      */
-    extra_top_padding_when_activated: number
+    extra_top_padding_when_activated: int
 
     font: string
 
@@ -20744,7 +19513,7 @@ interface LuaStyle {
     /**
      * Sets both minimal and maximal height to the given value.
      */
-    height: number
+    height: int
 
     /**
      * Horizontal align of the inner content of the widget, if any.
@@ -20753,14 +19522,14 @@ interface LuaStyle {
 
     /**
      * Horizontal space between individual cells.
-     * @remarks
      * Applies to subclasses: LuaTableStyle,LuaFlowStyle,LuaHorizontalFlowStyle
-     *
      */
-    horizontal_spacing: number
+    horizontal_spacing: int
 
     /**
-     * Whether the GUI element can be squashed (by maximal width of some parent element) horizontally. `nil` if this element does not support squashing. This is mainly meant to be used for scroll-pane The default value is false.
+     * Whether the GUI element can be squashed (by maximal width of some parent element) horizontally. `nil` if this element does not support squashing.
+     * 
+     * This is mainly meant to be used for scroll-pane. The default value is `false`.
      */
     horizontally_squashable?: boolean
 
@@ -20770,48 +19539,45 @@ interface LuaStyle {
     horizontally_stretchable?: boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
     hovered_font_color: Color
 
     /**
      * Space between the table cell contents left and border.
-     * @remarks
      * Applies to subclasses: LuaTableStyle
-     *
      */
-    left_cell_padding: number
+    left_cell_padding: int
 
-    left_margin: number
+    left_margin: int
 
-    left_padding: number
+    left_padding: int
 
     /**
      * Sets top/right/bottom/left margins to this value. An array with two values sets top/bottom margin to the first value and left/right margin to the second value. An array with four values sets top, right, bottom, left margin respectively.
      */
-    margin: number | number[]
+    margin: int | int[]
 
     /**
      * Maximal height ensures, that the widget will never be bigger than than that size. It can't be stretched to be bigger.
      */
-    maximal_height: number
+    maximal_height: int
 
     /**
      * Maximal width ensures, that the widget will never be bigger than than that size. It can't be stretched to be bigger.
      */
-    maximal_width: number
+    maximal_width: int
 
     /**
      * Minimal height ensures, that the widget will never be smaller than than that size. It can't be squashed to be smaller.
      */
-    minimal_height: number
+    minimal_height: int
 
     /**
      * Minimal width ensures, that the widget will never be smaller than than that size. It can't be squashed to be smaller.
      */
-    minimal_width: number
+    minimal_width: int
 
     /**
      * Name of this style.
@@ -20821,12 +19587,12 @@ interface LuaStyle {
     /**
      * Natural height specifies the height of the element tries to have, but it can still be squashed/stretched to have a smaller or bigger size.
      */
-    natural_height: number
+    natural_height: int
 
     /**
      * Natural width specifies the width of the element tries to have, but it can still be squashed/stretched to have a smaller or bigger size.
      */
-    natural_width: number
+    natural_width: int
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -20836,105 +19602,90 @@ interface LuaStyle {
     /**
      * Sets top/right/bottom/left paddings to this value. An array with two values sets top/bottom padding to the first value and left/right padding to the second value. An array with four values sets top, right, bottom, left padding respectively.
      */
-    padding: number | number[]
+    padding: int | int[]
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
     pie_progress_color: Color
 
     /**
      * How this GUI element handles rich text.
-     * @remarks
      * Applies to subclasses: LuaLabelStyle,LuaTextBoxStyle,LuaTextFieldStyle
-     *
      */
     rich_text_setting: defines.rich_text_setting
 
     /**
      * Space between the table cell contents right and border.
-     * @remarks
      * Applies to subclasses: LuaTableStyle
-     *
      */
-    right_cell_padding: number
+    right_cell_padding: int
 
-    right_margin: number
+    right_margin: int
 
-    right_padding: number
+    right_padding: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: TabStyle
-     *
      */
     selected_badge_font_color: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
     selected_clicked_font_color: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
     selected_font_color: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
     selected_hovered_font_color: Color
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LabelStyle
-     *
      */
     single_line: boolean
 
     /**
      * Sets both width and height to the given value. Also accepts an array with two values, setting width to the first and height to the second one.
      */
-    size: number | number[]
+    size: int | int[]
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: ImageStyle
-     *
      */
     stretch_image_to_widget_size: boolean
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaButtonStyle
-     *
      */
     strikethrough_color: Color
 
     /**
      * Space between the table cell contents top and border.
-     * @remarks
      * Applies to subclasses: LuaTableStyle
-     *
      */
-    top_cell_padding: number
+    top_cell_padding: int
 
-    top_margin: number
+    top_margin: int
 
-    top_padding: number
+    top_padding: int
 
     /**
-     * @remarks
+     * 
      * Applies to subclasses: LuaFrameStyle
-     *
      */
     use_header_filler: boolean
 
@@ -20950,14 +19701,14 @@ interface LuaStyle {
 
     /**
      * Vertical space between individual cells.
-     * @remarks
      * Applies to subclasses: LuaTableStyle,LuaFlowStyle,LuaVerticalFlowStyle,LuaTabbedPaneStyle
-     *
      */
-    vertical_spacing: number
+    vertical_spacing: int
 
     /**
-     * Whether the GUI element can be squashed (by maximal height of some parent element) vertically. `nil` if this element does not support squashing. This is mainly meant to be used for scroll-pane The default (parent) value for scroll pane is true, false otherwise.
+     * Whether the GUI element can be squashed (by maximal height of some parent element) vertically. `nil` if this element does not support squashing.
+     * 
+     * This is mainly meant to be used for scroll-pane. The default (parent) value for scroll pane is `true`, `false` otherwise.
      */
     vertically_squashable?: boolean
 
@@ -20969,7 +19720,7 @@ interface LuaStyle {
     /**
      * Sets both minimal and maximal width to the given value.
      */
-    width: number
+    width: int
 
 }
 
@@ -20982,14 +19733,14 @@ interface LuaSurface {
      * @returns The id of the created area.
      */
     add_script_area(this: void,
-        area: ScriptArea): number
+        area: ScriptArea): uint
 
     /**
      * Adds the given script position.
      * @returns The id of the created position.
      */
     add_script_position(this: void,
-        area: ScriptPosition): number
+        area: ScriptPosition): uint
 
     /**
      * Sets the given area to the checkerboard lab tiles.
@@ -21000,26 +19751,28 @@ interface LuaSurface {
 
     /**
      * Send a group to build a new base.
-     * @remarks
+     * 
      * The specified force must be AI-controlled; i.e. `force.ai_controllable` must be `true`.
-     *
      * @param force - Force the new base will belong to. Defaults to enemy.
      * @param position - Location of the new base.
      * @param unit_count - Number of biters to send for the base-building task.
      */
     build_enemy_base(this: void,
         position: MapPosition,
-        unit_count: number,
+        unit_count: uint,
         force?: ForceIdentification): void
 
     /**
+     * Calculate values for a list of tile properties at a list of positions.
+     * 
+     * Requests for unrecognized properties will be ignored, so this can also be used to test whether those properties exist.
      * @param positions - Positions for which to calculate property values
      * @param property_names - Names of properties (`"elevation"`, etc) to calculate.
      * @returns Table of property value lists, keyed by property name
      */
     calculate_tile_properties(this: void,
         property_names: string[],
-        positions: MapPosition[]): {[key: string]: number[]}
+        positions: MapPosition[]): {[key: string]: double[]}
 
     /**
      * If there exists an entity at the given location that can be fast-replaced with the given entity parameters.
@@ -21104,10 +19857,7 @@ interface LuaSurface {
     clear_pollution(this: void): void
 
     /**
-     * Clones the given area.
-     * @remarks
-     * Entities are cloned in an order such that they can always be created, eg rails before trains.
-     *
+     * Clones the given area. Entities are cloned in an order such that they can always be created, eg. rails before trains.
      * @param table.clear_destination_decoratives - If the destination decoratives should be cleared
      * @param table.clear_destination_entities - If the destination entities should be cleared
      * @param table.clone_decoratives - If decoratives should be cloned
@@ -21133,10 +19883,10 @@ interface LuaSurface {
 
     /**
      * Clones the given area.
-     * @remarks
+     * 
      * {@link defines.events.on_entity_cloned | runtime:defines.events.on_entity_cloned} is raised for each entity, and then {@link defines.events.on_area_cloned | runtime:defines.events.on_area_cloned} is raised.
-     * Entities are cloned in an order such that they can always be created, eg rails before trains.
-     *
+     * 
+     * Entities are cloned in an order such that they can always be created, eg. rails before trains.
      * @param table.clear_destination_decoratives - If the destination decoratives should be cleared
      * @param table.clear_destination_entities - If the destination entities should be cleared
      * @param table.clone_decoratives - If decoratives should be cloned
@@ -21165,9 +19915,8 @@ interface LuaSurface {
 
     /**
      * Clones the given entities.
-     * @remarks
-     * Entities are cloned in an order such that they can always be created, eg rails before trains.
-     *
+     * 
+     * Entities are cloned in an order such that they can always be created, eg. rails before trains.
      * @param table.create_build_effect_smoke - If true, the building effect smoke will be shown around the new entities.
      */
     clone_entities(this: void,
@@ -21183,7 +19932,13 @@ interface LuaSurface {
     /**
      * Count entities of given type or name in a given area. Works just like {@link LuaSurface::find_entities_filtered | runtime:LuaSurface::find_entities_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of entities.
      * 
-     * If no `area` or `position` are given, the entire surface is searched. If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box). If `position` and `radius` are given, this returns entities in the radius of the position. If `area` is specified, this returns entities colliding with that area.
+     * - If no `area` or `position` are given, the entire surface is searched.
+     * 
+     * - If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box).
+     * 
+     * - If `position` and `radius` are given, this returns entities in the radius of the position.
+     * 
+     * - If `area` is specified, this returns entities colliding with that area.
      * @param table.ghost_name - An empty array means the same as providing nothing (`nil`).
      * @param table.ghost_type - An empty array means the same as providing nothing (`nil`).
      * @param table.invert - Whether the filters should be inverted.
@@ -21195,7 +19950,7 @@ interface LuaSurface {
         table: {
             area?: BoundingBox,
             position?: MapPosition,
-            radius?: number,
+            radius?: double,
             name?: string | string[],
             type?: string | string[],
             ghost_name?: string | string[],
@@ -21205,10 +19960,10 @@ interface LuaSurface {
             force?: ForceIdentification | ForceIdentification[],
             to_be_deconstructed?: boolean,
             to_be_upgraded?: boolean,
-            limit?: number,
+            limit?: uint,
             is_military_target?: boolean,
             invert?: boolean
-        }): number
+        }): uint
 
     /**
      * Count tiles of a given name in a given area. Works just like {@link LuaSurface::find_tiles_filtered | runtime:LuaSurface::find_tiles_filtered}, except this only returns the count. As it doesn't construct all the wrapper objects, this is more efficient if one is only interested in the number of tiles.
@@ -21225,22 +19980,21 @@ interface LuaSurface {
         table: {
             area?: BoundingBox,
             position?: MapPosition,
-            radius?: number,
+            radius?: double,
             name?: string | string[],
             force?: ForceIdentification | ForceIdentification[],
-            limit?: number,
+            limit?: uint,
             has_hidden_tile?: boolean,
             has_tile_ghost?: boolean,
             to_be_deconstructed?: boolean,
             collision_mask?: CollisionMaskLayer | CollisionMaskLayer[],
             invert?: boolean
-        }): number
+        }): uint
 
     /**
      * Adds the given decoratives to the surface.
-     * @remarks
+     * 
      * This will merge decoratives of the same type that already exist effectively increasing the "amount" field.
-     *
      * @param table.check_collision - If collision should be checked against entities/tiles.
      */
     create_decoratives(this: void,
@@ -21257,20 +20011,23 @@ interface LuaSurface {
      * ```
      *
      * @example
-     * Creates a filter inserter with circuit conditions and a filter 
      * ```
+     * -- Creates a filter inserter with circuit conditions and a filter
      * game.surfaces[1].create_entity{
      *   name = "filter-inserter", position = {20, 15}, force = game.player.force,
-     *   conditions = {red = {name = "wood", count = 3, operator = ">"},
-     *               green = {name = "iron-ore", count = 1, operator = "<"},
-     *   logistics = {name = "wood", count = 3, operator = "="}},
+     *   conditions =
+     *   {
+     *     red = {name = "wood", count = 3, operator = ">"},
+     *     green = {name = "iron-ore", count = 1, operator = "<"},
+     *     logistics = {name = "wood", count = 3, operator = "="}
+     *   },
      *   filters = {{index = 1, name = "iron-ore"}}
      * }
      * ```
      *
      * @example
-     * Creates a requester chest already set to request 128 iron plates. 
      * ```
+     * -- Creates a requester chest already set to request 128 iron plates.
      * game.surfaces[1].create_entity{
      *   name = "logistic-chest-requester", position = {game.player.position.x+3, game.player.position.y},
      *   force = game.player.force, request_filters = {{index = 1, name = "iron-plate", count = 128}}
@@ -21284,8 +20041,8 @@ interface LuaSurface {
      * ```
      *
      * @example
-     * Creates a basic inserter at the player's location facing north 
      * ```
+     * -- Creates a basic inserter at the player's location facing north
      * game.surfaces[1].create_entity{name = "inserter", position = game.player.position, direction = defines.direction.north}
      * ```
      *
@@ -21304,9 +20061,9 @@ interface LuaSurface {
             name: string,
             position: MapPosition,
             movement: Vector,
-            height: number,
-            vertical_speed: number,
-            frame_speed: number
+            height: float,
+            vertical_speed: float,
+            frame_speed: float
         }): void
 
     /**
@@ -21363,7 +20120,9 @@ interface LuaSurface {
         position: ChunkPosition): void
 
     /**
-     * Removes all decoratives from the given area. If no area and no position are given, then the entire surface is searched.
+     * Removes all decoratives from the given area.
+     * 
+     * If no area and no position are given, then the entire surface is searched.
      * @param table.exclude_soft - Soft decoratives can be drawn over rails.
      * @param table.invert - If the filters should be inverted.
      */
@@ -21376,7 +20135,7 @@ interface LuaSurface {
             from_layer?: string,
             to_layer?: string,
             exclude_soft?: boolean,
-            limit?: number,
+            limit?: uint,
             invert?: boolean
         }): void
 
@@ -21385,7 +20144,7 @@ interface LuaSurface {
      * @param id - The area to edit.
      */
     edit_script_area(this: void,
-        id: number,
+        id: uint,
         area: ScriptArea): void
 
     /**
@@ -21393,7 +20152,7 @@ interface LuaSurface {
      * @param id - The position to edit.
      */
     edit_script_position(this: void,
-        id: number,
+        id: uint,
         area: ScriptPosition): void
 
     /**
@@ -21439,28 +20198,27 @@ interface LuaSurface {
             from_layer?: string,
             to_layer?: string,
             exclude_soft?: boolean,
-            limit?: number,
+            limit?: uint,
             invert?: boolean
         }): DecorativeResult[]
 
     /**
      * Find enemy units (entities with type "unit") of a given force within an area.
-     * @remarks
+     * 
      * This is more efficient than {@link LuaSurface::find_entities | runtime:LuaSurface::find_entities}.
-     *
      * @param center - Center of the search area
      * @param force - Force to find enemies of. If not given, uses the player force.
      * @param radius - Radius of the circular search area
      * @example
-     * Find all units who would be interested to attack the player, within 100-tile area. 
      * ```
+     * -- Find all units who would be interested to attack the player, within 100-tile area.
      * local enemies = game.player.surface.find_enemy_units(game.player.position, 100)
      * ```
      *
      */
     find_enemy_units(this: void,
         center: MapPosition,
-        radius: number,
+        radius: double,
         force?: ForceIdentification): LuaEntity[]
 
     /**
@@ -21468,8 +20226,8 @@ interface LuaSurface {
      * 
      * If no area is given all entities on the surface are returned.
      * @example
-     * Will evaluate to a list of all entities within given area. 
      * ```
+     * -- Will evaluate to a list of all entities within given area.
      * game.surfaces["nauvis"].find_entities({{-10, -10}, {10, 10}})
      * ```
      *
@@ -21483,8 +20241,11 @@ interface LuaSurface {
      * If no filters (`name`, `type`, `force`, etc.) are given, this returns all entities in the search area. If multiple filters are specified, only entities matching all given filters are returned.
      * 
      * - If no `area` or `position` are given, the entire surface is searched.
+     * 
      * - If `position` is given, this returns the entities colliding with that position (i.e the given position is within the entity's collision box).
+     * 
      * - If `position` and `radius` are given, this returns the entities within the radius of the position. Looks for the center of entities.
+     * 
      * - If `area` is specified, this returns the entities colliding with that area.
      * @param table.ghost_name - An empty array means the same as providing nothing (`nil`).
      * @param table.ghost_type - An empty array means the same as providing nothing (`nil`).
@@ -21507,7 +20268,7 @@ interface LuaSurface {
         table: {
             area?: BoundingBox,
             position?: MapPosition,
-            radius?: number,
+            radius?: double,
             name?: string | string[],
             type?: string | string[],
             ghost_name?: string | string[],
@@ -21517,7 +20278,7 @@ interface LuaSurface {
             force?: ForceIdentification | ForceIdentification[],
             to_be_deconstructed?: boolean,
             to_be_upgraded?: boolean,
-            limit?: number,
+            limit?: uint,
             is_military_target?: boolean,
             has_item_inside?: LuaItemPrototype,
             invert?: boolean
@@ -21565,7 +20326,7 @@ interface LuaSurface {
     find_nearest_enemy(this: void,
         table: {
             position: MapPosition,
-            max_distance: number,
+            max_distance: double,
             force?: ForceIdentification
         }): LuaEntity | null
 
@@ -21579,17 +20340,16 @@ interface LuaSurface {
     find_nearest_enemy_entity_with_owner(this: void,
         table: {
             position: MapPosition,
-            max_distance: number,
+            max_distance: double,
             force?: ForceIdentification
         }): LuaEntity
 
     /**
      * Find a non-colliding position within a given radius.
-     * @remarks
+     * 
      * Special care needs to be taken when using a radius of `0`. The game will not stop searching until it finds a suitable position, so it is important to make sure such a position exists. One particular case where it would not be able to find a solution is running it before any chunks have been generated.
-     *
      * @param center - Center of the search area.
-     * @param force_to_tile_center - Will only check tile centers. This can be useful when your intent is to place a building at the resulting position, as they must generally be placed at tile centers. Default false.
+     * @param force_to_tile_center - Will only check tile centers. This can be useful when your intent is to place a building at the resulting position, as they must generally be placed at tile centers. Defaults to `false`.
      * @param name - Prototype name of the entity to find a position for. (The bounding box for the collision checking is taken from this prototype.)
      * @param precision - The step length from the given position as it searches, in tiles. Minimum value is `0.01`.
      * @param radius - Max distance from `center` to search in. A radius of `0` means an infinitely-large search area.
@@ -21598,13 +20358,13 @@ interface LuaSurface {
     find_non_colliding_position(this: void,
         name: string,
         center: MapPosition,
-        radius: number,
-        precision: number,
+        radius: double,
+        precision: double,
         force_to_tile_center?: boolean): MapPosition | null
 
     /**
      * Find a non-colliding position within a given rectangle.
-     * @param force_to_tile_center - Will only check tile centers. This can be useful when your intent is to place a building at the resulting position, as they must generally be placed at tile centers. Default false.
+     * @param force_to_tile_center - Will only check tile centers. This can be useful when your intent is to place a building at the resulting position, as they must generally be placed at tile centers. Defaults to `false`.
      * @param name - Prototype name of the entity to find a position for. (The bounding box for the collision checking is taken from this prototype.)
      * @param precision - The step length from the given position as it searches, in tiles. Minimum value is 0.01.
      * @param search_space - The rectangle to search inside.
@@ -21613,7 +20373,7 @@ interface LuaSurface {
     find_non_colliding_position_in_box(this: void,
         name: string,
         search_space: BoundingBox,
-        precision: number,
+        precision: double,
         force_to_tile_center?: boolean): MapPosition | null
 
     /**
@@ -21633,10 +20393,10 @@ interface LuaSurface {
         table: {
             area?: BoundingBox,
             position?: MapPosition,
-            radius?: number,
+            radius?: double,
             name?: string | string[],
             force?: ForceIdentification | ForceIdentification[],
-            limit?: number,
+            limit?: uint,
             has_hidden_tile?: boolean,
             has_tile_ghost?: boolean,
             to_be_deconstructed?: boolean,
@@ -21646,21 +20406,20 @@ interface LuaSurface {
 
     /**
      * Find units (entities with type "unit") of a given force and force condition within a given area.
-     * @remarks
+     * 
      * This is more efficient than {@link LuaSurface::find_entities | runtime:LuaSurface::find_entities}.
-     *
      * @param table.area - Box to find units within.
      * @param table.condition - Only forces which meet the condition will be included in the search.
      * @param table.force - Force performing the search.
      * @example
-     * Find friendly units to "player" force 
      * ```
+     * -- Find friendly units to "player" force
      * local friendly_units = game.player.surface.find_units({area = {{-10, -10},{10, 10}}, force = "player", condition = "friend")
      * ```
      *
      * @example
-     * Find units of "player" force 
      * ```
+     * -- Find units of "player" force
      * local units = game.player.surface.find_units({area = {{-10, -10},{10, 10}}, force = "player", condition = "same"})
      * ```
      *
@@ -21692,9 +20451,8 @@ interface LuaSurface {
 
     /**
      * Gets all tiles of the given types that are connected horizontally or vertically to the given tile position including the given tile position.
-     * @remarks
+     * 
      * This won't find tiles in non-generated chunks.
-     *
      * @param area - The area to find connected tiles in. If provided the start position must be in this area.
      * @param include_diagonal - Include tiles that are connected diagonally.
      * @param position - The tile position to start at.
@@ -21731,9 +20489,8 @@ interface LuaSurface {
 
     /**
      * Get the pollution for a given position.
-     * @remarks
+     * 
      * Pollution is stored per chunk, so this will return the same value for all positions in one chunk.
-     *
      * @example
      * ```
      * game.surfaces[1].get_pollution({1,2})
@@ -21741,7 +20498,7 @@ interface LuaSurface {
      *
      */
     get_pollution(this: void,
-        position: MapPosition): number
+        position: MapPosition): double
 
     /**
      * Gets a random generated chunk position or 0,0 if no chunks have been generated on this surface.
@@ -21751,14 +20508,14 @@ interface LuaSurface {
     /**
      * Gets the resource amount of all resources on this surface
      */
-    get_resource_counts(this: void): {[key: string]: number}
+    get_resource_counts(this: void): {[key: string]: uint}
 
     /**
      * Gets the first script area by name or id.
      * @param key - The name or id of the area to get.
      */
     get_script_area(this: void,
-        key?: string | number): ScriptArea | null
+        key?: string | uint): ScriptArea | null
 
     /**
      * Gets the script areas that match the given name or if no name is given all areas are returned.
@@ -21771,7 +20528,7 @@ interface LuaSurface {
      * @param key - The name or id of the position to get.
      */
     get_script_position(this: void,
-        key?: string | number): ScriptPosition | null
+        key?: string | uint): ScriptPosition | null
 
     /**
      * Gets the script positions that match the given name or if no name is given all positions are returned.
@@ -21782,22 +20539,21 @@ interface LuaSurface {
     /**
      * Gets the starting area radius of this surface.
      */
-    get_starting_area_radius(this: void): number
+    get_starting_area_radius(this: void): double
 
     /**
      * Get the tile at a given position. An alternative call signature for this method is passing it a single {@link TilePosition | runtime:TilePosition}.
-     * @remarks
+     * 
      * Non-integer values will result in them being rounded down.
-     *
      */
     get_tile(this: void,
-        x: number,
-        y: number): LuaTile
+        x: int,
+        y: int): LuaTile
 
     /**
      * Gets the total amount of pollution on the surface by iterating over all of the chunks containing pollution.
      */
-    get_total_pollution(this: void): number
+    get_total_pollution(this: void): double
 
     /**
      * Gets train stops matching the given filters.
@@ -21805,7 +20561,7 @@ interface LuaSurface {
      * @param table.name - The name(s) of the train stops. Not providing names will match any stop.
      */
     get_train_stops(this: void,
-        table?: {
+        table: {
             name?: string | string[],
             force?: ForceIdentification
         }): LuaEntity[]
@@ -21830,9 +20586,8 @@ interface LuaSurface {
 
     /**
      * Play a sound for every player on this surface.
-     * @remarks
+     * 
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for that player.
-     *
      * @param table.override_sound_type - The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      * @param table.path - The sound to play.
      * @param table.position - Where the sound should be played. If not given, it's played at the current position of each player.
@@ -21842,7 +20597,7 @@ interface LuaSurface {
         table: {
             path: SoundPath,
             position?: MapPosition,
-            volume_modifier?: number,
+            volume_modifier?: double,
             override_sound_type?: SoundType
         }): void
 
@@ -21853,13 +20608,12 @@ interface LuaSurface {
      */
     pollute(this: void,
         source: MapPosition,
-        amount: number): void
+        amount: double): void
 
     /**
      * Print text to the chat console of all players on this surface.
-     * @remarks
+     * 
      * By default, messages that are identical to a message sent in the last 60 ticks are not printed again.
-     *
      */
     print(this: void,
         message: LocalisedString,
@@ -21867,9 +20621,8 @@ interface LuaSurface {
 
     /**
      * Regenerate autoplacement of some decoratives on this surface. This can be used to autoplace newly-added decoratives.
-     * @remarks
+     * 
      * All specified decorative prototypes must be autoplacable. If nothing is given all decoratives are generated on all chunks.
-     *
      * @param chunks - The chunk positions to regenerate the entities on. If not given all chunks are regenerated. Note chunks with status < entities are ignored.
      * @param decoratives - Prototype names of decorative or decoratives to autoplace. When `nil` all decoratives with an autoplace are used.
      */
@@ -21879,9 +20632,8 @@ interface LuaSurface {
 
     /**
      * Regenerate autoplacement of some entities on this surface. This can be used to autoplace newly-added entities.
-     * @remarks
+     * 
      * All specified entity prototypes must be autoplacable. If nothing is given all entities are generated on all chunks.
-     *
      * @param chunks - The chunk positions to regenerate the entities on. If not given all chunks are regenerated. Note chunks with status < entities are ignored.
      * @param entities - Prototype names of entity or entities to autoplace. When `nil` all entities with an autoplace are used.
      */
@@ -21894,14 +20646,14 @@ interface LuaSurface {
      * @returns If the area was actually removed. False when it didn't exist.
      */
     remove_script_area(this: void,
-        id: number): boolean
+        id: uint): boolean
 
     /**
      * Removes the given script position.
      * @returns If the position was actually removed. False when it didn't exist.
      */
     remove_script_position(this: void,
-        id: number): boolean
+        id: uint): boolean
 
     /**
      * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | runtime:PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities, such as vehicles. If you want to command actual units (such as biters or spitters) to move, use {@link LuaEntity::set_command | runtime:LuaEntity::set_command} instead.
@@ -21926,12 +20678,12 @@ interface LuaSurface {
             start: MapPosition,
             goal: MapPosition,
             force: ForceIdentification,
-            radius?: number,
+            radius?: double,
             pathfind_flags?: PathfinderFlags,
             can_open_gates?: boolean,
-            path_resolution_modifier?: number,
+            path_resolution_modifier?: int,
             entity_to_ignore?: LuaEntity
-        }): number
+        }): uint
 
     /**
      * Request that the game's map generator generate chunks at the given position for the given radius on this surface. If the radius is `0`, then only the chunk at the given position is generated.
@@ -21940,7 +20692,7 @@ interface LuaSurface {
      */
     request_to_generate_chunks(this: void,
         position: MapPosition,
-        radius?: number): void
+        radius?: uint): void
 
     /**
      * Set generated status of a chunk. Useful when copying chunks.
@@ -21970,18 +20722,17 @@ interface LuaSurface {
     set_multi_command(this: void,
         table: {
             command: Command,
-            unit_count: number,
+            unit_count: uint,
             force?: ForceIdentification,
-            unit_search_distance?: number
-        }): number
+            unit_search_distance?: uint
+        }): uint
 
     /**
      * Set tiles at specified locations. Can automatically correct the edges around modified tiles.
      * 
      * Placing a {@link mineable | runtime:LuaTilePrototype::mineable_properties} tile on top of a non-mineable one will turn the latter into the {@link LuaTile::hidden_tile | runtime:LuaTile::hidden_tile} for that tile. Placing a mineable tile on a mineable one or a non-mineable tile on a non-mineable one will not modify the hidden tile. This restriction can however be circumvented by using {@link LuaSurface::set_hidden_tile | runtime:LuaSurface::set_hidden_tile}.
-     * @remarks
+     * 
      * It is recommended to call this method once for all the tiles you want to change rather than calling it individually for every tile. As the tile correction is used after every step, calling it one by one could cause the tile correction logic to redo some of the changes. Also, many small API calls are generally more performance intensive than one big one.
-     *
      * @param correct_tiles - If `false`, the correction logic is not applied to the changed tiles. Defaults to `true`.
      * @param raise_event - Defaults to `false`.
      * @param remove_colliding_decoratives - Defaults to `true`.
@@ -22035,12 +20786,12 @@ interface LuaSurface {
     /**
      * Defines how surface daytime brightness influences each color channel of the current color lookup table (LUT).
      * 
-     * The LUT is multiplied by `((1 - weight) + brightness * weight)` and result is clamped to range [0, 1].
+     * The LUT is multiplied by `((1 - weight) + brightness * weight)` and result is clamped to range `[0, 1]`.
      * 
      * Default is `{0, 0, 0}`, which means no influence.
      * @example
-     * Makes night on the surface pitch black, assuming [LuaSurface::min_brightness](runtime:LuaSurface::min_brightness) being set to default value `0.15`. 
      * ```
+     * -- Makes night on the surface pitch black, LuaSurface::min_brightness is set to default value 0.15.
      * game.surfaces[1].brightness_visual_weights = { 1 / 0.85, 1 / 0.85, 1 / 0.85 }
      * ```
      *
@@ -22048,29 +20799,29 @@ interface LuaSurface {
     brightness_visual_weights: ColorModifier
 
     /**
-     * Amount of darkness at the current time, as a number in range [0, 1].
+     * Amount of darkness at the current time, as a number in range `[0, 1]`.
      */
-    readonly darkness: number
+    readonly darkness: float
 
     /**
      * The daytime when dawn starts.
      */
-    dawn: number
+    dawn: double
 
     /**
-     * Current time of day, as a number in range [0, 1).
+     * Current time of day, as a number in range `[0, 1)`.
      */
-    daytime: number
+    daytime: double
 
     /**
      * The daytime when dusk starts.
      */
-    dusk: number
+    dusk: double
 
     /**
      * The daytime when evening starts.
      */
-    evening: number
+    evening: double
 
     /**
      * True if daytime is currently frozen.
@@ -22085,7 +20836,7 @@ interface LuaSurface {
     /**
      * This surface's index in {@link LuaGameScript::surfaces | runtime:LuaGameScript::surfaces} (unique ID). It is assigned when a surface is created, and remains so until it is {@link deleted | runtime:on_surface_deleted}. Indexes of deleted surfaces can be reused.
      */
-    readonly index: number
+    readonly index: uint
 
     /**
      * The generation settings for this surface. These can be modified after surface generation, but note that this will not retroactively update the surface. To manually regenerate it, {@link LuaSurface::regenerate_entity | runtime:LuaSurface::regenerate_entity}, {@link LuaSurface::regenerate_decorative | runtime:LuaSurface::regenerate_decorative}, and {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk} can be used.
@@ -22095,18 +20846,17 @@ interface LuaSurface {
     /**
      * The minimal brightness during the night. Defaults to `0.15`. This has an effect on both rendering and game mechanics such as biter spawns and solar power.
      */
-    min_brightness: number
+    min_brightness: double
 
     /**
      * The daytime when morning starts.
      */
-    morning: number
+    morning: double
 
     /**
      * The name of this surface. Names are unique among surfaces.
-     * @remarks
-     * the default surface can't be renamed.
-     *
+     * 
+     * The default surface can't be renamed.
      */
     name: string
 
@@ -22121,22 +20871,19 @@ interface LuaSurface {
     peaceful_mode: boolean
 
     /**
-     * If clouds are shown on this surface.
-     * @remarks
-     * If false, clouds are never shown. If true the player must also have clouds enabled in graphics settings for them to be shown.
-     *
+     * If clouds are shown on this surface. If `false`, clouds are never shown. If `true`, the player must also have clouds enabled in graphics settings for them to be shown.
      */
     show_clouds: boolean
 
     /**
      * The multiplier of solar power on this surface. Cannot be less than 0.
      */
-    solar_power_multiplier: number
+    solar_power_multiplier: double
 
     /**
      * The number of ticks per day for this surface.
      */
-    ticks_per_day: number
+    ticks_per_day: uint
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -22151,12 +20898,12 @@ interface LuaSurface {
     /**
      * Change in wind orientation per tick.
      */
-    wind_orientation_change: number
+    wind_orientation_change: double
 
     /**
      * Current wind speed in tiles per tick.
      */
-    wind_speed: number
+    wind_speed: double
 
 }
 
@@ -22192,7 +20939,7 @@ interface LuaTechnology {
     /**
      * The current level of this technology. For level-based technology writing to this is the same as researching the technology to the previous level. Writing the level will set {@link LuaTechnology::enabled | runtime:LuaTechnology::enabled} to `true`.
      */
-    level: number
+    level: uint
 
     readonly localised_description: LocalisedString
 
@@ -22228,11 +20975,10 @@ interface LuaTechnology {
 
     /**
      * The number of research units required for this technology.
-     * @remarks
+     * 
      * This is multiplied by the current research cost multiplier, unless {@link LuaTechnologyPrototype::ignore_tech_cost_multiplier | runtime:LuaTechnologyPrototype::ignore_tech_cost_multiplier} is `true`.
-     *
      */
-    readonly research_unit_count: number
+    readonly research_unit_count: uint
 
     /**
      * The count formula, if this research has any. See {@link TechnologyUnit::count_formula | prototype:TechnologyUnit::count_formula} for details.
@@ -22242,7 +20988,7 @@ interface LuaTechnology {
     /**
      * Amount of energy required to finish a unit of research.
      */
-    readonly research_unit_energy: number
+    readonly research_unit_energy: double
 
     /**
      * The types of ingredients that labs will require to research this technology.
@@ -22297,16 +21043,15 @@ interface LuaTechnologyPrototype {
 
     /**
      * If this technology ignores the technology cost multiplier setting.
-     * @remarks
+     * 
      * {@link LuaTechnologyPrototype::research_unit_count | runtime:LuaTechnologyPrototype::research_unit_count} will already take this setting into account.
-     *
      */
     readonly ignore_tech_cost_multiplier: boolean
 
     /**
      * The level of this research.
      */
-    readonly level: number
+    readonly level: uint
 
     readonly localised_description: LocalisedString
 
@@ -22318,7 +21063,7 @@ interface LuaTechnologyPrototype {
     /**
      * The max level of this research.
      */
-    readonly max_level: number
+    readonly max_level: uint
 
     /**
      * Name of this technology.
@@ -22342,11 +21087,10 @@ interface LuaTechnologyPrototype {
 
     /**
      * The number of research units required for this technology.
-     * @remarks
+     * 
      * This is multiplied by the current research cost multiplier, unless {@link LuaTechnologyPrototype::ignore_tech_cost_multiplier | runtime:LuaTechnologyPrototype::ignore_tech_cost_multiplier} is `true`.
-     *
      */
-    readonly research_unit_count: number
+    readonly research_unit_count: uint
 
     /**
      * The count formula, if this research has any. See {@link TechnologyUnit::count_formula | prototype:TechnologyUnit::count_formula} for details.
@@ -22356,7 +21100,7 @@ interface LuaTechnologyPrototype {
     /**
      * Amount of energy required to finish a unit of research.
      */
-    readonly research_unit_energy: number
+    readonly research_unit_energy: double
 
     /**
      * The types of ingredients that labs will require to research this technology.
@@ -22396,8 +21140,8 @@ interface LuaTile {
     /**
      * What type of things can collide with this tile?
      * @example
-     * Check if the character would collide with a tile 
      * ```
+     * -- Check if the character would collide with a tile
      * game.player.print(tostring(game.player.surface.get_tile(1, 1).collides_with("player-layer")))
      * ```
      *
@@ -22442,7 +21186,9 @@ interface LuaTile {
         force?: ForceIdentification): boolean
 
     /**
-     * The name of the {@link LuaTilePrototype | runtime:LuaTilePrototype} hidden under this tile, if any. During normal gameplay, only {@link non-mineable | runtime:LuaTilePrototype::mineable_properties} tiles can become hidden. This can however be circumvented with {@link LuaSurface::set_hidden_tile | runtime:LuaSurface::set_hidden_tile}.
+     * The name of the {@link LuaTilePrototype | runtime:LuaTilePrototype} hidden under this tile, if any.
+     * 
+     * During normal gameplay, only {@link non-mineable | runtime:LuaTilePrototype::mineable_properties} tiles can become hidden. This can however be circumvented with {@link LuaSurface::set_hidden_tile | runtime:LuaSurface::set_hidden_tile}.
      */
     readonly hidden_tile?: string
 
@@ -22513,19 +21259,19 @@ interface LuaTilePrototype {
     /**
      * The probability that decorative entities will be removed from on top of this tile when this tile is generated.
      */
-    readonly decorative_removal_probability: number
+    readonly decorative_removal_probability: float
 
     /**
      * Amount of pollution emissions per second this tile will absorb.
      */
-    readonly emissions_per_second: number
+    readonly emissions_per_second: double
 
     /**
      * Items that when placed will produce this tile, if any. Construction bots will choose the first item in the list to build this tile.
      */
     readonly items_to_place_this?: ItemStackDefinition[]
 
-    readonly layer: number
+    readonly layer: uint
 
     readonly localised_description: LocalisedString
 
@@ -22548,7 +21294,7 @@ interface LuaTilePrototype {
         /**
          * Energy required to mine a tile.
          */
-        mining_time: number,
+        mining_time: double,
         
         /**
          * Products obtained by mining this tile.
@@ -22586,9 +21332,9 @@ interface LuaTilePrototype {
      */
     readonly valid: boolean
 
-    readonly vehicle_friction_modifier: number
+    readonly vehicle_friction_modifier: float
 
-    readonly walking_speed_modifier: number
+    readonly walking_speed_modifier: float
 
 }
 
@@ -22610,27 +21356,27 @@ interface LuaTrain {
      * Get a mapping of the train's inventory.
      * @returns The counts, indexed by item names.
      */
-    get_contents(this: void): {[key: string]: number}
+    get_contents(this: void): {[key: string]: uint}
 
     /**
      * Gets a mapping of the train's fluid inventory.
      * @returns The counts, indexed by fluid names.
      */
-    get_fluid_contents(this: void): {[key: string]: number}
+    get_fluid_contents(this: void): {[key: string]: double}
 
     /**
      * Get the amount of a particular fluid stored in the train.
      * @param fluid - Fluid name to count. If not given, counts all fluids.
      */
     get_fluid_count(this: void,
-        fluid?: string): number
+        fluid?: string): double
 
     /**
      * Get the amount of a particular item stored in the train.
      * @param item - Item name to count. If not given, counts all items.
      */
     get_item_count(this: void,
-        item?: string): number
+        item?: string): uint
 
     /**
      * Gets all rails under the train.
@@ -22641,7 +21387,7 @@ interface LuaTrain {
      * Go to the station specified by the index in the train's schedule.
      */
     go_to_station(this: void,
-        index: number): void
+        index: uint): void
 
     /**
      * All methods and properties that this object supports.
@@ -22659,7 +21405,7 @@ interface LuaTrain {
      * @returns The amount inserted.
      */
     insert_fluid(this: void,
-        fluid: Fluid): number
+        fluid: Fluid): double
 
     /**
      * Checks if the path is invalid and tries to re-path if it isn't.
@@ -22674,7 +21420,7 @@ interface LuaTrain {
      * @returns The amount of fluid actually removed.
      */
     remove_fluid(this: void,
-        fluid: Fluid): number
+        fluid: Fluid): double
 
     /**
      * Remove some items from the train.
@@ -22682,7 +21428,7 @@ interface LuaTrain {
      * @returns Number of items actually removed.
      */
     remove_item(this: void,
-        stack: ItemStackIdentification): number
+        stack: ItemStackIdentification): uint
 
     /**
      * The rail at the back end of the train, if any.
@@ -22727,19 +21473,19 @@ interface LuaTrain {
     /**
      * The unique train ID.
      */
-    readonly id: number
+    readonly id: uint
 
     /**
      * The total number of kills by this train.
      */
-    readonly kill_count: number
+    readonly kill_count: uint
 
     /**
      * The players killed by this train.
      * 
      * The keys are the player indices, the values are how often this train killed that player.
      */
-    readonly killed_players: {[key: number]: number}
+    readonly killed_players: {[key: string]: uint}
 
     /**
      * Locomotives of the train.
@@ -22771,12 +21517,12 @@ interface LuaTrain {
     /**
      * Current max speed when moving backwards, depends on locomotive prototype and fuel.
      */
-    readonly max_backward_speed: number
+    readonly max_backward_speed: double
 
     /**
      * Current max speed when moving forward, depends on locomotive prototype and fuel.
      */
-    readonly max_forward_speed: number
+    readonly max_forward_speed: double
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -22784,10 +21530,9 @@ interface LuaTrain {
     readonly object_name: string
 
     /**
-     * The player passengers on the train
-     * @remarks
+     * The player passengers on the train.
+     * 
      * This does *not* index using player index. See {@link LuaPlayer::index | runtime:LuaPlayer::index} on each player instance for the player index.
-     *
      */
     readonly passengers: LuaPlayer[]
 
@@ -22817,9 +21562,8 @@ interface LuaTrain {
 
     /**
      * This train's current schedule, if any. Set to `nil` to clear.
-     * @remarks
+     * 
      * The schedule can't be changed by modifying the returned table. Instead, changes must be made by assigning a new table to this attribute.
-     *
      */
     schedule?: TrainSchedule
 
@@ -22830,11 +21574,10 @@ interface LuaTrain {
 
     /**
      * Current speed.
-     * @remarks
+     * 
      * Changing the speed of the train is potentially an unsafe operation because train uses the speed for its internal calculations of break distances, etc.
-     *
      */
-    speed: number
+    speed: double
 
     /**
      * This train's current state.
@@ -22854,7 +21597,7 @@ interface LuaTrain {
     /**
      * The weight of this train.
      */
-    readonly weight: number
+    readonly weight: double
 
 }
 
@@ -22969,7 +21712,7 @@ interface LuaTransportLine {
      * @param position - Where to insert an item.
      */
     can_insert_at(this: void,
-        position: number): boolean
+        position: float): boolean
 
     /**
      * Can an item be inserted at the back of this line?
@@ -22985,14 +21728,14 @@ interface LuaTransportLine {
      * Get counts of all items on this line, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      * @returns The counts, indexed by item names.
      */
-    get_contents(this: void): {[key: string]: number}
+    get_contents(this: void): {[key: string]: uint}
 
     /**
      * Count some or all items on this line, similar to how {@link LuaInventory::get_item_count | runtime:LuaInventory::get_item_count} does.
      * @param item - Prototype name of the item to count. If not specified, count all items.
      */
     get_item_count(this: void,
-        item?: string): number
+        item?: string): uint
 
     /**
      * All methods and properties that this object supports.
@@ -23006,7 +21749,7 @@ interface LuaTransportLine {
      * @returns Were the items inserted successfully?
      */
     insert_at(this: void,
-        position: number,
+        position: float,
         items: ItemStackIdentification): boolean
 
     /**
@@ -23018,9 +21761,8 @@ interface LuaTransportLine {
 
     /**
      * Returns whether the associated internal transport line of this line is the same as the others associated internal transport line.
-     * @remarks
+     * 
      * This can return true even when the {@link LuaTransportLine::owner | runtime:LuaTransportLine::owner}s are different (so `this == other` is false), because the internal transport lines can span multiple tiles.
-     *
      */
     line_equals(this: void,
         other: LuaTransportLine): boolean
@@ -23031,7 +21773,7 @@ interface LuaTransportLine {
      * @returns Number of items actually removed.
      */
     remove_item(this: void,
-        items: ItemStackIdentification): number
+        items: ItemStackIdentification): uint
 
     /**
      * The transport lines that this transport line is fed by or an empty table if none.
@@ -23060,16 +21802,14 @@ interface LuaTransportLine {
 
     /**
      * The indexing operator.
-     * @remarks
      * This will return a {@link LuaItemStack | LuaItemStack}. The return type is any due to typescript limitations.
-     *
      */
     readonly [key: string]: any
 
     /**
      * Get the number of items on this transport line.
      */
-    readonly '#': number
+    readonly '#': uint
 
 }
 
@@ -23088,23 +21828,23 @@ interface LuaTrivialSmokePrototype {
 
     readonly cyclic: boolean
 
-    readonly duration: number
+    readonly duration: uint
 
-    readonly end_scale: number
+    readonly end_scale: double
 
-    readonly fade_away_duration: number
+    readonly fade_away_duration: uint
 
-    readonly fade_in_duration: number
+    readonly fade_in_duration: uint
 
     readonly glow_animation: boolean
 
-    readonly glow_fade_away_duration: number
+    readonly glow_fade_away_duration: uint
 
     readonly localised_description: LocalisedString
 
     readonly localised_name: LocalisedString
 
-    readonly movement_slow_down_factor: number
+    readonly movement_slow_down_factor: double
 
     /**
      * Name of this prototype.
@@ -23125,9 +21865,9 @@ interface LuaTrivialSmokePrototype {
 
     readonly show_when_smoke_off: boolean
 
-    readonly spread_duration: number
+    readonly spread_duration: uint
 
-    readonly start_scale: number
+    readonly start_scale: double
 
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -23142,9 +21882,8 @@ interface LuaTrivialSmokePrototype {
 interface LuaUnitGroup {
     /**
      * Make a unit a member of this group. Has the same effect as giving a `group_command` with this group to the unit.
-     * @remarks
+     * 
      * The member must have the same force as the unit group.
-     *
      */
     add_member(this: void,
         unit: LuaEntity): void
@@ -23199,7 +21938,7 @@ interface LuaUnitGroup {
     /**
      * The group number for this unit group.
      */
-    readonly group_number: number
+    readonly group_number: uint
 
     /**
      * Whether this unit group is controlled by a script or by the game engine. This can be changed using {@link LuaUnitGroup::set_autonomous | runtime:LuaUnitGroup::set_autonomous}.
@@ -23292,7 +22031,7 @@ interface LuaVoidEnergySourcePrototype {
     /**
      * The emissions of this energy source in `pollution/Joule`. Multiplying it by energy consumption in `Watt` gives `pollution/second`.
      */
-    readonly emissions: number
+    readonly emissions: double
 
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -23342,14 +22081,7 @@ interface LuaWallControlBehavior extends LuaControlBehavior {
 
 }
 
-/**
- * @remarks
- * Other attributes may be specified depending on `type`:
- *
- */
 interface LuaControlSetGuiArrowParams {
-    'margin': number
-
     /**
      * Where to point to. This field determines what other fields are mandatory.
      */
@@ -23358,22 +22090,20 @@ interface LuaControlSetGuiArrowParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `crafting_queue`
- *
  */
 interface LuaControlSetGuiArrowParamsCraftingQueue extends LuaControlSetGuiArrowParams {
     /**
      * Index in the crafting queue to point to.
      */
-    'crafting_queueindex': number
+    'crafting_queueindex': uint
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `entity`
- *
  */
 interface LuaControlSetGuiArrowParamsEntity extends LuaControlSetGuiArrowParams {
     'entity': LuaEntity
@@ -23381,9 +22111,8 @@ interface LuaControlSetGuiArrowParamsEntity extends LuaControlSetGuiArrowParams 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `item_stack`
- *
  */
 interface LuaControlSetGuiArrowParamsItemStack extends LuaControlSetGuiArrowParams {
     /**
@@ -23394,27 +22123,21 @@ interface LuaControlSetGuiArrowParamsItemStack extends LuaControlSetGuiArrowPara
     /**
      * Which stack to point to.
      */
-    'item_stack_index': number
+    'item_stack_index': uint
 
     'source': 'player' | 'target' | 'player-quickbar' | 'player-equipment-bar'
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `position`
- *
  */
 interface LuaControlSetGuiArrowParamsPosition extends LuaControlSetGuiArrowParams {
     'position': MapPosition
 
 }
 
-/**
- * @remarks
- * Other attributes may be specified depending on `type`:
- *
- */
 interface LuaGuiElementAddParams {
     /**
      * Where to position the child element when in the `relative` element.
@@ -23449,7 +22172,7 @@ interface LuaGuiElementAddParams {
     /**
      * Location in its parent that the child element should slot into. By default, the child will be appended onto the end.
      */
-    'index'?: number
+    'index'?: uint
 
     /**
      * Name of the child element. It must be unique within the parent element.
@@ -23489,9 +22212,8 @@ interface LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `button`
- *
  */
 interface LuaGuiElementAddParamsButton extends LuaGuiElementAddParams {
     /**
@@ -23512,9 +22234,8 @@ interface LuaGuiElementAddParamsButton extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `camera`
- *
  */
 interface LuaGuiElementAddParamsCamera extends LuaGuiElementAddParams {
     /**
@@ -23525,19 +22246,18 @@ interface LuaGuiElementAddParamsCamera extends LuaGuiElementAddParams {
     /**
      * The surface that the camera will render. Defaults to the player's current surface.
      */
-    'surface_index'?: number
+    'surface_index'?: uint
 
     /**
      * The initial camera zoom. Defaults to `0.75`.
      */
-    'zoom'?: number
+    'zoom'?: double
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `checkbox`
- *
  */
 interface LuaGuiElementAddParamsCheckbox extends LuaGuiElementAddParams {
     /**
@@ -23548,9 +22268,8 @@ interface LuaGuiElementAddParamsCheckbox extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `choose-elem-button`
- *
  */
 interface LuaGuiElementAddParamsChooseElemButton extends LuaGuiElementAddParams {
     /**
@@ -23621,9 +22340,8 @@ interface LuaGuiElementAddParamsChooseElemButton extends LuaGuiElementAddParams 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `drop-down`
- *
  */
 interface LuaGuiElementAddParamsDropDown extends LuaGuiElementAddParams {
     /**
@@ -23634,14 +22352,13 @@ interface LuaGuiElementAddParamsDropDown extends LuaGuiElementAddParams {
     /**
      * The index of the initially selected item. Defaults to 0.
      */
-    'selected_index'?: number
+    'selected_index'?: uint
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `flow`
- *
  */
 interface LuaGuiElementAddParamsFlow extends LuaGuiElementAddParams {
     /**
@@ -23652,9 +22369,8 @@ interface LuaGuiElementAddParamsFlow extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `frame`
- *
  */
 interface LuaGuiElementAddParamsFrame extends LuaGuiElementAddParams {
     /**
@@ -23665,9 +22381,8 @@ interface LuaGuiElementAddParamsFrame extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `line`
- *
  */
 interface LuaGuiElementAddParamsLine extends LuaGuiElementAddParams {
     /**
@@ -23678,9 +22393,8 @@ interface LuaGuiElementAddParamsLine extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `list-box`
- *
  */
 interface LuaGuiElementAddParamsListBox extends LuaGuiElementAddParams {
     /**
@@ -23691,20 +22405,19 @@ interface LuaGuiElementAddParamsListBox extends LuaGuiElementAddParams {
     /**
      * The index of the initially selected item. Defaults to 0.
      */
-    'selected_index'?: number
+    'selected_index'?: uint
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `minimap`
- *
  */
 interface LuaGuiElementAddParamsMinimap extends LuaGuiElementAddParams {
     /**
      * The player index the map should use. Defaults to the current player.
      */
-    'chart_player_index'?: number
+    'chart_player_index'?: uint
 
     /**
      * The force this minimap should use. Defaults to the player's current force.
@@ -23719,32 +22432,30 @@ interface LuaGuiElementAddParamsMinimap extends LuaGuiElementAddParams {
     /**
      * The surface the camera will render. Defaults to the player's current surface.
      */
-    'surface_index'?: number
+    'surface_index'?: uint
 
     /**
      * The initial camera zoom. Defaults to `0.75`.
      */
-    'zoom'?: number
+    'zoom'?: double
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `progressbar`
- *
  */
 interface LuaGuiElementAddParamsProgressbar extends LuaGuiElementAddParams {
     /**
      * The initial value of the progressbar, in the range [0, 1]. Defaults to `0`.
      */
-    'value'?: number
+    'value'?: double
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `radiobutton`
- *
  */
 interface LuaGuiElementAddParamsRadiobutton extends LuaGuiElementAddParams {
     /**
@@ -23755,9 +22466,8 @@ interface LuaGuiElementAddParamsRadiobutton extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `scroll-pane`
- *
  */
 interface LuaGuiElementAddParamsScrollPane extends LuaGuiElementAddParams {
     /**
@@ -23773,9 +22483,8 @@ interface LuaGuiElementAddParamsScrollPane extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `slider`
- *
  */
 interface LuaGuiElementAddParamsSlider extends LuaGuiElementAddParams {
     /**
@@ -23791,29 +22500,28 @@ interface LuaGuiElementAddParamsSlider extends LuaGuiElementAddParams {
     /**
      * The maximum value for the slider. Defaults to `30`.
      */
-    'maximum_value'?: number
+    'maximum_value'?: double
 
     /**
      * The minimum value for the slider. Defaults to `0`.
      */
-    'minimum_value'?: number
+    'minimum_value'?: double
 
     /**
      * The initial value for the slider. Defaults to `minimum_value`.
      */
-    'value'?: number
+    'value'?: double
 
     /**
      * The minimum value the slider can move. Defaults to `1`.
      */
-    'value_step'?: number
+    'value_step'?: double
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `sprite`
- *
  */
 interface LuaGuiElementAddParamsSprite extends LuaGuiElementAddParams {
     /**
@@ -23829,9 +22537,8 @@ interface LuaGuiElementAddParamsSprite extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `sprite-button`
- *
  */
 interface LuaGuiElementAddParamsSpriteButton extends LuaGuiElementAddParams {
     /**
@@ -23857,7 +22564,7 @@ interface LuaGuiElementAddParamsSpriteButton extends LuaGuiElementAddParams {
     /**
      * The number shown on the button.
      */
-    'number'?: number
+    'number'?: double
 
     /**
      * Formats small numbers as percentages. Defaults to `false`.
@@ -23877,9 +22584,8 @@ interface LuaGuiElementAddParamsSpriteButton extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `switch`
- *
  */
 interface LuaGuiElementAddParamsSwitch extends LuaGuiElementAddParams {
     /**
@@ -23903,9 +22609,8 @@ interface LuaGuiElementAddParamsSwitch extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `tab`
- *
  */
 interface LuaGuiElementAddParamsTab extends LuaGuiElementAddParams {
     /**
@@ -23916,15 +22621,14 @@ interface LuaGuiElementAddParamsTab extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `table`
- *
  */
 interface LuaGuiElementAddParamsTable extends LuaGuiElementAddParams {
     /**
      * Number of columns. This can't be changed after the table is created.
      */
-    'column_count': number
+    'column_count': uint
 
     /**
      * Whether the table should draw a single horizontal grid line after the headers. Defaults to `false`.
@@ -23949,9 +22653,8 @@ interface LuaGuiElementAddParamsTable extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `text-box`
- *
  */
 interface LuaGuiElementAddParamsTextBox extends LuaGuiElementAddParams {
     /**
@@ -23967,9 +22670,8 @@ interface LuaGuiElementAddParamsTextBox extends LuaGuiElementAddParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `textfield`
- *
  */
 interface LuaGuiElementAddParamsTextfield extends LuaGuiElementAddParams {
     /**
@@ -24009,11 +22711,6 @@ interface LuaGuiElementAddParamsTextfield extends LuaGuiElementAddParams {
 
 }
 
-/**
- * @remarks
- * Other attributes may be specified depending on the type of entity:
- *
- */
 interface LuaSurfaceCreateEntityParams {
     /**
      * If fast_replace is true simulate fast replace using this character.
@@ -24093,37 +22790,34 @@ interface LuaSurfaceCreateEntityParams {
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `artillery-flare`
- *
  */
 interface LuaSurfaceCreateEntityParamsArtilleryFlare extends LuaSurfaceCreateEntityParams {
-    'frame_speed': number
+    'frame_speed': float
 
-    'height': number
+    'height': float
 
     'movement': Vector
 
-    'vertical_speed': number
+    'vertical_speed': float
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `artillery-projectile`
- *
  */
 interface LuaSurfaceCreateEntityParamsArtilleryProjectile extends LuaSurfaceCreateEntityParams {
-    'max_range'?: number
+    'max_range'?: double
 
-    'speed': number
+    'speed': double
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `assembling-machine`
- *
  */
 interface LuaSurfaceCreateEntityParamsAssemblingMachine extends LuaSurfaceCreateEntityParams {
     'recipe'?: string
@@ -24131,20 +22825,19 @@ interface LuaSurfaceCreateEntityParamsAssemblingMachine extends LuaSurfaceCreate
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `beam`
- *
  */
 interface LuaSurfaceCreateEntityParamsBeam extends LuaSurfaceCreateEntityParams {
     /**
      * If set, beam will be destroyed after this value of ticks.
      */
-    'duration'?: number
+    'duration'?: uint
 
     /**
      * If set, beam will be destroyed when distance between source and target is greater than this value.
      */
-    'max_length'?: number
+    'max_length'?: uint
 
     /**
      * Source position will be offset by this value when rendering the beam.
@@ -24164,21 +22857,19 @@ interface LuaSurfaceCreateEntityParamsBeam extends LuaSurfaceCreateEntityParams 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `character-corpse`
- *
  */
 interface LuaSurfaceCreateEntityParamsCharacterCorpse extends LuaSurfaceCreateEntityParams {
-    'inventory_size'?: number
+    'inventory_size'?: uint
 
-    'player_index'?: number
+    'player_index'?: uint
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `cliff`
- *
  */
 interface LuaSurfaceCreateEntityParamsCliff extends LuaSurfaceCreateEntityParams {
     /**
@@ -24189,26 +22880,24 @@ interface LuaSurfaceCreateEntityParamsCliff extends LuaSurfaceCreateEntityParams
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `container`
- *
  */
 interface LuaSurfaceCreateEntityParamsContainer extends LuaSurfaceCreateEntityParams {
     /**
      * Inventory index where the red limiting bar should be set.
      */
-    'bar'?: number
+    'bar'?: uint
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `entity-ghost`
- *
  */
 interface LuaSurfaceCreateEntityParamsEntityGhost extends LuaSurfaceCreateEntityParams {
     /**
-     * If `false` the ghost entity will not expire. Default is `false`.
+     * If `false` the ghost entity will not expire. Default is `false`. Creating ghost with `expires = true` when ghost_time_to_live of this force is 0 will result in a script error.
      */
     'expires'?: boolean
 
@@ -24220,22 +22909,20 @@ interface LuaSurfaceCreateEntityParamsEntityGhost extends LuaSurfaceCreateEntity
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `fire`
- *
  */
 interface LuaSurfaceCreateEntityParamsFire extends LuaSurfaceCreateEntityParams {
     /**
      * With how many small flames should the fire on ground be created. Defaults to the initial flame count of the prototype.
      */
-    'initial_ground_flame_count'?: number
+    'initial_ground_flame_count'?: uint8
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `flying-text`
- *
  */
 interface LuaSurfaceCreateEntityParamsFlyingText extends LuaSurfaceCreateEntityParams {
     /**
@@ -24243,7 +22930,7 @@ interface LuaSurfaceCreateEntityParamsFlyingText extends LuaSurfaceCreateEntityP
      */
     'color'?: Color
 
-    'render_player_index'?: number
+    'render_player_index'?: uint
 
     /**
      * The string to show.
@@ -24253,15 +22940,14 @@ interface LuaSurfaceCreateEntityParamsFlyingText extends LuaSurfaceCreateEntityP
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `highlight-box`
- *
  */
 interface LuaSurfaceCreateEntityParamsHighlightBox extends LuaSurfaceCreateEntityParams {
     /**
      * The blink interval for this highlight box. Makes it be shown every `blink_interval` ticks. Defaults to `0` (constantly shown).
      */
-    'blink_interval'?: number
+    'blink_interval'?: uint
 
     /**
      * The bounding box defining the highlight box using absolute map coordinates. If specified, the general `position` parameter still needs to be present, but will be ignored. If not specified, the game falls back to the `source` parameter first, then the `target` parameter second. One of these three parameters need to be specified.
@@ -24276,19 +22962,18 @@ interface LuaSurfaceCreateEntityParamsHighlightBox extends LuaSurfaceCreateEntit
     /**
      * The player to render the highlight box for. If not provided, it will be rendered for all players.
      */
-    'render_player_index'?: number
+    'render_player_index'?: uint
 
     /**
      * The amount of time in ticks that the highlight box will exist for. Defaults to existing forever.
      */
-    'time_to_live'?: number
+    'time_to_live'?: uint
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `inserter`
- *
  */
 interface LuaSurfaceCreateEntityParamsInserter extends LuaSurfaceCreateEntityParams {
     'conditions': InserterCircuitConditions
@@ -24298,9 +22983,8 @@ interface LuaSurfaceCreateEntityParamsInserter extends LuaSurfaceCreateEntityPar
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `item-entity`
- *
  */
 interface LuaSurfaceCreateEntityParamsItemEntity extends LuaSurfaceCreateEntityParams {
     /**
@@ -24311,15 +22995,14 @@ interface LuaSurfaceCreateEntityParamsItemEntity extends LuaSurfaceCreateEntityP
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `item-request-proxy`
- *
  */
 interface LuaSurfaceCreateEntityParamsItemRequestProxy extends LuaSurfaceCreateEntityParams {
     /**
      * The stacks of items to be delivered to target entity from logistic network.
      */
-    'modules': {[key: string]: number}
+    'modules': {[key: string]: uint}
 
     /**
      * The target items are to be delivered to.
@@ -24329,9 +23012,36 @@ interface LuaSurfaceCreateEntityParamsItemRequestProxy extends LuaSurfaceCreateE
 }
 
 /**
- * @remarks
+ * 
+ * Applies to variant case `loader`
+ */
+interface LuaSurfaceCreateEntityParamsLoader extends LuaSurfaceCreateEntityParams {
+    'request_filters'?: InventoryFilter[]
+
+    /**
+     * Defaults to `"input"`.
+     */
+    'type'?: 'output' | 'input'
+
+}
+
+/**
+ * 
+ * Applies to variant case `loader-1x1`
+ */
+interface LuaSurfaceCreateEntityParamsLoader1x1 extends LuaSurfaceCreateEntityParams {
+    'request_filters'?: InventoryFilter[]
+
+    /**
+     * Defaults to `"input"`.
+     */
+    'type'?: 'output' | 'input'
+
+}
+
+/**
+ * 
  * Applies to variant case `locomotive`
- *
  */
 interface LuaSurfaceCreateEntityParamsLocomotive extends LuaSurfaceCreateEntityParams {
     /**
@@ -24342,9 +23052,8 @@ interface LuaSurfaceCreateEntityParamsLocomotive extends LuaSurfaceCreateEntityP
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `logistic-container`
- *
  */
 interface LuaSurfaceCreateEntityParamsLogisticContainer extends LuaSurfaceCreateEntityParams {
     'request_filters'?: InventoryFilter[]
@@ -24352,25 +23061,23 @@ interface LuaSurfaceCreateEntityParamsLogisticContainer extends LuaSurfaceCreate
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `particle`
- *
  */
 interface LuaSurfaceCreateEntityParamsParticle extends LuaSurfaceCreateEntityParams {
-    'frame_speed': number
+    'frame_speed': float
 
-    'height': number
+    'height': float
 
     'movement': Vector
 
-    'vertical_speed': number
+    'vertical_speed': float
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `programmable-speaker`
- *
  */
 interface LuaSurfaceCreateEntityParamsProgrammableSpeaker extends LuaSurfaceCreateEntityParams {
     'alert_parameters'?: ProgrammableSpeakerAlertParameters
@@ -24380,24 +23087,22 @@ interface LuaSurfaceCreateEntityParamsProgrammableSpeaker extends LuaSurfaceCrea
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `projectile`
- *
  */
 interface LuaSurfaceCreateEntityParamsProjectile extends LuaSurfaceCreateEntityParams {
-    'max_range'?: number
+    'max_range'?: double
 
-    'speed': number
+    'speed': double
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `resource`
- *
  */
 interface LuaSurfaceCreateEntityParamsResource extends LuaSurfaceCreateEntityParams {
-    'amount': number
+    'amount': uint
 
     /**
      * If colliding cliffs are removed. Default is true.
@@ -24417,9 +23122,8 @@ interface LuaSurfaceCreateEntityParamsResource extends LuaSurfaceCreateEntityPar
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `rolling-stock`
- *
  */
 interface LuaSurfaceCreateEntityParamsRollingStock extends LuaSurfaceCreateEntityParams {
     /**
@@ -24435,41 +23139,37 @@ interface LuaSurfaceCreateEntityParamsRollingStock extends LuaSurfaceCreateEntit
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `simple-entity-with-force`
- *
  */
 interface LuaSurfaceCreateEntityParamsSimpleEntityWithForce extends LuaSurfaceCreateEntityParams {
-    'render_player_index'?: number
+    'render_player_index'?: uint
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `simple-entity-with-owner`
- *
  */
 interface LuaSurfaceCreateEntityParamsSimpleEntityWithOwner extends LuaSurfaceCreateEntityParams {
-    'render_player_index'?: number
+    'render_player_index'?: uint
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `speech-bubble`
- *
  */
 interface LuaSurfaceCreateEntityParamsSpeechBubble extends LuaSurfaceCreateEntityParams {
-    'lifetime'?: number
+    'lifetime'?: uint
 
     'text': LocalisedString
 
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `stream`
- *
  */
 interface LuaSurfaceCreateEntityParamsStream extends LuaSurfaceCreateEntityParams {
     /**
@@ -24490,9 +23190,8 @@ interface LuaSurfaceCreateEntityParamsStream extends LuaSurfaceCreateEntityParam
 }
 
 /**
- * @remarks
+ * 
  * Applies to variant case `underground-belt`
- *
  */
 interface LuaSurfaceCreateEntityParamsUndergroundBelt extends LuaSurfaceCreateEntityParams {
     /**
