@@ -153,6 +153,7 @@ function parseType(type: FactorioType | undefined, indent: string, parent?: Fact
         // workaround for a LuaControlBehavior.type
         // 1.1.108 hoisted the `type` subkey from `control_behavior` to its own root define type, but it is still referenced in this type
         // seems like a bug in the spec docs. Check back on this in future versions.
+        // https://forums.factorio.com/viewtopic.php?f=233&t=113710
         if(type === 'defines.control_behavior.type') {
             return 'defines.type';
         }
@@ -242,11 +243,6 @@ function parseType(type: FactorioType | undefined, indent: string, parent?: Fact
                 }
                 let paramStrings = parent.properties.map((p, index) => {
                     let str = p.name;
-                    
-                    // at least one type (CircularProjectileCreationSpecification) has multiple properties named _, so differentiate them since that's not valid TS
-                    if(str === '_') {
-                        str = '_' + index;
-                    }
 
                     if(/-/.test(str)) {
                         str = `'${str}'`
@@ -645,12 +641,6 @@ function writePrototypeTypes(apiData: PrototypeData, apiVersion: string) {
 
     for(let typeData of apiData.types)
     {
-        // As far as I can tell, Resistances is improperly documented and should be an array
-        if(typeData.name === 'Resistances')
-        {
-            typeData.type = { complex_type: 'array', value: typeData.type };
-        }
-
         if(typeData.type === 'builtin')
         {
             var mapped = mapBuiltin(typeData.name);
