@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.108
+// Factorio version 1.1.109
 // API version 5
 
 declare namespace defines {
@@ -174,6 +174,80 @@ declare namespace defines {
                 hold = 1,
                 pulse = 0,
             }
+        }
+        enum type {
+            /**
+             * {@link LuaAccumulatorControlBehavior | runtime:LuaAccumulatorControlBehavior}
+             */
+            accumulator = 12,
+            /**
+             * {@link LuaArithmeticCombinatorControlBehavior | runtime:LuaArithmeticCombinatorControlBehavior}
+             */
+            arithmetic_combinator = 9,
+            /**
+             * {@link LuaConstantCombinatorControlBehavior | runtime:LuaConstantCombinatorControlBehavior}
+             */
+            constant_combinator = 10,
+            /**
+             * {@link LuaContainerControlBehavior | runtime:LuaContainerControlBehavior}
+             */
+            container = 0,
+            /**
+             * {@link LuaDeciderCombinatorControlBehavior | runtime:LuaDeciderCombinatorControlBehavior}
+             */
+            decider_combinator = 8,
+            /**
+             * {@link LuaGenericOnOffControlBehavior | runtime:LuaGenericOnOffControlBehavior}
+             */
+            generic_on_off = 1,
+            /**
+             * {@link LuaInserterControlBehavior | runtime:LuaInserterControlBehavior}
+             */
+            inserter = 2,
+            /**
+             * {@link LuaLampControlBehavior | runtime:LuaLampControlBehavior}
+             */
+            lamp = 3,
+            /**
+             * {@link LuaLogisticContainerControlBehavior | runtime:LuaLogisticContainerControlBehavior}
+             */
+            logistic_container = 4,
+            /**
+             * {@link LuaMiningDrillControlBehavior | runtime:LuaMiningDrillControlBehavior}
+             */
+            mining_drill = 16,
+            /**
+             * {@link LuaProgrammableSpeakerControlBehavior | runtime:LuaProgrammableSpeakerControlBehavior}
+             */
+            programmable_speaker = 17,
+            /**
+             * {@link LuaRailChainSignalControlBehavior | runtime:LuaRailChainSignalControlBehavior}
+             */
+            rail_chain_signal = 14,
+            /**
+             * {@link LuaRailSignalControlBehavior | runtime:LuaRailSignalControlBehavior}
+             */
+            rail_signal = 13,
+            /**
+             * {@link LuaRoboportControlBehavior | runtime:LuaRoboportControlBehavior}
+             */
+            roboport = 5,
+            /**
+             * {@link LuaStorageTankControlBehavior | runtime:LuaStorageTankControlBehavior}
+             */
+            storage_tank = 6,
+            /**
+             * {@link LuaTrainStopControlBehavior | runtime:LuaTrainStopControlBehavior}
+             */
+            train_stop = 7,
+            /**
+             * {@link LuaTransportBeltControlBehavior | runtime:LuaTransportBeltControlBehavior}
+             */
+            transport_belt = 11,
+            /**
+             * {@link LuaWallControlBehavior | runtime:LuaWallControlBehavior}
+             */
+            wall = 15,
         }
     }
     enum controllers {
@@ -1221,80 +1295,6 @@ declare namespace defines {
         secondary_left_split_line = 8,
         secondary_right_line = 5,
         secondary_right_split_line = 9,
-    }
-    enum type {
-        /**
-         * {@link LuaAccumulatorControlBehavior | runtime:LuaAccumulatorControlBehavior}
-         */
-        accumulator = 12,
-        /**
-         * {@link LuaArithmeticCombinatorControlBehavior | runtime:LuaArithmeticCombinatorControlBehavior}
-         */
-        arithmetic_combinator = 9,
-        /**
-         * {@link LuaConstantCombinatorControlBehavior | runtime:LuaConstantCombinatorControlBehavior}
-         */
-        constant_combinator = 10,
-        /**
-         * {@link LuaContainerControlBehavior | runtime:LuaContainerControlBehavior}
-         */
-        container = 0,
-        /**
-         * {@link LuaDeciderCombinatorControlBehavior | runtime:LuaDeciderCombinatorControlBehavior}
-         */
-        decider_combinator = 8,
-        /**
-         * {@link LuaGenericOnOffControlBehavior | runtime:LuaGenericOnOffControlBehavior}
-         */
-        generic_on_off = 1,
-        /**
-         * {@link LuaInserterControlBehavior | runtime:LuaInserterControlBehavior}
-         */
-        inserter = 2,
-        /**
-         * {@link LuaLampControlBehavior | runtime:LuaLampControlBehavior}
-         */
-        lamp = 3,
-        /**
-         * {@link LuaLogisticContainerControlBehavior | runtime:LuaLogisticContainerControlBehavior}
-         */
-        logistic_container = 4,
-        /**
-         * {@link LuaMiningDrillControlBehavior | runtime:LuaMiningDrillControlBehavior}
-         */
-        mining_drill = 16,
-        /**
-         * {@link LuaProgrammableSpeakerControlBehavior | runtime:LuaProgrammableSpeakerControlBehavior}
-         */
-        programmable_speaker = 17,
-        /**
-         * {@link LuaRailChainSignalControlBehavior | runtime:LuaRailChainSignalControlBehavior}
-         */
-        rail_chain_signal = 14,
-        /**
-         * {@link LuaRailSignalControlBehavior | runtime:LuaRailSignalControlBehavior}
-         */
-        rail_signal = 13,
-        /**
-         * {@link LuaRoboportControlBehavior | runtime:LuaRoboportControlBehavior}
-         */
-        roboport = 5,
-        /**
-         * {@link LuaStorageTankControlBehavior | runtime:LuaStorageTankControlBehavior}
-         */
-        storage_tank = 6,
-        /**
-         * {@link LuaTrainStopControlBehavior | runtime:LuaTrainStopControlBehavior}
-         */
-        train_stop = 7,
-        /**
-         * {@link LuaTransportBeltControlBehavior | runtime:LuaTransportBeltControlBehavior}
-         */
-        transport_belt = 11,
-        /**
-         * {@link LuaWallControlBehavior | runtime:LuaWallControlBehavior}
-         */
-        wall = 15,
     }
     enum wire_connection_id {
         electric_pole = 0,
