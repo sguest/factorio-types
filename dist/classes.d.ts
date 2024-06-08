@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.108
+// Factorio version 1.1.109
 // API version 5
 
 declare namespace runtime {
@@ -281,14 +281,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -307,14 +307,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -333,14 +333,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -359,14 +359,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -385,14 +385,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -411,14 +411,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -437,14 +437,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -463,14 +463,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -489,14 +489,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -515,14 +515,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -541,14 +541,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -567,14 +567,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -593,14 +593,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -619,14 +619,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -645,14 +645,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -671,14 +671,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -697,14 +697,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -723,14 +723,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -749,14 +749,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -775,14 +775,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -801,14 +801,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -827,14 +827,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -853,14 +853,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -879,14 +879,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -905,14 +905,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -931,14 +931,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -957,14 +957,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -983,14 +983,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1009,14 +1009,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1035,14 +1035,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1061,14 +1061,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1087,14 +1087,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1113,14 +1113,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1139,14 +1139,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1165,14 +1165,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1191,14 +1191,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1217,14 +1217,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1243,14 +1243,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1269,14 +1269,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1295,14 +1295,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1321,14 +1321,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1347,14 +1347,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1373,14 +1373,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1399,14 +1399,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1425,14 +1425,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1451,14 +1451,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1477,14 +1477,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1503,14 +1503,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1529,14 +1529,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1555,14 +1555,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1581,14 +1581,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1607,14 +1607,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1633,14 +1633,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1659,14 +1659,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1685,14 +1685,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1711,14 +1711,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1737,14 +1737,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1763,14 +1763,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1789,14 +1789,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1815,14 +1815,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1841,14 +1841,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1867,14 +1867,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1893,14 +1893,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1919,14 +1919,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1945,14 +1945,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1971,14 +1971,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -1997,14 +1997,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2023,14 +2023,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2049,14 +2049,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2075,14 +2075,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2101,14 +2101,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2127,14 +2127,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2153,14 +2153,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2179,14 +2179,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2205,14 +2205,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2231,14 +2231,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2257,14 +2257,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2283,14 +2283,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2309,14 +2309,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2335,14 +2335,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2361,14 +2361,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2387,14 +2387,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2413,14 +2413,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2439,14 +2439,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2465,14 +2465,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2491,14 +2491,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2517,14 +2517,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2543,14 +2543,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2569,14 +2569,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2595,14 +2595,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2621,14 +2621,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2647,14 +2647,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2673,14 +2673,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2699,14 +2699,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2725,14 +2725,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2751,14 +2751,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2777,14 +2777,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2803,14 +2803,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2829,14 +2829,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2855,14 +2855,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2881,14 +2881,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2907,14 +2907,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2933,14 +2933,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2959,14 +2959,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -2985,14 +2985,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3011,14 +3011,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3037,14 +3037,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3063,14 +3063,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3089,14 +3089,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3115,14 +3115,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3141,14 +3141,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3167,14 +3167,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3193,14 +3193,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3219,14 +3219,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3245,14 +3245,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3271,14 +3271,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3297,14 +3297,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3323,14 +3323,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3349,14 +3349,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3375,14 +3375,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3401,14 +3401,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3427,14 +3427,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3453,14 +3453,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3479,14 +3479,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3505,14 +3505,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3531,14 +3531,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3557,14 +3557,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3583,14 +3583,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3609,14 +3609,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3635,14 +3635,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3661,14 +3661,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3687,14 +3687,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3713,14 +3713,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3739,14 +3739,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3765,14 +3765,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3791,14 +3791,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3817,14 +3817,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3843,14 +3843,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3869,14 +3869,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3895,14 +3895,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3921,14 +3921,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3947,14 +3947,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3973,14 +3973,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -3999,14 +3999,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4025,14 +4025,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4051,14 +4051,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4077,14 +4077,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4103,14 +4103,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4129,14 +4129,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4155,14 +4155,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4181,14 +4181,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4207,14 +4207,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4233,14 +4233,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4259,14 +4259,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4285,14 +4285,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4311,14 +4311,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4337,14 +4337,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4363,14 +4363,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4389,14 +4389,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4415,14 +4415,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4441,14 +4441,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4467,14 +4467,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4493,14 +4493,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4519,14 +4519,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4545,14 +4545,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4571,14 +4571,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4597,14 +4597,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4623,14 +4623,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4649,14 +4649,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4675,14 +4675,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4701,14 +4701,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4727,14 +4727,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4753,14 +4753,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4779,14 +4779,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4805,14 +4805,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4831,14 +4831,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4857,14 +4857,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4883,14 +4883,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4909,14 +4909,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4935,14 +4935,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4961,14 +4961,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -4987,14 +4987,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -5013,14 +5013,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -5039,14 +5039,14 @@ interface LuaBootstrap {
      * @param filters - The filters for this event. Can only be used when registering for individual events.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -5065,14 +5065,14 @@ interface LuaBootstrap {
      * @param handler - The handler for this event. Passing `nil` will unregister it.
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_tick) event to print the current tick to console each tick
+     * -- Register for the on_tick event to print the current tick to console each tick
      * script.on_event(defines.events.on_tick,
      * function(event) game.print(event.tick) end)
      * ```
      *
      * @example
      * ```
-     * -- Register for the $ref($runtime, on_built_entity) event, limiting it to only be received when a `"fast-inserter"` is built
+     * -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
      * script.on_event(defines.events.on_built_entity,
      * function(event) game.print("Gotta go fast!") end,
      * {{filter = "name", name = "fast-inserter"}})
@@ -5169,7 +5169,7 @@ interface LuaBootstrap {
      * @param event - ID of the event to raise.
      * @example
      * ```
-     * -- Raise the $ref($runtime, on_console_chat) event with the desired message 'from' the first player
+     * -- Raise the on_console_chat event with the desired message 'from' the first player
      * local data = {player_index = 1, message = "Hello friends!"}
      * script.raise_event(defines.events.on_console_chat, data)
      * ```
@@ -12961,7 +12961,7 @@ interface LuaGameScript {
     readonly font_prototypes: {[key: string]: LuaFontPrototype}
 
     /**
-     * Get a table of all the forces that currently exist. This sparse table allows you to find forces by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will only iterate the hash part of the table. Iterating with `ipairs()` will not work at all.
+     * Get a table of all the forces that currently exist. This sparse table allows you to find forces by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will provide the `name`s as the keys. Iterating with `ipairs()` will not work at all.
      */
     readonly forces: {[key: string]: LuaForce}
 
@@ -13099,7 +13099,7 @@ interface LuaGameScript {
     readonly styles: {[key: string]: string}
 
     /**
-     * Get a table of all the surfaces that currently exist. This sparse table allows you to find surfaces by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will only iterate the hash part of the table. Iterating with `ipairs()` will not work at all.
+     * Get a table of all the surfaces that currently exist. This sparse table allows you to find surfaces by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will provide the `name`s as the keys. Iterating with `ipairs()` will not work at all.
      */
     readonly surfaces: {[key: string]: LuaSurface}
 
@@ -22082,6 +22082,8 @@ interface LuaWallControlBehavior extends LuaControlBehavior {
 }
 
 interface LuaControlSetGuiArrowParams {
+    'margin': uint
+
     /**
      * Where to point to. This field determines what other fields are mandatory.
      */

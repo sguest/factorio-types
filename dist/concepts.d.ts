@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.108
+// Factorio version 1.1.109
 // API version 5
 
 declare namespace runtime {
@@ -140,10 +140,14 @@ interface AttackParameterFluid {
     type: string
 }
 
+/**
+ * 
+ * Other attributes may be specified depending on `type`:
+ */
 interface AttackParameters {
     
     /**
-     * List of the names of compatible
+     * List of the names of compatible {@link LuaAmmoCategoryPrototypes | runtime:LuaAmmoCategoryPrototype}.
      */
     ammo_categories?: string[],
     
@@ -864,17 +868,17 @@ interface DecorativeResult {
 interface DifficultySettings {
     recipe_difficulty: defines.difficulty_settings.recipe_difficulty
 
+    /**
+     * Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce::research_queue_enabled | runtime:LuaForce::research_queue_enabled} for that.
+     */
+    research_queue_setting: 'after-victory' | 'always' | 'never'
+
     technology_difficulty: defines.difficulty_settings.technology_difficulty
 
     /**
      * A value in range [0.001, 1000].
      */
     technology_price_multiplier: double
-
-    /**
-     * Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce::research_queue_enabled | runtime:LuaForce::research_queue_enabled} for that.
-     */
-    research_queue_setting: 'after-victory' | 'always' | 'never'
 
 }
 
@@ -1257,64 +1261,14 @@ type ForceIdentification = /* The force index. */ uint8 | /* The force name. */ 
  */
 interface GameViewSettings {
     /**
-     * Show the controller GUI elements. This includes the toolbar, the selected tool slot, the armour slot, and the gun and ammunition slots.
-     */
-    show_controller_gui: boolean
-
-    /**
-     * Show the chart in the upper right-hand corner of the screen.
-     */
-    show_minimap: boolean
-
-    /**
-     * Show research progress and name in the upper right-hand corner of the screen.
-     */
-    show_research_info: boolean
-
-    /**
-     * Show overlay icons on entities. Also known as "alt-mode".
-     */
-    show_entity_info: boolean
-
-    /**
      * Show the flashing alert icons next to the player's toolbar.
      */
     show_alert_gui: boolean
 
     /**
-     * When `true` (the default), mousing over an entity will select it. Otherwise, moving the mouse won't update entity selection.
+     * Show the controller GUI elements. This includes the toolbar, the selected tool slot, the armour slot, and the gun and ammunition slots.
      */
-    update_entity_selection: boolean
-
-    /**
-     * When `true` (`false` is default), the rails will always show the rail block visualisation.
-     */
-    show_rail_block_visualisation: boolean
-
-    /**
-     * Shows or hides the buttons row.
-     */
-    show_side_menu: boolean
-
-    /**
-     * Shows or hides the view options when map is opened.
-     */
-    show_map_view_options: boolean
-
-    /**
-     * Shows or hides the tooltip that is displayed when selecting an entity.
-     */
-    show_entity_tooltip: boolean
-
-    /**
-     * Shows or hides quickbar of shortcuts.
-     */
-    show_quickbar: boolean
-
-    /**
-     * Shows or hides the shortcut bar.
-     */
-    show_shortcut_bar: boolean
+    show_controller_gui: boolean
 
     /**
      * Shows or hides the crafting queue.
@@ -1322,14 +1276,64 @@ interface GameViewSettings {
     show_crafting_queue: boolean
 
     /**
-     * Shows or hides the tool window with the weapons and armor.
+     * Show overlay icons on entities. Also known as "alt-mode".
      */
-    show_tool_bar: boolean
+    show_entity_info: boolean
+
+    /**
+     * Shows or hides the tooltip that is displayed when selecting an entity.
+     */
+    show_entity_tooltip: boolean
 
     /**
      * Shows or hides the mouse and keyboard/controller button hints in the bottom left corner if they are enabled in the interface settings.
      */
     show_hotkey_suggestions: boolean
+
+    /**
+     * Shows or hides the view options when map is opened.
+     */
+    show_map_view_options: boolean
+
+    /**
+     * Show the chart in the upper right-hand corner of the screen.
+     */
+    show_minimap: boolean
+
+    /**
+     * Shows or hides quickbar of shortcuts.
+     */
+    show_quickbar: boolean
+
+    /**
+     * When `true` (`false` is default), the rails will always show the rail block visualisation.
+     */
+    show_rail_block_visualisation: boolean
+
+    /**
+     * Show research progress and name in the upper right-hand corner of the screen.
+     */
+    show_research_info: boolean
+
+    /**
+     * Shows or hides the shortcut bar.
+     */
+    show_shortcut_bar: boolean
+
+    /**
+     * Shows or hides the buttons row.
+     */
+    show_side_menu: boolean
+
+    /**
+     * Shows or hides the tool window with the weapons and armor.
+     */
+    show_tool_bar: boolean
+
+    /**
+     * When `true` (the default), mousing over an entity will select it. Otherwise, moving the mouse won't update entity selection.
+     */
+    update_entity_selection: boolean
 
 }
 
@@ -2408,22 +2412,22 @@ type MapPosition = {
  *
  */
 interface MapSettings {
-    pollution: PollutionMapSettings
-
     enemy_evolution: EnemyEvolutionMapSettings
 
     enemy_expansion: EnemyExpansionMapSettings
-
-    unit_group: UnitGroupMapSettings
-
-    steering: SteeringMapSetting
-
-    path_finder: PathFinderMapSettings
 
     /**
      * If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
      */
     max_failed_behavior_count: uint
+
+    path_finder: PathFinderMapSettings
+
+    pollution: PollutionMapSettings
+
+    steering: SteeringMapSetting
+
+    unit_group: UnitGroupMapSettings
 
 }
 
@@ -3905,6 +3909,28 @@ interface AchievementPrototypeFilterType extends AchievementPrototypeFilter {
      * The prototype type, or a list of acceptable types.
      */
     type: string | string[]
+}
+
+/**
+ * Applies to `projectile` variant case
+ */
+interface AttackParametersProjectile extends AttackParameters {
+    projectile_center: Vector,
+    projectile_creation_distance: float,
+    projectile_creation_parameters?: CircularProjectileCreationSpecification[],
+    projectile_orientation_offset: float,
+    shell_particle?: CircularParticleCreationSpecification
+}
+
+/**
+ * Applies to `stream` variant case
+ */
+interface AttackParametersStream extends AttackParameters {
+    fluid_consumption: float,
+    fluids?: AttackParameterFluid[],
+    gun_barrel_length: float,
+    gun_center_shift: GunShift4Way,
+    projectile_creation_parameters?: CircularProjectileCreationSpecification[]
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "factorio-types",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Typescript declarations for the Factorio mod API",
   "main": "index.d.ts",
   "repository": "https://github.com/sguest/factorio-types.git",
@@ -24,7 +24,7 @@
     "src/**/*.d.ts",
     "dist/**/*.d.ts"
   ],
-  "factorioVersion": "1.1.108",
+  "factorioVersion": "1.1.109",
   "dependencies": {
     "lua-types": "^2.13.1"
   },
