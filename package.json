@@ -1,6 +1,6 @@
 {
   "name": "factorio-types",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Typescript declarations for the Factorio mod API",
   "main": "index.d.ts",
   "repository": "https://github.com/sguest/factorio-types.git",
@@ -12,11 +12,10 @@
     "rebuild": "ts-node json_parser/parser.ts -clean"
   },
   "devDependencies": {
-    "@types/node": "^15.12.2",
-    "node-html-parser": "^1.1.16",
-    "ts-node": "^10.0.0",
-    "typescript": "^5.4.2",
-    "typescript-to-lua": "^1.25.1"
+    "@types/node": "20.14.9",
+    "ts-node": "10.9.2",
+    "typescript": "5.5.2",
+    "typescript-to-lua": "1.26.0"
   },
   "files": [
     "index.d.ts",
@@ -29,6 +28,6 @@
     "lua-types": "^2.13.1"
   },
   "peerDependencies": {
-    "typescript-to-lua": "^1.25.1"
+    "typescript-to-lua": "1.26.0"
   }
 }

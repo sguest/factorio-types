@@ -14,4 +14,5 @@
 /// <reference path="./dist/events.d.ts" />
 /// <reference path="./dist/prototypes.d.ts" />
 /// <reference path="./dist/types.d.ts" />
+/// <reference path="./dist/datacollection.d.ts" />
 /// <reference types="lua-types/jit" />

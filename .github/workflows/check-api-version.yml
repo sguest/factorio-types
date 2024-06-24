@@ -57,9 +57,9 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: install
-      - name: npm run rebuild
+      - name: npm run build
         if: env.SKIP_ALL == 0
-        run: npm run rebuild
+        run: npm run build
       - name: update package version
         if: env.SKIP_ALL == 0
         run: npm version patch --no-git-tag-version

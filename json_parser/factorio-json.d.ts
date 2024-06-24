@@ -125,7 +125,7 @@ interface LuaLazyLoadedValueType {
 }
 
 interface TableType {
-    complex_type: 'table' | 'tuple';
+    complex_type: 'table';
     parameters: Parameter[];
     variant_parameter_groups?: ParameterGroup[];
     variant_parameter_description?: string;
