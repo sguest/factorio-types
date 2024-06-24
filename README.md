@@ -39,6 +39,10 @@ Primitive types like `uint8` or `nil` are preserved from the docs to better repr
 
 Note that since typescript has a single `number` type, the compiler will **not** prevent things like passing a `float` to a method that expects `uint8` because these are both just `number` types under the hood.
 
+## Lua tables
+
+Various types in the Factorio API are implemented as lua tables, specifically those with a `complex_type` of `dictionary` or `LuaCustomTable`. These types have intentionally been implemented as [Record](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type) types instead of TypescriptToLua's [Lua Table Type](https://typescripttolua.github.io/docs/advanced/language-extensions/#lua-table-types) because `LuaTable`s cannot be instantiated with `{ key1: 'value1', key2: 'value2' }` initializer syntax, and instead repeated calls to `set()` would be required, making initialization of such objects considerably more verbose.
+
 ## Lualib
 
 Factorio makes various lua functions available to mods via [LuaLib](https://github.com/wube/factorio-data/tree/master/core/lualib)
