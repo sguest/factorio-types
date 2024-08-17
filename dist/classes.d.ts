@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.109
+// Factorio version 1.1.110
 // API version 5
 
 declare namespace runtime {
@@ -5672,7 +5672,7 @@ interface LuaEntity extends LuaControl {
      */
     toggle_equipment_movement_bonus(this: void): void;
     /**
-     * Reconnect loader, beacon, cliff and mining drill connections to entities that might have been teleported out or in by the script. The game doesn't do this automatically as we don't want to loose performance by checking this in normal games.
+     * Reconnect loader, beacon, cliff and mining drill connections to entities that might have been teleported out or in by the script. The game doesn't do this automatically as we don't want to lose performance by checking this in normal games.
      */
     update_connections(this: void): void;
     readonly absorbed_pollution: double;
@@ -6394,6 +6394,8 @@ interface LuaEntity extends LuaControl {
     readonly stickers?: LuaEntity[];
     /**
      * The storage filter for this logistic storage container.
+     *
+     * Useable only on logistic containers with the `"storage"` {@link logistic_mode | runtime:LuaEntityPrototype::logistic_mode}.
      */
     storage_filter?: LuaItemPrototype;
     /**
@@ -7389,7 +7391,7 @@ interface LuaEntityPrototype {
      */
     readonly rotation_speed?: double;
     /**
-     * The current movement speed of this character, including effects from exoskeletons, tiles, stickers and shooting.
+     * The movement speed of this character prototype.
      */
     readonly running_speed?: double;
     /**
@@ -12144,7 +12146,7 @@ interface LuaLogisticContainerControlBehavior extends LuaControlBehavior {
      */
     help(this: void): string;
     /**
-     * The circuit mode of operations for the logistic container. Can only be set on containers whose {@link logistic_mode | runtime:LuaEntityPrototype::logistic_mode} is set to "requester".
+     * The circuit mode of operations for the logistic container. Can only be set on containers whose {@link logistic_mode | runtime:LuaEntityPrototype::logistic_mode} is set to `"requester"` or `"buffer"`.
      */
     circuit_mode_of_operation: defines.control_behavior.logistic_container.circuit_mode_of_operation;
     /**
@@ -13490,7 +13492,7 @@ interface LuaRandomGenerator {
      */
     readonly valid: boolean;
     /**
-     * Generates a random number. If no parameters are given a number in the `[0, 1)` range is returned. If a single parameter is given a floored number in the [1, N] range is returned. If 2 parameters are given a floored number in the [N1, N2] range is returned.
+     * Generates a random number. If no parameters are given a number in the `[0, 1)` range is returned. If a single parameter is given a floored number in the `[1, N]` range is returned. If 2 parameters are given a floored number in the `[N1, N2]` range is returned.
      * @param lower Inclusive lower bound on the result
      * @param upper Inclusive upper bound on the result
      */
@@ -15861,7 +15863,7 @@ interface LuaSurface {
      */
     wind_speed: double;
 }
-type LuaSurfaceCreateEntityParams = BaseLuaSurfaceCreateEntityParams | LuaSurfaceCreateEntityParamsArtilleryFlare | LuaSurfaceCreateEntityParamsArtilleryProjectile | LuaSurfaceCreateEntityParamsAssemblingMachine | LuaSurfaceCreateEntityParamsBeam | LuaSurfaceCreateEntityParamsCharacterCorpse | LuaSurfaceCreateEntityParamsCliff | LuaSurfaceCreateEntityParamsContainer | LuaSurfaceCreateEntityParamsEntityGhost | LuaSurfaceCreateEntityParamsFire | LuaSurfaceCreateEntityParamsFlyingText | LuaSurfaceCreateEntityParamsHighlightBox | LuaSurfaceCreateEntityParamsInserter | LuaSurfaceCreateEntityParamsItemEntity | LuaSurfaceCreateEntityParamsItemRequestProxy | LuaSurfaceCreateEntityParamsLoader | LuaSurfaceCreateEntityParamsLoader1x1 | LuaSurfaceCreateEntityParamsLocomotive | LuaSurfaceCreateEntityParamsLogisticContainer | LuaSurfaceCreateEntityParamsParticle | LuaSurfaceCreateEntityParamsProgrammableSpeaker | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsResource | LuaSurfaceCreateEntityParamsRollingStock | LuaSurfaceCreateEntityParamsSimpleEntityWithForce | LuaSurfaceCreateEntityParamsSimpleEntityWithOwner | LuaSurfaceCreateEntityParamsSpeechBubble | LuaSurfaceCreateEntityParamsStream | LuaSurfaceCreateEntityParamsUndergroundBelt;
+type LuaSurfaceCreateEntityParams = BaseLuaSurfaceCreateEntityParams | LuaSurfaceCreateEntityParamsArtilleryFlare | LuaSurfaceCreateEntityParamsArtilleryProjectile | LuaSurfaceCreateEntityParamsAssemblingMachine | LuaSurfaceCreateEntityParamsBeam | LuaSurfaceCreateEntityParamsCharacterCorpse | LuaSurfaceCreateEntityParamsCliff | LuaSurfaceCreateEntityParamsContainer | LuaSurfaceCreateEntityParamsEntityGhost | LuaSurfaceCreateEntityParamsFire | LuaSurfaceCreateEntityParamsFlyingText | LuaSurfaceCreateEntityParamsHighlightBox | LuaSurfaceCreateEntityParamsInserter | LuaSurfaceCreateEntityParamsItemEntity | LuaSurfaceCreateEntityParamsItemRequestProxy | LuaSurfaceCreateEntityParamsLoader | LuaSurfaceCreateEntityParamsLoader1x1 | LuaSurfaceCreateEntityParamsLocomotive | LuaSurfaceCreateEntityParamsLogisticContainer | LuaSurfaceCreateEntityParamsParticle | LuaSurfaceCreateEntityParamsProgrammableSpeaker | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsResource | LuaSurfaceCreateEntityParamsRollingStock | LuaSurfaceCreateEntityParamsSimpleEntityWithForce | LuaSurfaceCreateEntityParamsSimpleEntityWithOwner | LuaSurfaceCreateEntityParamsSpeechBubble | LuaSurfaceCreateEntityParamsStream | LuaSurfaceCreateEntityParamsTileGhost | LuaSurfaceCreateEntityParamsUndergroundBelt;
 interface BaseLuaSurfaceCreateEntityParams {
     /**
      * If fast_replace is true simulate fast replace using this character.
@@ -15939,7 +15941,6 @@ interface LuaSurfaceCreateEntityParamsArtilleryFlare extends BaseLuaSurfaceCreat
  * Applies to variant case `artillery-projectile`
  */
 interface LuaSurfaceCreateEntityParamsArtilleryProjectile extends BaseLuaSurfaceCreateEntityParams {
-    'max_range'?: double;
     'speed': double;
 }
 /**
@@ -16016,6 +16017,10 @@ interface LuaSurfaceCreateEntityParamsEntityGhost extends BaseLuaSurfaceCreateEn
      * The prototype name of the entity contained in the ghost.
      */
     'inner_name': string;
+    /**
+     * The {@link LuaEntity::tags | runtime:LuaEntity::tags} associated with this entity ghost.
+     */
+    'tags'?: Tags;
 }
 /**
  *
@@ -16162,6 +16167,9 @@ interface LuaSurfaceCreateEntityParamsProgrammableSpeaker extends BaseLuaSurface
  * Applies to variant case `projectile`
  */
 interface LuaSurfaceCreateEntityParamsProjectile extends BaseLuaSurfaceCreateEntityParams {
+    /**
+     * Defaults to 1000.
+     */
     'max_range'?: double;
     'speed': double;
 }
@@ -16237,6 +16245,20 @@ interface LuaSurfaceCreateEntityParamsStream extends BaseLuaSurfaceCreateEntityP
      * Absolute target position that can be used instead of target entity (entity has precedence if both entity and position are defined).
      */
     'target_position'?: MapPosition;
+}
+/**
+ *
+ * Applies to variant case `tile-ghost`
+ */
+interface LuaSurfaceCreateEntityParamsTileGhost extends BaseLuaSurfaceCreateEntityParams {
+    /**
+     * If `false` the ghost tile will not expire. Default is `false`. Creating ghost with `expires = true` when ghost_time_to_live of this force is 0 will result in a script error.
+     */
+    'expires'?: boolean;
+    /**
+     * The prototype name of the tile contained in the ghost.
+     */
+    'inner_name': string;
 }
 /**
  *
@@ -16443,8 +16465,9 @@ interface LuaTile {
     /**
      * Gets all tile ghosts on this tile.
      * @param force Get tile ghosts of this force.
+     * @returns The tile ghosts.
      */
-    get_tile_ghosts(this: void, force?: ForceIdentification): LuaTile[];
+    get_tile_ghosts(this: void, force?: ForceIdentification): LuaEntity[];
     /**
      * Does this tile have any tile ghosts on it.
      * @param force Check for tile ghosts of this force.
