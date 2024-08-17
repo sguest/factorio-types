@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.109
+// Factorio version 1.1.110
 // API version 5
 
 declare namespace runtime {
@@ -832,7 +832,7 @@ interface CommandWander extends BaseCommand {
     'wander_in_group'?: boolean;
 }
 /**
- * A string that specifies how the inputs should be compared
+ * A string that specifies how the inputs should be compared.
  *
  * While the API accepts both versions for `"less/greater than or equal to"` and `"not equal"`, it'll always return `"≥"`, `"≤"` or `"≠"` respectively when reading them back.
  */
@@ -1515,7 +1515,7 @@ interface EventData {
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type EventFilter = (LuaScriptRaisedReviveEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaPreGhostDeconstructedEventFilter | LuaScriptRaisedDestroyEventFilter | LuaUpgradeCancelledEventFilter | LuaPlayerRepairedEntityEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaPostEntityDiedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaEntityClonedEventFilter | LuaScriptRaisedBuiltEventFilter | LuaRobotMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPreGhostUpgradedEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaPlayerBuiltEntityEventFilter | LuaPlayerMinedEntityEventFilter | LuaEntityDamagedEventFilter | LuaSectorScannedEventFilter)[];
+type EventFilter = (LuaScriptRaisedDestroyEventFilter | LuaScriptRaisedReviveEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPostEntityDiedEventFilter | LuaEntityDiedEventFilter | LuaPlayerBuiltEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaRobotMinedEntityEventFilter | LuaPreGhostDeconstructedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaUpgradeCancelledEventFilter | LuaSectorScannedEventFilter | LuaPreGhostUpgradedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaEntityDamagedEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPlayerMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter)[];
 interface Fluid {
     /**
      * Fluid prototype name of the fluid.
@@ -4971,7 +4971,7 @@ type PropertyExpressionNames = Record<string, string>;
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type PrototypeFilter = (ItemPrototypeFilter | ModSettingPrototypeFilter | TechnologyPrototypeFilter | DecorativePrototypeFilter | AchievementPrototypeFilter | FluidPrototypeFilter | EquipmentPrototypeFilter | TilePrototypeFilter | RecipePrototypeFilter | EntityPrototypeFilter)[];
+type PrototypeFilter = (ModSettingPrototypeFilter | DecorativePrototypeFilter | EntityPrototypeFilter | TechnologyPrototypeFilter | RecipePrototypeFilter | EquipmentPrototypeFilter | AchievementPrototypeFilter | FluidPrototypeFilter | ItemPrototypeFilter | TilePrototypeFilter)[];
 /**
  * One of the following values:
  */
@@ -6135,7 +6135,7 @@ interface TriggerItem {
 /**
  * A set of trigger target masks.
  */
-type TriggerTargetMask = Record<string, boolean>;
+type TriggerTargetMask = Record<string, true>;
 interface UnitGroupMapSettings {
     /**
      * The minimum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `3 600` ticks.
