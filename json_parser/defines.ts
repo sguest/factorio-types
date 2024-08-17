@@ -10,6 +10,11 @@ function parseDefine(define: Define): ts.EnumDeclaration | ts.ModuleDeclaration 
         throw new Error('Cannot write define with both subkeys and values');
     }
 
+    if(/-/.test(define.name)) {
+        define.description = (`@customName ${define.name}\n` + define.description).trim();
+        define.name = define.name.replace(/-/g, '_');
+    }
+
     if(define.subkeys?.length) {
         return writeDocs(ts.factory.createModuleDeclaration(
             undefined,
@@ -19,9 +24,13 @@ function parseDefine(define: Define): ts.EnumDeclaration | ts.ModuleDeclaration 
     }
     else {
         const members = define.values?.map(member => {
+            if(/-/.test(member.name)) {
+                member.name = `'${member.name}'`;
+            }
             const memberNode = ts.factory.createEnumMember(member.name, ts.factory.createNumericLiteral(member.order));
             return writeDocs(memberNode, member);
         }) ?? [];
+
         return writeDocs(ts.factory.createEnumDeclaration([], define.name, members), define);
     }
 }
