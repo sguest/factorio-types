@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.109
+// Factorio version 1.1.110
 // API version 5
 
 declare namespace runtime {
@@ -3825,7 +3825,7 @@ interface on_train_schedule_changed {
     train: LuaTrain;
 }
 /**
- * Called when an entity with a trigger prototype (such as capsules) create an entity AND that trigger prototype defined `trigger_created_entity="true"`.
+ * Called when an entity with a trigger prototype (such as capsules) create an entity AND that trigger prototype defined `trigger_created_entity=true`.
  */
 interface on_trigger_created_entity {
     entity: LuaEntity;
@@ -3840,7 +3840,7 @@ interface on_trigger_created_entity {
     tick: uint;
 }
 /**
- * Called when an entity with a trigger prototype (such as capsules) fire an artillery projectile AND that trigger prototype defined `trigger_fired_artillery="true"`.
+ * Called when an entity with a trigger prototype (such as capsules) fire an artillery projectile AND that trigger prototype defined `trigger_fired_artillery=true`.
  */
 interface on_trigger_fired_artillery {
     entity: LuaEntity;

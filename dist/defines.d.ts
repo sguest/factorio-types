@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.109
+// Factorio version 1.1.110
 // API version 5
 
 declare namespace defines {
@@ -1038,9 +1038,396 @@ enum print_sound {
     use_player_settings = 2
 }
 /**
- * A dictionary mapping all top-level prototypes by name to a list of their associated subtypes. This list is organized as a lookup table, meaning it maps the sub-prototype names to `0`. As an example, `defines.prototypes['entity']` looks like this: `{furnace=0, inserter=0, container=0, ...}`.
+ * This define describes all top-level prototypes and their associated subtypes. It is organized as a lookup table, meaning the values of all the defines is `0`. As an example, `defines.prototypes['entity']` looks like `{furnace=0, inserter=0, container=0, ...}`.
  */
-enum prototypes {
+namespace prototypes {
+    enum achievement {
+        achievement = 0,
+        'build-entity-achievement' = 1,
+        'combat-robot-count' = 2,
+        'construct-with-robots-achievement' = 3,
+        'deconstruct-with-robots-achievement' = 4,
+        'deliver-by-robots-achievement' = 5,
+        'dont-build-entity-achievement' = 6,
+        'dont-craft-manually-achievement' = 7,
+        'dont-use-entity-in-energy-production-achievement' = 8,
+        'finish-the-game-achievement' = 9,
+        'group-attack-achievement' = 10,
+        'kill-achievement' = 11,
+        'player-damaged-achievement' = 12,
+        'produce-achievement' = 13,
+        'produce-per-hour-achievement' = 14,
+        'research-achievement' = 15,
+        'train-path-achievement' = 16
+    }
+    /**
+     * @customName ambient-sound
+     */
+    enum ambient_sound {
+        'ambient-sound' = 0
+    }
+    /**
+     * @customName ammo-category
+     */
+    enum ammo_category {
+        'ammo-category' = 0
+    }
+    enum animation {
+        animation = 0
+    }
+    /**
+     * @customName autoplace-control
+     */
+    enum autoplace_control {
+        'autoplace-control' = 0
+    }
+    /**
+     * @customName custom-input
+     */
+    enum custom_input {
+        'custom-input' = 0
+    }
+    /**
+     * @customName damage-type
+     */
+    enum damage_type {
+        'damage-type' = 0
+    }
+    enum decorative {
+        'optimized-decorative' = 0
+    }
+    /**
+     * @customName editor-controller
+     */
+    enum editor_controller {
+        'editor-controller' = 0
+    }
+    enum entity {
+        accumulator = 0,
+        'ammo-turret' = 1,
+        'arithmetic-combinator' = 2,
+        arrow = 3,
+        'artillery-flare' = 4,
+        'artillery-projectile' = 5,
+        'artillery-turret' = 6,
+        'artillery-wagon' = 7,
+        'assembling-machine' = 8,
+        beacon = 9,
+        beam = 10,
+        boiler = 11,
+        'burner-generator' = 12,
+        car = 13,
+        'cargo-wagon' = 14,
+        character = 15,
+        'character-corpse' = 16,
+        cliff = 17,
+        'combat-robot' = 18,
+        'constant-combinator' = 19,
+        'construction-robot' = 20,
+        container = 21,
+        corpse = 22,
+        'curved-rail' = 23,
+        'decider-combinator' = 24,
+        'deconstructible-tile-proxy' = 25,
+        'electric-energy-interface' = 26,
+        'electric-pole' = 27,
+        'electric-turret' = 28,
+        'entity-ghost' = 29,
+        explosion = 30,
+        fire = 31,
+        fish = 32,
+        'flame-thrower-explosion' = 33,
+        'fluid-turret' = 34,
+        'fluid-wagon' = 35,
+        'flying-text' = 36,
+        furnace = 37,
+        gate = 38,
+        generator = 39,
+        'heat-interface' = 40,
+        'heat-pipe' = 41,
+        'highlight-box' = 42,
+        'infinity-container' = 43,
+        'infinity-pipe' = 44,
+        inserter = 45,
+        'item-entity' = 46,
+        'item-request-proxy' = 47,
+        lab = 48,
+        lamp = 49,
+        'land-mine' = 50,
+        'leaf-particle' = 51,
+        'linked-belt' = 52,
+        'linked-container' = 53,
+        loader = 54,
+        'loader-1x1' = 55,
+        locomotive = 56,
+        'logistic-container' = 57,
+        'logistic-robot' = 58,
+        market = 59,
+        'mining-drill' = 60,
+        'offshore-pump' = 61,
+        particle = 62,
+        'particle-source' = 63,
+        pipe = 64,
+        'pipe-to-ground' = 65,
+        'player-port' = 66,
+        'power-switch' = 67,
+        'programmable-speaker' = 68,
+        projectile = 69,
+        pump = 70,
+        radar = 71,
+        'rail-chain-signal' = 72,
+        'rail-remnants' = 73,
+        'rail-signal' = 74,
+        reactor = 75,
+        resource = 76,
+        roboport = 77,
+        'rocket-silo' = 78,
+        'rocket-silo-rocket' = 79,
+        'rocket-silo-rocket-shadow' = 80,
+        'simple-entity' = 81,
+        'simple-entity-with-force' = 82,
+        'simple-entity-with-owner' = 83,
+        smoke = 84,
+        'smoke-with-trigger' = 85,
+        'solar-panel' = 86,
+        'speech-bubble' = 87,
+        'spider-leg' = 88,
+        'spider-vehicle' = 89,
+        splitter = 90,
+        sticker = 91,
+        'storage-tank' = 92,
+        'straight-rail' = 93,
+        stream = 94,
+        'tile-ghost' = 95,
+        'train-stop' = 96,
+        'transport-belt' = 97,
+        tree = 98,
+        turret = 99,
+        'underground-belt' = 100,
+        unit = 101,
+        'unit-spawner' = 102,
+        wall = 103
+    }
+    enum equipment {
+        'active-defense-equipment' = 0,
+        'battery-equipment' = 1,
+        'belt-immunity-equipment' = 2,
+        'energy-shield-equipment' = 3,
+        'generator-equipment' = 4,
+        'movement-bonus-equipment' = 5,
+        'night-vision-equipment' = 6,
+        'roboport-equipment' = 7,
+        'solar-panel-equipment' = 8
+    }
+    /**
+     * @customName equipment-category
+     */
+    enum equipment_category {
+        'equipment-category' = 0
+    }
+    /**
+     * @customName equipment-grid
+     */
+    enum equipment_grid {
+        'equipment-grid' = 0
+    }
+    enum fluid {
+        fluid = 0
+    }
+    enum font {
+        font = 0
+    }
+    /**
+     * @customName fuel-category
+     */
+    enum fuel_category {
+        'fuel-category' = 0
+    }
+    /**
+     * @customName god-controller
+     */
+    enum god_controller {
+        'god-controller' = 0
+    }
+    /**
+     * @customName gui-style
+     */
+    enum gui_style {
+        'gui-style' = 0
+    }
+    enum item {
+        ammo = 0,
+        armor = 1,
+        blueprint = 2,
+        'blueprint-book' = 3,
+        capsule = 4,
+        'copy-paste-tool' = 5,
+        'deconstruction-item' = 6,
+        gun = 7,
+        item = 8,
+        'item-with-entity-data' = 9,
+        'item-with-inventory' = 10,
+        'item-with-label' = 11,
+        'item-with-tags' = 12,
+        'mining-tool' = 13,
+        module = 14,
+        'rail-planner' = 15,
+        'repair-tool' = 16,
+        'selection-tool' = 17,
+        'spidertron-remote' = 18,
+        tool = 19,
+        'upgrade-item' = 20
+    }
+    /**
+     * @customName item-group
+     */
+    enum item_group {
+        'item-group' = 0
+    }
+    /**
+     * @customName item-subgroup
+     */
+    enum item_subgroup {
+        'item-subgroup' = 0
+    }
+    /**
+     * @customName map-gen-presets
+     */
+    enum map_gen_presets {
+        'map-gen-presets' = 0
+    }
+    /**
+     * @customName map-settings
+     */
+    enum map_settings {
+        'map-settings' = 0
+    }
+    /**
+     * @customName module-category
+     */
+    enum module_category {
+        'module-category' = 0
+    }
+    /**
+     * @customName mouse-cursor
+     */
+    enum mouse_cursor {
+        'mouse-cursor' = 0
+    }
+    /**
+     * @customName noise-expression
+     */
+    enum noise_expression {
+        'noise-expression' = 0
+    }
+    /**
+     * @customName noise-layer
+     */
+    enum noise_layer {
+        'noise-layer' = 0
+    }
+    enum particle {
+        'optimized-particle' = 0
+    }
+    enum recipe {
+        recipe = 0
+    }
+    /**
+     * @customName recipe-category
+     */
+    enum recipe_category {
+        'recipe-category' = 0
+    }
+    /**
+     * @customName resource-category
+     */
+    enum resource_category {
+        'resource-category' = 0
+    }
+    enum shortcut {
+        shortcut = 0
+    }
+    enum sound {
+        sound = 0
+    }
+    /**
+     * @customName spectator-controller
+     */
+    enum spectator_controller {
+        'spectator-controller' = 0
+    }
+    enum sprite {
+        sprite = 0
+    }
+    enum technology {
+        technology = 0
+    }
+    enum tile {
+        tile = 0
+    }
+    /**
+     * @customName tile-effect
+     */
+    enum tile_effect {
+        'tile-effect' = 0
+    }
+    /**
+     * @customName tips-and-tricks-item
+     */
+    enum tips_and_tricks_item {
+        'tips-and-tricks-item' = 0
+    }
+    /**
+     * @customName tips-and-tricks-item-category
+     */
+    enum tips_and_tricks_item_category {
+        'tips-and-tricks-item-category' = 0
+    }
+    /**
+     * @customName trigger-target-type
+     */
+    enum trigger_target_type {
+        'trigger-target-type' = 0
+    }
+    /**
+     * @customName trivial-smoke
+     */
+    enum trivial_smoke {
+        'trivial-smoke' = 0
+    }
+    enum tutorial {
+        tutorial = 0
+    }
+    /**
+     * @customName utility-constants
+     */
+    enum utility_constants {
+        'utility-constants' = 0
+    }
+    /**
+     * @customName utility-sounds
+     */
+    enum utility_sounds {
+        'utility-sounds' = 0
+    }
+    /**
+     * @customName utility-sprites
+     */
+    enum utility_sprites {
+        'utility-sprites' = 0
+    }
+    /**
+     * @customName virtual-signal
+     */
+    enum virtual_signal {
+        'virtual-signal' = 0
+    }
+    /**
+     * @customName wind-sound
+     */
+    enum wind_sound {
+        'wind-sound' = 0
+    }
 }
 enum rail_connection_direction {
     left = 0,

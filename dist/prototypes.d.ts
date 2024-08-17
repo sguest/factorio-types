@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.109
+// Factorio version 1.1.110
 // API version 5
 
 declare namespace prototype {
@@ -1580,7 +1580,7 @@ interface CorpsePrototype extends EntityPrototype {
      */
     time_before_removed?: uint32;
     /**
-     * Controls how long the corpse takes to fade, as in how long it takes to get from no transparency to full transparency/removed. This time is ''not'' added to `time_before_removed`, it is instead subtracted from it. So by default, the corpse starts fading about 15 seconds before it gets removed.
+     * Controls how long the corpse takes to fade, as in how long it takes to get from no transparency to full transparency/removed. This time is *not* added to `time_before_removed`, it is instead subtracted from it. So by default, the corpse starts fading about 15 seconds before it gets removed.
      */
     time_before_shading_off?: uint32;
     use_tile_color_for_ground_patch_tint?: bool;
@@ -1594,7 +1594,7 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
     /**
      * Sets the {@link modules | prototype:ModulePrototype} and {@link beacon | prototype:BeaconPrototype} effects that are allowed to be used on this machine.
      *
-     * Note: If the time to complete a recipe is shorter than one tick, only one craft can be completed per tick, but productivity bonus is applied to the non-limited ''completable'' work. For a simple example, if a recipe were to take half a tick, only one recipe would be completed, but twice the productivity bonus would occur. The surplus production from productivity is **not** limited to one craft per tick.
+     * Note: If the time to complete a recipe is shorter than one tick, only one craft can be completed per tick, but productivity bonus is applied to the non-limited *completable* work. For a simple example, if a recipe were to take half a tick, only one recipe would be completed, but twice the productivity bonus would occur. The surplus production from productivity is **not** limited to one craft per tick.
      */
     allowed_effects?: EffectTypeLimitation;
     /**
@@ -6930,9 +6930,12 @@ interface SmokePrototype extends EntityPrototype {
      */
     collision_mask?: CollisionMask;
     color?: Color;
+    /**
+     * If this is false then the smoke expires when the animation has played once.
+     */
     cyclic?: bool;
     /**
-     * May not be 0 if cyclic is true.
+     * May not be 0 if `cyclic` is true. If `cyclic` is false then the smoke will be expire when the animation has played once, even if there would still be duration left.
      */
     duration?: uint32;
     end_scale?: double;
@@ -7048,7 +7051,7 @@ interface SoundPrototype {
      */
     speed?: float;
     type: 'sound';
-    variations?: SoundDefinition[];
+    variations?: SoundDefinition | SoundDefinition[];
     /**
      * Only loaded if `variations` is not defined.
      */
@@ -7619,7 +7622,7 @@ interface TechnologyPrototype extends PrototypeBase {
       type = "technology",
       name = "physical-projectile-damage-2",
       [...]
-      upgrade = "true"
+      upgrade = true
     }
     ```
      */
