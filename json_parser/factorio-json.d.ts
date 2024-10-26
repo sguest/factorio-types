@@ -9,6 +9,8 @@ interface PrototypeData extends ApiData {
     stage: 'prototype';
     prototypes: FactorioPrototype[];
     types: FactorioPrototypeType[];
+    // Appears to be duplicated from runtime data, currently loading it from there and not using this one
+    defines: Define[];
 }
 
 interface FactorioPrototype {
@@ -20,7 +22,7 @@ interface FactorioPrototype {
     abstract: boolean;
     typename: string;
     deprecated: boolean;
-    properties: Attribute[];
+    properties: Property[];
 }
 
 interface FactorioPrototypeType {
@@ -32,7 +34,17 @@ interface FactorioPrototypeType {
     abstract: boolean;
     inline: boolean;
     type: FactorioType;
-    properties: Attribute[];
+    properties: Property[];
+}
+
+interface Property {
+    name: string;
+    order: number;
+    description: string;
+    override: boolean;
+    type: FactorioType;
+    optional: boolean;
+    default: FactorioType;
 }
 
 interface RuntimeData extends ApiData{
@@ -214,8 +226,7 @@ interface Attribute {
     examples?: string[];
     lists?: string[];
     subclasses?: string[];
-    type: FactorioType;
-    read: boolean;
-    write: boolean;
+    read_type: FactorioType;
+    write_type: FactorioType;
     optional: boolean;
 }

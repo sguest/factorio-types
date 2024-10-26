@@ -5,6 +5,7 @@ import { writeFile } from './files';
 import { parseAttribute } from './attributes';
 import { writeDocs } from './docs';
 import { parseParentStructure } from './format';
+import { parseProperty } from './properties';
 
 function parsePrototype(prototype: FactorioPrototype) {
     // Ugly hack, but this is a weird one-off where a property in a sub-class is a more generic union than the superclass
@@ -24,25 +25,40 @@ function parsePrototype(prototype: FactorioPrototype) {
         property!.description += ' - This will only accept an ItemStackIndex. The union with \'dynamic\' is only to satisfy BlueprintBookPrototype within Typescript\'s inheritance rules';
     }
 
-    const node = ts.factory.createInterfaceDeclaration([], prototype.name, [], createHeritage(prototype.parent), prototype.properties.map(parseAttribute));
+    const node = ts.factory.createInterfaceDeclaration([], prototype.name, [], createHeritage(prototype.parent), prototype.properties.map(parseProperty));
 
     return writeDocs(node, prototype);
 }
 
 function parseDataCollection(prototypes: FactorioPrototype[]) {
-    let members: ts.TypeElement[] = [];
+    let members: { [key: string]: ts.PropertySignature } = {};
     for(let prototype of prototypes) {
         if(prototype.typename) {
+            let newType = parseType(prototype.name);
+            let key = prototype.typename;
+
+            if(members[key]) {
+                let member = members[key];
+                let elementType = ((member.type! as ts.TypeLiteralNode).members[0] as ts.IndexSignatureDeclaration).type;
+                let existingTypes: ts.TypeNode[];
+                if(elementType.kind === ts.SyntaxKind.UnionType) {
+                    existingTypes = [...(elementType as ts.UnionTypeNode).types, newType];
+                }
+                else {
+                    existingTypes = [elementType];
+                }
+                newType = ts.factory.createUnionTypeNode([...existingTypes, newType])
+            }
             const indexer = ts.factory.createIndexSignature(
                 undefined,
                 [ts.factory.createParameterDeclaration([], undefined, "key", undefined, parseType('string'), undefined)],
-                parseType(prototype.name))
+                newType)
             let type = ts.factory.createTypeLiteralNode([indexer]);
-            members.push(ts.factory.createPropertySignature([], `'${prototype.typename}'`, undefined, type));
+            members[key] = ts.factory.createPropertySignature([], `'${key}'`, undefined, type);
         }
     }
 
-    return ts.factory.createInterfaceDeclaration([], 'dataCollection', [], [], members);
+    return ts.factory.createInterfaceDeclaration([], 'dataCollection', [], [], Object.values(members));
 }
 
 export function writePrototypes(apiData: PrototypeData) {

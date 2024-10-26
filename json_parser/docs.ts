@@ -6,12 +6,17 @@ function formatLinks(text: string) {
     return text.replace(/\[([^\]]*)\]\(([^\)]*)\)/g, '{@link $1 | $2}');
 }
 
-export function writeDocs<T extends ts.Node>(node: T, data: FactorioClass | FactorioEvent | Concept | Method | Attribute | FactorioPrototypeType | { description?: string }) {
+export function writeDocs<T extends ts.Node>(node: T, data: FactorioClass | FactorioEvent | Concept | Method | Attribute | FactorioPrototypeType | { description?: string }, extraValues?: { customAttributes?: string[] }) {
     const tags: ts.JSDocTag[] = [];
     let description = data.description;
     if('lists' in data && data.lists) {
         for(let list of data.lists) {
             description += '\n' + list
+        }
+    }
+    if(extraValues?.customAttributes) {
+        for(let attribute of extraValues.customAttributes) {
+            description += '\n' + attribute
         }
     }
     if('parameters' in data) {

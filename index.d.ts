@@ -6,7 +6,6 @@
 /// <reference path="./src/core.d.ts" />
 /// <reference path="./src/settings.d.ts" />
 /// <reference path="./src/serpent.d.ts" />
-/// <reference path="./src/lualib/noise.d.ts" />
 /// <reference path="./dist/global.d.ts" />
 /// <reference path="./dist/classes.d.ts" />
 /// <reference path="./dist/concepts.d.ts" />
