@@ -5,13 +5,17 @@ import { mapBuiltin, parseParentStructure } from './format';
 import { createHeritage, printNode } from './tsUtils';
 import { parseType } from './types';
 import { parseAttribute } from './attributes';
+import { parseProperty } from './properties';
 
 export function writePrototypeTypes(apiData: PrototypeData) {
     let output = '';
 
     const childTypes = parseParentStructure(apiData.types);
 
+    const indexedTypes:  {[key: string]: FactorioPrototypeType} = {};
+
     for(let typeData of apiData.types) {
+        indexedTypes[typeData.name] = typeData;
         if(childTypes[typeData.name]) {
             /*
              * Factorio prototypes often have super/sub classes with a "type" property of different literal strings
@@ -21,23 +25,45 @@ export function writePrototypeTypes(apiData: PrototypeData) {
             const typeIndex = typeData.properties.findIndex(p => p.name === 'type');
             if(typeIndex >= 0) {
                 let typeProp = typeData.properties[typeIndex];
-                if(typeof typeProp.type === 'object' && typeProp.type.complex_type === 'literal') {
-                    let baseName = typeData.name + 'Base';
-                    let typeName = typeData.name;
+                let handled = false;
+                if(typeof typeProp.type === 'object' && (typeProp.type.complex_type === 'literal' || typeProp.type.complex_type === 'union')) {
+                    let typeValue = '';
 
-                    output += `interface ${typeName} extends ${baseName} {\n`;
-                    output += `    type: '${typeProp.type.value}'\n`
-                    output += '}\n\n';
+                    if(typeProp.type.complex_type === 'literal') {
+                        typeValue = `'${typeProp.type.value}'`;
+                        handled = true;
+                    }
+                    else if(typeProp.type.complex_type === 'union') {
+                        handled = true;
+                        for(let option of typeProp.type.options) {
+                            if(typeof option !== 'object' || option.complex_type !== 'literal') {
+                                handled = false;
+                            }
+                        }
+                        if(handled) {
+                            typeValue = typeProp.type.options.map(s => `'${(s as LiteralType).value}'`).join(' | ')
+                        }
+                    }
 
-                    typeData.name = baseName;
-                    typeProp.type = 'string';
+                    if(handled)
+                    {
+                        let baseName = typeData.name + 'Base';
+                        let typeName = typeData.name;
 
-                    for(let child of childTypes[typeName]) {
-                        child.parent = baseName;
+                        output += `interface ${typeName} extends ${baseName} {\n`;
+                        output += `    type: ${typeValue}\n`
+                        output += '}\n\n';
+
+                        typeData.name = baseName;
+                        typeProp.type = 'string';
+
+                        for(let child of childTypes[typeName]) {
+                            child.parent = baseName;
+                        }
                     }
                 }
-                else {
-                    throw new Error('Cannot handle type inheritance where type property is non-literal');
+                if(!handled) {
+                    throw new Error('Cannot handle type inheritance where type property is not a literal or union of literals');
                 }
             }
         }
@@ -56,7 +82,21 @@ export function writePrototypeTypes(apiData: PrototypeData) {
         }
         else {
             if(typeof typeData.type === 'object' && 'complex_type' in typeData.type && typeData.type.complex_type === 'struct') {
-                node = ts.factory.createInterfaceDeclaration([], typeData.name, [], createHeritage(typeData.parent), typeData.properties.map(parseAttribute));
+                let parentType: FactorioPrototypeType | undefined;
+                if(typeData.parent) {
+                    parentType = indexedTypes[typeData.parent];
+                }
+
+                if(typeof parentType?.type === 'object' && 'complex_type' in parentType.type && parentType?.type.complex_type !== 'struct') {
+                    // Handle struct inheriting from non-struct. By default structs are an interface, but non-structs are modeled as types instead
+                    // interface can't inherit from a type, so use an intersection type instead
+                    let intersection = ts.factory.createIntersectionTypeNode([parseType(typeData.parent), parseType(typeData.type, typeData)])
+                    node = ts.factory.createTypeAliasDeclaration([], typeData.name, [], intersection); 
+                }
+                else
+                {
+                    node = ts.factory.createInterfaceDeclaration([], typeData.name, [], createHeritage(typeData.parent), typeData.properties.map(parseProperty));
+                }
             }
             else {
                 try{

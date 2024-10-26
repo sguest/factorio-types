@@ -45,14 +45,13 @@ export function parameterToAttribute(parameter: Parameter): Attribute {
         name: `'${parameter.name}'`,
         order: parameter.order,
         description: parameter.description,
-        type: parameter.type,
-        read: true,
-        write: true,
+        read_type: parameter.type,
+        write_type: parameter.type,
         optional: parameter.optional,
     }
 }
 
-export function parseParentStructure<T extends { parent: string, name: string, properties: Attribute[]}>(items: T[]) {
+export function parseParentStructure<T extends { parent: string, name: string, properties: (Attribute | Property)[] }>(items: T[]) {
     const childTypes: {[key: string]: T[]} = {};
 
     for(let item of items) {
@@ -63,19 +62,26 @@ export function parseParentStructure<T extends { parent: string, name: string, p
     }
 
     for(let item of items) {
-        if(childTypes[item.name]) {
-            for(let child of childTypes[item.name])
-            {
-                if(item.properties && child.properties)
+        let parentNames = [item.name];
+        while(parentNames.length)
+        {
+            let parentName = parentNames.pop()!;
+            if(childTypes[parentName]) {
+                for(let child of childTypes[parentName])
                 {
-                    for(let parentProp of item.properties)
+                    parentNames.push(child.name);
+                    if(item.properties && child.properties)
                     {
-                        for(let childProp of child.properties)
+                        for(let parentProp of item.properties)
                         {
-                            if(childProp.name === parentProp.name && childProp.optional && !parentProp.optional)
+                            for(let childProp of child.properties)
                             {
-                                // Can't inherit a required prop with an optional one in TS, so just set the parent prop to optional
-                                parentProp.optional = true;
+                                if(childProp.name === parentProp.name && childProp.optional && !parentProp.optional)
+                                {
+                                    // Can't inherit a required prop with an optional one in TS, so just set the parent prop to optional
+                                    parentProp.description = (parentProp.description || '') + '\nThis property is required, but marked as optional due to typescript inheritance limitations';
+                                    parentProp.optional = true;
+                                }
                             }
                         }
                     }

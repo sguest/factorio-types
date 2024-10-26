@@ -2,7 +2,6 @@ import * as ts from 'typescript';
 import { extractTypeNames, formatTypeName, mapBuiltin, parameterToAttribute } from './format';
 import { parseType } from './types';
 import { writeDocs } from './docs';
-import { parseParameter } from './parameters';
 import { parseAttribute } from './attributes';
 import { writeFile } from './files';
 import { createHeritage, printNode } from './tsUtils';
@@ -52,7 +51,7 @@ function parseVariants(concept: Concept) {
             typeName,
             [],
             createHeritage(baseName),
-            attributes.map(parseAttribute))
+            attributes.map(parseAttribute).flat())
 
         conceptNodes.push(writeDocs(typeNode, { description: variantGroup.description + `\nApplies to variant case \`${variantGroup.name}\``}));
         unionTypes.push(typeName);
@@ -90,6 +89,11 @@ function parseConcept(concept: Concept) {
                 description: '',
             })
         }
+    }
+
+    // The variant groups setup for this type is very strange and feels wrong. Just omitting it for now.
+    if(concept.name === 'LuaPostEntityDiedEventFilter') {
+        (concept.type as TableType).variant_parameter_groups = undefined;
     }
 
     const variantNodes: ts.Node[] = [];

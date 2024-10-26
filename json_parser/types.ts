@@ -2,6 +2,47 @@ import * as ts from 'typescript';
 import { writeDocs } from './docs';
 import { parseAttribute } from './attributes';
 import { questionToken } from './tsUtils';
+import { parseProperty } from './properties';
+
+const specialCaseKeys = [
+    'CollisionLayerID',
+    'EntityPrototypeFlag',
+    'AirbornePollutantID',
+    'ItemID',
+    'EntityID',
+    'TileID',
+    'DecorativeID',
+    'AutoplaceControlID',
+    'DirectionString',
+    'ItemPrototypeFlag'
+]
+
+// This could be expanded in the future, but these handle most of the cases present in the type definitions currently
+// The special case keys are cases where the property resolves to a string, but is represented by a type alias
+// This relationship is very difficult to figure out at this point in the process, so just handle a few special cases
+// If anything slips through this filter it will be represented by a LuaTable which is still valid
+// just less conventient to work with than a Record
+function isValidRecordKey(type: FactorioType) {
+    if(typeof type === 'string') {
+        return type === 'string' || type === 'uint' || specialCaseKeys.includes(type) || /^defines\./.test(type);
+    }
+
+    if(type.complex_type === 'literal') {
+        return true;
+    }
+
+    if(type.complex_type === 'union') {
+        for(let option of type.options) {
+            if(!isValidRecordKey(option)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
 
 const parseArray = (type: ArrayType, parent?: FactorioPrototype | FactorioPrototypeType) => ts.factory.createArrayTypeNode(parseType(type.value, parent));
 
@@ -13,7 +54,9 @@ const parseArray = (type: ArrayType, parent?: FactorioPrototype | FactorioProtot
 const parseUnion = (type: UnionType, parent?: FactorioPrototype | FactorioPrototypeType) =>
     ts.factory.createUnionTypeNode(type.options.map(t => parseType(t, parent)));
 
-const parseDictionary = (type: DictionaryType) => ts.factory.createTypeReferenceNode('Record', [parseType(type.key), parseType(type.value)]);
+const parseDictionary = (type: DictionaryType) => isValidRecordKey(type.key) ?
+    ts.factory.createTypeReferenceNode('Record', [parseType(type.key), parseType(type.value)]) :
+    ts.factory.createTypeReferenceNode('LuaTable', [parseType(type.key), parseType(type.value)]);
 
 const parseFunction = (type: FunctionType) => {
     // The json spec doesn't appear to have enough info to identify the return type of the function, so we're stuck with `any`
@@ -55,7 +98,7 @@ const parseLiteral = (type: LiteralType) => {
 };
 
 const parseStruct = (type: StructType) => {
-    const members = type.attributes.map(parseAttribute);
+    const members = type.attributes.map(parseAttribute).flat();
     return ts.factory.createTypeLiteralNode(members);
 }
 
@@ -63,7 +106,7 @@ const parseStructParent = (parent?: FactorioPrototype | FactorioPrototypeType) =
     if(!parent) {
         throw new Error('Cannot parse struct type without parent info');
     }
-    return ts.factory.createTypeLiteralNode(parent.properties.map(parseAttribute));
+    return ts.factory.createTypeLiteralNode(parent.properties.map(parseProperty));
 }
 
 export function parseType(type: FactorioType | undefined, parent?: FactorioPrototype | FactorioPrototypeType): ts.TypeNode {

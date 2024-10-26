@@ -97,7 +97,7 @@ function parseClass(classData: FactorioClass) {
 
     members.push(...classData.methods?.map(parseMethod) ?? []);
 
-    members.push(...classData.attributes?.map(parseAttribute) ?? []);
+    members.push(...classData.attributes?.map(parseAttribute).flat() ?? []);
 
     members.push(...classData.operators?.map(parseOperator).flat() ?? []);
 

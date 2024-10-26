@@ -43,78 +43,33 @@ Note that since typescript has a single `number` type, the compiler will **not**
 
 Various types in the Factorio API are implemented as lua tables, specifically those with a `complex_type` of `dictionary` or `LuaCustomTable`. These types have intentionally been implemented as [Record](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type) types instead of TypescriptToLua's [Lua Table Type](https://typescripttolua.github.io/docs/advanced/language-extensions/#lua-table-types) because `LuaTable`s cannot be instantiated with `{ key1: 'value1', key2: 'value2' }` initializer syntax, and instead repeated calls to `set()` would be required, making initialization of such objects considerably more verbose.
 
+## Read vs Write attributes
+
+Some attributes have separate read and write types defined, which is not supported by typescript. These are modeled by the read property having the attribute's name, and a separate `<name>_write` property representing writing to the property. This will map to the correct property name via a [@customName annotation](https://typescripttolua.github.io/docs/advanced/compiler-annotations/#customname). These properties are readable since typescript does not support the concept of writeonly, and reading them will succeed, but the type of the returned value will be wrong.
+
+Typescript:
+
+```typescript
+function example(burner: LuaBurner)
+{
+    let read: ItemIDAndQualityIDPair = burner.currently_burning;
+    burner.currently_burning_write = 'coal';
+}
+```
+
+Output lua:
+
+```lua
+local function example(burner)
+    local read = burner.currently_burning
+    burner.currently_burning = "coal"
+end
+```
+
 ## Lualib
 
 Factorio makes various lua functions available to mods via [LuaLib](https://github.com/wube/factorio-data/tree/master/core/lualib)
 
 Unlike the main parts of the factorio API, these do not exist as ambient globals but instead must be imported
 
-```typescript
-import * as noise from "noise";
-let x = noise.var_get('x');
-```
-
-Also unlike the main factorio API, these types are not documented in a machine-readable way and therefore are not generated here along with the main API types. Instead, they are hand-written as needed and as a result are incomplete and more likely to be wrong. See the [existing declarations](https://github.com/sguest/factorio-types/tree/master/src/lualib).
-
-If there are types of lualib that you need but do not exist, either open an issue asking for it, or write the type definitions and open a pull request. If you would like to continue working with these types while they do not exist in `factorio-types`, you can add the import path to `tstl.noResolvePaths` in tsconfig.json, and then `require()` the paths, which will be typed as `any`.
-
-`tsconfig.json`
-
-```json
-{
-    "tstl": {
-        "noResolvePaths": ["math2d"]
-    }
-}
-```
-
-`some-file.ts`
-
-```typescript
-const math2d = require('math2d');
-```
-
-### Noise
-
-The `noise` module has mostly-complete type definitions. A couple notes on usage due to the limitations of typescript
-
-The `noise.var` function is named `noise.var_get` since `var` is a reserved word in typscript. It will be emitted as `noise.var` thanks to a [@customName compiler annotation](https://typescripttolua.github.io/docs/advanced/compiler-annotations/#customname).
-
-typescript
-
-```ts
-import * as noise from "noise";
-let x = noise.var_get('x');
-```
-
-output lua
-
-```lua
-local noise = require("noise")
-local x = noise.var("x")
-```
-
-Noise values have operator overloads for common arithmetic operations, however Typescript does not support operator overloading. These are implemented as [Operator map types](https://typescripttolua.github.io/docs/advanced/language-extensions#operator-map-types) in the noise library, which will emit as regular operators in lua. Available operators are named following lua conventions for overloaded operators without the preceding double-underscore:
-
-- Addition: `noise.add`
-- Subraction: `noise.sub`
-- Multiplication: `noise.mul`
-- Division: `noise.div`
-- Unary Negation: `noise.unm`
-- Exponentiation: `noise.pow`
-
-typescript
-
-```ts
-let x = noise.var_get('x');
-let y = noise.var_get('y');
-let sum = noise.add(x, y);
-```
-
-Output lua
-
-```lua
-local x = noise.var("x")
-local y = noise.var("y")
-local sum = x + y;
-```
+The `noise` lualib definitions were previous present in this library. However, as of version 2.0.7, `noise.lua` was [removed from lualib in the factorio-data repo](https://github.com/wube/factorio-data/commit/7522d3763e76e09ce1a46cba676dfc2b6d12b127). This was accompanied by many of the required supporting types being removed from the prototype definitions, and therefore the noise definitions have been removed from this library, at least temporarily.
