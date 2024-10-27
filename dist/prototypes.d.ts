@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.110
-// API version 5
+// Factorio version 2.0.11
+// API version 6
 
 declare namespace prototype {
 /**
@@ -13,14 +13,13 @@ declare namespace prototype {
   type = "accumulator",
   name = "accumulator",
   icon = "__base__/graphics/icons/accumulator.png",
-  icon_size = 32,
   flags = {"placeable-neutral", "player-creation"},
   minable = {mining_time = 0.1, result = "accumulator"},
+  fast_replaceable_group = "accumulator",
   max_health = 150,
   corpse = "accumulator-remnants",
   collision_box = {{-0.9, -0.9}, {0.9, 0.9}},
   selection_box = {{-1, -1}, {1, 1}},
-  drawing_box = {{-1, -1.5}, {1, 1}},
   energy_source =
   {
     type = "electric",
@@ -29,32 +28,40 @@ declare namespace prototype {
     input_flow_limit = "300kW",
     output_flow_limit = "300kW"
   },
-  picture = accumulator_picture(),
-  charge_animation = accumulator_charge(),
-
-  charge_cooldown = 30,
-  charge_light = {intensity = 0.3, size = 7, color = {r = 1.0, g = 1.0, b = 1.0}},
-  discharge_animation = accumulator_discharge(),
-  discharge_cooldown = 60,
-  discharge_light = {intensity = 0.7, size = 7, color = {r = 1.0, g = 1.0, b = 1.0}},
-  vehicle_impact_sound =  { filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65 },
+  chargable_graphics =
+  {
+    picture = accumulator_picture(),
+    charge_animation = accumulator_charge(),
+    charge_cooldown = 30,
+    discharge_animation = accumulator_discharge(),
+    discharge_cooldown = 60
+  },
+  water_reflection = accumulator_reflection(),
   working_sound =
   {
-    sound =
+    main_sounds =
     {
-      filename = "__base__/sound/accumulator-working.ogg",
-      volume = 1
+      {
+        sound = {filename = "__base__/sound/accumulator-working.ogg", volume = 0.4, modifiers = volume_multiplier("main-menu", 1.44)},
+        match_volume_to_activity = true,
+        activity_to_volume_modifiers = {offset = 2, inverted = true},
+        fade_in_ticks = 4,
+        fade_out_ticks = 20
+      },
+      {
+        sound = {filename = "__base__/sound/accumulator-discharging.ogg", volume = 0.4, modifiers = volume_multiplier("main-menu", 1.44)},
+        match_volume_to_activity = true,
+        activity_to_volume_modifiers = {offset = 1},
+        fade_in_ticks = 4,
+        fade_out_ticks = 20
+      }
     },
-    idle_sound =
-    {
-      filename = "__base__/sound/accumulator-idle.ogg",
-      volume = 0.4
-    },
-    max_sounds_per_type = 5
+    idle_sound = {filename = "__base__/sound/accumulator-idle.ogg", volume = 0.35},
+    max_sounds_per_type = 3,
+    audible_distance_modifier = 0.5
   },
 
-  circuit_wire_connection_point = circuit_connector_definitions["accumulator"].points,
-  circuit_connector_sprites = circuit_connector_definitions["accumulator"].sprites,
+  circuit_connector = circuit_connector_definitions["accumulator"],
   circuit_wire_max_distance = default_circuit_wire_max_distance,
 
   default_output_signal = {type = "virtual", name = "signal-A"}
@@ -62,23 +69,8 @@ declare namespace prototype {
 ```
  */
 interface AccumulatorPrototype extends EntityWithOwnerPrototype {
-    charge_animation?: Animation;
-    /**
-     * Count of ticks to preserve the animation even when the charging ends. Used to prevent rapid blinking of the accumulator with unstable need to use it.
-     */
-    charge_cooldown: uint16;
-    /**
-     * Only loaded if `charge_animation` is defined.
-     */
-    charge_light?: LightDefinition;
-    /**
-     * The pictures displayed for circuit connections to this accumulator.
-     */
-    circuit_connector_sprites?: CircuitConnectorSprites;
-    /**
-     * Defines how wires visually connect to this accumulator.
-     */
-    circuit_wire_connection_point?: WireConnectionPoint;
+    chargable_graphics?: ChargableGraphics;
+    circuit_connector?: CircuitConnectorDefinition;
     /**
      * The maximum circuit wire distance for this entity.
      */
@@ -87,22 +79,12 @@ interface AccumulatorPrototype extends EntityWithOwnerPrototype {
      * The name of the signal that is the default for when an accumulator is connected to the circuit network.
      */
     default_output_signal?: SignalIDConnector;
-    discharge_animation?: Animation;
-    /**
-     * How long (in ticks) the animation will last after discharge has been initialized.
-     */
-    discharge_cooldown: uint16;
-    /**
-     * Only loaded if `discharge_animation` is defined.
-     */
-    discharge_light?: LightDefinition;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
     /**
      * The capacity of the energy source buffer specifies the capacity of the accumulator.
      */
     energy_source: ElectricEnergySource;
-    picture?: Sprite;
 }
 /**
  * This prototype definition is used for the in-game achievements.
@@ -116,12 +98,11 @@ interface AccumulatorPrototype extends EntityWithOwnerPrototype {
 }
 ```
  */
-interface AchievementPrototype extends PrototypeBase {
+interface AchievementPrototype extends Prototype {
     /**
      * If this is set to `false`, it is not possible to complete the achievement on the peaceful difficulty setting or when the enemy base generation settings have been changed.
      */
     allowed_without_fight?: bool;
-    hidden?: bool;
     /**
      * Path to the icon file.
      *
@@ -129,13 +110,11 @@ interface AchievementPrototype extends PrototypeBase {
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * The base game uses 128px icons for achievements.
+     *
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
@@ -147,12 +126,70 @@ interface AchievementPrototype extends PrototypeBase {
      */
     steam_stats_name?: string;
 }
+interface AchievementPrototypeWithCondition extends AchievementPrototype {
+    objective_condition: 'game-finished' | 'rocket-launched';
+}
 /**
  * Used by {@link discharge defense | https://wiki.factorio.com/Discharge_defense} and {@link personal laser defense | https://wiki.factorio.com/Personal_laser_defense}.
  */
 interface ActiveDefenseEquipmentPrototype extends EquipmentPrototype {
     attack_parameters: AttackParameters;
     automatic: bool;
+}
+/**
+ * The abstract base of all active trigger prototypes. Active triggers are a special type of trigger delivery mechanism that function of a period of time and do not result in the creation or deletion of entities to function. They are intended to be short-lived objects associated with a surface and cannot be cancelled until they self-destruct. Active triggers support migrations and prototype changes, but require their own named prototype to function.
+ */
+interface ActiveTriggerPrototype extends Prototype {
+}
+interface AgriculturalTowerPrototype extends EntityWithOwnerPrototype {
+    arm_extending_sound?: InterruptibleSound;
+    arm_extending_sound_source?: string;
+    central_orienting_sound?: InterruptibleSound;
+    central_orienting_sound_source?: string;
+    circuit_connector?: CircuitConnectorDefinition;
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    crane: AgriculturalCraneProperties;
+    crane_energy_usage: Energy;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
+    energy_source: EnergySource;
+    energy_usage: Energy;
+    graphics_set?: CraftingMachineGraphicsSet;
+    grappler_extending_sound?: InterruptibleSound;
+    grappler_extending_sound_source?: string;
+    grappler_orienting_sound?: InterruptibleSound;
+    grappler_orienting_sound_source?: string;
+    /**
+     * Must be positive.
+     */
+    growth_grid_tile_size?: uint32;
+    harvesting_procedure_points?: Vector3D[];
+    harvesting_sound?: Sound;
+    input_inventory_size: ItemStackIndex;
+    output_inventory_size?: ItemStackIndex;
+    planting_procedure_points?: Vector3D[];
+    planting_sound?: Sound;
+    /**
+     * Must be positive.
+     */
+    radius: double;
+    radius_visualisation_picture?: Sprite;
+    /**
+     * Must be >= 0 and < 1.
+     */
+    random_growth_offset?: double;
+}
+interface AirbornePollutantPrototype extends Prototype {
+    affects_evolution: bool;
+    /**
+     * If true, large amounts of this pollution will cause water tiles to turn a sickly green.
+     */
+    affects_water_tint: bool;
+    chart_color: Color;
+    icon: Sprite;
 }
 /**
  * This prototype is used to make sound while playing the game. This includes the game's {@link music | https://store.steampowered.com/app/436090/Factorio__Soundtrack/}, composed by Daniel James Taylor.
@@ -175,44 +212,60 @@ interface AmbientSound {
      */
     name: string;
     /**
-     * The sound file and volume.
+     * Track without a planet is bound to space platforms.
      */
-    sound: Sound;
+    planet?: SpaceLocationID;
     /**
-     * Lets the game know in what instances the audio file is played.
+     * Static music track.
+     *
+     * One of `sound` or `variable_sound` must be defined. Both cannot be defined together.
      */
-    track_type: /**
-     * This track is only played in the main menu.
-     */
-    'menu-track' | /**
-     * This track is played interleaved (alternating) with `"interlude"` tracks.
-     */
-    'main-track' | /**
-     * This track is considered a main track, with no functional difference to `"main-track"`.
-     */
-    'early-game' | /**
-     * This track is considered a main track, with no functional difference to `"main-track"`.
-     */
-    'late-game' | /**
-     * This track is played in between the main tracks.
-     */
-    'interlude';
+    sound?: Sound;
+    track_type: AmbientSoundType;
     /**
      * Specification of the type of the prototype.
      */
     type: 'ambient-sound';
+    /**
+     * Variable music track.
+     *
+     * One of `sound` or `variable_sound` must be defined. Both cannot be defined together.
+     */
+    variable_sound?: VariableAmbientSoundVariableSound;
+    /**
+     * Cannot be less than zero.
+     *
+     * Cannot be defined if `track_type` is `"hero-track"`.
+     */
     weight?: double;
 }
 /**
  * An ammo category. Each weapon has an ammo category, and can use any ammo with the same ammo category. Ammo categories can also be upgraded by technologies.
  */
-interface AmmoCategory extends PrototypeBase {
+interface AmmoCategory extends Prototype {
     bonus_gui_order?: Order;
+    /**
+     * Path to the icon file.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon?: FileName;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    icons?: IconData[];
 }
 /**
  * Ammo used for a gun.
  */
 interface AmmoItemPrototype extends ItemPrototype {
+    ammo_category: AmmoCategoryID;
     /**
      * When using a plain {@link AmmoType | prototype:AmmoType} (no array), the ammo type applies to everything (`"default"`).
      *
@@ -227,17 +280,20 @@ interface AmmoItemPrototype extends ItemPrototype {
      * Amount of extra time (in ticks) it takes to reload the weapon after depleting the magazine. Must be >= `0`.
      */
     reload_time?: float;
+    shoot_protected?: bool;
 }
 /**
  * A turret that consumes {@link ammo items | prototype:AmmoItemPrototype}.
  */
 interface AmmoTurretPrototype extends TurretPrototype {
-    automated_ammo_count: ItemCountType;
     /**
      * Shift of the "alt-mode icon" relative to the turret's position.
      */
-    entity_info_icon_shift?: Vector;
+    automated_ammo_count: ItemCountType;
+    energy_per_shot?: Energy;
+    energy_source?: ElectricEnergySource;
     inventory_size: ItemStackIndex;
+    prepare_with_no_ammo?: bool;
 }
 /**
  * Specifies an animation that can be used with {@link LuaRendering::draw_animation | runtime:LuaRendering::draw_animation} at runtime.
@@ -255,6 +311,10 @@ interface AnimationPrototype {
      * Only loaded if `layers` is not defined.
      */
     apply_runtime_tint?: bool;
+    /**
+     * Only loaded if `layers` is not defined.
+     */
+    apply_special_effect?: bool;
     /**
      * Only loaded if `layers` is not defined.
      */
@@ -292,11 +352,15 @@ interface AnimationPrototype {
      */
     draw_as_shadow?: bool;
     /**
-     * Only loaded if `layers` is not defined. Mandatory if `stripes` is not defined.
+     * Only loaded if `layers` is not defined. Mandatory if neither `stripes` nor `filenames` are defined.
      *
      * The path to the sprite file to use.
      */
     filename?: FileName;
+    /**
+     * Only loaded if neither `layers` nor `stripes` are defined.
+     */
+    filenames?: FileName[];
     /**
      * Only loaded if `layers` is not defined.
      */
@@ -320,15 +384,13 @@ interface AnimationPrototype {
     /**
      * Only loaded if `layers` is not defined. Mandatory if `size` is not defined.
      *
-     * Height of one frame in pixels, from 0-8192.
+     * Height of one frame in pixels, from 0-4096.
      */
     height?: SpriteSizeType;
     /**
      * Only loaded if `layers` is not defined.
-     *
-     * If this property exists and high resolution sprites are turned on, this is used to load the Animation.
      */
-    hr_version?: Animation;
+    invert_colors?: bool;
     /**
      * If this property is present, all Animation definitions have to be placed as entries in the array, and they will all be loaded from there. `layers` may not be an empty table. Each definition in the array may also have the `layers` property.
      *
@@ -344,9 +406,13 @@ interface AnimationPrototype {
      */
     line_length?: uint32;
     /**
+     * Only loaded if `layers` is not defined. Mandatory if `filenames` is defined.
+     */
+    lines_per_file?: uint32;
+    /**
      * Only loaded if `layers` is not defined.
      *
-     * Minimal mode is entered when mod loading fails. You are in it when you see the gray box after (part of) the loading screen that tells you a mod error ({@link Example | https://cdn.discordapp.com/attachments/340530709712076801/532315796626472972/unknown.png}). Modders can ignore this property.
+     * Minimal mode is entered when mod loading fails. You are in it when you see the gray box after (part of) the loading screen that tells you a mod error. Modders can ignore this property.
      */
     load_in_minimal_mode?: bool;
     /**
@@ -397,7 +463,11 @@ interface AnimationPrototype {
     /**
      * Only loaded if `layers` is not defined.
      */
-    run_mode?: 'forward' | 'backward' | 'forward-then-backward';
+    rotate_shift?: bool;
+    /**
+     * Only loaded if `layers` is not defined.
+     */
+    run_mode?: AnimationRunMode;
     /**
      * Only loaded if `layers` is not defined.
      *
@@ -413,25 +483,45 @@ interface AnimationPrototype {
     /**
      * Only loaded if `layers` is not defined.
      *
-     * The width and height of one frame. If this is a tuple, the first member of the tuple is the width and the second is the height. Otherwise the size is both width and height. Width and height may only be in the range of 0-8192.
+     * The width and height of one frame. If this is a tuple, the first member of the tuple is the width and the second is the height. Otherwise the size is both width and height. Width and height may only be in the range of 0-4096.
      */
     size?: SpriteSizeType | [
         SpriteSizeType,
         SpriteSizeType
     ];
     /**
+     * Only loaded if `layers` is not defined and if `filenames` is defined.
+     */
+    slice?: uint32;
+    /**
      * Only loaded if `layers` is not defined.
      */
     stripes?: Stripe[];
     /**
      * Only loaded if `layers` is not defined.
+     *
+     * Provides hint to sprite atlas system, so it can try to put sprites that are intended to be used at the same locations to the same sprite atlas.
+     */
+    surface?: SpriteUsageSurfaceHint;
+    /**
+     * Only loaded if `layers` is not defined.
      */
     tint?: Color;
+    /**
+     * Only loaded if `layers` is not defined.
+     */
+    tint_as_overlay?: bool;
     type: 'animation';
+    /**
+     * Only loaded if `layers` is not defined.
+     *
+     * Provides hint to sprite atlas system, so it can pack sprites that are related to each other to the same sprite atlas.
+     */
+    usage?: SpriteUsageHint;
     /**
      * Only loaded if `layers` is not defined. Mandatory if `size` is not defined.
      *
-     * Width of one frame in pixels, from 0-8192.
+     * Width of one frame in pixels, from 0-4096.
      */
     width?: SpriteSizeType;
     /**
@@ -467,18 +557,35 @@ interface ArithmeticCombinatorPrototype extends CombinatorPrototype {
  * Armor to wear on your in-game {@link character | prototype:CharacterPrototype} for defense and buffs.
  */
 interface ArmorPrototype extends ToolPrototype {
+    collision_box?: BoundingBox;
+    drawing_box?: BoundingBox;
     /**
      * Name of the {@link EquipmentGridPrototype | prototype:EquipmentGridPrototype} that this armor has.
      */
     equipment_grid?: EquipmentGridID;
     /**
+     * Only loaded if `provides_flight` is `true`.
+     */
+    flight_sound?: InterruptibleSound;
+    /**
      * By how many slots the inventory of the player is expanded when the armor is worn.
      */
     inventory_size_bonus?: ItemStackIndex;
     /**
+     * Only loaded if `provides_flight` is `true`.
+     */
+    landing_sound?: Sound;
+    moving_sound?: Sound;
+    provides_flight?: bool;
+    /**
      * What amount of damage the armor takes on what type of damage is incoming.
      */
     resistances?: Resistance[];
+    steps_sound?: Sound;
+    /**
+     * Only loaded if `provides_flight` is `true`.
+     */
+    takeoff_sound?: Sound;
 }
 /**
  * The arrows used for example in the campaign, they are literally just arrows.
@@ -509,19 +616,11 @@ interface ArrowPrototype extends EntityPrototype {
     arrow_picture: Sprite;
     blinking?: bool;
     circle_picture?: Sprite;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
 }
 /**
  * The entity spawned by the {@link artillery targeting remote | https://wiki.factorio.com/Artillery_targeting_remote}.
  */
 interface ArtilleryFlarePrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     creation_shift?: Vector;
     /**
      * How long this flare stays alive after `shots_per_flare` amount of shots have been shot at it.
@@ -539,13 +638,13 @@ interface ArtilleryFlarePrototype extends EntityPrototype {
     /**
      * Picture variation count and individual frame count must be equal to shadow variation count.
      */
-    pictures: AnimationVariations;
+    pictures?: AnimationVariations;
     regular_trigger_effect?: TriggerEffect;
     regular_trigger_effect_frequency?: uint32;
     render_layer?: RenderLayer;
     render_layer_when_on_ground?: RenderLayer;
     /**
-     * The entity with the higher number is selectable before the entity with the lower number. When two entities have the same selection priority, the one with the highest {@link CollisionMask | prototype:CollisionMask} (as determined by the order on that page) is selected.
+     * The entity with the higher number is selectable before the entity with the lower number.
      */
     selection_priority?: uint8;
     /**
@@ -571,10 +670,6 @@ interface ArtilleryProjectilePrototype extends EntityPrototype {
     ```
      */
     collision_box?: BoundingBox;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     final_action?: Trigger;
     height_from_ground?: float;
     map_color: Color;
@@ -599,7 +694,6 @@ interface ArtilleryTurretPrototype extends EntityWithOwnerPrototype {
     base_picture?: Animation4Way;
     base_picture_render_layer?: RenderLayer;
     base_picture_secondary_draw_order?: uint8;
-    base_shift?: Vector;
     /**
      * Only loaded if `cannon_barrel_recoil_shiftings` is loaded.
      */
@@ -611,9 +705,20 @@ interface ArtilleryTurretPrototype extends EntityWithOwnerPrototype {
      */
     cannon_barrel_recoil_shiftings_load_correction_matrix?: Vector3D[];
     cannon_base_pictures?: RotatedSprite;
+    cannon_base_shift: Vector3D;
     cannon_parking_frame_count?: uint16;
+    /**
+     * Must be positive.
+     */
     cannon_parking_speed?: float;
+    circuit_connector?: CircuitConnectorDefinition;
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
     disable_automatic_firing?: bool;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
     /**
      * Name of a {@link GunPrototype | prototype:GunPrototype}.
      */
@@ -631,7 +736,6 @@ interface ArtilleryTurretPrototype extends EntityWithOwnerPrototype {
      */
     manual_range_modifier: double;
     rotating_sound?: InterruptibleSound;
-    rotating_stopped_sound?: Sound;
     turn_after_shooting_cooldown?: uint16;
     turret_rotation_speed: double;
 }
@@ -647,18 +751,20 @@ interface ArtilleryWagonPrototype extends RollingStockPrototype {
      * Only loaded if `cannon_barrel_recoil_shiftings` is loaded.
      */
     cannon_barrel_light_direction?: Vector3D;
-    cannon_barrel_pictures?: RotatedSprite;
+    cannon_barrel_pictures?: RollingStockRotatedSlopedGraphics;
     cannon_barrel_recoil_shiftings?: Vector3D[];
     /**
      * Only loaded if `cannon_barrel_recoil_shiftings` is loaded.
      */
     cannon_barrel_recoil_shiftings_load_correction_matrix?: Vector3D[];
-    cannon_base_pictures?: RotatedSprite;
-    /**
-     * Must match `cannon_base_pictures` frame count.
-     */
-    cannon_base_shiftings?: Vector[];
+    cannon_base_height?: double;
+    cannon_base_pictures?: RollingStockRotatedSlopedGraphics;
+    cannon_base_shift_when_horizontal?: double;
+    cannon_base_shift_when_vertical?: double;
     cannon_parking_frame_count?: uint16;
+    /**
+     * Must be positive.
+     */
     cannon_parking_speed?: float;
     disable_automatic_firing?: bool;
     /**
@@ -674,7 +780,6 @@ interface ArtilleryWagonPrototype extends RollingStockPrototype {
      */
     manual_range_modifier: double;
     rotating_sound?: InterruptibleSound;
-    rotating_stopped_sound?: Sound;
     turn_after_shooting_cooldown?: uint16;
     turret_rotation_speed: double;
 }
@@ -682,14 +787,31 @@ interface ArtilleryWagonPrototype extends RollingStockPrototype {
  * An assembling machine - like the assembling machines 1/2/3 in the game, but you can use your own recipe categories.
  */
 interface AssemblingMachinePrototype extends CraftingMachinePrototype {
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
+    ];
     /**
-     * Shift of the "alt-mode icon" relative to the machine's center.
+     * The maximum circuit wire distance for this entity.
      */
-    entity_info_icon_shift?: Vector;
+    circuit_wire_max_distance?: double;
+    default_recipe_finished_signal?: SignalIDConnector;
+    default_working_signal?: SignalIDConnector;
+    /**
+     * Defaults to true if fixed_recipe is not given.
+     */
+    disabled_when_recipe_not_researched?: bool;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
+    enable_logistic_control_behavior?: bool;
+    fixed_quality?: QualityID;
     /**
      * The preset recipe of this machine. This machine does not show a recipe selection if this is set. The base game uses this for the {@link rocket silo | https://wiki.factorio.com/Rocket_silo}.
      */
     fixed_recipe?: RecipeID;
+    fluid_boxes_off_when_no_fluid_recipe?: bool;
     /**
      * The locale key of the title of the GUI that is shown when the player opens the assembling machine. May not be longer than 200 characters.
      */
@@ -701,10 +823,93 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
      */
     ingredient_count?: uint8;
 }
+interface AsteroidChunkPrototype extends Prototype {
+    collision_box?: SimpleBoundingBox;
+    dying_trigger_effect?: TriggerEffect;
+    graphics_set?: AsteroidGraphicsSet;
+    hide_from_signal_gui?: bool;
+    /**
+     * Path to the icon file.
+     *
+     * Mandatory if `icons` is not defined.
+     */
+    icon?: FileName;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    icons?: IconData[];
+    minable?: MinableProperties;
+}
+interface AsteroidCollectorPrototype extends EntityWithOwnerPrototype {
+    arm_angular_speed_cap_base?: float;
+    arm_angular_speed_cap_quality_scaling?: float;
+    arm_color_gradient?: Color[];
+    arm_count_base?: uint32;
+    arm_count_quality_scaling?: uint32;
+    arm_energy_usage: Energy;
+    arm_extend_sound?: Sound;
+    arm_inventory_size?: ItemStackIndex;
+    arm_inventory_size_quality_increase?: ItemStackIndex;
+    arm_retract_sound?: Sound;
+    /**
+     * If `arm_energy_usage` is not met, attempts to move slower at the cost of `arm_slow_energy_usage`.
+     */
+    arm_slow_energy_usage: Energy;
+    arm_speed_base?: float;
+    arm_speed_quality_scaling?: float;
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
+    ];
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    collection_box_offset?: float;
+    /**
+     * Must be positive.
+     */
+    collection_radius: double;
+    deposit_radius?: float;
+    deposit_sound?: Sound;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
+    energy_source: ElectricEnergySource | VoidEnergySource;
+    energy_usage_quality_scaling?: float;
+    graphics_set: AsteroidCollectorGraphicsSet;
+    head_collection_radius?: float;
+    held_items_display_count?: uint8;
+    held_items_offset?: float;
+    held_items_spread?: float;
+    inventory_size?: ItemStackIndex;
+    inventory_size_quality_increase?: ItemStackIndex;
+    minimal_arm_swing_segment_retraction?: uint32;
+    munch_sound?: Sound;
+    passive_energy_usage: Energy;
+    radius_visualisation_picture?: Sprite;
+    tether_size?: float;
+    unpowered_arm_speed_scale?: float;
+}
+interface AsteroidPrototype extends EntityWithOwnerPrototype {
+    /**
+     * Emissions cannot be larger than zero, asteroids cannot produce pollution.
+     */
+    emissions_per_second?: Record<AirbornePollutantID, double>;
+    graphics_set?: AsteroidGraphicsSet;
+    mass?: double;
+}
 /**
  * A setting in the map creation GUI. Used by the {@link autoplace system | prototype:AutoplaceSpecification::control}.
  */
-interface AutoplaceControl extends PrototypeBase {
+interface AutoplaceControl extends Prototype {
     /**
      * Whether there is an "enable" checkbox for the autoplace control in the map generator GUI. If this is false, the autoplace control cannot be disabled from the GUI.
      */
@@ -712,7 +917,7 @@ interface AutoplaceControl extends PrototypeBase {
     /**
      * Controls in what tab the autoplace is shown in the map generator GUI.
      */
-    category: 'resource' | 'terrain' | 'enemy';
+    category: 'resource' | 'terrain' | 'cliff' | 'enemy';
     /**
      * Sets whether this control's richness can be changed. The map generator GUI will only show the richness slider when the `category` is `"resource"`.
      *
@@ -734,6 +939,10 @@ interface BeaconPrototype extends EntityWithOwnerPrototype {
      */
     allowed_effects?: EffectTypeLimitation;
     /**
+     * Sets the {@link module categories | prototype:ModuleCategory} that are allowed to be inserted into this machine.
+     */
+    allowed_module_categories?: ModuleCategoryID[];
+    /**
      * Only loaded if `graphics_set` is not defined.
      *
      * The animation for the beacon, when in use.
@@ -746,9 +955,17 @@ interface BeaconPrototype extends EntityWithOwnerPrototype {
      */
     base_picture?: Animation;
     /**
+     * The beacon counter used by effect receiver when deciding which sample to take from `profile`.
+     */
+    beacon_counter?: 'total' | 'same_type';
+    /**
      * The multiplier of the module's effects, when shared between neighbors.
      */
     distribution_effectivity: double;
+    /**
+     * Must be 0 or positive.
+     */
+    distribution_effectivity_bonus_per_quality_level?: double;
     energy_source: ElectricEnergySource | VoidEnergySource;
     /**
      * The constant power usage of this beacon.
@@ -762,9 +979,24 @@ interface BeaconPrototype extends EntityWithOwnerPrototype {
      */
     graphics_set?: BeaconGraphicsSet;
     /**
-     * The number of module slots in this beacon and their icon positions.
+     * The number of module slots in this beacon.
      */
-    module_specification: ModuleSpecification;
+    module_slots: ItemStackIndex;
+    /**
+     * Affects animation speed.
+     */
+    perceived_performance?: PerceivedPerformance;
+    /**
+     * Extra multiplier applied to the effects received from beacon by the effect receiver based on amount of beacons that are in range of that effect receiver.
+     *
+     * If there are more beacons that reach the effect receiver than there are entries in this array, then the last entry in the array is used for the multiplier.
+     *
+     * If this is not defined, then an implicit profile of `{1}` will be used.
+     * @example ```
+    profile = {1, 0} -- entities do not receive any effects when they are in range of more than one beacon
+    ```
+     */
+    profile?: double[];
     radius_visualisation_picture?: Sprite;
     /**
      * The maximum distance that this beacon can supply its neighbors with its module's effects. Max distance is 64.
@@ -781,55 +1013,13 @@ interface BeamPrototype extends EntityPrototype {
      */
     action_triggered_automatically?: bool;
     /**
-     * Body segment of the beam. Must have at least 1 variation.
-     */
-    body: AnimationVariations;
-    body_light?: AnimationVariations;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    /**
      * Damage interval can't be 0. A value of 1 will cause the attack to be applied each tick.
      */
     damage_interval: uint32;
-    /**
-     * End point of the beam.
-     */
-    ending?: Animation;
-    ending_light?: Animation;
-    /**
-     * Only loaded if `start_light`, `ending_light`, `head_light`, `tail_light` and `body_light` are not defined.
-     */
-    ground_light_animations?: BeamAnimationSet;
-    /**
-     * Head segment of the beam.
-     */
-    head: Animation;
-    head_light?: Animation;
-    /**
-     * Only loaded if `start_light`, `ending_light`, `head_light`, `tail_light` and `body_light` are not defined.
-     *
-     * Lights are additively accumulated onto a light-map, which is {@link multiplicatively rendered | https://forums.factorio.com/viewtopic.php?p=435042#p435042} on the game world.
-     */
-    light_animations?: BeamAnimationSet;
-    random_end_animation_rotation?: bool;
+    graphics_set: BeamGraphicsSet;
     random_target_offset?: bool;
-    /**
-     * Start point of the beam.
-     */
-    start?: Animation;
-    start_light?: Animation;
-    /**
-     * Tail segment of the beam.
-     *
-     * All animations must have the same number of frames: Tail must have same number of frames as start, ending, head, body, start_light, ending_light, head_light, tail_light and body_light.
-     */
-    tail: Animation;
-    tail_light?: Animation;
     target_offset?: Vector;
-    transparent_start_end_animations?: bool;
-    width: double;
+    width: float;
 }
 /**
  * Used by {@link belt immunity equipment | https://wiki.factorio.com/Belt_immunity_equipment}.
@@ -865,29 +1055,11 @@ interface BlueprintBookPrototype extends ItemWithInventoryPrototype {
  */
 interface BlueprintItemPrototype extends SelectionToolPrototype {
     /**
-     * This property is parsed, but then ignored.
+     * The {@link SelectionModeData::mode | prototype:SelectionModeData::mode} is hardcoded to `"blueprint"`.
+     *
+     * The filters are parsed, but then ignored and forced to be empty.
      */
-    alt_entity_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_entity_filters?: EntityID[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_entity_type_filters?: string[];
-    /**
-     * This property is hardcoded to `"blueprint"`.
-     */
-    alt_selection_mode?: SelectionModeFlags;
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_tile_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_tile_filters?: TileID[];
+    alt_select: SelectionModeData;
     /**
      * This property is hardcoded to `false`.
      */
@@ -897,21 +1069,11 @@ interface BlueprintItemPrototype extends SelectionToolPrototype {
      */
     draw_label_for_cursor_render?: bool;
     /**
-     * This property is parsed, but then ignored.
+     * The {@link SelectionModeData::mode | prototype:SelectionModeData::mode} is hardcoded to `"blueprint"`.
+     *
+     * The filters are parsed, but then ignored and forced to be empty.
      */
-    entity_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    entity_filters?: EntityID[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    entity_type_filters?: string[];
-    /**
-     * This property is hardcoded to `"blueprint"`.
-     */
-    selection_mode?: SelectionModeFlags;
+    select: SelectionModeData;
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.
      * @example ```
@@ -919,14 +1081,6 @@ interface BlueprintItemPrototype extends SelectionToolPrototype {
     ```
      */
     stack_size: 1;
-    /**
-     * This property is parsed, but then ignored.
-     */
-    tile_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    tile_filters?: TileID[];
 }
 /**
  * A {@link boiler | https://wiki.factorio.com/Boiler}. It heats fluid and optionally outputs it as a different fluid.
@@ -941,21 +1095,9 @@ interface BoilerPrototype extends EntityWithOwnerPrototype {
     energy_consumption: Energy;
     energy_source: EnergySource;
     /**
-     * Animation that is drawn on top of the `structure` when `burning_cooldown` is larger than 1. The animation alpha can be controlled by the energy source light intensity, depending on `fire_flicker_enabled`.
-     *
-     * The secondary draw order of this is higher than the secondary draw order of `fire_glow`, so this is drawn above `fire_glow`.
-     */
-    fire: BoilerFire;
-    /**
      * If this is set to false, `fire` alpha is always 1 instead of being controlled by the light intensity of the energy source.
      */
     fire_flicker_enabled?: bool;
-    /**
-     * Animation that is drawn on top of the `structure` when `burning_cooldown` is larger than 1. The animation alpha can be controlled by the energy source light intensity, depending on `fire_glow_flicker_enabled`.
-     *
-     * The secondary draw order of this is lower than the secondary draw order of `fire`, so this is drawn below `fire`.
-     */
-    fire_glow: BoilerFireGlow;
     /**
      * If this is set to false, `fire_glow` alpha is always 1 instead of being controlled by the light intensity of the energy source.
      */
@@ -963,34 +1105,28 @@ interface BoilerPrototype extends EntityWithOwnerPrototype {
     /**
      * The input fluid box.
      *
-     * If `mode` is `"heat-water-inside"`, the fluid is heated up directly in this fluidbox.
+     * If `mode` is `"heat-fluid-inside"`, the fluid is heated up directly in this fluidbox.
      */
     fluid_box: FluidBox;
     /**
-     * In the `"heat-water-inside"` mode, fluid in the `fluid_box` is continuously heated from the input temperature up to its {@link FluidPrototype::max_temperature | prototype:FluidPrototype::max_temperature}.
+     * In the `"heat-fluid-inside"` mode, fluid in the `fluid_box` is continuously heated from the input temperature up to its {@link FluidPrototype::max_temperature | prototype:FluidPrototype::max_temperature}.
      *
      * In the `"output-to-separate-pipe"` mode, fluid is transferred from the `fluid_box` to the `output_fluid_box` when enough energy is available to {@link heat | prototype:FluidPrototype::heat_capacity} the input fluid to the `target_temperature`. Setting a filter on the `output_fluid_box` means that instead of the heated input fluid getting moved to the output, it is converted to the filtered fluid in a 1:1 ratio.
      */
-    mode?: 'heat-water-inside' | 'output-to-separate-pipe';
+    mode?: 'heat-fluid-inside' | 'output-to-separate-pipe';
     /**
      * The output fluid box.
      *
      * If `mode` is `"output-to-separate-pipe"` and this has a {@link filter | prototype:FluidBox::filter}, the heated input fluid is converted to the output fluid that is set in the filter (in a 1:1 ratio).
      *
-     * If `mode` is `"heat-water-inside"`, this fluidbox is unused.
+     * If `mode` is `"heat-fluid-inside"`, this fluidbox is unused.
      */
     output_fluid_box: FluidBox;
+    pictures?: BoilerPictureSet;
     /**
-     * Drawn above the `structure`, in the "higher-object-under" {@link RenderLayer | prototype:RenderLayer}. May be useful to correct problems with neighboring pipes overlapping the structure graphics.
+     * Only loaded, and mandatory if `mode` is `"output-to-separate-pipe"`. This is the temperature that the input fluid must reach to be moved to the output fluid box.
      */
-    patch?: BoilerPatch;
-    structure: BoilerStructure;
-    /**
-     * When `mode` is `"output-to-separate-pipe"`, this is the temperature that the input fluid must reach to be moved to the output fluid box.
-     *
-     * When `mode` is `"heat-water-inside"` this is unused. Instead, the fluid {@link max_temperature | prototype:FluidPrototype::max_temperature} is the target temperature for heating the fluid.
-     */
-    target_temperature: double;
+    target_temperature?: float;
 }
 /**
  * This prototype is used for receiving an achievement when the player builds an entity.
@@ -1012,12 +1148,12 @@ interface BuildEntityAchievementPrototype extends AchievementPrototype {
      */
     to_build: EntityID;
     /**
-     * This lets the game know how long into a game, before you can no longer complete the achievement. 0 means infinite time.
+     * The achievement must be completed within this time limit.
      * @example ```
-    until_second = 60 * 60 * 8 --8 hours
+    within = 60 * 60 * 60 * 8 -- 8 hours
     ```
      */
-    until_second?: uint32;
+    within?: MapTick;
 }
 /**
  * An entity that produces power from a burner energy source.
@@ -1048,10 +1184,21 @@ interface BurnerGeneratorPrototype extends EntityWithOwnerPrototype {
      */
     max_power_output: Energy;
     /**
-     * Animation runs at least this fast.
+     * Affects animation speed.
      */
-    min_perceived_performance?: double;
-    performance_to_sound_speedup?: double;
+    perceived_performance?: PerceivedPerformance;
+}
+/**
+ * Set of data affecting tooltips, looks of gui slots etc when {@link burner | prototype:BurnerEnergySource} is not supposed to be burning items but eating them.
+ */
+interface BurnerUsagePrototype extends Prototype {
+    accepted_fuel_key: string;
+    burned_in_key: string;
+    empty_slot_caption: LocalisedString;
+    empty_slot_description?: LocalisedString;
+    empty_slot_sprite: Sprite;
+    icon: Sprite;
+    no_fuel_status?: LocalisedString;
 }
 /**
  * A capsule, for example a {@link combat robot capsule | https://wiki.factorio.com/Combat_robot_capsules} or the {@link raw fish | https://wiki.factorio.com/Raw_fish}.
@@ -1063,6 +1210,18 @@ interface CapsulePrototype extends ItemPrototype {
      */
     radius_color?: Color;
 }
+interface CaptureRobotPrototype extends FlyingRobotPrototype {
+    capture_animation?: Animation;
+    /**
+     * Must be >= 0.001.
+     */
+    capture_speed?: double;
+    destroy_action?: Trigger;
+    /**
+     * Must be >= 0.0.
+     */
+    search_radius?: double;
+}
 /**
  * Entity with specialized properties for acceleration, braking, and turning.
  */
@@ -1070,20 +1229,17 @@ interface CarPrototype extends VehiclePrototype {
     /**
      * Animation speed 1 means 1 frame per tile.
      */
-    animation: RotatedAnimation;
+    animation?: RotatedAnimation;
     /**
-     * Two entities can collide only if they share a layer from the collision mask.
+     * If this car prototype keeps the trunk inventory sorted.
      */
-    collision_mask?: CollisionMask;
+    auto_sort_inventory?: bool;
     consumption: Energy;
     darkness_to_render_light_animation?: float;
     /**
      * Modifies the efficiency of energy transfer from burner output to wheels.
      */
     effectivity: double;
-    /**
-     * Must be a burner energy source when using `"burner"`, otherwise it can also be a void energy source.
-     */
     energy_source: BurnerEnergySource | VoidEnergySource;
     /**
      * The names of the  {@link GunPrototype | prototype:GunPrototype}s this car prototype uses.
@@ -1123,6 +1279,10 @@ interface CarPrototype extends VehiclePrototype {
     tank_driving?: bool;
     track_particle_triggers?: FootstepTriggerEffectList;
     /**
+     * If set to 0 then the car will not have a Logistics tab.
+     */
+    trash_inventory_size?: ItemStackIndex;
+    /**
      * Animation speed 1 means 1 frame per tile.
      */
     turret_animation?: RotatedAnimation;
@@ -1131,6 +1291,64 @@ interface CarPrototype extends VehiclePrototype {
      */
     turret_return_timeout?: uint32;
     turret_rotation_speed?: float;
+}
+interface CargoBayPrototype extends EntityWithOwnerPrototype {
+    /**
+     * Has to be 2 for 2x2 grid.
+     */
+    build_grid_size?: 2;
+    graphics_set?: CargoBayConnectableGraphicsSet;
+    hatch_definitions?: CargoHatchDefinition[];
+    /**
+     * Cannot be 0.
+     */
+    inventory_size_bonus: ItemStackIndex;
+    /**
+     * A special variant which renders on space platforms. If not specified, the game will fall back to the regular graphics set.
+     */
+    platform_graphics_set?: CargoBayConnectableGraphicsSet;
+}
+interface CargoLandingPadPrototype extends EntityWithOwnerPrototype {
+    cargo_station_parameters: CargoStationParameters;
+    circuit_connector?: CircuitConnectorDefinition;
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
+    graphics_set?: CargoBayConnectableGraphicsSet;
+    inventory_size: ItemStackIndex;
+    radar_range?: uint32;
+    /**
+     * Drawn when a robot brings/takes items from this landing pad.
+     */
+    robot_animation?: Animation;
+    /**
+     * Played when a robot brings/takes items from this landing pad. Ignored if `robot_animation` is not defined.
+     */
+    robot_animation_sound?: Sound;
+    /**
+     * The offset from the center of this landing pad where a robot visually brings/takes items.
+     */
+    robot_landing_location_offset?: Vector;
+    robot_opened_duration?: uint8;
+    trash_inventory_size?: ItemStackIndex;
+}
+interface CargoPodPrototype extends EntityWithOwnerPrototype {
+    /**
+     * Has to be of type 'pod-catalogue'.
+     */
+    default_graphic?: ProcessionGraphic;
+    /**
+     * Has to be of type 'pod-catalogue'.
+     */
+    default_shadow_graphic?: ProcessionGraphic;
+    inventory_size: ItemStackIndex;
+    procession_audio_catalogue?: ProcessionAudioCatalogue;
+    procession_graphic_catalogue?: ProcessionGraphicCatalogue;
+    shadow_slave_entity?: EntityID;
+    spawned_container: EntityID;
 }
 /**
  * A {@link cargo wagon | https://wiki.factorio.com/Cargo_wagon}.
@@ -1142,6 +1360,58 @@ interface CargoWagonPrototype extends RollingStockPrototype {
     inventory_size: ItemStackIndex;
 }
 /**
+ * Jumps between targets and applies a {@link Trigger | prototype:Trigger} to them.
+ */
+interface ChainActiveTriggerPrototype extends ActiveTriggerPrototype {
+    /**
+     * The trigger to apply when jumping to a new target.
+     */
+    action?: Trigger;
+    /**
+     * Chance that a new fork will spawn after each jump. `0` for 0% chance and `1` for 100% chance.
+     *
+     * Must be between 0 and 1.
+     */
+    fork_chance?: double;
+    fork_chance_increase_per_quality_level?: double;
+    /**
+     * Tick delay between each jump. `0` means that all jumps are instantaneous.
+     */
+    jump_delay_ticks?: MapTick;
+    /**
+     * Maximum number of forks allowed to spawn for the entire chain.
+     */
+    max_forks?: uint32;
+    /**
+     * Maximum number of forks that can spawn from a single jump.
+     */
+    max_forks_per_jump?: uint32;
+    /**
+     * Max number of jumps per trigger.
+     */
+    max_jumps?: uint32;
+    /**
+     * Max distance jumps are allowed to travel away from the original target.
+     */
+    max_range?: double;
+    /**
+     * Max length of jumps.
+     */
+    max_range_per_jump?: double;
+}
+/**
+ * This prototype is used for receiving an achievement when the player changes to a surface.
+ */
+interface ChangedSurfaceAchievementPrototype extends AchievementPrototype {
+    /**
+     * This will trigger the achievement, if the player changes to this surface.
+     * @example ```
+    surface = "fulgora"
+    ```
+     */
+    surface?: string;
+}
+/**
  * The corpse of a {@link CharacterPrototype | prototype:CharacterPrototype}.
  */
 interface CharacterCorpsePrototype extends EntityPrototype {
@@ -1149,10 +1419,6 @@ interface CharacterCorpsePrototype extends EntityPrototype {
      * Table of key value pairs, the keys are armor names and the values are numbers. The number is the Animation that is associated with the armor, e.g. using `1` will associate the armor with the first Animation in the pictures table.
      */
     armor_picture_mapping?: Record<ItemID, int32>;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     /**
      * Mandatory if `pictures` is not defined.
      */
@@ -1162,6 +1428,9 @@ interface CharacterCorpsePrototype extends EntityPrototype {
      */
     pictures?: AnimationVariations;
     render_layer?: RenderLayer;
+    /**
+     * 0 for infinite.
+     */
     time_to_live: uint32;
 }
 /**
@@ -1174,10 +1443,6 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
      * Name of the character corpse that is spawned when this character dies.
      */
     character_corpse?: EntityID;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     /**
      * Names of the crafting categories the character can craft recipes from. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#recipe-category}. See also {@link RecipeCategory | prototype:RecipeCategory}.
      */
@@ -1193,6 +1458,13 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
      * Must be >= 0.
      */
     enter_vehicle_distance?: double;
+    flying_bob_speed?: float;
+    /**
+     * This collision mask is used when the character is flying.
+     *
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"character/flying"`.
+     */
+    flying_collision_mask?: CollisionMaskConnector;
     /**
      * Triggered when the running animation (`animations`) rolls over the frames defined in `right_footprint_frames` and `left_footprint_frames`.
      */
@@ -1201,6 +1473,14 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
      * Triggered every tick of the running animation.
      */
     footstep_particle_triggers?: FootstepTriggerEffectList;
+    /**
+     * The search radius for a non-colliding position to move the player to if they are grounded mid-flight.  Must be >= 0.
+     */
+    grounded_landing_search_radius?: double;
+    /**
+     * Must be between 1 and 15.
+     */
+    guns_inventory_size?: ItemStackIndex;
     /**
      * Whether this character is moved by belts when standing on them.
      */
@@ -1241,6 +1521,7 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
     ```
      */
     mining_with_tool_particles_animation_positions: float[];
+    moving_sound_animation_positions: float[];
     reach_distance: uint32;
     reach_resource_distance: double;
     /**
@@ -1281,14 +1562,23 @@ interface CliffPrototype extends EntityPrototype {
      * Name of a capsule that has a robot_action to explode cliffs.
      */
     cliff_explosive?: ItemID;
-    cliff_height?: float;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     grid_offset: Vector;
     grid_size: Vector;
     orientations: OrientedCliffPrototypeSet;
+    place_as_crater?: CraterPlacementDefinition;
+}
+/**
+ * A collision layer. Used for {@link collision masks | prototype:CollisionMaskConnector}.
+ *
+ * It's recommend to use underscores instead of dashes in `name` so that the name can easily be used as a table key when defining collision masks.
+ * @example ```
+{
+  type = "collision-layer",
+  name = "is_lower_object"
+}
+```
+ */
+interface CollisionLayerPrototype extends Prototype {
 }
 /**
  * This prototype is used for receiving an achievement when the player has a certain robot follower count.
@@ -1313,12 +1603,12 @@ interface CombatRobotPrototype extends FlyingRobotPrototype {
     destroy_action?: Trigger;
     follows_player?: bool;
     friction?: double;
-    idle: RotatedAnimation;
-    in_motion: RotatedAnimation;
+    idle?: RotatedAnimation;
+    in_motion?: RotatedAnimation;
     light?: LightDefinition;
     range_from_player?: double;
-    shadow_idle: RotatedAnimation;
-    shadow_in_motion: RotatedAnimation;
+    shadow_idle?: RotatedAnimation;
+    shadow_in_motion?: RotatedAnimation;
     time_to_live: uint32;
 }
 /**
@@ -1327,7 +1617,7 @@ interface CombatRobotPrototype extends FlyingRobotPrototype {
 interface CombinatorPrototype extends EntityWithOwnerPrototype {
     /**
      * @example ```
-    active_energy_usage = "1KW"
+    active_energy_usage = "1kW"
     ```
      */
     active_energy_usage: Energy;
@@ -1346,7 +1636,15 @@ interface CombinatorPrototype extends EntityWithOwnerPrototype {
     circuit_wire_max_distance?: double;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
+    /**
+     * Emissions cannot be larger than zero, combinators cannot produce pollution.
+     */
+    emissions_per_second?: Record<AirbornePollutantID, double>;
+    /**
+     * Defines how this combinator gets energy. The emissions set on the energy source are ignored so combinators cannot produce pollution.
+     */
     energy_source: ElectricEnergySource | VoidEnergySource;
+    frozen_patch?: Sprite4Way;
     input_connection_bounding_box: BoundingBox;
     input_connection_points: [
         WireConnectionPoint,
@@ -1369,6 +1667,15 @@ interface CombinatorPrototype extends EntityWithOwnerPrototype {
         Vector
     ];
     sprites?: Sprite4Way;
+}
+interface CompleteObjectiveAchievementPrototype extends AchievementPrototypeWithCondition {
+    /**
+     * The achievement must be completed within this time limit.
+     * @example ```
+    within = 60 * 60 * 60 * 8 -- 8 hours
+    ```
+     */
+    within?: MapTick;
 }
 /**
  * A {@link constant combinator | https://wiki.factorio.com/Constant_combinator}.
@@ -1394,7 +1701,6 @@ interface ConstantCombinatorPrototype extends EntityWithOwnerPrototype {
     circuit_wire_max_distance?: double;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
-    item_slot_count: uint32;
     sprites?: Sprite4Way;
 }
 /**
@@ -1426,6 +1732,7 @@ interface ConstructionRobotPrototype extends RobotWithLogisticInterfacePrototype
      */
     collision_box?: BoundingBox;
     construction_vector: Vector;
+    mined_sound_volume_modifier?: float;
     repairing_sound?: Sound;
     shadow_working?: RotatedAnimation;
     smoke?: Animation;
@@ -1437,24 +1744,14 @@ interface ConstructionRobotPrototype extends RobotWithLogisticInterfacePrototype
  * A generic container, such as a chest. Cannot be rotated.
  */
 interface ContainerPrototype extends EntityWithOwnerPrototype {
-    /**
-     * The pictures displayed for circuit connections to this container.
-     */
-    circuit_connector_sprites?: CircuitConnectorSprites;
-    /**
-     * Defines how wires visually connect to this container.
-     */
-    circuit_wire_connection_point?: WireConnectionPoint;
+    circuit_connector?: CircuitConnectorDefinition;
     /**
      * The maximum circuit wire distance for this container.
      */
     circuit_wire_max_distance?: double;
+    default_status?: EntityStatus;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
-    /**
-     * If the inventory limiter (red X) is visible in the chest's GUI. This does not change the inventory itself ({@link LuaInventory::supports_bar | runtime:LuaInventory::supports_bar} will not change and the bar can still be modified by script).
-     */
-    enable_inventory_bar?: bool;
     /**
      * The number of slots in this container.
      */
@@ -1462,57 +1759,29 @@ interface ContainerPrototype extends EntityWithOwnerPrototype {
     /**
      * Whether the inventory of this container can be filtered (like cargo wagons) or not.
      */
-    inventory_type?: 'with_bar' | 'with_filters_and_bar';
+    inventory_type?: 'normal' | 'with_bar' | 'with_filters_and_bar';
     /**
      * The picture displayed for this entity.
      */
     picture?: Sprite;
-    /**
-     * If the icons of items shown in alt-mode should be scaled to the containers size.
-     */
-    scale_info_icons?: bool;
 }
 /**
  * A copy-paste or cut-paste tool.
  */
 interface CopyPasteToolPrototype extends SelectionToolPrototype {
     /**
-     * This property is parsed, but then ignored.
+     * The filters are parsed, but then ignored and forced to be empty.
      */
-    alt_entity_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_entity_filters?: EntityID[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_entity_type_filters?: string[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_tile_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_tile_filters?: TileID[];
+    alt_select: SelectionModeData;
     /**
      * This property is hardcoded to `false`.
      */
     always_include_tiles?: bool;
     cuts?: bool;
     /**
-     * This property is parsed, but then ignored.
+     * The filters are parsed, but then ignored and forced to be empty.
      */
-    entity_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    entity_filters?: EntityID[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    entity_type_filters?: string[];
+    select: SelectionModeData;
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.
      * @example ```
@@ -1520,14 +1789,6 @@ interface CopyPasteToolPrototype extends SelectionToolPrototype {
     ```
      */
     stack_size: 1;
-    /**
-     * This property is parsed, but then ignored.
-     */
-    tile_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    tile_filters?: TileID[];
 }
 /**
  * Used for corpses, for example the remnants when destroying buildings.
@@ -1544,10 +1805,8 @@ interface CorpsePrototype extends EntityPrototype {
     animation_overlay_final_render_layer?: RenderLayer;
     animation_overlay_render_layer?: RenderLayer;
     animation_render_layer?: RenderLayer;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
+    decay_animation?: RotatedAnimationVariations;
+    decay_frame_transition_duration?: float;
     /**
      * An array of arrays of integers. The inner arrays are called "groups" and must all have the same size.
      */
@@ -1558,8 +1817,10 @@ interface CorpsePrototype extends EntityPrototype {
      * Controls the speed of the animation: `1 ÷ dying_speed = duration of the animation`
      */
     dying_speed?: float;
+    expires?: bool;
     final_render_layer?: RenderLayer;
     ground_patch?: AnimationVariations;
+    ground_patch_decay?: AnimationVariations;
     ground_patch_fade_in_delay?: float;
     ground_patch_fade_in_speed?: float;
     ground_patch_fade_out_duration?: float;
@@ -1583,6 +1844,9 @@ interface CorpsePrototype extends EntityPrototype {
      * Controls how long the corpse takes to fade, as in how long it takes to get from no transparency to full transparency/removed. This time is *not* added to `time_before_removed`, it is instead subtracted from it. So by default, the corpse starts fading about 15 seconds before it gets removed.
      */
     time_before_shading_off?: uint32;
+    underwater_layer_offset?: int8;
+    underwater_patch?: RotatedSprite;
+    use_decay_layer?: bool;
     use_tile_color_for_ground_patch_tint?: bool;
 }
 /**
@@ -1593,26 +1857,12 @@ interface CorpsePrototype extends EntityPrototype {
 interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
     /**
      * Sets the {@link modules | prototype:ModulePrototype} and {@link beacon | prototype:BeaconPrototype} effects that are allowed to be used on this machine.
-     *
-     * Note: If the time to complete a recipe is shorter than one tick, only one craft can be completed per tick, but productivity bonus is applied to the non-limited *completable* work. For a simple example, if a recipe were to take half a tick, only one recipe would be completed, but twice the productivity bonus would occur. The surplus production from productivity is **not** limited to one craft per tick.
      */
     allowed_effects?: EffectTypeLimitation;
     /**
-     * Only loaded if `idle_animation` is defined.
+     * Sets the {@link module categories | prototype:ModuleCategory} that are allowed to be inserted into this machine.
      */
-    always_draw_idle_animation?: bool;
-    /**
-     * The animation played when crafting. When the crafting machine is idle, the animation will be paused.
-     *
-     * When a crafting machine cannot be rotated, only the north rotation of the animation will be used.
-     *
-     * The `animation_speed` of the animation is divided by 2 by the game. For example, the default animation speed of 1 means one animation frame per 2 ticks (30 fps) instead of the usual 60 fps.
-     */
-    animation?: Animation4Way;
-    /**
-     * Productivity bonus that this machine always has.
-     */
-    base_productivity?: float;
+    allowed_module_categories?: ModuleCategoryID[];
     /**
      * A list of {@link recipe categories | prototype:RecipeCategory} this crafting machine can use.
      * @example ```
@@ -1626,11 +1876,11 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
      * Crafting speed has to be positive.
      */
     crafting_speed: double;
-    default_recipe_tint?: DefaultRecipeTint;
     /**
      * Whether the "alt-mode icon" should have a black background.
      */
     draw_entity_info_icon_background?: bool;
+    effect_receiver?: EffectReceiver;
     /**
      * Defines how the crafting machine is powered.
      *
@@ -1644,89 +1894,53 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
     ```
      */
     energy_usage: Energy;
+    fast_transfer_modules_into_module_slots_only?: bool;
     /**
-     * Shift of the "alt-mode icon" relative to the machine's center.
-     */
-    entity_info_icon_shift?: Vector;
-    /**
-     * Can have `off_when_no_fluid_recipe` key that has a {@link bool | prototype:bool} value. `off_when_no_fluid_recipe` defaults to false. `off_when_no_fluid_recipe` is ignored by {@link FurnacePrototype | prototype:FurnacePrototype} and considered to always be false.
-     *
-     * If a crafting machine has fluid boxes *and* `off_when_no_fluid_recipe` is true, the crafting machine can only be rotated when a recipe consuming or producing fluid is set, or it has one of the other properties listed at the top of the page.
+     * The crafting machine's fluid boxes. If an assembling machine has fluid boxes *and* {@link AssemblingMachinePrototype::fluid_boxes_off_when_no_fluid_recipe | prototype:AssemblingMachinePrototype::fluid_boxes_off_when_no_fluid_recipe} is true, the assembling machine can only be rotated when a recipe consuming or producing fluid is set, or if it has one of the other properties listed at the top of this page.
      * @example ```
     fluid_boxes =
     {
       {
         production_type = "input",
-          pipe_picture = assembler2pipepictures(),
-          pipe_covers = pipecoverspictures(),
-          base_area = 10,
-          base_level = -1,
-          pipe_connections = { { type = "input", position = {0, -2} } },
-          secondary_draw_orders = { north = -1 }
+        pipe_picture = assembler2pipepictures(),
+        pipe_covers = pipecoverspictures(),
+        volume = 1000,
+        pipe_connections = {{ flow_direction="input", direction = defines.direction.north, position = {0, -1} }},
+        secondary_draw_orders = { north = -1 }
       },
       {
         production_type = "output",
         pipe_picture = assembler2pipepictures(),
         pipe_covers = pipecoverspictures(),
-        base_area = 10,
-        base_level = 1,
-        pipe_connections = {{ type = "output", position = {0, 2} }},
+        volume = 1000,
+        pipe_connections = {{ flow_direction="output", direction = defines.direction.south, position = {0, 1} }},
         secondary_draw_orders = { north = -1 }
       },
-      off_when_no_fluid_recipe = true
     }
     ```
      */
     fluid_boxes?: FluidBox[];
-    /**
-     * Idle animation must have the same frame count as `animation`. It is used for drawing the machine in the idle state. The animation is frozen on a single frame when the machine is idle.
-     *
-     * This is an animation and not just sprite to make it possible for idle state and working state to match their visuals when the machine switches from one state to another.
-     *
-     * When a crafting machine cannot be rotated, only the north rotation of the idle animation will be used.
-     *
-     * The `animation_speed` of the animation is divided by 2 by the game. For example, the default animation speed of 1 means one animation frame per 2 ticks (30 fps) instead of the usual 60 fps.
-     */
-    idle_animation?: Animation4Way;
+    forced_symmetry?: Mirroring;
+    graphics_set?: CraftingMachineGraphicsSet;
+    graphics_set_flipped?: CraftingMachineGraphicsSet;
+    ignore_output_full?: bool;
     /**
      * Whether the speed of the animation and working visualization should be based on the machine's speed (boosted or slowed by modules).
      */
     match_animation_speed_to_activity?: bool;
     /**
-     * The number of module slots in this machine, and their icon positions.
-     * @example ```
-    module_specification =
-    {
-      module_info_icon_shift =
-      {
-        0,
-        0.8
-      },
-      module_slots = 2
-    }
-    ```
+     * The number of module slots in this machine.
      */
-    module_specification?: ModuleSpecification;
+    module_slots?: ItemStackIndex;
+    /**
+     * Affects animation speed.
+     */
+    perceived_performance?: PerceivedPerformance;
+    production_health_effect?: ProductionHealthEffect;
     /**
      * Controls whether the ingredients of an in-progress recipe are destroyed when mining the machine/changing the recipe. If set to true, the ingredients do not get destroyed. This affects only the ingredients of the recipe that is currently in progress, so those that visually have already been consumed while their resulting product has not yet been produced.
      */
     return_ingredients_on_change?: bool;
-    /**
-     * Whether the "alt-mode icon" should be scaled to the size of the machine.
-     */
-    scale_entity_info_icon?: bool;
-    /**
-     * Only loaded if `shift_animation_waypoints` is defined.
-     */
-    shift_animation_transition_duration?: uint16;
-    /**
-     * Only loaded if `shift_animation_waypoints` is defined.
-     */
-    shift_animation_waypoint_stop_duration?: uint16;
-    /**
-     * Only loaded if one of `shift_animation_waypoint_stop_duration` or `shift_animation_transition_duration` is not 0.
-     */
-    shift_animation_waypoints?: ShiftAnimationWaypoints;
     /**
      * Whether the "alt-mode icon" should be drawn at all.
      */
@@ -1735,27 +1949,51 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
      * Whether the recipe icon should be shown on the map.
      */
     show_recipe_icon_on_map?: bool;
-    /**
-     * Used by {@link WorkingVisualisation::apply_tint | prototype:WorkingVisualisation::apply_tint}.
-     */
-    status_colors?: StatusColors;
-    /**
-     * Used to display different animations when the machine is running, for example tinted based on the current recipe.
-     *
-     * The `animation_speed` of the animation is divided by 2 by the game. For example, the default animation speed of 1 means one animation frame per 2 ticks (30 fps) instead of the usual 60 fps.
-     */
-    working_visualisations?: WorkingVisualisation[];
+    trash_inventory_size?: ItemStackIndex;
+    vector_to_place_result?: Vector;
 }
 /**
- * A curved rail.
+ * This prototype is used for receiving an achievement when the player creates a space platform.
  */
-interface CurvedRailPrototype extends RailPrototype {
-    bending_type?: 'turn';
+interface CreatePlatformAchievementPrototype extends AchievementPrototype {
+    /**
+     * How many space platforms need to be created.
+     */
+    amount?: uint32;
+}
+/**
+ * A curved-A rail.
+ */
+interface CurvedRailAPrototype extends RailPrototype {
+    /**
+     * The {@link collision_box | prototype:EntityPrototype::collision_box} of straight rail is hardcoded to `{{-0.7, -2.516}, {0.7, 2.516}}`.
+     */
+    collision_box?: BoundingBox;
+}
+/**
+ * A curved-B rail.
+ */
+interface CurvedRailBPrototype extends RailPrototype {
+    /**
+     * The {@link collision_box | prototype:EntityPrototype::collision_box} of straight rail is hardcoded to `{{-0.7, -2.441}, {0.7, 2.441}}`.
+     */
+    collision_box?: BoundingBox;
+}
+/**
+ * Custom events share the same namespace as custom inputs and built-in events for subscribing to and raising them.
+ * @example ```
+{
+  type = "custom-event",
+  name = "potato-custom-event"
+}
+```
+ */
+interface CustomEventPrototype extends Prototype {
 }
 /**
  * Used for custom keyboard shortcuts/key bindings in mods. The key associated with the custom input can be changed in the options. This means that `key_sequence` is simply the default key binding.
  */
-interface CustomInputPrototype extends PrototypeBase {
+interface CustomInputPrototype extends Prototype {
     /**
      * A {@link Lua event | runtime:CustomInputEvent} is only raised if the action is "lua".
      */
@@ -1764,6 +2002,10 @@ interface CustomInputPrototype extends PrototypeBase {
      * The alternative key binding for this control. See `key_sequence` for the format.
      */
     alternative_key_sequence?: string;
+    /**
+     * If `true`, when the shortcut is activated, the modifiers used for this shortcut can't be re-used to press something else until unpressed. The example where this is useful is ALT+A to activate spidertron remote, where ALT is consumed, so pressing right mouse button before the ALT is unpressed will not trigger pin creation (ALT + right mouse button), but send the selected unit instead.
+     */
+    block_modifiers?: bool;
     /**
      * Sets whether internal game events associated with the same key sequence should be fired or blocked. If they are fired ("none"), then the custom input event will happen before the internal game event.
      */
@@ -2088,7 +2330,7 @@ interface CustomInputPrototype extends PrototypeBase {
      */
     linked_game_control?: LinkedGameControl;
     /**
-     * Unique textual identification of the prototype. May not contain a dot, nor exceed a length of 200 characters.
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
      *
      * For a list of all names used in vanilla, see {@link data.raw | https://wiki.factorio.com/Data.raw}.
      *
@@ -2099,8 +2341,7 @@ interface CustomInputPrototype extends PrototypeBase {
 /**
  * A damage type. This is used in the {@link damage system | https://wiki.factorio.com/Damage}. {@link A list of built-in damage types can be found here | https://wiki.factorio.com/Damage#Damage_types}.
  */
-interface DamageType extends PrototypeBase {
-    hidden?: bool;
+interface DamageType extends Prototype {
 }
 /**
  * A {@link decider combinator | https://wiki.factorio.com/Decider_combinator}.
@@ -2129,39 +2370,17 @@ interface DeconstructWithRobotsAchievementPrototype extends AchievementPrototype
  * Entity used to signify that the tile below it should be deconstructed.
  */
 interface DeconstructibleTileProxyPrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
 }
 /**
  * A {@link deconstruction planner | https://wiki.factorio.com/Deconstruction_planner}.
  */
 interface DeconstructionItemPrototype extends SelectionToolPrototype {
     /**
-     * This property is parsed, but then ignored.
+     * The {@link SelectionModeData::mode | prototype:SelectionModeData::mode} is hardcoded to `"cancel-deconstruct"`.
+     *
+     * The filters are parsed, but then ignored and forced to be empty.
      */
-    alt_entity_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_entity_filters?: EntityID[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_entity_type_filters?: string[];
-    /**
-     * This property is hardcoded to `"cancel-deconstruct"`.
-     */
-    alt_selection_mode?: SelectionModeFlags;
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_tile_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_tile_filters?: TileID[];
+    alt_select: SelectionModeData;
     /**
      * This property is hardcoded to `false`.
      */
@@ -2171,21 +2390,11 @@ interface DeconstructionItemPrototype extends SelectionToolPrototype {
      */
     entity_filter_count?: ItemStackIndex;
     /**
-     * This property is parsed, but then ignored.
+     * The {@link SelectionModeData::mode | prototype:SelectionModeData::mode} is hardcoded to `"deconstruct"`.
+     *
+     * The filters are parsed, but then ignored and forced to be empty.
      */
-    entity_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    entity_filters?: EntityID[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    entity_type_filters?: string[];
-    /**
-     * This property is hardcoded to `"deconstruct"`.
-     */
-    selection_mode?: SelectionModeFlags;
+    select: SelectionModeData;
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.
      * @example ```
@@ -2197,35 +2406,44 @@ interface DeconstructionItemPrototype extends SelectionToolPrototype {
      * Can't be > 255.
      */
     tile_filter_count?: ItemStackIndex;
-    /**
-     * This property is parsed, but then ignored.
-     */
-    tile_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    tile_filters?: TileID[];
 }
 /**
  * Simple decorative purpose objects on the map, they have no health and some of them are removed when the player builds over. Usually used for grass patches, roots, small plants etc.
  */
-interface DecorativePrototype extends PrototypeBase {
+interface DecorativePrototype extends Prototype {
     autoplace?: AutoplaceSpecification;
     /**
      * Must contain the [0,0] point. Max radius of the collision box is 8.
      */
     collision_box?: BoundingBox;
-    collision_mask?: CollisionMask;
     /**
-     * Loaded only if `render_layer` = "decals".
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"decorative"`.
+     */
+    collision_mask?: CollisionMaskConnector;
+    /**
+     * Loaded only if `render_layer` = "decals". When decoratives are being spawned by {@link EnemySpawnerPrototype::spawn_decoration | prototype:EnemySpawnerPrototype::spawn_decoration} or {@link TurretPrototype::spawn_decoration | prototype:TurretPrototype::spawn_decoration}, decals with `decal_overdraw_priority` greater than 0 will be filtered such that they don't overlap too much. If two or more decals would overlap, only the one with the largest value of `decal_overdraw_priority` is placed.
      */
     decal_overdraw_priority?: uint16;
     grows_through_rail_path?: bool;
+    minimal_separation?: double;
     /**
      * Must contain at least 1 picture.
      */
     pictures: SpriteVariations;
+    placed_effect?: TriggerEffect;
+    /**
+     * When "decals" render layer is used, the decorative is treated as decal. That means it will be rendered within tile layers instead of normal sprite layers.
+     */
     render_layer?: RenderLayer;
+    /**
+     * Can be defined only when decorative is not "decal" (see `render_layer`).
+     */
+    stateless_visualisation?: StatelessVisualisations;
+    /**
+     * Only loaded if `stateless_visualisation` is not defined. Can be defined only when decorative is not "decal" (see `render_layer`).
+     */
+    stateless_visualisation_variations?: StatelessVisualisations[];
+    target_count?: uint16;
     /**
      * Mandatory if `render_layer` = "decals". This int16 is converted to a {@link RenderLayer | prototype:RenderLayer} internally.
      */
@@ -2237,6 +2455,31 @@ interface DecorativePrototype extends PrototypeBase {
     walking_sound?: Sound;
 }
 /**
+ * Delays the delivery of triggered effect by some number of ticks.
+ */
+interface DelayedActiveTriggerPrototype extends ActiveTriggerPrototype {
+    /**
+     * The trigger to apply after `delay` has elapsed.
+     */
+    action: Trigger;
+    /**
+     * If true, the delayed trigger is cancelled if the source entity is destroyed.
+     */
+    cancel_when_source_is_destroyed?: bool;
+    /**
+     * The number of ticks to delay the delivery of the triggered effect. Must be greater than 0.
+     */
+    delay: uint32;
+    /**
+     * The number of times to repeat the delayed trigger.
+     */
+    repeat_count?: uint32;
+    /**
+     * The number of ticks between repeat deliveries of the triggered effect. Must be greater than 0.
+     */
+    repeat_delay?: uint32;
+}
+/**
  * This prototype is used for receiving an achievement, when the player requests and receives enough items using logistic robots.
  */
 interface DeliverByRobotsAchievementPrototype extends AchievementPrototype {
@@ -2246,37 +2489,178 @@ interface DeliverByRobotsAchievementPrototype extends AchievementPrototype {
     amount = 10000
     ```
      */
-    amount: MaterialAmountType;
+    amount: uint32;
+}
+/**
+ * @example ```
+{
+  type = "deliver-category",
+  name = "bullet"
+}
+```
+ */
+interface DeliverCategory {
+    /**
+     * Name of the deliver category.
+     */
+    name: string;
+    type: 'deliver-category';
+}
+/**
+ * @example ```
+{
+  type = "deliver-impact-combination",
+  name = "bullet-organic",
+  deliver_category = "bullet",
+  impact_category = "organic",
+  trigger_effect_item =
+  {
+    type = "play-sound",
+    sound =
+    {
+      category = "weapon",
+      variations = sound_variations("__base__/sound/bullets/bullet-impact-organic", 5, 0.3),
+      aggregation = {max_count = 4, remove = true, count_already_playing = true}
+    }
+  }
+}
+```
+ */
+interface DeliverImpactCombination {
+    deliver_category: string;
+    impact_category: string;
+    /**
+     * Name of the deliver impact combination.
+     */
+    name: string;
+    trigger_effect_item: TriggerEffectItem;
+    type: 'deliver-impact-combination';
+}
+/**
+ * This prototype is used for receiving an achievement when a resource entity is depleted.
+ */
+interface DepleteResourceAchievementPrototype extends AchievementPrototype {
+    /**
+     * How many resource entities need to be depleted.
+     */
+    amount?: uint32;
+    /**
+     * If this is false, the player carries over their statistics from this achievement through all their saves.
+     */
+    limited_to_one_game?: bool;
+}
+interface DestroyCliffAchievementPrototype extends AchievementPrototype {
+    amount?: uint32;
+    /**
+     * If this is false, the player carries over their statistics from this achievement through all their saves.
+     */
+    limited_to_one_game?: bool;
+}
+/**
+ * A display panel prototype to provide a prototype for display panels.
+ */
+interface DisplayPanelPrototype extends EntityWithOwnerPrototype {
+    /**
+     * The background color of the display panel text.
+     */
+    background_color?: Color;
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
+    ];
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
+    /**
+     * The maximum width of the text on the display panel.
+     */
+    max_text_width?: uint32;
+    /**
+     * The display panel's graphics.
+     */
+    sprites?: Sprite4Way;
+    /**
+     * The color of the text on the display panel.
+     */
+    text_color?: Color;
+    /**
+     * The shift of the text on the display panel.
+     */
+    text_shift?: Vector;
 }
 /**
  * This prototype is used for receiving an achievement when the player finishes the game without building a specific entity.
  */
-interface DontBuildEntityAchievementPrototype extends AchievementPrototype {
+interface DontBuildEntityAchievementPrototype extends AchievementPrototypeWithCondition {
     amount?: uint32;
     /**
      * This will disable the achievement, if this entity is placed. If you finish the game without building this entity, you receive the achievement.
      * @example ```
-    dont_build = {"stack-inserter", "fluid-wagon"}
+    dont_build = {"bulk-inserter", "fluid-wagon"}
     ```
      */
     dont_build: EntityID | EntityID[];
+    /**
+     * If you research technology using one of specified items before building entity, you receive the achievement.
+     */
+    research_with?: ItemID | ItemID[];
 }
 /**
  * This prototype is used for receiving an achievement when the player finishes the game without crafting more than a set amount.
  */
-interface DontCraftManuallyAchievementPrototype extends AchievementPrototype {
+interface DontCraftManuallyAchievementPrototype extends AchievementPrototypeWithCondition {
     /**
      * This will disable the achievement, if the player crafts more than this.
      * @example ```
     amount = 111
     ```
      */
-    amount: MaterialAmountType;
+    amount: uint32;
+}
+/**
+ * This prototype is used for receiving an achievement when the player kill first entity using artillery.
+ */
+interface DontKillManuallyAchievementPrototype extends AchievementPrototypeWithCondition {
+    /**
+     * This will disable the achievement, if this entity is killed manually. If you kill this entity with artillery first, you receive the achievement.
+     */
+    to_kill?: EntityID;
+    /**
+     * This will disable the achievement, if this entity type is killed manually. If you kill this entity type with artillery first, you receive the achievement.
+     * @example ```
+    type_not_to_kill = "unit-spawner"
+    ```
+     */
+    type_not_to_kill?: string;
+}
+/**
+ * This prototype is used for receiving an achievement when the player researches with a specific science pack before unlocking another.
+ */
+interface DontResearchBeforeResearchingAchievementPrototype extends AchievementPrototypeWithCondition {
+    /**
+     * This will disable the achievement, if technology unlocking this item is researched before meeting requirements.
+     * @example ```
+    dont_research = {"production-science-pack", "utility-science-pack"}
+    ```
+     */
+    dont_research: ItemID | ItemID[];
+    /**
+     * If you research technology using one of specified items, you receive the achievement.
+     * @example ```
+    research_with = {"metallurgic-science-pack", "electromagnetic-science-pack", "agricultural-science-pack"}
+    ```
+     */
+    research_with: ItemID | ItemID[];
 }
 /**
  * This prototype is used for receiving an achievement when the player finishes the game without receiving energy from a specific energy source.
  */
-interface DontUseEntityInEnergyProductionAchievementPrototype extends AchievementPrototype {
+interface DontUseEntityInEnergyProductionAchievementPrototype extends AchievementPrototypeWithCondition {
     /**
      * This will **not** disable the achievement, if this entity is placed, and you have received any amount of power from it.
      * @example ```
@@ -2303,6 +2687,7 @@ interface EditorControllerPrototype {
     fill_built_entity_energy_buffers: bool;
     generate_neighbor_chunks: bool;
     gun_inventory_size: ItemStackIndex;
+    ignore_surface_conditions: bool;
     instant_blueprint_building: bool;
     instant_deconstruction: bool;
     instant_rail_planner: bool;
@@ -2380,6 +2765,10 @@ interface ElectricPolePrototype extends EntityWithOwnerPrototype {
      * Drawn above the `pictures` when the electric pole is connected to an electric network.
      */
     active_picture?: Sprite;
+    /**
+     * `0` means disable auto-connect.
+     */
+    auto_connect_up_to_n_wires?: uint8;
     connection_points: WireConnectionPoint[];
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
@@ -2393,7 +2782,7 @@ interface ElectricPolePrototype extends EntityWithOwnerPrototype {
      * Max value is 64.
      */
     maximum_wire_distance?: double;
-    pictures: RotatedSprite;
+    pictures?: RotatedSprite;
     radius_visualisation_picture?: Sprite;
     /**
      * The "radius" of this pole's supply area. Corresponds to *half* of the "supply area" in the item tooltip. If this is 3.5, the pole will have a 7x7 supply area.
@@ -2410,17 +2799,38 @@ interface ElectricTurretPrototype extends TurretPrototype {
     energy_source: ElectricEnergySource | VoidEnergySource;
 }
 /**
+ * An elevated curved-A rail.
+ */
+interface ElevatedCurvedRailAPrototype extends CurvedRailAPrototype {
+}
+/**
+ * An elevated curved-B rail.
+ */
+interface ElevatedCurvedRailBPrototype extends CurvedRailBPrototype {
+}
+/**
+ * An elevated half diagonal rail.
+ */
+interface ElevatedHalfDiagonalRailPrototype extends HalfDiagonalRailPrototype {
+}
+/**
+ * An elevated straight rail.
+ */
+interface ElevatedStraightRailPrototype extends StraightRailPrototype {
+}
+/**
  * Can spawn entities. Used for biter/spitter nests.
  */
 interface EnemySpawnerPrototype extends EntityWithOwnerPrototype {
+    absorptions_per_second?: Record<AirbornePollutantID, EnemySpawnerAbsorption>;
     /**
      * If this is true, this entities `is_military_target property` can be changed runtime (on the entity, not on the prototype itself).
      */
     allow_run_time_change_of_is_military_target?: false;
-    animations: AnimationVariations;
     call_for_help_radius: double;
+    captured_spawner_entity?: EntityID;
     dying_sound?: Sound;
-    integration?: SpriteVariations;
+    graphics_set: EnemySpawnerGraphicsSet;
     /**
      * Whether this prototype should be a high priority target for enemy forces. See {@link Military units and structures | https://wiki.factorio.com/Military_units_and_structures}.
      */
@@ -2443,9 +2853,6 @@ interface EnemySpawnerPrototype extends EntityWithOwnerPrototype {
      */
     max_spawn_shift: double;
     min_darkness_to_spawn?: float;
-    pollution_absorption_absolute: double;
-    pollution_absorption_proportional: double;
-    random_animation_offset?: bool;
     /**
      * Array of the {@link entities | prototype:EntityPrototype} that this spawner can spawn and their spawn probabilities. The sum of probabilities is expected to be 1.0. The array must not be empty.
      */
@@ -2453,7 +2860,7 @@ interface EnemySpawnerPrototype extends EntityWithOwnerPrototype {
     /**
      * Decoratives to be created when the spawner is created by the {@link map generator | https://wiki.factorio.com/Map_generator}. Placed when enemies expand if `spawn_decorations_on_expansion` is set to true.
      */
-    spawn_decoration?: CreateDecorativesTriggerEffectItem | CreateDecorativesTriggerEffectItem[];
+    spawn_decoration?: CreateDecorativesTriggerEffectItem[];
     /**
      * Whether `spawn_decoration` should be spawned when enemies {@link expand | https://wiki.factorio.com/Enemies#Expansions}.
      */
@@ -2473,6 +2880,7 @@ interface EnemySpawnerPrototype extends EntityWithOwnerPrototype {
      * What spaces should be between the spawned units.
      */
     spawning_spacing: double;
+    time_to_capture?: uint32;
 }
 /**
  * Used by {@link energy shield | https://wiki.factorio.com/Energy_shield}.
@@ -2489,7 +2897,6 @@ interface EnergyShieldEquipmentPrototype extends EquipmentPrototype {
   name = "entity-ghost",
   icon = "__core__/graphics/icons/mip/ghost-entity.png",
   icon_size = 64,
-  icon_mipmaps = 3,
   build_sound = { { filename = "__core__/sound/build-ghost-small.ogg",  volume = 0.6 } },
   medium_build_sound = { { filename = "__core__/sound/build-ghost-medium.ogg",  volume = 0.7 } },
   large_build_sound = { { filename = "__core__/sound/build-ghost-large.ogg",  volume = 0.7 } },
@@ -2499,21 +2906,13 @@ interface EnergyShieldEquipmentPrototype extends EquipmentPrototype {
 ```
  */
 interface EntityGhostPrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
+    huge_build_animated_sound?: Sound;
+    huge_build_sound?: Sound;
+    large_build_animated_sound?: Sound;
     large_build_sound?: Sound;
+    medium_build_animated_sound?: Sound;
     medium_build_sound?: Sound;
-}
-/**
- * Deprecated in 0.18. The type "particle" has been obsoleted and cannot be created. See {@link ParticlePrototype | prototype:ParticlePrototype} for particles.
- */
-interface EntityParticlePrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
+    small_build_animated_sound?: Sound;
 }
 /**
  * Abstract base of all entities in the game. Entity is nearly everything that can be on the map (except tiles).
@@ -2534,7 +2933,6 @@ interface EntityParticlePrototype extends EntityPrototype {
   inventory_size = 16,
   open_sound = { filename = "__base__/sound/wooden-chest-open.ogg" },
   close_sound = { filename = "__base__/sound/wooden-chest-close.ogg" },
-  vehicle_impact_sound = { filename = "__base__/sound/car-wood-impact.ogg", volume = 1.0 },
   picture =
   {
     filename = "__base__/graphics/entity/wooden-chest/wooden-chest.png",
@@ -2546,7 +2944,7 @@ interface EntityParticlePrototype extends EntityPrototype {
 }
 ```
  */
-interface EntityPrototype extends PrototypeBase {
+interface EntityPrototype extends Prototype {
     /**
      * Names of the entity prototypes this entity prototype can be pasted on to in addition to the standard supported types.
      *
@@ -2559,6 +2957,8 @@ interface EntityPrototype extends PrototypeBase {
     alert_icon_scale?: float;
     alert_icon_shift?: Vector;
     allow_copy_paste?: bool;
+    ambient_sounds?: WorldAmbientSoundDefinition | WorldAmbientSoundDefinition[];
+    ambient_sounds_group?: EntityID;
     /**
      * Used to specify the rules for placing this entity during map generation.
      */
@@ -2584,54 +2984,9 @@ interface EntityPrototype extends PrototypeBase {
      */
     collision_box?: BoundingBox;
     /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     * Some entity types have their own default that differs from the above default. They are listed here:
-     *
-     * - {@link ArrowPrototype | prototype:ArrowPrototype} - no masks
-     * - {@link ArtilleryFlarePrototype | prototype:ArtilleryFlarePrototype} - no masks
-     * - {@link ArtilleryProjectilePrototype | prototype:ArtilleryProjectilePrototype} - no masks
-     * - {@link BeamPrototype | prototype:BeamPrototype} - no masks
-     * - {@link CarPrototype | prototype:CarPrototype} - `{"player-layer", "train-layer", "consider-tile-transitions"}`
-     * - {@link CharacterPrototype | prototype:CharacterPrototype} - `{"player-layer", "train-layer", "consider-tile-transitions"}`
-     * - {@link CharacterCorpsePrototype | prototype:CharacterCorpsePrototype} - no masks
-     * - {@link CliffPrototype | prototype:CliffPrototype} - `{ "item-layer", "object-layer", "player-layer", "water-tile", "not-colliding-with-itself"}`
-     * - {@link CorpsePrototype | prototype:CorpsePrototype} - no masks
-     * - {@link DeconstructibleTileProxyPrototype | prototype:DeconstructibleTileProxyPrototype} - `{"ground-tile"}`
-     * - {@link EntityGhostPrototype | prototype:EntityGhostPrototype} - `{"ghost-layer"}`
-     * - {@link EntityParticlePrototype | prototype:EntityParticlePrototype} - no masks
-     * - {@link ExplosionPrototype | prototype:ExplosionPrototype} - no masks
-     * - {@link FireFlamePrototype | prototype:FireFlamePrototype} - no masks
-     * - {@link FishPrototype | prototype:FishPrototype} - `{"ground-tile", "colliding-with-tiles-only"}`
-     * - {@link FluidStreamPrototype | prototype:FluidStreamPrototype} - no masks
-     * - {@link FlyingRobotPrototype | prototype:FlyingRobotPrototype} - no masks
-     * - {@link FlyingTextPrototype | prototype:FlyingTextPrototype} - no masks
-     * - {@link GatePrototype | prototype:GatePrototype} - `{"item-layer", "object-layer", "player-layer", "water-tile", "train-layer"}`
-     * - {@link HeatPipePrototype | prototype:HeatPipePrototype} - `{"object-layer", "floor-layer", "water-tile"}`
-     * - {@link HighlightBoxEntityPrototype | prototype:HighlightBoxEntityPrototype} - no masks
-     * - {@link ItemEntityPrototype | prototype:ItemEntityPrototype} - `{"item-layer"}`
-     * - {@link ItemRequestProxyPrototype | prototype:ItemRequestProxyPrototype} - no masks
-     * - {@link LandMinePrototype | prototype:LandMinePrototype} - `{"object-layer", "water-tile", "rail-layer"}`
-     * - {@link LinkedBeltPrototype | prototype:LinkedBeltPrototype} - `{"object-layer", "item-layer", "transport-belt-layer", "water-tile"}`
-     * - {@link LoaderPrototype | prototype:LoaderPrototype} - `{"object-layer", "item-layer", "transport-belt-layer", "water-tile"}`
-     * - {@link ParticleSourcePrototype | prototype:ParticleSourcePrototype} - no masks
-     * - {@link PlayerPortPrototype | prototype:PlayerPortPrototype} - `{"object-layer", "floor-layer", "water-tile"}`
-     * - {@link ProjectilePrototype | prototype:ProjectilePrototype} - no masks
-     * - {@link RailPrototype | prototype:RailPrototype} - `{"item-layer", "object-layer",  "rail-layer", "floor-layer", "water-tile"}`
-     * - {@link RailSignalBasePrototype | prototype:RailSignalBasePrototype} - `{"floor-layer", "rail-layer", "item-layer"}`
-     * - {@link ResourceEntityPrototype | prototype:ResourceEntityPrototype} - `{"resource-layer"}`
-     * - {@link RollingStockPrototype | prototype:RollingStockPrototype} - `{"train-layer"}`
-     * - {@link SmokePrototype | prototype:SmokePrototype} - no masks
-     * - {@link SpeechBubblePrototype | prototype:SpeechBubblePrototype} - no masks
-     * - {@link SpiderLegPrototype | prototype:SpiderLegPrototype} - `{"player-layer", "rail-layer"}`
-     * - {@link SplitterPrototype | prototype:SplitterPrototype} - `{"object-layer", "item-layer", "transport-belt-layer", "water-tile"}`
-     * - {@link StickerPrototype | prototype:StickerPrototype} - no masks
-     * - {@link TileGhostPrototype | prototype:TileGhostPrototype} - `{"ghost-layer"}`
-     * - {@link TransportBeltPrototype | prototype:TransportBeltPrototype} - `{"object-layer", "floor-layer", "transport-belt-layer", "water-tile"}`
-     * - {@link UndergroundBeltPrototype | prototype:UndergroundBeltPrototype} - `{"object-layer", "item-layer", "transport-belt-layer", "water-tile"}`
-     * - {@link UnitPrototype | prototype:UnitPrototype} - `{"player-layer", "train-layer", "not-colliding-with-itself"}`
-     * - {@link VehiclePrototype | prototype:VehiclePrototype} - `{"player-layer", "train-layer"}`
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by the entity type.
      */
-    collision_mask?: CollisionMask;
+    collision_mask?: CollisionMaskConnector;
     /**
      * The effect/trigger that happens when the entity is placed.
      */
@@ -2641,46 +2996,31 @@ interface EntityPrototype extends PrototypeBase {
      */
     created_smoke?: CreateTrivialSmokeEffectItem;
     /**
-     * Specification of space needed to see the whole entity in GUIs. This is used to calculate the correct zoom and positioning in the entity info gui, for example in the entity tooltip.
+     * Used to merge multiple entities into one entry in the deconstruction planner.
+     */
+    deconstruction_alternative?: EntityID;
+    diagonal_tile_grid_size?: TilePosition;
+    /**
+     * Specification of extra vertical space needed to see the whole entity in GUIs. This is used to calculate the correct zoom and positioning in the entity info gui, for example in the entity tooltip.
      * @example ```
-    drawing_box = {{-0.5, -0.5}, {0.5, 0.5}}
+    drawing_box_vertical_extension = 0.5
     ```
      */
-    drawing_box?: BoundingBox;
+    drawing_box_vertical_extension?: double;
     /**
      * Amount of emissions created (positive number) or cleaned (negative number) every second by the entity. This is passive and currently used just for trees and fires. This is independent of the {@link emissions of energy sources | prototype:BaseEnergySource::emissions_per_minute} used by machines, which are created actively depending on the power consumption.
-     * @example ```
-    emissions_per_second = -0.001 -- cleaning effect of big tree
-    ```
      */
-    emissions_per_second?: double;
+    emissions_per_second?: Record<AirbornePollutantID, double>;
     enemy_map_color?: Color;
     /**
      * This allows you to replace an entity that's already placed, with a different one in your inventory. For example, replacing a burner inserter with a fast inserter. The replacement entity can be a different rotation to the replaced entity and you can replace an entity with the same type.
      *
      * This is simply a string, so any string can be used here. The entity that should be replaced simply has to use the same string here.
-     * The ones the game uses are:
-     *
-     * - "constant-combinator"
-     * - "container"
-     * - "furnace"
-     * - "transport-belt"
-     * - "electric-pole"
-     * - "steam-engine"
-     * - "inserter"
-     * - "long-handed-inserter"
-     * - "pipe"
-     * - "assembling-machine"
-     * - "wall"
-     * - "loader"
-     * - "rail-signal"
-     * - "linked-belts"
-     * - "mining-drill"
-     * - "pumpjack"
      */
     fast_replaceable_group?: string;
     flags?: EntityPrototypeFlags;
     friendly_map_color?: Color;
+    heating_energy?: Energy;
     /**
      * Where beams should hit the entity. Useful if the bounding box only covers part of the entity (e.g. feet of the character) and beams only hitting there would look weird.
      */
@@ -2697,16 +3037,16 @@ interface EntityPrototype extends PrototypeBase {
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
-     *
-     * Only loaded if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * Used to specify where and how should be the alt-mode icons of entities should be drawn.
      * @example ```
-    icon_size = 64
+    icon_draw_specification = {shift = {0, 0.5}, scale = 0.75, scale_for_many = 0.5, render_layer = "entity-info-icon"}
     ```
+     */
+    icon_draw_specification?: IconDrawSpecification;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
@@ -2715,6 +3055,20 @@ interface EntityPrototype extends PrototypeBase {
      * Either this or `icon` is mandatory for entities that have at least one of these flags active: `"placeable-neutral"`, `"placeable-player`", `"placeable-enemy"`.
      */
     icons?: IconData[];
+    /**
+     * @example ```
+    icons_positioning =
+    {
+      {inventory_index = defines.inventory.lab_modules, shift = {0, 0.9}},
+      {inventory_index = defines.inventory.lab_input, shift = {0, 0.0}, max_icons_per_row = 6, separation_multiplier = 0.9}
+    }
+    ```
+     */
+    icons_positioning?: IconSequencePositioning[];
+    /**
+     * Name of a {@link ImpactCategory | prototype:ImpactCategory}.
+     */
+    impact_category?: string;
     map_color?: Color;
     /**
      * Used instead of the collision box during map generation. Allows space entities differently during map generation, for example if the box is bigger, the entities will be placed farther apart.
@@ -2756,6 +3110,7 @@ interface EntityPrototype extends PrototypeBase {
     ```
      */
     placeable_by?: ItemToPlace | ItemToPlace[];
+    placeable_position_visualization?: Sprite;
     /**
      * When this is true, this entity prototype should be included during tile collision checks with tiles that have {@link TilePrototype::check_collision_with_entities | prototype:TilePrototype::check_collision_with_entities} set to true.
      */
@@ -2767,10 +3122,8 @@ interface EntityPrototype extends PrototypeBase {
     remains_when_mined?: EntityID | EntityID[];
     /**
      * Whether this entity should remove decoratives that collide with it when this entity is built. When set to "automatic", if the entity type is considered {@link a building | runtime:LuaEntityPrototype::is_building} (e.g. an assembling machine or a wall) it will remove decoratives.
-     *
-     * Using boolean values for this property is deprecated, however they have the same meaning as the corresponding strings.
      */
-    remove_decoratives?: 'automatic' | 'true' | 'false' | true | false;
+    remove_decoratives?: 'automatic' | 'true' | 'false';
     rotated_sound?: Sound;
     selectable_in_game?: bool;
     /**
@@ -2783,13 +3136,14 @@ interface EntityPrototype extends PrototypeBase {
      */
     selection_box?: BoundingBox;
     /**
-     * The entity with the higher number is selectable before the entity with the lower number. When two entities have the same selection priority, the one with the highest {@link collision mask | prototype:CollisionMask} (as determined by the order on that page) is selected.
+     * The entity with the higher number is selectable before the entity with the lower number.
      */
     selection_priority?: uint8;
     /**
      * The cursor size used when shooting at this entity.
      */
-    shooting_cursor_size?: float;
+    shooting_cursor_size?: double;
+    stateless_visualisation?: StatelessVisualisations;
     /**
      * Used to set the area of the entity that can have stickers on it, currently only used for units to specify the area where the green slow down stickers can appear.
      * @example ```
@@ -2797,25 +3151,19 @@ interface EntityPrototype extends PrototypeBase {
     ```
      */
     sticker_box?: BoundingBox;
-    /**
-     * The name of the {@link subgroup | prototype:ItemSubGroup} this entity should be sorted into in the map editor building selection.
-     */
-    subgroup?: ItemSubGroupID;
-    tile_height?: uint32;
+    surface_conditions?: SurfaceCondition[];
+    tile_buildability_rules?: TileBuildabilityRule[];
+    tile_height?: int32;
     /**
      * Used to determine how the center of the entity should be positioned when building (unless the off-grid {@link flag | prototype:EntityPrototypeFlags} is specified).
      *
      * When the tile width is odd, the center will be in the center of the tile, when it is even, the center is on the tile transition.
      */
-    tile_width?: uint32;
+    tile_width?: int32;
     /**
      * Defaults to the mask from {@link UtilityConstants::default_trigger_target_mask_by_type | prototype:UtilityConstants::default_trigger_target_mask_by_type}.
      */
     trigger_target_mask?: TriggerTargetMask;
-    /**
-     * When playing this sound, the volume is scaled by the speed of the vehicle when colliding with this entity.
-     */
-    vehicle_impact_sound?: Sound;
     /**
      * May also be defined inside `graphics_set` instead of directly in the entity prototype. This is useful for entities that use a `graphics_set` property to define their graphics, because then all graphics can be defined in one place.
      *
@@ -2844,7 +3192,6 @@ interface EntityPrototype extends PrototypeBase {
   inventory_size = 16,
   open_sound = { filename = "__base__/sound/wooden-chest-open.ogg" },
   close_sound = { filename = "__base__/sound/wooden-chest-close.ogg" },
-  vehicle_impact_sound = { filename = "__base__/sound/car-wood-impact.ogg", volume = 1.0 },
   picture =
   {
     filename = "__base__/graphics/entity/wooden-chest/wooden-chest.png",
@@ -2882,9 +3229,14 @@ interface EntityWithHealthPrototype extends EntityPrototype {
      */
     hide_resistances?: bool;
     /**
+     * May also be defined inside `graphics_set` instead of directly in the entity prototype. This is useful for entities that use a `graphics_set` property to define their graphics, because then all graphics can be defined in one place.
+     *
      * Sprite drawn on ground under the entity to make it feel more integrated into the ground.
      */
     integration_patch?: Sprite4Way;
+    /**
+     * May also be defined inside `graphics_set` instead of directly in the entity prototype. This is useful for entities that use a `graphics_set` property to define their graphics, because then all graphics can be defined in one place.
+     */
     integration_patch_render_layer?: RenderLayer;
     /**
      * The loot is dropped on the ground when the entity is killed.
@@ -2908,6 +3260,10 @@ interface EntityWithHealthPrototype extends EntityPrototype {
     ```
      */
     max_health?: float;
+    /**
+     * Fraction of health by which predicted damage must be exceeded before entity is considered as "predicted to die" causing turrets (and others) to stop shooting more projectiles. If entity is healing it is better to keep larger margin to avoid cases where not enough projectiles goes towards a target and it heals causing it to survive all the incoming projectiles. If entity does not heal, margin may be reduced. Must be >= 0.
+     */
+    overkill_fraction?: float;
     random_corpse_variation?: bool;
     /**
      * Played when this entity is repaired with a {@link RepairToolPrototype | prototype:RepairToolPrototype}.
@@ -2947,16 +3303,69 @@ interface EntityWithOwnerPrototype extends EntityWithHealthPrototype {
      * Whether this prototype should be a high priority target for enemy forces. See {@link Military units and structures | https://wiki.factorio.com/Military_units_and_structures}.
      */
     is_military_target?: bool;
+    /**
+     * The default scale is based on the tile distance of the shorter dimension. Where size 3 results into scale 1. The default minimum is 0.5 and maximum 1.0.
+     */
+    quality_indicator_scale?: double;
+}
+/**
+ * This prototype is used for receiving an achievement when the player equips armor.
+ */
+interface EquipArmorAchievementPrototype extends AchievementPrototype {
+    /**
+     * The achievement will trigger if this armor or the other armor is equipped.
+     * @example ```
+    alternative_armor = "mech-armor"
+    ```
+     */
+    alternative_armor: ItemID;
+    /**
+     * How many armors need to be equipped.
+     */
+    amount?: uint32;
+    /**
+     * The achievement will trigger if this armor or the alternative armor is equipped.
+     * @example ```
+    armor = "power-armor-mk2"
+    ```
+     */
+    armor: ItemID;
+    limit_quality: QualityID;
+    /**
+     * If this is false, the player carries over their statistics from this achievement through all their saves.
+     */
+    limited_to_one_game?: bool;
 }
 /**
  * Defines a category to be available to {@link equipment | prototype:EquipmentPrototype} and {@link equipment grids | prototype:EquipmentGridPrototype}.
  */
-interface EquipmentCategory extends PrototypeBase {
+interface EquipmentCategory extends Prototype {
+}
+/**
+ * The equipment used for ghosts of equipment.
+ */
+interface EquipmentGhostPrototype extends EquipmentPrototype {
+    /**
+     * Not loaded for equipment ghosts.
+     */
+    categories?: EquipmentCategoryID[];
+    /**
+     * Not loaded for equipment ghosts.
+     */
+    energy_source?: ElectricEnergySource;
+    /**
+     * Not loaded for equipment ghosts.
+     */
+    shape?: EquipmentShape;
+    /**
+     * Not loaded for equipment ghosts.
+     */
+    take_result?: ItemID;
 }
 /**
  * The prototype of an equipment grid, for example the one used in a {@link power armor | https://wiki.factorio.com/Power_armor}.
  */
-interface EquipmentGridPrototype extends PrototypeBase {
+interface EquipmentGridPrototype extends Prototype {
     /**
      * Only {@link equipment | prototype:EquipmentPrototype} with at least one of these {@link categories | prototype:EquipmentCategory} can be inserted into the grid.
      */
@@ -2971,7 +3380,7 @@ interface EquipmentGridPrototype extends PrototypeBase {
 /**
  * Abstract base of all equipment modules. Equipment modules can be inserted into {@link equipment grids | prototype:EquipmentGridPrototype}.
  */
-interface EquipmentPrototype extends PrototypeBase {
+interface EquipmentPrototype extends Prototype {
     /**
      * The color that the border of the background of this equipment should have when shown inside an equipment grid.
      */
@@ -2982,17 +3391,23 @@ interface EquipmentPrototype extends PrototypeBase {
     background_color?: Color;
     /**
      * Sets the categories of the equipment. It can only be inserted into {@link grids | prototype:EquipmentGridPrototype::equipment_categories} with at least one matching category.
+     * This property is required, but marked as optional due to typescript inheritance limitations
      */
-    categories: EquipmentCategoryID[];
-    energy_source: ElectricEnergySource;
+    categories?: EquipmentCategoryID[];
+    /**
+     *
+     * This property is required, but marked as optional due to typescript inheritance limitations
+     */
+    energy_source?: ElectricEnergySource;
     /**
      * The color that the background of this equipment should have when held in the players hand and hovering over an equipment grid.
      */
     grabbed_background_color?: Color;
     /**
      * How big this equipment should be in the grid and whether it should be one solid rectangle or of a custom shape.
+     * This property is required, but marked as optional due to typescript inheritance limitations
      */
-    shape: EquipmentShape;
+    shape?: EquipmentShape;
     /**
      * The graphics to use when this equipment is shown inside an equipment grid.
      */
@@ -3008,10 +3423,6 @@ interface EquipmentPrototype extends PrototypeBase {
 interface ExplosionPrototype extends EntityPrototype {
     animations: AnimationVariations;
     beam?: bool;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     correct_rotation?: bool;
     fade_in_duration?: uint8;
     fade_out_duration?: uint8;
@@ -3057,15 +3468,6 @@ interface ExplosionPrototype extends EntityPrototype {
     sound?: Sound;
 }
 /**
- * This prototype is used for receiving an achievement when the player finishes the game.
- */
-interface FinishTheGameAchievementPrototype extends AchievementPrototype {
-    /**
-     * This lets the game know how long into a game, before you can no longer complete the achievement. 0 means infinite time.
-     */
-    until_second?: uint32;
-}
-/**
  * A fire.
  */
 interface FireFlamePrototype extends EntityPrototype {
@@ -3074,13 +3476,9 @@ interface FireFlamePrototype extends EntityPrototype {
     burnt_patch_alpha_variations?: TileAndAlpha[];
     burnt_patch_lifetime?: uint32;
     burnt_patch_pictures?: SpriteVariations;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     damage_multiplier_decrease_per_tick?: float;
     damage_multiplier_increase_per_added_fuel?: float;
-    damage_per_tick: DamagePrototype;
+    damage_per_tick: DamageParameters;
     delay_between_initial_flames?: uint32;
     fade_in_duration?: uint32;
     fade_out_duration?: uint32;
@@ -3103,6 +3501,8 @@ interface FireFlamePrototype extends EntityPrototype {
     lifetime_increase_by?: uint32;
     lifetime_increase_cooldown?: uint32;
     light?: LightDefinition;
+    light_size_modifier_maximum?: float;
+    light_size_modifier_per_flame?: float;
     limit_overlapping_particles?: bool;
     maximum_damage_multiplier?: float;
     maximum_lifetime?: uint32;
@@ -3147,7 +3547,7 @@ interface FireFlamePrototype extends EntityPrototype {
   type = "fish",
   name = "fish",
   icon = "__base__/graphics/icons/fish.png",
-  icon_size = 64, icon_mipmaps = 4,
+  icon_size = 64,
   flags = { "placeable-neutral", "not-on-map" },
   minable = { mining_time = 1, result = "raw-fish", count = 5 },
   max_health = 20,
@@ -3176,19 +3576,7 @@ interface FireFlamePrototype extends EntityPrototype {
 ```
  */
 interface FishPrototype extends EntityWithHealthPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    pictures: SpriteVariations;
-}
-/**
- * Explosion that can deal damage.
- */
-interface FlameThrowerExplosionPrototype extends ExplosionPrototype {
-    damage: DamagePrototype;
-    height?: float;
-    slow_down_factor: double;
+    pictures?: SpriteVariations;
 }
 /**
  * A fluid.
@@ -3198,17 +3586,16 @@ interface FlameThrowerExplosionPrototype extends ExplosionPrototype {
   name = "water",
   default_temperature = 15,
   max_temperature = 100,
-  heat_capacity = "0.2KJ",
+  heat_capacity = "0.2kJ",
   base_color = { r = 0, g = 0.34, b = 0.6 },
   flow_color = { r = 0.7, g = 0.7, b = 0.7 },
   icon = "__base__/graphics/icons/fluid/water.png",
   icon_size = 64,
-  icon_mipmaps = 4,
   order = "a[fluid]-a[water]"
 }
 ```
  */
-interface FluidPrototype extends PrototypeBase {
+interface FluidPrototype extends Prototype {
     /**
      * Whether the fluid should be included in the barrel recipes automatically generated by the base mod.
      *
@@ -3222,7 +3609,7 @@ interface FluidPrototype extends PrototypeBase {
     /**
      * Also the minimum temperature of the fluid. Has to be lower than `max_temperature`.
      */
-    default_temperature: double;
+    default_temperature: float;
     /**
      * Scales pollution generated when the fluid is consumed.
      */
@@ -3240,18 +3627,14 @@ interface FluidPrototype extends PrototypeBase {
     /**
      * Above this temperature the `gas_flow` animation is used to display the fluid inside storage tanks and pipes.
      */
-    gas_temperature?: double;
+    gas_temperature?: float;
     /**
      * Joule needed to heat 1 Unit by 1 °C.
      * @example ```
-    heat_capacity = "0.2KJ"
+    heat_capacity = "0.2kJ"
     ```
      */
     heat_capacity?: Energy;
-    /**
-     * Hides the fluid from the signal selection screen.
-     */
-    hidden?: bool;
     /**
      * Path to the icon file.
      *
@@ -3259,24 +3642,22 @@ interface FluidPrototype extends PrototypeBase {
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
      * Can't be an empty array.
      */
     icons?: IconData[];
-    max_temperature?: double;
+    max_temperature?: float;
     /**
-     * The name of the {@link subgroup | prototype:ItemSubGroup} of this fluid. The value of this property may not be an empty string. It either has to be `nil`, or a non-empty string.
+     * Color to use for visualization. This color should be vibrant and easily distinguished.
+     *
+     * If not specified, this will be auto-generated from `base_color` by converting to HSV, decreasing saturation by 10% and setting value to 80%.
      */
-    subgroup?: ItemSubGroupID;
+    visualization_color?: Color;
 }
 /**
  * Used for example for the handheld flamethrower.
@@ -3286,10 +3667,6 @@ interface FluidStreamPrototype extends EntityPrototype {
      * Action that is triggered every time a particle lands. Not triggered for the first particle if `initial_action` is non-empty.
      */
     action?: Trigger;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     ground_light?: LightDefinition;
     /**
      * Action that is triggered when the first particle lands.
@@ -3343,7 +3720,7 @@ interface FluidStreamPrototype extends EntityPrototype {
      * Smoke spawning is controlled by `progress_to_create_smoke`.
      */
     smoke_sources?: SmokeSource[];
-    special_neutral_target_damage?: DamagePrototype;
+    special_neutral_target_damage?: DamageParameters;
     spine_animation?: Animation;
     stream_light?: LightDefinition;
     target_position_deviation?: double;
@@ -3356,7 +3733,7 @@ interface FluidTurretPrototype extends TurretPrototype {
     /**
      * Before an turret that was out of fluid ammunition is able to fire again, the `fluid_buffer_size` must fill to this proportion.
      */
-    activation_buffer_ratio: float;
+    activation_buffer_ratio: FluidAmount;
     /**
      * Requires ammo_type in attack_parameters.
      */
@@ -3366,8 +3743,8 @@ interface FluidTurretPrototype extends TurretPrototype {
     enough_fuel_indicator_light?: LightDefinition;
     enough_fuel_indicator_picture?: Sprite4Way;
     fluid_box: FluidBox;
-    fluid_buffer_input_flow: float;
-    fluid_buffer_size: float;
+    fluid_buffer_input_flow: FluidAmount;
+    fluid_buffer_size: FluidAmount;
     folded_muzzle_animation_shift?: AnimatedVector;
     folding_muzzle_animation_shift?: AnimatedVector;
     muzzle_animation?: Animation;
@@ -3387,7 +3764,7 @@ interface FluidTurretPrototype extends TurretPrototype {
  * A {@link fluid wagon | https://wiki.factorio.com/Fluid_wagon}.
  */
 interface FluidWagonPrototype extends RollingStockPrototype {
-    capacity: double;
+    capacity: FluidAmount;
     /**
      * Must be 1, 2 or 3.
      */
@@ -3397,10 +3774,6 @@ interface FluidWagonPrototype extends RollingStockPrototype {
  * Abstract base for construction/logistics and combat robots.
  */
 interface FlyingRobotPrototype extends EntityWithOwnerPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     /**
      * How much energy does it cost to move 1 tile.
      *
@@ -3433,7 +3806,7 @@ interface FlyingRobotPrototype extends EntityWithOwnerPrototype {
      */
     max_energy?: Energy;
     /**
-     * The maximum flying speed of the robot, in tiles/tick. Useful to limit the impact of {@link worker robot speed (research) | https://wiki.factorio.com/Worker_robot_speed_(research}).
+     * The maximum flying speed of the robot, including bonuses, in tiles/tick. Useful to limit the impact of {@link worker robot speed research | prototype:WorkerRobotSpeedModifier}.
      */
     max_speed?: double;
     /**
@@ -3461,24 +3834,6 @@ interface FlyingRobotPrototype extends EntityWithOwnerPrototype {
     ```
      */
     speed_multiplier_when_out_of_energy?: float;
-}
-/**
- * An upwards flying text that disappears after a certain time (setting {@link LuaEntity::active | runtime:LuaEntity::active} = false stops the flying and the disappearing.)
- */
-interface FlyingTextPrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    /**
-     * How fast the text flies up. Seems to be tiles/tick.
-     */
-    speed: float;
-    text_alignment?: 'left' | 'center' | 'right';
-    /**
-     * Time in ticks this flying-text lasts.
-     */
-    time_to_live: uint32;
 }
 /**
  * Fonts are used in all GUIs in the game.
@@ -3525,7 +3880,8 @@ interface FontPrototype {
 }
 ```
  */
-interface FuelCategory extends PrototypeBase {
+interface FuelCategory extends Prototype {
+    fuel_value_type?: LocalisedString;
 }
 /**
  * A furnace. Normal furnaces only process "smelting" category recipes, but you can make furnaces that process other {@link recipe categories | prototype:RecipeCategory}. The difference to assembling machines is that furnaces automatically choose their recipe based on input.
@@ -3533,12 +3889,14 @@ interface FuelCategory extends PrototypeBase {
 interface FurnacePrototype extends CraftingMachinePrototype {
     /**
      * The locale key of the message shown when the player attempts to insert an item into the furnace that cannot be processed by that furnace. In-game, the locale is provided the `__1__` parameter, which is the localised name of the item.
+     *
+     * The locale key is also used with an `_until` suffix for items that cannot be processed until they recipe is unlocked by a technology.
      */
     cant_insert_at_source_message_key?: string;
     /**
-     * Shift of the "alt-mode icon" relative to the machine's center.
+     * The locale key of the tooltip to be shown in the input slot instead of the automatically generated list of items that fit there
      */
-    entity_info_icon_shift?: Vector;
+    custom_input_slot_tooltip_key?: string;
     /**
      * The number of output slots.
      */
@@ -3548,6 +3906,80 @@ interface FurnacePrototype extends CraftingMachinePrototype {
      */
     source_inventory_size: ItemStackIndex;
 }
+interface FusionGeneratorPrototype extends EntityWithOwnerPrototype {
+    /**
+     * `output_flow_limit` is mandatory and must be positive.
+     */
+    energy_source: ElectricEnergySource;
+    graphics_set?: FusionGeneratorGraphicsSet;
+    /**
+     * {@link filter | prototype:FluidBox::filter} is mandatory.
+     */
+    input_fluid_box: FluidBox;
+    /**
+     * Must be positive.
+     */
+    max_fluid_usage: FluidAmount;
+    /**
+     * {@link filter | prototype:FluidBox::filter} is mandatory.
+     */
+    output_fluid_box: FluidBox;
+    /**
+     * Affects animation speed.
+     */
+    perceived_performance?: PerceivedPerformance;
+}
+/**
+ * Fusion reactor. Consumes fluid, fuel and additional energy to produce other fluid. Kind of advanced boiler. Can also have neighbour bonus.
+ */
+interface FusionReactorPrototype extends EntityWithOwnerPrototype {
+    /**
+     * Second energy source for the process: provides fuel
+     */
+    burner: BurnerEnergySource;
+    /**
+     * First energy source for the process: provides energy
+     */
+    energy_source: ElectricEnergySource;
+    graphics_set: FusionReactorGraphicsSet;
+    /**
+     * The input fluid box.
+     *
+     * {@link filter | prototype:FluidBox::filter} is mandatory.
+     */
+    input_fluid_box: FluidBox;
+    /**
+     * Maximum amount of fluid converted from `input_fluid_box` to `output_fluid_box` within a single tick.
+     *
+     * Must be positive.
+     */
+    max_fluid_usage: FluidAmount;
+    neighbour_bonus?: float;
+    /**
+     * Defines connection points to neighbours used to compute neighbour bonus.
+     */
+    neighbour_connectable?: NeighbourConnectable;
+    /**
+     * The output fluid box.
+     *
+     * {@link filter | prototype:FluidBox::filter} is mandatory.
+     */
+    output_fluid_box: FluidBox;
+    /**
+     * Affects animation speed.
+     */
+    perceived_performance?: PerceivedPerformance;
+    /**
+     * Power input consumed from first energy source at full performance.
+     *
+     * Cannot be negative.
+     */
+    power_input: Energy;
+    /**
+     * If set to true, only North and East direction will be buildable.
+     */
+    two_direction_only?: bool;
+}
 /**
  * A {@link gate | https://wiki.factorio.com/Gate}.
  */
@@ -3556,31 +3988,29 @@ interface GatePrototype extends EntityWithOwnerPrototype {
     /**
      * Played when the gate closes.
      */
-    close_sound: Sound;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
+    closing_sound?: Sound;
     fadeout_interval?: uint32;
-    horizontal_animation: Animation;
-    horizontal_rail_animation_left: Animation;
-    horizontal_rail_animation_right: Animation;
-    horizontal_rail_base: Animation;
+    horizontal_animation?: Animation;
+    horizontal_rail_animation_left?: Animation;
+    horizontal_rail_animation_right?: Animation;
+    horizontal_rail_base?: Animation;
+    /**
+     * This collision mask is used when the gate is open.
+     *
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"gate/opened"`.
+     */
+    opened_collision_mask?: CollisionMaskConnector;
     /**
      * Played when the gate opens.
      */
-    open_sound: Sound;
-    /**
-     * This collision mask is used when the gate is open.
-     */
-    opened_collision_mask?: CollisionMask;
+    opening_sound?: Sound;
     opening_speed: float;
     timeout_to_close: uint32;
-    vertical_animation: Animation;
-    vertical_rail_animation_left: Animation;
-    vertical_rail_animation_right: Animation;
-    vertical_rail_base: Animation;
-    wall_patch: Animation;
+    vertical_animation?: Animation;
+    vertical_rail_animation_left?: Animation;
+    vertical_rail_animation_right?: Animation;
+    vertical_rail_base?: Animation;
+    wall_patch?: Animation;
 }
 /**
  * Used by {@link portable fusion reactor | https://wiki.factorio.com/Portable_fusion_reactor}. Provides power in equipment grids. Can produce power for free or use a burner energy source.
@@ -3626,8 +4056,9 @@ interface GeneratorPrototype extends EntityWithOwnerPrototype {
     /**
      * The number of fluid units the generator uses per tick.
      */
-    fluid_usage_per_tick: double;
+    fluid_usage_per_tick: FluidAmount;
     horizontal_animation?: Animation;
+    horizontal_frozen_patch?: Sprite;
     /**
      * The power production of the generator is capped to this value. This is also the value that is shown as the maximum power output in the tooltip of the generator.
      *
@@ -3639,12 +4070,11 @@ interface GeneratorPrototype extends EntityWithOwnerPrototype {
      *
      * Used to calculate the `max_power_output` if it is not defined and `burns_fluid` is false. Then, the max power output is `(min(fluid_max_temp, maximum_temperature) - fluid_default_temp) × fluid_usage_per_tick × fluid_heat_capacity × effectivity`, the fluid is the filter specified on the `fluid_box`.
      */
-    maximum_temperature: double;
+    maximum_temperature: float;
     /**
-     * Animation runs at least this fast. This corresponds to the sound.
+     * Affects animation speed.
      */
-    min_perceived_performance?: double;
-    performance_to_sound_speedup?: double;
+    perceived_performance?: PerceivedPerformance;
     /**
      * Scales the generator's fluid usage to its maximum power output.
      *
@@ -3655,6 +4085,7 @@ interface GeneratorPrototype extends EntityWithOwnerPrototype {
     scale_fluid_usage?: bool;
     smoke?: SmokeSource[];
     vertical_animation?: Animation;
+    vertical_frozen_patch?: Sprite;
 }
 /**
  * Properties of the god controller.
@@ -3693,6 +4124,10 @@ interface GroupAttackAchievementPrototype extends AchievementPrototype {
     ```
      */
     amount?: uint32;
+    /**
+     * The achievement is only triggered if the attacking group of enemies contains at least one of the entities listed here.
+     */
+    entities?: EntityID[];
 }
 /**
  * The available GUI styles.
@@ -3712,6 +4147,15 @@ interface GunPrototype extends ItemPrototype {
     attack_parameters: AttackParameters;
 }
 /**
+ * A half diagonal rail.
+ */
+interface HalfDiagonalRailPrototype extends RailPrototype {
+    /**
+     * The {@link collision_box | prototype:EntityPrototype::collision_box} of straight rail is hardcoded to `{{-0.75, -1.9}, {0.75, 1.9}}`.
+     */
+    collision_box?: BoundingBox;
+}
+/**
  * This entity produces or consumes heat. Its heat settings can be changed runtime.
  */
 interface HeatInterfacePrototype extends EntityWithOwnerPrototype {
@@ -3723,13 +4167,9 @@ interface HeatInterfacePrototype extends EntityWithOwnerPrototype {
  * A {@link heat pipe | https://wiki.factorio.com/Heat_pipe}.
  */
 interface HeatPipePrototype extends EntityWithOwnerPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    connection_sprites: ConnectableEntityGraphics;
+    connection_sprites?: ConnectableEntityGraphics;
     heat_buffer: HeatBuffer;
-    heat_glow_sprites: ConnectableEntityGraphics;
+    heat_glow_sprites?: ConnectableEntityGraphics;
 }
 /**
  * Used to attach graphics for {@link cursor boxes | prototype:CursorBoxType} to entities during runtime. HighlightBoxEntity can also be independent from entities so it is simply drawn somewhere in the world. See {@link LuaSurface::create_entity | runtime:LuaSurface::create_entity} for the available options for type "highlight-box".
@@ -3737,10 +4177,21 @@ interface HeatPipePrototype extends EntityWithOwnerPrototype {
  * The {@link collision_box | prototype:EntityPrototype::collision_box} of the highlight box prototype is ignored during runtime, instead the "bounding_box" given in create_entity() or the selection box of the target entity is used.
  */
 interface HighlightBoxEntityPrototype extends EntityPrototype {
+}
+/**
+ * @example ```
+{
+  type = "impact-category",
+  name = "metal"
+}
+```
+ */
+interface ImpactCategory {
     /**
-     * Two entities can collide only if they share a layer from the collision mask.
+     * Name of the impact category.
      */
-    collision_mask?: CollisionMask;
+    name: string;
+    type: 'impact-category';
 }
 /**
  * A generic container, such as a chest, that can spawn or void items and interact with the logistics network.
@@ -3783,20 +4234,18 @@ interface InserterPrototype extends EntityWithOwnerPrototype {
      */
     allow_custom_vectors?: bool;
     /**
+     * Whether this inserter is considered a bulk inserter. Relevant for determining how {@link inserter capacity bonus (research) | https://wiki.factorio.com/Inserter_capacity_bonus_(research}) applies to the inserter.
+     */
+    bulk?: bool;
+    /**
      * Whether the inserter hand should move to the items it picks up from belts, leading to item chasing behaviour. If this is off, the inserter hand will stay in the center of the belt and any items picked up from the edges of the belt "teleport" to the inserter hand.
      */
     chases_belt_items?: bool;
-    circuit_connector_sprites?: [
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites
-    ];
-    circuit_wire_connection_points?: [
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
     ];
     /**
      * The maximum circuit wire distance for this entity.
@@ -3819,29 +4268,41 @@ interface InserterPrototype extends EntityWithOwnerPrototype {
      * Defines how this inserter gets energy. The emissions set on the energy source are ignored so inserters cannot produce pollution.
      */
     energy_source: EnergySource;
+    /**
+     * If inserter waits for full hand it could become stuck when item in hand changed because of spoiling. If this flag is set then inserter will start dropping held stack even if it was waiting for full hand.
+     */
+    enter_drop_mode_if_held_stack_spoiled?: bool;
     extension_speed: double;
     /**
      * How many filters this inserter has. Maximum count of filtered items in inserter is 5.
      */
     filter_count?: uint8;
-    hand_base_picture: Sprite;
-    hand_base_shadow: Sprite;
-    hand_closed_picture: Sprite;
-    hand_closed_shadow: Sprite;
-    hand_open_picture: Sprite;
-    hand_open_shadow: Sprite;
+    /**
+     * If drop target is belt, inserter may grab less so that it does not drop partial stacks unless it is forced to drop partial.
+     */
+    grab_less_to_match_belt_stack?: bool;
+    hand_base_frozen?: Sprite;
+    hand_base_picture?: Sprite;
+    hand_base_shadow?: Sprite;
+    hand_closed_frozen?: Sprite;
+    hand_closed_picture?: Sprite;
+    hand_closed_shadow?: Sprite;
+    hand_open_frozen?: Sprite;
+    hand_open_picture?: Sprite;
+    hand_open_shadow?: Sprite;
     /**
      * Used to determine how long the arm of the inserter is when drawing it. Does not affect gameplay. The lower the value, the straighter the arm. Increasing the value will give the inserter a bigger bend due to its longer parts.
      */
     hand_size?: double;
     insert_position: Vector;
-    pickup_position: Vector;
-    platform_picture: Sprite4Way;
-    rotation_speed: double;
     /**
-     * Whether this inserter is considered a stack inserter. Relevant for determining how {@link inserter capacity bonus (research) | https://wiki.factorio.com/Inserter_capacity_bonus_(research}) applies to the inserter.
+     * This inserter will not create stacks on belt with more than this amount of items. Must be >= 1.
      */
-    stack?: bool;
+    max_belt_stack_size?: uint8;
+    pickup_position: Vector;
+    platform_frozen?: Sprite4Way;
+    platform_picture?: Sprite4Way;
+    rotation_speed: double;
     /**
      * Stack size bonus that is inherent to the prototype without having to be researched.
      */
@@ -3850,6 +4311,14 @@ interface InserterPrototype extends EntityWithOwnerPrototype {
      * Whether the inserter should be able to fish {@link fish | https://wiki.factorio.com/Raw_fish}.
      */
     use_easter_egg?: bool;
+    /**
+     * Inserter will wait until its hand is full.
+     */
+    wait_for_full_hand?: bool;
+}
+interface InventoryBonusEquipmentPrototype extends EquipmentPrototype {
+    energy_source?: ElectricEnergySource;
+    inventory_size_bonus: ItemStackIndex;
 }
 /**
  * The entity used for items on the ground.
@@ -3878,10 +4347,6 @@ interface ItemEntityPrototype extends EntityPrototype {
     ```
      */
     collision_box?: BoundingBox;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
 }
 /**
  * An item group. Item groups are the tabs shown above the list of craftable items in the player's inventory GUI. The built-in groups are "logistics", "production", "intermediate-products" and "combat" but mods can define their own.
@@ -3894,11 +4359,10 @@ interface ItemEntityPrototype extends EntityPrototype {
   order = "a",
   icon = "__base__/graphics/item-group/logistics.png",
   icon_size = 128,
-  icon_mipmaps = 2
 }
 ```
  */
-interface ItemGroup extends PrototypeBase {
+interface ItemGroup extends Prototype {
     /**
      * Path to the icon that is shown to represent this item group.
      *
@@ -3906,13 +4370,11 @@ interface ItemGroup extends PrototypeBase {
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * The base game uses 128px icons for item groups.
+     *
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
@@ -3927,37 +4389,59 @@ interface ItemGroup extends PrototypeBase {
 /**
  * Possible configuration for all items.
  */
-interface ItemPrototype extends PrototypeBase {
+interface ItemPrototype extends Prototype {
     /**
      * The item that is the result when this item gets burned as fuel.
      */
     burnt_result?: ItemID;
     close_sound?: Sound;
     /**
+     * Only used by hidden setting, support may be limited.
+     */
+    color_hint?: ColorHintSpecification;
+    /**
      * If this is set, it is used to show items in alt-mode instead of the normal item icon. This can be useful to increase the contrast of the icon with the dark alt-mode {@link icon outline | prototype:UtilityConstants::item_outline_color}.
      *
      * Path to the icon file.
      *
      * Only loaded if `dark_background_icons` is not defined.
-     *
-     * Uses the basic `icon_size` and `icon_mipmaps` properties.
      */
     dark_background_icon?: FileName;
     /**
-     * Inside IconData, the property for the file path is `dark_background_icon` instead of `icon`. Can't be an empty array.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Uses the basic `icon_size` and `icon_mipmaps` properties.
+     * Only loaded if `dark_background_icons` is not defined.
+     */
+    dark_background_icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
      */
     dark_background_icons?: IconData[];
-    default_request_amount?: ItemCountType;
+    default_import_location?: SpaceLocationID;
+    /**
+     * The effect/trigger that happens when an item is destroyed by being dropped on a {@link TilePrototype | prototype:TilePrototype} marked as destroying dropped items.
+     *
+     * This overrides the {@link TilePrototype::default_destroyed_dropped_item_trigger | prototype:TilePrototype::default_destroyed_dropped_item_trigger} from the tile.
+     */
+    destroyed_by_dropping_trigger?: Trigger;
+    drop_sound?: Sound;
     /**
      * Specifies some properties of the item.
      * @example ```
-    flags = { "hidden" }
+    flags = { "hide-from-bonus-gui" }
     ```
      */
     flags?: ItemPrototypeFlags;
+    /**
+     * Must be 0 or positive.
+     */
     fuel_acceleration_multiplier?: double;
+    /**
+     * Additional fuel acceleration multiplier per quality level. Defaults to 30% of `fuel_acceleration_multiplier - 1` if `fuel_acceleration_multiplier` is larger than 1. Otherwise defaults to 0.
+     *
+     * Must be 0 or positive.
+     */
+    fuel_acceleration_multiplier_quality_bonus?: double;
     /**
      * Must exist when a nonzero fuel_value is defined.
      */
@@ -3967,7 +4451,16 @@ interface ItemPrototype extends PrototypeBase {
      * Colors the glow of the burner energy source when this fuel is burned. Can also be used to color the glow of reactors burning the fuel, see {@link ReactorPrototype::use_fuel_glow_color | prototype:ReactorPrototype::use_fuel_glow_color}.
      */
     fuel_glow_color?: Color;
+    /**
+     * Must be 0 or positive.
+     */
     fuel_top_speed_multiplier?: double;
+    /**
+     * Additional fuel top speed multiplier per quality level. Defaults to 30% of `fuel_top_speed_multiplier - 1` if `fuel_top_speed_multiplier` is larger than 1. Otherwise defaults to 0.
+     *
+     * Must be 0 or positive.
+     */
+    fuel_top_speed_multiplier_quality_bonus?: double;
     /**
      * Amount of energy the item gives when used as fuel.
      *
@@ -3977,6 +4470,7 @@ interface ItemPrototype extends PrototypeBase {
     ```
      */
     fuel_value?: Energy;
+    has_random_tint?: bool;
     /**
      * Path to the icon file.
      *
@@ -3984,30 +4478,26 @@ interface ItemPrototype extends PrototypeBase {
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * This definition applies to all icon-type properties, both on here and on any children.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
-     *
-     * This definition applies to all icon-type properties, both on here and on any children.
-     *
-     * Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
      * Can't be an empty array.
      */
     icons?: IconData[];
+    ingredient_to_weight_coefficient?: double;
+    inventory_move_sound?: Sound;
     open_sound?: Sound;
+    pick_sound?: Sound;
     /**
      * Used to give the item multiple different icons so that they look less uniform on belts. For inventory icons and similar, `icon/icons` will be used. Maximum number of variations is 16.
      *
-     * The expected size for icons of items on belts is 16px. So when using sprites of size `64` (same as base game icons), the `scale` should be set to 0.25.
+     * When using sprites of size `64` (same as base game icons), the `scale` should be set to 0.5.
      */
     pictures?: SpriteVariations;
+    place_as_equipment_result?: EquipmentID;
     place_as_tile?: PlaceAsTile;
     /**
      * Name of the {@link EntityPrototype | prototype:EntityPrototype} that can be built using this item. If this item should be the one that construction bots use to build the specified `place_result`, set the `"primary-place-result"` {@link item flag | prototype:ItemPrototypeFlags}.
@@ -4018,12 +4508,26 @@ interface ItemPrototype extends PrototypeBase {
     ```
      */
     place_result?: EntityID;
-    placed_as_equipment_result?: EquipmentID;
+    plant_result?: EntityID;
     /**
-     * Only loaded if `rocket_launch_products` is not defined.
+     * Randomly tints item instances on belts and in the world. 0 no tinting. 1 full tint.
      */
-    rocket_launch_product?: ItemProductPrototype;
+    random_tint_color?: Color;
     rocket_launch_products?: ItemProductPrototype[];
+    /**
+     * The way this item works when we try to send it to the orbit on its own.
+     *
+     * When "manual" is set, it can only be launched by pressing the launch button in the rocket silo.
+     *
+     * When "automated" is set, it will force the existence of "launch to orbit automatically" checkBox in the rocket silo which will then force the silo to automatically send the item to orbit when present.
+     */
+    send_to_orbit_mode?: SendToOrbitMode;
+    spoil_result?: ItemID;
+    spoil_ticks?: uint32;
+    /**
+     * Only loaded if `spoil_result` is not defined.
+     */
+    spoil_to_trigger_result?: SpoilToTriggerResult;
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.
      * @example ```
@@ -4032,25 +4536,14 @@ interface ItemPrototype extends PrototypeBase {
      */
     stack_size: ItemCountType;
     /**
-     * The name of the {@link subgroup | prototype:ItemSubGroup} this item should be sorted into in item selection GUIs like logistic requests.
-     *
-     * Empty text of subgroup is not allowed. (You can omit the definition to get the default "other").
+     * The default weight is calculated automatically from recipes and falls back to {@link UtilityConstants::default_item_weight | prototype:UtilityConstants::default_item_weight}.
      */
-    subgroup?: ItemSubGroupID;
-    /**
-     * The number of items needed to connect 2 entities with this as wire. In the base game, {@link green wire | https://wiki.factorio.com/Green_wire}, {@link red wire | https://wiki.factorio.com/Red_wire} and {@link copper cable | https://wiki.factorio.com/Copper_cable} have this set to 1.
-     */
-    wire_count?: ItemCountType;
+    weight?: Weight;
 }
 /**
  * Entity used to signify that an entity is requesting items, for example modules for an assembling machine after it was blueprinted with modules inside.
  */
 interface ItemRequestProxyPrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    picture: Sprite;
     use_target_entity_alert_icon_shift?: bool;
 }
 /**
@@ -4066,7 +4559,7 @@ interface ItemRequestProxyPrototype extends EntityPrototype {
 }
 ```
  */
-interface ItemSubGroup extends PrototypeBase {
+interface ItemSubGroup extends Prototype {
     /**
      * The item group this subgroup is located in.
      */
@@ -4080,32 +4573,36 @@ interface ItemWithEntityDataPrototype extends ItemPrototype {
      * Path to the icon file.
      *
      * Only loaded if `icon_tintables` is not defined.
-     *
-     * Uses `icon_size` and `icon_mipmaps` from its {@link ItemPrototype | prototype:ItemPrototype} parent.
      */
     icon_tintable?: FileName;
     /**
      * Path to the icon file.
      *
      * Only loaded if `icon_tintable_masks` is not defined and `icon_tintable` is defined.
-     *
-     * Uses `icon_size` and `icon_mipmaps` from its {@link ItemPrototype | prototype:ItemPrototype} parent.
      */
     icon_tintable_mask?: FileName;
     /**
-     * Inside IconData, the property for the file path is `icon_tintable_mask` instead of `icon`. Can't be an empty array.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icon_tintable_masks` is not defined and `icon_tintable` is defined.
+     */
+    icon_tintable_mask_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
      *
      * Only loaded if `icon_tintable` is defined.
-     *
-     * Uses `icon_size` and `icon_mipmaps` from its {@link ItemPrototype | prototype:ItemPrototype} parent.
      */
     icon_tintable_masks?: IconData[];
     /**
-     * Inside IconData, the property for the file path is `icon_tintable` instead of `icon`. Can't be an empty array.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icon_tintables` is not defined and `icon_tintable` is defined.
+     */
+    icon_tintable_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
      *
      * Only loaded if `icon_tintable` is defined (`icon_tintables` takes precedence over `icon_tintable`).
-     *
-     * Uses `icon_size` and `icon_mipmaps` from its {@link ItemPrototype | prototype:ItemPrototype} parent.
      */
     icon_tintables?: IconData[];
 }
@@ -4113,10 +4610,6 @@ interface ItemWithEntityDataPrototype extends ItemPrototype {
  * The inventory allows setting player defined filters similar to cargo wagon inventories.
  */
 interface ItemWithInventoryPrototype extends ItemWithLabelPrototype {
-    /**
-     * When true, this item-with-inventory will extend the inventory it sits in by default. This is a runtime property on the result item that can be changed through the Lua interface and only determines the initial value.
-     */
-    extends_inventory_by_default?: bool;
     /**
      * The locale key used when the player attempts to put an item that doesn't match the filter rules into the item-with-inventory.
      */
@@ -4128,25 +4621,6 @@ interface ItemWithInventoryPrototype extends ItemWithLabelPrototype {
     ```
      */
     filter_mode?: 'blacklist' | 'whitelist';
-    /**
-     * The insertion priority mode for this item. This determines if items are first attempted to be put into this items inventory if the item extends the inventory it sits in when items are put into the parent inventory.
-     * @example ```
-    insertion_priority_mode = "never"
-    ```
-     */
-    insertion_priority_mode?: /**
-     * Items are inserted into this item-with-inventory only if they match the whitelist defined in the prototype for the item and whitelist is used.
-     */
-    'default' | /**
-     * Items are never inserted into this item-with-inventory except explicitly by the player or script.
-     */
-    'never' | /**
-     * All items first try to be inserted into this item-with-inventory.
-     */
-    'always' | /**
-     * When the inventory contains filters that match the item-to-be-inserted then try to put it into this item before the inventory this item resides in.
-     */
-    'when-manually-filtered';
     /**
      * The inventory size of the item. - This will only accept an ItemStackIndex. The union with 'dynamic' is only to satisfy BlueprintBookPrototype within Typescript's inheritance rules
      */
@@ -4210,6 +4684,16 @@ interface KillAchievementPrototype extends AchievementPrototype {
      */
     amount?: uint32;
     /**
+     * The killer of the entity must be one of these entities.
+     * @example ```
+    damage_dealer = "artillery-turret"
+    ```
+     * @example ```
+    damage_dealer = {"artillery-turret", "artillery-wagon"}
+    ```
+     */
+    damage_dealer?: EntityID | EntityID[];
+    /**
      * This defines how the player needs to destroy the specific entity.
      * @example ```
     damage_type = "impact"
@@ -4233,7 +4717,7 @@ interface KillAchievementPrototype extends AchievementPrototype {
     /**
      * This defines which entity needs to be destroyed in order to receive the achievement.
      */
-    to_kill?: EntityID;
+    to_kill?: EntityID | EntityID[];
     /**
      * This defines what entity type needs to be destroyed in order to receive the achievement.
      * @example ```
@@ -4251,9 +4735,10 @@ interface LabPrototype extends EntityWithOwnerPrototype {
      */
     allowed_effects?: EffectTypeLimitation;
     /**
-     * Productivity bonus that this machine always has.
+     * Sets the {@link module categories | prototype:ModuleCategory} that are allowed to be inserted into this machine.
      */
-    base_productivity?: float;
+    allowed_module_categories?: ModuleCategoryID[];
+    effect_receiver?: EffectReceiver;
     /**
      * Defines how this lab gets energy.
      */
@@ -4262,10 +4747,7 @@ interface LabPrototype extends EntityWithOwnerPrototype {
      * The amount of energy this lab uses.
      */
     energy_usage: Energy;
-    /**
-     * Shift of the "alt-mode icon" relative to the lab's center.
-     */
-    entity_info_icon_shift?: Vector;
+    frozen_patch?: Sprite;
     /**
      * A list of the names of science packs that can be used in this lab.
      *
@@ -4277,18 +4759,27 @@ interface LabPrototype extends EntityWithOwnerPrototype {
     inputs: ItemID[];
     light?: LightDefinition;
     /**
-     * The number of module slots.
+     * The number of module slots in this lab.
      */
-    module_specification?: ModuleSpecification;
+    module_slots?: ItemStackIndex;
     /**
      * The animation that plays when the lab is idle.
      */
-    off_animation: Animation;
+    off_animation?: Animation;
     /**
      * The animation that plays when the lab is active.
      */
-    on_animation: Animation;
+    on_animation?: Animation;
     researching_speed?: double;
+    /**
+     * May not be 0. May not be larger than 100.
+     */
+    science_pack_drain_rate_percent?: uint8;
+    trash_inventory_size?: ItemStackIndex;
+    /**
+     * Whether the {@link QualityPrototype::science_pack_drain_multiplier | prototype:QualityPrototype::science_pack_drain_multiplier} of the quality of the science pack should be considered by the lab.
+     */
+    uses_quality_drain_modifier?: bool;
 }
 /**
  * A {@link lamp | https://wiki.factorio.com/Lamp} to provide light, using energy.
@@ -4297,7 +4788,7 @@ interface LabPrototype extends EntityWithOwnerPrototype {
   type = "lamp",
   name = "small-lamp",
   icon = "__base__/graphics/icons/small-lamp.png",
-  icon_size = 64, icon_mipmaps = 4,
+  icon_size = 64,
   flags = {"placeable-neutral", "player-creation"},
   minable = {mining_time = 0.1, result = "small-lamp"},
   max_health = 100,
@@ -4310,7 +4801,7 @@ interface LabPrototype extends EntityWithOwnerPrototype {
     type = "electric",
     usage_priority = "lamp"
   },
-  energy_usage_per_tick = "5KW",
+  energy_usage_per_tick = "5kW",
   darkness_for_all_lamps_on = 0.5,
   darkness_for_all_lamps_off = 0.3,
   light = {intensity = 0.9, size = 40, color = {r=1.0, g=1.0, b=0.75}},
@@ -4367,8 +4858,7 @@ interface LabPrototype extends EntityWithOwnerPrototype {
     {type = "virtual", name = "signal-white",  color = {r = 1, g = 1, b = 1}}
   },
 
-  circuit_wire_connection_point = circuit_connector_definitions["lamp"].points,
-  circuit_connector_sprites = circuit_connector_definitions["lamp"].sprites,
+  circuit_connector = circuit_connector_definitions["lamp"],
   circuit_wire_max_distance = default_circuit_wire_max_distance
 }
 ```
@@ -4378,14 +4868,7 @@ interface LampPrototype extends EntityWithOwnerPrototype {
      * Whether the lamp should always be on.
      */
     always_on?: bool;
-    /**
-     * The pictures displayed for circuit connections to this lamp.
-     */
-    circuit_connector_sprites?: CircuitConnectorSprites;
-    /**
-     * Defines how wires visually connect to this lamp.
-     */
-    circuit_wire_connection_point?: WireConnectionPoint;
+    circuit_connector?: CircuitConnectorDefinition;
     /**
      * The maximum circuit wire distance for this entity.
      */
@@ -4398,6 +4881,10 @@ interface LampPrototype extends EntityWithOwnerPrototype {
      * darkness_for_all_lamps_on must be > darkness_for_all_lamps_off. Values must be between 0 and 1.
      */
     darkness_for_all_lamps_on?: float;
+    default_blue_signal?: SignalIDConnector;
+    default_green_signal?: SignalIDConnector;
+    default_red_signal?: SignalIDConnector;
+    default_rgb_signal?: SignalIDConnector;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
     /**
@@ -4422,11 +4909,11 @@ interface LampPrototype extends EntityWithOwnerPrototype {
     /**
      * The lamps graphics when it's off.
      */
-    picture_off: Sprite;
+    picture_off?: Sprite;
     /**
      * The lamps graphics when it's on.
      */
-    picture_on: Sprite;
+    picture_on?: Sprite;
     signal_to_color_mapping?: SignalColorMapping[];
 }
 /**
@@ -4435,10 +4922,6 @@ interface LampPrototype extends EntityWithOwnerPrototype {
 interface LandMinePrototype extends EntityWithOwnerPrototype {
     action?: Trigger;
     ammo_category?: AmmoCategoryID;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     /**
      * Force the landmine to kill itself when exploding.
      */
@@ -4450,11 +4933,11 @@ interface LandMinePrototype extends EntityWithOwnerPrototype {
     /**
      * The sprite of the landmine before it is armed (just after placing).
      */
-    picture_safe: Sprite;
+    picture_safe?: Sprite;
     /**
      * The sprite of the landmine of a friendly force when it is armed.
      */
-    picture_set: Sprite;
+    picture_set?: Sprite;
     /**
      * The sprite of the landmine of an enemy force when it is armed.
      */
@@ -4466,14 +4949,63 @@ interface LandMinePrototype extends EntityWithOwnerPrototype {
     /**
      * Collision mask that another entity must collide with to make this landmine blow up.
      */
-    trigger_collision_mask?: CollisionMask;
+    trigger_collision_mask?: CollisionMaskConnector;
     trigger_force?: ForceCondition;
     trigger_radius: double;
 }
+interface LaneSplitterPrototype extends TransportBeltConnectablePrototype {
+    structure: Animation4Way;
+    structure_animation_movement_cooldown?: uint32;
+    structure_animation_speed_coefficient?: double;
+    structure_patch?: Animation4Way;
+}
 /**
- * Deprecated in 0.18. Particles that are exclusively meant for leaves of trees. The type "leaf-particle" has been obsoleted and cannot be created. See {@link ParticlePrototype | prototype:ParticlePrototype} for particles.
+ * A legacy curved rail.
  */
-interface LeafParticlePrototype extends EntityParticlePrototype {
+interface LegacyCurvedRailPrototype extends RailPrototype {
+    /**
+     * The {@link collision_box | prototype:EntityPrototype::collision_box} of legacy curved rail is hardcoded to `{{-0.75, -0.55}, {0.75, 1.6}}`.
+     *
+     * The secondary collision box of legacy curved rail is hardcoded to `{{-0.68, -2.7}, {0.68, 2.7}}`.
+     */
+    collision_box?: BoundingBox;
+}
+/**
+ * A legacy straight rail.
+ */
+interface LegacyStraightRailPrototype extends RailPrototype {
+    /**
+     * The {@link collision_box | prototype:EntityPrototype::collision_box} of legacy straight rail is hardcoded to `{{-0.7, -0.99}, {0.7, 0.99}}`.
+     */
+    collision_box?: BoundingBox;
+}
+interface LightningAttractorPrototype extends EntityWithOwnerPrototype {
+    chargable_graphics?: ChargableGraphics;
+    /**
+     * Cannot be less than 0.
+     */
+    efficiency?: double;
+    /**
+     * Mandatory if `efficiency` is larger than 0. May not be defined if `efficiency` is 0.
+     */
+    energy_source?: ElectricEnergySource;
+    lightning_strike_offset?: MapPosition;
+    range_elongation?: double;
+}
+interface LightningPrototype extends EntityPrototype {
+    attracted_volume_modifier?: float;
+    damage?: double;
+    effect_duration: uint16;
+    energy?: Energy;
+    graphics_set?: LightningGraphicsSet;
+    sound?: Sound;
+    source_offset?: Vector;
+    source_variance?: Vector;
+    strike_effect?: Trigger;
+    /**
+     * Must be less than or equal to `effect_duration`.
+     */
+    time_to_damage?: uint16;
 }
 /**
  * A belt that can be connected to a belt anywhere else, including on a different surface. The linked belts have to be {@link connected with console commands | https://wiki.factorio.com/Console#Connect_linked_belts} or runtime scripting in mods or scenarios. {@link LuaEntity::connect_linked_belts | runtime:LuaEntity::connect_linked_belts} and other runtime functions.
@@ -4482,25 +5014,14 @@ interface LinkedBeltPrototype extends TransportBeltConnectablePrototype {
     allow_blueprint_connection?: bool;
     allow_clone_connection?: bool;
     allow_side_loading?: bool;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    structure: LinkedBeltStructure;
+    structure?: LinkedBeltStructure;
     structure_render_layer?: RenderLayer;
 }
 /**
  * A container that shares its inventory with containers with the same {@link link_id | runtime:LuaEntity::link_id}, which can be set via the GUI. The link IDs are per prototype and force, so only containers with the **same ID**, **same prototype name** and **same force** will share inventories.
  */
 interface LinkedContainerPrototype extends EntityWithOwnerPrototype {
-    /**
-     * The pictures displayed for circuit connections to this linked container.
-     */
-    circuit_connector_sprites?: CircuitConnectorSprites;
-    /**
-     * Defines how wires visually connect to this linked container.
-     */
-    circuit_wire_connection_point?: WireConnectionPoint;
+    circuit_connector?: CircuitConnectorDefinition;
     /**
      * The maximum circuit wire distance for this linked container.
      */
@@ -4518,9 +5039,8 @@ interface LinkedContainerPrototype extends EntityWithOwnerPrototype {
     /**
      * Whether the inventory of this container can be filtered (like cargo wagons) or not.
      */
-    inventory_type?: 'with_bar' | 'with_filters_and_bar';
+    inventory_type?: 'normal' | 'with_bar' | 'with_filters_and_bar';
     picture?: Sprite;
-    scale_info_icons?: bool;
 }
 /**
  * Continuously loads and unloads machines, as an alternative to inserters.
@@ -4557,13 +5077,23 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype {
      */
     belt_length?: double;
     /**
-     * Two entities can collide only if they share a layer from the collision mask.
+     * First the four cardinal directions for `direction_out`, followed by the four directions for `direction_in`.
      */
-    collision_mask?: CollisionMask;
+    circuit_connector?: CircuitConnectorDefinition[];
+    /**
+     * Render layer for all directions of the circuit connectors.
+     */
+    circuit_connector_layer?: RenderLayer;
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
     /**
      * The distance between the position of this loader and the tile of the loader's container target.
      */
     container_distance?: double;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
     /**
      * Energy in Joules. Can't be negative.
      */
@@ -4573,7 +5103,11 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype {
      * How many item filters this loader has. Maximum count of filtered items in loader is 5.
      */
     filter_count: uint8;
-    structure: LoaderStructure;
+    /**
+     * Loader will not create stacks on belt that are larger than this value. Must be >= 1.
+     */
+    max_belt_stack_size?: uint8;
+    structure?: LoaderStructure;
     structure_render_layer?: RenderLayer;
 }
 /**
@@ -4581,12 +5115,9 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype {
  */
 interface LocomotivePrototype extends RollingStockPrototype {
     darkness_to_render_light_animation?: float;
-    /**
-     * Must be a burner energy source when using "burner", otherwise it can also be a void energy source.
-     */
     energy_source: BurnerEnergySource | VoidEnergySource;
     front_light?: LightDefinition;
-    front_light_pictures?: RotatedSprite;
+    front_light_pictures?: RollingStockRotatedSlopedGraphics;
     max_power: Energy;
     /**
      * In tiles. A locomotive will snap to a nearby train stop when the player places it within this distance to the stop.
@@ -4612,21 +5143,19 @@ interface LogisticContainerPrototype extends ContainerPrototype {
     landing_location_offset?: Vector;
     /**
      * The way this chest interacts with the logistic network.
+     * This property is required, but marked as optional due to typescript inheritance limitations
      */
     logistic_mode?: 'active-provider' | 'passive-provider' | 'requester' | 'storage' | 'buffer';
     /**
-     * The number of request slots this logistics container has. Requester-type containers must have > 0 slots and can have a maximum of 1000 slots. Storage-type containers must have <= 1 slot.
+     * The number of request slots this logistics container has. Requester-type containers must have > 0 slots and can have a maximum of {@link UtilityConstants::max_logistic_filter_count | prototype:UtilityConstants::max_logistic_filter_count} slots. Storage-type containers must have <= 1 slot.
      */
     max_logistic_slots?: uint16;
     opened_duration?: uint8;
     /**
-     * The picture displayed for this entity.
-     */
-    picture?: Sprite;
-    /**
      * Whether the "no network" icon should be rendered on this entity if the entity is not within a logistics network.
      */
     render_not_in_network_icon?: bool;
+    trash_inventory_size?: ItemStackIndex;
     /**
      * Whether logistic robots have to deliver the exact amount of items requested to this logistic container instead of over-delivering (within their cargo size).
      */
@@ -4677,23 +5206,36 @@ interface LogisticRobotPrototype extends RobotWithLogisticInterfacePrototype {
     {
       difficulty_settings =
       {
-        recipe_difficulty = defines.difficulty_settings.recipe_difficulty.expensive,
-        technology_difficulty = defines.difficulty_settings.technology_difficulty.expensive,
         technology_price_multiplier = 4
       }
     }
   },
   ["island"] =
   {
-    order = "g",
+    order = "h",
     basic_settings =
     {
       property_expression_names =
       {
-        elevation = "0_17-island",
+        elevation = "elevation_island",
+        moisture = "moisture_basic",
+        aux = "aux_basic",
+        cliffiness = "cliffiness_basic",
+        cliff_elevation = "cliff_elevation_from_elevation",
+        trees_forest_path_cutout = 1
       },
-      autoplace_controls = {},
-      terrain_segmentation = 1,
+      cliff_settings =
+      {
+        cliff_smoothing = 1
+      },
+      autoplace_controls =
+      {
+        ["trees"] =
+        {
+          frequency = 1,
+          size = 0.5
+        }
+      }
     }
   }
 }
@@ -4710,6 +5252,7 @@ interface MapGenPresets {
  * The default map settings.
  */
 interface MapSettings {
+    asteroids: AsteroidSettings;
     difficulty_settings: DifficultySettings;
     enemy_evolution: EnemyEvolutionSettings;
     enemy_expansion: EnemyExpansionSettings;
@@ -4735,7 +5278,7 @@ interface MarketPrototype extends EntityWithOwnerPrototype {
      * Whether all forces are allowed to open this market.
      */
     allow_access_to_all_forces?: bool;
-    picture: Sprite;
+    picture?: Sprite;
 }
 /**
  * A mining drill for automatically extracting resources from {@link resource entities | prototype:ResourceEntityPrototype}. This prototype type is used by {@link burner mining drill | https://wiki.factorio.com/Burner_mining_drill}, {@link electric mining drill | https://wiki.factorio.com/Electric_mining_drill} and {@link pumpjack | https://wiki.factorio.com/Pumpjack} in vanilla.
@@ -4746,35 +5289,19 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
      */
     allowed_effects?: EffectTypeLimitation;
     /**
-     * Only loaded if `graphics_set` is not defined.
+     * Sets the {@link module categories | prototype:ModuleCategory} that are allowed to be inserted into this machine.
      */
-    animations?: Animation4Way;
+    allowed_module_categories?: ModuleCategoryID[];
     /**
      * Used by the {@link pumpjack | https://wiki.factorio.com/Pumpjack} to have a static 4 way sprite.
      */
     base_picture?: Sprite4Way;
-    /**
-     * Productivity bonus that this machine always has. Values below `0` are allowed, however the sum of the resulting effect together with modules and research is limited to be at least 0%, see {@link Effect | prototype:Effect}.
-     */
-    base_productivity?: float;
     base_render_layer?: RenderLayer;
-    /**
-     * Mandatory if circuit_wire_max_distance  > 0.
-     */
-    circuit_connector_sprites?: [
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites
-    ];
-    /**
-     * Mandatory if circuit_wire_max_distance  > 0.
-     */
-    circuit_wire_connection_points?: [
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
     ];
     /**
      * The maximum circuit wire distance for this entity.
@@ -4782,6 +5309,11 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
     circuit_wire_max_distance?: double;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
+    drilling_sound?: InterruptibleSound;
+    drilling_sound_animation_end_frame?: uint16;
+    drilling_sound_animation_start_frame?: uint16;
+    drops_full_belt_stacks?: bool;
+    effect_receiver?: EffectReceiver;
     /**
      * The energy source of this mining drill.
      */
@@ -4793,18 +5325,30 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
     ```
      */
     energy_usage: Energy;
+    /**
+     * How many filters this mining drill has. Maximum count of filtered resources in a mining drill is 5.
+     */
+    filter_count?: uint8;
     graphics_set?: MiningDrillGraphicsSet;
     input_fluid_box?: FluidBox;
     /**
      * The speed of this drill.
      */
     mining_speed: double;
-    module_specification?: ModuleSpecification;
+    /**
+     * The number of module slots in this machine.
+     */
+    module_slots?: ItemStackIndex;
     /**
      * When this mining drill is connected to the circuit network, the resource that it is reading (either the entire resource patch, or the resource in the mining area of the drill, depending on circuit network setting), is tinted in this color when mousing over the mining drill.
      */
     monitor_visualization_tint?: Color;
+    moving_sound?: InterruptibleSound;
     output_fluid_box?: FluidBox;
+    /**
+     * Affects animation speed.
+     */
+    perceived_performance?: PerceivedPerformance;
     /**
      * The sprite used to show the range of the mining drill.
      */
@@ -4815,12 +5359,14 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
      * Note: Categories containing resources which produce items, fluids, or items+fluids may be combined on the same entity, but may not work as expected. Examples: Miner does not rotate fluid-resulting resources until depletion. Fluid isn't output (fluid resource change and fluidbox matches previous fluid). Miner with no `vector_to_place_result` can't output an item result and halts.
      */
     resource_categories: ResourceCategoryID[];
+    resource_drain_rate_percent?: uint8;
     /**
      * The distance from the centre of the mining drill to search for resources in.
      *
      * This is 2.49 for electric mining drills (a 5x5 area) and 0.99 for burner mining drills (a 2x2 area). The drill searches resource outside its natural boundary box, which is 0.01 (the middle of the entity); making it 2.5 and 1.0 gives it another block radius.
      */
     resource_searching_radius: double;
+    shuffle_resources_to_mine?: bool;
     /**
      * The position where any item results are placed, when the mining drill is facing north (default direction). If the drill does not produce any solid items but uses a fluidbox output instead (e.g. pumpjacks), a vector of `{0,0}` disables the yellow arrow alt-mode indicator for the placed item location.
      */
@@ -4828,14 +5374,9 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
     wet_mining_graphics_set?: MiningDrillGraphicsSet;
 }
 /**
- * Exists only for migration, cannot be used by mods.
- */
-interface MiningToolPrototype extends ToolPrototype {
-}
-/**
  * A module category. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#module-category}. See {@link ModulePrototype::category | prototype:ModulePrototype::category}.
  */
-interface ModuleCategory extends PrototypeBase {
+interface ModuleCategory extends Prototype {
 }
 /**
  * A {@link module | https://wiki.factorio.com/Module}. They are used to affect the capabilities of existing machines, for example by increasing the crafting speed of a {@link crafting machine | prototype:CraftingMachinePrototype}.
@@ -4854,25 +5395,31 @@ interface ModulePrototype extends ItemPrototype {
      * The effect of the module on the machine it's inserted in, such as increased pollution.
      */
     effect: Effect;
-    /**
-     * Array of {@link recipe names | prototype:RecipePrototype} this module can be used on. If empty, the module can be used on all recipes.
-     */
-    limitation?: RecipeID[];
-    /**
-     * Array of {@link recipe names | prototype:RecipePrototype} this module can **not** be used on, implicitly allowing its use on all other recipes. This property has no effect if set to an empty table.
-     *
-     * Note that the game converts this into a normal list of limitations internally, so reading {@link LuaItemPrototype::limitations | runtime:LuaItemPrototype::limitations} at runtime will be the product of both ways of defining limitations.
-     */
-    limitation_blacklist?: RecipeID[];
-    /**
-     * The locale key of the message that is shown when the player attempts to use the module on a recipe it can't be used on. The locale key will be prefixed with `item-limitation.` (the "category" of the locale) by the game.
-     */
-    limitation_message_key?: string;
     requires_beacon_alt_mode?: bool;
     /**
      * Tier of the module inside its category. Used when upgrading modules: Ctrl + click modules into an entity and it will replace lower tier modules with higher tier modules if they have the same category.
      */
     tier: uint32;
+}
+/**
+ * This prototype is used for receiving an achievement when the player moves a module with the cursor.
+ */
+interface ModuleTransferAchievementPrototype extends AchievementPrototype {
+    /**
+     * How many modules need to be transferred.
+     */
+    amount?: uint32;
+    /**
+     * If this is false, the player carries over their statistics from this achievement through all their saves.
+     */
+    limited_to_one_game?: bool;
+    /**
+     * This will trigger the achievement, if this module is transferred.
+     * @example ```
+    module = "quality-module"
+    ```
+     */
+    module: ItemID;
 }
 /**
  * Used by {@link SelectionToolPrototype::mouse_cursor | prototype:SelectionToolPrototype::mouse_cursor}.
@@ -4929,13 +5476,20 @@ interface MovementBonusEquipmentPrototype extends EquipmentPrototype {
 /**
  * A {@link NoiseExpression | prototype:NoiseExpression} with a name. The base game uses named noise expressions to specify functions for many map properties to be used in map generation; e.g. the "elevation" expression is used to calculate elevation for every point on a map. For a list of the built-in named noise expressions, see {@link data.raw | https://wiki.factorio.com/Data.raw#noise-expression}.
  *
- * Named noise expressions can be used by {@link MapGenSettings | prototype:MapGenSettings} and {@link MapGenPreset | prototype:MapGenPreset} to override which named expression is used to calculate a given property by having an entry in `property_expression_names`, e.g. `elevation = "0.16-elevation"`.
+ * Named noise expressions can be used by {@link MapGenSettings | prototype:MapGenSettings} and {@link MapGenPreset | prototype:MapGenPreset} to override which named expression is used to calculate a given property by having an entry in `property_expression_names`, e.g. `elevation = "elevation_island"`.
  *
  * Alternate expressions can be made available in the map generator GUI by setting their `intended_property` to the name of the property they should override.
  *
- * Named noise expressions can also be used by {@link noise variables | prototype:NoiseVariable}, e.g. `noise.var("my-named-expression")`.
+ * Named noise expressions can also be used as {@link noise variables | runtime:noise-expressions} e.g. `var("my-noise-expression")`.
+ * @example ```
+{
+  type = "noise-expression",
+  name = "distance",
+  expression = "distance_from_nearest_point{x = x, y = y, points = starting_positions}"
+}
+```
  */
-interface NamedNoiseExpression extends PrototypeBase {
+interface NamedNoiseExpression extends Prototype {
     /**
      * The noise expression itself. This is where most of the noise magic happens.
      */
@@ -4943,65 +5497,74 @@ interface NamedNoiseExpression extends PrototypeBase {
     /**
      * Names the property that this expression is intended to provide a value for, if any. This will make the expression show up as an option in the map generator GUI, unless it is the only expression with that intended property, in which case it will be hidden and selected by default.
      *
-     * Note that the "Map type" dropdown in the map generation GUI is actually a selector for "elevation" generators. If generators are available for other properties, the "Map type" dropdown in the GUI will be renamed to "elevation" and shown along with selectors for the other selectable properties.
-     *
-     * For example if a noise expression is intended to be used as an alternative temperature generator, `intended_property` should be "temperature". The base game uses the intended_properties elevation, temperature, moisture and aux. For how the named noise expression with those intended_properties are used in the base game see the notable named noise expression list on {@link BaseNamedNoiseExpressions | prototype:BaseNamedNoiseExpressions}. Mods may add any other intended_property or modify the existing noise expressions to change/remove their intended properties. Furthermore, mods may remove the use of those named noise expressions from the map generation code or change what they affect.
-     *
-     * **intended_property in the base game:** The base game defines two named noise expressions that have the `intended_property` "elevation" so that are selectable via the "Map type" dropdown (which actually selects elevation generators)
-     *
-     * ```
-     * local noise = require("noise")
-     * data:extend{
-     *   {
-     *     type = "noise-expression",
-     *     name = "elevation",
-     *     intended_property = "elevation",
-     *     expression = noise.var("0_17-lakes-elevation") -- "0_17-lakes-elevation" is another named noise expression. Noise variables may reference named noise expressions.
-     *   },
-     *   {
-     *     type = "noise-expression",
-     *     name = "0_17-island",
-     *     intended_property = "elevation",
-     *     -- A large island surrounded by an endless ocean
-     *     -- expression =  [...]
-     *   }
-     * }
-     * ```
-     *
-     * **Mods can define any intended_property with any name**. This examples aims to show what this is useful for.
-     *
-     * A {@link NoiseVariable | prototype:NoiseVariable} can reference a named noise expression, so by defining the "test" named noise expression, `noise.var("test")` may be used in other {@link noise expressions | prototype:NoiseExpression}. Intended_property allows to override what the variable references: With the example, if "more-test" is selected in the dropdown in the map generator GUI, its `expression` (`noise.ridge(noise.var("y"), -10, 6`) will provide the value for the noise variable "test" instead.
-     *
-     * For easy demonstration, that value is assigned to the "elevation" named noise expression, so changing the "test" generator changes the `noise.var("test")` which in turn is used by the "elevation" named noise expression. The "elevation" noise variable is used by water generation, so changing the test generators is immediately visible in the map generation preview.
-     *
-     * Note that the player can select the "Island" elevation generator in the Elevation dropdown (previously named Map type), which means the 0_17-island named noise expression is selected and `noise.var("test")` isn't used anymore so changing the test generator no longer has an effect.
-     *
-     * ```
-     * local noise = require("noise")
-     * data:extend{
-     *   {
-     *     type = "noise-expression",
-     *     name = "test",
-     *     intended_property = "test",
-     *     expression = noise.ridge(noise.var("x"), -80, 8),
-     *   },
-     *   {
-     *     type = "noise-expression",
-     *     name = "more-test",
-     *     intended_property = "test", -- override the "test" noise variable when selected by the player
-     *     expression = noise.ridge(noise.var("y"), -10, 6),
-     *   }
-     * }
-     * data.raw["noise-expression"]["elevation"].expression = noise.var("test") -- the noise variable "test"
-     * ```
+     * For example if a noise expression is intended to be used as an alternative temperature generator, `intended_property` should be "temperature".
      */
     intended_property?: string;
+    /**
+     * A map of expression name to expression.
+     *
+     * Local expressions are meant to store data locally similar to local variables in Lua. Their purpose is to hold noise expressions used multiple times in the named noise expression, or just to tell the reader that the local expression has a specific purpose. Local expressions can access other local definitions, but recursive definitions aren't supported.
+     */
+    local_expressions?: Record<string, NoiseExpression>;
+    /**
+     * A map of function name to function.
+     *
+     * Local functions serve the same purpose as local expressions - they aren't visible outside of the specific prototype and they have access to other local definitions.
+     */
+    local_functions?: Record<string, NoiseFunction>;
     /**
      * Used to order alternative expressions in the map generator GUI. For a given property (e.g. 'temperature'), the NamedNoiseExpression with that property's name as its `intended_property` with the lowest order will be chosen as the default in the GUI.
      *
      * If no order is specified, it defaults to "2000" if the property name matches the expression name (making it the 'technical default' generator for the property if none is specified in MapGenSettings), or "3000" otherwise. A generator defined with an order less than "2000" but with a unique name can thereby override the default generator used when creating a new map through the GUI without automatically overriding the 'technical default' generator, which is probably used by existing maps.
      */
     order?: Order;
+}
+/**
+ * Named noise functions are defined in the same way as {@link NamedNoiseExpression | prototype:NamedNoiseExpression} except that they also have parameters.
+ *
+ * Named noise functions are available to be used in {@link NoiseExpressions | prototype:NoiseExpression}.
+ * @example ```
+{
+  type = "noise-function",
+  name = "random_between",
+  parameters = {"from", "to"},
+  expression = "random_penalty{x = x, y = y, source = to, amplitude = to - from}"
+}
+```
+ * @example ```
+{
+  type = "noise-function",
+  name = "finish_elevation",
+  parameters = {"elevation", "segmentation_multiplier"},
+  expression = "min((elevation - water_level) / segmentation_multiplier, <more stuff>, starting_lake_distance / 16 + starting_lake_noise / 2)",
+  local_expressions =
+  {
+    starting_lake_distance = "distance_from_nearest_point{x = x, y = y, points = starting_lake_positions, maximum_distance = 1024}",
+    starting_lake_noise = "quick_multioctave_noise_persistence{<more stuff>}"
+  }
+}
+```
+ */
+interface NamedNoiseFunction extends Prototype {
+    expression: NoiseExpression;
+    /**
+     * A map of expression name to expression.
+     *
+     * Local expressions are meant to store data locally similar to local variables in Lua. Their purpose is to hold noise expressions used multiple times in the named noise expression, or just to tell the reader that the local expression has a specific purpose. Local expressions can access other local definitions and also function parameters, but recursive definitions aren't supported.
+     */
+    local_expressions?: Record<string, NoiseExpression>;
+    /**
+     * A map of function name to function.
+     *
+     * Local functions serve the same purpose as local expressions - they aren't visible outside of the specific prototype and they have access to other local definitions.
+     */
+    local_functions?: Record<string, NoiseFunction>;
+    /**
+     * The order of the parameters matters because functions can also be called with positional arguments.
+     *
+     * A function can't have more than 255 parameters.
+     */
+    parameters: string[];
 }
 /**
  * Used by {@link nightvision | https://wiki.factorio.com/Nightvision}.
@@ -5017,54 +5580,18 @@ interface NightVisionEquipmentPrototype extends EquipmentPrototype {
     energy_input: Energy;
 }
 /**
- * A noise layer used by the {@link autoplace system | prototype:AutoplacePeak::noise_layer}. For a list of built-in layers, see {@link here | https://wiki.factorio.com/Data.raw#noise-layer}.
- */
-interface NoiseLayer extends PrototypeBase {
-}
-/**
  * An {@link offshore pump | https://wiki.factorio.com/Offshore_pump}.
  */
 interface OffshorePumpPrototype extends EntityWithOwnerPrototype {
-    adjacent_tile_collision_box?: BoundingBox;
-    /**
-     * Tiles colliding with `adjacent_tile_collision_box` must NOT collide with this collision mask.
-     */
-    adjacent_tile_collision_mask?: CollisionMask;
-    /**
-     * Tiles colliding with `adjacent_tile_collision_box` must collide with this collision mask (unless it's empty).
-     */
-    adjacent_tile_collision_test?: CollisionMask;
     /**
      * If false, the offshore pump will not show fluid present (visually) before there is an output connected. The pump will also animate yet not show fluid when the fluid is 100% extracted (e.g. such as with a pump).
      */
     always_draw_fluid?: bool;
-    /**
-     * Tile at placement position must NOT collide with this collision mask.
-     */
-    center_collision_mask?: CollisionMask;
-    /**
-     * If not set (=default), the offshore pump does not collide with tiles if it has none of these collision masks: "water-tile", "ground-tile", "resource-layer", "player-layer", "item-layer", "doodad-layer". If it has at least one of the six collision masks, it does collide with tiles.
-     *
-     * If set, this specifies whether collision with tiles should (true) or should not (false) be performed on an offshore pump.
-     */
-    check_bounding_box_collides_with_tiles?: bool;
-    /**
-     * Mandatory if circuit_wire_max_distance > 0.
-     */
-    circuit_connector_sprites?: [
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites
-    ];
-    /**
-     * Mandatory if circuit_wire_max_distance > 0.
-     */
-    circuit_wire_connection_points?: [
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
     ];
     /**
      * The maximum circuit wire distance for this entity.
@@ -5073,33 +5600,35 @@ interface OffshorePumpPrototype extends EntityWithOwnerPrototype {
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
     /**
-     * The name of the fluid that is produced by the pump.
+     * Defines how the offshore pump is powered.
+     *
+     * When using an electric energy source and `drain` is not specified, it will be set to `energy_usage ÷ 30` automatically.
      */
-    fluid: FluidID;
+    energy_source: EnergySource;
+    /**
+     * Sets how much energy this offshore pump consumes. Energy usage has to be positive.
+     * @example ```
+    energy_usage = "60kW"
+    ```
+     */
+    energy_usage: Energy;
     fluid_box: FluidBox;
-    fluid_box_tile_collision_test?: CollisionMask;
+    fluid_source_offset: Vector;
     graphics_set?: OffshorePumpGraphicsSet;
     /**
-     * Animation runs at least this fast.
+     * Affects animation speed.
      */
-    min_perceived_performance?: float;
-    /**
-     * Mandatory if `graphics_set` is not defined.
-     *
-     * Deprecated, use `graphics_set` instead.
-     */
-    picture?: Animation4Way;
-    placeable_position_visualization?: Sprite;
+    perceived_performance?: PerceivedPerformance;
     /**
      * How many units of fluid are produced per tick. Must be > 0.
      */
-    pumping_speed: float;
+    pumping_speed: FluidAmount;
     remove_on_tile_collision?: bool;
 }
 /**
  * An entity with a limited lifetime that can use trigger effects.
  */
-interface ParticlePrototype extends PrototypeBase {
+interface ParticlePrototype extends Prototype {
     draw_shadow_when_on_ground?: bool;
     ended_in_water_trigger_effect?: TriggerEffect;
     ended_on_ground_trigger_effect?: TriggerEffect;
@@ -5117,7 +5646,7 @@ interface ParticlePrototype extends PrototypeBase {
     /**
      * Picture variation count and individual frame count must be equal to shadow variation count.
      */
-    pictures: AnimationVariations;
+    pictures?: AnimationVariations;
     regular_trigger_effect?: TriggerEffect;
     /**
      * Can't be 1.
@@ -5138,10 +5667,6 @@ interface ParticlePrototype extends PrototypeBase {
  * Creates particles.
  */
 interface ParticleSourcePrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     height: float;
     height_deviation?: float;
     horizontal_speed: float;
@@ -5173,19 +5698,55 @@ interface PipePrototype extends EntityWithOwnerPrototype {
     /**
      * All graphics for this pipe.
      */
-    pictures: PipePictures;
+    pictures?: PipePictures;
     vertical_window_bounding_box: BoundingBox;
 }
 /**
  * A {@link pipe to ground | https://wiki.factorio.com/Pipe_to_ground}.
  */
 interface PipeToGroundPrototype extends EntityWithOwnerPrototype {
+    disabled_visualization?: Sprite4Way;
     /**
      * Causes fluid icon to always be drawn, ignoring the usual pair requirement.
      */
     draw_fluid_icon_override?: bool;
     fluid_box: FluidBox;
-    pictures: PipeToGroundPictures;
+    frozen_patch?: Sprite4Way;
+    pictures?: Sprite4Way;
+    visualization?: Sprite4Way;
+}
+interface PlaceEquipmentAchievementPrototype extends AchievementPrototype {
+    amount?: uint32;
+    armor: ItemID;
+    limit_equip_quality: QualityID;
+    limit_quality: QualityID;
+    /**
+     * If this is false, the player carries over their statistics from this achievement through all their saves.
+     */
+    limited_to_one_game?: bool;
+}
+interface PlanetPrototype extends SpaceLocationPrototype {
+    entities_require_heating?: bool;
+    lightning_properties?: LightningProperties;
+    map_gen_settings?: PlanetPrototypeMapGenSettings;
+    map_seed_offset?: uint32;
+    persistent_ambient_sounds?: PersistentWorldAmbientSoundsDefinition;
+    player_effects?: Trigger;
+    pollutant_type?: AirbornePollutantID;
+    surface_properties?: LuaTable<SurfacePropertyID, double>;
+    surface_render_parameters?: SurfaceRenderParameters;
+    ticks_between_player_effects?: MapTick;
+}
+interface PlantPrototype extends TreePrototype {
+    agricultural_tower_tint?: RecipeTints;
+    /**
+     * Must be positive.
+     */
+    growth_ticks: MapTick;
+    /**
+     * The burst of pollution to emit when the plant is harvested.
+     */
+    harvest_emissions?: Record<AirbornePollutantID, double>;
 }
 /**
  * This prototype is used for receiving an achievement when the player receives damage.
@@ -5214,18 +5775,9 @@ interface PlayerDamagedAchievementPrototype extends AchievementPrototype {
     type_of_dealer?: string;
 }
 /**
- * When a character dies, this entity will immediately respawn the character at the entities location, so there is no respawn time. If there are multiple player ports in the world, the character will respawn at the nearest player port to their death location.
+ * Deprecated in 2.0.
  */
 interface PlayerPortPrototype extends EntityWithOwnerPrototype {
-    animation: Animation;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    /**
-     * Whether this prototype should be a high priority target for enemy forces. See {@link Military units and structures | https://wiki.factorio.com/Military_units_and_structures}.
-     */
-    is_military_target?: bool;
 }
 /**
  * A {@link power switch | https://wiki.factorio.com/Power_switch}.
@@ -5234,15 +5786,51 @@ interface PowerSwitchPrototype extends EntityWithOwnerPrototype {
     circuit_wire_connection_point: WireConnectionPoint;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
-    led_off: Sprite;
-    led_on: Sprite;
+    frozen_patch?: Sprite;
+    led_off?: Sprite;
+    led_on?: Sprite;
     left_wire_connection_point: WireConnectionPoint;
-    overlay_loop: Animation;
-    overlay_start: Animation;
+    overlay_loop?: Animation;
+    overlay_start?: Animation;
     overlay_start_delay: uint8;
-    power_on_animation: Animation;
+    power_on_animation?: Animation;
     right_wire_connection_point: WireConnectionPoint;
     wire_max_distance?: double;
+}
+/**
+ * Helps {@link ProcessionLayers | prototype:ProcessionLayer} pass properties between subsequent transitions if they belong to the same group.
+ */
+interface ProcessionLayerInheritanceGroup extends Prototype {
+    arrival_application?: TransitionApplication;
+    intermezzo_application?: TransitionApplication;
+}
+/**
+ * Describes the duration and visuals of a departure, arrival or an intermezzo while traveling between surfaces. Usually provided inside of a {@link ProcessionSet | prototype:ProcessionSet}.
+ */
+interface ProcessionPrototype extends Prototype {
+    /**
+     * Used alternatively when landing to ground.
+     */
+    ground_timeline?: ProcessionTimeline;
+    /**
+     * Indexes used to match transitions from different surfaces together. Only a single intermezzo of a given procession_style may exist.
+     * @example ```
+    Going from Surface A -> Surface B
+    Surface A has departures: [1, 3, 4]
+    Surface B has arrivals:   [2, 3, 5]
+    This trip will select:
+    Departure 3 -> (Intermezzo 3) -> Arrival 3
+    ```
+     */
+    procession_style: uint32 | uint32[];
+    /**
+     * Used when leaving or arriving to a station.
+     */
+    timeline: ProcessionTimeline;
+    /**
+     * Arrival and Departure are to be referenced by name. All intermezzos are collected during loading and filled in by `procession_style`.
+     */
+    usage: 'departure' | 'arrival' | 'intermezzo';
 }
 /**
  * This prototype is used for receiving an achievement when the player produces more than the specified amount of items.
@@ -5277,6 +5865,7 @@ interface ProduceAchievementPrototype extends AchievementPrototype {
      * If this is false, the player carries over their statistics from this achievement through all their saves.
      */
     limited_to_one_game: bool;
+    quality?: QualityID;
 }
 /**
  * This prototype is used for receiving an achievement when the player crafts a specified item a certain amount, in an hour.
@@ -5313,8 +5902,7 @@ interface ProducePerHourAchievementPrototype extends AchievementPrototype {
  */
 interface ProgrammableSpeakerPrototype extends EntityWithOwnerPrototype {
     audible_distance_modifier?: float;
-    circuit_connector_sprites?: CircuitConnectorSprites;
-    circuit_wire_connection_point?: WireConnectionPoint;
+    circuit_connector?: CircuitConnectorDefinition;
     circuit_wire_max_distance?: double;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
@@ -5322,7 +5910,7 @@ interface ProgrammableSpeakerPrototype extends EntityWithOwnerPrototype {
     energy_usage_per_tick: Energy;
     instruments: ProgrammableSpeakerInstrument[];
     maximum_polyphony: uint32;
-    sprite: Sprite;
+    sprite?: Sprite;
 }
 /**
  * Entity with limited lifetime that can hit other entities and has triggers when this happens.
@@ -5336,11 +5924,7 @@ interface ProjectilePrototype extends EntityPrototype {
      * Executed when the projectile hits something.
      */
     action?: Trigger;
-    animation?: AnimationVariations;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
+    animation?: RotatedAnimationVariations;
     /**
      * Setting this to true can be used to disable projectile homing behaviour.
      */
@@ -5356,7 +5940,10 @@ interface ProjectilePrototype extends EntityPrototype {
      * When true the entity is hit at the position on its collision box the projectile first collides with. When false the entity is hit at its own position.
      */
     hit_at_collision_position?: bool;
-    hit_collision_mask?: CollisionMask;
+    /**
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"projectile/hit"`.
+     */
+    hit_collision_mask?: CollisionMaskConnector;
     light?: LightDefinition;
     /**
      * Must be greater than or equal to 0.
@@ -5370,7 +5957,7 @@ interface ProjectilePrototype extends EntityPrototype {
      * Whether the animation of the projectile is rotated to match the direction of travel.
      */
     rotatable?: bool;
-    shadow?: AnimationVariations;
+    shadow?: RotatedAnimationVariations;
     smoke?: SmokeSource[];
     speed_modifier?: Vector;
     /**
@@ -5379,10 +5966,28 @@ interface ProjectilePrototype extends EntityPrototype {
     turn_speed?: float;
     turning_speed_increases_exponentially_with_projectile_speed?: bool;
 }
+interface Prototype extends PrototypeBase {
+    /**
+     * The ID type corresponding to the prototype that inherits from this.
+     *
+     * For example, if this is an {@link EntityPrototype | prototype:EntityPrototype}, this property's type is {@link EntityID | prototype:EntityID}.
+     */
+    factoriopedia_alternative?: string;
+}
 /**
  * The abstract base for prototypes. PrototypeBase defines the common features of prototypes, such as localization and order.
  */
 interface PrototypeBase {
+    /**
+     * Provides additional description used in factoriopedia.
+     */
+    factoriopedia_description?: LocalisedString;
+    /**
+     * The simulation shown when looking at this prototype in the Factoriopedia GUI.
+     */
+    factoriopedia_simulation?: SimulationDefinition;
+    hidden?: bool;
+    hidden_in_factoriopedia?: bool;
     /**
      * Overwrites the description set in the {@link locale file | https://wiki.factorio.com/Tutorial:Localisation}. The description is usually shown in the tooltip of the prototype.
      */
@@ -5392,7 +5997,7 @@ interface PrototypeBase {
      */
     localised_name?: LocalisedString;
     /**
-     * Unique textual identification of the prototype. May not contain a dot, nor exceed a length of 200 characters.
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
      *
      * For a list of all names used in vanilla, see {@link data.raw | https://wiki.factorio.com/Data.raw}.
      */
@@ -5402,9 +6007,17 @@ interface PrototypeBase {
      */
     order?: Order;
     /**
+     * Whether the prototype is a special type which can be used to parametrize blueprints and doesn't have other function.
+     */
+    parameter?: bool;
+    /**
+     * The name of an {@link ItemSubGroup | prototype:ItemSubGroup}.
+     */
+    subgroup?: ItemSubGroupID;
+    /**
      * Specifies the kind of prototype this is.
      *
-     * For a list of all types used in vanilla, see {@link data.raw | https://wiki.factorio.com/Data.raw}.
+     * For a list of all possible types, see the {@link prototype overview | prototype:prototypes}.
      */
     type: string;
 }
@@ -5415,24 +6028,12 @@ interface PumpPrototype extends EntityWithOwnerPrototype {
     /**
      * The animation for the pump.
      */
-    animations: Animation4Way;
-    /**
-     * Mandatory if circuit_wire_max_distance  > 0.
-     */
-    circuit_connector_sprites?: [
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites
-    ];
-    /**
-     * Mandatory if circuit_wire_max_distance  > 0.
-     */
-    circuit_wire_connection_points?: [
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint
+    animations?: Animation4Way;
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
     ];
     circuit_wire_max_distance?: double;
     draw_circuit_wires?: bool;
@@ -5447,23 +6048,90 @@ interface PumpPrototype extends EntityWithOwnerPrototype {
     energy_usage: Energy;
     fluid_animation?: Animation4Way;
     /**
-     * The area of the entity where fluid inputs and outputs.
+     * The area of the entity where fluid travels.
      */
     fluid_box: FluidBox;
     fluid_wagon_connector_alignment_tolerance?: double;
     fluid_wagon_connector_frame_count?: uint8;
     fluid_wagon_connector_graphics?: FluidWagonConnectorGraphics;
     fluid_wagon_connector_speed?: double;
+    frozen_patch?: Sprite4Way;
     glass_pictures?: Sprite4Way;
     /**
      * The amount of fluid this pump transfers per tick.
      */
-    pumping_speed: double;
+    pumping_speed: FluidAmount;
+}
+interface QualityPrototype extends Prototype {
+    /**
+     * Must be >= 0.
+     */
+    beacon_power_usage_multiplier?: float;
+    color: Color;
+    draw_sprite_by_default?: bool;
+    /**
+     * Path to the icon file.
+     *
+     * Mandatory if `icons` is not defined.
+     */
+    icon?: FileName;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    icons?: IconData[];
+    /**
+     * Requires Space Age to use level greater than `0`.
+     */
+    level: uint32;
+    /**
+     * Must be in range `[0, 1]`.
+     */
+    mining_drill_resource_drain_multiplier?: float;
+    /**
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
+     *
+     * Requires Space Age to create prototypes with name other than `normal` or `quality-unknown`.
+     */
+    name: string;
+    next?: QualityID;
+    /**
+     * Must be in range [0, 1.0].
+     */
+    next_probability?: double;
+    /**
+     * Must be in range `[0, 1]`.
+     */
+    science_pack_drain_multiplier?: float;
 }
 /**
  * A {@link radar | https://wiki.factorio.com/Radar}.
  */
 interface RadarPrototype extends EntityWithOwnerPrototype {
+    circuit_connector?: CircuitConnectorDefinition;
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    /**
+     * If set to true, radars on the same surface will connect to other radars on the same surface using hidden wires with {@link radar | runtime:defines.wire_origin.radars} origin.
+     */
+    connects_to_other_radars?: bool;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
+    /**
+     * Must be between 0 and 1. Must be larger than or equal to `energy_fraction_to_disconnect`.
+     */
+    energy_fraction_to_connect?: float;
+    /**
+     * Must be between 0 and 1. Must be less than or equal to `energy_fraction_to_connect`.
+     */
+    energy_fraction_to_disconnect?: float;
     /**
      * The amount of energy the radar has to consume for nearby scan to be performed. This value doesn't have any effect on sector scanning.
      *
@@ -5491,6 +6159,7 @@ interface RadarPrototype extends EntityWithOwnerPrototype {
     ```
      */
     energy_usage: Energy;
+    frozen_patch?: Sprite;
     /**
      * Whether this prototype should be a high priority target for enemy forces. See {@link Military units and structures | https://wiki.factorio.com/Military_units_and_structures}.
      */
@@ -5503,59 +6172,51 @@ interface RadarPrototype extends EntityWithOwnerPrototype {
      * The radius of the area this radar can chart, in chunks.
      */
     max_distance_of_sector_revealed: uint32;
-    pictures: RotatedSprite;
+    pictures?: RotatedSprite;
     radius_minimap_visualisation_color?: Color;
+    reset_orientation_when_frozen?: bool;
     rotation_speed?: double;
 }
 /**
  * A {@link rail chain signal | https://wiki.factorio.com/Rail_chain_signal}.
  */
 interface RailChainSignalPrototype extends RailSignalBasePrototype {
-    blue_light?: LightDefinition;
-    default_blue_output_signal?: SignalIDConnector;
-    /**
-     * Array of 8 vectors.
-     */
-    selection_box_offsets: Vector[];
 }
 /**
  * A {@link rail planner | https://wiki.factorio.com/Rail_planner}.
  */
 interface RailPlannerPrototype extends ItemPrototype {
+    manual_length_limit?: double;
     /**
-     * The name of an entity of the type "curved-rail". The first item to place of the rail must be this rail planner.
+     * May not be an empty array. Entities must be rails and their first item-to-place must be this item.
      */
-    curved_rail: EntityID;
+    rails: EntityID[];
     /**
-     * The name of an entity of the type "straight-rail". The first item to place of the rail must be this rail planner.
+     * Name of a rail support.
      */
-    straight_rail: EntityID;
+    support?: EntityID;
 }
 /**
- * The abstract base of both rail prototypes.
+ * The abstract base of all rail prototypes.
  */
 interface RailPrototype extends EntityWithOwnerPrototype {
     /**
      * Has to be 2 for 2x2 grid.
      */
     build_grid_size?: 2;
+    deconstruction_marker_positions?: Vector[];
+    ending_shifts?: Vector[];
+    extra_planner_goal_penalty?: double;
+    extra_planner_penalty?: double;
+    fence_pictures?: RailFenceGraphicsSet;
     /**
-     * All rail {@link collision_boxes | prototype:EntityPrototype::collision_box} are hardcoded and cannot be modified.
-     * The hardcoded values are:
-     *
-     * - straight_rail_primary_bounding_box = `{-0.7, -0.99, 0.7, 0.99}`
-     * - diagonal_straight_rail_primary_bounding_box = `{-0.65, -0.7, 0.65, 0.7}`
-     * - curved_rail_primary_bounding_box = `{-0.75, -0.55, 0.75, 1.6}`
-     * - secondary_bounding_box = `{-0.68, -2.7, 0.68, 2.7}`
+     * Must be 0, 2 or 4. Can't be non-zero if `fence_pictures` is defined.
      */
-    collision_box?: BoundingBox;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
+    forced_fence_segment_count?: uint8;
     pictures: RailPictureSet;
+    removes_soft_decoratives?: bool;
     /**
-     * Furthermore, the rail {@link selection_boxes | prototype:EntityPrototype::selection_box} are automatically calculated from the bounding boxes, so effectively also hardcoded.
+     * The rail {@link selection_boxes | prototype:EntityPrototype::selection_box} are automatically calculated from the collision boxes, which are hardcoded. So effectively the selection boxes also hardcoded.
      */
     selection_box?: BoundingBox;
     /**
@@ -5564,43 +6225,42 @@ interface RailPrototype extends EntityWithOwnerPrototype {
     walking_sound?: Sound;
 }
 /**
+ * A rail ramp.
+ */
+interface RailRampPrototype extends RailPrototype {
+    /**
+     * The {@link collision_box | prototype:EntityPrototype::collision_box} of straight rail is hardcoded to `{{-1.6, -7.6}, {1.6, 7.6}}`.
+     */
+    collision_box?: BoundingBox;
+    /**
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"allow_on_deep_oil_ocean"`.
+     */
+    collision_mask_allow_on_deep_oil_ocean?: CollisionMaskConnector;
+    /**
+     * Must be lower than 500 and at least 1.
+     */
+    support_range?: float;
+}
+/**
  * Used for rail corpses.
  */
 interface RailRemnantsPrototype extends CorpsePrototype {
-    bending_type: 'straight' | 'turn';
     /**
      * Has to be 2 for 2x2 grid.
      */
     build_grid_size?: 2;
     /**
-     * All rail remnant {@link collision_boxes | prototype:EntityPrototype::collision_box} are hardcoded and cannot be modified.
-     * The hardcoded values are:
-     *
-     * - straight_rail_primary_bounding_box = `{-0.7, -0.99, 0.7, 0.99}`
-     * - diagonal_straight_rail_primary_bounding_box = `{-0.65, -0.7, 0.65, 0.7}`
-     * - curved_rail_primary_bounding_box = `{-0.75, -0.55, 0.75, 1.6}`
-     * - secondary_bounding_box = `{-0.68, -2.7, 0.68, 2.7}`
+     * "Rail remnant entities must have a non-zero {@link collision_box | prototype:EntityPrototype::collision_box} defined.
      */
     collision_box?: BoundingBox;
     pictures: RailPictureSet;
-    /**
-     * Furthermore, the rail remnant {@link selection_boxes | prototype:EntityPrototype::selection_box} are automatically calculated from the bounding boxes, so effectively also hardcoded.
-     */
-    selection_box?: BoundingBox;
+    related_rail: EntityID;
+    secondary_collision_box?: BoundingBox;
 }
 /**
  * The abstract base entity for both rail signals.
  */
 interface RailSignalBasePrototype extends EntityWithOwnerPrototype {
-    animation: RotatedAnimation;
-    /**
-     * Mandatory if circuit_wire_max_distance > 0.
-     */
-    circuit_connector_sprites?: CircuitConnectorSprites[];
-    /**
-     * Mandatory if circuit_wire_max_distance > 0.
-     */
-    circuit_wire_connection_points?: WireConnectionPoint[];
     /**
      * The maximum circuit wire distance for this entity.
      */
@@ -5609,35 +6269,59 @@ interface RailSignalBasePrototype extends EntityWithOwnerPrototype {
      * The {@link collision_box | prototype:EntityPrototype::collision_box} of rail signals is hardcoded to `{{-0.2, -0.2}, {0.2, 0.2}}`.
      */
     collision_box?: BoundingBox;
-    /**
-     * Rail signals must collide with each other, this can be achieved by having the "rail-layer" collision mask layer on all rail signals.
-     *
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
+    default_blue_output_signal?: SignalIDConnector;
     default_green_output_signal?: SignalIDConnector;
     default_orange_output_signal?: SignalIDConnector;
     default_red_output_signal?: SignalIDConnector;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
     /**
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by  `type .. "/elevated"`.
+     */
+    elevated_collision_mask?: CollisionMaskConnector;
+    elevated_picture_set: RailSignalPictureSet;
+    elevated_selection_priority?: uint8;
+    /**
      * The "placeable-off-grid" flag will be ignored for rail signals.
      */
     flags?: EntityPrototypeFlags;
-    green_light?: LightDefinition;
-    orange_light?: LightDefinition;
-    rail_piece?: Animation;
-    red_light?: LightDefinition;
+    ground_picture_set: RailSignalPictureSet;
 }
 /**
  * A {@link rail signal | https://wiki.factorio.com/Rail_signal}.
  */
 interface RailSignalPrototype extends RailSignalBasePrototype {
 }
+interface RailSupportPrototype extends EntityWithOwnerPrototype {
+    /**
+     * Has to be 2 for 2x2 grid.
+     */
+    build_grid_size?: 2;
+    /**
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"allow_on_deep_oil_ocean"`.
+     */
+    collision_mask_allow_on_deep_oil_ocean?: CollisionMaskConnector;
+    /**
+     * Array must contain 8 items.
+     */
+    elevated_selection_boxes?: BoundingBox[];
+    graphics_set: RailSupportGraphicsSet;
+    not_buildable_if_no_rails?: bool;
+    snap_to_spots_distance?: float;
+    /**
+     * Must be lower than 500 and at least 1.
+     */
+    support_range?: float;
+}
 /**
  * A {@link reactor | https://wiki.factorio.com/Reactor}.
  */
 interface ReactorPrototype extends EntityWithOwnerPrototype {
+    circuit_connector?: CircuitConnectorDefinition;
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
     /**
      * If defined, number of variations must be at least equal to count of {@link connections | prototype:HeatBuffer::connections} defined in `heat_buffer`. Each variation represents connected heat buffer connection of corresponding index.
      */
@@ -5654,6 +6338,9 @@ interface ReactorPrototype extends EntityWithOwnerPrototype {
      * When `use_fuel_glow_color` is true, this is the color used as `working_light_picture` tint for fuels that don't have glow color defined.
      */
     default_fuel_glow_color?: Color;
+    default_temperature_signal?: SignalIDConnector;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
     /**
      * May not be a heat energy source.
      *
@@ -5689,7 +6376,7 @@ interface ReactorPrototype extends EntityWithOwnerPrototype {
      * Whether the reactor should use {@link fuel_glow_color | prototype:ItemPrototype::fuel_glow_color} from the fuel item prototype as light color and tint for `working_light_picture`. {@link Forum post. | https://forums.factorio.com/71121}
      */
     use_fuel_glow_color?: bool;
-    working_light_picture: Sprite;
+    working_light_picture?: Animation;
 }
 /**
  * A recipe category. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#recipe-category}. See {@link RecipePrototype::category | prototype:RecipePrototype::category}. Recipe categories can be used to specify which {@link machine | prototype:CraftingMachinePrototype::crafting_categories} can craft which {@link recipes | prototype:RecipePrototype}.
@@ -5702,20 +6389,18 @@ interface ReactorPrototype extends EntityWithOwnerPrototype {
 }
 ```
  */
-interface RecipeCategory extends PrototypeBase {
+interface RecipeCategory extends Prototype {
 }
 /**
  * A recipe. It can be a crafting recipe, a smelting recipe, or a custom type of recipe, see {@link RecipeCategory | prototype:RecipeCategory}.
- *
- * This prototype has two different formats that can be specified. If both `normal` and `expensive` are not defined, the standard properties define this recipe. Otherwise, they are ignored, and the `normal` and `expensive` properties are used exclusively to define this recipe.
  * @example ```
 {
   type = "recipe",
   name = "iron-plate",
   category = "smelting",
   energy_required = 3.5,
-  ingredients = {{"iron-ore", 1}},
-  result = "iron-plate"
+  ingredients = {{type = "item", name = "iron-ore", amount = 1}},
+  results = {{type="item", name="iron-plate", amount=1}}
 }
 ```
  * @example ```
@@ -5744,82 +6429,45 @@ interface RecipeCategory extends PrototypeBase {
   allow_decomposition = false
 }
 ```
- * @example ```
-{  -- Recipe with difficulty
-  type = "recipe",
-  name = "iron-gear-wheel",
-  normal =
-  {
-    ingredients = {{"iron-plate", 2}},
-    result = "iron-gear-wheel"
-  },
-  expensive =
-  {
-    ingredients = {{"iron-plate", 4}},
-    result = "iron-gear-wheel"
-  }
-}
-```
- * @example ```
-{  -- Uncraftable in normal mode (unless unlocked via command/research)
-  type = "recipe",
-  name = "iron-gear-wheel",
-  normal = false,
-  expensive =
-  {
-    ingredients = {{"iron-plate", 4}},
-    result = "iron-gear-wheel"
-  }
-}
-```
- * @example ```
-{  -- Expensive recipe always used, even when in normal mode
-  type = "recipe",
-  name = "iron-gear-wheel",
-  normal = nil, -- can be omitted
-  expensive =
-  {
-    ingredients = {{"iron-plate", 4}},
-    result = "iron-gear-wheel"
-  }
-}
-```
  */
-interface RecipePrototype extends PrototypeBase {
+interface RecipePrototype extends Prototype {
     /**
      * Whether the recipe can be used as an intermediate recipe in hand-crafting.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     allow_as_intermediate?: bool;
+    allow_consumption?: bool;
+    allow_consumption_message?: LocalisedString;
     /**
      * Whether this recipe is allowed to be broken down for the recipe tooltip "Total raw" calculations.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     allow_decomposition?: bool;
     /**
      * Whether the recipe is allowed to have the extra inserter overload bonus applied (4 * stack inserter stack size).
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     allow_inserter_overload?: bool;
     /**
      * Whether the recipe is allowed to use intermediate recipes when hand-crafting.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     allow_intermediates?: bool;
+    allow_pollution?: bool;
+    allow_pollution_message?: LocalisedString;
+    allow_productivity?: bool;
+    allow_productivity_message?: LocalisedString;
+    allow_quality?: bool;
+    allow_quality_message?: LocalisedString;
+    allow_speed?: bool;
+    allow_speed_message?: LocalisedString;
+    /**
+     * Sets the {@link module categories | prototype:ModuleCategory} that are allowed to be used with this recipe.
+     */
+    allowed_module_categories?: ModuleCategoryID[];
+    alternative_unlock_methods?: TechnologyID[];
     /**
      * Whether the "Made in: <Machine>" part of the tool-tip should always be present, and not only when the recipe can't be hand-crafted.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     always_show_made_in?: bool;
     /**
      * Whether the products are always shown in the recipe tooltip.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     always_show_products?: bool;
     /**
@@ -5832,49 +6480,27 @@ interface RecipePrototype extends PrototypeBase {
      */
     category?: RecipeCategoryID;
     /**
-     * Used by {@link CraftingMachinePrototype::working_visualisations | prototype:CraftingMachinePrototype::working_visualisations} to tint certain layers with the recipe color. {@link WorkingVisualisation::apply_recipe_tint | prototype:WorkingVisualisation::apply_recipe_tint} determines which of the four colors is used for that layer, if any.
+     * Used by {@link WorkingVisualisations::working_visualisations | prototype:WorkingVisualisations::working_visualisations} to tint certain layers with the recipe color. {@link WorkingVisualisation::apply_recipe_tint | prototype:WorkingVisualisation::apply_recipe_tint} determines which of the four colors is used for that layer, if any.
      */
-    crafting_machine_tint?: CraftingMachineTint;
-    /**
-     * Only loaded if neither `normal` nor `expensive` are defined.
-     */
+    crafting_machine_tint?: RecipeTints;
     emissions_multiplier?: double;
     /**
      * This can be `false` to disable the recipe at the start of the game, or `true` to leave it enabled.
      *
      * If a recipe is unlocked via technology, this should be set to `false`.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     enabled?: bool;
     /**
      * The amount of time it takes to make this recipe. Must be `> 0.001`. Equals the number of seconds it takes to craft at crafting speed `1`.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     energy_required?: double;
     /**
-     * Can be set to `false` if the `normal` property is defined. This will disable this difficulty, same as setting `enabled` to `false` would. If it's later enabled (by research, etc.), it will use the data from `normal`.
-     *
-     * If this property is not defined while `normal` is, it will mirror its data.
-     */
-    expensive?: RecipeData | false;
-    /**
-     * Hides the recipe from crafting menus.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
-     */
-    hidden?: bool;
-    /**
      * Hides the recipe from the player's crafting screen. The recipe will still show up for selection in machines.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     hide_from_player_crafting?: bool;
+    hide_from_signal_gui?: bool;
     /**
      * Hides the recipe from item/fluid production statistics.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     hide_from_stats?: bool;
     /**
@@ -5887,13 +6513,9 @@ interface RecipePrototype extends PrototypeBase {
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Only loaded if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
@@ -5901,26 +6523,20 @@ interface RecipePrototype extends PrototypeBase {
      */
     icons?: IconData[];
     /**
-     * A table containing ingredient names and counts. Can also contain information about fluid temperature and catalyst amounts. The catalyst amounts are automatically calculated from the recipe, or can be set manually in the IngredientPrototype (see {@link here | https://factorio.com/blog/post/fff-256}).
+     * A table containing ingredient names and amounts. Can also contain information about fluid temperature and whether some of the amount is ignored by production statistics.
      *
      * The maximum ingredient amount is 65 535. Can be set to an empty table to create a recipe that needs no ingredients.
      *
      * Duplicate ingredients, e.g. two entries with the same name, are *not* allowed. In-game, the item ingredients are ordered by {@link ItemGroup::order_in_recipe | prototype:ItemGroup::order_in_recipe}.
-     *
-     * Mandatory if neither `normal` nor `expensive` are defined.
      * @example ```
-    -- Shorthand format
-    ingredients = {{"iron-stick", 2}, {"iron-plate", 3}}
-    ```
-     * @example ```
-    -- Full format
+    -- Recipe with items
     ingredients = {
       {type = "item", name = "iron-stick", amount = 2},
       {type = "item", name = "iron-plate", amount = 3}
     }
     ```
      * @example ```
-    -- Fluids don't support shorthand
+    -- Recipe with fluids
     ingredients = {
       {type="fluid", name="water", amount=50},
       {type="fluid", name="crude-oil", amount=100}
@@ -5932,46 +6548,28 @@ interface RecipePrototype extends PrototypeBase {
      * For recipes with one or more products: Subgroup, localised_name and icon default to the values of the singular/main product, but can be overwritten by the recipe. Setting the main_product to an empty string (`""`) forces the title in the recipe tooltip to use the recipe's name (not that of the product) and shows the products in the tooltip.
      *
      * If 1) there are multiple products and this property is nil, 2) this property is set to an empty string (`""`), or 3) there are no products, the recipe will use the localised_name, icon, and subgroup of the recipe. icon and subgroup become non-optional.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     main_product?: string;
     /**
-     * Can be set to `false` if the `expensive` property is defined. This will disable this difficulty, same as setting `enabled` to `false` would. If it's later enabled (by research, etc.), it will use the data from `expensive`.
-     *
-     * If this property is not defined while `expensive` is, it will mirror its data.
+     * Must be >= 0.
      */
-    normal?: RecipeData | false;
+    maximum_productivity?: double;
     /**
      * Used to determine how many extra items are put into an assembling machine before it's considered "full enough". See {@link insertion limits | https://wiki.factorio.com/Inserters#Insertion_limits}.
      *
      * If set to `0`, it instead uses the following formula: `1.166 / (energy_required / the assembler's crafting_speed)`, rounded up, and clamped to be between`2` and `100`. The numbers used in this formula can be changed by the {@link UtilityConstants | prototype:UtilityConstants} properties `dynamic_recipe_overload_factor`, `minimum_recipe_overload_multiplier`, and `maximum_recipe_overload_multiplier`.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     overload_multiplier?: uint32;
-    /**
-     * Only loaded if neither `normal` nor `expensive` are defined.
-     */
+    preserve_products_in_machine_output?: bool;
     requester_paste_multiplier?: uint32;
     /**
-     * The item created by this recipe. Must be the name of an {@link item | prototype:ItemPrototype}, such as `"iron-gear-wheel"`.
-     *
-     * Only loaded, and mandatory if neither `results`, `normal` nor `expensive` are defined.
+     * When set to true, the recipe will always produce fresh (non-spoiled) item even when the ingredients are spoiled.
      */
-    result?: ItemID;
+    result_is_always_fresh?: bool;
     /**
-     * The number of items created by this recipe.
-     *
-     * Only loaded if neither `results`, `normal` nor `expensive` are defined.
-     */
-    result_count?: uint16;
-    /**
-     * A table containing result names and counts. Can also contain information about fluid temperature and catalyst amounts. The catalyst amounts are automatically calculated from the recipe, or can be set manually in the ProductPrototype (see {@link here | https://factorio.com/blog/post/fff-256}).
+     * A table containing result names and amounts. Products also contain information such as fluid temperature, probability of results and whether some of the amount is ignored by productivity.
      *
      * Can be set to an empty table to create a recipe that produces nothing. Duplicate results, e.g. two entries with the same name, are allowed.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      * @example ```
     results = {
       {type="fluid", name="heavy-oil", amount=3},
@@ -5992,31 +6590,32 @@ interface RecipePrototype extends PrototypeBase {
     results?: ProductPrototype[];
     /**
      * Whether the recipe name should have the product amount in front of it. E.g. "2x Transport belt".
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     show_amount_in_title?: bool;
-    /**
-     * The name of the {@link subgroup | prototype:ItemSubGroup} of this recipe. If not specified, it defaults to the subgroup of the product if there is only one, or of the `main_product` if multiple products exist.
-     *
-     * Mandatory if multiple products exist and no `main_product` is specified, or if there is no product.
-     */
-    subgroup?: ItemSubGroupID;
+    surface_conditions?: SurfaceCondition[];
     /**
      * Whether enabling this recipe unlocks its item products to show in selection lists (item filters, logistic requests, etc.).
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     unlock_results?: bool;
+}
+/**
+ * Properties of the remote controller.
+ */
+interface RemoteControllerPrototype {
+    /**
+     * Must be >= 0.34375.
+     */
+    movement_speed: double;
+    /**
+     * Name of the remote controller. Base game uses "default".
+     */
+    name: string;
+    type: 'remote-controller';
 }
 /**
  * A {@link repair pack | https://wiki.factorio.com/Repair_pack}. Using the tool decreases durability to restore entity health.
  */
 interface RepairToolPrototype extends ToolPrototype {
-    /**
-     * This does nothing, it is never triggered.
-     */
-    repair_result?: Trigger;
     /**
      * Entity health repaired per used {@link ToolPrototype::durability | prototype:ToolPrototype::durability}. E.g. a repair tool with 5 durability and a repair speed of 2 will restore 10 health.
      *
@@ -6047,10 +6646,14 @@ interface ResearchAchievementPrototype extends AchievementPrototype {
      */
     technology?: TechnologyID;
 }
+interface ResearchWithSciencePackAchievementPrototype extends AchievementPrototype {
+    amount?: uint32;
+    science_pack: ItemID;
+}
 /**
  * A resource category. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#resource-category}. See {@link ResourceEntityPrototype::category | prototype:ResourceEntityPrototype::category}.
  */
-interface ResourceCategory extends PrototypeBase {
+interface ResourceCategory extends Prototype {
 }
 /**
  * A mineable/gatherable entity. Its {@link collision_mask | prototype:EntityPrototype::collision_mask} must contain "resource-layer" if it should be minable with a {@link MiningDrillPrototype | prototype:MiningDrillPrototype}.
@@ -6127,10 +6730,11 @@ interface ResourceEntityPrototype extends EntityPrototype {
      * Must be greater than or equal to `0`.
      */
     cliff_removal_probability?: double;
+    draw_stateless_visualisation_under_building?: bool;
     /**
-     * Two entities can collide only if they share a layer from the collision mask.
+     * Sound played when a {@link CarPrototype | prototype:CarPrototype} drives over this resource.
      */
-    collision_mask?: CollisionMask;
+    driving_sound?: InterruptibleSound;
     /**
      * How long it takes `stages_effect` to go from `min_effect_alpha` to `max_effect_alpha`.
      */
@@ -6196,7 +6800,7 @@ interface ResourceEntityPrototype extends EntityPrototype {
      *
      * When using {@link AnimationVariations::sheet | prototype:AnimationVariations::sheet}, `frame_count` is the amount of frames per row in the spritesheet. `variation_count` is the amount of rows in the spritesheet. Each row in the spritesheet is one stage of the animation.
      */
-    stages: AnimationVariations;
+    stages?: AnimationVariations;
     /**
      * An effect that can be overlaid above the normal ore graphics. Used in the base game to make {@link uranium ore | https://wiki.factorio.com/Uranium_ore} glow.
      */
@@ -6241,6 +6845,7 @@ interface RoboportEquipmentPrototype extends EquipmentPrototype {
      * How many charging points this roboport has. If this is 0, the length of the charging_offsets table is used to calculate the charging station count.
      */
     charging_station_count?: uint32;
+    charging_station_count_affected_by_quality?: bool;
     charging_station_shift?: Vector;
     /**
      * Distance in tiles. This defines how far away a robot can be from the charging spot and still be charged, however the bot is still required to reach a charging spot in the first place.
@@ -6264,7 +6869,7 @@ interface RoboportEquipmentPrototype extends EquipmentPrototype {
     /**
      * The animation played at each charging point when a robot is charging there.
      */
-    recharging_animation: Animation;
+    recharging_animation?: Animation;
     /**
      * The light emitted when charging a robot.
      */
@@ -6288,17 +6893,21 @@ interface RoboportEquipmentPrototype extends EquipmentPrototype {
      * The offset from the center of the roboport at which robots will enter and exit.
      */
     stationing_offset?: Vector;
+    /**
+     * When robot ascends or descends to this roboport, at which height is should switch between `"air-object"` and `"object"` {@link render layer | prototype:RenderLayer}.
+     */
+    stationing_render_layer_swap_height?: float;
 }
 /**
  * A {@link roboport | https://wiki.factorio.com/Roboport}.
  */
 interface RoboportPrototype extends EntityWithOwnerPrototype {
-    base: Sprite;
+    base?: Sprite;
     /**
      * The animation played when the roboport is idle.
      */
-    base_animation: Animation;
-    base_patch: Sprite;
+    base_animation?: Animation;
+    base_patch?: Sprite;
     /**
      * The distance (in tiles) from the roboport at which robots will wait to charge. Notably, if the robot is already in range, then it will simply wait at its current position.
      */
@@ -6319,13 +6928,13 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
      * How many charging points this roboport has. If this is 0, the length of the charging_offsets table is used to calculate the charging station count.
      */
     charging_station_count?: uint32;
+    charging_station_count_affected_by_quality?: bool;
     charging_station_shift?: Vector;
     /**
      * Unused.
      */
     charging_threshold_distance?: float;
-    circuit_connector_sprites?: CircuitConnectorSprites;
-    circuit_wire_connection_point?: WireConnectionPoint;
+    circuit_connector?: CircuitConnectorDefinition;
     /**
      * The maximum circuit wire distance for this entity.
      */
@@ -6337,10 +6946,11 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
     construction_radius: float;
     default_available_construction_output_signal?: SignalIDConnector;
     default_available_logistic_output_signal?: SignalIDConnector;
+    default_roboports_output_signal?: SignalIDConnector;
     default_total_construction_output_signal?: SignalIDConnector;
     default_total_logistic_output_signal?: SignalIDConnector;
-    door_animation_down: Animation;
-    door_animation_up: Animation;
+    door_animation_down?: Animation;
+    door_animation_up?: Animation;
     draw_circuit_wires?: bool;
     draw_construction_radius_visualization?: bool;
     draw_copper_wires?: bool;
@@ -6356,6 +6966,7 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
     ```
      */
     energy_usage: Energy;
+    frozen_patch?: Sprite;
     /**
      * Must be >= `logistics_radius`.
      */
@@ -6368,7 +6979,12 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
      * The number of repair pack slots in the roboport.
      */
     material_slots_count: ItemStackIndex;
+    max_logistic_slots?: LogisticFilterIndex;
     open_door_trigger_effect?: TriggerEffect;
+    /**
+     * Defaults to the max of logistic range or construction range rounded up to chunks.
+     */
+    radar_range?: uint32;
     /**
      * Minimum charge that the roboport has to have after a blackout (0 charge/buffered energy) to begin working again. Additionally, freshly placed roboports will have their energy buffer filled with `0.25 × recharge_minimum` energy.
      *
@@ -6381,7 +6997,7 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
     /**
      * The animation played at each charging point when a robot is charging there.
      */
-    recharging_animation: Animation;
+    recharging_animation?: Animation;
     /**
      * The light emitted when charging a robot.
      */
@@ -6406,12 +7022,16 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
      * The offset from the center of the roboport at which robots will enter and exit.
      */
     stationing_offset?: Vector;
+    /**
+     * When robot ascends or descends to this roboport, at which height is should switch between `"air-object"` and `"object"` {@link render layer | prototype:RenderLayer}.
+     */
+    stationing_render_layer_swap_height?: float;
 }
 /**
  * The common properties of logistic and construction robots represented by an abstract prototype.
  */
 interface RobotWithLogisticInterfacePrototype extends FlyingRobotPrototype {
-    cargo_centered: Vector;
+    charging_sound?: InterruptibleSound;
     /**
      * Applied when the robot expires (runs out of energy and {@link FlyingRobotPrototype::speed_multiplier_when_out_of_energy | prototype:FlyingRobotPrototype::speed_multiplier_when_out_of_energy} is 0).
      */
@@ -6425,6 +7045,9 @@ interface RobotWithLogisticInterfacePrototype extends FlyingRobotPrototype {
      * Only the first frame of the animation is drawn. This means that the graphics for the in_motion state cannot be animated.
      */
     in_motion?: RotatedAnimation;
+    /**
+     * The robot's cargo carrying capacity. Can be increased by {@link worker robot cargo size research | prototype:WorkerRobotStorageModifier}.
+     */
     max_payload_size: ItemCountType;
     /**
      * Only the first frame of the animation is drawn. This means that the graphics for the idle state cannot be animated.
@@ -6451,17 +7074,23 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      * Applied when switching into the {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} state.
      */
     alarm_trigger?: TriggerEffect;
-    arm_01_back_animation: Animation;
-    arm_02_right_animation: Animation;
-    arm_03_front_animation: Animation;
-    base_day_sprite: Sprite;
+    arm_01_back_animation?: Animation;
+    arm_02_right_animation?: Animation;
+    arm_03_front_animation?: Animation;
+    base_day_sprite?: Sprite;
     base_engine_light?: LightDefinition;
-    base_front_sprite: Sprite;
+    base_front_frozen?: Sprite;
+    base_front_sprite?: Sprite;
+    base_frozen?: Sprite;
     base_light?: LightDefinition;
     /**
      * Drawn instead of `base_day_sprite` during the night, that is when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
      */
     base_night_sprite?: Sprite;
+    /**
+     * Must have exactly one entry in {@link CargoStationParameters::hatch_definitions | prototype:CargoStationParameters::hatch_definitions}.
+     */
+    cargo_station_parameters: CargoStationParameters;
     /**
      * Played when switching into the {@link arms_retract | runtime:defines.rocket_silo_status.arms_retract} state.
      */
@@ -6478,10 +7107,12 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      * Applied when switching into the {@link arms_advance | runtime:defines.rocket_silo_status.arms_advance} state.
      */
     clamps_on_trigger?: TriggerEffect;
+    door_back_frozen?: Sprite;
     door_back_open_offset: Vector;
-    door_back_sprite: Sprite;
+    door_back_sprite?: Sprite;
+    door_front_frozen?: Sprite;
     door_front_open_offset: Vector;
-    door_front_sprite: Sprite;
+    door_front_sprite?: Sprite;
     /**
      * The inverse of the duration in ticks of {@link doors_opening | runtime:defines.rocket_silo_status.doors_opening} and {@link closing | runtime:defines.rocket_silo_status.doors_closing}.
      * @example ```
@@ -6497,19 +7128,20 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      * Applied when switching into the {@link doors_opening | runtime:defines.rocket_silo_status.doors_opening} and {@link doors_closing | runtime:defines.rocket_silo_status.doors_closing} states.
      */
     doors_trigger?: TriggerEffect;
-    /**
-     * Played when switching into the {@link engine_starting | runtime:defines.rocket_silo_status.engine_starting} state.
-     */
-    flying_sound?: Sound;
     hole_clipping_box: BoundingBox;
-    hole_light_sprite: Sprite;
-    hole_sprite: Sprite;
+    hole_frozen?: Sprite;
+    hole_light_sprite?: Sprite;
+    hole_sprite?: Sprite;
     /**
      * May be 0.
      *
      * Additional energy used during the night, that is when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
      */
     lamp_energy_usage: Energy;
+    /**
+     * Enables 'Space Age' functionality for this rocket silo, allowing it to supply space platforms.
+     */
+    launch_to_space_platforms?: bool;
     /**
      * The time to wait in the {@link launch_started | runtime:defines.rocket_silo_status.launch_started} state before switching to {@link engine_starting | runtime:defines.rocket_silo_status.engine_starting}.
      */
@@ -6521,6 +7153,11 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
     ```
      */
     light_blinking_speed: double;
+    logistic_trash_inventory_size?: ItemStackIndex;
+    /**
+     * Played when switching from {@link rocket_flying | runtime:defines.rocket_silo_status.rocket_flying} into the {@link doors_opened | runtime:defines.rocket_silo_status.doors_opened} state when a quick follow-up rocket is ready.
+     */
+    quick_alarm_sound?: Sound;
     /**
      * Played when switching into the {@link rocket_rising | runtime:defines.rocket_silo_status.rocket_rising} state.
      */
@@ -6532,29 +7169,38 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
     /**
      * Drawn from the start of the {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} state until the end of the {@link lights_blinking_close | runtime:defines.rocket_silo_status.lights_blinking_close} state.
      */
-    red_lights_back_sprites: Sprite;
+    red_lights_back_sprites?: Sprite;
     /**
      * Drawn from the start of the {@link lights_blinking_open | runtime:defines.rocket_silo_status.lights_blinking_open} state until the end of the {@link lights_blinking_close | runtime:defines.rocket_silo_status.lights_blinking_close} state.
      */
-    red_lights_front_sprites: Sprite;
+    red_lights_front_sprites?: Sprite;
+    /**
+     * Whether the "no network" icon should be rendered on this entity if the entity is not within a logistics network.
+     */
+    render_not_in_network_icon?: bool;
     /**
      * Name of a {@link RocketSiloRocketPrototype | prototype:RocketSiloRocketPrototype}.
      */
     rocket_entity: EntityID;
-    rocket_glow_overlay_sprite: Sprite;
+    rocket_glow_overlay_sprite?: Sprite;
     /**
      * The number of crafts that must complete to produce a rocket. This includes bonus crafts from productivity. Recipe products are ignored.
      */
     rocket_parts_required: uint32;
-    rocket_result_inventory_size?: ItemStackIndex;
+    /**
+     * Must be at least `rocket_parts_required`.
+     */
+    rocket_parts_storage_cap?: uint32;
+    rocket_quick_relaunch_start_offset: double;
     /**
      * The time to wait in the {@link doors_opened | runtime:defines.rocket_silo_status.doors_opened} state before switching to {@link rocket_rising | runtime:defines.rocket_silo_status.rocket_rising}.
      */
     rocket_rising_delay?: uint8;
-    rocket_shadow_overlay_sprite: Sprite;
+    rocket_shadow_overlay_sprite?: Sprite;
+    rocket_supply_inventory_size?: ItemStackIndex;
     satellite_animation?: Animation;
     satellite_shadow_animation?: Animation;
-    shadow_sprite: Sprite;
+    shadow_sprite?: Sprite;
     silo_fade_out_end_distance: double;
     silo_fade_out_start_distance: double;
     /**
@@ -6563,16 +7209,23 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      * Does not affect the duration of the launch sequence.
      */
     times_to_blink: uint8;
+    to_be_inserted_to_rocket_inventory_size?: ItemStackIndex;
 }
 /**
  * The rocket inside the rocket silo.
  */
 interface RocketSiloRocketPrototype extends EntityPrototype {
+    cargo_attachment_offset?: Vector;
+    /**
+     * Name of a {@link CargoPodPrototype | prototype:CargoPodPrototype}.
+     */
+    cargo_pod_entity: EntityID;
     dying_explosion?: EntityID;
     effects_fade_in_end_distance: double;
     effects_fade_in_start_distance: double;
     engine_starting_speed: double;
     flying_acceleration: double;
+    flying_sound?: Sound;
     flying_speed: double;
     flying_trigger?: TriggerEffect;
     full_render_layer_switch_distance: double;
@@ -6581,23 +7234,24 @@ interface RocketSiloRocketPrototype extends EntityPrototype {
     rising_speed: double;
     rocket_above_wires_slice_offset_from_center?: float;
     rocket_air_object_slice_offset_from_center?: float;
-    rocket_flame_animation: Animation;
-    rocket_flame_left_animation: Animation;
+    rocket_flame_animation?: Animation;
+    rocket_flame_left_animation?: Animation;
     rocket_flame_left_rotation: float;
-    rocket_flame_right_animation: Animation;
+    rocket_flame_right_animation?: Animation;
     rocket_flame_right_rotation: float;
-    rocket_glare_overlay_sprite: Sprite;
+    rocket_fog_mask?: FogMaskShapeDefinition;
+    rocket_glare_overlay_sprite?: Sprite;
     rocket_initial_offset?: Vector;
     rocket_launch_offset: Vector;
     rocket_render_layer_switch_distance: double;
     rocket_rise_offset: Vector;
-    rocket_shadow_sprite: Sprite;
-    rocket_smoke_bottom1_animation: Animation;
-    rocket_smoke_bottom2_animation: Animation;
-    rocket_smoke_top1_animation: Animation;
-    rocket_smoke_top2_animation: Animation;
-    rocket_smoke_top3_animation: Animation;
-    rocket_sprite: Sprite;
+    rocket_shadow_sprite?: Sprite;
+    rocket_smoke_bottom1_animation?: Animation;
+    rocket_smoke_bottom2_animation?: Animation;
+    rocket_smoke_top1_animation?: Animation;
+    rocket_smoke_top2_animation?: Animation;
+    rocket_smoke_top3_animation?: Animation;
+    rocket_sprite?: Sprite;
     rocket_visible_distance_from_center: float;
     shadow_fade_out_end_ratio: double;
     shadow_fade_out_start_ratio: double;
@@ -6610,7 +7264,8 @@ interface RocketSiloRocketPrototype extends EntityPrototype {
   type = "rocket-silo-rocket-shadow",
   name = "rocket-silo-rocket-shadow",
   flags = {"not-on-map"},
-  collision_mask = {"not-colliding-with-itself"},
+  hidden = true,
+  collision_mask = {layers={}, not_colliding_with_itself=true},
   collision_box = {{0, 0}, {10, 3.5}},
   selection_box = {{0, 0}, {0, 0}}
 }
@@ -6626,19 +7281,34 @@ interface RollingStockPrototype extends VehiclePrototype {
     allow_manual_color?: bool;
     allow_robot_dispatch_in_automatic_mode?: bool;
     back_light?: LightDefinition;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     color?: Color;
     /**
      * The distance between the joint of this rolling stock and its connected rolling stocks joint.
+     *
+     * Maximum connection distance is 15.
      */
     connection_distance: double;
+    default_copy_color_from_train_stop?: bool;
+    /**
+     * Cannot use `fade_ticks`.
+     */
+    door_closing_sound?: InterruptibleSound;
+    /**
+     * Cannot use `fade_ticks`.
+     */
+    door_opening_sound?: InterruptibleSound;
+    drive_over_elevated_tie_trigger?: TriggerEffect;
     /**
      * Usually a sound to play when the rolling stock drives over a tie. The rolling stock is considered to be driving over a tie every `tie_distance` tiles.
      */
     drive_over_tie_trigger?: TriggerEffect;
+    drive_over_tie_trigger_minimal_speed?: double;
+    /**
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by  `type .. "/elevated"`.
+     */
+    elevated_collision_mask?: CollisionMaskConnector;
+    elevated_rail_sound?: MainSound;
+    elevated_selection_priority?: uint8;
     horizontal_doors?: Animation;
     /**
      * The length between this rolling stocks front and rear joints. Joints are the point where connection_distance is measured from when rolling stock are connected to one another. Wheels sprite are placed based on the joint position.
@@ -6654,95 +7324,189 @@ interface RollingStockPrototype extends VehiclePrototype {
      * In-game, the max speed of a train is `min(all_rolling_stock_max_speeds) × average(all_fuel_modifiers_in_all_locomotives)`. This calculated train speed is then silently capped to 7386.3km/h.
      */
     max_speed: double;
-    pictures: RotatedSprite;
+    pictures?: RollingStockRotatedSlopedGraphics;
     stand_by_light?: LightDefinition;
     /**
      * In tiles. Used to determine how often `drive_over_tie_trigger` is triggered.
      */
     tie_distance?: double;
+    /**
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by  `type .. "/transition"`.
+     */
+    transition_collision_mask?: CollisionMaskConnector;
     vertical_doors?: Animation;
     vertical_selection_shift: double;
-    wheels?: RotatedSprite;
+    wheels?: RollingStockRotatedSlopedGraphics;
+}
+/**
+ * Entity representing an individual segment in a {@link SegmentedUnitPrototype | prototype:SegmentedUnitPrototype}
+ */
+interface SegmentPrototype extends EntityWithOwnerPrototype {
+    /**
+     * The animation to use of the entity.
+     */
+    animation: RotatedAnimation;
+    /**
+     * The number of segments behind this one that should always be rendered atop this one, giving the illusion that at all orientations, those following segments overlap this current segment.
+     *
+     * Must be 0 or greater, and the sum of `forward_overlap` and `backward_overlap` must be less than or equal to 4.
+     */
+    backward_overlap?: uint8;
+    /**
+     * The number of tiles of spacing to add behind this segment. Can be negative. Scales with the segment scale when used in a {@link SegmentEngineSpecification | prototype:SegmentEngineSpecification}.
+     */
+    backward_padding?: double;
+    /**
+     * The sound to play when the entity dies.
+     *
+     * If not specified, {@link UtilitySounds::segment_dying_sound | prototype:UtilitySounds::segment_dying_sound} is used.
+     */
+    dying_sound?: Sound;
+    dying_sound_volume_modifier?: float;
+    /**
+     * The number of segments ahead of this one that should always be rendered atop this one, giving the illusion that at all orientations, those preceding segments overlap this current segment.
+     *
+     * Must be 0 or greater, and the sum of `forward_overlap` and `backward_overlap` must be less than or equal to 4.
+     */
+    forward_overlap?: uint8;
+    /**
+     * The number of tiles of spacing to add in front of this segment. Can be negative. Scales with the segment scale when used in a {@link SegmentEngineSpecification | prototype:SegmentEngineSpecification}.
+     */
+    forward_padding?: double;
+    /**
+     * The layer to render the entity in.
+     */
+    render_layer?: RenderLayer;
+    /**
+     * The effects to trigger every tick.
+     */
+    update_effects?: TriggerEffectWithCooldown[];
+    /**
+     * The effects to trigger every tick while enraged, in addition to `update_effects`.
+     */
+    update_effects_while_enraged?: TriggerEffectWithCooldown[];
+}
+/**
+ * Entity composed of multiple segment entities that trail behind the head.
+ */
+interface SegmentedUnitPrototype extends SegmentPrototype {
+    /**
+     * The acceleration rate when moving from one state to another. Cannot be negative.
+     */
+    acceleration_rate: double;
+    /**
+     * Attack parameters for when a segmented unit is attacking something.
+     */
+    attack_parameters?: AttackParameters;
+    /**
+     * The movement speed while attacking, in tiles per tick. Cannot be negative.
+     */
+    attacking_speed: double;
+    /**
+     * The number of ticks to remain enraged after last taking damage.
+     */
+    enraged_duration: uint32;
+    /**
+     * The movement speed while enraged, in tiles per tick. Cannot be negative.
+     */
+    enraged_speed: double;
+    /**
+     * Sound which plays when health ratio drops below any of `hurt_thresholds`.
+     */
+    hurt_roar?: Sound;
+    /**
+     * Only loaded, and mandatory if `hurt_roar` is defined.
+     */
+    hurt_thresholds?: float[];
+    /**
+     * The movement speed while investigating, in tiles per tick. Cannot be negative.
+     */
+    investigating_speed: double;
+    /**
+     * The movement speed while patrolling, in tiles per tick. Cannot be negative.
+     */
+    patrolling_speed: double;
+    /**
+     * Cannot be negative.
+     */
+    patrolling_turn_radius?: double;
+    /**
+     * Attack parameters for when a segmented unit is attacking something in retaliation because the target first attacked it.
+     */
+    revenge_attack_parameters?: AttackParameters;
+    roar?: Sound;
+    /**
+     * The default is 1.0f / (6.0f * 60.0f), average pause between roars is 6 seconds.
+     */
+    roar_probability?: float;
+    /**
+     * Specification of the segment engine, which should contain a list of the segments that compose the entity's body.
+     */
+    segment_engine: SegmentEngineSpecification;
+    /**
+     * The territory radius in chunks. The chunk in which the entity spawned is included.
+     */
+    territory_radius: uint32;
+    /**
+     * The number of ticks between territory scans. Greater values means longer time between scans, which means a slower reaction time. Cannot be `0`.
+     */
+    ticks_per_scan?: uint32;
+    /**
+     * Turn radius, in tiles. Cannot be negative.
+     */
+    turn_radius: double;
+    /**
+     * Attempts to smooth out tight turns by limiting how quickly the unit can change turning directions. 0 means no turn smoothing, 1 means no turning whatsoever. Must be between 0 and 1.
+     */
+    turn_smoothing?: double;
+    /**
+     * Vision distance, affects scanning radius for enemies to attack. Must be non-negative. Max 100.
+     */
+    vision_distance: double;
 }
 /**
  * Used in the base game as a base for the blueprint item and the deconstruction item.
  */
 interface SelectionToolPrototype extends ItemWithLabelPrototype {
-    alt_entity_filter_mode?: 'whitelist' | 'blacklist';
-    alt_entity_filters?: EntityID[];
-    alt_entity_type_filters?: string[];
-    alt_reverse_entity_filter_mode?: 'whitelist' | 'blacklist';
-    alt_reverse_entity_filters?: EntityID[];
-    alt_reverse_entity_type_filters?: string[];
-    alt_reverse_selection_color?: Color;
-    alt_reverse_selection_count_button_color?: Color;
     /**
-     * The type of cursor box used to render selection of entities/tiles when alt-reverse-selecting (using SHIFT + Right mouse button
+     * Settings for how the selection tool alt-reverse-selects things in-game (using SHIFT + Right mouse button).
      */
-    alt_reverse_selection_cursor_box_type?: CursorBoxType;
-    /**
-     * A list of selection mode flags that define how the selection tool alt-reverse-selects things in-game (using SHIFT + Right mouse button).
-     */
-    alt_reverse_selection_mode?: SelectionModeFlags;
-    alt_reverse_tile_filter_mode?: 'whitelist' | 'blacklist';
-    alt_reverse_tile_filters?: TileID[];
-    /**
-     * The color of the rectangle used when alt-selection is done in-game.
-     */
-    alt_selection_color: Color;
-    alt_selection_count_button_color?: Color;
-    /**
-     * The type of cursor box used to render selection of entities/tiles when alt selecting.
-     */
-    alt_selection_cursor_box_type: CursorBoxType;
-    /**
-     * A list of selection mode flags that define how the selection tool alt-selects things in-game.
-     */
-    alt_selection_mode?: SelectionModeFlags;
-    alt_tile_filter_mode?: 'whitelist' | 'blacklist';
-    alt_tile_filters?: TileID[];
+    alt_reverse_select?: SelectionModeData;
+    alt_select: SelectionModeData;
     /**
      * If tiles should be included in the selection regardless of entities also being in the selection. This is a visual only setting.
      */
     always_include_tiles?: bool;
-    chart_alt_reverse_selection_color?: Color;
-    chart_alt_selection_color?: Color;
-    chart_reverse_selection_color?: Color;
-    chart_selection_color?: Color;
-    entity_filter_mode?: 'whitelist' | 'blacklist';
-    entity_filters?: EntityID[];
-    entity_type_filters?: string[];
     mouse_cursor?: MouseCursorID;
-    reverse_entity_filter_mode?: 'whitelist' | 'blacklist';
-    reverse_entity_filters?: EntityID[];
-    reverse_entity_type_filters?: string[];
-    reverse_selection_color?: Color;
-    reverse_selection_count_button_color?: Color;
+    reverse_select?: SelectionModeData;
+    select: SelectionModeData;
+    skip_fog_of_war?: bool;
+    super_forced_select?: SelectionModeData;
+}
+interface SelectorCombinatorPrototype extends CombinatorPrototype {
+    count_symbol_sprites?: Sprite4Way;
+    max_symbol_sprites?: Sprite4Way;
+    min_symbol_sprites?: Sprite4Way;
+    quality_symbol_sprites?: Sprite4Way;
+    random_symbol_sprites?: Sprite4Way;
+    rocket_capacity_sprites?: Sprite4Way;
+    stack_size_sprites?: Sprite4Way;
+}
+/**
+ * This prototype is used for receiving an achievement when the player shoots certain ammo.
+ */
+interface ShootAchievementPrototype extends AchievementPrototype {
     /**
-     * The type of cursor box used to render selection of entities/tiles when reverse-selecting.
+     * This will trigger the achievement, if this ammo is shot.
+     * @example ```
+    ammo_type = "atomic-bomb"
+    ```
      */
-    reverse_selection_cursor_box_type?: CursorBoxType;
+    ammo_type?: ItemID;
     /**
-     * A list of selection mode flags that define how the selection tool reverse-selects things in-game.
+     * How much of the ammo needs to be shot.
      */
-    reverse_selection_mode?: SelectionModeFlags;
-    reverse_tile_filter_mode?: 'whitelist' | 'blacklist';
-    reverse_tile_filters?: TileID[];
-    /**
-     * The color of the rectangle used when standard selection is done in-game.
-     */
-    selection_color: Color;
-    selection_count_button_color?: Color;
-    /**
-     * The type of cursor box used to render selection of entities/tiles when standard selecting.
-     */
-    selection_cursor_box_type: CursorBoxType;
-    /**
-     * A list of selection mode flags that define how the selection tool selects things in-game.
-     */
-    selection_mode?: SelectionModeFlags;
-    tile_filter_mode?: 'whitelist' | 'blacklist';
-    tile_filters?: TileID[];
+    amount?: uint32;
 }
 /**
  * Definition for a shortcut button in the {@link shortcut bar | https://wiki.factorio.com/Shortcut_bar}.
@@ -6752,41 +7516,21 @@ interface SelectionToolPrototype extends ItemWithLabelPrototype {
 {
   type = "shortcut",
   name = "give-deconstruction-planner",
-  order = "b[blueprints]-g[deconstruction-planner]",
+  order = "b[blueprints]-i[deconstruction-planner]",
   action = "spawn-item",
   localised_name = {"shortcut.make-deconstruction-planner"},
   associated_control_input = "give-deconstruction-planner",
   technology_to_unlock = "construction-robotics",
   item_to_spawn = "deconstruction-planner",
   style = "red",
-  icon =
-  {
-    filename = "__base__/graphics/icons/shortcut-toolbar/mip/new-deconstruction-planner-x32-white.png",
-    priority = "extra-high-no-scale",
-    size = 32,
-    mipmap_count = 2,
-    flags = {"gui-icon"}
-  },
-  small_icon =
-  {
-    filename = "__base__/graphics/icons/shortcut-toolbar/mip/new-deconstruction-planner-x24-white.png",
-    priority = "extra-high-no-scale",
-    size = 24,
-    mipmap_count = 2,
-    flags = {"gui-icon"}
-  },
-  disabled_small_icon =
-  {
-    filename = "__base__/graphics/icons/shortcut-toolbar/mip/new-deconstruction-planner-x24-white.png",
-    priority = "extra-high-no-scale",
-    size = 24,
-    mipmap_count = 2,
-    flags = {"gui-icon"}
-  }
+  icon = "__base__/graphics/icons/shortcut-toolbar/mip/new-deconstruction-planner-x32.png",
+  icon_size = 32,
+  small_icon = "__base__/graphics/icons/shortcut-toolbar/mip/new-deconstruction-planner-x24.png",
+  small_icon_size = 24
 }
 ```
  */
-interface ShortcutPrototype extends PrototypeBase {
+interface ShortcutPrototype extends Prototype {
     /**
      * If this is `"lua"`, {@link on_lua_shortcut | runtime:on_lua_shortcut} is raised when the shortcut is clicked.
      */
@@ -6796,23 +7540,23 @@ interface ShortcutPrototype extends PrototypeBase {
      */
     associated_control_input?: string;
     /**
-     * The icon used when the shortcut is shown in the quickbar, and is not usable.
+     * Path to the icon file.
      *
-     * Note: The scale that can be defined in the sprite may not behave as expected because the game always scales the sprite to fill the GUI slot.
+     * Mandatory if `icons` is not defined.
      */
-    disabled_icon?: Sprite;
+    icon?: FileName;
     /**
-     * The icon used in the panel for visible shortcuts, when the shortcut is not usable.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Note: The scale that can be defined in the sprite may not behave as expected because the game always scales the sprite to fill the GUI slot.
+     * The base game uses 32px icons for shortcuts.
+     *
+     * Only loaded if `icons` is not defined.
      */
-    disabled_small_icon?: Sprite;
+    icon_size?: SpriteSizeType;
     /**
-     * Scales to fit a 16x16-pixel square.
-     *
-     * Note: The scale that can be defined in the sprite may not behave as expected because the game always scales the sprite to fill the GUI slot.
+     * Can't be an empty array.
      */
-    icon: Sprite;
+    icons?: IconData[];
     /**
      * The item to create when clicking on a shortcut with the action set to `"spawn-item"`. The item must have the {@link spawnable | prototype:ItemPrototypeFlags::spawnable} flag set.
      */
@@ -6822,11 +7566,23 @@ interface ShortcutPrototype extends PrototypeBase {
      */
     order?: Order;
     /**
-     * The icon used in the panel for visible shortcuts, when the shortcut is usable.
+     * Path to the icon file. Used in the shortcut selection popup.
      *
-     * Note: The scale that can be defined in the sprite may not behave as expected because the game always scales the sprite to fill the GUI slot.
+     * Mandatory if `small_icons` is not defined.
      */
-    small_icon?: Sprite;
+    small_icon?: FileName;
+    /**
+     * The size of the small icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * The base game uses 24px small icons for shortcuts.
+     *
+     * Only loaded if `small_icons` is not defined.
+     */
+    small_icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    small_icons?: IconData[];
     style?: 'default' | 'blue' | 'red' | 'green';
     /**
      * The technology that must be researched before this shortcut can be used. Once a shortcut is unlocked in one save file, it is unlocked for all future save files.
@@ -6836,6 +7592,10 @@ interface ShortcutPrototype extends PrototypeBase {
      * Must be enabled for the Factorio API to be able to set the toggled state on the shortcut button, see {@link LuaPlayer::set_shortcut_toggled | runtime:LuaPlayer::set_shortcut_toggled}.
      */
     toggleable?: bool;
+    /**
+     * If `true`, the shortcut will not be available until its `technology_to_unlock` is researched, even if it was already researched in a different game.
+     */
+    unavailable_until_unlocked?: bool;
 }
 /**
  * An extremely basic entity with no special functionality. Used for minable rocks. Cannot be rotated.
@@ -6846,6 +7606,8 @@ interface SimpleEntityPrototype extends EntityWithHealthPrototype {
      * Whether this entity should be treated as a rock for the purpose of deconstruction and for {@link CarPrototype::immune_to_rock_impacts | prototype:CarPrototype::immune_to_rock_impacts}.
      */
     count_as_rock_for_filtered_deconstruction?: bool;
+    lower_pictures?: SpriteVariations;
+    lower_render_layer?: RenderLayer;
     /**
      * Takes priority over `animations`. Only the `north` sprite is used because this entity cannot be rotated.
      */
@@ -6864,6 +7626,10 @@ interface SimpleEntityPrototype extends EntityWithHealthPrototype {
      * Used to determine render order for entities with the same `render_layer` in the same position. Entities with a higher `secondary_draw_order` are drawn on top.
      */
     secondary_draw_order?: int8;
+    /**
+     * Loaded and drawn with all `pictures`, `picture` and `animations`. If graphics variation is larger than number of `lower_pictures` variations this layer is not drawn.
+     */
+    stateless_visualisation_variations?: StatelessVisualisations[];
 }
 /**
  * By default, this entity will be a priority target for units/turrets, who will choose to attack it even if it does not block their path. Setting {@link EntityWithOwnerPrototype::is_military_target | prototype:EntityWithOwnerPrototype::is_military_target} to `false` will turn this off, which then makes this type equivalent to {@link SimpleEntityWithOwnerPrototype | prototype:SimpleEntityWithOwnerPrototype}.
@@ -6886,6 +7652,11 @@ interface SimpleEntityWithOwnerPrototype extends EntityWithOwnerPrototype {
      */
     force_visibility?: ForceCondition;
     /**
+     * Loaded and drawn with all `pictures`, `picture` and `animations`. If graphics variation is larger than number of `lower_pictures` variations this layer is not drawn.
+     */
+    lower_pictures?: SpriteVariations;
+    lower_render_layer?: RenderLayer;
+    /**
      * Takes priority over `animations`.
      */
     picture?: Sprite4Way;
@@ -6903,11 +7674,7 @@ interface SimpleEntityWithOwnerPrototype extends EntityWithOwnerPrototype {
      * Used to determine render order for entities with the same `render_layer` in the same position. Entities with a higher `secondary_draw_order` are drawn on top.
      */
     secondary_draw_order?: int8;
-}
-/**
- * Deprecated in 0.16. The type "simple-smoke" has been obsoleted and cannot be created. Use {@link TrivialSmokePrototype | prototype:TrivialSmokePrototype} or {@link SmokeWithTriggerPrototype | prototype:SmokeWithTriggerPrototype} instead.
- */
-interface SimpleSmokePrototype extends SmokePrototype {
+    stateless_visualisation_variations?: StatelessVisualisations[];
 }
 /**
  * Abstract entity that has an animation.
@@ -6917,7 +7684,7 @@ interface SmokePrototype extends EntityPrototype {
      * Smoke always moves randomly unless `movement_slow_down_factor` is 0. If `affected_by_wind` is true, the smoke will also be moved by wind.
      */
     affected_by_wind?: bool;
-    animation: Animation;
+    animation?: Animation;
     /**
      * Must have a collision box size of zero.
      * @example ```
@@ -6925,10 +7692,6 @@ interface SmokePrototype extends EntityPrototype {
     ```
      */
     collision_box?: BoundingBox;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     color?: Color;
     /**
      * If this is false then the smoke expires when the animation has played once.
@@ -6967,6 +7730,14 @@ interface SmokeWithTriggerPrototype extends SmokePrototype {
      * 0 means never apply.
      */
     action_cooldown?: uint32;
+    /**
+     * If true, causes the smoke to move with the target entity if one is specified.
+     */
+    attach_to_target?: bool;
+    /**
+     * If true, the smoke will immediately start fading away when the entity it is attached to is destroyed. If it was never attached to an entity in the first place, then the smoke will fade away immediately after being created.
+     */
+    fade_when_attachment_is_destroyed?: bool;
     particle_count?: uint8;
     particle_distance_scale_factor?: float;
     particle_duration_variation?: uint32;
@@ -7000,7 +7771,7 @@ interface SolarPanelPrototype extends EntityWithOwnerPrototype {
     /**
      * The picture displayed for this solar panel.
      */
-    picture: SpriteVariations;
+    picture?: SpriteVariations;
     /**
      * The maximum amount of power this solar panel can produce.
      */
@@ -7010,6 +7781,7 @@ interface SolarPanelPrototype extends EntityWithOwnerPrototype {
  * Specifies a sound that can be used with {@link SoundPath | runtime:SoundPath} at runtime.
  */
 interface SoundPrototype {
+    advanced_volume_control?: AdvancedVolumeControl;
     aggregation?: AggregationSpecification;
     allow_random_repeat?: bool;
     /**
@@ -7031,11 +7803,29 @@ interface SoundPrototype {
      */
     max_speed?: float;
     /**
+     * Only loaded if `variations` is not defined.
+     *
+     * Only loaded if `min_volume` is defined.
+     *
+     * Must be `>= min_volume`.
+     */
+    max_volume?: float;
+    /**
      * Must be `>= 1 / 64`.
      *
      * Only loaded if both `variations` and `speed` are not defined.
      */
     min_speed?: float;
+    /**
+     * Only loaded if `variations` and `volume` are not defined.
+     *
+     * Must be `>= 0`.
+     */
+    min_volume?: float;
+    /**
+     * Only loaded if `variations` is not defined.
+     */
+    modifiers?: SoundModifier | SoundModifier[];
     /**
      * Name of the sound. Can be used as a {@link SoundPath | runtime:SoundPath} at runtime.
      */
@@ -7045,17 +7835,188 @@ interface SoundPrototype {
      */
     preload?: bool;
     /**
+     * Sounds with higher priority will replace a sound with lower priority if the maximum sounds limit is reached.
+     *
+     * 0 is the highest priority, 255 is the lowest priority.
+     */
+    priority?: uint8;
+    /**
      * Speed must be `>= 1 / 64`. This sets both min and max speeds.
      *
      * Only loaded if `variations` is not defined.
      */
     speed?: float;
+    speed_smoothing_window_size?: uint32;
     type: 'sound';
     variations?: SoundDefinition | SoundDefinition[];
     /**
      * Only loaded if `variations` is not defined.
+     *
+     * This sets both min and max volumes.
+     *
+     * Must be `>= 0`.
      */
     volume?: float;
+}
+interface SpaceConnectionDistanceTraveledAchievementPrototype extends AchievementPrototype {
+    /**
+     * How far a platform must travel to gain this achievement. Repeated trips over a shorter distance do not count.
+     */
+    distance: uint32;
+    /**
+     * The achievement is unidirectional, this property controls the direction (using space connection definition).
+     *
+     * When false, a platform must go through {@link from | prototype:SpaceConnectionPrototype::from} location and travel in {@link to | prototype:SpaceConnectionPrototype::to} direction. When true, a platform must go through `to` location and travel in `from` direction.
+     */
+    reversed: bool;
+    tracked_connection: SpaceConnectionID;
+}
+interface SpaceConnectionPrototype extends Prototype {
+    asteroid_spawn_definitions?: SpaceConnectionAsteroidSpawnDefinition[];
+    from: SpaceLocationID;
+    /**
+     * Path to the icon file.
+     *
+     * Mandatory if `icons` is not defined.
+     */
+    icon?: FileName;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    icons?: IconData[];
+    /**
+     * Cannot be 0.
+     */
+    length?: uint32;
+    to: SpaceLocationID;
+}
+/**
+ * A space location, such as a planet.
+ */
+interface SpaceLocationPrototype extends Prototype {
+    asteroid_spawn_definitions?: SpaceLocationAsteroidSpawnDefinition[];
+    /**
+     * If greater than 0, `asteroid_spawn_definitions` will be used on space connections of this location, interpolated based on distance. The number specifies the percentage of the route where the location stops spawning its asteroids.
+     */
+    asteroid_spawn_influence?: double;
+    auto_save_on_first_trip?: bool;
+    /**
+     * Distance from the location's parent body in map coordinates.
+     */
+    distance: double;
+    /**
+     * If `false`, an orbital ring will not be drawn for this location.
+     */
+    draw_orbit?: bool;
+    /**
+     * When set to true, it means that this connection offers fly condition rather than wait condition at the destination
+     */
+    fly_condition?: bool;
+    /**
+     * A value which modifies platform speed; is subtracted when traveling from this location and added when traveling to this location.
+     */
+    gravity_pull: double;
+    /**
+     * Path to the icon file.
+     *
+     * Mandatory if `icons` is not defined.
+     */
+    icon?: FileName;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    icons?: IconData[];
+    /**
+     * The orientation where the location's name will be drawn.
+     */
+    label_orientation?: RealOrientation;
+    /**
+     * The apparent size of the space location in map coordinates.
+     */
+    magnitude?: double;
+    /**
+     * Angle in relation to the parent body.
+     */
+    orientation: RealOrientation;
+    /**
+     * The orientation where parked space platforms will be drawn.
+     */
+    parked_platforms_orientation?: RealOrientation;
+    /**
+     * These transitions are used for anything traveling from the surface associated with this location.
+     */
+    planet_procession_set?: ProcessionSet;
+    /**
+     * These transitions are used for any platform stopped at this location.
+     */
+    platform_procession_set?: ProcessionSet;
+    procession_audio_catalogue?: ProcessionAudioCatalogue;
+    procession_graphic_catalogue?: ProcessionGraphicCatalogue;
+    solar_power_in_space?: double;
+    /**
+     * Path to the icon file.
+     *
+     * Only loaded if `starmap_icons` is not defined.
+     */
+    starmap_icon?: FileName;
+    /**
+     * The size of the starmap icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `starmap_icons` is not defined.
+     */
+    starmap_icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    starmap_icons?: IconData[];
+}
+interface SpacePlatformHubPrototype extends EntityWithOwnerPrototype {
+    /**
+     * Has to be 256 to make blueprints snap to (0, 0) most of the time.
+     */
+    build_grid_size?: 256;
+    cargo_station_parameters: CargoStationParameters;
+    circuit_connector?: CircuitConnectorDefinition;
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    default_damage_taken_signal?: SignalIDConnector;
+    default_speed_signal?: SignalIDConnector;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
+    /**
+     * Name of a {@link ContainerPrototype | prototype:ContainerPrototype}.
+     */
+    dump_container: EntityID;
+    graphics_set?: CargoBayConnectableGraphicsSet;
+    inventory_size: ItemStackIndex;
+    persistent_ambient_sounds?: PersistentWorldAmbientSoundsDefinition;
+    platform_repair_speed_modifier?: float;
+    surface_render_parameters?: SurfaceRenderParameters;
+    weight?: Weight;
+}
+interface SpacePlatformStarterPackPrototype extends ItemPrototype {
+    create_electric_network?: bool;
+    /**
+     * The quality of the items will match the quality of the starter pack.
+     */
+    initial_items?: ItemProductPrototype[];
+    surface?: SurfaceID;
+    tiles?: SpacePlatformTileDefinition[];
+    trigger?: Trigger;
 }
 /**
  * Properties of the spectator controller.
@@ -7075,10 +8036,6 @@ interface SpectatorControllerPrototype {
  * A speech bubble. It floats in the world and can display text.
  */
 interface SpeechBubblePrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     fade_in_out_ticks?: uint32;
     /**
      * Needs a style of the type "speech_bubble_style", defined inside the gui styles.
@@ -7093,22 +8050,71 @@ interface SpeechBubblePrototype extends EntityPrototype {
 /**
  * Used by {@link SpiderLegSpecification | prototype:SpiderLegSpecification} for {@link SpiderVehiclePrototype | prototype:SpiderVehiclePrototype}, also known as {@link spidertron | https://wiki.factorio.com/Spidertron}.
  */
-interface SpiderLegPrototype extends EntityWithHealthPrototype {
+interface SpiderLegPrototype extends EntityWithOwnerPrototype {
     /**
-     * Two entities can collide only if they share a layer from the collision mask.
+     * The height of the foot from the ground when at rest.
      */
-    collision_mask?: CollisionMask;
-    graphics_set: SpiderLegGraphicsSet;
+    ankle_height?: double;
+    base_position_selection_distance: double;
+    graphics_set?: SpiderLegGraphicsSet;
+    /**
+     * The flexibility of hip. Must be between 0 and 1 inclusive. 0 means the hip doesn't flex at all, and 1 means the hip can bend the entire range, from straight up to straight down. Values less than one will dampen the hip flexibility and cause the upper and lower leg parts to stretch and squish more to compensate. Does not affect movement, only graphics.
+     */
+    hip_flexibility?: double;
     initial_movement_speed: double;
+    /**
+     * The placement of the knee relative to the torso of the spider and the end of the foot when at rest. Used to calculate the shape of the leg and the length of the individual parts. Values between 0 and 1 place the knee between the torso and the leg. Values closer to 0 will place the knee closer to the torso.
+     */
+    knee_distance_factor: double;
+    /**
+     * The resting height of the knee from the ground. Used to derive leg part length and size. If set too low, this could cause the knee to invert, bending inwards underneath the spider.
+     */
+    knee_height: double;
+    lower_leg_dying_trigger_effects?: SpiderLegTriggerEffect[];
     minimal_step_size: double;
     movement_acceleration: double;
     movement_based_position_selection_distance: double;
     /**
-     * Must be larger than 0.
+     * A scalar that controls the amount of influence this leg has over the position of the torso. Must be greater than 0.
      */
-    part_length: double;
+    stretch_force_scalar?: double;
     target_position_randomisation_distance: double;
-    walking_sound_volume_modifier?: double;
+    upper_leg_dying_trigger_effects?: SpiderLegTriggerEffect[];
+    walking_sound_speed_modifier?: float;
+    walking_sound_volume_modifier?: float;
+}
+interface SpiderUnitPrototype extends EntityWithOwnerPrototype {
+    absorptions_to_join_attack?: Record<AirbornePollutantID, float>;
+    ai_settings?: UnitAISettings;
+    attack_parameters: AttackParameters;
+    distraction_cooldown: uint32;
+    dying_sound?: Sound;
+    graphics_set?: SpiderTorsoGraphicsSet;
+    /**
+     * The height of the spider affects the shooting height and the drawing of the graphics and lights.
+     */
+    height: float;
+    max_pursue_distance?: double;
+    min_pursue_time?: uint32;
+    radar_range?: uint32;
+    spawning_time_modifier?: double;
+    spider_engine: SpiderEngineSpecification;
+    /**
+     * Cannot be negative.
+     */
+    torso_bob_speed?: float;
+    /**
+     * The orientation of the torso of the spider affects the shooting direction and the drawing of the graphics and lights.
+     */
+    torso_rotation_speed?: float;
+    /**
+     * Must be less than or equal to 100.
+     */
+    vision_distance: double;
+    /**
+     * A sound the spider unit makes when it sets out to attack.
+     */
+    warcry?: Sound;
 }
 /**
  * A {@link spidertron | https://wiki.factorio.com/Spidertron}.
@@ -7122,11 +8128,8 @@ interface SpiderVehiclePrototype extends VehiclePrototype {
      */
     chain_shooting_cooldown_modifier: float;
     chunk_exploration_radius: uint32;
-    /**
-     * Must be a burner energy source when using "burner", otherwise it can also be a void energy source.
-     */
     energy_source: BurnerEnergySource | VoidEnergySource;
-    graphics_set: SpiderVehicleGraphicsSet;
+    graphics_set?: SpiderVehicleGraphicsSet;
     /**
      * The guns this spider vehicle uses.
      */
@@ -7137,7 +8140,7 @@ interface SpiderVehiclePrototype extends VehiclePrototype {
     height: float;
     inventory_size: ItemStackIndex;
     movement_energy_consumption: Energy;
-    spider_engine: SpiderEnginePrototype;
+    spider_engine: SpiderEngineSpecification;
     /**
      * Cannot be negative.
      */
@@ -7152,23 +8155,9 @@ interface SpiderVehiclePrototype extends VehiclePrototype {
     trash_inventory_size?: ItemStackIndex;
 }
 /**
- * The {@link spidertron remote | https://wiki.factorio.com/Spidertron_remote}. This remote can only be connected to entities of type {@link SpiderVehiclePrototype | prototype:SpiderVehiclePrototype}.
+ * The {@link spidertron remote | https://wiki.factorio.com/Spidertron_remote}. This remote can only be used for entities of type {@link SpiderVehiclePrototype | prototype:SpiderVehiclePrototype}.
  */
-interface SpidertronRemotePrototype extends ItemPrototype {
-    /**
-     * Path to the icon file.
-     *
-     * Mandatory if `icon_color_indicator_masks` is not defined.
-     *
-     * Uses `icon_size` and `icon_mipmaps` from its {@link ItemPrototype | prototype:ItemPrototype} parent.
-     */
-    icon_color_indicator_mask?: FileName;
-    /**
-     * Inside IconData, the property for the file path is `icon_color_indicator_mask` instead of `icon`. Can't be an empty array.
-     *
-     * Uses `icon_size` and `icon_mipmaps` from its {@link ItemPrototype | prototype:ItemPrototype} parent.
-     */
-    icon_color_indicator_masks?: IconData[];
+interface SpidertronRemotePrototype extends SelectionToolPrototype {
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.
      * @example ```
@@ -7181,11 +8170,12 @@ interface SpidertronRemotePrototype extends ItemPrototype {
  * A {@link splitter | https://wiki.factorio.com/Splitter}.
  */
 interface SplitterPrototype extends TransportBeltConnectablePrototype {
+    frozen_patch?: Sprite4Way;
     /**
-     * Two entities can collide only if they share a layer from the collision mask.
+     * The name of the {@link TransportBeltPrototype | prototype:TransportBeltPrototype} which is used for the sound of the underlying belt.
      */
-    collision_mask?: CollisionMask;
-    structure: Animation4Way;
+    related_transport_belt?: EntityID;
+    structure?: Animation4Way;
     structure_animation_movement_cooldown?: uint32;
     structure_animation_speed_coefficient?: double;
     /**
@@ -7215,7 +8205,29 @@ interface SpritePrototype {
     /**
      * Only loaded if `layers` is not defined.
      */
+    apply_special_effect?: bool;
+    /**
+     * Only loaded if `layers` is not defined.
+     */
     blend_mode?: BlendMode;
+    /**
+     * Only loaded if `layers` is not defined.
+     *
+     * Number of slices this is sliced into when using the "optimized atlas packing" option. If you are a modder, you can just ignore this property. Example: If this is 4, the sprite will be sliced into a 4x4 grid.
+     */
+    dice?: SpriteSizeType;
+    /**
+     * Only loaded if `layers` is not defined.
+     *
+     * Same as `dice` above, but this specifies only how many slices there are on the x axis.
+     */
+    dice_x?: SpriteSizeType;
+    /**
+     * Only loaded if `layers` is not defined.
+     *
+     * Same as `dice` above, but this specifies only how many slices there are on the y axis.
+     */
+    dice_y?: SpriteSizeType;
     /**
      * Only loaded if `layers` is not defined.
      *
@@ -7255,15 +8267,13 @@ interface SpritePrototype {
     /**
      * Only loaded if `layers` is not defined. Mandatory if `size` is not defined.
      *
-     * Height of the picture in pixels, from 0-8192.
+     * Height of the picture in pixels, from 0-4096.
      */
     height?: SpriteSizeType;
     /**
      * Only loaded if `layers` is not defined.
-     *
-     * If this property exists and high resolution sprites are turned on, this is used to load the Sprite.
      */
-    hr_version?: Sprite;
+    invert_colors?: bool;
     /**
      * If this property is present, all Sprite definitions have to be placed as entries in the array, and they will all be loaded from there. `layers` may not be an empty table. Each definition in the array may also have the `layers` property.
      *
@@ -7273,7 +8283,7 @@ interface SpritePrototype {
     /**
      * Only loaded if `layers` is not defined.
      *
-     * Minimal mode is entered when mod loading fails. You are in it when you see the gray box after (part of) the loading screen that tells you a mod error ({@link Example | https://cdn.discordapp.com/attachments/340530709712076801/532315796626472972/unknown.png}). Modders can ignore this property.
+     * Minimal mode is entered when mod loading fails. You are in it when you see the gray box after (part of) the loading screen that tells you a mod error. Modders can ignore this property.
      */
     load_in_minimal_mode?: bool;
     /**
@@ -7307,6 +8317,10 @@ interface SpritePrototype {
     priority?: SpritePriority;
     /**
      * Only loaded if `layers` is not defined.
+     */
+    rotate_shift?: bool;
+    /**
+     * Only loaded if `layers` is not defined.
      *
      * Values other than `1` specify the scale of the sprite on default zoom. A scale of `2` means that the picture will be two times bigger on screen (and thus more pixelated).
      */
@@ -7320,7 +8334,7 @@ interface SpritePrototype {
     /**
      * Only loaded if `layers` is not defined.
      *
-     * The width and height of the sprite. If this is a tuple, the first member of the tuple is the width and the second is the height. Otherwise the size is both width and height. Width and height may only be in the range of 0-8192.
+     * The width and height of the sprite. If this is a tuple, the first member of the tuple is the width and the second is the height. Otherwise the size is both width and height. Width and height may only be in the range of 0-4096.
      */
     size?: SpriteSizeType | [
         SpriteSizeType,
@@ -7329,30 +8343,28 @@ interface SpritePrototype {
     /**
      * Only loaded if `layers` is not defined.
      *
-     * Number of slices this is sliced into when using the "optimized atlas packing" option. If you are a modder, you can just ignore this property. As an example, if this is `4`, the sprite will be sliced into a `4x4` grid.
+     * Provides hint to sprite atlas system, so it can try to put sprites that are intended to be used at the same locations to the same sprite atlas.
      */
-    slice?: SpriteSizeType;
-    /**
-     * Only loaded if `layers` is not defined.
-     *
-     * Same as `slice`, but this specifies only how many slices there are on the x-axis.
-     */
-    slice_x?: SpriteSizeType;
-    /**
-     * Only loaded if `layers` is not defined.
-     *
-     * Same as `slice`, but this specifies only how many slices there are on the y-axis.
-     */
-    slice_y?: SpriteSizeType;
+    surface?: SpriteUsageSurfaceHint;
     /**
      * Only loaded if `layers` is not defined.
      */
     tint?: Color;
+    /**
+     * Only loaded if `layers` is not defined.
+     */
+    tint_as_overlay?: bool;
     type: 'sprite';
+    /**
+     * Only loaded if `layers` is not defined.
+     *
+     * Provides hint to sprite atlas system, so it can pack sprites that are related to each other to the same sprite atlas.
+     */
+    usage?: SpriteUsageHint;
     /**
      * Only loaded if `layers` is not defined. Mandatory if `size` is not defined.
      *
-     * Width of the picture in pixels, from 0-8192.
+     * Width of the picture in pixels, from 0-4096.
      */
     width?: SpriteSizeType;
     /**
@@ -7374,17 +8386,13 @@ interface SpritePrototype {
 interface StickerPrototype extends EntityPrototype {
     animation?: Animation;
     /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    /**
      * Interval between application of `damage_per_tick`, in ticks.
      */
     damage_interval?: uint32;
     /**
      * Applied every `damage_interval` ticks, so may not necessarily be "per tick".
      */
-    damage_per_tick?: DamagePrototype;
+    damage_per_tick?: DamageParameters;
     /**
      * Must be > 0.
      */
@@ -7392,6 +8400,19 @@ interface StickerPrototype extends EntityPrototype {
     fire_spread_cooldown?: uint8;
     fire_spread_radius?: float;
     force_visibility?: ForceCondition;
+    /**
+     * If true, causes the target entity to become "grounded", disabling flight. This only applies to Character entities wearing mech armor.
+     */
+    ground_target?: bool;
+    /**
+     * The `hidden` property of stickers is hardcoded to `true`.
+     */
+    hidden?: bool;
+    /**
+     * The `hidden_in_factoriopedia` property of stickers is hardcoded to `true`.
+     */
+    hidden_in_factoriopedia?: bool;
+    render_layer?: RenderLayer;
     /**
      * Using this property marks the sticker as a "selection sticker", meaning that the selection box will be rendered around the entity when the sticker is on it.
      */
@@ -7402,6 +8423,24 @@ interface StickerPrototype extends EntityPrototype {
      */
     spread_fire_entity?: EntityID;
     stickers_per_square_meter?: float;
+    /**
+     * The maximum movement speed for the target.
+     *
+     * Negative values are ignored.
+     */
+    target_movement_max?: float;
+    /**
+     * The maximum movement speed for the target when the sticker is attached. It linearly changes over time to reach `target_movement_max_to`.
+     *
+     * Negative values are ignored.
+     */
+    target_movement_max_from?: float;
+    /**
+     * The maximum movement speed for the target when the sticker expires. It linearly changes over time starting from `target_movement_max_from`.
+     *
+     * Negative values are ignored.
+     */
+    target_movement_max_to?: float;
     /**
      * Less than 1 to reduce movement speed, more than 1 to increase it.
      */
@@ -7414,6 +8453,10 @@ interface StickerPrototype extends EntityPrototype {
      * The modifier value when the sticker expires. It linearly changes over time starting from `target_movement_modifier_from`.
      */
     target_movement_modifier_to?: float;
+    /**
+     * Effects (with cooldowns) to trigger every tick.
+     */
+    update_effects?: TriggerEffectWithCooldown[];
     vehicle_friction_modifier?: float;
     /**
      * Works similarly to `target_movement_modifier_from`.
@@ -7423,6 +8466,24 @@ interface StickerPrototype extends EntityPrototype {
      * Works similarly to `target_movement_modifier_to`.
      */
     vehicle_friction_modifier_to?: float;
+    /**
+     * The maximum movement speed for vehicles.
+     *
+     * Negative values are ignored.
+     */
+    vehicle_speed_max?: float;
+    /**
+     * The maximum movement speed for vehicles when the sticker is attached. It linearly changes over time to reach `vehicle_speed_max_to`.
+     *
+     * Negative values are ignored.
+     */
+    vehicle_speed_max_from?: float;
+    /**
+     * The maximum movement speed for vehicles when the sticker expires. It linearly changes over time starting from `vehicle_speed_max_from`.
+     *
+     * Negative values are ignored.
+     */
+    vehicle_speed_max_to?: float;
     /**
      * Less than 1 to reduce vehicle speed, more than 1 to increase it.
      */
@@ -7440,23 +8501,11 @@ interface StickerPrototype extends EntityPrototype {
  * A {@link storage tank | https://wiki.factorio.com/Storage_tank}.
  */
 interface StorageTankPrototype extends EntityWithOwnerPrototype {
-    /**
-     * Mandatory if circuit_wire_max_distance  > 0.
-     */
-    circuit_connector_sprites?: [
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites
-    ];
-    /**
-     * Mandatory if circuit_wire_max_distance  > 0.
-     */
-    circuit_wire_connection_points?: [
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
     ];
     circuit_wire_max_distance?: double;
     draw_circuit_wires?: bool;
@@ -7470,11 +8519,7 @@ interface StorageTankPrototype extends EntityWithOwnerPrototype {
      */
     flow_length_in_ticks: uint32;
     fluid_box: FluidBox;
-    pictures: StorageTankPictures;
-    /**
-     * If the icons of fluids shown in alt-mode should be scaled to the storage tank's size.
-     */
-    scale_info_icons?: bool;
+    pictures?: StorageTankPictures;
     /**
      * Whether the "alt-mode icon" should be drawn at all.
      */
@@ -7489,18 +8534,41 @@ interface StorageTankPrototype extends EntityWithOwnerPrototype {
  * A straight rail.
  */
 interface StraightRailPrototype extends RailPrototype {
-    bending_type?: 'straight';
+    /**
+     * The {@link collision_box | prototype:EntityPrototype::collision_box} of straight rail is hardcoded to `{{-0.7, -0.99}, {0.7, 0.99}}`.
+     */
+    collision_box?: BoundingBox;
+}
+interface SurfacePropertyPrototype extends Prototype {
+    default_value: double;
+    is_time?: bool;
+    /**
+     * The locale key of the unit of the property. In-game, the locale is provided the `__1__` parameter, which is the value of the property.
+     */
+    localised_unit_key?: string;
+}
+interface SurfacePrototype extends Prototype {
+    /**
+     * Path to the icon file.
+     *
+     * Mandatory if `icons` is not defined.
+     */
+    icon?: FileName;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon_size?: SpriteSizeType;
+    surface_properties?: LuaTable<SurfacePropertyID, double>;
 }
 /**
  * A {@link technology | https://wiki.factorio.com/Technologies}.
- *
- * This prototype has two different formats that can be specified. If both `normal` and `expensive` are not defined, the standard properties define this technology. Otherwise, they are ignored, and the `normal` and `expensive` properties are used exclusively to define this technology.
  * @example ```
 {
   type = "technology",
   name = "steel-processing",
   icon_size = 256,
-  icon_mipmaps = 4,
   icon = "__base__/graphics/technology/steel-processing.png",
   effects =
   {
@@ -7523,11 +8591,10 @@ interface StraightRailPrototype extends RailPrototype {
 }
 ```
  */
-interface TechnologyPrototype extends PrototypeBase {
+interface TechnologyPrototype extends Prototype {
+    allows_productivity?: bool;
     /**
      * List of effects of the technology (applied when the technology is researched).
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      * @example ```
     {
       {
@@ -7538,22 +8605,11 @@ interface TechnologyPrototype extends PrototypeBase {
     ```
      */
     effects?: Modifier[];
-    /**
-     * Only loaded if neither `normal` nor `expensive` are defined.
-     */
     enabled?: bool;
     /**
-     * Can be set to `false` if the `normal` property is defined. This will disable this difficulty, same as setting `enabled` to `false` would. If it's later manually enabled by script, it will use the data from `normal`.
-     *
-     * If this property is not defined while `normal` is, it will mirror its data.
+     * Whether the technology should be shown in the technology tree GUI when "Show only essential technologies" is enabled.
      */
-    expensive?: TechnologyData | false;
-    /**
-     * Hides the technology from the tech screen.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
-     */
-    hidden?: bool;
+    essential?: bool;
     /**
      * Path to the icon file.
      *
@@ -7561,13 +8617,11 @@ interface TechnologyPrototype extends PrototypeBase {
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * The base game uses 256px icons for technologies.
+     *
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
@@ -7576,16 +8630,12 @@ interface TechnologyPrototype extends PrototypeBase {
     icons?: IconData[];
     /**
      * Controls whether the technology cost ignores the tech cost multiplier set in the {@link DifficultySettings | runtime:DifficultySettings}. E.g. `4` for the default expensive difficulty.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     ignore_tech_cost_multiplier?: bool;
     /**
      * `"infinite"` for infinite technologies, otherwise `uint32`.
      *
      * Defaults to the same level as the technology, which is `0` for non-upgrades, and the level of the upgrade for upgrades.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     max_level?: uint32 | 'infinite';
     /**
@@ -7593,30 +8643,24 @@ interface TechnologyPrototype extends PrototypeBase {
      */
     name: string;
     /**
-     * Can be set to `false` if the `expensive` property is defined. This will disable this difficulty, same as setting `enabled` to `false` would. If it's later manually enabled by script, it will use the data from `expensive`.
-     *
-     * If this property is not defined while `expensive` is, it will mirror its data.
-     */
-    normal?: TechnologyData | false;
-    /**
      * List of technologies needed to be researched before this one can be researched.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      * @example ```
     prerequisites = {"explosives", "military-2"}
     ```
      */
     prerequisites?: TechnologyID[];
     /**
+     * Mandatory if `unit` is not defined.
+     */
+    research_trigger?: TechnologyTrigger;
+    /**
      * Determines the cost in items and time of the technology.
      *
-     * Mandatory if neither `normal` nor `expensive` are defined.
+     * Mandatory if `research_trigger` is not defined.
      */
     unit?: TechnologyUnit;
     /**
      * When set to true, and the technology contains several levels, only the relevant one is displayed in the technology screen.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      * @example ```
     {
       type = "technology",
@@ -7629,47 +8673,47 @@ interface TechnologyPrototype extends PrototypeBase {
     upgrade?: bool;
     /**
      * Controls whether the technology is shown in the tech GUI when it is not `enabled`.
-     *
-     * Only loaded if neither `normal` nor `expensive` are defined.
      */
     visible_when_disabled?: bool;
 }
+interface TemporaryContainerPrototype extends ContainerPrototype {
+    alert_after_time?: uint32;
+    destroy_on_empty?: bool;
+    time_to_live?: uint32;
+}
+interface ThrusterPrototype extends EntityWithOwnerPrototype {
+    fuel_fluid_box: FluidBox;
+    graphics_set?: ThrusterGraphicsSet;
+    /**
+     * `max_performance.fluid_volume` must not be smaller than `min_performance.fluid_volume`.
+     */
+    max_performance: ThrusterPerformancePoint;
+    min_performance: ThrusterPerformancePoint;
+    oxidizer_fluid_box: FluidBox;
+    plumes?: PlumesSpecification;
+}
 /**
- * Used to define the parameters for the water shader.
+ * Used to define the parameters for tile shaders.
  */
 interface TileEffectDefinition {
-    animation_scale: float | [
-        float,
-        float
-    ];
-    animation_speed: float;
-    dark_threshold: float | [
-        float,
-        float
-    ];
-    far_zoom?: float;
-    foam_color: Color;
-    foam_color_multiplier: float;
     /**
-     * Name of the tile-effect. Base game uses "water".
+     * Name of the tile-effect.
      */
     name: string;
-    near_zoom?: float;
-    reflection_threshold: float | [
-        float,
-        float
-    ];
-    specular_lightness: Color;
-    specular_threshold: float | [
-        float,
-        float
-    ];
     /**
-     * Sprite size must be 512x512.
+     * Only loaded, and mandatory if `shader` is `"puddle"`.
      */
-    texture: Sprite;
-    tick_scale: float;
+    puddle?: PuddleTileEffectParameters;
+    shader: 'water' | 'space' | 'puddle';
+    /**
+     * Only loaded, and mandatory if `shader` is `"space"`.
+     */
+    space?: SpaceTileEffectParameters;
     type: 'tile-effect';
+    /**
+     * Only loaded, and mandatory if `shader` is `"water"`.
+     */
+    water?: WaterTileEffectParameters;
 }
 /**
  * The entity used for tile ghosts.
@@ -7685,71 +8729,102 @@ interface TileEffectDefinition {
 ```
  */
 interface TileGhostPrototype extends EntityPrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
 }
 /**
  * A {@link tile | https://wiki.factorio.com/Tile}.
  */
-interface TilePrototype extends PrototypeBase {
+interface TilePrototype extends Prototype {
+    absorptions_per_second?: Record<AirbornePollutantID, double>;
     /**
      * Array of tile names that are allowed next to this one.
      */
     allowed_neighbors?: TileID[];
+    allows_being_covered?: bool;
+    ambient_sounds?: WorldAmbientSoundDefinition | WorldAmbientSoundDefinition[];
+    ambient_sounds_group?: TileID;
     autoplace?: AutoplaceSpecification;
+    bound_decoratives?: DecorativeID | DecorativeID[];
+    /**
+     * The build animation used when this tile is built on a space platform.
+     */
+    build_animations?: Animation4Way;
+    build_animations_background?: Animation4Way;
     /**
      * If this is loaded as one Sound, it is loaded as the "small" build sound.
      */
     build_sound?: Sound | TileBuildSound;
+    /**
+     * When the build_animations frame reaches this point the tile is built.
+     *
+     * Mandatory if `build_animations` is defined.
+     */
+    built_animation_frame?: uint32;
     can_be_part_of_blueprint?: bool;
     /**
      * If set to true, the game will check for collisions with entities before building or mining the tile. If entities are in the way it is not possible to mine/build the tile.
      */
     check_collision_with_entities?: bool;
-    collision_mask: CollisionMask;
+    collision_mask: CollisionMaskConnector;
     decorative_removal_probability?: float;
+    default_cover_tile?: TileID;
     /**
-     * Used only for the `layer_group` default, see above.
+     * The effect/trigger that runs when an item is destroyed by being dropped on this tile.
+     *
+     * If the item defines {@link its own trigger | prototype:ItemPrototype::destroyed_by_dropping_trigger} it will override this.
+     *
+     * If this is defined, `destroys_dropped_items` must be `true`.
      */
-    draw_in_water_layer?: bool;
+    default_destroyed_dropped_item_trigger?: Trigger;
     /**
-     * Name of a {@link TileEffectDefinition | prototype:TileEffectDefinition}.
+     * If items dropped on this tile are destroyed.
      */
-    effect?: string;
+    destroys_dropped_items?: bool;
+    driving_sound?: Sound;
+    /**
+     * Triggers when a foundation tile is destroyed by an asteroid.
+     */
+    dying_explosion?: ExplosionDefinition | ExplosionDefinition[];
+    effect?: TileEffectDefinitionID;
     effect_color?: Color;
     /**
      * Used by the {@link pollution | https://wiki.factorio.com/Pollution} shader.
      */
     effect_color_secondary?: Color;
     effect_is_opaque?: bool;
+    fluid?: FluidID;
+    frozen_variant?: TileID;
     /**
-     * Path to the icon file. If this and `icon` is not set, the `material_background` in `variants` is used as the icon.
+     * Path to the icon file. If this and `icons` is not set, the `material_background` in `variants` is used as the icon.
      *
      * Only loaded if `icons` is not defined.
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Only loaded if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
      * Can't be an empty array. If this and `icon` is not set, the `material_background` in `variants` is used as the icon.
      */
     icons?: IconData[];
+    is_foundation?: bool;
+    landing_steps_sound?: Sound;
     /**
      * Specifies transition drawing priority.
      */
     layer: uint8;
     layer_group?: TileRenderLayer;
+    /**
+     * For surfaces that use {@link fog effect | prototype:SurfaceRenderParameters::fog} of type `gleba`, this property determines whether given tile should contribute to fog intensity on a chunk or not.
+     */
+    lowland_fog?: bool;
     map_color: Color;
+    /**
+     * Must be equal to or greater than 0.
+     */
+    max_health?: float;
     /**
      * If you want the tile to not be mineable, don't specify the minable property. Only non-mineable tiles become hidden tiles when placing mineable tiles on top of them.
      */
@@ -7760,12 +8835,12 @@ interface TilePrototype extends PrototypeBase {
      */
     needs_correction?: bool;
     next_direction?: TileID;
+    particle_tints?: TileBasedParticleTints;
     placeable_by?: ItemToPlace | ItemToPlace[];
-    /**
-     * Emissions absorbed per second by this tile. Use a negative value if pollution is created instead of removed.
-     */
-    pollution_absorption_per_second: double;
     scorch_mark_color?: Color;
+    searchable?: bool;
+    sprite_usage_surface?: SpriteUsageSurfaceHint;
+    thawed_variant?: TileID;
     tint?: Color;
     transition_merges_with_tile?: TileID;
     transition_overlay_layer_offset?: int8;
@@ -7785,6 +8860,7 @@ interface TilePrototype extends PrototypeBase {
     vehicle_friction_modifier?: double;
     walking_sound?: Sound;
     walking_speed_modifier?: double;
+    weight?: Weight;
 }
 /**
  * A tips and tricks entry.
@@ -7798,6 +8874,22 @@ interface TipsAndTricksItem extends PrototypeBase {
      * An array of names of other tips and tricks items. This tips and tricks entry is only shown to the player once they have marked all dependencies as read.
      */
     dependencies?: string[];
+    /**
+     * Path to the icon file.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon?: FileName;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    icons?: IconData[];
     image?: FileName;
     /**
      * The tips and tricks entry is indented by `indent`×6 spaces.
@@ -7807,6 +8899,10 @@ interface TipsAndTricksItem extends PrototypeBase {
      * Whether the tip title on the left in the tips and tricks GUI should use the "title_tip_item" style (semi bold font).
      */
     is_title?: bool;
+    /**
+     * Used to order prototypes in inventory, recipes and GUIs. May not exceed a length of 200 characters.
+     */
+    order?: Order;
     player_input_method_filter?: PlayerInputMethodFilter;
     simulation?: SimulationDefinition;
     /**
@@ -7898,26 +8994,15 @@ interface TrainStopPrototype extends EntityWithOwnerPrototype {
      */
     build_grid_size?: 2;
     chart_name?: bool;
-    /**
-     * Mandatory if circuit_wire_max_distance > 0.
-     */
-    circuit_connector_sprites?: [
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites,
-        CircuitConnectorSprites
-    ];
-    /**
-     * Mandatory if circuit_wire_max_distance > 0.
-     */
-    circuit_wire_connection_points?: [
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint,
-        WireConnectionPoint
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
     ];
     circuit_wire_max_distance?: double;
     color?: Color;
+    default_priority_signal?: SignalIDConnector;
     default_train_stopped_signal?: SignalIDConnector;
     default_trains_count_signal?: SignalIDConnector;
     default_trains_limit_signal?: SignalIDConnector;
@@ -7934,18 +9019,7 @@ interface TrainStopPrototype extends EntityWithOwnerPrototype {
  */
 interface TransportBeltConnectablePrototype extends EntityWithOwnerPrototype {
     animation_speed_coefficient?: double;
-    /**
-     * This is the preferred way to specify transport belt animations.
-     */
     belt_animation_set?: TransportBeltAnimationSet;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    belt_horizontal?: Animation;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    belt_vertical?: Animation;
     /**
      * Transport belt connectable entities must have {@link collision_box | prototype:EntityPrototype::collision_box} of an appropriate minimal size, they should occupy more than half of every tile the entity covers.
      * @example ```
@@ -7953,27 +9027,6 @@ interface TransportBeltConnectablePrototype extends EntityWithOwnerPrototype {
     ```
      */
     collision_box?: BoundingBox;
-    /**
-     * Transport belt connectable entities must collide with "transport-belt-layer". Transport belt connectable entities must have collision_mask that collides with itself. Transport belt connectable entities cannot have collision mask that collides only with tiles (must collide with entities in some way).
-     */
-    collision_mask?: CollisionMask;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    ending_bottom?: Animation;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    ending_patch?: Sprite4Way;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    ending_side?: Animation;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    ending_top?: Animation;
-    ends_with_stopper?: bool;
     /**
      * Transport belt connectable entities cannot have the `"building-direction-8-way"` flag.
      */
@@ -7986,50 +9039,21 @@ interface TransportBeltConnectablePrototype extends EntityWithOwnerPrototype {
      * Must be a positive non-infinite number. The number is a fixed point number with 8 bits reserved for decimal precision, meaning the smallest value step is `1/2^8 = 0.00390625`. In the simple case of a non-curved belt, the rate is multiples of `1.875` items/s, even though the entity tooltip may show a different rate.
      */
     speed: double;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    starting_bottom?: Animation;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    starting_side?: Animation;
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     */
-    starting_top?: Animation;
 }
 /**
  * A {@link transport belt | https://wiki.factorio.com/Transport_belt}.
  */
 interface TransportBeltPrototype extends TransportBeltConnectablePrototype {
-    /**
-     * Mandatory if `belt_animation_set` is not defined.
-     *
-     * Transport belts must have 12 animations.
-     */
-    animations?: RotatedAnimation;
-    /**
-     * This is the preferred way to specify transport belt animations.
-     */
     belt_animation_set?: TransportBeltAnimationSetWithCorners;
     /**
-     * The pictures displayed for circuit connections to this transport belt.
+     * Set of 7 {@link circuit connector definitions | prototype:CircuitConnectorDefinition} in order: X, H, V, SE, SW, NE and NW.
      */
-    circuit_connector_sprites?: CircuitConnectorSprites[];
-    /**
-     * Defines how wires visually connect to this transport belt.
-     */
-    circuit_wire_connection_points?: WireConnectionPoint[];
+    circuit_connector?: CircuitConnectorDefinition[];
     /**
      * The maximum circuit wire distance for this entity.
      */
     circuit_wire_max_distance?: double;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
-    connector_frame_sprites: TransportBeltConnectorFrame;
+    connector_frame_sprites?: TransportBeltConnectorFrame;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
     /**
@@ -8057,9 +9081,10 @@ interface TreePrototype extends EntityWithHealthPrototype {
      * Mandatory if `variations` is not defined.
      */
     pictures?: SpriteVariations;
+    stateless_visualisation_variations?: StatelessVisualisations[];
     variation_weights?: float[];
     /**
-     * Can't be empty.
+     * If defined, it can't be empty.
      */
     variations?: TreeVariation[];
 }
@@ -8073,7 +9098,7 @@ interface TriggerTargetType {
 /**
  * Smoke, but it's not an entity for optimization purposes.
  */
-interface TrivialSmokePrototype extends PrototypeBase {
+interface TrivialSmokePrototype extends Prototype {
     /**
      * Smoke always moves randomly unless `movement_slow_down_factor` is 0. If `affected_by_wind` is true, the smoke will also be moved by wind.
      */
@@ -8117,31 +9142,42 @@ interface TurretPrototype extends EntityWithOwnerPrototype {
      */
     attack_parameters: AttackParameters;
     attack_target_mask?: TriggerTargetMask;
-    attacking_animation?: RotatedAnimation4Way;
+    attacking_animation?: RotatedAnimation8Way;
     /**
      * Controls the speed of the attacking_animation: `1 ÷ attacking_speed = duration of the attacking_animation`
      */
     attacking_speed?: float;
-    base_picture?: Animation4Way;
-    base_picture_render_layer?: RenderLayer;
-    base_picture_secondary_draw_order?: uint8;
     call_for_help_radius: double;
     /**
-     * Specifies the name of the {@link CorpsePrototype | prototype:CorpsePrototype} to be used when this entity dies.
+     * Set of {@link circuit connector definitions | prototype:CircuitConnectorDefinition} for all directions used by this turret. Required amount of elements is based on other prototype values: 8 elements if building-direction-8-way flag is set, or 16 elements if building-direction-16-way flag is set, or 4 elements if turret_base_has_direction is set to true, or 1 element.
      */
-    corpse?: EntityID;
+    circuit_connector?: CircuitConnectorDefinition[];
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    default_speed?: float;
+    default_speed_secondary?: float;
+    default_speed_when_killed?: float;
+    default_starting_progress_when_killed?: float;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
     dying_sound?: Sound;
-    ending_attack_animation?: RotatedAnimation4Way;
+    ending_attack_animation?: RotatedAnimation8Way;
     /**
      * Controls the speed of the ending_attack_animation: `1 ÷ ending_attack_speed = duration of the ending_attack_animation`
      */
     ending_attack_speed?: float;
-    energy_glow_animation?: RotatedAnimation4Way;
+    ending_attack_speed_secondary?: float;
+    ending_attack_speed_when_killed?: float;
+    ending_attack_starting_progress_when_killed?: float;
+    energy_glow_animation?: RotatedAnimation8Way;
     /**
      * The range of the flickering of the alpha of `energy_glow_animation`. Default is range 0.2, so animation alpha can be anywhere between 0.8 and 1.0.
      */
     energy_glow_animation_flicker_strength?: float;
-    folded_animation: RotatedAnimation4Way;
+    folded_animation: RotatedAnimation8Way;
+    folded_animation_is_stateless?: bool;
     /**
      * It's randomized whether a particular turret uses the primary or the secondary speed for its animations.
      *
@@ -8154,16 +9190,23 @@ interface TurretPrototype extends EntityWithOwnerPrototype {
      * Controls the speed of the folded_animation: `1 ÷ folded_speed_secondary = duration of the folded_animation`
      */
     folded_speed_secondary?: float;
-    folding_animation?: RotatedAnimation4Way;
+    folded_speed_when_killed?: float;
+    folded_starting_progress_when_killed?: float;
+    folded_state_corpse?: EntityID | EntityID[];
+    folding_animation?: RotatedAnimation8Way;
     folding_sound?: Sound;
     /**
      * Controls the speed of the folding_animation: `1 ÷ folding_speed = duration of the folding_animation`
      */
     folding_speed?: float;
+    folding_speed_secondary?: float;
+    folding_speed_when_killed?: float;
+    folding_starting_progress_when_killed?: float;
     /**
      * The intensity of light in the form of `energy_glow_animation` drawn on top of `energy_glow_animation`.
      */
     glow_light_intensity?: float;
+    graphics_set: TurretGraphicsSet;
     gun_animation_render_layer?: RenderLayer;
     gun_animation_secondary_draw_order?: uint8;
     ignore_target_mask?: TriggerTargetMask;
@@ -8173,7 +9216,7 @@ interface TurretPrototype extends EntityWithOwnerPrototype {
      */
     is_military_target?: bool;
     prepare_range?: double;
-    prepared_alternative_animation?: RotatedAnimation4Way;
+    prepared_alternative_animation?: RotatedAnimation8Way;
     /**
      * The chance for `prepared_alternative_animation` to be used.
      */
@@ -8191,7 +9234,9 @@ interface TurretPrototype extends EntityWithOwnerPrototype {
      * Controls the speed of the prepared_alternative_animation: `1 ÷ prepared_alternative_speed_secondary = duration of the prepared_alternative_animation`
      */
     prepared_alternative_speed_secondary?: float;
-    prepared_animation?: RotatedAnimation4Way;
+    prepared_alternative_speed_when_killed?: float;
+    prepared_alternative_starting_progress_when_killed?: float;
+    prepared_animation?: RotatedAnimation8Way;
     prepared_sound?: Sound;
     /**
      * It's randomized whether a particular turret uses the primary or the secondary speed for its animations.
@@ -8205,39 +9250,58 @@ interface TurretPrototype extends EntityWithOwnerPrototype {
      * Controls the speed of the prepared_animation: `1 ÷ prepared_speed_secondary = duration of the prepared_animation`
      */
     prepared_speed_secondary?: float;
-    preparing_animation?: RotatedAnimation4Way;
+    prepared_speed_when_killed?: float;
+    prepared_starting_progress_when_killed?: float;
+    preparing_animation?: RotatedAnimation8Way;
     preparing_sound?: Sound;
     /**
      * Controls the speed of the preparing_animation: `1 ÷ preparing_speed = duration of the preparing_animation`
      */
     preparing_speed?: float;
+    preparing_speed_secondary?: float;
+    preparing_speed_when_killed?: float;
+    preparing_starting_progress_when_killed?: float;
     random_animation_offset?: bool;
+    resource_indicator_animation?: RotatedAnimation8Way;
+    rotating_sound?: InterruptibleSound;
     rotation_speed?: float;
-    /**
-     * Whether the secondary (animation) speeds should always be used.
-     */
-    secondary_animation?: bool;
+    rotation_speed_secondary?: float;
+    rotation_speed_when_killed?: float;
+    rotation_starting_progress_when_killed?: float;
     shoot_in_prepare_state?: bool;
     /**
      * Decoratives to be created when the spawner is created by the {@link map generator | https://wiki.factorio.com/Map_generator}. Placed when enemies expand if `spawn_decorations_on_expansion` is set to true.
      */
-    spawn_decoration?: CreateDecorativesTriggerEffectItem | CreateDecorativesTriggerEffectItem[];
+    spawn_decoration?: CreateDecorativesTriggerEffectItem[];
     /**
      * Whether `spawn_decoration` should be spawned when this turret is created through {@link enemy expansion | https://wiki.factorio.com/Enemies#Expansions}.
      */
     spawn_decorations_on_expansion?: bool;
-    starting_attack_animation?: RotatedAnimation4Way;
+    special_effect?: TurretSpecialEffect;
+    /**
+     * When `false` turret will enter `starting_attack` state without checking its ammo or energy levels. {@link FluidTurretPrototype | prototype:FluidTurretPrototype} forces this to `true`.
+     */
+    start_attacking_only_when_can_shoot?: bool;
+    starting_attack_animation?: RotatedAnimation8Way;
     starting_attack_sound?: Sound;
     /**
      * Controls the speed of the starting_attack_animation: `1 ÷ starting_attack_speed = duration of the starting_attack_animation`
      */
     starting_attack_speed?: float;
+    starting_attack_speed_secondary?: float;
+    starting_attack_speed_when_killed?: float;
+    starting_attack_starting_progress_when_killed?: float;
     turret_base_has_direction?: bool;
+    unfolds_before_dying?: bool;
 }
 /**
  * The definition of the tutorial to be used in the tips and tricks, see {@link TipsAndTricksItem | prototype:TipsAndTricksItem}. The actual tutorial scripting code is defined in the tutorial scenario. The scenario must be placed in the `tutorials` folder in the mod.
  */
 interface TutorialDefinition extends PrototypeBase {
+    /**
+     * Used to order prototypes in inventory, recipes and GUIs. May not exceed a length of 200 characters.
+     */
+    order?: Order;
     /**
      * Name of the folder for this tutorial scenario in the {@link `tutorials` folder | https://wiki.factorio.com/Tutorial:Mod_structure#Subfolders}.
      */
@@ -8247,19 +9311,19 @@ interface TutorialDefinition extends PrototypeBase {
  * An {@link underground belt | https://wiki.factorio.com/Underground_belt}.
  */
 interface UndergroundBeltPrototype extends TransportBeltConnectablePrototype {
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     max_distance: uint8;
-    structure: UndergroundBeltStructure;
+    max_distance_tint?: Color;
+    max_distance_underground_remove_belts_sprite?: Sprite;
+    structure?: UndergroundBeltStructure;
+    underground_collision_mask?: CollisionMaskConnector;
     underground_remove_belts_sprite?: Sprite;
-    underground_sprite: Sprite;
+    underground_sprite?: Sprite;
 }
 /**
  * Entity that moves around and attacks players, for example {@link biters and spitters | https://wiki.factorio.com/Enemies#Creatures}.
  */
 interface UnitPrototype extends EntityWithOwnerPrototype {
+    absorptions_to_join_attack?: Record<AirbornePollutantID, float>;
     affected_by_tiles?: bool;
     ai_settings?: UnitAISettings;
     /**
@@ -8272,10 +9336,6 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
      */
     attack_parameters: AttackParameters;
     can_open_gates?: bool;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     /**
      * How fast the `run_animation` frames are advanced. The animations are advanced animation_speed frames per `distance_per_frame` that the unit moves.
      *
@@ -8306,10 +9366,6 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
      * Movement speed of the unit in the world, in tiles per tick. Must be equal to or greater than 0.
      */
     movement_speed: float;
-    /**
-     * The amount of pollution that has to be absorbed by the unit's spawner before the unit will leave the spawner and attack the source of the pollution.
-     */
-    pollution_to_join_attack: float;
     radar_range?: uint32;
     render_layer?: RenderLayer;
     rotation_speed?: float;
@@ -8326,59 +9382,35 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
      */
     vision_distance: double;
     walking_sound?: Sound;
+    /**
+     * A sound the unit makes when it sets out to attack.
+     */
+    warcry?: Sound;
 }
 /**
  * An {@link upgrade planner | https://wiki.factorio.com/Upgrade_planner}.
  */
 interface UpgradeItemPrototype extends SelectionToolPrototype {
     /**
-     * This property is parsed, but then ignored.
+     * The {@link SelectionModeData::mode | prototype:SelectionModeData::mode} is hardcoded to `"cancel-upgrade"`.
+     *
+     * The filters are parsed, but then ignored and forced to be empty.
      */
-    alt_entity_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_entity_filters?: EntityID[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_entity_type_filters?: string[];
-    /**
-     * This property is hardcoded to `"cancel-upgrade"`.
-     */
-    alt_selection_mode?: SelectionModeFlags;
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_tile_filter_mode?: 'whitelist' | 'blacklist';
-    /**
-     * This property is parsed, but then ignored.
-     */
-    alt_tile_filters?: TileID[];
+    alt_select: SelectionModeData;
     /**
      * This property is hardcoded to `false`.
      */
     always_include_tiles?: bool;
     /**
-     * This property is parsed, but then ignored.
+     * If the item will draw its label when held in the cursor in place of the item count.
      */
-    entity_filter_mode?: 'whitelist' | 'blacklist';
+    draw_label_for_cursor_render?: bool;
     /**
-     * This property is parsed, but then ignored.
+     * The {@link SelectionModeData::mode | prototype:SelectionModeData::mode} is hardcoded to `"upgrade"`.
+     *
+     * The filters are parsed, but then ignored and forced to be empty.
      */
-    entity_filters?: EntityID[];
-    /**
-     * This property is parsed, but then ignored.
-     */
-    entity_type_filters?: string[];
-    /**
-     * Can't be > 255.
-     */
-    mapper_count?: ItemStackIndex;
-    /**
-     * This property is hardcoded to `"upgrade"`.
-     */
-    selection_mode?: SelectionModeFlags;
+    select: SelectionModeData;
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.
      * @example ```
@@ -8386,46 +9418,89 @@ interface UpgradeItemPrototype extends SelectionToolPrototype {
     ```
      */
     stack_size: 1;
+}
+/**
+ * This prototype is used for receiving an achievement when the player uses a capsule.
+ */
+interface UseItemAchievementPrototype extends AchievementPrototype {
     /**
-     * This property is parsed, but then ignored.
+     * How many capsules need to be used.
      */
-    tile_filter_mode?: 'whitelist' | 'blacklist';
+    amount?: uint32;
+    limit_quality: QualityID;
     /**
-     * This property is parsed, but then ignored.
+     * If this is false, the player carries over their statistics from this achievement through all their saves.
      */
-    tile_filters?: TileID[];
+    limited_to_one_game?: bool;
+    /**
+     * This will trigger the achievement, if this capsule is used.
+     * @example ```
+    to_use = "raw-fish"
+    ```
+     */
+    to_use: ItemID;
 }
 /**
  * Constants used by the game that are not specific to certain prototypes. See {@link utility-constants.lua | https://github.com/wube/factorio-data/blob/master/core/prototypes/utility-constants.lua} for the values used by the base game.
  */
 interface UtilityConstants extends PrototypeBase {
+    agricultural_range_visualization_color: Color;
     artillery_range_visualization_color: Color;
+    asteroid_collector_blockage_update_tile_distance: uint32;
+    asteroid_collector_max_nurbs_control_point_separation: double;
+    asteroid_collector_navmesh_refresh_tick_interval: uint32;
+    asteroid_collector_static_head_swing_segment_count: uint32;
+    asteroid_collector_static_head_swing_strength_scale: double;
+    asteroid_fading_range: float;
+    asteroid_position_offset_to_speed_coefficient: double;
+    asteroid_spawning_offset: SimpleBoundingBox;
+    asteroid_spawning_with_random_orientation_max_speed: double;
     /**
-     * The base game uses more entries here that are applied via the {@link ammo categories | https://github.com/wube/factorio-data/blob/master/base/prototypes/categories/ammo-category.lua#L72-L76}.
+     * The base game uses more entries here that are applied via the ammo-category.lua file.
      */
     bonus_gui_ordering: BonusGuiOrdering;
     building_buildable_tint: Color;
     building_buildable_too_far_tint: Color;
+    building_collision_mask: CollisionMaskConnector;
     building_ignorable_tint: Color;
     building_no_tint: Color;
     building_not_buildable_tint: Color;
     capsule_range_visualization_color: Color;
     /**
-     * Chart = map + minimap.
+     * Chart means map and minimap.
      */
     chart: ChartUtilityConstants;
+    chart_search_highlight: Color;
     checkerboard_black: Color;
     checkerboard_white: Color;
+    clear_cursor_volume_modifier: float;
     clipboard_history_size: uint32;
-    color_filters: ColorFilterData[];
+    color_filters?: ColorFilterData[];
     count_button_size: int32;
     daytime_color_lookup: DaytimeColorLookupTable;
     deconstruct_mark_tint: Color;
     default_alert_icon_scale: float;
     default_alert_icon_scale_by_type?: Record<string, float>;
     default_alert_icon_shift_by_type?: Record<string, Vector>;
+    /**
+     * The strings can be entity types or custom strings.
+     */
+    default_collision_masks: Record<string, CollisionMaskConnector>;
     default_enemy_force_color: Color;
+    default_item_weight: Weight;
     default_other_force_color: Color;
+    /**
+     * The default value of {@link FluidBox::max_pipeline_extent | prototype:FluidBox::max_pipeline_extent}.
+     */
+    default_pipeline_extent: double;
+    /**
+     * Must contain arrival and departure with {@link procession_style | prototype:ProcessionPrototype::procession_style} containing 0.
+     */
+    default_planet_procession_set: ProcessionSet;
+    /**
+     * Must contain arrival and departure with {@link procession_style | prototype:ProcessionPrototype::procession_style} containing 0.
+     */
+    default_platform_procession_set: ProcessionSet;
     default_player_force_color: Color;
     default_scorch_mark_color: Color;
     /**
@@ -8434,50 +9509,115 @@ interface UtilityConstants extends PrototypeBase {
     default_trigger_target_mask_by_type?: Record<string, TriggerTargetMask>;
     disabled_recipe_slot_background_tint: Color;
     disabled_recipe_slot_tint: Color;
+    drop_item_radius: float;
     dynamic_recipe_overload_factor: double;
+    /**
+     * Silently clamped to be between 0 and 0.99.
+     */
+    ejected_item_direction_variation: double;
+    /**
+     * Silently clamped to be between 0 and 1.
+     */
+    ejected_item_friction: double;
+    /**
+     * Silently clamped to be between 1 tick and 5 minutes (`5 * 60 * 60` ticks).
+     */
+    ejected_item_lifetime: MapTick;
+    /**
+     * Silently clamped to be between 0 and 1/60.
+     */
+    ejected_item_speed: double;
     enabled_recipe_slot_tint: Color;
+    enemies_in_simulation_volume_modifier: float;
     entity_button_background_color: Color;
     entity_renderer_search_box_limits: EntityRendererSearchBoxLimits;
+    environment_sounds_transition_fade_in_ticks: uint32;
     equipment_default_background_border_color: Color;
     equipment_default_background_color: Color;
     equipment_default_grabbed_background_color: Color;
+    explosions_in_simulation_volume_modifier: float;
     filter_outline_color: Color;
     /**
-     * Must be >= 1
+     * Must be >= 1.
      */
     flying_text_ttl: uint32;
     forced_enabled_recipe_slot_background_tint: Color;
+    freezing_temperature: double;
+    frozen_color_lookup: ColorLookupTable;
+    ghost_layer: CollisionLayerID;
+    ghost_shimmer_settings: GhostShimmerConfig;
     ghost_tint: Color;
+    ghost_tint_delivering: Color;
     gui_remark_color: Color;
+    gui_search_match_background_color: Color;
+    gui_search_match_foreground_color: Color;
     icon_shadow_color: Color;
     icon_shadow_inset: float;
     icon_shadow_radius: float;
     icon_shadow_sharpness: float;
     /**
+     * Must be >= 1.
+     */
+    inserter_hand_stack_items_per_sprite: ItemCountType;
+    /**
+     * Must be >= 1.
+     */
+    inserter_hand_stack_max_sprites: ItemCountType;
+    /**
      * Must be in range [1, 100].
      */
     inventory_width: uint32;
+    item_ammo_magazine_left_bar_color: Color;
+    item_default_random_tint_strength: Color;
+    /**
+     * There must be one array item with a threshold of `0`.
+     */
+    item_health_bar_colors: ItemHealthColorData[];
     item_outline_color: Color;
     item_outline_inset: float;
     item_outline_radius: float;
     item_outline_sharpness: float;
+    item_tool_durability_bar_color: Color;
+    /**
+     * Radius of area where cargo pods won't land.
+     */
+    landing_area_clear_zone_radius: float;
+    /**
+     * Max radius where cargo pods will land.
+     */
+    landing_area_max_radius: float;
+    large_area_size: float;
+    large_blueprint_area_size: float;
     /**
      * Can be set to anything from range 0 to 255, but larger values will be clamped to 160. Setting it to larger values can have performance impact (growing geometrically).
      */
     light_renderer_search_distance_limit: uint8;
+    lightning_attractor_collection_range_color: Color;
+    lightning_attractor_protection_range_color: Color;
+    logistic_gui_selected_network_highlight_tint: Color;
+    logistic_gui_unselected_network_highlight_tint: Color;
+    low_energy_robot_estimate_multiplier: double;
     main_menu_background_image_location: FileName;
     main_menu_background_vignette_intensity: float;
     main_menu_background_vignette_sharpness: float;
     /**
      * The strings represent the names of the simulations.
      */
-    main_menu_simulations: Record<string, SimulationDefinition>;
+    main_menu_simulations?: Record<string, SimulationDefinition>;
     manual_rail_building_reach_modifier: double;
     map_editor: MapEditorConstants;
+    /**
+     * Must be >= 1.
+     */
+    max_belt_stack_size: uint8;
+    max_fluid_flow: FluidAmount;
+    max_logistic_filter_count: LogisticFilterIndex;
     max_terrain_building_size: uint8;
     maximum_recipe_overload_multiplier: uint32;
     medium_area_size: float;
     medium_blueprint_area_size: float;
+    minimap_slot_clicked_tint: Color;
+    minimap_slot_hovered_tint: Color;
     minimum_recipe_overload_multiplier: uint32;
     missing_preview_sprite_location: FileName;
     /**
@@ -8485,16 +9625,23 @@ interface UtilityConstants extends PrototypeBase {
      */
     module_inventory_width: uint32;
     /**
-     * Must be >= 1.
+     * Silently clamped to be between 0 and 1.
      */
-    normalised_achievement_icon_size: uint32;
+    moving_sound_count_reduction_rate: float;
+    music_transition_fade_in_ticks: uint32;
+    music_transition_fade_out_ticks: uint32;
+    music_transition_pause_ticks: uint32;
     /**
      * The table with `name = "default"` must exist and be the first member of the array.
      */
     player_colors: PlayerColorData[];
+    probability_product_count_tint: Color;
     rail_planner_count_button_color: Color;
     rail_segment_colors: Color[];
     recipe_step_limit: uint32;
+    remote_view_LPF_max_cutoff_frequency: float;
+    remote_view_LPF_min_cutoff_frequency: float;
+    rocket_lift_weight: Weight;
     script_command_console_chat_color: Color;
     /**
      * Must be in range [1, 100].
@@ -8503,22 +9650,39 @@ interface UtilityConstants extends PrototypeBase {
     /**
      * Must be in range [1, 100].
      */
-    select_slot_row_count: uint32;
+    select_slot_row_count: uint8;
+    selected_chart_search_highlight: Color;
     server_command_console_chat_color: Color;
+    show_chunk_components_collision_mask: CollisionMaskConnector;
     small_area_size: float;
     small_blueprint_area_size: float;
+    /**
+     * Variables: speed, thrust, weight, width, height
+     */
+    space_platform_default_speed_formula: MathExpression;
+    /**
+     * Determines how fast space platforms will send items in trash slots to the surface. Each item type has its own cooldown.
+     */
+    space_platform_dump_cooldown: uint32;
+    space_platform_max_size: SimpleBoundingBox;
+    space_platform_relative_speed_factor: double;
+    space_platform_starfield_movement_vector: Vector;
+    spawner_evolution_factor_health_modifier: float;
     tile_ghost_tint: Color;
+    tile_ghost_tint_delivering: Color;
     /**
      * Must be >= 1.
      */
     tooltip_monitor_edge_border: int32;
-    train_button_hovered_tint: Color;
-    train_destination_full_color: Color;
     train_inactivity_wait_condition_default: uint32;
-    train_no_path_color: Color;
+    train_on_elevated_rail_shadow_shift_multiplier: Vector;
     train_path_finding: TrainPathFinderConstants;
+    train_pushed_by_player_ignores_friction: bool;
+    train_pushed_by_player_max_acceleration: double;
+    train_pushed_by_player_max_speed: double;
     train_temporary_stop_wait_time: uint32;
     train_time_wait_condition_default: uint32;
+    train_visualization: TrainVisualizationConstants;
     tree_leaf_distortion_distortion_far: Vector;
     tree_leaf_distortion_distortion_near: Vector;
     tree_leaf_distortion_speed_far: Vector;
@@ -8528,12 +9692,17 @@ interface UtilityConstants extends PrototypeBase {
     tree_shadow_roughness: float;
     tree_shadow_speed: float;
     turret_range_visualization_color: Color;
-    /**
-     * Must be >= 1.
-     */
-    tutorial_notice_icon_size: uint32;
+    underground_belt_max_distance_tint: Color;
+    underground_pipe_max_distance_tint: Color;
     unit_group_max_pursue_distance: double;
     unit_group_pathfind_resolution: int8;
+    /**
+     * Silently clamped to be between 0 and 1.
+     */
+    walking_sound_count_reduction_rate: float;
+    water_collision_mask: CollisionMaskConnector;
+    weapons_in_simulation_volume_modifier: float;
+    zero_count_value_tint: Color;
     zoom_to_world_can_use_nightvision: bool;
     zoom_to_world_daytime_color_lookup: DaytimeColorLookupTable;
     zoom_to_world_effect_strength: float;
@@ -8548,29 +9717,33 @@ interface UtilitySounds extends PrototypeBase {
     armor_remove: Sound;
     axe_fighting: Sound;
     axe_mining_ore: Sound;
-    blueprint_selection_ended: Sound;
-    blueprint_selection_started: Sound;
+    axe_mining_stone: Sound;
+    build_animated_huge: Sound;
+    build_animated_large: Sound;
+    build_animated_medium: Sound;
+    build_animated_small: Sound;
+    build_blueprint_huge: Sound;
     build_blueprint_large: Sound;
     build_blueprint_medium: Sound;
     build_blueprint_small: Sound;
+    build_ghost_upgrade: Sound;
+    build_ghost_upgrade_cancel: Sound;
+    build_huge: Sound;
     build_large: Sound;
     build_medium: Sound;
     build_small: Sound;
-    cancel_deconstruction_selection_ended: Sound;
-    cancel_deconstruction_selection_started: Sound;
     cannot_build: Sound;
     clear_cursor: Sound;
     confirm: Sound;
     console_message: Sound;
-    copy_activated: Sound;
     crafting_finished: Sound;
-    cut_activated: Sound;
-    deconstruct_big: Sound;
+    deconstruct_huge: Sound;
+    deconstruct_large: Sound;
     deconstruct_medium: Sound;
     deconstruct_robot: Sound;
     deconstruct_small: Sound;
-    deconstruction_selection_ended: Sound;
-    deconstruction_selection_started: Sound;
+    default_driving_sound: InterruptibleSound;
+    default_landing_steps: Sound;
     default_manual_repair: Sound;
     drop_item: Sound;
     entity_settings_copied: Sound;
@@ -8590,16 +9763,16 @@ interface UtilitySounds extends PrototypeBase {
     picked_up_item: Sound;
     rail_plan_start: Sound;
     research_completed: Sound;
-    rotated_big: Sound;
+    rotated_huge: Sound;
+    rotated_large: Sound;
     rotated_medium: Sound;
     rotated_small: Sound;
     scenario_message: Sound;
+    segment_dying_sound?: Sound;
     smart_pipette: Sound;
     switch_gun: Sound;
     tutorial_notice: Sound;
     undo: Sound;
-    upgrade_selection_ended: Sound;
-    upgrade_selection_started: Sound;
     wire_connect_pole: Sound;
     wire_disconnect: Sound;
     wire_pickup: Sound;
@@ -8608,29 +9781,51 @@ interface UtilitySounds extends PrototypeBase {
  * Sprites used by the game that are not specific to certain prototypes.
  */
 interface UtilitySprites extends PrototypeBase {
+    achievement_label: Sprite;
+    achievement_label_completed: Sprite;
     achievement_label_failed: Sprite;
-    achievement_label_locked: Sprite;
-    achievement_label_unlocked: Sprite;
-    achievement_label_unlocked_off: Sprite;
+    achievement_warning: Sprite;
     add: Sprite;
+    add_white: Sprite;
     alert_arrow: Sprite;
     ammo_damage_modifier_constant?: Sprite;
     ammo_damage_modifier_icon: Sprite;
     ammo_icon: Sprite;
     and_or: Sprite;
+    any_quality: Sprite;
     area_icon: Sprite;
     arrow_button: Animation;
     artillery_range_modifier_constant?: Sprite;
     artillery_range_modifier_icon: Sprite;
+    asteroid_chunk_editor_icon: Sprite;
+    asteroid_collector_path_blocked_icon: Sprite;
+    backward_arrow: Sprite;
+    backward_arrow_black: Sprite;
     bar_gray_pip: Sprite;
     battery: Sprite;
+    beacon_distribution_modifier_constant?: Sprite;
+    beacon_distribution_modifier_icon: Sprite;
+    belt_stack_size_bonus_modifier_constant?: Sprite;
+    belt_stack_size_bonus_modifier_icon: Sprite;
     bookmark: Sprite;
     brush_circle_shape: Sprite;
     brush_icon: Sprite;
     brush_square_shape: Sprite;
+    buildability_collision: Sprite;
+    buildability_collision_elevated: Sprite;
+    buildability_elevated_collision_bottom: Sprite;
+    buildability_elevated_collision_line: Sprite;
+    buildability_elevated_collision_top: Sprite;
+    bulk_inserter_capacity_bonus_modifier_constant?: Sprite;
+    bulk_inserter_capacity_bonus_modifier_icon: Sprite;
     cable_editor_icon: Sprite;
+    cargo_bay_not_connected_icon: Sprite;
+    cargo_landing_pad_count_modifier_constant?: Sprite;
+    cargo_landing_pad_count_modifier_icon: Sprite;
     center: Sprite;
     change_recipe: Sprite;
+    change_recipe_productivity_modifier_constant?: Sprite;
+    change_recipe_productivity_modifier_icon: Sprite;
     character_additional_mining_categories_modifier_constant?: Sprite;
     character_additional_mining_categories_modifier_icon: Sprite;
     character_build_distance_modifier_constant?: Sprite;
@@ -8647,8 +9842,6 @@ interface UtilitySprites extends PrototypeBase {
     character_item_pickup_distance_modifier_icon: Sprite;
     character_logistic_requests_modifier_constant?: Sprite;
     character_logistic_requests_modifier_icon: Sprite;
-    character_logistic_slots_modifier_constant?: Sprite;
-    character_logistic_slots_modifier_icon: Sprite;
     character_logistic_trash_slots_modifier_constant?: Sprite;
     character_logistic_trash_slots_modifier_icon: Sprite;
     character_loot_pickup_distance_modifier_constant?: Sprite;
@@ -8665,19 +9858,19 @@ interface UtilitySprites extends PrototypeBase {
     check_mark_dark_green: Sprite;
     check_mark_green: Sprite;
     check_mark_white: Sprite;
-    circuit_network_panel_black: Sprite;
-    circuit_network_panel_white: Sprite;
+    circuit_network_panel: Sprite;
+    cliff_deconstruction_enabled_modifier_constant?: Sprite;
+    cliff_deconstruction_enabled_modifier_icon: Sprite;
     cliff_editor_icon: Sprite;
     clock: Sprite;
     clone: Sprite;
     clone_editor_icon: Sprite;
+    close: Sprite;
     close_black: Sprite;
     close_fat: Sprite;
     close_map_preview: Sprite;
-    close_white: Sprite;
     clouds: Animation;
     collapse: Sprite;
-    collapse_dark: Sprite;
     color_effect: Sprite;
     color_picker: Sprite;
     confirm_slot: Sprite;
@@ -8843,10 +10036,14 @@ interface UtilitySprites extends PrototypeBase {
     controller_xbox_x: Sprite;
     controller_xbox_y: Sprite;
     copper_wire: Sprite;
+    copper_wire_highlight: Sprite;
     copy: Sprite;
     covered_chunk: Sprite;
     crafting_machine_recipe_not_unlocked: Sprite;
+    create_ghost_on_entity_death_modifier_constant?: Sprite;
+    create_ghost_on_entity_death_modifier_icon: Sprite;
     cross_select: Sprite;
+    crosshair: Sprite;
     cursor_box: CursorBoxSpecification;
     cursor_icon: Sprite;
     custom_tag_icon: Sprite;
@@ -8859,12 +10056,11 @@ interface UtilitySprites extends PrototypeBase {
     default_ammo_damage_modifier_icon: Sprite;
     default_gun_speed_modifier_icon: Sprite;
     default_turret_attack_modifier_icon: Sprite;
+    destination_full_icon: Sprite;
     destroyed_icon: Sprite;
     down_arrow: Sprite;
     downloaded: Sprite;
-    downloaded_white: Sprite;
     downloading: Sprite;
-    downloading_white: Sprite;
     dropdown: Sprite;
     editor_pause: Sprite;
     editor_play: Sprite;
@@ -8873,6 +10069,15 @@ interface UtilitySprites extends PrototypeBase {
     editor_speed_up: Sprite;
     electricity_icon: Sprite;
     electricity_icon_unplugged: Sprite;
+    empty_ammo_slot: Sprite;
+    empty_armor_slot: Sprite;
+    empty_drop_cargo_slot: Sprite;
+    empty_gun_slot: Sprite;
+    empty_inserter_hand_slot: Sprite;
+    empty_module_slot: Sprite;
+    empty_robot_material_slot: Sprite;
+    empty_robot_slot: Sprite;
+    empty_trash_slot: Sprite;
     enemy_force_icon: Sprite;
     enter: Sprite;
     entity_editor_icon: Sprite;
@@ -8881,28 +10086,34 @@ interface UtilitySprites extends PrototypeBase {
     equipment_grid: Sprite;
     equipment_slot: Sprite;
     expand: Sprite;
-    expand_dark: Sprite;
     expand_dots: Sprite;
-    expand_dots_white: Sprite;
     explosion_chart_visualization: Animation;
     export: Sprite;
     export_slot: Sprite;
-    favourite_server_icon: Sprite;
+    feedback: Sprite;
+    filter_blacklist: Sprite;
     /**
      * The sprite will be drawn on top of {@link fluid turrets | prototype:FluidTurretPrototype} that are out of fluid ammunition and don't have {@link FluidTurretPrototype::out_of_ammo_alert_icon | prototype:FluidTurretPrototype::out_of_ammo_alert_icon} set.
      */
     fluid_icon: Sprite;
     fluid_indication_arrow: Sprite;
     fluid_indication_arrow_both_ways: Sprite;
+    fluid_visualization_connection: Sprite;
+    fluid_visualization_connection_both_ways: Sprite;
+    fluid_visualization_connection_underground: Sprite;
+    fluid_visualization_extent_arrow: Sprite;
     follower_robot_lifetime_modifier_constant?: Sprite;
     follower_robot_lifetime_modifier_icon: Sprite;
     force_editor_icon: Sprite;
+    force_ghost_cursor: Sprite;
+    force_tile_ghost_cursor: Sprite;
+    forward_arrow: Sprite;
+    forward_arrow_black: Sprite;
+    frozen_icon: Sprite;
     fuel_icon: Sprite;
     game_stopped_visualization: Sprite;
     ghost_bar_pip: Sprite;
     ghost_cursor: Sprite;
-    ghost_time_to_live_modifier_constant?: Sprite;
-    ghost_time_to_live_modifier_icon: Sprite;
     give_item_modifier_constant?: Sprite;
     give_item_modifier_icon: Sprite;
     go_to_arrow: Sprite;
@@ -8911,7 +10122,7 @@ interface UtilitySprites extends PrototypeBase {
     green_circle: Sprite;
     green_dot: Sprite;
     green_wire: Sprite;
-    green_wire_hightlight: Sprite;
+    green_wire_highlight: Sprite;
     grey_placement_indicator_leg: Sprite;
     grey_rail_signal_placement_indicator: Sprite;
     grid_view: Sprite;
@@ -8934,6 +10145,7 @@ interface UtilitySprites extends PrototypeBase {
     inserter_stack_size_bonus_modifier_constant?: Sprite;
     inserter_stack_size_bonus_modifier_icon: Sprite;
     item_editor_icon: Sprite;
+    item_to_be_delivered_symbol: Sprite;
     laboratory_productivity_modifier_constant?: Sprite;
     laboratory_productivity_modifier_icon: Sprite;
     laboratory_speed_modifier_constant?: Sprite;
@@ -8942,6 +10154,7 @@ interface UtilitySprites extends PrototypeBase {
     light_cone: Sprite;
     light_medium: Sprite;
     light_small: Sprite;
+    lightning_warning_icon: Sprite;
     line_icon: Sprite;
     list_view: Sprite;
     logistic_network_panel_black: Sprite;
@@ -8950,6 +10163,7 @@ interface UtilitySprites extends PrototypeBase {
     lua_snippet_tool_icon: Sprite;
     map: Sprite;
     map_exchange_string: Sprite;
+    max_distance_underground_remove_belts: Sprite;
     max_failed_attempts_per_tick_per_construction_queue_modifier_constant?: Sprite;
     max_failed_attempts_per_tick_per_construction_queue_modifier_icon: Sprite;
     max_successful_attempts_per_tick_per_construction_queue_modifier_constant?: Sprite;
@@ -8959,18 +10173,29 @@ interface UtilitySprites extends PrototypeBase {
     medium_gui_arrow: Sprite;
     mining_drill_productivity_bonus_modifier_constant?: Sprite;
     mining_drill_productivity_bonus_modifier_icon: Sprite;
+    mining_with_fluid_modifier_constant?: Sprite;
+    mining_with_fluid_modifier_icon: Sprite;
     missing_icon: Sprite;
     missing_mod_icon: Sprite;
+    mod_category: Sprite;
     mod_dependency_arrow: Sprite;
+    mod_downloads_count: Sprite;
+    mod_last_updated: Sprite;
     mouse_cursor: Sprite;
+    move_tag: Sprite;
     multiplayer_waiting_icon: Sprite;
     nature_icon: Sprite;
+    navmesh_pending_icon: Animation;
     neutral_force_icon: Sprite;
     no_building_material_icon: Sprite;
     no_nature_icon: Sprite;
+    no_path_icon: Sprite;
+    no_platform_storage_space_icon: Sprite;
+    no_roboport_storage_space_icon: Sprite;
     no_storage_space_icon: Sprite;
     none_editor_icon: Sprite;
     not_available: Sprite;
+    not_available_black: Sprite;
     not_enough_construction_robots_icon: Sprite;
     not_enough_repair_packs_icon: Sprite;
     not_played_yet_dark_green: Sprite;
@@ -8980,8 +10205,13 @@ interface UtilitySprites extends PrototypeBase {
     notification: Sprite;
     output_console_gradient: Sprite;
     paint_bucket_icon: Sprite;
+    parametrise: Sprite;
     pause: Sprite;
+    pin_arrow: Sprite;
+    pin_center: Sprite;
+    pipeline_disabled_icon: Sprite;
     placement_indicator_leg: Sprite;
+    platform_entity_build_animations: EntityBuildAnimations;
     play: Sprite;
     played_dark_green: Sprite;
     played_green: Sprite;
@@ -8990,28 +10220,34 @@ interface UtilitySprites extends PrototypeBase {
     pump_cannot_connect_icon: Sprite;
     questionmark: Sprite;
     rail_path_not_possible: Sprite;
+    rail_planner_allow_elevated_rails_modifier_constant?: Sprite;
+    rail_planner_allow_elevated_rails_modifier_icon: Sprite;
     rail_planner_indication_arrow: Sprite;
+    rail_planner_indication_arrow_anchored: Sprite;
     rail_planner_indication_arrow_too_far: Sprite;
     rail_signal_placement_indicator: Sprite;
+    rail_support_on_deep_oil_ocean_modifier_constant?: Sprite;
+    rail_support_on_deep_oil_ocean_modifier_icon: Sprite;
+    rail_support_placement_indicator: Sprite;
     reassign: Sprite;
+    rebuild_mark: Sprite;
     recharge_icon: Sprite;
+    recipe_arrow: Sprite;
     red_wire: Sprite;
-    red_wire_hightlight: Sprite;
+    red_wire_highlight: Sprite;
     reference_point: Sprite;
     refresh: Sprite;
     refresh_white: Animation;
-    rename_icon_normal: Sprite;
-    rename_icon_small_black: Sprite;
-    rename_icon_small_white: Sprite;
+    rename_icon: Sprite;
     reset: Sprite;
     reset_white: Sprite;
     resource_editor_icon: Sprite;
+    resources_depleted_icon: Sprite;
     right_arrow: Sprite;
     robot_slot: Sprite;
     scripting_editor_icon: Sprite;
-    search_black: Sprite;
+    search: Sprite;
     search_icon: Sprite;
-    search_white: Sprite;
     select_icon_black: Sprite;
     select_icon_white: Sprite;
     set_bar_slot: Sprite;
@@ -9021,80 +10257,58 @@ interface UtilitySprites extends PrototypeBase {
     short_indication_line: Sprite;
     short_indication_line_green: Sprite;
     show_electric_network_in_map_view: Sprite;
-    show_electric_network_in_map_view_black: Sprite;
     show_logistics_network_in_map_view: Sprite;
-    show_logistics_network_in_map_view_black: Sprite;
+    show_pipelines_in_map_view: Sprite;
     show_player_names_in_map_view: Sprite;
-    show_player_names_in_map_view_black: Sprite;
-    show_pollution_in_map_view: Sprite;
-    show_pollution_in_map_view_black: Sprite;
     show_rail_signal_states_in_map_view: Sprite;
-    show_rail_signal_states_in_map_view_black: Sprite;
     show_recipe_icons_in_map_view: Sprite;
-    show_recipe_icons_in_map_view_black: Sprite;
     show_tags_in_map_view: Sprite;
-    show_tags_in_map_view_black: Sprite;
     show_train_station_names_in_map_view: Sprite;
-    show_train_station_names_in_map_view_black: Sprite;
     show_turret_range_in_map_view: Sprite;
-    show_turret_range_in_map_view_black: Sprite;
     show_worker_robots_in_map_view: Sprite;
-    show_worker_robots_in_map_view_black: Sprite;
     shuffle: Sprite;
-    side_menu_achievements_hover_icon: Sprite;
     side_menu_achievements_icon: Sprite;
-    side_menu_blueprint_library_hover_icon: Sprite;
     side_menu_blueprint_library_icon: Sprite;
-    side_menu_bonus_hover_icon: Sprite;
     side_menu_bonus_icon: Sprite;
-    side_menu_logistic_network_hover_icon: Sprite;
-    side_menu_map_hover_icon: Sprite;
+    side_menu_factoriopedia_icon: Sprite;
+    side_menu_logistic_networks_icon: Sprite;
     side_menu_map_icon: Sprite;
-    side_menu_menu_hover_icon: Sprite;
     side_menu_menu_icon: Sprite;
-    side_menu_production_hover_icon: Sprite;
+    side_menu_players_icon: Sprite;
     side_menu_production_icon: Sprite;
-    side_menu_technology_hover_icon: Sprite;
-    side_menu_train_hover_icon: Sprite;
+    side_menu_space_platforms_icon: Sprite;
+    side_menu_technology_icon: Sprite;
     side_menu_train_icon: Sprite;
-    side_menu_tutorials_hover_icon: Sprite;
     side_menu_tutorials_icon: Sprite;
     slot: Sprite;
-    slot_icon_ammo: Sprite;
-    slot_icon_ammo_black: Sprite;
-    slot_icon_armor: Sprite;
-    slot_icon_armor_black: Sprite;
-    slot_icon_fuel: Sprite;
-    slot_icon_fuel_black: Sprite;
-    slot_icon_gun: Sprite;
-    slot_icon_gun_black: Sprite;
-    slot_icon_inserter_hand: Sprite;
-    slot_icon_inserter_hand_black: Sprite;
-    slot_icon_module: Sprite;
-    slot_icon_module_black: Sprite;
-    slot_icon_resource: Sprite;
-    slot_icon_resource_black: Sprite;
-    slot_icon_result: Sprite;
-    slot_icon_result_black: Sprite;
-    slot_icon_robot: Sprite;
-    slot_icon_robot_black: Sprite;
-    slot_icon_robot_material: Sprite;
-    slot_icon_robot_material_black: Sprite;
+    slots_view: Sprite;
     small_gui_arrow: Sprite;
+    sort_by_name: Sprite;
+    sort_by_time: Sprite;
+    space_age_icon: Sprite;
     spawn_flag: Sprite;
     speed_down: Sprite;
     speed_up: Sprite;
     spray_icon: Sprite;
-    stack_inserter_capacity_bonus_modifier_constant?: Sprite;
-    stack_inserter_capacity_bonus_modifier_icon: Sprite;
+    starmap_platform_moving: Sprite;
+    starmap_platform_moving_clicked: Sprite;
+    starmap_platform_moving_hovered: Sprite;
+    starmap_platform_stacked: Sprite;
+    starmap_platform_stacked_clicked: Sprite;
+    starmap_platform_stacked_hovered: Sprite;
+    starmap_platform_stopped: Sprite;
+    starmap_platform_stopped_clicked: Sprite;
+    starmap_platform_stopped_hovered: Sprite;
+    starmap_star: Sprite;
     station_name: Sprite;
+    status_blue: Sprite;
+    status_inactive: Sprite;
     status_not_working: Sprite;
     status_working: Sprite;
     status_yellow: Sprite;
     stop: Sprite;
     surface_editor_icon: Sprite;
     sync_mods: Sprite;
-    technology_black: Sprite;
     technology_white: Sprite;
     tick_custom: Sprite;
     tick_once: Sprite;
@@ -9102,9 +10316,12 @@ interface UtilitySprites extends PrototypeBase {
     tile_editor_icon: Sprite;
     tile_ghost_cursor: Sprite;
     time_editor_icon: Sprite;
+    tip_icon: Sprite;
     too_far: Sprite;
     too_far_from_roboport_icon: Sprite;
+    tooltip_category_spoilable: Sprite;
     track_button: Sprite;
+    track_button_white: Sprite;
     train_braking_force_bonus_modifier_constant?: Sprite;
     train_braking_force_bonus_modifier_icon: Sprite;
     train_stop_disabled_in_map_view: Sprite;
@@ -9115,19 +10332,31 @@ interface UtilitySprites extends PrototypeBase {
     trash_white: Sprite;
     turret_attack_modifier_constant?: Sprite;
     turret_attack_modifier_icon: Sprite;
+    unclaimed_cargo_icon: Sprite;
     underground_pipe_connection: Sprite;
     underground_remove_belts: Sprite;
     underground_remove_pipes: Sprite;
+    unlock_circuit_network_modifier_constant?: Sprite;
+    unlock_circuit_network_modifier_icon: Sprite;
+    unlock_quality_modifier_constant?: Sprite;
+    unlock_quality_modifier_icon: Sprite;
     unlock_recipe_modifier_constant?: Sprite;
     unlock_recipe_modifier_icon: Sprite;
+    unlock_space_location_modifier_constant?: Sprite;
+    unlock_space_location_modifier_icon: Sprite;
+    unlock_space_platforms_modifier_constant?: Sprite;
+    unlock_space_platforms_modifier_icon: Sprite;
     upgrade_blueprint: Sprite;
     upgrade_mark: Sprite;
     variations_tool_icon: Sprite;
+    vehicle_logistics_modifier_constant?: Sprite;
+    vehicle_logistics_modifier_icon: Sprite;
     warning: Sprite;
     warning_icon: Sprite;
     warning_white: Sprite;
     white_mask: Sprite;
     white_square: Sprite;
+    white_square_icon: Sprite;
     wire_shadow: Sprite;
     worker_robot_battery_modifier_constant?: Sprite;
     worker_robot_battery_modifier_icon: Sprite;
@@ -9135,18 +10364,6 @@ interface UtilitySprites extends PrototypeBase {
     worker_robot_speed_modifier_icon: Sprite;
     worker_robot_storage_modifier_constant?: Sprite;
     worker_robot_storage_modifier_icon: Sprite;
-    zoom_to_world_blueprint_enabled_modifier_constant?: Sprite;
-    zoom_to_world_blueprint_enabled_modifier_icon: Sprite;
-    zoom_to_world_deconstruction_planner_enabled_modifier_constant?: Sprite;
-    zoom_to_world_deconstruction_planner_enabled_modifier_icon: Sprite;
-    zoom_to_world_enabled_modifier_constant?: Sprite;
-    zoom_to_world_enabled_modifier_icon: Sprite;
-    zoom_to_world_ghost_building_enabled_modifier_constant?: Sprite;
-    zoom_to_world_ghost_building_enabled_modifier_icon: Sprite;
-    zoom_to_world_selection_tool_enabled_modifier_constant?: Sprite;
-    zoom_to_world_selection_tool_enabled_modifier_icon: Sprite;
-    zoom_to_world_upgrade_planner_enabled_modifier_constant?: Sprite;
-    zoom_to_world_upgrade_planner_enabled_modifier_icon: Sprite;
 }
 /**
  * Abstract base of all vehicles.
@@ -9156,15 +10373,16 @@ interface VehiclePrototype extends EntityWithOwnerPrototype {
      * Determines whether this vehicle accepts passengers. This includes both drivers and gunners, if applicable.
      */
     allow_passengers?: bool;
+    allow_remote_driving?: bool;
     /**
      * Must be positive. There is no functional difference between the two ways to set braking power/force.
      */
     braking_power: Energy | double;
-    /**
-     * Two entities can collide only if they share a layer from the collision mask.
-     */
-    collision_mask?: CollisionMask;
     crash_trigger?: TriggerEffect;
+    /**
+     * Name of a {@link DeliverCategory | prototype:DeliverCategory}.
+     */
+    deliver_category?: string;
     /**
      * The (movement) energy used per hit point (1 hit point = 1 health damage) taken and dealt for this vehicle during collisions. The smaller the number, the more damage this vehicle and the rammed entity take during collisions: `damage = energy / energy_per_hit_point`.
      */
@@ -9177,6 +10395,7 @@ interface VehiclePrototype extends EntityWithOwnerPrototype {
      * Must be positive. There is no functional difference between the two ways to set friction force.
      */
     friction: double;
+    impact_speed_to_volume_ratio?: double;
     /**
      * The sprite that represents this vehicle on the map/minimap.
      */
@@ -9185,14 +10404,6 @@ interface VehiclePrototype extends EntityWithOwnerPrototype {
      * The sprite that represents this vehicle on the map/minimap when it is selected.
      */
     selected_minimap_representation?: Sprite;
-    /**
-     * Must be positive. Sound is scaled by speed.
-     */
-    sound_minimum_speed?: double;
-    /**
-     * Must be positive. Sound is scaled by speed.
-     */
-    sound_scaling_ratio?: double;
     stop_trigger?: TriggerEffect;
     stop_trigger_speed?: double;
     /**
@@ -9207,7 +10418,7 @@ interface VehiclePrototype extends EntityWithOwnerPrototype {
 /**
  * A {@link virtual signal | https://wiki.factorio.com/Circuit_network#Virtual_signals}.
  */
-interface VirtualSignalPrototype extends PrototypeBase {
+interface VirtualSignalPrototype extends Prototype {
     /**
      * Path to the icon file that is used to represent this virtual signal.
      *
@@ -9215,30 +10426,21 @@ interface VirtualSignalPrototype extends PrototypeBase {
      */
     icon?: FileName;
     /**
-     * Icons of reduced size will be used at decreased scale.
-     */
-    icon_mipmaps?: IconMipMapType;
-    /**
-     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon.
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
-     * Mandatory if `icons` is not defined, or if `icon_size` is not specified for all instances of `icons`.
+     * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
     /**
      * The icon that is used to represent this virtual signal. Can't be an empty array.
      */
     icons?: IconData[];
-    /**
-     * The name of an {@link ItemSubGroup | prototype:ItemSubGroup}.
-     */
-    subgroup?: ItemSubGroupID;
 }
 /**
  * A {@link wall | https://wiki.factorio.com/Wall}.
  */
 interface WallPrototype extends EntityWithOwnerPrototype {
-    circuit_connector_sprites?: CircuitConnectorSprites;
-    circuit_wire_connection_point?: WireConnectionPoint;
+    circuit_connector?: CircuitConnectorDefinition;
     /**
      * The maximum circuit wire distance for this entity.
      */
@@ -9247,7 +10449,7 @@ interface WallPrototype extends EntityWithOwnerPrototype {
     default_output_signal?: SignalIDConnector;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
-    pictures: WallPictures;
+    pictures?: WallPictures;
     /**
      * Different walls will visually connect to each other if their merge group is the same.
      */
@@ -9263,34 +10465,6 @@ interface WallPrototype extends EntityWithOwnerPrototype {
     wall_diode_red_light_right?: LightDefinition;
     wall_diode_red_light_top?: LightDefinition;
 }
-/**
- * A wind sound.
- * @example ```
-{
-  type = "wind-sound",
-  name = "wind-1",
-  sound =
-  {
-    filename = "__base__/sound/wind/wind.ogg",
-    volume = 1.0
-  }
-}
-```
- */
-interface WindSound {
-    /**
-     * Unique textual identification of the prototype.
-     */
-    name: string;
-    /**
-     * The sound file and volume.
-     */
-    sound: Sound;
-    /**
-     * Specification of the type of the prototype.
-     */
-    type: 'wind-sound';
-}
 type dataExtendType = ({
     type: 'accumulator';
 } & AccumulatorPrototype) | ({
@@ -9298,6 +10472,10 @@ type dataExtendType = ({
 } & AchievementPrototype) | ({
     type: 'active-defense-equipment';
 } & ActiveDefenseEquipmentPrototype) | ({
+    type: 'agricultural-tower';
+} & AgriculturalTowerPrototype) | ({
+    type: 'airborne-pollutant';
+} & AirbornePollutantPrototype) | ({
     type: 'ambient-sound';
 } & AmbientSound) | ({
     type: 'ammo-category';
@@ -9324,6 +10502,12 @@ type dataExtendType = ({
 } & ArtilleryWagonPrototype) | ({
     type: 'assembling-machine';
 } & AssemblingMachinePrototype) | ({
+    type: 'asteroid-chunk';
+} & AsteroidChunkPrototype) | ({
+    type: 'asteroid-collector';
+} & AsteroidCollectorPrototype) | ({
+    type: 'asteroid';
+} & AsteroidPrototype) | ({
     type: 'autoplace-control';
 } & AutoplaceControl) | ({
     type: 'battery-equipment';
@@ -9344,22 +10528,40 @@ type dataExtendType = ({
 } & BuildEntityAchievementPrototype) | ({
     type: 'burner-generator';
 } & BurnerGeneratorPrototype) | ({
+    type: 'burner-usage';
+} & BurnerUsagePrototype) | ({
     type: 'capsule';
 } & CapsulePrototype) | ({
+    type: 'capture-robot';
+} & CaptureRobotPrototype) | ({
     type: 'car';
 } & CarPrototype) | ({
+    type: 'cargo-bay';
+} & CargoBayPrototype) | ({
+    type: 'cargo-landing-pad';
+} & CargoLandingPadPrototype) | ({
+    type: 'cargo-pod';
+} & CargoPodPrototype) | ({
     type: 'cargo-wagon';
 } & CargoWagonPrototype) | ({
+    type: 'chain-active-trigger';
+} & ChainActiveTriggerPrototype) | ({
+    type: 'change-surface-achievement';
+} & ChangedSurfaceAchievementPrototype) | ({
     type: 'character-corpse';
 } & CharacterCorpsePrototype) | ({
     type: 'character';
 } & CharacterPrototype) | ({
     type: 'cliff';
 } & CliffPrototype) | ({
-    type: 'combat-robot-count';
+    type: 'collision-layer';
+} & CollisionLayerPrototype) | ({
+    type: 'combat-robot-count-achievement';
 } & CombatRobotCountAchievementPrototype) | ({
     type: 'combat-robot';
 } & CombatRobotPrototype) | ({
+    type: 'complete-objective-achievement';
+} & CompleteObjectiveAchievementPrototype) | ({
     type: 'constant-combinator';
 } & ConstantCombinatorPrototype) | ({
     type: 'construct-with-robots-achievement';
@@ -9372,8 +10574,16 @@ type dataExtendType = ({
 } & CopyPasteToolPrototype) | ({
     type: 'corpse';
 } & CorpsePrototype) | ({
-    type: 'curved-rail';
-} & CurvedRailPrototype) | ({
+    type: 'crafting-machine';
+} & CraftingMachinePrototype) | ({
+    type: 'create-platform-achievement';
+} & CreatePlatformAchievementPrototype) | ({
+    type: 'curved-rail-a';
+} & CurvedRailAPrototype) | ({
+    type: 'curved-rail-b';
+} & CurvedRailBPrototype) | ({
+    type: 'custom-event';
+} & CustomEventPrototype) | ({
     type: 'custom-input';
 } & CustomInputPrototype) | ({
     type: 'damage-type';
@@ -9388,12 +10598,28 @@ type dataExtendType = ({
 } & DeconstructionItemPrototype) | ({
     type: 'optimized-decorative';
 } & DecorativePrototype) | ({
+    type: 'delayed-active-trigger';
+} & DelayedActiveTriggerPrototype) | ({
     type: 'deliver-by-robots-achievement';
 } & DeliverByRobotsAchievementPrototype) | ({
+    type: 'deliver-category';
+} & DeliverCategory) | ({
+    type: 'deliver-impact-combination';
+} & DeliverImpactCombination) | ({
+    type: 'deplete-resource-achievement';
+} & DepleteResourceAchievementPrototype) | ({
+    type: 'destroy-cliff-achievement';
+} & DestroyCliffAchievementPrototype) | ({
+    type: 'display-panel';
+} & DisplayPanelPrototype) | ({
     type: 'dont-build-entity-achievement';
 } & DontBuildEntityAchievementPrototype) | ({
     type: 'dont-craft-manually-achievement';
 } & DontCraftManuallyAchievementPrototype) | ({
+    type: 'dont-kill-manually-achievement';
+} & DontKillManuallyAchievementPrototype) | ({
+    type: 'dont-research-before-researching-achievement';
+} & DontResearchBeforeResearchingAchievementPrototype) | ({
     type: 'dont-use-entity-in-energy-production-achievement';
 } & DontUseEntityInEnergyProductionAchievementPrototype) | ({
     type: 'editor-controller';
@@ -9404,28 +10630,34 @@ type dataExtendType = ({
 } & ElectricPolePrototype) | ({
     type: 'electric-turret';
 } & ElectricTurretPrototype) | ({
+    type: 'elevated-curved-rail-a';
+} & ElevatedCurvedRailAPrototype) | ({
+    type: 'elevated-curved-rail-b';
+} & ElevatedCurvedRailBPrototype) | ({
+    type: 'elevated-half-diagonal-rail';
+} & ElevatedHalfDiagonalRailPrototype) | ({
+    type: 'elevated-straight-rail';
+} & ElevatedStraightRailPrototype) | ({
     type: 'unit-spawner';
 } & EnemySpawnerPrototype) | ({
     type: 'energy-shield-equipment';
 } & EnergyShieldEquipmentPrototype) | ({
     type: 'entity-ghost';
 } & EntityGhostPrototype) | ({
-    type: 'particle';
-} & EntityParticlePrototype) | ({
+    type: 'equip-armor-achievement';
+} & EquipArmorAchievementPrototype) | ({
     type: 'equipment-category';
 } & EquipmentCategory) | ({
+    type: 'equipment-ghost';
+} & EquipmentGhostPrototype) | ({
     type: 'equipment-grid';
 } & EquipmentGridPrototype) | ({
     type: 'explosion';
 } & ExplosionPrototype) | ({
-    type: 'finish-the-game-achievement';
-} & FinishTheGameAchievementPrototype) | ({
     type: 'fire';
 } & FireFlamePrototype) | ({
     type: 'fish';
 } & FishPrototype) | ({
-    type: 'flame-thrower-explosion';
-} & FlameThrowerExplosionPrototype) | ({
     type: 'fluid';
 } & FluidPrototype) | ({
     type: 'stream';
@@ -9434,14 +10666,16 @@ type dataExtendType = ({
 } & FluidTurretPrototype) | ({
     type: 'fluid-wagon';
 } & FluidWagonPrototype) | ({
-    type: 'flying-text';
-} & FlyingTextPrototype) | ({
     type: 'font';
 } & FontPrototype) | ({
     type: 'fuel-category';
 } & FuelCategory) | ({
     type: 'furnace';
 } & FurnacePrototype) | ({
+    type: 'fusion-generator';
+} & FusionGeneratorPrototype) | ({
+    type: 'fusion-reactor';
+} & FusionReactorPrototype) | ({
     type: 'gate';
 } & GatePrototype) | ({
     type: 'generator-equipment';
@@ -9456,18 +10690,24 @@ type dataExtendType = ({
 } & GuiStyle) | ({
     type: 'gun';
 } & GunPrototype) | ({
+    type: 'half-diagonal-rail';
+} & HalfDiagonalRailPrototype) | ({
     type: 'heat-interface';
 } & HeatInterfacePrototype) | ({
     type: 'heat-pipe';
 } & HeatPipePrototype) | ({
     type: 'highlight-box';
 } & HighlightBoxEntityPrototype) | ({
+    type: 'impact-category';
+} & ImpactCategory) | ({
     type: 'infinity-container';
 } & InfinityContainerPrototype) | ({
     type: 'infinity-pipe';
 } & InfinityPipePrototype) | ({
     type: 'inserter';
 } & InserterPrototype) | ({
+    type: 'inventory-bonus-equipment';
+} & InventoryBonusEquipmentPrototype) | ({
     type: 'item-entity';
 } & ItemEntityPrototype) | ({
     type: 'item-group';
@@ -9494,8 +10734,16 @@ type dataExtendType = ({
 } & LampPrototype) | ({
     type: 'land-mine';
 } & LandMinePrototype) | ({
-    type: 'leaf-particle';
-} & LeafParticlePrototype) | ({
+    type: 'lane-splitter';
+} & LaneSplitterPrototype) | ({
+    type: 'legacy-curved-rail';
+} & LegacyCurvedRailPrototype) | ({
+    type: 'legacy-straight-rail';
+} & LegacyStraightRailPrototype) | ({
+    type: 'lightning-attractor';
+} & LightningAttractorPrototype) | ({
+    type: 'lightning';
+} & LightningPrototype) | ({
     type: 'linked-belt';
 } & LinkedBeltPrototype) | ({
     type: 'linked-container';
@@ -9504,6 +10752,8 @@ type dataExtendType = ({
 } & Loader1x1Prototype) | ({
     type: 'loader';
 } & Loader1x2Prototype) | ({
+    type: 'loader';
+} & LoaderPrototype) | ({
     type: 'locomotive';
 } & LocomotivePrototype) | ({
     type: 'logistic-container';
@@ -9518,22 +10768,22 @@ type dataExtendType = ({
 } & MarketPrototype) | ({
     type: 'mining-drill';
 } & MiningDrillPrototype) | ({
-    type: 'mining-tool';
-} & MiningToolPrototype) | ({
     type: 'module-category';
 } & ModuleCategory) | ({
     type: 'module';
 } & ModulePrototype) | ({
+    type: 'module-transfer-achievement';
+} & ModuleTransferAchievementPrototype) | ({
     type: 'mouse-cursor';
 } & MouseCursor) | ({
     type: 'movement-bonus-equipment';
 } & MovementBonusEquipmentPrototype) | ({
     type: 'noise-expression';
 } & NamedNoiseExpression) | ({
+    type: 'noise-function';
+} & NamedNoiseFunction) | ({
     type: 'night-vision-equipment';
 } & NightVisionEquipmentPrototype) | ({
-    type: 'noise-layer';
-} & NoiseLayer) | ({
     type: 'offshore-pump';
 } & OffshorePumpPrototype) | ({
     type: 'optimized-particle';
@@ -9544,12 +10794,22 @@ type dataExtendType = ({
 } & PipePrototype) | ({
     type: 'pipe-to-ground';
 } & PipeToGroundPrototype) | ({
+    type: 'place-equipment-achievement';
+} & PlaceEquipmentAchievementPrototype) | ({
+    type: 'planet';
+} & PlanetPrototype) | ({
+    type: 'plant';
+} & PlantPrototype) | ({
     type: 'player-damaged-achievement';
 } & PlayerDamagedAchievementPrototype) | ({
     type: 'player-port';
 } & PlayerPortPrototype) | ({
     type: 'power-switch';
 } & PowerSwitchPrototype) | ({
+    type: 'procession-layer-inheritance-group';
+} & ProcessionLayerInheritanceGroup) | ({
+    type: 'procession';
+} & ProcessionPrototype) | ({
     type: 'produce-achievement';
 } & ProduceAchievementPrototype) | ({
     type: 'produce-per-hour-achievement';
@@ -9560,26 +10820,38 @@ type dataExtendType = ({
 } & ProjectilePrototype) | ({
     type: 'pump';
 } & PumpPrototype) | ({
+    type: 'quality';
+} & QualityPrototype) | ({
     type: 'radar';
 } & RadarPrototype) | ({
     type: 'rail-chain-signal';
 } & RailChainSignalPrototype) | ({
     type: 'rail-planner';
 } & RailPlannerPrototype) | ({
+    type: 'rail';
+} & RailPrototype) | ({
+    type: 'rail-ramp';
+} & RailRampPrototype) | ({
     type: 'rail-remnants';
 } & RailRemnantsPrototype) | ({
     type: 'rail-signal';
 } & RailSignalPrototype) | ({
+    type: 'rail-support';
+} & RailSupportPrototype) | ({
     type: 'reactor';
 } & ReactorPrototype) | ({
     type: 'recipe-category';
 } & RecipeCategory) | ({
     type: 'recipe';
 } & RecipePrototype) | ({
+    type: 'remote-controller';
+} & RemoteControllerPrototype) | ({
     type: 'repair-tool';
 } & RepairToolPrototype) | ({
     type: 'research-achievement';
 } & ResearchAchievementPrototype) | ({
+    type: 'research-with-science-pack-achievement';
+} & ResearchWithSciencePackAchievementPrototype) | ({
     type: 'resource-category';
 } & ResourceCategory) | ({
     type: 'resource';
@@ -9594,8 +10866,18 @@ type dataExtendType = ({
 } & RocketSiloRocketPrototype) | ({
     type: 'rocket-silo-rocket-shadow';
 } & RocketSiloRocketShadowPrototype) | ({
+    type: 'rolling-stock';
+} & RollingStockPrototype) | ({
+    type: 'segment';
+} & SegmentPrototype) | ({
+    type: 'segmented-unit';
+} & SegmentedUnitPrototype) | ({
     type: 'selection-tool';
 } & SelectionToolPrototype) | ({
+    type: 'selector-combinator';
+} & SelectorCombinatorPrototype) | ({
+    type: 'shoot-achievement';
+} & ShootAchievementPrototype) | ({
     type: 'shortcut';
 } & ShortcutPrototype) | ({
     type: 'simple-entity';
@@ -9604,8 +10886,6 @@ type dataExtendType = ({
 } & SimpleEntityWithForcePrototype) | ({
     type: 'simple-entity-with-owner';
 } & SimpleEntityWithOwnerPrototype) | ({
-    type: 'smoke';
-} & SimpleSmokePrototype) | ({
     type: 'smoke-with-trigger';
 } & SmokeWithTriggerPrototype) | ({
     type: 'solar-panel-equipment';
@@ -9614,12 +10894,24 @@ type dataExtendType = ({
 } & SolarPanelPrototype) | ({
     type: 'sound';
 } & SoundPrototype) | ({
+    type: 'space-connection-distance-traveled-achievement';
+} & SpaceConnectionDistanceTraveledAchievementPrototype) | ({
+    type: 'space-connection';
+} & SpaceConnectionPrototype) | ({
+    type: 'space-location';
+} & SpaceLocationPrototype) | ({
+    type: 'space-platform-hub';
+} & SpacePlatformHubPrototype) | ({
+    type: 'space-platform-starter-pack';
+} & SpacePlatformStarterPackPrototype) | ({
     type: 'spectator-controller';
 } & SpectatorControllerPrototype) | ({
     type: 'speech-bubble';
 } & SpeechBubblePrototype) | ({
     type: 'spider-leg';
 } & SpiderLegPrototype) | ({
+    type: 'spider-unit';
+} & SpiderUnitPrototype) | ({
     type: 'spider-vehicle';
 } & SpiderVehiclePrototype) | ({
     type: 'spidertron-remote';
@@ -9634,8 +10926,16 @@ type dataExtendType = ({
 } & StorageTankPrototype) | ({
     type: 'straight-rail';
 } & StraightRailPrototype) | ({
+    type: 'surface-property';
+} & SurfacePropertyPrototype) | ({
+    type: 'surface';
+} & SurfacePrototype) | ({
     type: 'technology';
 } & TechnologyPrototype) | ({
+    type: 'temporary-container';
+} & TemporaryContainerPrototype) | ({
+    type: 'thruster';
+} & ThrusterPrototype) | ({
     type: 'tile-effect';
 } & TileEffectDefinition) | ({
     type: 'tile-ghost';
@@ -9652,6 +10952,8 @@ type dataExtendType = ({
 } & TrainPathAchievementPrototype) | ({
     type: 'train-stop';
 } & TrainStopPrototype) | ({
+    type: 'transport-belt-connectable';
+} & TransportBeltConnectablePrototype) | ({
     type: 'transport-belt';
 } & TransportBeltPrototype) | ({
     type: 'tree';
@@ -9670,16 +10972,18 @@ type dataExtendType = ({
 } & UnitPrototype) | ({
     type: 'upgrade-item';
 } & UpgradeItemPrototype) | ({
+    type: 'use-item-achievement';
+} & UseItemAchievementPrototype) | ({
     type: 'utility-constants';
 } & UtilityConstants) | ({
     type: 'utility-sounds';
 } & UtilitySounds) | ({
     type: 'utility-sprites';
 } & UtilitySprites) | ({
+    type: 'vehicle';
+} & VehiclePrototype) | ({
     type: 'virtual-signal';
 } & VirtualSignalPrototype) | ({
     type: 'wall';
-} & WallPrototype) | ({
-    type: 'wind-sound';
-} & WindSound) | settings.dataExtendType | PrototypeBase;
+} & WallPrototype) | settings.dataExtendType | PrototypeBase;
 }

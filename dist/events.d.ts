@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.110
-// API version 5
+// Factorio version 2.0.11
+// API version 6
 
 declare namespace runtime {
 /**
@@ -40,6 +40,24 @@ interface CustomInputEvent {
      * Information about the prototype that is selected when the custom input is used. Needs to be enabled on the custom input's prototype. `nil` if none is selected.
      */
     selected_prototype?: SelectedPrototypeData;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when an achievement is gained.
+ */
+interface on_achievement_gained {
+    achievement: LuaAchievementPrototype;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The player who gained the achievement.
+     */
+    player_index: uint;
     /**
      * Tick the event was generated.
      */
@@ -140,7 +158,7 @@ interface on_build_base_arrived {
     /**
      * The unit group the command was assigned to.
      */
-    group?: LuaUnitGroup;
+    group?: LuaCommandable;
     /**
      * Identifier of the event
      */
@@ -158,17 +176,13 @@ interface on_build_base_arrived {
  * Called when player builds something.
  */
 interface on_built_entity {
-    created_entity: LuaEntity;
-    /**
-     * The item prototype used to build the entity. Note this won't exist in some situations (built from blueprint, undo, etc).
-     */
-    item?: LuaItemPrototype;
+    consumed_items: LuaInventory;
+    entity: LuaEntity;
     /**
      * Identifier of the event
      */
     name: defines.events;
     player_index: uint;
-    stack: LuaItemStack;
     /**
      * The tags associated with this entity if any.
      */
@@ -197,13 +211,13 @@ interface on_cancelled_deconstruction {
  * Called when the upgrade of an entity is canceled.
  */
 interface on_cancelled_upgrade {
-    direction?: defines.direction;
     entity: LuaEntity;
     /**
      * Identifier of the event
      */
     name: defines.events;
     player_index?: uint;
+    quality: LuaQualityPrototype;
     target: LuaEntityPrototype;
     /**
      * Tick the event was generated.
@@ -213,7 +227,7 @@ interface on_cancelled_upgrade {
 /**
  * Called when a character corpse expires due to timeout or all of the items being removed from it.
  *
- * This is not called if the corpse is mined. See {@link defines.events.on_pre_player_mined_item | runtime:defines.events.on_pre_player_mined_item} to detect that.
+ * this is not called if the corpse is mined. See {@link defines.events.on_pre_player_mined_item | runtime:defines.events.on_pre_player_mined_item} to detect that.
  */
 interface on_character_corpse_expired {
     /**
@@ -254,8 +268,10 @@ interface on_chart_tag_modified {
      * Identifier of the event
      */
     name: defines.events;
-    old_icon?: SignalID;
-    old_player?: uint;
+    old_icon: SignalID;
+    old_player_index?: uint;
+    old_position: MapPosition;
+    old_surface: LuaSurface;
     old_text: string;
     player_index?: uint;
     tag: LuaCustomChartTag;
@@ -464,8 +480,6 @@ interface on_cutscene_started {
  * Called when a cutscene is playing, each time it reaches a waypoint in that cutscene.
  *
  * This refers to an index in the table previously passed to set_controller which started the cutscene.
- *
- * Due to implementation omission, `waypoint_index` is 0-based.
  */
 interface on_cutscene_waypoint_reached {
     /**
@@ -484,23 +498,6 @@ interface on_cutscene_waypoint_reached {
      * The index of the waypoint we just completed.
      */
     waypoint_index: uint;
-}
-/**
- * Called when the map difficulty settings are changed.
- *
- * It's not guaranteed that both settings are changed - just that at least one has been changed.
- */
-interface on_difficulty_settings_changed {
-    /**
-     * Identifier of the event
-     */
-    name: defines.events;
-    old_recipe_difficulty: uint;
-    old_technology_difficulty: uint;
-    /**
-     * Tick the event was generated.
-     */
-    tick: uint;
 }
 /**
  * Called when an entity is cloned. The filter applies to the source entity.
@@ -541,7 +538,7 @@ interface on_entity_color_changed {
  */
 interface on_entity_damaged {
     /**
-     * The entity that did the attacking if available.
+     * The entity that originally triggered the events that led to this damage, if available (e.g. the character, turret, etc. that pulled the trigger).
      */
     cause?: LuaEntity;
     damage_type: LuaDamagePrototype;
@@ -567,32 +564,13 @@ interface on_entity_damaged {
      */
     original_damage_amount: float;
     /**
-     * Tick the event was generated.
+     * The entity that is directly dealing the damage, if available (e.g. the projectile, flame, sticker, grenade, laser beam, etc.).
      */
-    tick: uint;
-}
-/**
- * Called after an entity is destroyed that has been registered with {@link LuaBootstrap::register_on_entity_destroyed | runtime:LuaBootstrap::register_on_entity_destroyed}.
- *
- * Depending on when a given entity is destroyed, this event will be fired at the end of the current tick or at the end of the next tick.
- */
-interface on_entity_destroyed {
-    /**
-     * Identifier of the event
-     */
-    name: defines.events;
-    /**
-     * The number returned by {@link register_on_entity_destroyed | runtime:LuaBootstrap::register_on_entity_destroyed} to uniquely identify this entity during this event.
-     */
-    registration_number: uint64;
+    source?: LuaEntity;
     /**
      * Tick the event was generated.
      */
     tick: uint;
-    /**
-     * The {@link LuaEntity::unit_number | runtime:LuaEntity::unit_number} of the destroyed entity, if it had one.
-     */
-    unit_number?: uint;
 }
 /**
  * Called when an entity dies.
@@ -628,9 +606,7 @@ interface on_entity_died {
     tick: uint;
 }
 /**
- * Called when one of an entity's personal logistic slots changes.
- *
- * "Personal logistic slot" refers to a character or vehicle's personal request / auto-trash slots, not the request slots on logistic chests.
+ * Called when one of an entity's logistic slots changes.
  */
 interface on_entity_logistic_slot_changed {
     /**
@@ -645,6 +621,10 @@ interface on_entity_logistic_slot_changed {
      * The player who changed the slot, or `nil` if changed by script.
      */
     player_index?: uint;
+    /**
+     * The section changed.
+     */
+    section: LuaLogisticSection;
     /**
      * The slot index that was changed.
      */
@@ -752,6 +732,10 @@ interface on_equipment_removed {
      * Identifier of the event
      */
     name: defines.events;
+    /**
+     * The equipment quality.
+     */
+    quality: string;
     /**
      * Tick the event was generated.
      */
@@ -1078,6 +1062,8 @@ interface on_gui_elem_changed {
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} is hovered by the mouse.
+ *
+ * Only fired for events whose {@link LuaGuiElement::raise_hover_events | runtime:LuaGuiElement::raise_hover_events} is `true`.
  */
 interface on_gui_hover {
     /**
@@ -1099,6 +1085,8 @@ interface on_gui_hover {
 }
 /**
  * Called when the player's cursor leaves a {@link LuaGuiElement | runtime:LuaGuiElement} that was previously hovered.
+ *
+ * Only fired for events whose {@link LuaGuiElement::raise_hover_events | runtime:LuaGuiElement::raise_hover_events} is `true`.
  */
 interface on_gui_leave {
     /**
@@ -1344,16 +1332,13 @@ interface on_marked_for_deconstruction {
  * Called when an entity is marked for upgrade with the Upgrade planner or via script.
  */
 interface on_marked_for_upgrade {
-    /**
-     * The new direction (if any)
-     */
-    direction?: defines.direction;
     entity: LuaEntity;
     /**
      * Identifier of the event
      */
     name: defines.events;
     player_index?: uint;
+    quality: LuaQualityPrototype;
     target: LuaEntityPrototype;
     /**
      * Tick the event was generated.
@@ -1406,9 +1391,40 @@ interface on_mod_item_opened {
      */
     player_index: uint;
     /**
+     * The item quality clicked on.
+     */
+    quality: LuaQualityPrototype;
+    /**
      * Tick the event was generated.
      */
     tick: uint;
+}
+/**
+ * Called after an object is destroyed that has been registered with {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}.
+ *
+ * Depending on when a given object is destroyed, this event will be fired at the end of the current tick or at the end of the next tick.
+ */
+interface on_object_destroyed {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The number returned by {@link register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed} to uniquely identify this object during this event.
+     */
+    registration_number: uint64;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+    /**
+     * Type of the object that was destroyed. Same as third value returned by {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}
+     */
+    type: defines.target_type;
+    /**
+     * Useful identifier of the object. Same as second value returned by {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}
+     */
+    useful_id: uint64;
 }
 /**
  * Called directly after a permission group is added.
@@ -1423,9 +1439,9 @@ interface on_permission_group_added {
      */
     name: defines.events;
     /**
-     * The player that added the group.
+     * The player that added the group or `nil` if by a mod.
      */
-    player_index: uint;
+    player_index?: uint;
     /**
      * Tick the event was generated.
      */
@@ -1448,9 +1464,9 @@ interface on_permission_group_deleted {
      */
     name: defines.events;
     /**
-     * The player doing the deletion.
+     * The player doing the deletion or `nil` if by a mod.
      */
-    player_index: uint;
+    player_index?: uint;
     /**
      * Tick the event was generated.
      */
@@ -1485,9 +1501,9 @@ interface on_permission_group_edited {
      */
     other_player_index: uint;
     /**
-     * The player that did the editing.
+     * The player that did the editing or `nil` if by a mod.
      */
-    player_index: uint;
+    player_index?: uint;
     /**
      * Tick the event was generated.
      */
@@ -1591,6 +1607,10 @@ interface on_player_alt_selected_area {
      */
     player_index: uint;
     /**
+     * The item quality used to select the area.
+     */
+    quality: string;
+    /**
      * The surface selected.
      */
     surface: LuaSurface;
@@ -1665,6 +1685,10 @@ interface on_player_banned {
  */
 interface on_player_built_tile {
     /**
+     * The inventory containing the items used to build the tiles.
+     */
+    inventory?: LuaInventory;
+    /**
      * The item type used to build the tiles
      */
     item?: LuaItemPrototype;
@@ -1674,9 +1698,9 @@ interface on_player_built_tile {
     name: defines.events;
     player_index: uint;
     /**
-     * The stack used to build the tiles (may be empty if all of the items were used to build the tiles).
+     * The quality of the item used to build the tiles
      */
-    stack?: LuaItemStack;
+    quality?: LuaQualityPrototype;
     /**
      * The surface the tile(s) were built on.
      */
@@ -1763,8 +1787,6 @@ interface on_player_changed_position {
 }
 /**
  * Called after a player changes surfaces.
- *
- * In the instance a player is moved off a surface due to it being deleted this is not called.
  */
 interface on_player_changed_surface {
     /**
@@ -1776,9 +1798,9 @@ interface on_player_changed_surface {
      */
     player_index: uint;
     /**
-     * The surface index the player was on.
+     * The surface index the player was on - may be `nil` if the surface no longer exists.
      */
-    surface_index: uint;
+    surface_index?: uint;
     /**
      * Tick the event was generated.
      */
@@ -1861,25 +1883,25 @@ interface on_player_configured_blueprint {
     tick: uint;
 }
 /**
- * Called when a player configures spidertron remote to be connected with a given spidertron
+ * Called after a player changes controller types.
  */
-interface on_player_configured_spider_remote {
+interface on_player_controller_changed {
     /**
      * Identifier of the event
      */
     name: defines.events;
     /**
-     * The player that configured the remote.
+     * The old controller type.
+     */
+    old_type: defines.controllers;
+    /**
+     * The player who changed controllers.
      */
     player_index: uint;
     /**
      * Tick the event was generated.
      */
     tick: uint;
-    /**
-     * Spider vehicle to which remote was connected to.
-     */
-    vehicle: LuaEntity;
 }
 /**
  * Called when the player finishes crafting an item. This event fires just before the results are inserted into the player's inventory, not when the crafting is queued (see {@link on_pre_player_crafted_item | runtime:on_pre_player_crafted_item}).
@@ -1961,6 +1983,14 @@ interface on_player_deconstructed_area {
      */
     player_index: uint;
     /**
+     * The item quality used to select the area.
+     */
+    quality: string;
+    /**
+     * The item stack used to select the area.
+     */
+    stack?: LuaItemStack;
+    /**
      * The surface selected.
      */
     surface: LuaSurface;
@@ -1995,6 +2025,27 @@ interface on_player_died {
      * Identifier of the event
      */
     name: defines.events;
+    player_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when the display density scale changes for a given player. The display density scale is the scale value automatically applied based on the player's display DPI. This is only relevant on platforms that support high-density displays.
+ */
+interface on_player_display_density_scale_changed {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The old display scale
+     */
+    old_scale: double;
+    /**
+     * The player
+     */
     player_index: uint;
     /**
      * Tick the event was generated.
@@ -2104,6 +2155,28 @@ interface on_player_fast_transferred {
     /**
      * The player transferred from or to.
      */
+    player_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when the player flips an entity. This event is only fired when the entity actually changes its orientation or mirroring -- pressing the flip keys on an entity that can't be flipped won't fire this event.
+ */
+interface on_player_flipped_entity {
+    /**
+     * The flipped entity.
+     */
+    entity: LuaEntity;
+    /**
+     * The enacted flip. true = Horizontal, false = Vertical
+     */
+    horizontal: boolean;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
     player_index: uint;
     /**
      * Tick the event was generated.
@@ -2229,6 +2302,27 @@ interface on_player_left_game {
     tick: uint;
 }
 /**
+ * Called when a player's active locale changes. See {@link LuaPlayer::locale | runtime:LuaPlayer::locale}.
+ */
+interface on_player_locale_changed {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The previously active locale.
+     */
+    old_locale: string;
+    /**
+     * The player whose locale was changed.
+     */
+    player_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
  * Called after a players main inventory changed in some way.
  */
 interface on_player_main_inventory_changed {
@@ -2345,6 +2439,10 @@ interface on_player_pipette {
      */
     player_index: uint;
     /**
+     * The item quality put in the cursor
+     */
+    quality: LuaQualityPrototype;
+    /**
      * Tick the event was generated.
      */
     tick: uint;
@@ -2431,6 +2529,10 @@ interface on_player_removed_equipment {
     name: defines.events;
     player_index: uint;
     /**
+     * The equipment quality.
+     */
+    quality: string;
+    /**
      * Tick the event was generated.
      */
     tick: uint;
@@ -2507,6 +2609,8 @@ interface on_player_reverse_selected_area {
 }
 /**
  * Called when the player rotates an entity. This event is only fired when the entity actually changes its orientation -- pressing the rotate key on an entity that can't be rotated won't fire this event.
+ *
+ * Entities being flipped will not fire this event, even if the flip involves rotating. See {@link on_player_flipped_entity | runtime:on_player_flipped_entity}.
  */
 interface on_player_rotated_entity {
     /**
@@ -2551,6 +2655,10 @@ interface on_player_selected_area {
      * The player doing the selection.
      */
     player_index: uint;
+    /**
+     * The item quality used to select the area.
+     */
+    quality: string;
     /**
      * The surface selected.
      */
@@ -2606,6 +2714,14 @@ interface on_player_setup_blueprint {
      * The player doing the selection.
      */
     player_index: uint;
+    /**
+     * The item quality used to select the area.
+     */
+    quality: string;
+    /**
+     * The item stack used to select the area.
+     */
+    stack?: LuaItemStack;
     /**
      * The surface selected.
      */
@@ -2728,14 +2844,18 @@ interface on_player_used_capsule {
      */
     position: MapPosition;
     /**
+     * The quality of the capsule item used.
+     */
+    quality: LuaQualityPrototype;
+    /**
      * Tick the event was generated.
      */
     tick: uint;
 }
 /**
- * Called when a player uses spidertron remote to send a spidertron to a given position
+ * Called when a player uses spidertron remote to send all selected units to a given position
  */
-interface on_player_used_spider_remote {
+interface on_player_used_spidertron_remote {
     /**
      * Identifier of the event
      */
@@ -2749,17 +2869,9 @@ interface on_player_used_spider_remote {
      */
     position: MapPosition;
     /**
-     * If the use was successful. It may fail when spidertron has different driver or when player is on different surface.
-     */
-    success: boolean;
-    /**
      * Tick the event was generated.
      */
     tick: uint;
-    /**
-     * Spider vehicle which was requested to move.
-     */
-    vehicle: LuaEntity;
 }
 /**
  * Called after an entity dies.
@@ -2794,6 +2906,10 @@ interface on_post_entity_died {
      */
     prototype: LuaEntityPrototype;
     /**
+     * The quality of the entity that died.
+     */
+    quality: LuaQualityPrototype;
+    /**
      * The surface the entity was on.
      */
     surface_index: uint;
@@ -2811,6 +2927,10 @@ interface on_post_entity_died {
  */
 interface on_pre_build {
     /**
+     * Build mode the item was placed with.
+     */
+    build_mode: defines.build_mode;
+    /**
      * Whether the item was placed while moving.
      */
     created_by_moving: boolean;
@@ -2827,6 +2947,10 @@ interface on_pre_build {
      */
     flip_vertical: boolean;
     /**
+     * If the item is mirrored (only crafting machines support this)
+     */
+    mirror: boolean;
+    /**
      * Identifier of the event
      */
     name: defines.events;
@@ -2838,10 +2962,6 @@ interface on_pre_build {
      * Where the item was placed.
      */
     position: MapPosition;
-    /**
-     * Item was placed using shift building.
-     */
-    shift_build: boolean;
     /**
      * Tick the event was generated.
      */
@@ -2920,6 +3040,7 @@ interface on_pre_ghost_upgraded {
      * The player that did the upgrade if any.
      */
     player_index?: uint;
+    quality: LuaQualityPrototype;
     target: LuaEntityPrototype;
     /**
      * Tick the event was generated.
@@ -2939,9 +3060,9 @@ interface on_pre_permission_group_deleted {
      */
     name: defines.events;
     /**
-     * The player doing the deletion.
+     * The player doing the deletion or `nil` if by a mod.
      */
-    player_index: uint;
+    player_index?: uint;
     /**
      * Tick the event was generated.
      */
@@ -3085,7 +3206,24 @@ interface on_pre_robot_exploded_cliff {
      * Identifier of the event
      */
     name: defines.events;
+    /**
+     * The quality of the cliff explosive used.
+     */
+    quality: LuaQualityPrototype;
     robot: LuaEntity;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called just before the scenario finishes.
+ */
+interface on_pre_scenario_finished {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
     /**
      * Tick the event was generated.
      */
@@ -3150,6 +3288,27 @@ interface on_pre_surface_deleted {
     tick: uint;
 }
 /**
+ * Called when the player triggers "redo".
+ */
+interface on_redo_applied {
+    /**
+     * The context of the redo action.
+     */
+    actions: UndoRedoAction[];
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The player who triggered the redo action.
+     */
+    player_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
  * Called when research is cancelled.
  */
 interface on_research_cancelled {
@@ -3186,6 +3345,23 @@ interface on_research_finished {
      * The researched technology
      */
     research: LuaTechnology;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when research is moved forwards or backwards in the research queue.
+ */
+interface on_research_moved {
+    /**
+     * The force whose research was re-arranged.
+     */
+    force: LuaForce;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
     /**
      * Tick the event was generated.
      */
@@ -3251,7 +3427,7 @@ interface on_robot_built_entity {
     /**
      * The entity built.
      */
-    created_entity: LuaEntity;
+    entity: LuaEntity;
     /**
      * Identifier of the event
      */
@@ -3278,6 +3454,10 @@ interface on_robot_built_entity {
  */
 interface on_robot_built_tile {
     /**
+     * The inventory containing the stacks used to build the tiles.
+     */
+    inventory: LuaInventory;
+    /**
      * The item type used to build the tiles.
      */
     item: LuaItemPrototype;
@@ -3286,13 +3466,13 @@ interface on_robot_built_tile {
      */
     name: defines.events;
     /**
+     * The quality the item used to build the tiles.
+     */
+    quality: LuaQualityPrototype;
+    /**
      * The robot.
      */
     robot: LuaEntity;
-    /**
-     * The stack used to build the tiles (may be empty if all of the items where used to build the tiles).
-     */
-    stack: LuaItemStack;
     /**
      * The surface the tile(s) are build on.
      */
@@ -3322,6 +3502,10 @@ interface on_robot_exploded_cliff {
      * Identifier of the event
      */
     name: defines.events;
+    /**
+     * The quality of the cliff explosive used.
+     */
+    quality: LuaQualityPrototype;
     robot: LuaEntity;
     /**
      * Tick the event was generated.
@@ -3548,6 +3732,10 @@ interface on_script_path_request_finished {
  */
 interface on_script_trigger_effect {
     /**
+     * The entity that originally caused the sequence of triggers
+     */
+    cause_entity?: LuaEntity;
+    /**
      * The effect_id specified in the trigger effect.
      */
     effect_id: string;
@@ -3594,6 +3782,20 @@ interface on_sector_scanned {
     tick: uint;
 }
 /**
+ * Called when an individual segment of a SegmentedUnit is created.
+ */
+interface on_segment_entity_created {
+    entity: LuaEntity;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
  * Called after the selected entity changes for a given player.
  */
 interface on_selected_entity_changed {
@@ -3609,6 +3811,187 @@ interface on_selected_entity_changed {
      * The player whose selected entity changed.
      */
     player_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when a space platform builds an entity.
+ */
+interface on_space_platform_built_entity {
+    /**
+     * The entity built.
+     */
+    entity: LuaEntity;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The platform that did the building.
+     */
+    platform: LuaSpacePlatform;
+    /**
+     * The item used to do the building.
+     */
+    stack: LuaItemStack;
+    /**
+     * The tags associated with this entity if any.
+     */
+    tags?: Tags;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called after a space platform builds tiles.
+ */
+interface on_space_platform_built_tile {
+    /**
+     * The inventory containing the stacks used to build the tiles.
+     */
+    inventory: LuaInventory;
+    /**
+     * The item type used to build the tiles.
+     */
+    item: LuaItemPrototype;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The platform.
+     */
+    platform: LuaSpacePlatform;
+    /**
+     * The quality the item used to build the tiles.
+     */
+    quality: LuaQualityPrototype;
+    /**
+     * The surface the tile(s) are build on.
+     */
+    surface_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+    /**
+     * The tile prototype that was placed.
+     */
+    tile: LuaTilePrototype;
+    /**
+     * The position data.
+     */
+    tiles: OldTileAndPosition[];
+}
+/**
+ * Called when a space platform changes state
+ */
+interface on_space_platform_changed_state {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    old_state: defines.space_platform_state;
+    platform: LuaSpacePlatform;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called after the results of an entity being mined are collected just before the entity is destroyed.
+ *
+ * After this event any items in the buffer will be transferred into the platform as if they came from mining the entity.
+ *
+ * The buffer inventory is special in that it's only valid during this event and has a dynamic size expanding as more items are transferred into it.
+ */
+interface on_space_platform_mined_entity {
+    /**
+     * The temporary inventory that holds the result of mining the entity.
+     */
+    buffer: LuaInventory;
+    /**
+     * The entity that has been mined.
+     */
+    entity: LuaEntity;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The platform doing the mining.
+     */
+    platform: LuaSpacePlatform;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when a platform mines an entity.
+ */
+interface on_space_platform_mined_item {
+    /**
+     * The entity the platform just picked up.
+     */
+    item_stack: SimpleItemStack;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The platform that did the mining.
+     */
+    platform: LuaSpacePlatform;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called after a platform mines tiles.
+ */
+interface on_space_platform_mined_tile {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The platform.
+     */
+    platform: LuaSpacePlatform;
+    /**
+     * The surface the tile(s) were mined on.
+     */
+    surface_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+    /**
+     * The position data.
+     */
+    tiles: OldTileAndPosition[];
+}
+/**
+ * Called before a platform mines an entity.
+ */
+interface on_space_platform_pre_mined {
+    /**
+     * The entity which is about to be mined.
+     */
+    entity: LuaEntity;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The platform that's about to do the mining.
+     */
+    platform: LuaSpacePlatform;
     /**
      * Tick the event was generated.
      */
@@ -3855,10 +4238,31 @@ interface on_trigger_fired_artillery {
     tick: uint;
 }
 /**
+ * Called when the player triggers "undo".
+ */
+interface on_undo_applied {
+    /**
+     * The context of the undo action.
+     */
+    actions: UndoRedoAction[];
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The player who triggered the undo action.
+     */
+    player_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
  * Called when a unit is added to a unit group.
  */
 interface on_unit_added_to_group {
-    group: LuaUnitGroup;
+    group: LuaCommandable;
     /**
      * Identifier of the event
      */
@@ -3873,7 +4277,7 @@ interface on_unit_added_to_group {
  * Called when a new unit group is created, before any members are added to it.
  */
 interface on_unit_group_created {
-    group: LuaUnitGroup;
+    group: LuaCommandable;
     /**
      * Identifier of the event
      */
@@ -3887,7 +4291,7 @@ interface on_unit_group_created {
  * Called when a unit group finishes gathering and starts executing its command.
  */
 interface on_unit_group_finished_gathering {
-    group: LuaUnitGroup;
+    group: LuaCommandable;
     /**
      * Identifier of the event
      */
@@ -3901,7 +4305,7 @@ interface on_unit_group_finished_gathering {
  * Called when a unit is removed from a unit group.
  */
 interface on_unit_removed_from_group {
-    group: LuaUnitGroup;
+    group: LuaCommandable;
     /**
      * Identifier of the event
      */
