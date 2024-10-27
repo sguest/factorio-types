@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.110
-// API version 5
+// Factorio version 2.0.11
+// API version 6
 
 declare namespace prototype {
 interface dataCollection {
@@ -15,6 +15,12 @@ interface dataCollection {
     };
     'active-defense-equipment': {
         [key: string]: ActiveDefenseEquipmentPrototype;
+    };
+    'agricultural-tower': {
+        [key: string]: AgriculturalTowerPrototype;
+    };
+    'airborne-pollutant': {
+        [key: string]: AirbornePollutantPrototype;
     };
     'ambient-sound': {
         [key: string]: AmbientSound;
@@ -55,6 +61,15 @@ interface dataCollection {
     'assembling-machine': {
         [key: string]: AssemblingMachinePrototype;
     };
+    'asteroid-chunk': {
+        [key: string]: AsteroidChunkPrototype;
+    };
+    'asteroid-collector': {
+        [key: string]: AsteroidCollectorPrototype;
+    };
+    'asteroid': {
+        [key: string]: AsteroidPrototype;
+    };
     'autoplace-control': {
         [key: string]: AutoplaceControl;
     };
@@ -85,14 +100,35 @@ interface dataCollection {
     'burner-generator': {
         [key: string]: BurnerGeneratorPrototype;
     };
+    'burner-usage': {
+        [key: string]: BurnerUsagePrototype;
+    };
     'capsule': {
         [key: string]: CapsulePrototype;
+    };
+    'capture-robot': {
+        [key: string]: CaptureRobotPrototype;
     };
     'car': {
         [key: string]: CarPrototype;
     };
+    'cargo-bay': {
+        [key: string]: CargoBayPrototype;
+    };
+    'cargo-landing-pad': {
+        [key: string]: CargoLandingPadPrototype;
+    };
+    'cargo-pod': {
+        [key: string]: CargoPodPrototype;
+    };
     'cargo-wagon': {
         [key: string]: CargoWagonPrototype;
+    };
+    'chain-active-trigger': {
+        [key: string]: ChainActiveTriggerPrototype;
+    };
+    'change-surface-achievement': {
+        [key: string]: ChangedSurfaceAchievementPrototype;
     };
     'character-corpse': {
         [key: string]: CharacterCorpsePrototype;
@@ -103,11 +139,17 @@ interface dataCollection {
     'cliff': {
         [key: string]: CliffPrototype;
     };
-    'combat-robot-count': {
+    'collision-layer': {
+        [key: string]: CollisionLayerPrototype;
+    };
+    'combat-robot-count-achievement': {
         [key: string]: CombatRobotCountAchievementPrototype;
     };
     'combat-robot': {
         [key: string]: CombatRobotPrototype;
+    };
+    'complete-objective-achievement': {
+        [key: string]: CompleteObjectiveAchievementPrototype;
     };
     'constant-combinator': {
         [key: string]: ConstantCombinatorPrototype;
@@ -127,8 +169,20 @@ interface dataCollection {
     'corpse': {
         [key: string]: CorpsePrototype;
     };
-    'curved-rail': {
-        [key: string]: CurvedRailPrototype;
+    'crafting-machine': {
+        [key: string]: CraftingMachinePrototype;
+    };
+    'create-platform-achievement': {
+        [key: string]: CreatePlatformAchievementPrototype;
+    };
+    'curved-rail-a': {
+        [key: string]: CurvedRailAPrototype;
+    };
+    'curved-rail-b': {
+        [key: string]: CurvedRailBPrototype;
+    };
+    'custom-event': {
+        [key: string]: CustomEventPrototype;
     };
     'custom-input': {
         [key: string]: CustomInputPrototype;
@@ -151,14 +205,38 @@ interface dataCollection {
     'optimized-decorative': {
         [key: string]: DecorativePrototype;
     };
+    'delayed-active-trigger': {
+        [key: string]: DelayedActiveTriggerPrototype;
+    };
     'deliver-by-robots-achievement': {
         [key: string]: DeliverByRobotsAchievementPrototype;
+    };
+    'deliver-category': {
+        [key: string]: DeliverCategory;
+    };
+    'deliver-impact-combination': {
+        [key: string]: DeliverImpactCombination;
+    };
+    'deplete-resource-achievement': {
+        [key: string]: DepleteResourceAchievementPrototype;
+    };
+    'destroy-cliff-achievement': {
+        [key: string]: DestroyCliffAchievementPrototype;
+    };
+    'display-panel': {
+        [key: string]: DisplayPanelPrototype;
     };
     'dont-build-entity-achievement': {
         [key: string]: DontBuildEntityAchievementPrototype;
     };
     'dont-craft-manually-achievement': {
         [key: string]: DontCraftManuallyAchievementPrototype;
+    };
+    'dont-kill-manually-achievement': {
+        [key: string]: DontKillManuallyAchievementPrototype;
+    };
+    'dont-research-before-researching-achievement': {
+        [key: string]: DontResearchBeforeResearchingAchievementPrototype;
     };
     'dont-use-entity-in-energy-production-achievement': {
         [key: string]: DontUseEntityInEnergyProductionAchievementPrototype;
@@ -175,6 +253,18 @@ interface dataCollection {
     'electric-turret': {
         [key: string]: ElectricTurretPrototype;
     };
+    'elevated-curved-rail-a': {
+        [key: string]: ElevatedCurvedRailAPrototype;
+    };
+    'elevated-curved-rail-b': {
+        [key: string]: ElevatedCurvedRailBPrototype;
+    };
+    'elevated-half-diagonal-rail': {
+        [key: string]: ElevatedHalfDiagonalRailPrototype;
+    };
+    'elevated-straight-rail': {
+        [key: string]: ElevatedStraightRailPrototype;
+    };
     'unit-spawner': {
         [key: string]: EnemySpawnerPrototype;
     };
@@ -184,11 +274,14 @@ interface dataCollection {
     'entity-ghost': {
         [key: string]: EntityGhostPrototype;
     };
-    'particle': {
-        [key: string]: EntityParticlePrototype;
+    'equip-armor-achievement': {
+        [key: string]: EquipArmorAchievementPrototype;
     };
     'equipment-category': {
         [key: string]: EquipmentCategory;
+    };
+    'equipment-ghost': {
+        [key: string]: EquipmentGhostPrototype;
     };
     'equipment-grid': {
         [key: string]: EquipmentGridPrototype;
@@ -196,17 +289,11 @@ interface dataCollection {
     'explosion': {
         [key: string]: ExplosionPrototype;
     };
-    'finish-the-game-achievement': {
-        [key: string]: FinishTheGameAchievementPrototype;
-    };
     'fire': {
         [key: string]: FireFlamePrototype;
     };
     'fish': {
         [key: string]: FishPrototype;
-    };
-    'flame-thrower-explosion': {
-        [key: string]: FlameThrowerExplosionPrototype;
     };
     'fluid': {
         [key: string]: FluidPrototype;
@@ -220,9 +307,6 @@ interface dataCollection {
     'fluid-wagon': {
         [key: string]: FluidWagonPrototype;
     };
-    'flying-text': {
-        [key: string]: FlyingTextPrototype;
-    };
     'font': {
         [key: string]: FontPrototype;
     };
@@ -231,6 +315,12 @@ interface dataCollection {
     };
     'furnace': {
         [key: string]: FurnacePrototype;
+    };
+    'fusion-generator': {
+        [key: string]: FusionGeneratorPrototype;
+    };
+    'fusion-reactor': {
+        [key: string]: FusionReactorPrototype;
     };
     'gate': {
         [key: string]: GatePrototype;
@@ -253,6 +343,9 @@ interface dataCollection {
     'gun': {
         [key: string]: GunPrototype;
     };
+    'half-diagonal-rail': {
+        [key: string]: HalfDiagonalRailPrototype;
+    };
     'heat-interface': {
         [key: string]: HeatInterfacePrototype;
     };
@@ -262,6 +355,9 @@ interface dataCollection {
     'highlight-box': {
         [key: string]: HighlightBoxEntityPrototype;
     };
+    'impact-category': {
+        [key: string]: ImpactCategory;
+    };
     'infinity-container': {
         [key: string]: InfinityContainerPrototype;
     };
@@ -270,6 +366,9 @@ interface dataCollection {
     };
     'inserter': {
         [key: string]: InserterPrototype;
+    };
+    'inventory-bonus-equipment': {
+        [key: string]: InventoryBonusEquipmentPrototype;
     };
     'item-entity': {
         [key: string]: ItemEntityPrototype;
@@ -310,8 +409,20 @@ interface dataCollection {
     'land-mine': {
         [key: string]: LandMinePrototype;
     };
-    'leaf-particle': {
-        [key: string]: LeafParticlePrototype;
+    'lane-splitter': {
+        [key: string]: LaneSplitterPrototype;
+    };
+    'legacy-curved-rail': {
+        [key: string]: LegacyCurvedRailPrototype;
+    };
+    'legacy-straight-rail': {
+        [key: string]: LegacyStraightRailPrototype;
+    };
+    'lightning-attractor': {
+        [key: string]: LightningAttractorPrototype;
+    };
+    'lightning': {
+        [key: string]: LightningPrototype;
     };
     'linked-belt': {
         [key: string]: LinkedBeltPrototype;
@@ -323,7 +434,7 @@ interface dataCollection {
         [key: string]: Loader1x1Prototype;
     };
     'loader': {
-        [key: string]: Loader1x2Prototype;
+        [key: string]: Loader1x2Prototype | LoaderPrototype;
     };
     'locomotive': {
         [key: string]: LocomotivePrototype;
@@ -346,14 +457,14 @@ interface dataCollection {
     'mining-drill': {
         [key: string]: MiningDrillPrototype;
     };
-    'mining-tool': {
-        [key: string]: MiningToolPrototype;
-    };
     'module-category': {
         [key: string]: ModuleCategory;
     };
     'module': {
         [key: string]: ModulePrototype;
+    };
+    'module-transfer-achievement': {
+        [key: string]: ModuleTransferAchievementPrototype;
     };
     'mouse-cursor': {
         [key: string]: MouseCursor;
@@ -364,11 +475,11 @@ interface dataCollection {
     'noise-expression': {
         [key: string]: NamedNoiseExpression;
     };
+    'noise-function': {
+        [key: string]: NamedNoiseFunction;
+    };
     'night-vision-equipment': {
         [key: string]: NightVisionEquipmentPrototype;
-    };
-    'noise-layer': {
-        [key: string]: NoiseLayer;
     };
     'offshore-pump': {
         [key: string]: OffshorePumpPrototype;
@@ -385,6 +496,15 @@ interface dataCollection {
     'pipe-to-ground': {
         [key: string]: PipeToGroundPrototype;
     };
+    'place-equipment-achievement': {
+        [key: string]: PlaceEquipmentAchievementPrototype;
+    };
+    'planet': {
+        [key: string]: PlanetPrototype;
+    };
+    'plant': {
+        [key: string]: PlantPrototype;
+    };
     'player-damaged-achievement': {
         [key: string]: PlayerDamagedAchievementPrototype;
     };
@@ -393,6 +513,12 @@ interface dataCollection {
     };
     'power-switch': {
         [key: string]: PowerSwitchPrototype;
+    };
+    'procession-layer-inheritance-group': {
+        [key: string]: ProcessionLayerInheritanceGroup;
+    };
+    'procession': {
+        [key: string]: ProcessionPrototype;
     };
     'produce-achievement': {
         [key: string]: ProduceAchievementPrototype;
@@ -409,6 +535,9 @@ interface dataCollection {
     'pump': {
         [key: string]: PumpPrototype;
     };
+    'quality': {
+        [key: string]: QualityPrototype;
+    };
     'radar': {
         [key: string]: RadarPrototype;
     };
@@ -418,11 +547,20 @@ interface dataCollection {
     'rail-planner': {
         [key: string]: RailPlannerPrototype;
     };
+    'rail': {
+        [key: string]: RailPrototype;
+    };
+    'rail-ramp': {
+        [key: string]: RailRampPrototype;
+    };
     'rail-remnants': {
         [key: string]: RailRemnantsPrototype;
     };
     'rail-signal': {
         [key: string]: RailSignalPrototype;
+    };
+    'rail-support': {
+        [key: string]: RailSupportPrototype;
     };
     'reactor': {
         [key: string]: ReactorPrototype;
@@ -433,11 +571,17 @@ interface dataCollection {
     'recipe': {
         [key: string]: RecipePrototype;
     };
+    'remote-controller': {
+        [key: string]: RemoteControllerPrototype;
+    };
     'repair-tool': {
         [key: string]: RepairToolPrototype;
     };
     'research-achievement': {
         [key: string]: ResearchAchievementPrototype;
+    };
+    'research-with-science-pack-achievement': {
+        [key: string]: ResearchWithSciencePackAchievementPrototype;
     };
     'resource-category': {
         [key: string]: ResourceCategory;
@@ -460,8 +604,23 @@ interface dataCollection {
     'rocket-silo-rocket-shadow': {
         [key: string]: RocketSiloRocketShadowPrototype;
     };
+    'rolling-stock': {
+        [key: string]: RollingStockPrototype;
+    };
+    'segment': {
+        [key: string]: SegmentPrototype;
+    };
+    'segmented-unit': {
+        [key: string]: SegmentedUnitPrototype;
+    };
     'selection-tool': {
         [key: string]: SelectionToolPrototype;
+    };
+    'selector-combinator': {
+        [key: string]: SelectorCombinatorPrototype;
+    };
+    'shoot-achievement': {
+        [key: string]: ShootAchievementPrototype;
     };
     'shortcut': {
         [key: string]: ShortcutPrototype;
@@ -475,9 +634,6 @@ interface dataCollection {
     'simple-entity-with-owner': {
         [key: string]: SimpleEntityWithOwnerPrototype;
     };
-    'smoke': {
-        [key: string]: SimpleSmokePrototype;
-    };
     'smoke-with-trigger': {
         [key: string]: SmokeWithTriggerPrototype;
     };
@@ -490,6 +646,21 @@ interface dataCollection {
     'sound': {
         [key: string]: SoundPrototype;
     };
+    'space-connection-distance-traveled-achievement': {
+        [key: string]: SpaceConnectionDistanceTraveledAchievementPrototype;
+    };
+    'space-connection': {
+        [key: string]: SpaceConnectionPrototype;
+    };
+    'space-location': {
+        [key: string]: SpaceLocationPrototype;
+    };
+    'space-platform-hub': {
+        [key: string]: SpacePlatformHubPrototype;
+    };
+    'space-platform-starter-pack': {
+        [key: string]: SpacePlatformStarterPackPrototype;
+    };
     'spectator-controller': {
         [key: string]: SpectatorControllerPrototype;
     };
@@ -498,6 +669,9 @@ interface dataCollection {
     };
     'spider-leg': {
         [key: string]: SpiderLegPrototype;
+    };
+    'spider-unit': {
+        [key: string]: SpiderUnitPrototype;
     };
     'spider-vehicle': {
         [key: string]: SpiderVehiclePrototype;
@@ -520,8 +694,20 @@ interface dataCollection {
     'straight-rail': {
         [key: string]: StraightRailPrototype;
     };
+    'surface-property': {
+        [key: string]: SurfacePropertyPrototype;
+    };
+    'surface': {
+        [key: string]: SurfacePrototype;
+    };
     'technology': {
         [key: string]: TechnologyPrototype;
+    };
+    'temporary-container': {
+        [key: string]: TemporaryContainerPrototype;
+    };
+    'thruster': {
+        [key: string]: ThrusterPrototype;
     };
     'tile-effect': {
         [key: string]: TileEffectDefinition;
@@ -546,6 +732,9 @@ interface dataCollection {
     };
     'train-stop': {
         [key: string]: TrainStopPrototype;
+    };
+    'transport-belt-connectable': {
+        [key: string]: TransportBeltConnectablePrototype;
     };
     'transport-belt': {
         [key: string]: TransportBeltPrototype;
@@ -574,6 +763,9 @@ interface dataCollection {
     'upgrade-item': {
         [key: string]: UpgradeItemPrototype;
     };
+    'use-item-achievement': {
+        [key: string]: UseItemAchievementPrototype;
+    };
     'utility-constants': {
         [key: string]: UtilityConstants;
     };
@@ -583,14 +775,14 @@ interface dataCollection {
     'utility-sprites': {
         [key: string]: UtilitySprites;
     };
+    'vehicle': {
+        [key: string]: VehiclePrototype;
+    };
     'virtual-signal': {
         [key: string]: VirtualSignalPrototype;
     };
     'wall': {
         [key: string]: WallPrototype;
-    };
-    'wind-sound': {
-        [key: string]: WindSound;
     };
 }
 }

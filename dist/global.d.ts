@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.110
-// API version 5
+// Factorio version 2.0.11
+// API version 6
 
 /**
  * Allows registration of custom commands for the in-game console.
@@ -13,6 +13,14 @@ declare const commands: runtime.LuaCommandProcessor;
  * The main scripting interface through which most of the API is accessed.
  */
 declare const game: runtime.LuaGameScript;
+/**
+ * Provides access to various helper and utility functions.
+ */
+declare const helpers: runtime.LuaHelpers;
+/**
+ * Allows read-only access to prototypes.
+ */
+declare const prototypes: runtime.LuaPrototypes;
 /**
  * Allows printing messages to the calling RCON instance, if any.
  */

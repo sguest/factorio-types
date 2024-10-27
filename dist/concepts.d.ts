@@ -2,8 +2,8 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.110
-// API version 5
+// Factorio version 2.0.11
+// API version 6
 
 declare namespace runtime {
 interface BaseAchievementPrototypeFilter {
@@ -79,16 +79,12 @@ interface AmmoType {
      */
     clamp_position?: boolean;
     /**
-     * Ammo category of this ammo.
-     */
-    category: string;
-    /**
      * Energy consumption of a single shot, if applicable. Defaults to `0`.
      */
     energy_consumption?: double;
     range_modifier?: double;
     cooldown_modifier?: double;
-    consumption_modifier?: double;
+    consumption_modifier?: float;
 }
 /**
  * Any basic type (string, number, boolean), table, or LuaObject.
@@ -124,6 +120,42 @@ interface ArithmeticCombinatorParameters {
      */
     output_signal?: SignalID;
 }
+interface AsteroidChunk {
+    /**
+     * The name of the asteroid chunk prototype.
+     */
+    name: string;
+    position: MapPosition;
+    movement: Vector;
+}
+/**
+ * An asteroid chunk prototype may be specified in one of two ways.
+ */
+type AsteroidChunkID = /**
+ * The asteroid chunk prototype.
+ */
+LuaAsteroidChunkPrototype | /**
+ * The prototype name.
+ */
+string;
+interface AsteroidChunkPrototypeFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'minable';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+interface AsteroidMapSettings {
+    spawning_rate: double;
+    max_ray_portals_expanded_per_tick: uint;
+}
 interface AttackParameterFluid {
     /**
      * Name of the {@link LuaFluidPrototype | runtime:LuaFluidPrototype}.
@@ -150,7 +182,7 @@ interface BaseAttackParameters {
     /**
      * Defines how the range is determined.
      */
-    range_mode: 'center-to-center' | 'bounding-box-to-bounding-box';
+    range_mode: RangeMode;
     /**
      * When searching for the nearest enemy to attack, `fire_penalty` is added to the enemy's distance if they are on fire.
      */
@@ -228,7 +260,7 @@ interface AttackParametersStream extends BaseAttackParameters {
 }
 interface AutoplaceControl {
     /**
-     * For things that are placed as spots such as ores and enemy bases, frequency is generally proportional to number of spots placed per unit area. For continuous features such as forests, frequency is how compressed the probability function is over distance, i.e. the inverse of 'scale' (similar to terrain_segmentation). When the {@link LuaAutoplaceControlPrototype | runtime:LuaAutoplaceControlPrototype} is of the category `"terrain"`, then scale is shown in the map generator GUI instead of frequency.
+     * For things that are placed as spots such as ores and enemy bases, frequency is generally proportional to number of spots placed per unit area. For continuous features such as forests, frequency is how compressed the probability function is over distance, i.e. the inverse of 'scale'. When the {@link LuaAutoplaceControlPrototype | runtime:LuaAutoplaceControlPrototype} is of the category `"terrain"`, then scale is shown in the map generator GUI instead of frequency.
      */
     frequency: MapGenSize;
     /**
@@ -236,7 +268,7 @@ interface AutoplaceControl {
      */
     size: MapGenSize;
     /**
-     * Has different effects for different things, but generally affects the 'health' or density of a thing that is placed without affecting where it is placed. For trees, richness affects tree health.  For ores, richness multiplies the amount of ore at any given tile in a patch. Metadata about autoplace controls (such as whether or not 'richness' does anything for them) can be found in the {@link LuaAutoplaceControlPrototype | runtime:LuaAutoplaceControlPrototype} by looking up `game.autoplace_control_prototypes[(control prototype name)]`, e.g. `game.autoplace_control_prototypes["enemy-base"].richness` is false, because enemy base autoplacement doesn't use richness.
+     * Has different effects for different things, but generally affects the 'health' or density of a thing that is placed without affecting where it is placed. For trees, richness affects tree health.  For ores, richness multiplies the amount of ore at any given tile in a patch. Metadata about autoplace controls (such as whether or not 'richness' does anything for them) can be found in the {@link LuaAutoplaceControlPrototype | runtime:LuaAutoplaceControlPrototype} by looking up `prototypes.autoplace_control[(control prototype name)]`, e.g. `prototypes.autoplace_control["enemy-base"].richness` is false, because enemy base autoplacement doesn't use richness.
      */
     richness: MapGenSize;
 }
@@ -251,69 +283,20 @@ interface AutoplaceSettings {
     settings?: Record<string, AutoplaceControl>;
 }
 /**
- * Specifies how probability and richness are calculated when placing something on the map. Can be specified either using `probability_expression` and `richness_expression` or by using all the other fields.
+ * Specifies how probability and richness are calculated when placing something on the map.
  */
 interface AutoplaceSpecification {
-    probability_expression: NoiseExpression;
-    richness_expression: NoiseExpression;
-    coverage: double;
-    sharpness: double;
-    max_probability: double;
-    placement_density: uint;
-    richness_base: double;
-    richness_multiplier: double;
-    richness_multiplier_distance_bonus: double;
-    starting_area_size: uint;
-    order: string;
-    default_enabled: boolean;
-    peaks?: AutoplaceSpecificationPeak[];
     /**
      * Control prototype name.
      */
     control?: string;
-    tile_restriction?: AutoplaceSpecificationRestriction[];
+    default_enabled: boolean;
     force: string;
-    random_probability_penalty: double;
-}
-interface AutoplaceSpecificationPeak {
-    influence: double;
-    max_influence: double;
-    min_influence: double;
-    richness_influence: double;
-    noisePersistence: double;
-    /**
-     * Prototype name of the noise layer.
-     */
-    noise_layer?: string;
-    noise_octaves_difference: double;
-    water_optimal: double;
-    water_range: double;
-    water_max_range: double;
-    water_top_property_limit: double;
-    elevation_optimal: double;
-    elevation_range: double;
-    elevation_max_range: double;
-    elevation_top_property_limit: double;
-    temperature_optimal: double;
-    temperature_range: double;
-    temperature_max_range: double;
-    temperature_top_property_limit: double;
-    starting_area_weight_optimal: double;
-    starting_area_weight_range: double;
-    starting_area_weight_max_range: double;
-    starting_area_weight_top_property_limit: double;
-    tier_from_start_optimal: double;
-    tier_from_start_range: double;
-    tier_from_start_max_range: double;
-    tier_from_start_top_property_limit: double;
-    distance_optimal: double;
-    distance_range: double;
-    distance_max_range: double;
-    distance_top_property_limit: double;
-    aux_optimal: double;
-    aux_range: double;
-    aux_max_range: double;
-    aux_top_property_limit: double;
+    order: string;
+    placement_density: uint;
+    tile_restriction?: AutoplaceSpecificationRestriction[];
+    probability_expression: NoiseExpression;
+    richness_expression?: NoiseExpression;
 }
 interface AutoplaceSpecificationRestriction {
     /**
@@ -356,35 +339,127 @@ interface BlueprintEntity {
      */
     direction?: defines.direction;
     /**
-     * The entity tags of the entity, if there are any. Only relevant for entity ghosts.
+     * Whether this entity is mirrored.
      */
-    tags?: Tags;
+    mirror?: boolean;
     /**
-     * The items that the entity will request when revived, if there are any. It's a mapping of prototype names to amounts. Only relevant for entity ghosts.
+     * The prototype name of the entity's quality.
      */
-    items?: Record<string, uint>;
-    /**
-     * The circuit network connections of the entity, if there are any. Only relevant for entities that support circuit connections.
-     */
-    connections?: BlueprintCircuitConnection;
+    quality?: string;
     /**
      * The control behavior of the entity, if it has one. The format of the control behavior depends on the entity's type. Only relevant for entities that support control behaviors.
      */
     control_behavior?: BlueprintControlBehavior;
     /**
+     * The items that the entity will request when revived, if any.
+     */
+    items?: BlueprintInsertPlan[];
+    /**
+     * The entity tags of the entity, if there are any.
+     */
+    tags?: Tags;
+    /**
      * The schedule of the entity, if it has one. Only relevant for locomotives.
      */
-    schedule?: TrainScheduleRecord[];
+    schedule?: BlueprintSchedule;
+    /**
+     * Wires connected to this entity in the blueprint.
+     */
+    wires?: BlueprintWire[];
+}
+/**
+ * Defines an item type that a blueprint entity will request.
+ */
+interface BlueprintInsertPlan {
+    /**
+     * The prototype name and quality of the item to request.
+     */
+    id: ItemIDAndQualityIDPair;
+    /**
+     * Describes the inventories to insert these items into.
+     */
+    items: ItemInventoryPositions;
+}
+interface BlueprintLogisticFilter {
+    index: LogisticFilterIndex;
+    /**
+     * The type of the logistic filter.
+     */
+    type?: SignalIDType;
+    /**
+     * Name of the logistic filter.
+     */
+    name?: string;
+    /**
+     * The prototype name of the quality. `nil` for any quality.
+     */
+    quality?: string;
+    /**
+     * The comparator for quality. `nil` if any quality.
+     */
+    comparator?: ComparatorString;
+    count: int;
+    max_count?: ItemCountType;
+    /**
+     * Defaults to 0.
+     */
+    minimum_delivery_count?: ItemCountType;
+    import_from?: string;
+}
+interface BlueprintSchedule {
+    records?: BlueprintScheduleRecord[];
+    group?: string;
+    interrupts?: BlueprintScheduleInterrupt[];
+}
+interface BlueprintScheduleInterrupt {
+    name?: string;
+    conditions?: WaitCondition[];
+    targets?: BlueprintScheduleRecord[];
+    inside_interrupt: boolean;
+}
+interface BlueprintScheduleRecord {
+    /**
+     * Name of the station.
+     */
+    station?: string;
+    wait_conditions?: WaitCondition[];
+    /**
+     * Only present when the station is temporary, the value is then always `true`.
+     */
+    temporary?: boolean;
+    created_by_interrupt?: boolean;
+    allows_unloading?: boolean;
 }
 interface BlueprintSignalIcon {
     /**
-     * The icon to use. It can be any item icon as well as any virtual signal icon.
+     * The icon to use.
      */
     signal: SignalID;
     /**
-     * Index of the icon in the blueprint icons slots. Has to be an integer in the range [1, 4].
+     * Index of the icon in the blueprint icons slots. An integer in the range [1, 4].
      */
     index: uint;
+}
+/**
+ * Describes a single wire in the blueprint. The members of the tuple are, in order:
+ *
+ * - `source_entity_number`
+ *
+ * - `source_wire_connector_id`
+ *
+ * - `target_entity_number`
+ *
+ * - `target_wire_connector_id`
+ */
+type BlueprintWire = [
+    uint,
+    defines.wire_connector_id,
+    uint,
+    defines.wire_connector_id
+];
+interface BlueprintWireEnd {
+    entity: BlueprintEntity;
+    connector: defines.wire_connector_id;
 }
 /**
  * Two positions, specifying the top-left and bottom-right corner of the box respectively. Like with {@link MapPosition | runtime:MapPosition}, the names of the members may be omitted. When read from the game, the third member `orientation` is present if it is non-zero.
@@ -405,6 +480,13 @@ type BoundingBox = {
     MapPosition,
     MapPosition
 ];
+/**
+ * The name of a {@link LuaBurnerUsagePrototype | runtime:LuaBurnerUsagePrototype}.
+ * @example ```
+"fuel"
+```
+ */
+type BurnerUsageID = string;
 interface BaseCapsuleAction {
     type: 'throw' | 'equipment-remote' | 'use-on-self' | 'artillery-remote' | 'destroy-cliffs';
 }
@@ -507,21 +589,16 @@ interface CircuitCondition {
     constant?: int;
 }
 interface CircuitConditionDefinition {
+    /**
+     * TODOC CircuitConditionDefinition now extends CircuitCondition, all fields of CircuitCondition should be pasted here directly
+     */
     condition: CircuitCondition;
     /**
      * Whether the condition is currently fulfilled
      */
     fulfilled?: boolean;
 }
-interface CircuitConnectionDefinition {
-    /**
-     * Wire color, either {@link defines.wire_type.red | runtime:defines.wire_type.red} or {@link defines.wire_type.green | runtime:defines.wire_type.green}.
-     */
-    wire: defines.wire_type;
-    target_entity: LuaEntity;
-    source_circuit_id: defines.circuit_connector_id;
-    target_circuit_id: defines.circuit_connector_id;
-}
+type CircuitNetworkSelection = table;
 interface CircularParticleCreationSpecification {
     /**
      * Name of the {@link LuaEntityPrototype | runtime:LuaEntityPrototype}.
@@ -537,9 +614,6 @@ interface CircularParticleCreationSpecification {
     height_deviation: float;
     vertical_speed: float;
     vertical_speed_deviation: float;
-    /**
-     * This vector is a table with `x` and `y` keys instead of an array.
-     */
     center: Vector;
     creation_distance: double;
     creation_distance_orientation: double;
@@ -556,6 +630,10 @@ interface CliffPlacementSettings {
      */
     name: string;
     /**
+     * Name of the autoplace control prototype.
+     */
+    control: string;
+    /**
      * Elevation at which the first row of cliffs is placed. The default is `10`, and this cannot be set from the map generation GUI.
      */
     cliff_elevation_0: float;
@@ -564,33 +642,45 @@ interface CliffPlacementSettings {
      */
     cliff_elevation_interval: float;
     /**
+     * Smoothing makes cliffs straighter on rough elevation but makes placement inaccurate. 0 is no smoothing, 1 is full smoothing. Values outside of 0-1 are possible for specific effects but not recommended.
+     */
+    cliff_smoothing: float;
+    /**
      * Corresponds to 'continuity' in the GUI. This value is not used directly, but is used by the 'cliffiness' noise expression, which in combination with elevation and the two cliff elevation properties drives cliff placement (cliffs are placed when elevation crosses the elevation contours defined by `cliff_elevation_0` and `cliff_elevation_interval` when 'cliffiness' is greater than `0.5`). The default 'cliffiness' expression interprets this value such that larger values result in longer unbroken walls of cliffs, and smaller values (between `0` and `1`) result in larger gaps in cliff walls.
      */
     richness: MapGenSize;
 }
 /**
- * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
+ * The name of a {@link LuaCollisionLayerPrototype | runtime:LuaCollisionLayerPrototype}.
+ * @example ```
+"is_lower_object"
+```
  */
-type CollisionMask = Record<CollisionMaskLayer, true>;
+type CollisionLayerID = string;
 /**
- * A {@link string | runtime:string} specifying a collision mask layer.
- *
- * In addition to the listed layers, there is `"layer-13"` through `"layer-55"`. These layers are currently unused by the game but may change. If a mod is going to use one of the unused layers it's recommended to start at the higher layers because the base game will take from the lower ones.
+ * @example ```
+-- Most common collision mask of buildings:
+collision_mask = {layers = {item = true, meltable = true, object = true, player = true, water_tile = true, is_object = true, is_lower_object = true}}
+```
  */
-type CollisionMaskLayer = 'ground-tile' | 'water-tile' | 'resource-layer' | 'doodad-layer' | 'floor-layer' | 'item-layer' | 'ghost-layer' | 'object-layer' | 'player-layer' | 'train-layer' | 'rail-layer' | 'transport-belt-layer' | 'not-setup' | 'layer-13' | 'layer-14' | 'layer-15' | 'layer-16' | 'layer-17' | 'layer-18' | 'layer-19' | 'layer-20' | 'layer-21' | 'layer-22' | 'layer-23' | 'layer-24' | 'layer-25' | 'layer-26' | 'layer-27' | 'layer-28' | 'layer-29' | 'layer-30' | 'layer-31' | 'layer-32' | 'layer-33' | 'layer-34' | 'layer-35' | 'layer-36' | 'layer-37' | 'layer-38' | 'layer-39' | 'layer-40' | 'layer-41' | 'layer-42' | 'layer-43' | 'layer-44' | 'layer-45' | 'layer-46' | 'layer-47' | 'layer-48' | 'layer-49' | 'layer-50' | 'layer-51' | 'layer-52' | 'layer-53' | 'layer-54' | 'layer-55';
-/**
- * A {@link CollisionMask | runtime:CollisionMask} which also includes any flags this mask has.
- */
-type CollisionMaskWithFlags = Record<CollisionMaskLayer | /**
- * Any two entities that both have this option enabled on their prototype and have an identical collision mask layers list will not collide. Other collision mask options are not included in the identical layer list check. This does mean that two different prototypes with the same collision mask layers and this option enabled will not collide.
- */
-'not-colliding-with-itself' | /**
- * Uses the prototypes position rather than its collision box when doing collision checks with tile prototypes. Allows the prototype to overlap colliding tiles up until its center point. This is only respected for character movement and cars driven by players.
- */
-'consider-tile-transitions' | /**
- * Any prototype with this collision option will only be checked for collision with other prototype's collision masks if they are a tile.
- */
-'colliding-with-tiles-only', true>;
+interface CollisionMask {
+    /**
+     * Every key in the dictionary is the name of one {@link layer | runtime:LuaCollisionLayerPrototype} the object collides with. The value is meaningless and always `true`. An empty table means that no layers are set.
+     */
+    layers: Record<string, true>;
+    /**
+     * Any two entities that both have this option enabled on their prototype and have an identical collision mask layers list will not collide. Other collision mask options are not included in the identical layer list check. This does mean that two different prototypes with the same collision mask layers and this option enabled will not collide. Defaults to `false`.
+     */
+    not_colliding_with_itself?: boolean;
+    /**
+     * Uses the prototypes position rather than its collision box when doing collision checks with tile prototypes. Allows the prototype to overlap colliding tiles up until its center point. This is only respected for character movement and cars driven by players. Defaults to `false`.
+     */
+    consider_tile_transitions?: boolean;
+    /**
+     * Any prototype with this collision option will only be checked for collision with other prototype's collision masks if they are a tile. Defaults to `false`.
+     */
+    colliding_with_tiles_only?: boolean;
+}
 /**
  * Red, green, blue and alpha values, all in range [0, 1] or all in range [0, 255] if any value is > 1. All values here are optional. Color channels default to `0`, the alpha channel defaults to `1`.
  *
@@ -781,7 +871,7 @@ interface CommandGroup extends BaseCommand {
     /**
      * The group whose command to follow.
      */
-    'group': LuaUnitGroup;
+    'group': LuaCommandable;
     /**
      * Whether the unit will use the group distraction or the commands distraction. Defaults to true.
      */
@@ -864,6 +954,31 @@ type ComparatorString = /**
  * "not equal to"
  */
 '!=';
+interface CompiledLogisticFilter {
+    index: LogisticFilterIndex;
+    /**
+     * The type of the logistic filter.
+     */
+    type?: SignalIDType;
+    /**
+     * Name of the logistic filter.
+     */
+    name?: string;
+    /**
+     * The prototype name of the quality. `nil` for any quality.
+     */
+    quality?: string;
+    /**
+     * The comparator for quality. `nil` if any quality.
+     */
+    comparator?: ComparatorString;
+    count: int;
+    max_count?: ItemCountType;
+    /**
+     * Defaults to 0.
+     */
+    minimum_delivery_count?: ItemCountType;
+}
 interface ConfigurationChangedData {
     /**
      * Old version of the map. Present only when loading map version other than the current version.
@@ -886,25 +1001,6 @@ interface ConfigurationChangedData {
      */
     migration_applied: boolean;
 }
-interface ConstantCombinatorParameters {
-    /**
-     * Signal to emit.
-     */
-    signal: SignalID;
-    /**
-     * Value of the signal to emit.
-     */
-    count: int;
-    /**
-     * Index of the constant combinator's slot to set this signal to.
-     */
-    index: uint;
-}
-interface CopperConnectionDefinition {
-    source_wire_connector: defines.wire_connection_id;
-    target_entity: LuaEntity;
-    target_wire_connector: defines.wire_connection_id;
-}
 interface CraftingQueueItem {
     /**
      * The index of the item in the crafting queue.
@@ -923,13 +1019,13 @@ interface CraftingQueueItem {
      */
     prerequisite: boolean;
 }
-/**
- * One of the following values:
- */
 type CursorBoxRenderType = /**
  * The normal entity selection box. Yellow by default.
  */
 'entity' | /**
+ * The multiplayer entity selection box which gets tinted using {@link LuaPlayer::chat_color | runtime:LuaPlayer::chat_color}. White by default.
+ */
+'multiplayer-entity' | /**
  * The selection box used to specify electric poles an entity is connected to. Light blue by default.
  */
 'electricity' | /**
@@ -950,7 +1046,7 @@ type CursorBoxRenderType = /**
 'train-visualization' | /**
  * Green by default.
  */
-'blueprint-snap-rectangle';
+'blueprint-snap-rectangle' | 'spidertron-remote-selected' | 'spidertron-remote-to-be-selected';
 interface CustomCommandData {
     /**
      * The name of the command.
@@ -969,6 +1065,10 @@ interface CustomCommandData {
      */
     parameter?: string;
 }
+interface CustomEntityStatus {
+    diode: defines.entity_status_diode;
+    label: LocalisedString;
+}
 interface CutsceneWaypoint {
     /**
      * Position to pan the camera to.
@@ -977,7 +1077,7 @@ interface CutsceneWaypoint {
     /**
      * Entity or unit group to pan the camera to.
      */
-    target?: LuaEntity | LuaUnitGroup;
+    target?: LuaEntity | LuaCommandable;
     /**
      * How many ticks it will take to reach this waypoint from the previous one.
      */
@@ -1001,31 +1101,27 @@ interface DamageTypeFilters {
      */
     types: Record<string, true>;
 }
+/**
+ * A damage type prototype may be specified in one of two ways.
+ */
+type DamageTypeID = /**
+ * The damage type prototype.
+ */
+LuaDamagePrototype | /**
+ * The prototype name.
+ */
+string;
+type DeciderCombinatorCondition = table;
+type DeciderCombinatorOutput = table;
 interface DeciderCombinatorParameters {
     /**
-     * Defaults to blank.
+     * List of conditions.
      */
-    first_signal?: SignalID;
+    conditions: DeciderCombinatorCondition[];
     /**
-     * Second signal to use in an operation, if any. If this is not specified, the second argument to a decider combinator's operation is assumed to be the value of `constant`.
+     * List of outputs.
      */
-    second_signal?: SignalID;
-    /**
-     * Constant to use as the second argument of operation. Defaults to `0`.
-     */
-    constant?: uint;
-    /**
-     * Specifies how the inputs should be compared. If not specified, defaults to `"<"`.
-     */
-    comparator?: ComparatorString;
-    /**
-     * Defaults to blank.
-     */
-    output_signal?: SignalID;
-    /**
-     * Defaults to `true`. When `false`, will output a value of `1` for the given `output_signal`.
-     */
-    copy_count_from_input?: boolean;
+    outputs: DeciderCombinatorOutput[];
 }
 interface Decorative {
     /**
@@ -1035,6 +1131,16 @@ interface Decorative {
     position: TilePosition;
     amount: uint8;
 }
+/**
+ * A decorative prototype may be specified in one of two ways.
+ */
+type DecorativeID = /**
+ * The decorative prototype.
+ */
+LuaDecorativePrototype | /**
+ * The prototype name.
+ */
+string;
 interface BaseDecorativePrototypeFilter {
     /**
      * The condition to filter on.
@@ -1059,7 +1165,10 @@ interface DecorativePrototypeFilterCollisionMask extends BaseDecorativePrototype
      * The condition to filter on.
      */
     'filter': 'collision-mask';
-    'mask': CollisionMask | CollisionMaskWithFlags;
+    /**
+     * Name of one {@link layer | runtime:LuaCollisionLayerPrototype} or a full collision mask.
+     */
+    'mask': CollisionLayerID | CollisionMask;
     /**
      * How to filter.
      */
@@ -1070,20 +1179,43 @@ interface DecorativeResult {
     decorative: LuaDecorativePrototype;
     amount: uint;
 }
+interface DetailedItemOnLine {
+    stack: LuaItemStack;
+    /**
+     * Linear position of this stack on this line.
+     */
+    position: float;
+    /**
+     * Unique identifier of this item while it is on transport lines.
+     */
+    unique_id: uint;
+}
 /**
- * Technology and recipe difficulty settings. Updating any of the attributes will immediately take effect in the game engine.
+ * Technology difficulty settings. Updating any of the attributes will immediately take effect in the game engine.
  */
 interface DifficultySettings {
-    recipe_difficulty: defines.difficulty_settings.recipe_difficulty;
     /**
-     * Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce::research_queue_enabled | runtime:LuaForce::research_queue_enabled} for that.
+     * A value in range [0.01, 100].
      */
-    research_queue_setting: 'after-victory' | 'always' | 'never';
-    technology_difficulty: defines.difficulty_settings.technology_difficulty;
+    spoil_time_modifier: double;
     /**
      * A value in range [0.001, 1000].
      */
     technology_price_multiplier: double;
+}
+interface DisplayPanelMessageDefinition {
+    /**
+     * The message to show.
+     */
+    text: string;
+    /**
+     * The icon to show alongside the message.
+     */
+    icon: SignalID;
+    /**
+     * The circuit condition under which to show the message.
+     */
+    condition: CircuitConditionDefinition;
 }
 interface DisplayResolution {
     width: uint;
@@ -1092,13 +1224,15 @@ interface DisplayResolution {
 interface DragTarget {
     target_entity: LuaEntity;
     /**
-     * If the wire being dragged is a circuit wire this is the connector id.
+     * Identifier of the wire connector from which the wire is being dragged.
      */
-    target_circuit_id?: defines.circuit_connector_id;
-    /**
-     * If the wire being dragged is copper wire this is the wire id.
-     */
-    target_wire_id?: defines.wire_connection_id;
+    wire_connector_id: defines.wire_connector_id;
+}
+interface EffectReceiver {
+    base_effect: ModuleEffects;
+    uses_module_effects: boolean;
+    uses_beacon_effects: boolean;
+    uses_surface_effects: boolean;
 }
 interface ElemID {
     type: ElemType;
@@ -1106,11 +1240,15 @@ interface ElemID {
      * Name of a prototype as defined by `type`.
      */
     name: string;
+    /**
+     * Name of a quality prototype if `type` use quality.
+     */
+    quality?: string;
 }
 /**
  * A {@link string | runtime:string} specifying a type for {@link choose elem buttons | runtime:LuaGuiElement::elem_type}. It's also used by {@link ElemID | runtime:ElemID} for {@link LuaGuiElement::elem_tooltip | runtime:LuaGuiElement::elem_tooltip}.
  */
-type ElemType = 'achievement' | 'decorative' | 'entity' | 'equipment' | 'fluid' | 'item' | 'item-group' | 'recipe' | 'signal' | 'technology' | 'tile';
+type ElemType = 'achievement' | 'decorative' | 'entity' | 'equipment' | 'fluid' | 'item' | 'item-group' | 'recipe' | 'signal' | 'technology' | 'tile' | 'asteroid-chunk' | 'space-location' | 'item-with-quality' | 'entity-with-quality' | 'recipe-with-quality' | 'equipment-with-quality';
 /**
  * These values represent a percentual increase in evolution. This means a value of `0.1` would increase evolution by 10%.
  */
@@ -1136,6 +1274,7 @@ interface EnemyEvolutionMapSettings {
  * Candidate chunks are given scores to determine which one of them should be expanded into. This score takes into account various settings noted below. The iteration is over a square region centered around the chunk for which the calculation is done, and includes the central chunk as well. Distances are calculated as {@link Manhattan distance | https://en.wikipedia.org/wiki/Taxicab_geometry}.
  *
  * The pseudocode algorithm to determine a chunk's score is as follows:
+ *
  * ```
  * player = 0
  * for neighbour in all chunks within enemy_building_influence_radius from chunk:
@@ -1204,11 +1343,51 @@ interface EnemyExpansionMapSettings {
      */
     max_expansion_cooldown: uint;
 }
+/**
+ * An entity prototype may be specified in one of three ways.
+ */
+type EntityID = /**
+ * The entity prototype.
+ */
+LuaEntityPrototype | /**
+ * The entity.
+ */
+LuaEntity | /**
+ * The prototype name.
+ */
+string;
+/**
+ * An entity prototype with optional quality specification.
+ */
+interface EntityIDAndQualityIDPair {
+    /**
+     * Entity prototype.
+     */
+    name: EntityID;
+    /**
+     * Quality prototype. Normal quality will be used if not specified.
+     */
+    quality?: QualityID;
+}
+interface EntityIDFilter {
+    /**
+     * The entity name.
+     */
+    name: string;
+    /**
+     * The name of the quality.
+     */
+    quality?: string;
+    /**
+     * The quality comparison type.
+     */
+    comparator?: ComparatorString;
+}
 interface BaseEntityPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'flying-robot' | 'robot-with-logistics-interface' | 'rail' | 'ghost' | 'explosion' | 'vehicle' | 'crafting-machine' | 'rolling-stock' | 'turret' | 'transport-belt-connectable' | 'wall-connectable' | 'buildable' | 'placable-in-editor' | 'clonable' | 'selectable' | 'hidden' | 'entity-with-health' | 'building' | 'fast-replaceable' | 'uses-direction' | 'minable' | 'circuit-connectable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'name' | 'type' | 'collision-mask' | 'flag' | 'build-base-evolution-requirement' | 'selection-priority' | 'emissions' | 'crafting-category';
+    filter: 'flying-robot' | 'robot-with-logistics-interface' | 'rail' | 'ghost' | 'explosion' | 'vehicle' | 'crafting-machine' | 'rolling-stock' | 'turret' | 'transport-belt-connectable' | 'wall-connectable' | 'buildable' | 'placable-in-editor' | 'clonable' | 'selectable' | 'hidden' | 'entity-with-health' | 'building' | 'fast-replaceable' | 'uses-direction' | 'minable' | 'circuit-connectable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'name' | 'type' | 'collision-mask' | 'flag' | 'build-base-evolution-requirement' | 'selection-priority' | 'emissions-per-second' | 'crafting-category';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -1218,7 +1397,7 @@ interface BaseEntityPrototypeFilter {
      */
     invert?: boolean;
 }
-type EntityPrototypeFilter = BaseEntityPrototypeFilter | EntityPrototypeFilterBuildBaseEvolutionRequirement | EntityPrototypeFilterCollisionMask | EntityPrototypeFilterCraftingCategory | EntityPrototypeFilterEmissions | EntityPrototypeFilterFlag | EntityPrototypeFilterName | EntityPrototypeFilterSelectionPriority | EntityPrototypeFilterType;
+type EntityPrototypeFilter = BaseEntityPrototypeFilter | EntityPrototypeFilterBuildBaseEvolutionRequirement | EntityPrototypeFilterCollisionMask | EntityPrototypeFilterCraftingCategory | EntityPrototypeFilterEmissionsPerSecond | EntityPrototypeFilterFlag | EntityPrototypeFilterName | EntityPrototypeFilterSelectionPriority | EntityPrototypeFilterType;
 /**
  *
  * Applies to variant case `build-base-evolution-requirement`
@@ -1238,7 +1417,7 @@ interface EntityPrototypeFilterBuildBaseEvolutionRequirement extends BaseEntityP
  * Usage example:
  *
  * ```
- * game.get_filtered_entity_prototypes({{filter = "collision-mask", mask = "player-layer", mask_mode = "collides"}})
+ * prototypes.get_entity_filtered({{filter = "collision-mask", mask = "player", mask_mode = "collides"}})
  * ```
  * Applies to variant case `collision-mask`
  */
@@ -1247,7 +1426,10 @@ interface EntityPrototypeFilterCollisionMask extends BaseEntityPrototypeFilter {
      * The condition to filter on.
      */
     'filter': 'collision-mask';
-    'mask': CollisionMask | CollisionMaskWithFlags;
+    /**
+     * Name of one {@link layer | runtime:LuaCollisionLayerPrototype} or a full collision mask.
+     */
+    'mask': CollisionLayerID | CollisionMask;
     'mask_mode': 'collides' | 'layers-equals' | 'contains-any' | 'contains-all';
 }
 /**
@@ -1266,14 +1448,18 @@ interface EntityPrototypeFilterCraftingCategory extends BaseEntityPrototypeFilte
 }
 /**
  *
- * Applies to variant case `emissions`
+ * Applies to variant case `emissions-per-second`
  */
-interface EntityPrototypeFilterEmissions extends BaseEntityPrototypeFilter {
+interface EntityPrototypeFilterEmissionsPerSecond extends BaseEntityPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    'filter': 'emissions';
+    'filter': 'emissions-per-second';
     'comparison': ComparatorString;
+    /**
+     * The name of a pollutant type to check.
+     */
+    'pollutant': string;
     /**
      * The value to compare against.
      */
@@ -1283,7 +1469,7 @@ interface EntityPrototypeFilterEmissions extends BaseEntityPrototypeFilter {
  * Usage example:
  *
  * ```
- * game.get_filtered_entity_prototypes({{filter = "flag", flag = "placeable-player"}, {filter = "flag", flag = "placeable-enemy", mode = "and"}})
+ * prototypes.get_entity_filtered({{filter = "flag", flag = "placeable-player"}, {filter = "flag", flag = "placeable-enemy", mode = "and"}})
  * ```
  * Applies to variant case `flag`
  */
@@ -1328,7 +1514,7 @@ interface EntityPrototypeFilterSelectionPriority extends BaseEntityPrototypeFilt
 /**
  * Usage example:
  * ```
- * game.get_filtered_entity_prototypes({{filter = "type", type = "unit"}})
+ * prototypes.get_entity_filtered({{filter = "type", type = "unit"}})
  * ```
  * Applies to variant case `type`
  */
@@ -1370,9 +1556,9 @@ type EntityPrototypeFlag = /**
  * Used to automatically detect the proper direction of the entity if possible. Used by the pump, train stop, and train signal by default.
  */
 'filter-directions' | /**
- * Fast replace will not apply when building while moving.
+ * When set, entity will be possible to obtain by using {@link LuaGameScript::get_entity_by_unit_number | runtime:LuaGameScript::get_entity_by_unit_number}. It also changes input actions sent by a player to be selecting entity by unit number instead of a position which may help players in latency to select moving entities.
  */
-'fast-replaceable-no-build-while-moving' | /**
+'get-by-unit-number' | /**
  * Used to specify that the entity breathes air, and is thus affected by poison.
  */
 'breaths-air' | /**
@@ -1388,15 +1574,9 @@ type EntityPrototypeFlag = /**
  * Prevents the entity from being part of a blueprint.
  */
 'not-blueprintable' | /**
- * Hides the entity from the bonus GUI and from the "made in"-property of recipe tooltips.
- */
-'hidden' | /**
  * Hides the alt-info of this entity when in alt-mode.
  */
-'hide-alt-info' | /**
- * Does not fast replace this entity over other entity types when building while moving.
- */
-'fast-replaceable-no-cross-type-while-moving' | 'no-gap-fill-while-building' | /**
+'hide-alt-info' | 'no-gap-fill-while-building' | /**
  * Does not apply fire stickers to the entity.
  */
 'not-flammable' | /**
@@ -1417,27 +1597,98 @@ type EntityPrototypeFlag = /**
 'not-upgradable' | /**
  * Prevents the entity from being shown in the kill statistics.
  */
-'not-in-kill-statistics' | /**
+'not-in-kill-statistics' | 'building-direction-16-way' | 'snap-to-rail-support-spot' | /**
  * Prevents the entity from being shown in the "made in" list in recipe tooltips.
  */
 'not-in-made-in';
 /**
- * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all. By default, none of these flags are set.
+ * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
+ *
+ * By default, none of these flags are set.
  */
 type EntityPrototypeFlags = Record<EntityPrototypeFlag, true>;
+interface EntitySearchFilters {
+    area?: BoundingBox;
+    /**
+     * Has precedence over area field.
+     */
+    position?: MapPosition;
+    /**
+     * If given with position, will return all entities within the radius of the position.
+     */
+    radius?: double;
+    /**
+     * An empty array means nothing matches the name filter.
+     */
+    name?: EntityID | EntityID[];
+    /**
+     * An empty array means nothing matches the type filter.
+     */
+    type?: string | string[];
+    /**
+     * An empty array means nothing matches the ghost_name filter.
+     */
+    ghost_name?: EntityID | EntityID[];
+    /**
+     * An empty array means nothing matches the ghost_type filter.
+     */
+    ghost_type?: string | string[];
+    direction?: defines.direction | defines.direction[];
+    collision_mask?: CollisionLayerID | CollisionLayerID[] | Record<CollisionLayerID, true>;
+    force?: ForceSet;
+    to_be_deconstructed?: boolean;
+    to_be_upgraded?: boolean;
+    limit?: uint;
+    is_military_target?: boolean;
+    has_item_inside?: ItemWithQualityID;
+    quality?: QualityCondition;
+    /**
+     * Whether the filters should be inverted.
+     */
+    invert?: boolean;
+}
 /**
- * An entity prototype may be specified in one of three ways.
+ * An entity prototype with optional quality specification. Can be specified in one of four ways.
  */
-type EntityPrototypeIdentification = /**
- * The entity.
+type EntityWithQualityID = /**
+ * The entity. Both prototype and quality of the entity will be used.
  */
 LuaEntity | /**
- * The entity prototype.
+ * The entity prototype. Normal quality will be used.
  */
 LuaEntityPrototype | /**
+ * The prototype name. Normal quality will be used.
+ */
+string | /**
+ * A table of entity prototype and quality.
+ */
+EntityIDAndQualityIDPair;
+/**
+ * An equipment prototype may be specified in one of three ways.
+ */
+type EquipmentID = /**
+ * The equipment prototype.
+ */
+LuaEquipmentPrototype | /**
+ * The equipment.
+ */
+LuaEquipment | /**
  * The prototype name.
  */
 string;
+/**
+ * An equipment prototype with optional quality specification.
+ */
+interface EquipmentIDAndQualityIDPair {
+    /**
+     * Equipment prototype.
+     */
+    name: EquipmentID;
+    /**
+     * Quality prototype. Normal quality will be used if not specified.
+     */
+    quality?: QualityID;
+}
 /**
  * A table used to define a manual shape for a piece of equipment.
  */
@@ -1494,6 +1745,22 @@ interface EquipmentPrototypeFilterType extends BaseEquipmentPrototypeFilter {
     'type': string | string[];
 }
 /**
+ * An equipment prototype with optional quality specification.
+ */
+type EquipmentWithQualityID = /**
+ * The equipment prototype. Normal quality will be used.
+ */
+LuaEquipmentPrototype | /**
+ * The equipment. Both prototype and quality of the provided equipment will be used.
+ */
+LuaEquipment | /**
+ * The prototype name. Normal quality will be used.
+ */
+string | /**
+ * A table of equipment prototype and quality.
+ */
+EquipmentIDAndQualityIDPair;
+/**
  * Information about the event that has been raised. The table can also contain other fields depending on the type of event. See {@link the list of Factorio events | runtime:events} for more information on these.
  */
 interface EventData {
@@ -1515,7 +1782,7 @@ interface EventData {
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type EventFilter = (LuaScriptRaisedDestroyEventFilter | LuaScriptRaisedReviveEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPostEntityDiedEventFilter | LuaEntityDiedEventFilter | LuaPlayerBuiltEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaRobotMinedEntityEventFilter | LuaPreGhostDeconstructedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaUpgradeCancelledEventFilter | LuaSectorScannedEventFilter | LuaPreGhostUpgradedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaEntityDamagedEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPlayerMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter)[];
+type EventFilter = (LuaPrePlatformMinedEntityEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformMinedEntityEventFilter | LuaScriptRaisedDestroyEventFilter | LuaPlayerBuiltEntityEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPreGhostDeconstructedEventFilter | LuaEntityClonedEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaRobotBuiltEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaPlayerRepairedEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaSectorScannedEventFilter | LuaPostEntityDiedEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaPlayerMinedEntityEventFilter | LuaEntityDamagedEventFilter | LuaScriptRaisedReviveEventFilter | LuaEntityDiedEventFilter | LuaPreRobotMinedEntityEventFilter)[];
 interface Fluid {
     /**
      * Fluid prototype name of the fluid.
@@ -1528,21 +1795,12 @@ interface Fluid {
     /**
      * The temperature. When reading from {@link LuaFluidBox | runtime:LuaFluidBox}, this field will always be present. It is not necessary to specify it when writing, however. When not specified, the fluid will be set to the fluid's default temperature as specified in the fluid's prototype.
      */
-    temperature?: double;
+    temperature?: float;
 }
-/**
- * A definition of a fluidbox connection point.
- */
-interface FluidBoxConnection {
-    type: 'input' | 'output' | 'input-output';
-    /**
-     * The 4 cardinal direction connection points for this pipe. This vector is a table with `x` and `y` keys instead of an array.
-     */
-    positions: Vector[];
-    /**
-     * The maximum tile distance this underground connection can connect at if this is an underground pipe.
-     */
-    max_underground_distance?: uint;
+interface FluidBoxConnectionRecord {
+    this_linked_connection_id: uint;
+    other_entity: LuaEntity;
+    other_linked_connection_id: uint;
 }
 interface FluidBoxFilter {
     /**
@@ -1552,11 +1810,11 @@ interface FluidBoxFilter {
     /**
      * The minimum temperature allowed into the fluidbox.
      */
-    minimum_temperature: double;
+    minimum_temperature: float;
     /**
      * The maximum temperature allowed into the fluidbox.
      */
-    maximum_temperature: double;
+    maximum_temperature: float;
 }
 interface FluidBoxFilterSpec {
     /**
@@ -1566,11 +1824,11 @@ interface FluidBoxFilterSpec {
     /**
      * The minimum temperature allowed into the fluidbox.
      */
-    minimum_temperature?: double;
+    minimum_temperature?: float;
     /**
      * The maximum temperature allowed into the fluidbox.
      */
-    maximum_temperature?: double;
+    maximum_temperature?: float;
     /**
      * Force the filter to be set, regardless of current fluid content.
      */
@@ -1579,7 +1837,7 @@ interface FluidBoxFilterSpec {
 /**
  * A fluid may be specified in one of three ways.
  */
-type FluidIdentification = /**
+type FluidID = /**
  * The fluid name.
  */
 string | /**
@@ -1589,6 +1847,50 @@ LuaFluidPrototype | /**
  * The fluid.
  */
 Fluid;
+/**
+ * @example ```
+-- Products of the "advanced-oil-processing" recipe
+{{type="fluid", name="heavy-oil", amount=1},
+  {type="fluid", name="light-oil", amount=4.5},
+  {type="fluid", name="petroleum-gas", amount=5.5}}
+```
+ */
+interface FluidProduct {
+    type: 'fluid';
+    /**
+     * Prototype name of the result.
+     */
+    name: string;
+    /**
+     * Amount of the fluid to give. If not returned, `amount_min` and `amount_max` will be present instead.
+     */
+    amount?: double;
+    /**
+     * Minimal amount of the fluid to give. Not returned if `amount` is returned.
+     */
+    amount_min?: double;
+    /**
+     * Maximum amount of the fluid to give. Not returned if `amount` is returned.
+     */
+    amount_max?: double;
+    /**
+     * A value in range `[0, 1]`. Fluid is only given with this probability; otherwise no product is produced.
+     */
+    probability: double;
+    /**
+     * How much of this product is ignored by statistics.
+     */
+    ignored_by_stats?: double;
+    /**
+     * How much of this product is ignored by productivity.
+     */
+    ignored_by_productivity?: double;
+    /**
+     * The fluid temperature of this product.
+     */
+    temperature?: float;
+    fluidbox_index?: uint;
+}
 interface BaseFluidPrototypeFilter {
     /**
      * The condition to filter on.
@@ -1749,16 +2051,26 @@ type ForceCondition = /**
 /**
  * A force may be specified in one of three ways.
  */
-type ForceIdentification = /**
- * The force index.
- */
-uint8 | /**
- * The force name.
+type ForceID = /**
+ * Name of the force, same as {@link LuaForce::name | runtime:LuaForce::name}.
  */
 string | /**
+ * Index of the force, same as {@link LuaForce::index | runtime:LuaForce::index}.
+ */
+uint8 | /**
  * A reference to {@link LuaForce | runtime:LuaForce} may be passed directly.
  */
 LuaForce;
+/**
+ * Set of forces. Can be specified in one of two ways.
+ */
+type ForceSet = /**
+ * Array of many forces.
+ */
+ForceID[] | /**
+ * A single force.
+ */
+ForceID;
 /**
  * Parameters that affect the look and control of the game. Updating any of the member attributes here will immediately take effect in the game engine.
  */
@@ -1784,7 +2096,7 @@ interface GameViewSettings {
      */
     show_entity_tooltip: boolean;
     /**
-     * Shows or hides the mouse and keyboard/controller button hints in the bottom left corner if they are enabled in the interface settings.
+     * hows or hides the mouse and keyboard/controller button hints in the bottom left corner if they are enabled in the interface settings.
      */
     show_hotkey_suggestions: boolean;
     /**
@@ -1896,7 +2208,7 @@ interface GuiArrowSpecificationItemStack extends BaseGuiArrowSpecification {
      * Which stack to point to.
      */
     'item_stack_index': uint;
-    'source': 'player' | 'target' | 'player-quickbar' | 'player-equipment-bar';
+    'source': 'player' | 'target' | 'player-quickbar';
 }
 /**
  *
@@ -2088,9 +2400,9 @@ interface BaseIngredient {
      */
     amount: double;
     /**
-     * How much of this ingredient is a catalyst.
+     * How much of this ingredient is ignored by statistics.
      */
-    catalyst_amount?: uint | double;
+    ignored_by_stats?: uint | double;
 }
 type Ingredient = BaseIngredient | IngredientFluid;
 /**
@@ -2102,11 +2414,11 @@ interface IngredientFluid extends BaseIngredient {
     /**
      * The maximum fluid temperature allowed.
      */
-    'maximum_temperature'?: double;
+    'maximum_temperature'?: float;
     /**
      * The minimum fluid temperature required.
      */
-    'minimum_temperature'?: double;
+    'minimum_temperature'?: float;
 }
 interface InserterCircuitConditions {
     circuit?: CircuitCondition;
@@ -2122,11 +2434,164 @@ interface InventoryFilter {
      */
     name: string;
 }
+interface InventoryPosition {
+    /**
+     * The ID of the inventory to insert into.
+     */
+    inventory: defines.inventory;
+    /**
+     * The stack index of the inventory to insert into.
+     */
+    stack: ItemStackIndex;
+    /**
+     * How many items to insert. Defaults to `1`.
+     */
+    count?: ItemCountType;
+}
+type ItemCountType = uint;
+interface ItemCountWithQuality {
+    /**
+     * The name of the item prototype.
+     */
+    name: string;
+    /**
+     * The number of items.
+     */
+    count: uint;
+    /**
+     * The quality level of the items.
+     */
+    quality: QualityID;
+}
+/**
+ * An item filter may be specified in two ways, either as a string which is an item prototype name or as a table.
+ */
+type ItemFilter = {
+    /**
+     * The item.
+     */
+    name?: ItemID;
+    /**
+     * The quality.
+     */
+    quality?: QualityID;
+    /**
+     * The quality comparison type.
+     */
+    comparator?: ComparatorString;
+} | string;
+/**
+ * An item prototype may be specified in one of four ways.
+ */
+type ItemID = /**
+ * Item prototype.
+ */
+LuaItemPrototype | /**
+ * Non empty item stack.
+ */
+LuaItemStack | /**
+ * The item.
+ */
+LuaItem | /**
+ * The prototype name.
+ */
+string;
+/**
+ * An item prototype with optional quality specification.
+ */
+interface ItemIDAndQualityIDPair {
+    /**
+     * Item prototype. Returns `LuaItemPrototype` when read.
+     */
+    name: ItemID;
+    /**
+     * Quality prototype. Normal quality will be used if not specified. Returns `LuaQualityPrototype` when read.
+     */
+    quality?: QualityID;
+}
+interface ItemIDFilter {
+    /**
+     * The item name.
+     */
+    name: string;
+    /**
+     * The name of the quality.
+     */
+    quality?: string;
+    /**
+     * The quality comparison type.
+     */
+    comparator?: ComparatorString;
+}
+interface ItemInventoryPositions {
+    /**
+     * A list of stacks into which items should be inserted.
+     */
+    in_inventory?: InventoryPosition[];
+    /**
+     * Defaults to `0`. Number of items to request for the equipment grid. When the items arrive they will be used to revive the first matching ghost equipment.
+     */
+    grid_count?: ItemCountType;
+}
+interface ItemLocationData {
+    surface: LuaSurface;
+    entity?: LuaEntity;
+    player?: LuaPlayer;
+    position: MapPosition;
+    force: LuaForce;
+}
+/**
+ * @example ```
+-- Products of the "steel-chest" recipe (an array of Product)
+{{type="item", name="steel-chest", amount=1}}
+```
+ * @example ```
+-- What a custom recipe would look like that had a probability of 0.5 to return a
+-- minimum amount of 1 and a maximum amount of 5
+{{type="item", name="custom-item", probability=0.5, amount_min=1, amount_max=5}}
+```
+ */
+interface ItemProduct {
+    type: 'item';
+    /**
+     * Prototype name of the result.
+     */
+    name: string;
+    /**
+     * Amount of the item to give. If not returned, `amount_min` and `amount_max` will be present instead.
+     */
+    amount?: uint16;
+    /**
+     * Minimal amount of the item to give. Not returned if `amount` is returned.
+     */
+    amount_min?: uint16;
+    /**
+     * Maximum amount of the item to give. Not returned if `amount` is returned.
+     */
+    amount_max?: uint16;
+    /**
+     * A value in range `[0, 1]`. Item is only given with this probability; otherwise no product is produced.
+     */
+    probability: double;
+    /**
+     * How much of this product is ignored by statistics.
+     */
+    ignored_by_stats?: uint16;
+    /**
+     * How much of this product is ignored by productivity.
+     */
+    ignored_by_productivity?: uint16;
+    /**
+     * Probability that a craft will yield one additional product. Also applies to bonus crafts caused by productivity.
+     */
+    extra_count_fraction?: float;
+    percent_spoiled?: float;
+}
 interface BaseItemPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'tool' | 'mergeable' | 'item-with-inventory' | 'selection-tool' | 'item-with-label' | 'has-rocket-launch-products' | 'fuel' | 'place-result' | 'burnt-result' | 'place-as-tile' | 'placed-as-equipment-result' | 'name' | 'type' | 'flag' | 'subgroup' | 'fuel-category' | 'stack-size' | 'default-request-amount' | 'wire-count' | 'fuel-value' | 'fuel-acceleration-multiplier' | 'fuel-top-speed-multiplier' | 'fuel-emissions-multiplier';
+    filter: 'tool' | 'mergeable' | 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'item-with-inventory' | 'selection-tool' | 'item-with-label' | 'has-rocket-launch-products' | 'fuel' | 'place-result' | 'burnt-result' | 'place-as-tile' | 'placed-as-equipment-result' | 'name' | 'type' | 'flag' | 'subgroup' | 'fuel-category' | 'stack-size' | 'fuel-value' | 'fuel-acceleration-multiplier' | 'fuel-top-speed-multiplier' | 'fuel-emissions-multiplier';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2136,7 +2601,7 @@ interface BaseItemPrototypeFilter {
      */
     invert?: boolean;
 }
-type ItemPrototypeFilter = BaseItemPrototypeFilter | ItemPrototypeFilterBurntResult | ItemPrototypeFilterDefaultRequestAmount | ItemPrototypeFilterFlag | ItemPrototypeFilterFuelAccelerationMultiplier | ItemPrototypeFilterFuelCategory | ItemPrototypeFilterFuelEmissionsMultiplier | ItemPrototypeFilterFuelTopSpeedMultiplier | ItemPrototypeFilterFuelValue | ItemPrototypeFilterName | ItemPrototypeFilterPlaceAsTile | ItemPrototypeFilterPlaceResult | ItemPrototypeFilterPlacedAsEquipmentResult | ItemPrototypeFilterStackSize | ItemPrototypeFilterSubgroup | ItemPrototypeFilterType | ItemPrototypeFilterWireCount;
+type ItemPrototypeFilter = BaseItemPrototypeFilter | ItemPrototypeFilterBurntResult | ItemPrototypeFilterFlag | ItemPrototypeFilterFuelAccelerationMultiplier | ItemPrototypeFilterFuelCategory | ItemPrototypeFilterFuelEmissionsMultiplier | ItemPrototypeFilterFuelTopSpeedMultiplier | ItemPrototypeFilterFuelValue | ItemPrototypeFilterName | ItemPrototypeFilterPlaceAsTile | ItemPrototypeFilterPlaceResult | ItemPrototypeFilterPlacedAsEquipmentResult | ItemPrototypeFilterStackSize | ItemPrototypeFilterSubgroup | ItemPrototypeFilterType;
 /**
  *
  * Applies to variant case `burnt-result`
@@ -2150,21 +2615,6 @@ interface ItemPrototypeFilterBurntResult extends BaseItemPrototypeFilter {
      * Filters for the burnt result.
      */
     'elem_filters'?: ItemPrototypeFilter[];
-}
-/**
- *
- * Applies to variant case `default-request-amount`
- */
-interface ItemPrototypeFilterDefaultRequestAmount extends BaseItemPrototypeFilter {
-    /**
-     * The condition to filter on.
-     */
-    'filter': 'default-request-amount';
-    'comparison': ComparatorString;
-    /**
-     * The value to compare against.
-     */
-    'value': uint;
 }
 /**
  *
@@ -2313,7 +2763,7 @@ interface ItemPrototypeFilterPlacedAsEquipmentResult extends BaseItemPrototypeFi
  * Usage example:
  *
  * ```
- * game.get_filtered_item_prototypes({{filter = "stack-size", comparison = ">", value = 20}, {filter = "stack-size", comparison = "<", value = 100, mode = "and"}})
+ * prototypes.get_item_filtered({{filter = "stack-size", comparison = ">", value = 20}, {filter = "stack-size", comparison = "<", value = 100, mode = "and"}})
  * ```
  * Applies to variant case `stack-size`
  */
@@ -2345,7 +2795,7 @@ interface ItemPrototypeFilterSubgroup extends BaseItemPrototypeFilter {
 /**
  * Usage example:
  * ```
- * game.get_filtered_item_prototypes({{filter = "type", type = "armor"}})
+ * prototypes.get_item_filtered({{filter = "type", type = "armor"}})
  * ```
  * Applies to variant case `type`
  */
@@ -2360,30 +2810,15 @@ interface ItemPrototypeFilterType extends BaseItemPrototypeFilter {
     'type': string | string[];
 }
 /**
- *
- * Applies to variant case `wire-count`
- */
-interface ItemPrototypeFilterWireCount extends BaseItemPrototypeFilter {
-    /**
-     * The condition to filter on.
-     */
-    'filter': 'wire-count';
-    'comparison': ComparatorString;
-    /**
-     * The value to compare against.
-     */
-    'value': uint;
-}
-/**
  * A {@link string | runtime:string} specifying an item prototype flag.
  */
 type ItemPrototypeFlag = /**
  * Determines whether the logistics areas of roboports should be drawn when holding this item. Used by the deconstruction planner by default.
  */
 'draw-logistic-overlay' | /**
- * Hides the item in the logistic requests and filters GUIs (among others).
+ * If this item is skipped by the trash-unrequested logic.
  */
-'hidden' | /**
+'excluded-from-trash-unrequested' | /**
  * Always shows the item in the logistic requests and filters GUIs (among others) even when the recipe for that item is locked.
  */
 'always-show' | /**
@@ -2396,9 +2831,6 @@ type ItemPrototypeFlag = /**
  * Prevents the item from being stacked. It also prevents the item from stacking in assembling machine input slots, which can otherwise exceed the item stack size if required by the recipe. Additionally, the item does not show an item count when in the cursor.
  */
 'not-stackable' | /**
- * Makes the item act as an extension to the inventory that it is placed in. Only has an effect for items with inventory.
- */
-'can-extend-inventory' | /**
  * Makes construction bots prefer this item when building the entity specified by its `place_result`.
  */
 'primary-place-result' | /**
@@ -2410,33 +2842,29 @@ type ItemPrototypeFlag = /**
 'only-in-cursor' | /**
  * Allows the item to be spawned by a quickbar shortcut or custom input.
  */
-'spawnable';
+'spawnable' | 'spoil-result' | /**
+ * Controls whether the spoil time ignores the spoil time modifier in the {@link DifficultySettings | runtime:DifficultySettings}.
+ */
+'ignore-spoil-time-modifier';
 /**
- * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all. By default, none of these flags are set.
+ * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
+ *
+ * By default, none of these flags are set.
  */
 type ItemPrototypeFlags = Record<ItemPrototypeFlag, true>;
-/**
- * An item prototype may be specified in one of three ways.
- */
-type ItemPrototypeIdentification = /**
- * The item.
- */
-LuaItemStack | /**
- * The item prototype.
- */
-LuaItemPrototype | /**
- * The prototype name.
- */
-string;
 interface ItemStackDefinition {
     /**
      * Prototype name of the item the stack holds.
      */
     name: string;
     /**
-     * Number of items the stack holds. If not specified, defaults to `1`.
+     * Number of items the stack holds. Defaults to `1`.
      */
-    count?: uint;
+    count?: ItemCountType;
+    /**
+     * Quality of the item the stack holds. Defaults to `"normal"`.
+     */
+    quality?: string;
     /**
      * Health of the items in the stack. Defaults to `1.0`.
      */
@@ -2448,20 +2876,49 @@ interface ItemStackDefinition {
     /**
      * Amount of ammo in the ammo items in the stack.
      */
-    ammo?: double;
+    ammo?: float;
     /**
      * Tags of the items with tags in the stack.
      */
     tags?: string[];
+    /**
+     * Description of the items with tags in the stack.
+     */
+    custom_description?: LocalisedString;
+    /**
+     * The spoil percent for this item if the item can spoil. Defaults to `0`.
+     */
+    spoil_percent?: double;
 }
 /**
  * An item may be specified in one of two ways.
  */
 type ItemStackIdentification = SimpleItemStack | LuaItemStack;
+type ItemStackIndex = uint16;
 interface ItemStackLocation {
     inventory: defines.inventory;
     slot: uint;
 }
+/**
+ * An item prototype with optional quality specification. Can be specified in one of four ways.
+ */
+type ItemWithQualityID = /**
+ * The item stack. Both prototype and quality of the item stack will be used.
+ */
+LuaItemStack | /**
+ * The item prototype. Normal quality will be used.
+ */
+LuaItemPrototype | /**
+ * The prototype name. Normal quality will be used.
+ */
+string | /**
+ * A table of entity prototype and quality.
+ */
+ItemIDAndQualityIDPair;
+/**
+ * The internal name of a game control (key binding).
+ */
+type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-technology' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music';
 /**
  * Localised strings are a way to support translation of in-game text. It is an array where the first element is the key and the remaining elements are parameters that will be substituted for placeholders in the template designated by the key.
  *
@@ -2500,31 +2957,46 @@ game.print({"", {"item-name.iron-plate"}, ": ", 60})
 type LocalisedString = string | number | boolean | LuaObject | nil | LocalisedString[];
 interface LogisticFilter {
     /**
-     * The index this filter applies to.
+     * The item filter to put into the slot.
      */
-    index: uint;
+    value?: SignalFilter;
     /**
-     * The item name for this filter.
+     * The minimum amount to satisfy.
      */
-    name: string;
+    min?: int;
     /**
-     * The count for this filter.
+     * The maximum amount to keep in inventory. `nil` for infinite.
      */
-    count: uint;
+    max?: ItemCountType;
+    /**
+     * The minimum count that will be delivered to a space platform. `nil` if unchanged from the default.
+     */
+    minimum_delivery_count?: ItemCountType;
+    /**
+     * The space location to import from.
+     */
+    import_from?: SpaceLocationID;
 }
-interface LogisticParameters {
+type LogisticFilterIndex = uint16;
+interface LogisticSection {
+    index: uint8;
+    filters?: BlueprintLogisticFilter[];
+    group?: string;
     /**
-     * The item. `nil` clears the filter.
+     * Defaults to 1.
      */
-    name?: string;
+    multiplier?: float;
     /**
-     * Defaults to `0`.
+     * Defaults to true.
      */
-    min?: uint;
+    active?: float;
+}
+interface LogisticSections {
+    sections?: LogisticSection[];
     /**
-     * Defaults to max uint.
+     * Defaults to false.
      */
-    max?: uint;
+    trash_not_requested?: boolean;
 }
 interface LogisticsNetworkSupplyCounts {
     /**
@@ -2572,7 +3044,7 @@ interface BaseLuaEntityClonedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2643,7 +3115,7 @@ interface BaseLuaEntityDamagedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'original-damage-amount' | 'final-damage-amount' | 'damage-type' | 'final-health';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'original-damage-amount' | 'final-damage-amount' | 'damage-type' | 'final-health';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2773,7 +3245,7 @@ interface BaseLuaEntityDeconstructionCancelledEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2844,7 +3316,7 @@ interface BaseLuaEntityDiedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2915,7 +3387,7 @@ interface BaseLuaEntityMarkedForDeconstructionEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2986,7 +3458,7 @@ interface BaseLuaEntityMarkedForUpgradeEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3057,11 +3529,167 @@ interface LuaEntityMarkedForUpgradeEventFilterType extends BaseLuaEntityMarkedFo
  * Any LuaObject listed on the {@link Classes | runtime:classes} page.
  */
 type LuaObject = object;
+interface BaseLuaPlatformBuiltEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'force';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type LuaPlatformBuiltEntityEventFilter = BaseLuaPlatformBuiltEntityEventFilter | LuaPlatformBuiltEntityEventFilterForce | LuaPlatformBuiltEntityEventFilterGhostName | LuaPlatformBuiltEntityEventFilterGhostType | LuaPlatformBuiltEntityEventFilterName | LuaPlatformBuiltEntityEventFilterType;
+/**
+ *
+ * Applies to variant case `force`
+ */
+interface LuaPlatformBuiltEntityEventFilterForce extends BaseLuaPlatformBuiltEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'force';
+    /**
+     * The entity force
+     */
+    'force': string;
+}
+/**
+ *
+ * Applies to variant case `ghost_name`
+ */
+interface LuaPlatformBuiltEntityEventFilterGhostName extends BaseLuaPlatformBuiltEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'ghost_name';
+    /**
+     * The ghost prototype name.
+     */
+    'name': string;
+}
+/**
+ *
+ * Applies to variant case `ghost_type`
+ */
+interface LuaPlatformBuiltEntityEventFilterGhostType extends BaseLuaPlatformBuiltEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'ghost_type';
+    /**
+     * The ghost prototype type.
+     */
+    'type': string;
+}
+/**
+ *
+ * Applies to variant case `name`
+ */
+interface LuaPlatformBuiltEntityEventFilterName extends BaseLuaPlatformBuiltEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'name';
+    /**
+     * The prototype name.
+     */
+    'name': string;
+}
+/**
+ *
+ * Applies to variant case `type`
+ */
+interface LuaPlatformBuiltEntityEventFilterType extends BaseLuaPlatformBuiltEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'type';
+    /**
+     * The prototype type.
+     */
+    'type': string;
+}
+interface BaseLuaPlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type LuaPlatformMinedEntityEventFilter = BaseLuaPlatformMinedEntityEventFilter | LuaPlatformMinedEntityEventFilterGhostName | LuaPlatformMinedEntityEventFilterGhostType | LuaPlatformMinedEntityEventFilterName | LuaPlatformMinedEntityEventFilterType;
+/**
+ *
+ * Applies to variant case `ghost_name`
+ */
+interface LuaPlatformMinedEntityEventFilterGhostName extends BaseLuaPlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'ghost_name';
+    /**
+     * The ghost prototype name.
+     */
+    'name': string;
+}
+/**
+ *
+ * Applies to variant case `ghost_type`
+ */
+interface LuaPlatformMinedEntityEventFilterGhostType extends BaseLuaPlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'ghost_type';
+    /**
+     * The ghost prototype type.
+     */
+    'type': string;
+}
+/**
+ *
+ * Applies to variant case `name`
+ */
+interface LuaPlatformMinedEntityEventFilterName extends BaseLuaPlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'name';
+    /**
+     * The prototype name.
+     */
+    'name': string;
+}
+/**
+ *
+ * Applies to variant case `type`
+ */
+interface LuaPlatformMinedEntityEventFilterType extends BaseLuaPlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'type';
+    /**
+     * The prototype type.
+     */
+    'type': string;
+}
 interface BaseLuaPlayerBuiltEntityEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'force';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'force';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3146,7 +3774,7 @@ interface BaseLuaPlayerMinedEntityEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3217,7 +3845,7 @@ interface BaseLuaPlayerRepairedEntityEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3284,11 +3912,11 @@ interface LuaPlayerRepairedEntityEventFilterType extends BaseLuaPlayerRepairedEn
      */
     'type': string;
 }
-interface BaseLuaPostEntityDiedEventFilter {
+interface LuaPostEntityDiedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type';
+    filter: 'ghost';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3298,26 +3926,11 @@ interface BaseLuaPostEntityDiedEventFilter {
      */
     invert?: boolean;
 }
-type LuaPostEntityDiedEventFilter = BaseLuaPostEntityDiedEventFilter | LuaPostEntityDiedEventFilterType;
-/**
- *
- * Applies to variant case `type`
- */
-interface LuaPostEntityDiedEventFilterType extends BaseLuaPostEntityDiedEventFilter {
-    /**
-     * The condition to filter on.
-     */
-    'filter': 'type';
-    /**
-     * The prototype type.
-     */
-    'type': string;
-}
 interface BaseLuaPreGhostDeconstructedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3388,7 +4001,7 @@ interface BaseLuaPreGhostUpgradedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3455,11 +4068,82 @@ interface LuaPreGhostUpgradedEventFilterType extends BaseLuaPreGhostUpgradedEven
      */
     'type': string;
 }
+interface BaseLuaPrePlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type LuaPrePlatformMinedEntityEventFilter = BaseLuaPrePlatformMinedEntityEventFilter | LuaPrePlatformMinedEntityEventFilterGhostName | LuaPrePlatformMinedEntityEventFilterGhostType | LuaPrePlatformMinedEntityEventFilterName | LuaPrePlatformMinedEntityEventFilterType;
+/**
+ *
+ * Applies to variant case `ghost_name`
+ */
+interface LuaPrePlatformMinedEntityEventFilterGhostName extends BaseLuaPrePlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'ghost_name';
+    /**
+     * The ghost prototype name.
+     */
+    'name': string;
+}
+/**
+ *
+ * Applies to variant case `ghost_type`
+ */
+interface LuaPrePlatformMinedEntityEventFilterGhostType extends BaseLuaPrePlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'ghost_type';
+    /**
+     * The ghost prototype type.
+     */
+    'type': string;
+}
+/**
+ *
+ * Applies to variant case `name`
+ */
+interface LuaPrePlatformMinedEntityEventFilterName extends BaseLuaPrePlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'name';
+    /**
+     * The prototype name.
+     */
+    'name': string;
+}
+/**
+ *
+ * Applies to variant case `type`
+ */
+interface LuaPrePlatformMinedEntityEventFilterType extends BaseLuaPrePlatformMinedEntityEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'type';
+    /**
+     * The prototype type.
+     */
+    'type': string;
+}
 interface BaseLuaPrePlayerMinedEntityEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3530,7 +4214,7 @@ interface BaseLuaPreRobotMinedEntityEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3601,7 +4285,7 @@ interface BaseLuaRobotBuiltEntityEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'force';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'force';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3686,7 +4370,7 @@ interface BaseLuaRobotMinedEntityEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3757,7 +4441,7 @@ interface BaseLuaScriptRaisedBuiltEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3828,7 +4512,7 @@ interface BaseLuaScriptRaisedDestroyEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3899,7 +4583,7 @@ interface BaseLuaScriptRaisedReviveEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3970,7 +4654,7 @@ interface BaseLuaScriptRaisedTeleportedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -4041,7 +4725,7 @@ interface BaseLuaSectorScannedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -4112,7 +4796,7 @@ interface BaseLuaUpgradeCancelledEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -4189,6 +4873,7 @@ interface MapAndDifficultySettings {
     unit_group: UnitGroupMapSettings;
     steering: SteeringMapSettings;
     path_finder: PathFinderMapSettings;
+    asteroids: AsteroidMapSettings;
     /**
      * If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
      */
@@ -4196,16 +4881,14 @@ interface MapAndDifficultySettings {
     difficulty_settings: MapDifficultySettings;
 }
 interface MapDifficultySettings {
-    recipe_difficulty: defines.difficulty_settings.recipe_difficulty;
-    technology_difficulty: defines.difficulty_settings.technology_difficulty;
     /**
      * A value in range [0.001, 1000].
      */
     technology_price_multiplier: double;
     /**
-     * Changing this to `"always"` or `"after-victory"` does not automatically unlock the research queue. See {@link LuaForce::research_queue_enabled | runtime:LuaForce::research_queue_enabled} for that.
+     * A value in range [0.01, 100].
      */
-    research_queue_setting: 'after-victory' | 'always' | 'never';
+    spoil_time_modifier: double;
 }
 /**
  * The data that can be extracted from a map exchange string, as a plain table.
@@ -4227,7 +4910,6 @@ interface MapGenPreset {
     advanced_settings?: AdvancedMapGenSettings;
 }
 /**
- * The 'map type' dropdown in the map generation GUI is actually a selector for elevation generator. The base game sets `property_expression_names.elevation` to `"0_16-elevation"` to reproduce terrain from 0.16 or to `"0_17-island"` for the island preset. If generators are available for other properties, the 'map type' dropdown in the GUI will be renamed to 'elevation' and shown along with selectors for the other selectable properties.
  * @example ```
 -- Assuming a NamedNoiseExpression with the name "my-alternate-grass1-probability" is defined...
 local surface = game.player.surface
@@ -4248,14 +4930,6 @@ surface.map_gen_settings = mgs
  */
 interface MapGenSettings {
     /**
-     * The inverse of 'water scale' in the map generator GUI. Lower `terrain_segmentation` increases the scale of elevation features (lakes, continents, etc). This behavior can be overridden with alternate elevation generators (see `property_expression_names`, below).
-     */
-    terrain_segmentation: MapGenSize;
-    /**
-     * The equivalent to 'water coverage' in the map generator GUI. Specifically, when this value is non-zero, `water_level = 10 * log2` (the value of this field), and the elevation generator subtracts water level from elevation before adding starting lakes. If water is set to 'none', elevation is clamped to a small positive value before adding starting lakes. This behavior can be overridden with alternate elevation generators (see `property_expression_names`, below).
-     */
-    water: MapGenSize;
-    /**
      * Indexed by autoplace control prototype name.
      */
     autoplace_controls: Record<string, AutoplaceControl>;
@@ -4267,10 +4941,6 @@ interface MapGenSettings {
      * Each setting in this dictionary maps the string type to the settings for that type.
      */
     autoplace_settings: Record<'entity' | 'tile' | 'decorative', AutoplaceSettings>;
-    /**
-     * Map generation settings for entities of the type "cliff".
-     */
-    cliff_settings: CliffPlacementSettings;
     /**
      * The random seed used to generated this map.
      */
@@ -4292,18 +4962,27 @@ interface MapGenSettings {
      */
     starting_points: MapPosition[];
     /**
-     * Whether peaceful mode is enabled for this map.
+     * Whether enemy creatures will not attack unless the player first attacks them.
      */
     peaceful_mode: boolean;
+    /**
+     * Whether enemy creatures will not naturally spawn from spawners, map gen, or trigger effects.
+     */
+    no_enemies_mode: boolean;
     /**
      * Overrides for tile property value generators.
      */
     property_expression_names: PropertyExpressionNames;
+    /**
+     * Map generation settings for entities of the type "cliff".
+     */
+    cliff_settings: CliffPlacementSettings;
+    territory_settings: TerritorySettings;
 }
 /**
  * A floating point number specifying an amount.
  *
- * For backwards compatibility, MapGenSizes can also be specified as one of the following strings, which will be converted to a number (when queried, a number will always be returned):
+ * For backwards compatibility, MapGenSizes can also be specified as a string, which will be converted to a number (when queried, a number will always be returned).
  *
  * The map generation algorithm officially supports the range of values the in-game map generation screen shows (specifically `0` and values from `1/6` to `6`). Values outside this range are not guaranteed to work as expected.
  */
@@ -4383,11 +5062,12 @@ type MapPosition = {
 /**
  * Various game-related settings. Updating any of the attributes will immediately take effect in the game engine.
  * @example ```
--- Increase the number of short paths the pathfinder can cache
+-- Increase the number of short paths the pathfinder can cache.
 game.map_settings.path_finder.short_cache_size = 15
 ```
  */
 interface MapSettings {
+    asteroids: AsteroidMapSettings;
     enemy_evolution: EnemyEvolutionMapSettings;
     enemy_expansion: EnemyExpansionMapSettings;
     /**
@@ -4399,6 +5079,10 @@ interface MapSettings {
     steering: SteeringMapSetting;
     unit_group: UnitGroupMapSettings;
 }
+/**
+ * `math.huge` represents the maximum possible tick.
+ */
+type MapTick = uint64;
 /**
  * What is shown in the map view. If a field is not given, that setting will not be changed.
  */
@@ -4414,7 +5098,86 @@ interface MapViewSettings {
     'show-worker-robots'?: boolean;
     'show-rail-signal-states'?: boolean;
     'show-recipe-icons'?: boolean;
+    'show-pipelines'?: boolean;
     'show-non-standard-map-info'?: boolean;
+}
+interface MarketIngredient {
+    /**
+     * Prototype name of the required item.
+     */
+    name: string;
+    /**
+     * Normal quality will be used if not specified.
+     */
+    quality?: string;
+    /**
+     * Count of the item. Cannot be 0.
+     */
+    count: ItemCountType;
+}
+/**
+ * A string that represents a math expression. The expression parser recognizes four basic token types (with their regex):
+ *
+ * - Whitespace: `[ \n\r\t]*`
+ *
+ * - Number: `(0x[0-9a-f]+|([0-9]+\.?[0-9]*|\.[0-9]+)(e-?[0-9]+)?)` (e.g. `3.2`, `100`, `.6`, `4.2e-5`, `0x2a5f`). Supports hexadecimal input and scientific notation for decimal numbers.
+ *
+ * - Operator: `+`, `-`, `*`, `/`, `^`, and `()` for brackets, which may be nested.
+ *
+ * - Identifier: The functions listed below and any variables listed where the expression is used.
+ *
+ * Identifiers are used to name functions and variables, which result in or represent numbers. The following functions are always available:
+ *
+ * - `abs(value)`: Returns absolute value of the given argument; i.e. if the argument is negative, it is inverted.
+ *
+ * - `log2(value)`: Returns a binary logarithm of the given value.
+ *
+ * - `sign(value)`: Returns `-1` for negative numbers, `0` for zero (regardless of sign), `1` for positive numbers
+ *
+ * - `max(value1, value2, ...)`: Returns the greater of the given values. Supports between 2 and 255 arguments.
+ *
+ * - `min(value1, value2, ...)`: Returns the smaller of the given values. Supports between 2 and 255 arguments.
+ *
+ * The property where the expression is used may provide variables. For example in {@link TechnologyUnit::count_formula | prototype:TechnologyUnit::count_formula} `L` and `l` may be used for the technology level.
+ *
+ * The formula is executed following the {@link BODMAS | https://en.wikipedia.org/wiki/Order_of_operations#Conventional_order} order (also known as PEMDAS).
+ * @example ```
+"2500 * (L - 3)"
+```
+ * @example ```
+"(4e5 * (abs(speed) + 10.5)) / weight"
+```
+ */
+type MathExpression = string;
+interface MineableProperties {
+    /**
+     * Is this entity mineable at all?
+     */
+    minable: boolean;
+    /**
+     * Energy required to mine an entity.
+     */
+    mining_time: double;
+    /**
+     * Prototype name of the particle produced when mining this entity. Will only be present if this entity produces any particle during mining.
+     */
+    mining_particle?: string;
+    /**
+     * Products obtained by mining this entity.
+     */
+    products?: Product[];
+    /**
+     * The required fluid amount if any.
+     */
+    fluid_amount?: double;
+    /**
+     * The prototype name of the required fluid if any.
+     */
+    required_fluid?: string;
+    /**
+     * The mining trigger if any.
+     */
+    mining_trigger?: TriggerItem[];
 }
 interface ModChangeData {
     /**
@@ -4492,20 +5255,18 @@ interface ModSettingPrototypeFilterType extends BaseModSettingPrototypeFilter {
 /**
  * Used by {@link TechnologyModifier | runtime:TechnologyModifier}.
  */
-type ModifierType = 'inserter-stack-size-bonus' | 'stack-inserter-capacity-bonus' | 'laboratory-speed' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' | 'worker-robot-speed' | 'worker-robot-storage' | 'ghost-time-to-live' | 'turret-attack' | 'ammo-damage' | 'give-item' | 'gun-speed' | 'unlock-recipe' | 'character-crafting-speed' | 'character-mining-speed' | 'character-running-speed' | 'character-build-distance' | 'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' | 'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' | 'deconstruction-time-to-live' | 'max-failed-attempts-per-tick-per-construction-queue' | 'max-successful-attempts-per-tick-per-construction-queue' | 'character-health-bonus' | 'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'zoom-to-world-enabled' | 'zoom-to-world-ghost-building-enabled' | 'zoom-to-world-blueprint-enabled' | 'zoom-to-world-deconstruction-planner-enabled' | 'zoom-to-world-upgrade-planner-enabled' | 'zoom-to-world-selection-tool-enabled' | 'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'nothing' | 'character-logistic-requests';
-interface ModuleEffectValue {
-    /**
-     * The percentual increase of the attribute. A value of `0.6` means a 60% increase.
-     */
-    bonus: float;
-}
+type ModifierType = 'inserter-stack-size-bonus' | 'bulk-inserter-capacity-bonus' | 'laboratory-speed' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' | 'worker-robot-speed' | 'worker-robot-storage' | 'turret-attack' | 'ammo-damage' | 'give-item' | 'gun-speed' | 'unlock-recipe' | 'character-crafting-speed' | 'character-mining-speed' | 'character-running-speed' | 'character-build-distance' | 'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' | 'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' | 'deconstruction-time-to-live' | 'max-failed-attempts-per-tick-per-construction-queue' | 'max-successful-attempts-per-tick-per-construction-queue' | 'character-health-bonus' | 'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'nothing' | 'character-logistic-requests' | 'unlock-space-location' | 'unlock-quality' | 'unlock-space-platforms' | 'unlock-circuit-network' | 'cargo-landing-pad-count' | 'change-recipe-productivity' | 'cliff-deconstruction-enabled' | 'mining-with-fluid' | 'rail-support-on-deep-oil-ocean' | 'rail-planner-allow-elevated-rails' | 'beacon-distribution' | 'create-ghost-on-entity-death' | 'belt-stack-size-bonus' | 'vehicle-logistics';
+/**
+ * The percentual increase of the attribute. A value of `0.6` means a 60% increase.
+ */
+type ModuleEffectValue = float;
 /**
  * @example ```
 -- These are the effects of the vanilla Productivity Module 3 (up to floating point imprecisions)
-{consumption={bonus=0.6},
-  speed={bonus=-0.15},
-  productivity={bonus=0.06},
-  pollution={bonus=0.075}}
+{consumption=0.6,
+  speed=-0.15,
+  productivity=0.06,
+  pollution=0.075}
 ```
  */
 interface ModuleEffects {
@@ -4513,6 +5274,7 @@ interface ModuleEffects {
     speed?: ModuleEffectValue;
     productivity?: ModuleEffectValue;
     pollution?: ModuleEffectValue;
+    quality?: ModuleEffectValue;
 }
 /**
  * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
@@ -4546,7 +5308,7 @@ interface Offer {
     /**
      * List of prices.
      */
-    price: Ingredient[];
+    price?: MarketIngredient[];
     /**
      * The action that will take place when a player accepts the offer. Usually a `"give-item"` modifier.
      */
@@ -4556,6 +5318,16 @@ interface OldTileAndPosition {
     old_tile: LuaTilePrototype;
     position: TilePosition;
 }
+/**
+ * A particle prototype may be specified in one of two ways.
+ */
+type ParticleID = /**
+ * The particle prototype.
+ */
+LuaParticlePrototype | /**
+ * The prototype name.
+ */
+string;
 interface PathFinderMapSettings {
     /**
      * The pathfinder performs a step of the backward search every `fwd2bwd_ratio`'th step. The minimum allowed value is `2`, which means symmetric search. The default value is `5`.
@@ -4566,6 +5338,10 @@ interface PathFinderMapSettings {
      */
     goal_pressure_ratio: double;
     /**
+     * Whether to cache paths at all. Defaults to `true`.
+     */
+    use_path_cache: boolean;
+    /**
      * The maximum number of nodes that are expanded per tick. Defaults to `1 000`.
      */
     max_steps_worked_per_tick: double;
@@ -4573,10 +5349,6 @@ interface PathFinderMapSettings {
      * The maximum amount of work each pathfinding job is allowed to do per tick. Defaults to `8 000`.
      */
     max_work_done_per_tick: uint;
-    /**
-     * Whether to cache paths at all. Defaults to `true`.
-     */
-    use_path_cache: boolean;
     /**
      * Number of elements in the short cache. Defaults to `5`.
      */
@@ -4731,7 +5503,7 @@ interface PathfinderWaypoint {
  */
 interface PipeConnection {
     flow_direction: 'input' | 'output' | 'input-output';
-    connection_type: 'normal' | 'underground';
+    connection_type: 'normal' | 'underground' | 'linked';
     /**
      * The absolute position of this connection within the entity.
      */
@@ -4753,6 +5525,18 @@ interface PipeConnection {
      */
     target_pipe_connection_index?: uint;
 }
+interface PipeConnectionDefinition {
+    /**
+     * The 4 cardinal direction connection points for this pipe.
+     */
+    positions: MapPosition[];
+    /**
+     * The maximum tile distance this underground connection can connect.
+     */
+    max_underground_distance?: uint;
+    flow_direction: 'input-output' | 'input' | 'output';
+    direction: defines.direction;
+}
 interface PlaceAsTileResult {
     /**
      * The tile prototype.
@@ -4760,6 +5544,13 @@ interface PlaceAsTileResult {
     result: LuaTilePrototype;
     condition_size: uint;
     condition: CollisionMask;
+}
+interface PlatformSchedule {
+    /**
+     * Index of the currently active record
+     */
+    current: uint;
+    records: ScheduleRecord[];
 }
 /**
  * A player may be specified in one of three ways.
@@ -4847,13 +5638,14 @@ interface PrintSettings {
     /**
      * The volume of the sound to play. Must be between 0 and 1 inclusive. Defaults to 1.
      */
-    volume_modifier?: double;
+    volume_modifier?: float;
     /**
      * If set to false, message will not be part of game state and will disappear from output console after save-load. Defaults to `true`.
      */
     game_state?: boolean;
 }
 /**
+ * Returns one of the subtypes, depending on the value of `type`.
  * @example ```
 -- Products of the "steel-chest" recipe (an array of Product)
 {{type="item", name="steel-chest", amount=1}}
@@ -4866,66 +5658,20 @@ interface PrintSettings {
 ```
  * @example ```
 -- What a custom recipe would look like that had a probability of 0.5 to return a
--- minimum amount of 1 and amaximum amount of 5
+-- minimum amount of 1 and a maximum amount of 5
 {{type="item", name="custom-item", probability=0.5, amount_min=1, amount_max=5}}
 ```
  */
-interface BaseProduct {
-    type: 'item' | 'fluid';
-    /**
-     * Prototype name of the result.
-     */
-    name: string;
-    /**
-     * Amount of the item or fluid to give. If not specified, `amount_min`, `amount_max` and `probability` must all be specified.
-     */
-    amount?: double;
-    /**
-     * Minimal amount of the item or fluid to give. Has no effect when `amount` is specified.
-     */
-    amount_min?: uint | double;
-    /**
-     * Maximum amount of the item or fluid to give. Has no effect when `amount` is specified.
-     */
-    amount_max?: uint | double;
-    /**
-     * A value in range [0, 1]. Item or fluid is only given with this probability; otherwise no product is produced.
-     */
-    probability?: double;
-    /**
-     * How much of this product is a catalyst.
-     */
-    catalyst_amount?: uint | double;
-}
-/**
- * @example ```
--- Products of the "steel-chest" recipe (an array of Product)
-{{type="item", name="steel-chest", amount=1}}
-```
- * @example ```
--- Products of the "advanced-oil-processing" recipe
-{{type="fluid", name="heavy-oil", amount=1},
-  {type="fluid", name="light-oil", amount=4.5},
-  {type="fluid", name="petroleum-gas", amount=5.5}}
-```
- * @example ```
--- What a custom recipe would look like that had a probability of 0.5 to return a
--- minimum amount of 1 and amaximum amount of 5
-{{type="item", name="custom-item", probability=0.5, amount_min=1, amount_max=5}}
-```
+type Product = /**
+ * Returned when the `type` is `"item"`.
  */
-type Product = BaseProduct | ProductFluid;
-/**
- *
- * Applies to variant case `fluid`
+ItemProduct | /**
+ * Returned when the `type` is `"fluid"`.
  */
-interface ProductFluid extends BaseProduct {
-    'type': 'fluid';
-    /**
-     * The fluid temperature of this product.
-     */
-    'temperature'?: double;
-}
+FluidProduct | /**
+ * Returned when the `type` is `"research-progress"`.
+ */
+ResearchProgressProduct;
 interface ProgrammableSpeakerAlertParameters {
     show_alert: boolean;
     show_on_map: boolean;
@@ -4942,10 +5688,23 @@ interface ProgrammableSpeakerInstrument {
     notes: string[];
 }
 interface ProgrammableSpeakerParameters {
-    playback_volume: double;
-    playback_globally: boolean;
+    playback_volume: float;
+    playback_mode: ProgrammableSpeakerPlaybackMode;
     allow_polyphony: boolean;
 }
+/**
+ * Specifies from where the programmable speaker's sound will be heard.
+ */
+type ProgrammableSpeakerPlaybackMode = /**
+ * The sound can be heard within the audible range around the speaker.
+ */
+'local' | /**
+ * The sound can be heard anywhere on the speaker's surface.
+ */
+'surface' | /**
+ * The sound can be heard everywhere.
+ */
+'global';
 /**
  * All other MapGenSettings feed into named noise expressions, and therefore placement can be overridden by including the name of a property in this dictionary. The probability and richness functions for placing specific tiles, entities, and decoratives can be overridden by including an entry named `{tile|entity|decorative}:(prototype name):{probability|richness}`.
  * Values either name a NamedNoiseExpression or can be literal numbers, stored as strings (e.g. `5`). All other controls can be overridden by a property expression names. Notable properties:
@@ -4960,10 +5719,10 @@ interface ProgrammableSpeakerParameters {
  * - `enemy-base-radius` - a number representing the radius of an enemy base, if one were to be placed on the given tile, by default proportional to a constant plus `enemy-base-intensity`.
  * Climate controls ('Moisture' and 'Terrain type' at the bottom of the Terrain tab in the map generator GUI) don't have their own dedicated structures in MapGenSettings. Instead, their values are stored as property expression overrides with long names:
  *
- * - `control-setting:moisture:frequency:multiplier` - frequency (inverse of scale) multiplier for moisture noise.  Default is 1.
- * - `control-setting:moisture:bias` - global bias for moisture (which normally varies between 0 and 1). Default is 0.
- * - `control-setting:aux:frequency:multiplier` - frequency (inverse of scale) multiplier for aux (called 'terrain type' in the GUI) noise.  Default is 1.
- * - `control-setting:aux:bias` - global bias for aux/terrain type (which normally varies between 0 and 1). Default is 0.
+ * - `control:moisture:frequency` - frequency (inverse of scale) multiplier for moisture noise.  Default is 1.
+ * - `control:moisture:bias` - global bias for moisture (which normally varies between 0 and 1). Default is 0.
+ * - `control:aux:frequency` - frequency (inverse of scale) multiplier for aux (called 'terrain type' in the GUI) noise.  Default is 1.
+ * - `control:aux:bias` - global bias for aux/terrain type (which normally varies between 0 and 1). Default is 0.
  */
 type PropertyExpressionNames = Record<string, string>;
 /**
@@ -4971,10 +5730,7 @@ type PropertyExpressionNames = Record<string, string>;
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type PrototypeFilter = (ModSettingPrototypeFilter | DecorativePrototypeFilter | EntityPrototypeFilter | TechnologyPrototypeFilter | RecipePrototypeFilter | EquipmentPrototypeFilter | AchievementPrototypeFilter | FluidPrototypeFilter | ItemPrototypeFilter | TilePrototypeFilter)[];
-/**
- * One of the following values:
- */
+type PrototypeFilter = (ModSettingPrototypeFilter | TilePrototypeFilter | DecorativePrototypeFilter | RecipePrototypeFilter | AchievementPrototypeFilter | TechnologyPrototypeFilter | AsteroidChunkPrototypeFilter | ItemPrototypeFilter | EquipmentPrototypeFilter | EntityPrototypeFilter | SpaceLocationPrototypeFilter | FluidPrototypeFilter)[];
 type PrototypeFilterMode = 'none' | 'whitelist' | 'blacklist';
 interface PrototypeHistory {
     /**
@@ -4986,22 +5742,122 @@ interface PrototypeHistory {
      */
     changed: string[];
 }
+/**
+ * An item filter may be specified in two ways, either as a string which is a quality prototype name or as a table.
+ */
+type QualityCondition = {
+    /**
+     * The prototype name of the quality.
+     */
+    quality?: string;
+    /**
+     * The comparator for quality.
+     */
+    comparator?: ComparatorString;
+} | string;
+/**
+ * A quality prototype may be specified in one of two ways.
+ */
+type QualityID = /**
+ * The quality prototype.
+ */
+LuaQualityPrototype | /**
+ * The prototype name.
+ */
+string;
 interface RadiusVisualisationSpecification {
     distance: double;
     offset: Vector;
     draw_in_cursor: boolean;
     draw_on_selection: boolean;
 }
-interface RailEnd {
+interface RailEndGoal {
+    /**
+     * Rail target.
+     */
     rail: LuaEntity;
     direction: defines.rail_direction;
+    /**
+     * Goal priority. If not provided, defaults to 50.
+     */
+    priority?: uint8;
 }
+interface RailEndStart {
+    rail: LuaEntity;
+    direction: defines.rail_direction;
+    /**
+     * Defaults to `true`. Providing false will cause the pathfinder to reject a path that starts here and ends in the same segment as the path would be too short to provide correct alignment with a goal.
+     */
+    allow_path_within_segment?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    is_front?: boolean;
+    /**
+     * Start priority. Defaults to `50`.
+     */
+    priority?: uint8;
+}
+interface RailExtensionData {
+    /**
+     * Name of the entity prototype to be built
+     */
+    name: string;
+    /**
+     * Position of the entity to be built
+     */
+    position: MapPosition;
+    /**
+     * Direction of the entity to be built
+     */
+    direction: defines.direction;
+    /**
+     * Goal where this rail extension will go to
+     */
+    goal: RailLocation;
+}
+interface RailLocation {
+    position: MapPosition;
+    direction: defines.direction;
+    rail_layer: defines.rail_layer;
+}
+/**
+ * A table containing the parameters required to raise a given game event. See the event being raised for what parameters are required.
+ */
+type RaiseEventParameters = table;
+type RangeMode = 'center-to-center' | 'bounding-box-to-bounding-box' | 'center-to-bounding-box';
 /**
  * The smooth orientation. It is a {@link float | runtime:float} in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise. This means a value of `0` indicates "north", a value of `0.5` indicates "south".
  *
  * For example then, a value of `0.625` would indicate "south-west", and a value of `0.875` would indicate "north-west".
  */
 type RealOrientation = float;
+/**
+ * A recipe may be specified in one of three ways.
+ */
+type RecipeID = /**
+ * By recipe prototype.
+ */
+LuaRecipePrototype | /**
+ * By instance of recipe.
+ */
+LuaRecipe | /**
+ * By name of the recipe prototype.
+ */
+string;
+/**
+ * A recipe prototype with optional quality specification.
+ */
+interface RecipeIDAndQualityIDPair {
+    /**
+     * Recipe prototype.
+     */
+    name: RecipeID;
+    /**
+     * Quality prototype.
+     */
+    quality: QualityID;
+}
 interface BaseRecipePrototypeFilter {
     /**
      * The condition to filter on.
@@ -5102,7 +5958,7 @@ interface RecipePrototypeFilterHasProductFluid extends BaseRecipePrototypeFilter
      */
     'filter': 'has-product-fluid';
     /**
-     * Matches if at least 1 product is a fluid that matches these filters.
+     * Matches if at least 1 product is a fluid that matches
      */
     'elem_filters'?: FluidPrototypeFilter[];
 }
@@ -5173,24 +6029,100 @@ interface RecipePrototypeFilterSubgroup extends BaseRecipePrototypeFilter {
     'subgroup': string;
 }
 /**
- * A number between 0 and 255 inclusive, represented by one of the following named strings or the string version of the number. For example `"27"` and `"decals"` are both valid. Higher values are rendered above lower values.
+ * Represents an object that can be {@link registered | runtime:LuaBootstrap::register_on_object_destroyed} for the {@link on_object_destroyed | runtime:on_object_destroyed} event. Each target has an associated {@link defines.target_type | runtime:defines.target_type} and some have a unique identifier.
+ */
+type RegistrationTarget = /**
+ * Target type {@link entity | runtime:defines.target_type.entity}; `useful_id` {@link LuaEntity::unit_number | runtime:LuaEntity::unit_number}
+ */
+LuaEntity | /**
+ * Target type {@link equipment | runtime:defines.target_type.equipment}
+ */
+LuaEquipment | /**
+ * Target type {@link equipment_grid | runtime:defines.target_type.equipment_grid}; `useful_id` {@link LuaEquipmentGrid::unique_id | runtime:LuaEquipmentGrid::unique_id}
+ */
+LuaEquipmentGrid | /**
+ * Target type {@link item | runtime:defines.target_type.item}; `useful_id` {@link LuaItemCommon::item_number | runtime:LuaItemCommon::item_number}
+ */
+LuaItem | /**
+ * Target type {@link logistic_cell | runtime:defines.target_type.logistic_cell}
+ */
+LuaLogisticCell | /**
+ * Target type {@link logistic_network | runtime:defines.target_type.logistic_network}; `useful_id` {@link LuaLogisticNetwork::network_id | runtime:LuaLogisticNetwork::network_id}
+ */
+LuaLogisticNetwork | /**
+ * Target type {@link logistic_section | runtime:defines.target_type.logistic_section};
+ */
+LuaLogisticSection | /**
+ * Target type {@link permission_group | runtime:defines.target_type.permission_group}; `useful_id` {@link LuaPermissionGroup::group_id | runtime:LuaPermissionGroup::group_id}
+ */
+LuaPermissionGroup | /**
+ * Target type {@link planet | runtime:defines.target_type.planet}
+ */
+LuaPlanet | /**
+ * Target type {@link player | runtime:defines.target_type.player}; `useful_id` {@link LuaPlayer::index | runtime:LuaPlayer::index}
+ */
+LuaPlayer | /**
+ * Target type {@link rail_path | runtime:defines.target_type.rail_path};
+ */
+LuaRailPath | /**
+ * Target type {@link render_object | runtime:defines.target_type.render_object}; `useful_id` {@link LuaRenderObject::id | runtime:LuaRenderObject::id}
+ */
+LuaRenderObject | /**
+ * Target type {@link space_platform | runtime:defines.target_type.space_platform}; `useful_id` {@link LuaSpacePlatform::index | runtime:LuaSpacePlatform::index}
+ */
+LuaSpacePlatform | /**
+ * Target type {@link surface | runtime:defines.target_type.surface}; `useful_id` {@link LuaSurface::index | runtime:LuaSurface::index}
+ */
+LuaSurface | /**
+ * Target type {@link train | runtime:defines.target_type.train}; `useful_id` {@link LuaTrain::id | runtime:LuaTrain::id}
+ */
+LuaTrain | /**
+ * Target type {@link commandable | runtime:defines.target_type.commandable}; `useful_id` {@link LuaCommandable::unique_id | runtime:LuaCommandable::unique_id}
+ */
+LuaCommandable | /**
+ * Target type {@link custom_chart_tag | runtime:defines.target_type.custom_chart_tag}; `useful_id` {@link LuaCustomChartTag::tag_number | runtime:LuaCustomChartTag::tag_number}
+ */
+LuaCustomChartTag | /**
+ * Target type {@link gui_element | runtime:defines.target_type.gui_element}; `useful_id` {@link LuaGuiElement::index | runtime:LuaGuiElement::index}
+ */
+LuaGuiElement;
+/**
+ * A number between 0 and 255 inclusive, represented by one of the following named strings or the string version of the number. For example `"10"` and `"decals"` are both valid. Higher values are rendered above lower values.
  */
 type RenderLayer = /**
  * A string of a number
  */
 string | /**
- * 15
+ * 0
  */
-'water-tile' | /**
- * 25
+'zero' | /**
+ * 1
  */
-'ground-tile' | /**
- * 26
+'background-transitions' | /**
+ * 2
  */
-'tile-transition' | /**
- * 27
+'under-tiles' | /**
+ * 10
  */
 'decals' | /**
+ * 11
+ */
+'above-tiles' | /**
+ * 12
+ */
+'ground-layer-1' | /**
+ * 13
+ */
+'ground-layer-2' | /**
+ * 14
+ */
+'ground-layer-3' | /**
+ * 15
+ */
+'ground-layer-4' | /**
+ * 16
+ */
+'ground-layer-5' | /**
  * 29
  */
 'lower-radius-visualization' | /**
@@ -5206,6 +6138,15 @@ string | /**
  * 67
  */
 'building-smoke' | /**
+ * 68
+ */
+'rail-stone-path-lower' | /**
+ * 76
+ */
+'rail-stone-path' | /**
+ * 84
+ */
+'rail-tie' | /**
  * 92
  */
 'decorative' | /**
@@ -5218,79 +6159,136 @@ string | /**
  * 95
  */
 'ground-patch-higher2' | /**
- * 112
+ * 96
+ */
+'rail-chain-signal-metal' | /**
+ * 97
+ */
+'rail-screw' | /**
+ * 100
+ */
+'rail-metal' | /**
+ * 102
  */
 'remnants' | /**
- * 113
+ * 103
  */
 'floor' | /**
- * 114
+ * 104
  */
 'transport-belt' | /**
- * 115
+ * 105
  */
 'transport-belt-endings' | /**
- * 120
+ * 106
  */
 'floor-mechanics-under-corpse' | /**
- * 121
+ * 107
  */
 'corpse' | /**
- * 122
+ * 108
  */
 'floor-mechanics' | /**
- * 123
+ * 109
  */
 'item' | /**
- * 124
+ * 117
+ */
+'transport-belt-reader' | /**
+ * 118
  */
 'lower-object' | /**
- * 126
+ * 120
  */
 'transport-belt-circuit-connector' | /**
- * 127
+ * 121
  */
 'lower-object-above-shadow' | /**
- * 129
+ * 122
+ */
+'lower-object-overlay' | /**
+ * 123
+ */
+'object-under' | /**
+ * 124
  */
 'object' | /**
- * 131
+ * 125
+ */
+'cargo-hatch' | /**
+ * 126
  */
 'higher-object-under' | /**
- * 132
+ * 127
  */
 'higher-object-above' | /**
- * 134
+ * 128
+ */
+'train-stop-top' | /**
+ * 129
  */
 'item-in-inserter-hand' | /**
- * 135
+ * 130
+ */
+'above-inserter' | /**
+ * 131
  */
 'wires' | /**
+ * 132
+ */
+'under-elevated' | /**
+ * 133
+ */
+'elevated-rail-stone-path-lower' | /**
+ * 134
+ */
+'elevated-rail-stone-path' | /**
+ * 135
+ */
+'elevated-rail-tie' | /**
  * 136
  */
-'wires-above' | /**
- * 138
+'elevated-rail-screw' | /**
+ * 137
  */
-'entity-info-icon' | /**
- * 139
+'elevated-rail-metal' | /**
+ * 141
  */
-'entity-info-icon-above' | /**
+'elevated-lower-object' | /**
  * 142
  */
-'explosion' | /**
+'elevated-object' | /**
  * 143
  */
+'elevated-higher-object' | /**
+ * 149
+ */
+'fluid-visualization' | /**
+ * 150
+ */
+'wires-above' | /**
+ * 153
+ */
+'entity-info-icon' | /**
+ * 154
+ */
+'entity-info-icon-above' | /**
+ * 157
+ */
+'explosion' | /**
+ * 158
+ */
 'projectile' | /**
- * 144
+ * 159
  */
 'smoke' | /**
- * 145
+ * 160
  */
 'air-object' | /**
- * 147
+ * 161
  */
 'air-entity-info-icon' | /**
- * 148
+ * 162
  */
 'light-effect' | /**
  * 187
@@ -5305,9 +6303,81 @@ string | /**
  * 190
  */
 'arrow' | /**
- * 210
+ * 226
  */
 'cursor';
+interface ResearchIngredient {
+    /**
+     * Prototype name of the required item.
+     */
+    name: string;
+    /**
+     * Amount of items required to research one unit of technology.
+     */
+    amount: uint16;
+}
+interface ResearchProgressProduct {
+    type: 'research-progress';
+    /**
+     * Prototype name of the research item.
+     */
+    research_item: string;
+    amount: double;
+}
+interface BaseResearchTrigger {
+    type: 'craft-item' | 'mine-entity' | 'craft-fluid' | 'send-item-to-orbit' | 'capture-spawner' | 'build-entity' | 'create-space-platform';
+}
+type ResearchTrigger = BaseResearchTrigger | ResearchTriggerBuildEntity | ResearchTriggerCaptureSpawner | ResearchTriggerCraftFluid | ResearchTriggerCraftItem | ResearchTriggerMineEntity | ResearchTriggerSendItemToOrbit;
+/**
+ *
+ * Applies to variant case `build-entity`
+ */
+interface ResearchTriggerBuildEntity extends BaseResearchTrigger {
+    'type': 'build-entity';
+    'entity': EntityIDFilter;
+}
+/**
+ *
+ * Applies to variant case `capture-spawner`
+ */
+interface ResearchTriggerCaptureSpawner extends BaseResearchTrigger {
+    'type': 'capture-spawner';
+    'entity'?: string;
+}
+/**
+ *
+ * Applies to variant case `craft-fluid`
+ */
+interface ResearchTriggerCraftFluid extends BaseResearchTrigger {
+    'type': 'craft-fluid';
+    'amount': double;
+    'fluid': string;
+}
+/**
+ *
+ * Applies to variant case `craft-item`
+ */
+interface ResearchTriggerCraftItem extends BaseResearchTrigger {
+    'type': 'craft-item';
+    'item': string;
+    'item_quality'?: string;
+}
+/**
+ *
+ * Applies to variant case `mine-entity`
+ */
+interface ResearchTriggerMineEntity extends BaseResearchTrigger {
+    'type': 'mine-entity';
+    'entity': string;
+}
+/**
+ *
+ * Applies to variant case `send-item-to-orbit`
+ */
+interface ResearchTriggerSendItemToOrbit extends BaseResearchTrigger {
+    'type': 'send-item-to-orbit';
+    'item': ItemIDFilter;
+}
 interface Resistance {
     /**
      * Absolute damage decrease
@@ -5324,7 +6394,28 @@ interface RidingState {
 }
 interface RollingStockDrawData {
     position: MapPosition;
-    orientaton: RealOrientation;
+    orientation: RealOrientation;
+    slope: float;
+    height: float;
+}
+interface ScheduleRecord {
+    /**
+     * Name of the station.
+     */
+    station?: string;
+    /**
+     * Rail to path to. Ignored if `station` is present.
+     */
+    rail?: LuaEntity;
+    /**
+     * When a train is allowed to reach rail target from any direction it will be `nil`. If rail has to be reached from specific direction, this value allows to choose the direction. This value corresponds to {@link LuaEntity::connected_rail_direction | runtime:LuaEntity::connected_rail_direction} of a TrainStop.
+     */
+    rail_direction?: defines.rail_direction;
+    wait_conditions?: WaitCondition[];
+    /**
+     * Only present when the station is temporary, the value is then always `true`.
+     */
+    temporary?: boolean;
 }
 /**
  * An area defined using the map editor.
@@ -5344,20 +6435,20 @@ interface ScriptPosition {
     color: Color;
     id: uint;
 }
-interface ScriptRenderTarget {
-    entity?: LuaEntity;
-    entity_offset?: Vector;
-    position?: MapPosition;
-}
 /**
- * One vertex of a ScriptRenderPolygon.
+ * When writing it is possible to give LuaEntity or MapPosition directly. However, reading always returns the full ScriptRenderTargetTable.
  */
-interface ScriptRenderVertexTarget {
-    target: MapPosition | LuaEntity;
+type ScriptRenderTarget = LuaEntity | MapPosition | ScriptRenderTargetTable;
+interface ScriptRenderTargetTable {
+    entity?: LuaEntity;
     /**
-     * Only used if `target` is a LuaEntity.
+     * Only used if `entity` was given.
      */
-    target_offset?: Vector;
+    offset?: Vector;
+    /**
+     * Only used, and mandatory if `entity` is not given.
+     */
+    position?: MapPosition;
 }
 /**
  * Scroll policy of a {@link scroll pane | runtime:LuaGuiElement}.
@@ -5435,9 +6526,6 @@ type SelectionModeFlags = Record</**
  * Selects entities that are {@link entities with health | runtime:LuaEntity::is_entity_with_health}.
  */
 'entity-with-health' | /**
- * Deprecated. Replaced by `is-military-target`.
- */
-'entity-with-force' | /**
  * Selects entities that are {@link military targets | runtime:LuaEntity::is_military_target}.
  */
 'is-military-target' | /**
@@ -5446,13 +6534,35 @@ type SelectionModeFlags = Record</**
 'entity-with-owner' | /**
  * Selects entities that are not `rolling-stock`s.
  */
-'avoid-rolling-stock' | /**
+'avoid-rolling-stock' | 'avoid-vehicle' | 'controllable' | 'controllable-add' | 'controllable-remove' | /**
  * Selects entities that are `entity-ghost`s.
  */
 'entity-ghost' | /**
  * Selects entities that are `tile-ghost`s.
  */
 'tile-ghost', true>;
+interface SelectorCombinatorParameters {
+    /**
+     * The signal to use.
+     */
+    index_signal: SignalID;
+    /**
+     * The signal index to use if not using a specific signal.
+     */
+    index_constant: uint;
+    /**
+     * The signal to emit.
+     */
+    count_signal: SignalID;
+    /**
+     * Must be one of `"select"`, `"count"`, `"random"`. When not specified, defaults to `"select"`.
+     */
+    operation?: string;
+    /**
+     * If the maximum value is used.
+     */
+    select_max: boolean;
+}
 /**
  * An actual signal transmitted by the network.
  */
@@ -5466,13 +6576,38 @@ interface Signal {
      */
     count: int;
 }
-interface SignalID {
-    type: 'item' | 'fluid' | 'virtual';
+/**
+ * A signal filter may be specified in two ways, either as a string which is a virtual signal name or item prototype name or as a table.
+ */
+type SignalFilter = {
     /**
-     * Name of the item, fluid or virtual signal.
+     * The type of the signal filter.
+     */
+    type?: SignalIDType;
+    /**
+     * Name of the signal.
+     */
+    name: string;
+    /**
+     * The prototype name of the signal's quality. `nil` for any quality.
+     */
+    quality?: QualityID;
+    /**
+     * The comparator for quality. `nil` if any quality.
+     */
+    comparator?: ComparatorString;
+} | string;
+interface SignalID {
+    /**
+     * The type of the signal. If the type is `"item"`, this will be `nil` when reading.
+     */
+    type?: SignalIDType;
+    /**
+     * Name of the prototype.
      */
     name?: string;
 }
+type SignalIDType = 'item' | 'fluid' | 'virtual' | 'entity' | 'recipe' | 'space-location' | 'asteroid-chunk' | 'quality';
 /**
  * An item stack may be specified in one of two ways.
  * @example ```
@@ -5497,24 +6632,22 @@ string | /**
  * The detailed definition of an item stack.
  */
 ItemStackDefinition;
-/**
- * The vectors for all 5 position attributes are a table with `x` and `y` keys instead of an array.
- */
 interface SmokeSource {
     name: string;
-    frequency: double;
-    offset: double;
+    frequency: float;
+    offset: float;
     position?: Vector;
     north_position?: Vector;
+    north_east_position?: Vector;
     east_position?: Vector;
+    south_east_position?: Vector;
     south_position?: Vector;
+    south_west_position?: Vector;
     west_position?: Vector;
+    north_west_position?: Vector;
     deviation?: MapPosition;
-    starting_frame_speed: uint16;
-    starting_frame_speed_deviation: double;
     starting_frame: uint16;
-    starting_frame_deviation: double;
-    slow_down_factor: uint8;
+    starting_frame_deviation: uint16;
     height: float;
     height_deviation: float;
     starting_vertical_speed: float;
@@ -5524,33 +6657,103 @@ interface SmokeSource {
 /**
  * It can be either the name of a {@link SoundPrototype | prototype:SoundPrototype} defined in the data stage, or a path in the form `"type/name"`. The latter option can be sorted into three categories.
  *
- * The validity of a SoundPath can be verified at runtime using {@link LuaGameScript::is_valid_sound_path | runtime:LuaGameScript::is_valid_sound_path}.
- * The utility and ambient types each contain general use sound prototypes defined by the game itself:
+ * The validity of a SoundPath can be verified at runtime using {@link LuaHelpers::is_valid_sound_path | runtime:LuaHelpers::is_valid_sound_path}.
+ * The utility and ambient types each contain general use sound prototypes defined by the game itself.
  *
  * - `"utility"` - Uses {@link UtilitySounds | prototype:UtilitySounds}. Example: `"utility/wire_connect_pole"`
  * - `"ambient"` - Uses {@link AmbientSound | prototype:AmbientSound}. Example: `"ambient/resource-deficiency"`
- * The following types can be combined with any tile name as long as its prototype defines the corresponding sound:
- *
- * - `"tile-walking"` - Uses {@link TilePrototype::walking_sound | prototype:TilePrototype::walking_sound}. Example: `"tile-walking/concrete"`
- * - `"tile-mined"` - Uses {@link TilePrototype::mined_sound | prototype:TilePrototype::mined_sound}
- * - `"tile-build-small"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}. Example: `"tile-build-small/concrete"`
- * - `"tile-build-medium"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}
- * - `"tile-build-large"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}
- * The following types can be combined with any entity name as long as its prototype defines the corresponding sound:
- *
- * - `"entity-build"` - Uses {@link Entity::build_sound | prototype:EntityPrototype::build_sound}. Example: `"entity-build/wooden-chest"`
- * - `"entity-mined"` - Uses {@link Entity::mined_sound | prototype:EntityPrototype::mined_sound}
- * - `"entity-mining"` - Uses {@link Entity::mining_sound | prototype:EntityPrototype::mining_sound}
- * - `"entity-vehicle_impact"` - Uses {@link EntityPrototype::vehicle_impact_sound | prototype:EntityPrototype::vehicle_impact_sound}
- * - `"entity-rotated"` - Uses {@link EntityPrototype::rotated_sound | prototype:EntityPrototype::rotated_sound}
- * - `"entity-open"` - Uses {@link Entity::open_sound | prototype:EntityPrototype::open_sound}
- * - `"entity-close"` - Uses {@link Entity::close_sound | prototype:EntityPrototype::close_sound}
  */
 type SoundPath = string;
 /**
  * Defines which slider in the game's sound settings affects the volume of this sound. Furthermore, some sound types are mixed differently than others, e.g. zoom level effects are applied.
  */
-type SoundType = 'game-effect' | 'gui-effect' | 'ambient' | 'environment' | 'walking' | 'alert' | 'wind';
+type SoundType = 'game-effect' | 'gui-effect' | 'ambient' | 'environment' | 'walking' | 'alert' | 'wind' | 'world-ambient' | 'weapon' | 'explosion' | 'enemy';
+interface SpaceConnectionAsteroidSpawnDefinition {
+    /**
+     * `asteroid-chunk` or `entity`
+     */
+    type: string;
+    /**
+     * The asteroid chunk or entity name.
+     */
+    asteroid: string;
+    spawn_points: SpaceConnectionAsteroidSpawnPoint[];
+}
+interface SpaceConnectionAsteroidSpawnPoint {
+    probability: double;
+    speed: double;
+    distance: double;
+}
+interface SpaceLocationAsteroidSpawnDefinition {
+    /**
+     * `asteroid-chunk` or `entity`
+     */
+    type: string;
+    /**
+     * The asteroid chunk or entity name.
+     */
+    asteroid: string;
+    probability: double;
+    speed: double;
+}
+/**
+ * A space location prototype may be specified in one of two ways.
+ */
+type SpaceLocationID = /**
+ * The space location prototype.
+ */
+LuaSpaceLocationPrototype | /**
+ * The prototype name.
+ */
+string;
+interface BaseSpaceLocationPrototypeFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'fly-condition' | 'type' | 'solar-power-in-space';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type SpaceLocationPrototypeFilter = BaseSpaceLocationPrototypeFilter | SpaceLocationPrototypeFilterSolarPowerInSpace | SpaceLocationPrototypeFilterType;
+/**
+ *
+ * Applies to variant case `solar-power-in-space`
+ */
+interface SpaceLocationPrototypeFilterSolarPowerInSpace extends BaseSpaceLocationPrototypeFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'solar-power-in-space';
+    'comparison': ComparatorString;
+    /**
+     * The value to compare against.
+     */
+    'value': double;
+}
+/**
+ *
+ * Applies to variant case `type`
+ */
+interface SpaceLocationPrototypeFilterType extends BaseSpaceLocationPrototypeFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'type';
+    /**
+     * The prototype type, or a list of acceptable types.
+     */
+    'type': string | string[];
+}
+/**
+ * Space platform may be specified in one of one ways.
+ */
+type SpacePlatformIdentification = LuaSpacePlatform;
 interface SpawnPointDefinition {
     /**
      * Evolution factor for which this weight applies.
@@ -5561,22 +6764,41 @@ interface SpawnPointDefinition {
      */
     weight: double;
 }
+interface SpoilToTriggerResult {
+    /**
+     * The trigger runs (count-in-stack / items_per_trigger) times; rounded up.
+     */
+    items_per_trigger: uint;
+    /**
+     * The trigger items that are run.
+     */
+    trigger: TriggerItem[];
+}
 /**
  * It can be either the name of a {@link SpritePrototype | prototype:SpritePrototype} defined in the data stage, or a path in form "type/name" or "type.name".
  *
- * The validity of a SpritePath can be verified at runtime using {@link LuaGameScript::is_valid_sprite_path | runtime:LuaGameScript::is_valid_sprite_path}.
+ * The validity of a SpritePath can be verified at runtime using {@link LuaHelpers::is_valid_sprite_path | runtime:LuaHelpers::is_valid_sprite_path}.
  * The supported types are:
  *
  * - `"item"` - for example "item/iron-plate" is the icon sprite of iron plate
  * - `"entity"` - for example "entity/small-biter" is the icon sprite of the small biter
  * - `"technology"`
  * - `"recipe"`
- * - `"item-group"`
  * - `"fluid"`
  * - `"tile"`
+ * - `"item-group"`
  * - `"virtual-signal"`
+ * - `"shortcut"`
  * - `"achievement"`
  * - `"equipment"`
+ * - `"ammo-category"`
+ * - `"decorative"`
+ * - `"space-connection"`
+ * - `"space-location"`
+ * - `"surface"`
+ * - `"airborne-pollutant"`
+ * - `"asteroid-chunk"`
+ * - `"quality"`
  * - `"file"` - path to an image file located inside the current scenario. This file is not preloaded so it will be slower; for frequently used sprites, it is better to define sprite prototype and use it instead.
  * - `"utility"` - sprite defined in the utility-sprites object, these are the pictures used by the game internally for the UI.
  */
@@ -5597,6 +6819,11 @@ interface SteeringMapSettings {
     default: SteeringMapSetting;
     moving: SteeringMapSetting;
 }
+interface SurfaceCondition {
+    property: string;
+    min: double;
+    max: double;
+}
 /**
  * A surface may be specified in one of three ways.
  */
@@ -5610,6 +6837,16 @@ string | /**
  * A reference to {@link LuaSurface | runtime:LuaSurface} may be passed directly.
  */
 LuaSurface;
+/**
+ * Surface property prototype may be specified in one of two ways.
+ */
+type SurfacePropertyID = /**
+ * The surface property prototype.
+ */
+LuaSurfacePropertyPrototype | /**
+ * The prototype name.
+ */
+string;
 /**
  * State of a GUI {@link switch | runtime:LuaGuiElement::switch_state}.
  */
@@ -5641,18 +6878,18 @@ type TargetType = /**
  */
 'direction';
 /**
- * A technology may be specified in one of three ways.
+ * An technology prototype may be specified in one of three ways.
  */
-type TechnologyIdentification = /**
- * The technology name.
+type TechnologyID = /**
+ * The technology prototype.
  */
-string | /**
- * A reference to {@link LuaTechnology | runtime:LuaTechnology} may be passed directly.
+LuaTechnologyPrototype | /**
+ * Instance of the technology.
  */
 LuaTechnology | /**
- * A reference to {@link LuaTechnologyPrototype | runtime:LuaTechnologyPrototype} may be passed directly.
+ * The prototype name.
  */
-LuaTechnologyPrototype;
+string;
 /**
  * The effect that is applied when a technology is researched. It is a table that contains at least the field `type`.
  */
@@ -5864,6 +7101,12 @@ interface TechnologyPrototypeFilterUnlocksRecipe extends BaseTechnologyPrototype
      */
     'recipe': string;
 }
+interface TerritorySettings {
+    units: string[];
+    territory_index_expression: string;
+    territory_variation_expression: string;
+    minimum_territory_size: uint;
+}
 /**
  * The text is aligned so that the target position is at the given side of the text.
  *
@@ -5881,6 +7124,19 @@ interface Tile {
     name: string;
 }
 /**
+ * A tile may be specified in one of three ways.
+ */
+type TileID = /**
+ * By tile prototype.
+ */
+LuaTilePrototype | /**
+ * By instance of tile.
+ */
+LuaTile | /**
+ * By name of the tile prototype.
+ */
+string;
+/**
  * Coordinates of a tile on a {@link LuaSurface | runtime:LuaSurface} where each integer `x`/`y` represents a different tile. This uses the same format as {@link MapPosition | runtime:MapPosition}, except it rounds any non-integer `x`/`y` down to whole numbers. It can be specified either with or without explicit keys.
  */
 type TilePosition = {
@@ -5894,7 +7150,7 @@ interface BaseTilePrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'minable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'collision-mask' | 'walking-speed-modifier' | 'vehicle-friction-modifier' | 'decorative-removal-probability' | 'emissions';
+    filter: 'minable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'collision-mask' | 'walking-speed-modifier' | 'vehicle-friction-modifier' | 'decorative-removal-probability' | 'absorptions-per-second';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -5904,7 +7160,26 @@ interface BaseTilePrototypeFilter {
      */
     invert?: boolean;
 }
-type TilePrototypeFilter = BaseTilePrototypeFilter | TilePrototypeFilterCollisionMask | TilePrototypeFilterDecorativeRemovalProbability | TilePrototypeFilterEmissions | TilePrototypeFilterVehicleFrictionModifier | TilePrototypeFilterWalkingSpeedModifier;
+type TilePrototypeFilter = BaseTilePrototypeFilter | TilePrototypeFilterAbsorptionsPerSecond | TilePrototypeFilterCollisionMask | TilePrototypeFilterDecorativeRemovalProbability | TilePrototypeFilterVehicleFrictionModifier | TilePrototypeFilterWalkingSpeedModifier;
+/**
+ *
+ * Applies to variant case `absorptions-per-second`
+ */
+interface TilePrototypeFilterAbsorptionsPerSecond extends BaseTilePrototypeFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'absorptions-per-second';
+    'comparison': ComparatorString;
+    /**
+     * The name of a pollutant type to check.
+     */
+    'pollutant': string;
+    /**
+     * The value to compare against.
+     */
+    'value': double;
+}
 /**
  *
  * Applies to variant case `collision-mask`
@@ -5914,7 +7189,10 @@ interface TilePrototypeFilterCollisionMask extends BaseTilePrototypeFilter {
      * The condition to filter on.
      */
     'filter': 'collision-mask';
-    'mask': CollisionMask | CollisionMaskWithFlags;
+    /**
+     * Name of one {@link layer | runtime:LuaCollisionLayerPrototype} or a full collision mask.
+     */
+    'mask': CollisionLayerID | CollisionMask;
     /**
      * How to filter.
      */
@@ -5934,21 +7212,6 @@ interface TilePrototypeFilterDecorativeRemovalProbability extends BaseTileProtot
      * The value to compare against.
      */
     'value': float;
-}
-/**
- *
- * Applies to variant case `emissions`
- */
-interface TilePrototypeFilterEmissions extends BaseTilePrototypeFilter {
-    /**
-     * The condition to filter on.
-     */
-    'filter': 'emissions';
-    'comparison': ComparatorString;
-    /**
-     * The value to compare against.
-     */
-    'value': double;
 }
 /**
  *
@@ -5980,6 +7243,79 @@ interface TilePrototypeFilterWalkingSpeedModifier extends BaseTilePrototypeFilte
      */
     'value': double;
 }
+interface TileSearchFilters {
+    area?: BoundingBox;
+    /**
+     * Ignored if not given with radius.
+     */
+    position?: MapPosition;
+    /**
+     * If given with position, will return all tiles within the radius of the position.
+     */
+    radius?: double;
+    /**
+     * An empty array means nothing matches the name filter.
+     */
+    name?: TileID | TileID[];
+    limit?: uint;
+    has_hidden_tile?: boolean;
+    /**
+     * Can be further filtered by supplying a `force` filter.
+     */
+    has_double_hidden_tile?: boolean;
+    /**
+     * Can be further filtered by supplying a `force` filter.
+     */
+    has_tile_ghost?: boolean;
+    /**
+     * Can be further filtered by supplying a `force` filter.
+     */
+    to_be_deconstructed?: boolean;
+    collision_mask?: CollisionLayerID | CollisionLayerID[] | Record<CollisionLayerID, true>;
+    force?: ForceSet;
+    /**
+     * If the filters should be inverted.
+     */
+    invert?: boolean;
+}
+interface TrainFilter {
+    /**
+     * Train ID filter
+     */
+    train_id?: uint;
+    /**
+     * Surface the train must be on in order to pass
+     */
+    surface?: SurfaceIdentification;
+    /**
+     * Train must contain at least one rolling stock of this force to pass
+     */
+    force?: ForceID;
+    /**
+     * Train must contain a rolling stock of any of provided prototype to pass
+     */
+    stock?: EntityID | EntityID[];
+    /**
+     * Train must have at least that many stocks to pass
+     */
+    min_stocks?: uint;
+    /**
+     * Train must have at most that many stocks to pass
+     */
+    max_stocks?: uint;
+    /**
+     * Checks if train is moving (has speed != 0) or not moving.
+     */
+    is_moving?: boolean;
+    /**
+     * Checks if train has a passenger.
+     */
+    has_passenger?: boolean;
+    /**
+     * Checks if train is in manual controller.
+     */
+    is_manual?: boolean;
+}
 interface TrainPathAllGoalsResult {
     /**
      * Amount of goals that are accessible.
@@ -5998,62 +7334,52 @@ interface TrainPathAllGoalsResult {
      */
     steps_count: uint;
 }
-interface TrainPathAnyGoalResult {
-    /**
-     * True if any goal was accessible.
-     */
-    found_path: boolean;
-    /**
-     * If any goal was accessible, this gives index of the particular goal that was found.
-     */
-    goal_index?: uint;
-    /**
-     * Penalty of the path to goal if a goal was accessible.
-     */
-    penalty?: double;
-    /**
-     * Amount of steps pathfinder performed. This is a measure of how expensive this search was.
-     */
-    steps_count: uint;
-}
-interface TrainPathFinderPathResult {
+type TrainPathFinderGoal = TrainStopGoal | RailEndGoal | LuaRailEnd | /**
+ * Only if it points at train-stop that is connected to a rail.
+ */
+LuaEntity;
+interface TrainPathFinderOneGoalResult {
     /**
      * True if found path.
      */
     found_path: boolean;
     /**
-     * Only returned if `return_path` was set to true and path was found. Contains all rails in order that are part of the found path.
-     */
-    path?: LuaEntity[];
-    /**
      * If path was found, provides index of the specific goal to which the path goes to.
      */
     goal_index?: uint;
+    /**
+     * If path was found, provides index of the specific start from which the path to target goes from
+     */
+    start_index?: uint;
     /**
      * Penalty of the path to goal if path was found.
      */
     penalty?: double;
     /**
-     * If path was found, provides total length of all rails of the path.
+     * If path was found, tells if the path was reached from the train's front end or from {@link RailEndStart | runtime:RailEndStart} with {@link RailEndStart::is_front | runtime:RailEndStart::is_front} set.
+     */
+    is_front?: boolean;
+    /**
+     * If path was found and search was of type `"path"`, provides total length of all rails of the path.
      */
     total_length?: double;
     /**
-     * If path was found, tells if the path was reached from the `from_front` or train's front end.
+     * Only if search was of type `"path"`, `return_path` was set to true and path was found. Contains all rails in order that are part of the found path.
      */
-    is_front?: boolean;
+    path?: LuaEntity[];
     /**
      * Amount of steps pathfinder performed. This is a measure of how expensive this search was.
      */
     steps_count: uint;
 }
 /**
- * A {@link string | runtime:string} specifying the type of request for {@link LuaGameScript::request_train_path | runtime:LuaGameScript::request_train_path}.
+ * A {@link string | runtime:string} specifying the type of request for {@link LuaTrainManager::request_train_path | runtime:LuaTrainManager::request_train_path}.
  */
 type TrainPathRequestType = /**
- * The method will return {@link TrainPathFinderPathResult | runtime:TrainPathFinderPathResult}.
+ * The method will return {@link TrainPathFinderOneGoalResult | runtime:TrainPathFinderOneGoalResult}.
  */
 'path' | /**
- * The method will return {@link TrainPathAnyGoalResult | runtime:TrainPathAnyGoalResult}.
+ * The method will return {@link TrainPathFinderOneGoalResult | runtime:TrainPathFinderOneGoalResult}.
  */
 'any-goal-accessible' | /**
  * The method will return {@link TrainPathAllGoalsResult | runtime:TrainPathAllGoalsResult}.
@@ -6067,35 +7393,54 @@ interface TrainSchedule {
      * Index of the currently active record
      */
     current: uint;
-    records: TrainScheduleRecord[];
+    records: ScheduleRecord[];
 }
-interface TrainScheduleRecord {
+interface TrainStopFilter {
     /**
-     * Name of the station.
+     * Surface the train stop must be on in order to pass
      */
-    station?: string;
+    surface?: SurfaceIdentification;
     /**
-     * Rail to path to. Ignored if `station` is present.
+     * ForceID the train stop must have to pass
      */
-    rail?: LuaEntity;
+    force?: ForceID;
     /**
-     * When a train is allowed to reach rail target from any direction it will be `nil`. If rail has to be reached from specific direction, this value allows to choose the direction. This value corresponds to {@link LuaEntity::connected_rail_direction | runtime:LuaEntity::connected_rail_direction} of a TrainStop.
+     * Checks if train stop is full (trains count >= trains limit or disabled) or not full.
      */
-    rail_direction?: defines.rail_direction;
-    wait_conditions?: WaitCondition[];
+    is_full?: boolean;
     /**
-     * Only present when the station is temporary, the value is then always `true`.
+     * Checks if train stop has a rail next to it.
      */
-    temporary?: boolean;
+    is_connected_to_rail?: boolean;
+    /**
+     * If given, only train stops of this type will pass
+     */
+    type?: EntityID | EntityID[];
+    /**
+     * Train stop must belong to given station name to pass
+     */
+    station_name?: string | string[];
+    /**
+     * If train stop has limit set by control behavior
+     */
+    limit_set_by_control_behavior?: boolean;
+    /**
+     * If train stop is disabled by a control behavior
+     */
+    is_disabled?: boolean;
 }
 interface TrainStopGoal {
     /**
      * Train stop target. Must be connected to rail ({@link LuaEntity::connected_rail | runtime:LuaEntity::connected_rail} returns valid LuaEntity).
      */
     train_stop: LuaEntity;
+    /**
+     * Goal priority. If not provided, defaults to {@link LuaEntity::train_stop_priority | runtime:LuaEntity::train_stop_priority} of provided train_stop.
+     */
+    priority?: uint8;
 }
 interface TriggerDelivery {
-    type: 'instant' | 'projectile' | 'flame-thrower' | 'beam' | 'stream' | 'artillery';
+    type: 'instant' | 'projectile' | 'beam' | 'stream' | 'artillery' | 'chain' | 'delayed';
     source_effects: TriggerEffectItem[];
     target_effects: TriggerEffectItem[];
 }
@@ -6111,7 +7456,7 @@ interface TriggerEffectItem {
 /**
  * Used by {@link TriggerEffectItem | runtime:TriggerEffectItem}.
  */
-type TriggerEffectItemType = 'damage' | 'create-entity' | 'create-explosion' | 'create-fire' | 'create-smoke' | 'create-trivial-smoke' | 'create-particle' | 'create-sticker' | 'create-decorative' | 'nested-result' | 'play-sound' | 'push-back' | 'destroy-cliffs' | 'show-explosion-on-chart' | 'insert-item' | 'script' | 'set-tile' | 'invoke-tile-trigger' | 'destroy-decoratives' | 'camera-effect';
+type TriggerEffectItemType = 'damage' | 'create-entity' | 'create-explosion' | 'create-fire' | 'create-smoke' | 'create-trivial-smoke' | 'create-asteroid-chunk' | 'create-particle' | 'create-sticker' | 'create-decorative' | 'nested-result' | 'play-sound' | 'push-back' | 'destroy-cliffs' | 'show-explosion-on-chart' | 'insert-item' | 'script' | 'set-tile' | 'invoke-tile-trigger' | 'destroy-decoratives' | 'camera-effect' | 'activate-impact';
 interface TriggerItem {
     type: 'direct' | 'area' | 'line' | 'cluster';
     action_delivery?: TriggerDelivery[];
@@ -6136,6 +7481,210 @@ interface TriggerItem {
  * A set of trigger target masks.
  */
 type TriggerTargetMask = Record<string, true>;
+/**
+ * A trivial smoke prototype may be specified in one of two ways.
+ */
+type TrivialSmokeID = /**
+ * The trivial smoke prototype.
+ */
+LuaTrivialSmokePrototype | /**
+ * The prototype name.
+ */
+string;
+interface BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    type: string;
+    /**
+     * The tags attached to the undo action, if any.
+     */
+    tags?: Tags;
+}
+type UndoRedoAction = BaseUndoRedoAction | UndoRedoActionBuiltEntity | UndoRedoActionBuiltTile | UndoRedoActionCopyEntitySettings | UndoRedoActionRemovedEntity | UndoRedoActionRemovedTile | UndoRedoActionRotatedEntity | UndoRedoActionUpgradedEntity | UndoRedoActionUpgradedModules | UndoRedoActionWireAdded | UndoRedoActionWireRemoved;
+/**
+ *
+ * Applies to variant case `built-entity`
+ */
+interface UndoRedoActionBuiltEntity extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'built-entity';
+    /**
+     * The specification of the built entity.
+     */
+    'target': BlueprintEntity;
+}
+/**
+ *
+ * Applies to variant case `built-tile`
+ */
+interface UndoRedoActionBuiltTile extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'built-tile';
+    /**
+     * The prototype name of the newly built tile.
+     */
+    'new_tile': string;
+    /**
+     * The position of the newly built tile.
+     */
+    'position': TilePosition;
+    /**
+     * The prototype name of the replaced tile, if any was replaced.
+     */
+    'previous_tile'?: string;
+    /**
+     * The surface on which the tile was built.
+     */
+    'surface_index': uint;
+}
+/**
+ *
+ * Applies to variant case `copy-entity-settings`
+ */
+interface UndoRedoActionCopyEntitySettings extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'copy-entity-settings';
+    'entity_with_previous_settings'?: BlueprintEntity;
+    'target'?: BlueprintEntity;
+}
+/**
+ *
+ * Applies to variant case `removed-entity`
+ */
+interface UndoRedoActionRemovedEntity extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'removed-entity';
+    /**
+     * The items that the entity will request when revived, if there are any. It's a mapping of prototype names to amounts. Not present for entities the game can't restore, like trees or rocks.
+     */
+    'insert_plan'?: BlueprintInsertPlan[];
+    /**
+     * The schedule of the entity, if it has one. Only relevant for locomotives. Not present for entities the game can't restore, like trees or rocks.
+     */
+    'schedule'?: BlueprintSchedule;
+    /**
+     * The surface from which the entity was removed. Not present for entities the game can't restore, like trees or rocks.
+     */
+    'surface_index'?: uint;
+    /**
+     * The specification of the removed entity.
+     */
+    'target': BlueprintEntity;
+}
+/**
+ *
+ * Applies to variant case `removed-tile`
+ */
+interface UndoRedoActionRemovedTile extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'removed-tile';
+    /**
+     * The position of the removed tile.
+     */
+    'position': TilePosition;
+    /**
+     * The prototype name of the removed tile.
+     */
+    'previous_tile': string;
+    /**
+     * The surface from which the tile was removed.
+     */
+    'surface_index': uint;
+}
+/**
+ *
+ * Applies to variant case `rotated-entity`
+ */
+interface UndoRedoActionRotatedEntity extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'rotated-entity';
+    /**
+     * The direction of the entity before upgrading.
+     */
+    'original_direction': defines.direction;
+    'original_mirroring': boolean;
+    /**
+     * The specification of the rotated entity.
+     */
+    'target': BlueprintEntity;
+}
+/**
+ *
+ * Applies to variant case `upgraded-entity`
+ */
+interface UndoRedoActionUpgradedEntity extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'upgraded-entity';
+    /**
+     * The prototype name of the upgraded entity.
+     */
+    'original_name': string;
+    /**
+     * The quality prototype name of the entity before upgrading.
+     */
+    'original_quality_name': string;
+    /**
+     * The specification of the upgraded entity.
+     */
+    'target': BlueprintEntity;
+}
+/**
+ *
+ * Applies to variant case `upgraded-modules`
+ */
+interface UndoRedoActionUpgradedModules extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'upgraded-modules';
+    /**
+     * The modules present in the target before the upgrade.
+     */
+    'modules_before': BlueprintInsertPlan;
+    /**
+     * The specification of the upgraded entity.
+     */
+    'target': BlueprintEntity;
+}
+/**
+ *
+ * Applies to variant case `wire-added`
+ */
+interface UndoRedoActionWireAdded extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'wire-added';
+    'a': BlueprintWireEnd;
+    'b': BlueprintWireEnd;
+}
+/**
+ *
+ * Applies to variant case `wire-removed`
+ */
+interface UndoRedoActionWireRemoved extends BaseUndoRedoAction {
+    /**
+     * The type of action that was undone or redone.
+     */
+    'type': 'wire-removed';
+    'a': BlueprintWireEnd;
+    'b': BlueprintWireEnd;
+}
 interface UnitGroupMapSettings {
     /**
      * The minimum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `3 600` ticks.
@@ -6197,15 +7746,41 @@ interface UnitSpawnDefinition {
      */
     spawn_points: SpawnPointDefinition[];
 }
-interface UpgradeFilter {
+interface UpgradeMapperDestination {
+    /**
+     * `"item"`, or `"entity"`.
+     */
+    type: string;
+    /**
+     * Name of the item, or entity.
+     */
+    name?: string;
+    /**
+     * Name of the quality.
+     */
+    quality?: string;
+    /**
+     * when type is `"item"` and the mapper is configured to install modules the limit per machine. If `0` then no limit.
+     */
+    count?: uint;
+}
+interface UpgradeMapperSource {
     type: 'item' | 'entity';
     /**
      * Name of the item, or entity.
      */
     name?: string;
+    /**
+     * Name of the quality prototype.
+     */
+    quality?: string;
+    /**
+     * The quality comparison type.
+     */
+    comparator?: ComparatorString;
 }
 /**
- * A vector is a two-element array containing the `x` and `y` components. In some specific cases, the vector is a table with `x` and `y` keys instead, which the documentation will point out.
+ * A vector is a two-element array or dictionary containing the `x` and `y` components. The game will always provide the array format. Positive x goes east, positive y goes south.
  * @example ```
 right = {1.0, 0.0}
 ```
@@ -6214,6 +7789,20 @@ type Vector = {
     x: float;
     y: float;
 } | [
+    float,
+    float
+];
+/**
+ * Reading this always returns the table with the named keys.
+ *
+ * If this is specified as a three-element array then the array items are x, y and z, in that order.
+ */
+type Vector3D = {
+    x: float;
+    y: float;
+    z: float;
+} | [
+    float,
     float,
     float
 ];
@@ -6227,50 +7816,83 @@ interface VehicleAutomaticTargetingParameters {
  * For example, `"top"` aligned text means the top of the text is at the target position. Or in other words, the target is at the top of the text.
  */
 type VerticalTextAlign = 'top' | 'middle' | 'baseline' | 'bottom';
+/**
+ * A virtual signal prototype may be specified in one of two ways.
+ */
+type VirtualSignalID = /**
+ * The virtual signal prototype.
+ */
+LuaVirtualSignalPrototype | /**
+ * The prototype name.
+ */
+string;
 interface WaitCondition {
     type: WaitConditionType;
     /**
-     * Specifies how this condition is to be compared with the preceding conditions in the corresponding `wait_conditions` array.
+     * Specifies how this condition is to be compared with the preceding conditions in the corresponding `wait_conditions` array. Always present when reading, defaults to `"and"` when writing.
      */
-    compare_type: 'and' | 'or';
+    compare_type?: 'and' | 'or';
     /**
      * Number of ticks to wait when `type` is `"time"`, or number of ticks of inactivity when `type` is `"inactivity"`.
      */
     ticks?: uint;
     /**
-     * Only present when `type` is `"item_count"`, `"circuit"` or `"fluid_count"`, and a circuit condition is configured.
+     * This is a CircuitCondition and only present when `type` is `"item_count"`, `"circuit"`, `"fluid_count"`, `"fuel_item_count_all"`, or `"fuel_item_count_any"`, and a circuit condition is configured. This is a ItemIDAndQualityIDPair and only present when `type` is `"request_satisfied"` or `"request_not_satisfied"`
      */
-    condition?: CircuitCondition;
+    condition?: CircuitCondition | ItemIDAndQualityIDPair;
+    /**
+     * Name of the space location. Only present when `type` is "`any_planet_import_zero`" and a planet is configured.
+     */
+    planet?: string;
+    /**
+     * Name of the station. Only present when `type` is "`specific_destination_full`", "`specific_destination_not_full`", "`at_station`", or "`not_at_station`", and a station is configured.
+     */
+    station?: string;
+    /**
+     * Amount of damage to take when `type` is `"damage_taken"`.
+     */
+    damage?: uint;
 }
 /**
  * Type of a {@link WaitCondition | runtime:WaitCondition}.
  */
-type WaitConditionType = 'time' | 'full' | 'empty' | 'item_count' | 'circuit' | 'inactivity' | 'robots_inactive' | 'fluid_count' | 'passenger_present' | 'passenger_not_present';
-interface WireConnectionDefinition {
+type WaitConditionType = 'time' | 'full' | 'empty' | 'not_empty' | 'item_count' | 'circuit' | 'inactivity' | 'robots_inactive' | 'fluid_count' | 'passenger_present' | 'passenger_not_present' | 'fuel_item_count_all' | 'fuel_item_count_any' | 'fuel_full' | 'destination_full_or_no_path' | 'request_satisfied' | 'request_not_satisfied' | 'all_requests_satisfied' | 'any_request_not_satisfied' | 'any_request_zero' | 'any_planet_import_zero' | 'specific_destination_full' | 'specific_destination_not_full' | 'at_station' | 'not_at_station' | 'damage_taken';
+interface WireConnection {
+    target: LuaWireConnector;
     /**
-     * The type of wire used.
+     * Defaults to defines.wire_origin.player
      */
-    wire: defines.wire_type;
+    origin?: defines.wire_origin;
+}
+interface WorkerRobotOrder {
     /**
-     * The entity to (dis)connect the source entity with.
+     * The type of the order.
      */
-    target_entity: LuaEntity;
+    type: defines.robot_order_type;
     /**
-     * Mandatory if the source entity has more than one circuit connection using circuit wire.
+     * The target of the order.
      */
-    source_circuit_id?: defines.circuit_connector_id;
+    target?: LuaEntity;
     /**
-     * Mandatory if the target entity has more than one circuit connection using circuit wire.
+     * The item to place if relevant.
      */
-    target_circuit_id?: defines.circuit_connector_id;
+    item_to_place?: SimpleItemStack;
     /**
-     * Mandatory if the source entity has more than one wire connection using copper wire.
+     * The secondary target of the upgrade order.
      */
-    source_wire_id?: defines.wire_connection_id;
+    secondary_target?: LuaEntity;
     /**
-     * Mandatory if the target entity has more than one wire connection using copper wire.
+     * The cliff explosive for the cliff explode job.
      */
-    target_wire_id?: defines.wire_connection_id;
+    cliff_explosive_id?: LuaItemPrototype;
+    /**
+     * The target item of the pickup or deliver order.
+     */
+    target_item?: ItemIDAndQualityIDPair;
+    /**
+     * The target count of the pickup or deliver order.
+     */
+    target_count?: ItemCountType;
 }
 /**
  * A double-precision floating-point number. This is the same data type as all Lua numbers use.

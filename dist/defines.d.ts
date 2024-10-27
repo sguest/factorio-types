@@ -2,20 +2,28 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 1.1.110
-// API version 5
+// Factorio version 2.0.11
+// API version 6
 
 declare namespace defines {
 enum alert_type {
-    custom = 0,
-    entity_destroyed = 1,
-    entity_under_attack = 2,
-    no_material_for_construction = 3,
-    no_storage = 4,
-    not_enough_construction_robots = 5,
-    not_enough_repair_packs = 6,
-    train_out_of_fuel = 7,
-    turret_fire = 8
+    collector_path_blocked = 0,
+    custom = 1,
+    entity_destroyed = 2,
+    entity_under_attack = 3,
+    no_material_for_construction = 4,
+    no_platform_storage = 5,
+    no_roboport_storage = 6,
+    no_storage = 7,
+    not_enough_construction_robots = 8,
+    not_enough_repair_packs = 9,
+    pipeline_overextended = 10,
+    platform_tile_building_blocked = 11,
+    train_no_path = 12,
+    train_out_of_fuel = 13,
+    turret_fire = 14,
+    turret_out_of_ammo = 15,
+    unclaimed_cargo = 16
 }
 /**
  * AI command exit status. See {@link LuaEntity::set_command | runtime:LuaEntity::set_command}
@@ -34,6 +42,11 @@ enum build_check_type {
     script = 0,
     script_ghost = 3
 }
+enum build_mode {
+    forced = 1,
+    normal = 0,
+    superforced = 2
+}
 /**
  * State of a chain signal.
  */
@@ -50,35 +63,6 @@ enum chunk_generated_status {
     entities = 5,
     nothing = 0,
     tiles = 4
-}
-enum circuit_condition_index {
-    arithmetic_combinator = 3,
-    constant_combinator = 5,
-    decider_combinator = 4,
-    inserter_circuit = 0,
-    inserter_logistic = 1,
-    lamp = 2,
-    offshore_pump = 6,
-    pump = 7
-}
-enum circuit_connector_id {
-    accumulator = 0,
-    combinator_input = 13,
-    combinator_output = 14,
-    constant_combinator = 1,
-    container = 2,
-    electric_pole = 10,
-    inserter = 11,
-    lamp = 12,
-    linked_container = 3,
-    offshore_pump = 15,
-    programmable_speaker = 4,
-    pump = 16,
-    rail_chain_signal = 6,
-    rail_signal = 5,
-    roboport = 7,
-    storage_tank = 8,
-    wall = 9
 }
 /**
  * Command given to units describing what they should do.
@@ -139,26 +123,29 @@ enum compound_command {
     return_last = 2
 }
 namespace control_behavior {
-    namespace inserter {
-        enum circuit_mode_of_operation {
-            enable_disable = 1,
+    namespace cargo_landing_pad {
+        enum exclusive_mode {
             none = 0,
-            read_hand_contents = 3,
-            set_filters = 2,
-            set_stack_size = 4
+            send_contents = 1,
+            set_requests = 2
         }
+    }
+    namespace inserter {
         enum hand_read_mode {
             hold = 0,
             pulse = 1
         }
     }
     namespace lamp {
-        enum circuit_mode_of_operation {
-            use_colors = 0
+        enum color_mode {
+            color_mapping = 0,
+            components = 1,
+            packed_rgb = 2
         }
     }
     namespace logistic_container {
-        enum circuit_mode_of_operation {
+        enum exclusive_mode {
+            none = 2,
             send_contents = 0,
             set_requests = 1
         }
@@ -169,8 +156,23 @@ namespace control_behavior {
             this_miner = 0
         }
     }
+    namespace roboport {
+        enum read_items_mode {
+            logistics = 1,
+            missing_requests = 2,
+            none = 0
+        }
+    }
+    namespace rocket_silo {
+        enum read_mode {
+            logistic_inventory = 1,
+            none = 0,
+            orbital_requests = 2
+        }
+    }
     namespace transport_belt {
         enum content_read_mode {
+            entire_belt_hold = 2,
             hold = 1,
             pulse = 0
         }
@@ -181,9 +183,29 @@ namespace control_behavior {
          */
         accumulator = 12,
         /**
+         * {@link LuaAgriculturalTowerControlBehavior | runtime:LuaAgriculturalTowerControlBehavior}
+         */
+        agricultural_tower = 31,
+        /**
          * {@link LuaArithmeticCombinatorControlBehavior | runtime:LuaArithmeticCombinatorControlBehavior}
          */
         arithmetic_combinator = 9,
+        /**
+         * {@link LuaArtilleryTurretControlBehavior | runtime:LuaArtilleryTurretControlBehavior}
+         */
+        artillery_turret = 25,
+        /**
+         * {@link LuaAssemblingMachineControlBehavior | runtime:LuaAssemblingMachineControlBehavior}
+         */
+        assembling_machine = 18,
+        /**
+         * {@link LuaAsteroidCollectorControlBehavior | runtime:LuaAsteroidCollectorControlBehavior}
+         */
+        asteroid_collector = 26,
+        /**
+         * {@link LuaCargoLandingPadControlBehavior | runtime:LuaCargoLandingPadControlBehavior}
+         */
+        cargo_landing_pad = 30,
         /**
          * {@link LuaConstantCombinatorControlBehavior | runtime:LuaConstantCombinatorControlBehavior}
          */
@@ -197,6 +219,10 @@ namespace control_behavior {
          */
         decider_combinator = 8,
         /**
+         * {@link LuaDisplayPanelControlBehavior | runtime:LuaDisplayPanelControlBehavior}
+         */
+        display_panel = 28,
+        /**
          * {@link LuaGenericOnOffControlBehavior | runtime:LuaGenericOnOffControlBehavior}
          */
         generic_on_off = 1,
@@ -208,6 +234,10 @@ namespace control_behavior {
          * {@link LuaLampControlBehavior | runtime:LuaLampControlBehavior}
          */
         lamp = 3,
+        /**
+         * {@link LuaLoaderControlBehavior | runtime:LuaLoaderControlBehavior}
+         */
+        loader = 29,
         /**
          * {@link LuaLogisticContainerControlBehavior | runtime:LuaLogisticContainerControlBehavior}
          */
@@ -221,17 +251,41 @@ namespace control_behavior {
          */
         programmable_speaker = 17,
         /**
-         * {@link LuaRailChainSignalControlBehavior | runtime:LuaRailChainSignalControlBehavior}
+         * {@link LuaPumpControlBehavior | runtime:LuaPumpControlBehavior}
+         */
+        pump = 19,
+        /**
+         * {@link LuaRadarControlBehavior | runtime:LuaRadarControlBehavior}
+         */
+        radar = 27,
+        /**
+         * {@link LuaRailSignalBaseControlBehavior | runtime:LuaRailSignalBaseControlBehavior}
          */
         rail_chain_signal = 14,
         /**
-         * {@link LuaRailSignalControlBehavior | runtime:LuaRailSignalControlBehavior}
+         * {@link LuaRailSignalBaseControlBehavior | runtime:LuaRailSignalBaseControlBehavior}
          */
         rail_signal = 13,
+        /**
+         * {@link LuaReactorControlBehavior | runtime:LuaReactorControlBehavior}
+         */
+        reactor = 23,
         /**
          * {@link LuaRoboportControlBehavior | runtime:LuaRoboportControlBehavior}
          */
         roboport = 5,
+        /**
+         * {@link LuaRocketSiloControlBehavior | runtime:LuaRocketSiloControlBehavior}
+         */
+        rocket_silo = 21,
+        /**
+         * {@link LuaSelectorCombinatorControlBehavior | runtime:LuaSelectorCombinatorControlBehavior}
+         */
+        selector_combinator = 20,
+        /**
+         * {@link LuaSpacePlatformHubControlBehavior | runtime:LuaSpacePlatformHubControlBehavior}
+         */
+        space_platform_hub = 24,
         /**
          * {@link LuaStorageTankControlBehavior | runtime:LuaStorageTankControlBehavior}
          */
@@ -244,6 +298,10 @@ namespace control_behavior {
          * {@link LuaTransportBeltControlBehavior | runtime:LuaTransportBeltControlBehavior}
          */
         transport_belt = 11,
+        /**
+         * {@link LuaTurretControlBehavior | runtime:LuaTurretControlBehavior}
+         */
+        turret = 22,
         /**
          * {@link LuaWallControlBehavior | runtime:LuaWallControlBehavior}
          */
@@ -272,6 +330,10 @@ enum controllers {
      */
     god = 2,
     /**
+     * Can't move/change items but can build ghosts/change settings.
+     */
+    remote = 6,
+    /**
      * Can't change anything in the world but can view anything.
      */
     spectator = 5
@@ -292,30 +354,30 @@ namespace deconstruction_item {
         only = 3
     }
 }
+enum default_icon_size {
+}
 enum difficulty {
     easy = 0,
     hard = 2,
     normal = 1
 }
-namespace difficulty_settings {
-    enum recipe_difficulty {
-        expensive = 1,
-        normal = 0
-    }
-    enum technology_difficulty {
-        expensive = 1,
-        normal = 0
-    }
-}
 enum direction {
-    east = 2,
+    east = 4,
+    eastnortheast = 3,
+    eastsoutheast = 5,
     north = 0,
-    northeast = 1,
-    northwest = 7,
-    south = 4,
-    southeast = 3,
-    southwest = 5,
-    west = 6
+    northeast = 2,
+    northnortheast = 1,
+    northnorthwest = 15,
+    northwest = 14,
+    south = 8,
+    southeast = 6,
+    southsoutheast = 7,
+    southsouthwest = 9,
+    southwest = 10,
+    west = 12,
+    westnorthwest = 13,
+    westsouthwest = 11
 }
 enum disconnect_reason {
     afk = 6,
@@ -350,217 +412,307 @@ enum distraction {
 }
 enum entity_status {
     /**
+     * Only used if set through {@link LuaEntity::status | runtime:LuaEntity::status} or {@link ContainerPrototype::default_status | prototype:ContainerPrototype::default_status}.
+     */
+    broken = 3,
+    /**
      * Used by rail signals.
      */
-    cant_divide_segments = 43,
+    cant_divide_segments = 59,
     /**
      * Used by accumulators.
      */
-    charging = 13,
-    closed_by_circuit_network = 7,
+    charging = 17,
+    closed_by_circuit_network = 10,
+    /**
+     * Used by asteroid collectors.
+     */
+    computing_navigation = 63,
+    /**
+     * Used by trains.
+     */
+    destination_stop_full = 48,
     /**
      * Used by constant combinators: Combinator is turned off via switch in GUI.
      */
-    disabled = 40,
-    disabled_by_control_behavior = 5,
-    disabled_by_script = 8,
+    disabled = 56,
+    disabled_by_control_behavior = 8,
+    disabled_by_script = 11,
     /**
      * Used by accumulators.
      */
-    discharging = 14,
+    discharging = 18,
     /**
      * Used by crafting machines.
      */
-    fluid_ingredient_shortage = 23,
+    fluid_ingredient_shortage = 28,
+    frozen = 7,
     /**
      * Used by burner energy sources.
      */
-    full_burnt_result_output = 25,
+    full_burnt_result_output = 31,
     /**
      * Used by crafting machines, boilers, burner energy sources and reactors: Reactor/burner has full burnt result inventory, boiler has full output fluidbox.
      */
-    full_output = 24,
+    full_output = 29,
     /**
      * Used by accumulators.
      */
-    fully_charged = 15,
+    fully_charged = 19,
+    /**
+     * Used by ghosts.
+     */
+    ghost = 2,
     /**
      * Used by crafting machines.
      */
-    item_ingredient_shortage = 26,
+    item_ingredient_shortage = 32,
     /**
      * Used by the rocket silo.
      */
-    launching_rocket = 33,
+    launching_rocket = 41,
     /**
      * Used by boilers and fluid turrets: Boiler still has some fluid but is about to run out.
      */
-    low_input_fluid = 22,
-    low_power = 3,
+    low_input_fluid = 27,
+    low_power = 5,
     /**
      * Used by heat energy sources.
      */
-    low_temperature = 39,
-    marked_for_deconstruction = 9,
+    low_temperature = 55,
+    marked_for_deconstruction = 12,
     /**
      * Used by mining drills when the mining fluid is missing.
      */
-    missing_required_fluid = 27,
+    missing_required_fluid = 33,
     /**
      * Used by labs.
      */
-    missing_science_packs = 28,
+    missing_science_packs = 34,
     /**
      * Used by power switches.
      */
-    networks_connected = 11,
+    networks_connected = 15,
     /**
      * Used by power switches.
      */
-    networks_disconnected = 12,
+    networks_disconnected = 16,
     /**
      * Used by ammo turrets.
      */
-    no_ammo = 38,
-    no_fuel = 4,
+    no_ammo = 54,
+    /**
+     * Used by filter inserters.
+     */
+    no_filter = 60,
+    no_fuel = 6,
     /**
      * Used by furnaces.
      */
-    no_ingredients = 18,
+    no_ingredients = 22,
     /**
      * Used by boilers, fluid turrets and fluid energy sources: Boiler has no fluid to work with.
      */
-    no_input_fluid = 19,
+    no_input_fluid = 23,
     /**
      * Used by mining drills.
      */
-    no_minable_resources = 21,
+    no_minable_resources = 25,
     /**
      * Used by beacons.
      */
-    no_modules_to_transmit = 34,
-    no_power = 2,
+    no_modules_to_transmit = 50,
+    /**
+     * Used by trains and space platform hubs.
+     */
+    no_path = 49,
+    no_power = 4,
     /**
      * Used by assembling machines.
      */
-    no_recipe = 17,
+    no_recipe = 21,
     /**
      * Used by labs.
      */
-    no_research_in_progress = 20,
+    no_research_in_progress = 24,
+    /**
+     * Used by agricultural towers.
+     */
+    no_spot_seedable_by_inputs = 61,
     normal = 1,
+    /**
+     * Used by cargo bays.
+     */
+    not_connected_to_hub_or_pad = 26,
     /**
      * Used by rail signals.
      */
-    not_connected_to_rail = 42,
+    not_connected_to_rail = 58,
+    /**
+     * Used by agricultural towers.
+     */
+    not_enough_space_in_output = 30,
+    /**
+     * Used by space platform hubs.
+     */
+    not_enough_thrust = 47,
     /**
      * Used by generators and solar panels.
      */
-    not_plugged_in_electric_network = 10,
-    opened_by_circuit_network = 6,
+    not_plugged_in_electric_network = 14,
+    /**
+     * Used by space platform hubs.
+     */
+    on_the_way = 43,
+    opened_by_circuit_network = 9,
     /**
      * Used by logistic containers.
      */
-    out_of_logistic_network = 16,
+    out_of_logistic_network = 20,
+    /**
+     * Used by space platform hubs.
+     */
+    paused = 13,
+    /**
+     * Used by pipes, pipes to ground and storage tanks.
+     */
+    pipeline_overextended = 64,
     /**
      * Used by the rocket silo.
      */
-    preparing_rocket_for_launch = 31,
+    preparing_rocket_for_launch = 38,
     /**
      * Used by roboports.
      */
-    recharging_after_power_outage = 35,
+    recharging_after_power_outage = 51,
+    /**
+     * Used by assembling machines.
+     */
+    recipe_not_researched = 65,
+    /**
+     * Used by thrusters.
+     */
+    thrust_not_required = 42,
     /**
      * Used by lamps.
      */
-    turned_off_during_daytime = 41,
+    turned_off_during_daytime = 57,
+    /**
+     * Used by trains.
+     */
+    waiting_at_stop = 45,
+    /**
+     * Used by inserters when wait_for_full_hand is set.
+     */
+    waiting_for_more_items = 36,
+    /**
+     * Used by agricultural towers.
+     */
+    waiting_for_plants_to_grow = 62,
+    /**
+     * Used by space platform hubs.
+     */
+    waiting_for_rockets_to_arrive = 46,
     /**
      * Used by inserters.
      */
-    waiting_for_source_items = 29,
+    waiting_for_source_items = 35,
     /**
      * Used by inserters and mining drills.
      */
-    waiting_for_space_in_destination = 30,
-    /**
-     * Used by inserters targeting entity ghosts.
-     */
-    waiting_for_target_to_be_built = 36,
-    /**
-     * Used by inserters targeting rails.
-     */
-    waiting_for_train = 37,
+    waiting_for_space_in_destination = 37,
     /**
      * Used by the rocket silo.
      */
-    waiting_to_launch_rocket = 32,
+    waiting_for_space_in_platform_hub = 40,
+    /**
+     * Used by inserters targeting entity ghosts.
+     */
+    waiting_for_target_to_be_built = 52,
+    /**
+     * Used by inserters targeting rails.
+     */
+    waiting_for_train = 53,
+    /**
+     * Used by space platform hubs.
+     */
+    waiting_in_orbit = 44,
+    /**
+     * Used by the rocket silo.
+     */
+    waiting_to_launch_rocket = 39,
     working = 0
+}
+enum entity_status_diode {
+    green = 0,
+    red = 1,
+    yellow = 2
 }
 /**
  * See the {@link events page | runtime:events} for more info on what events contain and when they get raised.
  */
 enum events {
-    on_ai_command_completed = 0,
-    on_area_cloned = 1,
-    on_biter_base_built = 2,
-    on_brush_cloned = 3,
-    on_build_base_arrived = 4,
-    on_built_entity = 5,
-    on_cancelled_deconstruction = 6,
-    on_cancelled_upgrade = 7,
-    on_character_corpse_expired = 8,
-    on_chart_tag_added = 9,
-    on_chart_tag_modified = 10,
-    on_chart_tag_removed = 11,
-    on_chunk_charted = 12,
-    on_chunk_deleted = 13,
-    on_chunk_generated = 14,
-    on_combat_robot_expired = 15,
-    on_console_chat = 16,
-    on_console_command = 17,
-    on_cutscene_cancelled = 18,
-    on_cutscene_finished = 19,
-    on_cutscene_started = 20,
-    on_cutscene_waypoint_reached = 21,
-    on_difficulty_settings_changed = 22,
+    on_achievement_gained = 0,
+    on_ai_command_completed = 1,
+    on_area_cloned = 2,
+    on_biter_base_built = 3,
+    on_brush_cloned = 4,
+    on_build_base_arrived = 5,
+    on_built_entity = 6,
+    on_cancelled_deconstruction = 7,
+    on_cancelled_upgrade = 8,
+    on_character_corpse_expired = 9,
+    on_chart_tag_added = 10,
+    on_chart_tag_modified = 11,
+    on_chart_tag_removed = 12,
+    on_chunk_charted = 13,
+    on_chunk_deleted = 14,
+    on_chunk_generated = 15,
+    on_combat_robot_expired = 16,
+    on_console_chat = 17,
+    on_console_command = 18,
+    on_cutscene_cancelled = 19,
+    on_cutscene_finished = 20,
+    on_cutscene_started = 21,
+    on_cutscene_waypoint_reached = 22,
     on_entity_cloned = 23,
     on_entity_color_changed = 24,
     on_entity_damaged = 25,
-    on_entity_destroyed = 26,
-    on_entity_died = 27,
-    on_entity_logistic_slot_changed = 28,
-    on_entity_renamed = 29,
-    on_entity_settings_pasted = 30,
-    on_entity_spawned = 31,
-    on_equipment_inserted = 32,
-    on_equipment_removed = 33,
-    on_force_cease_fire_changed = 34,
-    on_force_created = 35,
-    on_force_friends_changed = 36,
-    on_force_reset = 37,
-    on_forces_merged = 38,
-    on_forces_merging = 39,
-    on_game_created_from_scenario = 40,
-    on_gui_checked_state_changed = 41,
-    on_gui_click = 42,
-    on_gui_closed = 43,
-    on_gui_confirmed = 44,
-    on_gui_elem_changed = 45,
-    on_gui_hover = 46,
-    on_gui_leave = 47,
-    on_gui_location_changed = 48,
-    on_gui_opened = 49,
-    on_gui_selected_tab_changed = 50,
-    on_gui_selection_state_changed = 51,
-    on_gui_switch_state_changed = 52,
-    on_gui_text_changed = 53,
-    on_gui_value_changed = 54,
-    on_land_mine_armed = 55,
-    on_lua_shortcut = 56,
-    on_marked_for_deconstruction = 57,
-    on_marked_for_upgrade = 58,
-    on_market_item_purchased = 59,
-    on_mod_item_opened = 60,
+    on_entity_died = 26,
+    on_entity_logistic_slot_changed = 27,
+    on_entity_renamed = 28,
+    on_entity_settings_pasted = 29,
+    on_entity_spawned = 30,
+    on_equipment_inserted = 31,
+    on_equipment_removed = 32,
+    on_force_cease_fire_changed = 33,
+    on_force_created = 34,
+    on_force_friends_changed = 35,
+    on_force_reset = 36,
+    on_forces_merged = 37,
+    on_forces_merging = 38,
+    on_game_created_from_scenario = 39,
+    on_gui_checked_state_changed = 40,
+    on_gui_click = 41,
+    on_gui_closed = 42,
+    on_gui_confirmed = 43,
+    on_gui_elem_changed = 44,
+    on_gui_hover = 45,
+    on_gui_leave = 46,
+    on_gui_location_changed = 47,
+    on_gui_opened = 48,
+    on_gui_selected_tab_changed = 49,
+    on_gui_selection_state_changed = 50,
+    on_gui_switch_state_changed = 51,
+    on_gui_text_changed = 52,
+    on_gui_value_changed = 53,
+    on_land_mine_armed = 54,
+    on_lua_shortcut = 55,
+    on_marked_for_deconstruction = 56,
+    on_marked_for_upgrade = 57,
+    on_market_item_purchased = 58,
+    on_mod_item_opened = 59,
+    on_object_destroyed = 60,
     on_permission_group_added = 61,
     on_permission_group_deleted = 62,
     on_permission_group_edited = 63,
@@ -580,110 +732,125 @@ enum events {
     on_player_cheat_mode_enabled = 77,
     on_player_clicked_gps_tag = 78,
     on_player_configured_blueprint = 79,
-    on_player_configured_spider_remote = 80,
+    on_player_controller_changed = 80,
     on_player_crafted_item = 81,
     on_player_created = 82,
     on_player_cursor_stack_changed = 83,
     on_player_deconstructed_area = 84,
     on_player_demoted = 85,
     on_player_died = 86,
-    on_player_display_resolution_changed = 87,
-    on_player_display_scale_changed = 88,
-    on_player_driving_changed_state = 89,
-    on_player_dropped_item = 90,
-    on_player_fast_transferred = 91,
-    on_player_flushed_fluid = 92,
-    on_player_gun_inventory_changed = 93,
-    on_player_input_method_changed = 94,
-    on_player_joined_game = 95,
-    on_player_kicked = 96,
-    on_player_left_game = 97,
-    on_player_main_inventory_changed = 98,
-    on_player_mined_entity = 99,
-    on_player_mined_item = 100,
-    on_player_mined_tile = 101,
-    on_player_muted = 102,
-    on_player_pipette = 103,
-    on_player_placed_equipment = 104,
-    on_player_promoted = 105,
-    on_player_removed = 106,
-    on_player_removed_equipment = 107,
-    on_player_repaired_entity = 108,
-    on_player_respawned = 109,
-    on_player_reverse_selected_area = 110,
-    on_player_rotated_entity = 111,
-    on_player_selected_area = 112,
-    on_player_set_quick_bar_slot = 113,
-    on_player_setup_blueprint = 114,
-    on_player_toggled_alt_mode = 115,
-    on_player_toggled_map_editor = 116,
-    on_player_trash_inventory_changed = 117,
-    on_player_unbanned = 118,
-    on_player_unmuted = 119,
-    on_player_used_capsule = 120,
-    on_player_used_spider_remote = 121,
-    on_post_entity_died = 122,
-    on_pre_build = 123,
-    on_pre_chunk_deleted = 124,
-    on_pre_entity_settings_pasted = 125,
-    on_pre_ghost_deconstructed = 126,
-    on_pre_ghost_upgraded = 127,
-    on_pre_permission_group_deleted = 128,
-    on_pre_permission_string_imported = 129,
-    on_pre_player_crafted_item = 130,
-    on_pre_player_died = 131,
-    on_pre_player_left_game = 132,
-    on_pre_player_mined_item = 133,
-    on_pre_player_removed = 134,
-    on_pre_player_toggled_map_editor = 135,
-    on_pre_robot_exploded_cliff = 136,
-    on_pre_script_inventory_resized = 137,
-    on_pre_surface_cleared = 138,
-    on_pre_surface_deleted = 139,
-    on_research_cancelled = 140,
-    on_research_finished = 141,
-    on_research_reversed = 142,
-    on_research_started = 143,
-    on_resource_depleted = 144,
-    on_robot_built_entity = 145,
-    on_robot_built_tile = 146,
-    on_robot_exploded_cliff = 147,
-    on_robot_mined = 148,
-    on_robot_mined_entity = 149,
-    on_robot_mined_tile = 150,
-    on_robot_pre_mined = 151,
-    on_rocket_launch_ordered = 152,
-    on_rocket_launched = 153,
-    on_runtime_mod_setting_changed = 154,
-    on_script_inventory_resized = 155,
-    on_script_path_request_finished = 156,
-    on_script_trigger_effect = 157,
-    on_sector_scanned = 158,
-    on_selected_entity_changed = 159,
-    on_spider_command_completed = 160,
-    on_string_translated = 161,
-    on_surface_cleared = 162,
-    on_surface_created = 163,
-    on_surface_deleted = 164,
-    on_surface_imported = 165,
-    on_surface_renamed = 166,
-    on_technology_effects_reset = 167,
-    on_tick = 168,
-    on_train_changed_state = 169,
-    on_train_created = 170,
-    on_train_schedule_changed = 171,
-    on_trigger_created_entity = 172,
-    on_trigger_fired_artillery = 173,
-    on_unit_added_to_group = 174,
-    on_unit_group_created = 175,
-    on_unit_group_finished_gathering = 176,
-    on_unit_removed_from_group = 177,
-    on_worker_robot_expired = 178,
-    script_raised_built = 179,
-    script_raised_destroy = 180,
-    script_raised_revive = 181,
-    script_raised_set_tiles = 182,
-    script_raised_teleported = 183
+    on_player_display_density_scale_changed = 87,
+    on_player_display_resolution_changed = 88,
+    on_player_display_scale_changed = 89,
+    on_player_driving_changed_state = 90,
+    on_player_dropped_item = 91,
+    on_player_fast_transferred = 92,
+    on_player_flipped_entity = 93,
+    on_player_flushed_fluid = 94,
+    on_player_gun_inventory_changed = 95,
+    on_player_input_method_changed = 96,
+    on_player_joined_game = 97,
+    on_player_kicked = 98,
+    on_player_left_game = 99,
+    on_player_locale_changed = 100,
+    on_player_main_inventory_changed = 101,
+    on_player_mined_entity = 102,
+    on_player_mined_item = 103,
+    on_player_mined_tile = 104,
+    on_player_muted = 105,
+    on_player_pipette = 106,
+    on_player_placed_equipment = 107,
+    on_player_promoted = 108,
+    on_player_removed = 109,
+    on_player_removed_equipment = 110,
+    on_player_repaired_entity = 111,
+    on_player_respawned = 112,
+    on_player_reverse_selected_area = 113,
+    on_player_rotated_entity = 114,
+    on_player_selected_area = 115,
+    on_player_set_quick_bar_slot = 116,
+    on_player_setup_blueprint = 117,
+    on_player_toggled_alt_mode = 118,
+    on_player_toggled_map_editor = 119,
+    on_player_trash_inventory_changed = 120,
+    on_player_unbanned = 121,
+    on_player_unmuted = 122,
+    on_player_used_capsule = 123,
+    on_player_used_spidertron_remote = 124,
+    on_post_entity_died = 125,
+    on_pre_build = 126,
+    on_pre_chunk_deleted = 127,
+    on_pre_entity_settings_pasted = 128,
+    on_pre_ghost_deconstructed = 129,
+    on_pre_ghost_upgraded = 130,
+    on_pre_permission_group_deleted = 131,
+    on_pre_permission_string_imported = 132,
+    on_pre_player_crafted_item = 133,
+    on_pre_player_died = 134,
+    on_pre_player_left_game = 135,
+    on_pre_player_mined_item = 136,
+    on_pre_player_removed = 137,
+    on_pre_player_toggled_map_editor = 138,
+    on_pre_robot_exploded_cliff = 139,
+    on_pre_scenario_finished = 140,
+    on_pre_script_inventory_resized = 141,
+    on_pre_surface_cleared = 142,
+    on_pre_surface_deleted = 143,
+    on_redo_applied = 144,
+    on_research_cancelled = 145,
+    on_research_finished = 146,
+    on_research_moved = 147,
+    on_research_reversed = 148,
+    on_research_started = 149,
+    on_resource_depleted = 150,
+    on_robot_built_entity = 151,
+    on_robot_built_tile = 152,
+    on_robot_exploded_cliff = 153,
+    on_robot_mined = 154,
+    on_robot_mined_entity = 155,
+    on_robot_mined_tile = 156,
+    on_robot_pre_mined = 157,
+    on_rocket_launch_ordered = 158,
+    on_rocket_launched = 159,
+    on_runtime_mod_setting_changed = 160,
+    on_script_inventory_resized = 161,
+    on_script_path_request_finished = 162,
+    on_script_trigger_effect = 163,
+    on_sector_scanned = 164,
+    on_segment_entity_created = 165,
+    on_selected_entity_changed = 166,
+    on_space_platform_built_entity = 167,
+    on_space_platform_built_tile = 168,
+    on_space_platform_changed_state = 169,
+    on_space_platform_mined_entity = 170,
+    on_space_platform_mined_item = 171,
+    on_space_platform_mined_tile = 172,
+    on_space_platform_pre_mined = 173,
+    on_spider_command_completed = 174,
+    on_string_translated = 175,
+    on_surface_cleared = 176,
+    on_surface_created = 177,
+    on_surface_deleted = 178,
+    on_surface_imported = 179,
+    on_surface_renamed = 180,
+    on_technology_effects_reset = 181,
+    on_tick = 182,
+    on_train_changed_state = 183,
+    on_train_created = 184,
+    on_train_schedule_changed = 185,
+    on_trigger_created_entity = 186,
+    on_trigger_fired_artillery = 187,
+    on_undo_applied = 188,
+    on_unit_added_to_group = 189,
+    on_unit_group_created = 190,
+    on_unit_group_finished_gathering = 191,
+    on_unit_removed_from_group = 192,
+    on_worker_robot_expired = 193,
+    script_raised_built = 194,
+    script_raised_destroy = 195,
+    script_raised_revive = 196,
+    script_raised_set_tiles = 197,
+    script_raised_teleported = 198
 }
 enum flow_precision_index {
     fifty_hours = 5,
@@ -726,275 +893,345 @@ enum gui_type {
     custom = 4,
     entity = 5,
     equipment = 6,
-    item = 7,
-    logistic = 8,
-    none = 9,
-    other_player = 10,
-    permissions = 11,
-    player_management = 12,
-    production = 13,
-    research = 14,
-    script_inventory = 15,
-    server_management = 16,
-    tile = 17,
-    trains = 18,
-    tutorials = 19
+    global_electric_network = 7,
+    item = 8,
+    logistic = 9,
+    none = 10,
+    opened_entity_grid = 11,
+    other_player = 12,
+    permissions = 13,
+    player_management = 14,
+    production = 15,
+    script_inventory = 16,
+    server_management = 17,
+    tile = 18,
+    trains = 19
 }
 enum input_action {
-    activate_copy = 0,
-    activate_cut = 1,
-    activate_paste = 2,
-    add_permission_group = 3,
-    add_train_station = 4,
-    admin_action = 5,
-    alt_reverse_select_area = 6,
-    alt_select_area = 7,
-    alt_select_blueprint_entities = 8,
-    alternative_copy = 9,
-    begin_mining = 10,
-    begin_mining_terrain = 11,
-    build = 12,
-    build_rail = 13,
-    build_terrain = 14,
-    cancel_craft = 15,
-    cancel_deconstruct = 16,
-    cancel_new_blueprint = 17,
-    cancel_research = 18,
-    cancel_upgrade = 19,
-    change_active_character_tab = 20,
-    change_active_item_group_for_crafting = 21,
-    change_active_item_group_for_filters = 22,
-    change_active_quick_bar = 23,
-    change_arithmetic_combinator_parameters = 24,
-    change_decider_combinator_parameters = 25,
-    change_entity_label = 26,
-    change_item_description = 27,
-    change_item_label = 28,
-    change_multiplayer_config = 29,
-    change_picking_state = 30,
-    change_programmable_speaker_alert_parameters = 31,
-    change_programmable_speaker_circuit_parameters = 32,
-    change_programmable_speaker_parameters = 33,
-    change_riding_state = 34,
-    change_shooting_state = 35,
-    change_train_stop_station = 36,
-    change_train_wait_condition = 37,
-    change_train_wait_condition_data = 38,
-    clear_cursor = 39,
-    connect_rolling_stock = 40,
-    copy = 41,
-    copy_entity_settings = 42,
-    copy_opened_blueprint = 43,
-    copy_opened_item = 44,
-    craft = 45,
-    cursor_split = 46,
-    cursor_transfer = 47,
-    custom_input = 48,
-    cycle_blueprint_book_backwards = 49,
-    cycle_blueprint_book_forwards = 50,
-    deconstruct = 51,
-    delete_blueprint_library = 52,
-    delete_blueprint_record = 53,
-    delete_custom_tag = 54,
-    delete_permission_group = 55,
-    destroy_item = 56,
-    destroy_opened_item = 57,
-    disconnect_rolling_stock = 58,
-    drag_train_schedule = 59,
-    drag_train_wait_condition = 60,
-    drop_blueprint_record = 61,
-    drop_item = 62,
-    edit_blueprint_tool_preview = 63,
-    edit_custom_tag = 64,
-    edit_permission_group = 65,
-    export_blueprint = 66,
-    fast_entity_split = 67,
-    fast_entity_transfer = 68,
-    flush_opened_entity_fluid = 69,
-    flush_opened_entity_specific_fluid = 70,
-    go_to_train_station = 71,
-    grab_blueprint_record = 72,
-    gui_checked_state_changed = 73,
-    gui_click = 74,
-    gui_confirmed = 75,
-    gui_elem_changed = 76,
-    gui_hover = 77,
-    gui_leave = 78,
-    gui_location_changed = 79,
-    gui_selected_tab_changed = 80,
-    gui_selection_state_changed = 81,
-    gui_switch_state_changed = 82,
-    gui_text_changed = 83,
-    gui_value_changed = 84,
-    import_blueprint = 85,
-    import_blueprint_string = 86,
-    import_blueprints_filtered = 87,
-    import_permissions_string = 88,
-    inventory_split = 89,
-    inventory_transfer = 90,
-    launch_rocket = 91,
-    lua_shortcut = 92,
-    map_editor_action = 93,
-    market_offer = 94,
-    mod_settings_changed = 95,
-    open_achievements_gui = 96,
-    open_blueprint_library_gui = 97,
-    open_blueprint_record = 98,
-    open_bonus_gui = 99,
-    open_character_gui = 100,
-    open_current_vehicle_gui = 101,
-    open_equipment = 102,
-    open_gui = 103,
-    open_item = 104,
-    open_logistic_gui = 105,
-    open_mod_item = 106,
-    open_parent_of_opened_item = 107,
-    open_production_gui = 108,
-    open_technology_gui = 109,
-    open_tips_and_tricks_gui = 110,
-    open_train_gui = 111,
-    open_train_station_gui = 112,
-    open_trains_gui = 113,
-    paste_entity_settings = 114,
-    place_equipment = 115,
-    quick_bar_pick_slot = 116,
-    quick_bar_set_selected_page = 117,
-    quick_bar_set_slot = 118,
-    reassign_blueprint = 119,
-    remove_cables = 120,
-    remove_train_station = 121,
-    reset_assembling_machine = 122,
-    reset_item = 123,
-    reverse_select_area = 124,
-    rotate_entity = 125,
-    select_area = 126,
-    select_blueprint_entities = 127,
-    select_entity_slot = 128,
-    select_item = 129,
-    select_mapper_slot = 130,
-    select_next_valid_gun = 131,
-    select_tile_slot = 132,
-    send_spidertron = 133,
-    set_auto_launch_rocket = 134,
-    set_autosort_inventory = 135,
-    set_behavior_mode = 136,
-    set_car_weapons_control = 137,
-    set_circuit_condition = 138,
-    set_circuit_mode_of_operation = 139,
-    set_controller_logistic_trash_filter_item = 140,
-    set_deconstruction_item_tile_selection_mode = 141,
-    set_deconstruction_item_trees_and_rocks_only = 142,
-    set_entity_color = 143,
-    set_entity_energy_property = 144,
-    set_entity_logistic_trash_filter_item = 145,
-    set_filter = 146,
-    set_flat_controller_gui = 147,
-    set_heat_interface_mode = 148,
-    set_heat_interface_temperature = 149,
-    set_infinity_container_filter_item = 150,
-    set_infinity_container_remove_unfiltered_items = 151,
-    set_infinity_pipe_filter = 152,
-    set_inserter_max_stack_size = 153,
-    set_inventory_bar = 154,
-    set_linked_container_link_i_d = 155,
-    set_logistic_filter_item = 156,
-    set_logistic_filter_signal = 157,
-    set_player_color = 158,
-    set_recipe_notifications = 159,
-    set_request_from_buffers = 160,
-    set_research_finished_stops_game = 161,
-    set_signal = 162,
-    set_splitter_priority = 163,
-    set_train_stopped = 164,
-    set_trains_limit = 165,
-    set_vehicle_automatic_targeting_parameters = 166,
-    setup_assembling_machine = 167,
-    setup_blueprint = 168,
-    setup_single_blueprint_record = 169,
-    smart_pipette = 170,
-    spawn_item = 171,
-    stack_split = 172,
-    stack_transfer = 173,
-    start_repair = 174,
-    start_research = 175,
-    start_walking = 176,
-    stop_building_by_moving = 177,
-    switch_connect_to_logistic_network = 178,
-    switch_constant_combinator_state = 179,
-    switch_inserter_filter_mode_state = 180,
-    switch_power_switch_state = 181,
-    switch_to_rename_stop_gui = 182,
-    take_equipment = 183,
-    toggle_deconstruction_item_entity_filter_mode = 184,
-    toggle_deconstruction_item_tile_filter_mode = 185,
-    toggle_driving = 186,
-    toggle_enable_vehicle_logistics_while_moving = 187,
-    toggle_entity_logistic_requests = 188,
-    toggle_equipment_movement_bonus = 189,
-    toggle_map_editor = 190,
-    toggle_personal_logistic_requests = 191,
-    toggle_personal_roboport = 192,
-    toggle_show_entity_info = 193,
-    translate_string = 194,
-    undo = 195,
-    upgrade = 196,
-    upgrade_opened_blueprint_by_item = 197,
-    upgrade_opened_blueprint_by_record = 198,
-    use_artillery_remote = 199,
-    use_item = 200,
-    wire_dragging = 201,
-    write_to_console = 202
+    activate_interrupt = 0,
+    activate_paste = 1,
+    add_decider_combinator_condition = 2,
+    add_decider_combinator_output = 3,
+    add_logistic_section = 4,
+    add_permission_group = 5,
+    add_pin = 6,
+    add_train_interrupt = 7,
+    add_train_station = 8,
+    adjust_blueprint_snapping = 9,
+    admin_action = 10,
+    alt_reverse_select_area = 11,
+    alt_select_area = 12,
+    alt_select_blueprint_entities = 13,
+    alternative_copy = 14,
+    begin_mining = 15,
+    begin_mining_terrain = 16,
+    build = 17,
+    build_rail = 18,
+    build_terrain = 19,
+    cancel_craft = 20,
+    cancel_deconstruct = 21,
+    cancel_delete_space_platform = 22,
+    cancel_new_blueprint = 23,
+    cancel_research = 24,
+    cancel_upgrade = 25,
+    change_active_character_tab = 26,
+    change_active_item_group_for_crafting = 27,
+    change_active_item_group_for_filters = 28,
+    change_active_quick_bar = 29,
+    change_arithmetic_combinator_parameters = 30,
+    change_entity_label = 31,
+    change_item_label = 32,
+    change_logistic_point_group = 33,
+    change_multiplayer_config = 34,
+    change_picking_state = 35,
+    change_programmable_speaker_alert_parameters = 36,
+    change_programmable_speaker_circuit_parameters = 37,
+    change_programmable_speaker_parameters = 38,
+    change_riding_state = 39,
+    change_selector_combinator_parameters = 40,
+    change_shooting_state = 41,
+    change_train_name = 42,
+    change_train_stop_station = 43,
+    change_train_wait_condition = 44,
+    change_train_wait_condition_data = 45,
+    clear_cursor = 46,
+    connect_rolling_stock = 47,
+    copy = 48,
+    copy_entity_settings = 49,
+    copy_large_opened_blueprint = 50,
+    copy_large_opened_item = 51,
+    copy_opened_blueprint = 52,
+    copy_opened_item = 53,
+    craft = 54,
+    create_space_platform = 55,
+    cursor_split = 56,
+    cursor_transfer = 57,
+    custom_input = 58,
+    cycle_blueprint_book_backwards = 59,
+    cycle_blueprint_book_forwards = 60,
+    cycle_quality_down = 61,
+    cycle_quality_up = 62,
+    deconstruct = 63,
+    delete_blueprint_library = 64,
+    delete_blueprint_record = 65,
+    delete_custom_tag = 66,
+    delete_logistic_group = 67,
+    delete_permission_group = 68,
+    delete_space_platform = 69,
+    destroy_item = 70,
+    destroy_opened_item = 71,
+    disconnect_rolling_stock = 72,
+    drag_decider_combinator_condition = 73,
+    drag_decider_combinator_output = 74,
+    drag_train_schedule = 75,
+    drag_train_schedule_interrupt = 76,
+    drag_train_wait_condition = 77,
+    drop_blueprint_record = 78,
+    drop_item = 79,
+    edit_blueprint_tool_preview = 80,
+    edit_custom_tag = 81,
+    edit_display_panel = 82,
+    edit_display_panel_always_show = 83,
+    edit_display_panel_icon = 84,
+    edit_display_panel_parameters = 85,
+    edit_display_panel_show_in_chart = 86,
+    edit_interrupt = 87,
+    edit_permission_group = 88,
+    edit_pin = 89,
+    enable_transitional_requests = 90,
+    export_blueprint = 91,
+    fast_entity_split = 92,
+    fast_entity_transfer = 93,
+    flip_entity = 94,
+    flush_opened_entity_fluid = 95,
+    flush_opened_entity_specific_fluid = 96,
+    go_to_train_station = 97,
+    grab_blueprint_record = 98,
+    gui_checked_state_changed = 99,
+    gui_click = 100,
+    gui_confirmed = 101,
+    gui_elem_changed = 102,
+    gui_hover = 103,
+    gui_leave = 104,
+    gui_location_changed = 105,
+    gui_selected_tab_changed = 106,
+    gui_selection_state_changed = 107,
+    gui_switch_state_changed = 108,
+    gui_text_changed = 109,
+    gui_value_changed = 110,
+    import_blueprint = 111,
+    import_blueprint_string = 112,
+    import_blueprints_filtered = 113,
+    import_permissions_string = 114,
+    instantly_create_space_platform = 115,
+    inventory_split = 116,
+    inventory_transfer = 117,
+    land_at_planet = 118,
+    launch_rocket = 119,
+    lua_shortcut = 120,
+    map_editor_action = 121,
+    market_offer = 122,
+    mod_settings_changed = 123,
+    modify_decider_combinator_condition = 124,
+    modify_decider_combinator_output = 125,
+    move_research = 126,
+    open_achievements_gui = 127,
+    open_blueprint_library_gui = 128,
+    open_blueprint_record = 129,
+    open_bonus_gui = 130,
+    open_character_gui = 131,
+    open_current_vehicle_gui = 132,
+    open_equipment = 133,
+    open_global_electric_network_gui = 134,
+    open_gui = 135,
+    open_item = 136,
+    open_logistics_gui = 137,
+    open_mod_item = 138,
+    open_new_platform_button_from_rocket_silo = 139,
+    open_opened_entity_grid = 140,
+    open_parent_of_opened_item = 141,
+    open_production_gui = 142,
+    open_train_gui = 143,
+    open_train_station_gui = 144,
+    open_trains_gui = 145,
+    parametrise_blueprint = 146,
+    paste_entity_settings = 147,
+    pin_alert_group = 148,
+    pin_custom_alert = 149,
+    pin_search_result = 150,
+    pipette = 151,
+    place_equipment = 152,
+    quick_bar_pick_slot = 153,
+    quick_bar_set_selected_page = 154,
+    quick_bar_set_slot = 155,
+    reassign_blueprint = 156,
+    redo = 157,
+    remote_view_entity = 158,
+    remote_view_surface = 159,
+    remove_cables = 160,
+    remove_decider_combinator_condition = 161,
+    remove_decider_combinator_output = 162,
+    remove_logistic_section = 163,
+    remove_pin = 164,
+    remove_train_interrupt = 165,
+    remove_train_station = 166,
+    rename_interrupt = 167,
+    rename_space_platform = 168,
+    reorder_logistic_section = 169,
+    request_missing_construction_materials = 170,
+    reset_assembling_machine = 171,
+    reverse_select_area = 172,
+    rotate_entity = 173,
+    select_area = 174,
+    select_asteroid_chunk_slot = 175,
+    select_blueprint_entities = 176,
+    select_entity_filter_slot = 177,
+    select_entity_slot = 178,
+    select_item_filter = 179,
+    select_mapper_slot_from = 180,
+    select_mapper_slot_to = 181,
+    select_next_valid_gun = 182,
+    select_tile_slot = 183,
+    send_spidertron = 184,
+    send_stack_to_trash = 185,
+    send_stacks_to_trash = 186,
+    send_train_to_pin_target = 187,
+    set_behavior_mode = 188,
+    set_car_weapons_control = 189,
+    set_cheat_mode_quality = 190,
+    set_circuit_condition = 191,
+    set_circuit_mode_of_operation = 192,
+    set_combinator_description = 193,
+    set_copy_color_from_train_stop = 194,
+    set_deconstruction_item_tile_selection_mode = 195,
+    set_deconstruction_item_trees_and_rocks_only = 196,
+    set_entity_color = 197,
+    set_entity_energy_property = 198,
+    set_filter = 199,
+    set_ghost_cursor = 200,
+    set_heat_interface_mode = 201,
+    set_heat_interface_temperature = 202,
+    set_infinity_container_filter_item = 203,
+    set_infinity_container_remove_unfiltered_items = 204,
+    set_infinity_pipe_filter = 205,
+    set_inserter_max_stack_size = 206,
+    set_inventory_bar = 207,
+    set_lamp_always_on = 208,
+    set_linked_container_link_i_d = 209,
+    set_logistic_filter_item = 210,
+    set_logistic_network_name = 211,
+    set_logistic_section_active = 212,
+    set_player_color = 213,
+    set_pump_fluid_filter = 214,
+    set_request_from_buffers = 215,
+    set_research_finished_stops_game = 216,
+    set_rocket_silo_send_to_orbit_automated_mode = 217,
+    set_schedule_record_allow_unloading = 218,
+    set_signal = 219,
+    set_splitter_priority = 220,
+    set_spoil_priority = 221,
+    set_train_stop_priority = 222,
+    set_train_stopped = 223,
+    set_trains_limit = 224,
+    set_turret_ignore_unlisted = 225,
+    set_use_inserter_filters = 226,
+    set_vehicle_automatic_targeting_parameters = 227,
+    setup_assembling_machine = 228,
+    setup_blueprint = 229,
+    setup_single_blueprint_record = 230,
+    spawn_item = 231,
+    spectator_change_surface = 232,
+    stack_split = 233,
+    stack_transfer = 234,
+    start_repair = 235,
+    start_research = 236,
+    start_walking = 237,
+    stop_drag_build = 238,
+    swap_logistic_filter_items = 239,
+    switch_connect_to_logistic_network = 240,
+    switch_constant_combinator_state = 241,
+    switch_inserter_filter_mode_state = 242,
+    switch_mining_drill_filter_mode_state = 243,
+    switch_power_switch_state = 244,
+    take_equipment = 245,
+    toggle_artillery_auto_targeting = 246,
+    toggle_deconstruction_item_entity_filter_mode = 247,
+    toggle_deconstruction_item_tile_filter_mode = 248,
+    toggle_driving = 249,
+    toggle_enable_vehicle_logistics_while_moving = 250,
+    toggle_entity_logistic_requests = 251,
+    toggle_equipment_movement_bonus = 252,
+    toggle_map_editor = 253,
+    toggle_personal_logistic_requests = 254,
+    toggle_personal_roboport = 255,
+    toggle_selected_entity = 256,
+    toggle_show_entity_info = 257,
+    translate_string = 258,
+    trash_not_requested_items = 259,
+    undo = 260,
+    upgrade = 261,
+    upgrade_opened_blueprint_by_item = 262,
+    upgrade_opened_blueprint_by_record = 263,
+    use_item = 264,
+    wire_dragging = 265,
+    write_to_console = 266
 }
 enum input_method {
     game_controller = 1,
     keyboard_and_mouse = 0
 }
 enum inventory {
-    artillery_turret_ammo = 40,
-    artillery_wagon_ammo = 41,
-    assembling_machine_input = 21,
-    assembling_machine_modules = 23,
-    assembling_machine_output = 22,
-    beacon_modules = 38,
+    artillery_turret_ammo = 42,
+    artillery_wagon_ammo = 43,
+    assembling_machine_dump = 25,
+    assembling_machine_input = 22,
+    assembling_machine_modules = 24,
+    assembling_machine_output = 23,
+    beacon_modules = 40,
     burnt_result = 1,
-    car_ammo = 35,
-    car_trunk = 34,
-    cargo_wagon = 36,
-    character_ammo = 8,
-    character_armor = 9,
-    character_corpse = 39,
-    character_guns = 7,
-    character_main = 6,
-    character_trash = 11,
-    character_vehicle = 10,
+    car_ammo = 37,
+    car_trunk = 36,
+    cargo_landing_pad_main = 49,
+    cargo_landing_pad_trash = 50,
+    cargo_unit = 35,
+    cargo_wagon = 38,
+    character_ammo = 9,
+    character_armor = 10,
+    character_corpse = 41,
+    character_guns = 8,
+    character_main = 7,
+    character_trash = 12,
+    character_vehicle = 11,
     chest = 2,
-    editor_ammo = 15,
-    editor_armor = 16,
-    editor_guns = 14,
-    editor_main = 13,
+    editor_ammo = 16,
+    editor_armor = 17,
+    editor_guns = 15,
+    editor_main = 14,
     fuel = 0,
-    furnace_modules = 5,
-    furnace_result = 4,
-    furnace_source = 3,
-    god_main = 12,
-    item_main = 27,
-    lab_input = 24,
-    lab_modules = 25,
-    mining_drill_modules = 26,
-    roboport_material = 18,
-    roboport_robot = 17,
-    robot_cargo = 19,
-    robot_repair = 20,
-    rocket = 33,
-    rocket_silo_input = 30,
-    rocket_silo_modules = 32,
-    rocket_silo_output = 31,
-    rocket_silo_result = 29,
-    rocket_silo_rocket = 28,
-    spider_ammo = 43,
-    spider_trash = 44,
-    spider_trunk = 42,
-    turret_ammo = 37
+    furnace_modules = 6,
+    furnace_result = 5,
+    furnace_source = 4,
+    god_main = 13,
+    hub_main = 47,
+    hub_trash = 48,
+    item_main = 29,
+    lab_input = 26,
+    lab_modules = 27,
+    logistic_container_trash = 3,
+    mining_drill_modules = 28,
+    roboport_material = 19,
+    roboport_robot = 18,
+    robot_cargo = 20,
+    robot_repair = 21,
+    rocket_silo_input = 32,
+    rocket_silo_modules = 34,
+    rocket_silo_output = 33,
+    rocket_silo_rocket = 30,
+    rocket_silo_trash = 31,
+    spider_ammo = 45,
+    spider_trash = 46,
+    spider_trunk = 44,
+    turret_ammo = 39
 }
 enum logistic_member_index {
     character_provider = 4,
@@ -1002,6 +1239,7 @@ enum logistic_member_index {
     character_storage = 3,
     generic_on_off_behavior = 5,
     logistic_container = 0,
+    spidertron_requester = 6,
     vehicle_storage = 1
 }
 enum logistic_mode {
@@ -1012,11 +1250,29 @@ enum logistic_mode {
     requester = 3,
     storage = 2
 }
+enum logistic_section_type {
+    circuit_controlled = 1,
+    manual = 0,
+    /**
+     * Used by space platform hubs.
+     */
+    request_missing_materials_controlled = 3,
+    /**
+     * Used by rocket silos.
+     */
+    transitional_request_controlled = 2
+}
 enum mouse_button_type {
     left = 1,
     middle = 3,
     none = 0,
     right = 2
+}
+enum moving_state {
+    adaptive = 2,
+    moving = 1,
+    stale = 0,
+    stuck = 3
 }
 enum print_skip {
     /**
@@ -1044,21 +1300,47 @@ namespace prototypes {
     enum achievement {
         achievement = 0,
         'build-entity-achievement' = 1,
-        'combat-robot-count' = 2,
-        'construct-with-robots-achievement' = 3,
-        'deconstruct-with-robots-achievement' = 4,
-        'deliver-by-robots-achievement' = 5,
-        'dont-build-entity-achievement' = 6,
-        'dont-craft-manually-achievement' = 7,
-        'dont-use-entity-in-energy-production-achievement' = 8,
-        'finish-the-game-achievement' = 9,
-        'group-attack-achievement' = 10,
-        'kill-achievement' = 11,
-        'player-damaged-achievement' = 12,
-        'produce-achievement' = 13,
-        'produce-per-hour-achievement' = 14,
-        'research-achievement' = 15,
-        'train-path-achievement' = 16
+        'change-surface-achievement' = 2,
+        'combat-robot-count-achievement' = 3,
+        'complete-objective-achievement' = 4,
+        'construct-with-robots-achievement' = 5,
+        'create-platform-achievement' = 6,
+        'deconstruct-with-robots-achievement' = 7,
+        'deliver-by-robots-achievement' = 8,
+        'deplete-resource-achievement' = 9,
+        'destroy-cliff-achievement' = 10,
+        'dont-build-entity-achievement' = 11,
+        'dont-craft-manually-achievement' = 12,
+        'dont-kill-manually-achievement' = 13,
+        'dont-research-before-researching-achievement' = 14,
+        'dont-use-entity-in-energy-production-achievement' = 15,
+        'equip-armor-achievement' = 16,
+        'group-attack-achievement' = 17,
+        'kill-achievement' = 18,
+        'module-transfer-achievement' = 19,
+        'place-equipment-achievement' = 20,
+        'player-damaged-achievement' = 21,
+        'produce-achievement' = 22,
+        'produce-per-hour-achievement' = 23,
+        'research-achievement' = 24,
+        'research-with-science-pack-achievement' = 25,
+        'shoot-achievement' = 26,
+        'space-connection-distance-traveled-achievement' = 27,
+        'train-path-achievement' = 28,
+        'use-item-achievement' = 29
+    }
+    /**
+     * @customName active-trigger
+     */
+    enum active_trigger {
+        'chain-active-trigger' = 0,
+        'delayed-active-trigger' = 1
+    }
+    /**
+     * @customName airborne-pollutant
+     */
+    enum airborne_pollutant {
+        'airborne-pollutant' = 0
     }
     /**
      * @customName ambient-sound
@@ -1076,10 +1358,34 @@ namespace prototypes {
         animation = 0
     }
     /**
+     * @customName asteroid-chunk
+     */
+    enum asteroid_chunk {
+        'asteroid-chunk' = 0
+    }
+    /**
      * @customName autoplace-control
      */
     enum autoplace_control {
         'autoplace-control' = 0
+    }
+    /**
+     * @customName burner-usage
+     */
+    enum burner_usage {
+        'burner-usage' = 0
+    }
+    /**
+     * @customName collision-layer
+     */
+    enum collision_layer {
+        'collision-layer' = 0
+    }
+    /**
+     * @customName custom-event
+     */
+    enum custom_event {
+        'custom-event' = 0
     }
     /**
      * @customName custom-input
@@ -1097,6 +1403,18 @@ namespace prototypes {
         'optimized-decorative' = 0
     }
     /**
+     * @customName deliver-category
+     */
+    enum deliver_category {
+        'deliver-category' = 0
+    }
+    /**
+     * @customName deliver-impact-combination
+     */
+    enum deliver_impact_combination {
+        'deliver-impact-combination' = 0
+    }
+    /**
      * @customName editor-controller
      */
     enum editor_controller {
@@ -1104,120 +1422,153 @@ namespace prototypes {
     }
     enum entity {
         accumulator = 0,
-        'ammo-turret' = 1,
-        'arithmetic-combinator' = 2,
-        arrow = 3,
-        'artillery-flare' = 4,
-        'artillery-projectile' = 5,
-        'artillery-turret' = 6,
-        'artillery-wagon' = 7,
-        'assembling-machine' = 8,
-        beacon = 9,
-        beam = 10,
-        boiler = 11,
-        'burner-generator' = 12,
-        car = 13,
-        'cargo-wagon' = 14,
-        character = 15,
-        'character-corpse' = 16,
-        cliff = 17,
-        'combat-robot' = 18,
-        'constant-combinator' = 19,
-        'construction-robot' = 20,
-        container = 21,
-        corpse = 22,
-        'curved-rail' = 23,
-        'decider-combinator' = 24,
-        'deconstructible-tile-proxy' = 25,
-        'electric-energy-interface' = 26,
-        'electric-pole' = 27,
-        'electric-turret' = 28,
-        'entity-ghost' = 29,
-        explosion = 30,
-        fire = 31,
-        fish = 32,
-        'flame-thrower-explosion' = 33,
-        'fluid-turret' = 34,
-        'fluid-wagon' = 35,
-        'flying-text' = 36,
-        furnace = 37,
-        gate = 38,
-        generator = 39,
-        'heat-interface' = 40,
-        'heat-pipe' = 41,
-        'highlight-box' = 42,
-        'infinity-container' = 43,
-        'infinity-pipe' = 44,
-        inserter = 45,
-        'item-entity' = 46,
-        'item-request-proxy' = 47,
-        lab = 48,
-        lamp = 49,
-        'land-mine' = 50,
-        'leaf-particle' = 51,
-        'linked-belt' = 52,
-        'linked-container' = 53,
-        loader = 54,
-        'loader-1x1' = 55,
-        locomotive = 56,
-        'logistic-container' = 57,
-        'logistic-robot' = 58,
-        market = 59,
-        'mining-drill' = 60,
-        'offshore-pump' = 61,
-        particle = 62,
-        'particle-source' = 63,
-        pipe = 64,
-        'pipe-to-ground' = 65,
-        'player-port' = 66,
-        'power-switch' = 67,
-        'programmable-speaker' = 68,
-        projectile = 69,
-        pump = 70,
-        radar = 71,
-        'rail-chain-signal' = 72,
-        'rail-remnants' = 73,
-        'rail-signal' = 74,
-        reactor = 75,
-        resource = 76,
-        roboport = 77,
-        'rocket-silo' = 78,
-        'rocket-silo-rocket' = 79,
-        'rocket-silo-rocket-shadow' = 80,
-        'simple-entity' = 81,
-        'simple-entity-with-force' = 82,
-        'simple-entity-with-owner' = 83,
-        smoke = 84,
-        'smoke-with-trigger' = 85,
-        'solar-panel' = 86,
-        'speech-bubble' = 87,
-        'spider-leg' = 88,
-        'spider-vehicle' = 89,
-        splitter = 90,
-        sticker = 91,
-        'storage-tank' = 92,
-        'straight-rail' = 93,
-        stream = 94,
-        'tile-ghost' = 95,
-        'train-stop' = 96,
-        'transport-belt' = 97,
-        tree = 98,
-        turret = 99,
-        'underground-belt' = 100,
-        unit = 101,
-        'unit-spawner' = 102,
-        wall = 103
+        'agricultural-tower' = 1,
+        'ammo-turret' = 2,
+        'arithmetic-combinator' = 3,
+        arrow = 4,
+        'artillery-flare' = 5,
+        'artillery-projectile' = 6,
+        'artillery-turret' = 7,
+        'artillery-wagon' = 8,
+        'assembling-machine' = 9,
+        asteroid = 10,
+        'asteroid-collector' = 11,
+        beacon = 12,
+        beam = 13,
+        boiler = 14,
+        'burner-generator' = 15,
+        'capture-robot' = 16,
+        car = 17,
+        'cargo-bay' = 18,
+        'cargo-landing-pad' = 19,
+        'cargo-pod' = 20,
+        'cargo-wagon' = 21,
+        character = 22,
+        'character-corpse' = 23,
+        cliff = 24,
+        'combat-robot' = 25,
+        'constant-combinator' = 26,
+        'construction-robot' = 27,
+        container = 28,
+        corpse = 29,
+        'crafting-machine' = 30,
+        'curved-rail-a' = 31,
+        'curved-rail-b' = 32,
+        'decider-combinator' = 33,
+        'deconstructible-tile-proxy' = 34,
+        'display-panel' = 35,
+        'electric-energy-interface' = 36,
+        'electric-pole' = 37,
+        'electric-turret' = 38,
+        'elevated-curved-rail-a' = 39,
+        'elevated-curved-rail-b' = 40,
+        'elevated-half-diagonal-rail' = 41,
+        'elevated-straight-rail' = 42,
+        'entity-ghost' = 43,
+        explosion = 44,
+        fire = 45,
+        fish = 46,
+        'fluid-turret' = 47,
+        'fluid-wagon' = 48,
+        furnace = 49,
+        'fusion-generator' = 50,
+        'fusion-reactor' = 51,
+        gate = 52,
+        generator = 53,
+        'half-diagonal-rail' = 54,
+        'heat-interface' = 55,
+        'heat-pipe' = 56,
+        'highlight-box' = 57,
+        'infinity-container' = 58,
+        'infinity-pipe' = 59,
+        inserter = 60,
+        'item-entity' = 61,
+        'item-request-proxy' = 62,
+        lab = 63,
+        lamp = 64,
+        'land-mine' = 65,
+        'lane-splitter' = 66,
+        'legacy-curved-rail' = 67,
+        'legacy-straight-rail' = 68,
+        lightning = 69,
+        'lightning-attractor' = 70,
+        'linked-belt' = 71,
+        'linked-container' = 72,
+        loader = 73,
+        'loader-1x1' = 74,
+        locomotive = 75,
+        'logistic-container' = 76,
+        'logistic-robot' = 77,
+        market = 78,
+        'mining-drill' = 79,
+        'offshore-pump' = 80,
+        'particle-source' = 81,
+        pipe = 82,
+        'pipe-to-ground' = 83,
+        plant = 84,
+        'player-port' = 85,
+        'power-switch' = 86,
+        'programmable-speaker' = 87,
+        projectile = 88,
+        pump = 89,
+        radar = 90,
+        rail = 91,
+        'rail-chain-signal' = 92,
+        'rail-ramp' = 93,
+        'rail-remnants' = 94,
+        'rail-signal' = 95,
+        'rail-support' = 96,
+        reactor = 97,
+        resource = 98,
+        roboport = 99,
+        'rocket-silo' = 100,
+        'rocket-silo-rocket' = 101,
+        'rocket-silo-rocket-shadow' = 102,
+        'rolling-stock' = 103,
+        segment = 104,
+        'segmented-unit' = 105,
+        'selector-combinator' = 106,
+        'simple-entity' = 107,
+        'simple-entity-with-force' = 108,
+        'simple-entity-with-owner' = 109,
+        'smoke-with-trigger' = 110,
+        'solar-panel' = 111,
+        'space-platform-hub' = 112,
+        'speech-bubble' = 113,
+        'spider-leg' = 114,
+        'spider-unit' = 115,
+        'spider-vehicle' = 116,
+        splitter = 117,
+        sticker = 118,
+        'storage-tank' = 119,
+        'straight-rail' = 120,
+        stream = 121,
+        'temporary-container' = 122,
+        thruster = 123,
+        'tile-ghost' = 124,
+        'train-stop' = 125,
+        'transport-belt' = 126,
+        'transport-belt-connectable' = 127,
+        tree = 128,
+        turret = 129,
+        'underground-belt' = 130,
+        unit = 131,
+        'unit-spawner' = 132,
+        vehicle = 133,
+        wall = 134
     }
     enum equipment {
         'active-defense-equipment' = 0,
         'battery-equipment' = 1,
         'belt-immunity-equipment' = 2,
         'energy-shield-equipment' = 3,
-        'generator-equipment' = 4,
-        'movement-bonus-equipment' = 5,
-        'night-vision-equipment' = 6,
-        'roboport-equipment' = 7,
-        'solar-panel-equipment' = 8
+        'equipment-ghost' = 4,
+        'generator-equipment' = 5,
+        'inventory-bonus-equipment' = 6,
+        'movement-bonus-equipment' = 7,
+        'night-vision-equipment' = 8,
+        'roboport-equipment' = 9,
+        'solar-panel-equipment' = 10
     }
     /**
      * @customName equipment-category
@@ -1255,6 +1606,12 @@ namespace prototypes {
     enum gui_style {
         'gui-style' = 0
     }
+    /**
+     * @customName impact-category
+     */
+    enum impact_category {
+        'impact-category' = 0
+    }
     enum item {
         ammo = 0,
         armor = 1,
@@ -1269,11 +1626,11 @@ namespace prototypes {
         'item-with-inventory' = 10,
         'item-with-label' = 11,
         'item-with-tags' = 12,
-        'mining-tool' = 13,
-        module = 14,
-        'rail-planner' = 15,
-        'repair-tool' = 16,
-        'selection-tool' = 17,
+        module = 13,
+        'rail-planner' = 14,
+        'repair-tool' = 15,
+        'selection-tool' = 16,
+        'space-platform-starter-pack' = 17,
         'spidertron-remote' = 18,
         tool = 19,
         'upgrade-item' = 20
@@ -1321,13 +1678,25 @@ namespace prototypes {
         'noise-expression' = 0
     }
     /**
-     * @customName noise-layer
+     * @customName noise-function
      */
-    enum noise_layer {
-        'noise-layer' = 0
+    enum noise_function {
+        'noise-function' = 0
     }
     enum particle {
         'optimized-particle' = 0
+    }
+    enum procession {
+        procession = 0
+    }
+    /**
+     * @customName procession-layer-inheritance-group
+     */
+    enum procession_layer_inheritance_group {
+        'procession-layer-inheritance-group' = 0
+    }
+    enum quality {
+        quality = 0
     }
     enum recipe {
         recipe = 0
@@ -1337,6 +1706,12 @@ namespace prototypes {
      */
     enum recipe_category {
         'recipe-category' = 0
+    }
+    /**
+     * @customName remote-controller
+     */
+    enum remote_controller {
+        'remote-controller' = 0
     }
     /**
      * @customName resource-category
@@ -1351,6 +1726,19 @@ namespace prototypes {
         sound = 0
     }
     /**
+     * @customName space-connection
+     */
+    enum space_connection {
+        'space-connection' = 0
+    }
+    /**
+     * @customName space-location
+     */
+    enum space_location {
+        planet = 0,
+        'space-location' = 1
+    }
+    /**
      * @customName spectator-controller
      */
     enum spectator_controller {
@@ -1358,6 +1746,15 @@ namespace prototypes {
     }
     enum sprite {
         sprite = 0
+    }
+    enum surface {
+        surface = 0
+    }
+    /**
+     * @customName surface-property
+     */
+    enum surface_property {
+        'surface-property' = 0
     }
     enum technology {
         technology = 0
@@ -1422,12 +1819,6 @@ namespace prototypes {
     enum virtual_signal {
         'virtual-signal' = 0
     }
-    /**
-     * @customName wind-sound
-     */
-    enum wind_sound {
-        'wind-sound' = 0
-    }
 }
 enum rail_connection_direction {
     left = 0,
@@ -1438,6 +1829,10 @@ enum rail_connection_direction {
 enum rail_direction {
     back = 1,
     front = 0
+}
+enum rail_layer {
+    elevated = 1,
+    ground = 0
 }
 enum relative_gui_position {
     bottom = 1,
@@ -1450,66 +1845,76 @@ enum relative_gui_type {
     achievement_gui = 1,
     additional_entity_info_gui = 2,
     admin_gui = 3,
-    arithmetic_combinator_gui = 4,
-    armor_gui = 5,
-    assembling_machine_gui = 6,
-    assembling_machine_select_recipe_gui = 7,
-    beacon_gui = 8,
-    blueprint_book_gui = 9,
-    blueprint_library_gui = 10,
-    blueprint_setup_gui = 11,
-    bonus_gui = 12,
-    burner_equipment_gui = 13,
-    car_gui = 14,
-    constant_combinator_gui = 15,
-    container_gui = 16,
-    controller_gui = 17,
-    decider_combinator_gui = 18,
-    deconstruction_item_gui = 19,
-    electric_energy_interface_gui = 20,
-    electric_network_gui = 21,
-    entity_variations_gui = 22,
-    entity_with_energy_source_gui = 23,
-    equipment_grid_gui = 24,
-    furnace_gui = 25,
-    generic_on_off_entity_gui = 26,
-    heat_interface_gui = 27,
-    infinity_pipe_gui = 28,
-    inserter_gui = 29,
-    item_with_inventory_gui = 30,
-    lab_gui = 31,
-    lamp_gui = 32,
-    linked_container_gui = 33,
-    loader_gui = 34,
-    logistic_gui = 35,
-    market_gui = 36,
-    mining_drill_gui = 37,
-    other_player_gui = 38,
-    permissions_gui = 39,
-    pipe_gui = 40,
-    power_switch_gui = 41,
-    production_gui = 42,
-    programmable_speaker_gui = 43,
-    rail_chain_signal_gui = 44,
-    rail_signal_gui = 45,
-    reactor_gui = 46,
-    rename_stop_gui = 47,
-    resource_entity_gui = 48,
-    roboport_gui = 49,
-    rocket_silo_gui = 50,
-    script_inventory_gui = 51,
-    server_config_gui = 52,
-    spider_vehicle_gui = 53,
-    splitter_gui = 54,
-    standalone_character_gui = 55,
-    storage_tank_gui = 56,
-    tile_variations_gui = 57,
-    train_gui = 58,
-    train_stop_gui = 59,
-    trains_gui = 60,
-    transport_belt_gui = 61,
-    upgrade_item_gui = 62,
-    wall_gui = 63
+    agriculture_tower_gui = 4,
+    arithmetic_combinator_gui = 5,
+    armor_gui = 6,
+    assembling_machine_gui = 7,
+    assembling_machine_select_recipe_gui = 8,
+    asteroid_collector_gui = 9,
+    beacon_gui = 10,
+    blueprint_book_gui = 11,
+    blueprint_library_gui = 12,
+    blueprint_setup_gui = 13,
+    bonus_gui = 14,
+    burner_equipment_gui = 15,
+    car_gui = 16,
+    cargo_landing_pad_gui = 17,
+    constant_combinator_gui = 18,
+    container_gui = 19,
+    controller_gui = 20,
+    decider_combinator_gui = 21,
+    deconstruction_item_gui = 22,
+    display_panel_gui = 23,
+    electric_energy_interface_gui = 24,
+    electric_network_gui = 25,
+    entity_variations_gui = 26,
+    entity_with_energy_source_gui = 27,
+    equipment_grid_gui = 28,
+    furnace_gui = 29,
+    generic_on_off_entity_gui = 30,
+    ghost_picker_gui = 31,
+    global_electric_network_gui = 32,
+    heat_interface_gui = 33,
+    infinity_pipe_gui = 34,
+    inserter_gui = 35,
+    item_with_inventory_gui = 36,
+    lab_gui = 37,
+    lamp_gui = 38,
+    linked_container_gui = 39,
+    loader_gui = 40,
+    logistic_gui = 41,
+    market_gui = 42,
+    mining_drill_gui = 43,
+    other_player_gui = 44,
+    permissions_gui = 45,
+    pick_stop_gui = 46,
+    pipe_gui = 47,
+    power_switch_gui = 48,
+    production_gui = 49,
+    programmable_speaker_gui = 50,
+    pump_gui = 51,
+    rail_signal_base_gui = 52,
+    reactor_gui = 53,
+    resource_entity_gui = 54,
+    roboport_gui = 55,
+    rocket_silo_gui = 56,
+    script_inventory_gui = 57,
+    selector_combinator_gui = 58,
+    server_config_gui = 59,
+    space_platform_hub_gui = 60,
+    spider_vehicle_gui = 61,
+    splitter_gui = 62,
+    standalone_character_gui = 63,
+    storage_tank_gui = 64,
+    tile_variations_gui = 65,
+    tips_and_tricks_gui = 66,
+    train_gui = 67,
+    train_stop_gui = 68,
+    trains_gui = 69,
+    transport_belt_gui = 70,
+    turret_gui = 71,
+    upgrade_item_gui = 72,
+    wall_gui = 73
 }
 enum render_mode {
     chart = 1,
@@ -1533,6 +1938,44 @@ namespace riding {
         right = 2,
         straight = 1
     }
+}
+enum robot_order_type {
+    /**
+     * Construct a ghost.
+     */
+    construct = 0,
+    /**
+     * Deconstruct an entity.
+     */
+    deconstruct = 4,
+    /**
+     * Deliver an item.
+     */
+    deliver = 2,
+    /**
+     * Deliver specific items to an entity (item request proxy).
+     */
+    deliver_items = 5,
+    /**
+     * Explode a cliff.
+     */
+    explode_cliff = 7,
+    /**
+     * Pickup an item.
+     */
+    pickup = 1,
+    /**
+     * Pickup items from an entity (item request proxy).
+     */
+    pickup_items = 8,
+    /**
+     * Repair an entity.
+     */
+    repair = 3,
+    /**
+     * Upgrade an entity.
+     */
+    upgrade = 6
 }
 /**
  * The various parts of the launch sequence of the rocket silo.
@@ -1599,6 +2042,12 @@ enum rocket_silo_status {
      */
     rocket_rising = 5
 }
+enum selection_mode {
+    alt_reverse_select = 3,
+    alt_select = 1,
+    reverse_select = 2,
+    select = 0
+}
 enum shooting {
     not_shooting = 0,
     shooting_enemies = 1,
@@ -1625,51 +2074,101 @@ enum signal_state {
      */
     reserved_by_circuit_network = 3
 }
+enum space_platform_state {
+    /**
+     * Doesn't have anywhere to go.
+     */
+    no_path = 6,
+    /**
+     * Waiting for a starter pack
+     */
+    no_schedule = 5,
+    /**
+     * Following the path.
+     */
+    on_the_path = 3,
+    /**
+     * Starter pack is on the way.
+     */
+    starter_pack_on_the_way = 2,
+    /**
+     * Starter pack was requested from the logistics system.
+     */
+    starter_pack_requested = 1,
+    /**
+     * Waiting at a station.
+     */
+    waiting_at_station = 7,
+    /**
+     * Platform is ready to leave this planet and does not accept deliveries.
+     */
+    waiting_for_departure = 4,
+    /**
+     * Waiting for a starter pack.
+     */
+    waiting_for_starter_pack = 0
+}
+enum target_type {
+    commandable = 15,
+    custom_chart_tag = 16,
+    entity = 0,
+    equipment = 1,
+    equipment_grid = 2,
+    gui_element = 17,
+    item = 3,
+    logistic_cell = 4,
+    logistic_network = 5,
+    logistic_section = 6,
+    permission_group = 7,
+    planet = 8,
+    player = 9,
+    rail_path = 10,
+    render_object = 11,
+    space_platform = 12,
+    surface = 13,
+    train = 14
+}
 enum train_state {
     /**
      * Braking before a rail signal.
      */
-    arrive_signal = 4,
+    arrive_signal = 3,
     /**
      * Braking before a station.
      */
-    arrive_station = 6,
+    arrive_station = 5,
     /**
      * Same as no_path but all candidate train stops are full
      */
-    destination_full = 10,
+    destination_full = 9,
     /**
      * Can move if user explicitly sits in and rides the train.
      */
-    manual_control = 9,
+    manual_control = 7,
     /**
      * Switched to manual control and has to stop.
      */
-    manual_control_stop = 8,
+    manual_control_stop = 6,
     /**
      * Has no path and is stopped.
      */
-    no_path = 3,
+    no_path = 2,
     /**
      * Doesn't have anywhere to go.
      */
-    no_schedule = 2,
+    no_schedule = 1,
     /**
      * Normal state -- following the path.
      */
     on_the_path = 0,
     /**
-     * Had path and lost it -- must stop.
-     */
-    path_lost = 1,
-    /**
      * Waiting at a signal.
      */
-    wait_signal = 5,
+    wait_signal = 4,
     /**
      * Waiting at a station.
      */
-    wait_station = 7
+    wait_station = 8
 }
 enum transport_line {
     left_line = 0,
@@ -1683,10 +2182,21 @@ enum transport_line {
     secondary_right_line = 5,
     secondary_right_split_line = 9
 }
-enum wire_connection_id {
-    electric_pole = 0,
-    power_switch_left = 1,
-    power_switch_right = 2
+enum wire_connector_id {
+    circuit_green = 1,
+    circuit_red = 0,
+    combinator_input_green = 3,
+    combinator_input_red = 2,
+    combinator_output_green = 5,
+    combinator_output_red = 4,
+    pole_copper = 6,
+    power_switch_left_copper = 7,
+    power_switch_right_copper = 8
+}
+enum wire_origin {
+    player = 0,
+    radars = 2,
+    script = 1
 }
 enum wire_type {
     copper = 2,
