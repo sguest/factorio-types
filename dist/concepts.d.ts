@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.11
+// Factorio version 2.0.12
 // API version 6
 
 declare namespace runtime {
@@ -2434,6 +2434,7 @@ interface InventoryFilter {
      */
     name: string;
 }
+type InventoryIndex = uint8;
 interface InventoryPosition {
     /**
      * The ID of the inventory to insert into.
@@ -6632,6 +6633,7 @@ string | /**
  * The detailed definition of an item stack.
  */
 ItemStackDefinition;
+type SimulationWidgetType = 'signal-id' | 'signal-id-base' | 'signal-or-number' | 'simple-slot' | 'simple-item-slot' | 'recipe-slot' | 'quickbar-slot' | 'logistics-button' | 'logistics-button-space' | 'text-button-localised-substring' | 'text-button' | 'text-button-substring' | 'inventory-limit-slot-button' | 'train-schedule-action-button' | 'choose-button' | 'textfield' | 'item-group-tab' | 'drop-down' | 'check-box' | 'switch' | 'label';
 interface SmokeSource {
     name: string;
     frequency: float;

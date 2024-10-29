@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.11
+// Factorio version 2.0.12
 // API version 6
 
 declare namespace prototype {
@@ -9420,6 +9420,32 @@ interface UpgradeItemPrototype extends SelectionToolPrototype {
     stack_size: 1;
 }
 /**
+ * This prototype is used for receiving an achievement when the player produces energy by entity.
+ */
+interface UseEntityInEnergyProductionAchievementPrototype extends AchievementPrototype {
+    /**
+     * This item need to be consumed before gaining the achievement.
+     * @example ```
+    consumed_condition = "uranium-fuel-cell"
+    ```
+     */
+    consumed_condition?: ItemID;
+    /**
+     * This entity is needed to produce energy, for the player to complete the achievement.
+     * @example ```
+    entity = "steam-engine"
+    ```
+     */
+    entity: EntityID;
+    /**
+     * This item need to be built before gaining the achievement.
+     * @example ```
+    required_to_build = "nuclear-reactor"
+    ```
+     */
+    required_to_build?: EntityID;
+}
+/**
  * This prototype is used for receiving an achievement when the player uses a capsule.
  */
 interface UseItemAchievementPrototype extends AchievementPrototype {
@@ -10574,8 +10600,6 @@ type dataExtendType = ({
 } & CopyPasteToolPrototype) | ({
     type: 'corpse';
 } & CorpsePrototype) | ({
-    type: 'crafting-machine';
-} & CraftingMachinePrototype) | ({
     type: 'create-platform-achievement';
 } & CreatePlatformAchievementPrototype) | ({
     type: 'curved-rail-a';
@@ -10752,8 +10776,6 @@ type dataExtendType = ({
 } & Loader1x1Prototype) | ({
     type: 'loader';
 } & Loader1x2Prototype) | ({
-    type: 'loader';
-} & LoaderPrototype) | ({
     type: 'locomotive';
 } & LocomotivePrototype) | ({
     type: 'logistic-container';
@@ -10828,8 +10850,6 @@ type dataExtendType = ({
 } & RailChainSignalPrototype) | ({
     type: 'rail-planner';
 } & RailPlannerPrototype) | ({
-    type: 'rail';
-} & RailPrototype) | ({
     type: 'rail-ramp';
 } & RailRampPrototype) | ({
     type: 'rail-remnants';
@@ -10866,8 +10886,6 @@ type dataExtendType = ({
 } & RocketSiloRocketPrototype) | ({
     type: 'rocket-silo-rocket-shadow';
 } & RocketSiloRocketShadowPrototype) | ({
-    type: 'rolling-stock';
-} & RollingStockPrototype) | ({
     type: 'segment';
 } & SegmentPrototype) | ({
     type: 'segmented-unit';
@@ -10952,8 +10970,6 @@ type dataExtendType = ({
 } & TrainPathAchievementPrototype) | ({
     type: 'train-stop';
 } & TrainStopPrototype) | ({
-    type: 'transport-belt-connectable';
-} & TransportBeltConnectablePrototype) | ({
     type: 'transport-belt';
 } & TransportBeltPrototype) | ({
     type: 'tree';
@@ -10972,6 +10988,8 @@ type dataExtendType = ({
 } & UnitPrototype) | ({
     type: 'upgrade-item';
 } & UpgradeItemPrototype) | ({
+    type: 'use-entity-in-energy-production-achievement';
+} & UseEntityInEnergyProductionAchievementPrototype) | ({
     type: 'use-item-achievement';
 } & UseItemAchievementPrototype) | ({
     type: 'utility-constants';
@@ -10980,8 +10998,6 @@ type dataExtendType = ({
 } & UtilitySounds) | ({
     type: 'utility-sprites';
 } & UtilitySprites) | ({
-    type: 'vehicle';
-} & VehiclePrototype) | ({
     type: 'virtual-signal';
 } & VirtualSignalPrototype) | ({
     type: 'wall';
