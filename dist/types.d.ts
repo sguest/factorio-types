@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.11
+// Factorio version 2.0.12
 // API version 6
 
 declare namespace prototype {
@@ -723,9 +723,6 @@ CopyPasteToolPrototype | /**
  * `'corpse'`
  */
 CorpsePrototype | /**
- * `'crafting-machine'`
- */
-CraftingMachinePrototype | /**
  * `'create-platform-achievement'`
  */
 CreatePlatformAchievementPrototype | /**
@@ -990,9 +987,6 @@ Loader1x1Prototype | /**
  * `'loader'`
  */
 Loader1x2Prototype | /**
- * `'loader'`
- */
-LoaderPrototype | /**
  * `'locomotive'`
  */
 LocomotivePrototype | /**
@@ -1104,9 +1098,6 @@ RailChainSignalPrototype | /**
  * `'rail-planner'`
  */
 RailPlannerPrototype | /**
- * `'rail'`
- */
-RailPrototype | /**
  * `'rail-ramp'`
  */
 RailRampPrototype | /**
@@ -1161,9 +1152,6 @@ RocketSiloRocketPrototype | /**
  * `'rocket-silo-rocket-shadow'`
  */
 RocketSiloRocketShadowPrototype | /**
- * `'rolling-stock'`
- */
-RollingStockPrototype | /**
  * `'segment'`
  */
 SegmentPrototype | /**
@@ -1290,9 +1278,6 @@ TrainPathAchievementPrototype | /**
  * `'train-stop'`
  */
 TrainStopPrototype | /**
- * `'transport-belt-connectable'`
- */
-TransportBeltConnectablePrototype | /**
  * `'transport-belt'`
  */
 TransportBeltPrototype | /**
@@ -1320,6 +1305,9 @@ UnitPrototype | /**
  * `'upgrade-item'`
  */
 UpgradeItemPrototype | /**
+ * `'use-entity-in-energy-production-achievement'`
+ */
+UseEntityInEnergyProductionAchievementPrototype | /**
  * `'use-item-achievement'`
  */
 UseItemAchievementPrototype | /**
@@ -1332,9 +1320,6 @@ UtilitySounds | /**
  * `'utility-sprites'`
  */
 UtilitySprites | /**
- * `'vehicle'`
- */
-VehiclePrototype | /**
  * `'virtual-signal'`
  */
 VirtualSignalPrototype | /**
@@ -5819,6 +5804,8 @@ interface LoaderStructure {
     direction_in?: Sprite4Way;
     direction_out?: Sprite4Way;
     front_patch?: Sprite4Way;
+    frozen_patch_in?: Sprite4Way;
+    frozen_patch_out?: Sprite4Way;
 }
 /**
  * Localised strings are a way to support translation of in-game text. They offer a language-independent code representation of the text that should be shown to players.
@@ -8774,30 +8761,7 @@ interface SimpleModifier extends BaseModifier {
     modifier: double;
 }
 /**
- * Used by tips and tricks and main menu simulations.
- *
- * There are a few simulation-only APIs:
- *
- * ```
- * game.create_test_player{name=string}
- * game.activate_rail_planner{position=position,ghost_mode=bool,build_mode=defines.build_mode}
- * game.deactivate_rail_planner()
- * game.move_cursor{position=position,speed=number}  -- should be called every tick; returns true when target is reached
- * game.activate_selection()
- * game.finish_selection()
- * game.deactivate_selection()
- * game.scroll_clipboard_forwards()
- * game.scroll_clipboard_backwards()
- * game.camera_player_cursor_position [RW]
- * game.camera_position [RW]
- * game.camera_zoom [W]
- * game.camera_player [W]
- * game.camera_player_cursor_direction [W]
- * game.camera_alt_info [W]
- * player.drag_start_position [W]
- * player.raw_build_from_cursor{ghost_mode=bool,created_by_moving=bool,position=position}
- * surface.create_entities_from_blueprint_string{string=string,position=position,force=force,direction=defines.direction,flip_horizontal=bool,flip_vertical=bool,by_player=player}
- * ```
+ * Used by tips and tricks and main menu simulations. Simulations can be controlled at runtime via {@link LuaSimulation | runtime:LuaSimulation}.
  */
 interface SimulationDefinition {
     /**

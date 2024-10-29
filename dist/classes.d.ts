@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.11
+// Factorio version 2.0.12
 // API version 6
 
 declare namespace runtime {
@@ -5011,7 +5011,7 @@ interface LuaControl {
      *
      * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory` or `nil`.
      */
-    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | defines.gui_type;
+    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | defines.gui_type;
     readonly opened_gui_type?: defines.gui_type;
     /**
      * Current item-picking state.
@@ -15598,6 +15598,115 @@ interface LuaShortcutPrototype extends LuaPrototypeBase {
  * The simulation object instance can be obtained from {@link LuaGameScript::simulation | runtime:LuaGameScript::simulation}.
  */
 interface LuaSimulation {
+    /**
+     * Activate the rail planner at the given position.
+     * @param table.ghost_mode Defaults to `false`.
+     * @param table.build_mode Defaults to {@link normal | runtime:defines.build_mode.normal}.
+     */
+    activate_rail_planner(this: void, table: {
+        position?: MapPosition;
+        ghost_mode?: boolean;
+        build_mode?: defines.build_mode;
+    }): void;
+    /**
+     * Send a control press event at the current cursor position.
+     * @param table.control The name of the control input to press.
+     * @param table.notify Whether to show flying text of the activated control.
+     */
+    control_down(this: void, table: {
+        control: string;
+        notify: boolean;
+    }): void;
+    /**
+     * Send a control down and up event at the current cursor position. This is equivalent to calling {@link LuaSimulation::control_down | runtime:LuaSimulation::control_down}, then {@link LuaSimulation::control_up | runtime:LuaSimulation::control_up}.
+     * @param table.control The name of the control input to press and release.
+     * @param table.notify Whether to show flying text of the activated control.
+     */
+    control_press(this: void, table: {
+        control: string;
+        notify: boolean;
+    }): void;
+    /**
+     * Send a control release event at the current cursor position.
+     * @param table.control The name of the control input to release.
+     */
+    control_up(this: void, table: {
+        control: string;
+    }): void;
+    /**
+     * @param table.name The name of the new player.
+     * @returns The created player.
+     */
+    create_test_player(this: void, table: {
+        name: string;
+    }): LuaPlayer;
+    /**
+     * Deactivate the rail planner.
+     */
+    deactivate_rail_planner(this: void): void;
+    /**
+     * @param table.inventory Defaults to `"character"`.
+     * @returns Position of the GUI slot on the screen, if successfully found.
+     */
+    get_slot_position(this: void, table: {
+        inventory_index: InventoryIndex;
+        slot_index: ItemStackIndex;
+        inventory?: 'character' | 'entity';
+    }): MapPosition | null;
+    /**
+     * @returns Center of the GUI widget on the screen, if successfully found.
+     */
+    get_widget_position(this: void, table: {
+        type: SimulationWidgetType;
+        data?: string;
+        data2?: string;
+    }): MapPosition | null;
+    /**
+     * Send a left mouse button click event at its current position. This is equivalent to calling {@link LuaSimulation::mouse_down | runtime:LuaSimulation::mouse_down}, then {@link LuaSimulation::mouse_up | runtime:LuaSimulation::mouse_up}.
+     */
+    mouse_click(this: void): void;
+    /**
+     * Send a left mouse button-down event at its current position.
+     */
+    mouse_down(this: void): void;
+    /**
+     * Send a left mouse button-up event at its current position.
+     */
+    mouse_up(this: void): void;
+    /**
+     * Move the cursor towards the given position at the given speed.
+     * @param table.speed Defaults to `0.2`.
+     * @returns Whether the cursor will reach the target position with this move.
+     */
+    move_cursor(this: void, table: {
+        position: MapPosition;
+        speed?: double;
+    }): boolean;
+    /**
+     * Scroll the clipboard backwards by one entry.
+     */
+    scroll_clipboard_backwards(this: void): void;
+    /**
+     * Scroll the clipboard forwards by one entry.
+     */
+    scroll_clipboard_forwards(this: void): void;
+    /**
+     * Write text as if it was typed by a player. Overwrites existing text by selecting it first.
+     * @param table.text The text to write. Does nothing if no text is provided.
+     */
+    write(this: void, table: {
+        text?: string;
+    }): void;
+    active_quickbars: uint8;
+    camera_alt_info: boolean;
+    camera_player: PlayerIdentification;
+    camera_player_cursor_direction: defines.direction;
+    camera_player_cursor_position?: MapPosition;
+    camera_position?: MapPosition;
+    camera_surface_index?: uint;
+    camera_zoom: double;
+    gui_tooltip_interval: double;
+    hide_cursor: boolean;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */

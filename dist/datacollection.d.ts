@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.11
+// Factorio version 2.0.12
 // API version 6
 
 declare namespace prototype {
@@ -168,9 +168,6 @@ interface dataCollection {
     };
     'corpse': {
         [key: string]: CorpsePrototype;
-    };
-    'crafting-machine': {
-        [key: string]: CraftingMachinePrototype;
     };
     'create-platform-achievement': {
         [key: string]: CreatePlatformAchievementPrototype;
@@ -434,7 +431,7 @@ interface dataCollection {
         [key: string]: Loader1x1Prototype;
     };
     'loader': {
-        [key: string]: Loader1x2Prototype | LoaderPrototype;
+        [key: string]: Loader1x2Prototype;
     };
     'locomotive': {
         [key: string]: LocomotivePrototype;
@@ -547,9 +544,6 @@ interface dataCollection {
     'rail-planner': {
         [key: string]: RailPlannerPrototype;
     };
-    'rail': {
-        [key: string]: RailPrototype;
-    };
     'rail-ramp': {
         [key: string]: RailRampPrototype;
     };
@@ -603,9 +597,6 @@ interface dataCollection {
     };
     'rocket-silo-rocket-shadow': {
         [key: string]: RocketSiloRocketShadowPrototype;
-    };
-    'rolling-stock': {
-        [key: string]: RollingStockPrototype;
     };
     'segment': {
         [key: string]: SegmentPrototype;
@@ -733,9 +724,6 @@ interface dataCollection {
     'train-stop': {
         [key: string]: TrainStopPrototype;
     };
-    'transport-belt-connectable': {
-        [key: string]: TransportBeltConnectablePrototype;
-    };
     'transport-belt': {
         [key: string]: TransportBeltPrototype;
     };
@@ -763,6 +751,9 @@ interface dataCollection {
     'upgrade-item': {
         [key: string]: UpgradeItemPrototype;
     };
+    'use-entity-in-energy-production-achievement': {
+        [key: string]: UseEntityInEnergyProductionAchievementPrototype;
+    };
     'use-item-achievement': {
         [key: string]: UseItemAchievementPrototype;
     };
@@ -774,9 +765,6 @@ interface dataCollection {
     };
     'utility-sprites': {
         [key: string]: UtilitySprites;
-    };
-    'vehicle': {
-        [key: string]: VehiclePrototype;
     };
     'virtual-signal': {
         [key: string]: VirtualSignalPrototype;
