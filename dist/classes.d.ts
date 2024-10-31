@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.12
+// Factorio version 2.0.13
 // API version 6
 
 declare namespace runtime {
@@ -79,7 +79,7 @@ interface LuaAchievementPrototype extends LuaPrototypeBase {
     readonly minimum_damage?: float;
     readonly minimum_distance?: double;
     readonly minimum_energy_produced?: double;
-    readonly module?: LuaItemPrototype;
+    readonly module?: string[];
     readonly more_than_manually?: boolean;
     readonly not_to_kill?: LuaEntityPrototype;
     /**
@@ -13657,6 +13657,10 @@ interface LuaPlayer extends LuaControl {
      */
     permission_group?: LuaPermissionGroup;
     /**
+     * The player's "physical" controller. When a player is in the remote controller, this specifies the controller they will return to. When the player is not in the remote controller, this is equivalent to {@link LuaPlayer::controller_type | runtime:LuaPlayer::controller_type}.
+     */
+    readonly physical_controller_type: defines.controllers;
+    /**
      * The current position of this players physical controller.
      */
     readonly physical_position: MapPosition;
@@ -14125,6 +14129,10 @@ interface LuaPumpControlBehavior extends LuaGenericOnOffControlBehavior {
  */
 interface LuaQualityPrototype extends LuaPrototypeBase {
     readonly beacon_power_usage_multiplier: float;
+    /**
+     * The color of the prototype
+     */
+    readonly color: Color;
     readonly draw_sprite_by_default: boolean;
     /**
      * Level basically specifies the stat-increasing value of this quality level
@@ -15846,7 +15854,7 @@ interface LuaSpacePlatform {
     /**
      * The name of this space platform.
      */
-    readonly name: string;
+    name: string;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */

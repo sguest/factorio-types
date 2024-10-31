@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.12
+// Factorio version 2.0.13
 // API version 6
 
 declare namespace prototype {
@@ -5877,11 +5877,11 @@ interface MainSound {
      */
     audible_distance_modifier?: double;
     /**
-     * Can't be used when `match_progress_to_activity` is true.
+     * Can't be used when `match_progress_to_activity` is `true`.
      */
     fade_in_ticks?: uint32;
     /**
-     * Can't be used when `match_progress_to_activity` is true.
+     * Can't be used when `match_progress_to_activity` is `true`.
      */
     fade_out_ticks?: uint32;
     match_progress_to_activity?: bool;
@@ -5896,6 +5896,10 @@ interface MainSound {
      */
     probability?: double;
     sound?: Sound;
+    /**
+     * Only used if {@link WorkingSound::persistent | prototype:WorkingSound::persistent} is `true`.
+     */
+    volume_smoothing_window_size?: uint32;
 }
 interface ManualTransferTipTrigger extends CountBasedTipTrigger {
     type: 'manual-transfer';
