@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.12
+// Factorio version 2.0.13
 // API version 6
 
 declare namespace defines {
@@ -2083,6 +2083,10 @@ enum space_platform_state {
      * Following the path.
      */
     on_the_path = 3,
+    /**
+     * Paused.
+     */
+    paused = 8,
     /**
      * Starter pack is on the way.
      */

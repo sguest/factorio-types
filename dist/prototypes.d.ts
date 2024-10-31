@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.12
+// Factorio version 2.0.13
 // API version 6
 
 declare namespace prototype {
@@ -5419,7 +5419,7 @@ interface ModuleTransferAchievementPrototype extends AchievementPrototype {
     module = "quality-module"
     ```
      */
-    module: ItemID;
+    module: ItemID | ItemID[];
 }
 /**
  * Used by {@link SelectionToolPrototype::mouse_cursor | prototype:SelectionToolPrototype::mouse_cursor}.

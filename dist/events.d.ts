@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.12
+// Factorio version 2.0.13
 // API version 6
 
 declare namespace runtime {
@@ -3224,6 +3224,10 @@ interface on_pre_scenario_finished {
      * Identifier of the event
      */
     name: defines.events;
+    /**
+     * If a player won
+     */
+    player_won: boolean;
     /**
      * Tick the event was generated.
      */
