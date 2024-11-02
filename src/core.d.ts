@@ -32,6 +32,8 @@ type Table = any;
 
 type uint = number;
 
+type bool = boolean;
+
 /*
  * The data.extend method. It's the primary way to add prototypes to the data table.
  * 
