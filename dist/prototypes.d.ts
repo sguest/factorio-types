@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.13
+// Factorio version 2.0.14
 // API version 6
 
 declare namespace prototype {
@@ -299,6 +299,12 @@ interface AmmoTurretPrototype extends TurretPrototype {
  * Specifies an animation that can be used with {@link LuaRendering::draw_animation | runtime:LuaRendering::draw_animation} at runtime.
  */
 interface AnimationPrototype {
+    /**
+     * Only loaded if `layers` is not defined.
+     *
+     * If `true`, the sprite may be downsampled to half its size on load even when 'Sprite quality' graphics setting is set to 'High'. Whether downsampling happens depends on detected hardware and other graphics settings.
+     */
+    allow_forced_downscale?: bool;
     /**
      * Only loaded if `layers` is not defined.
      *
@@ -824,7 +830,6 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
     ingredient_count?: uint8;
 }
 interface AsteroidChunkPrototype extends Prototype {
-    collision_box?: SimpleBoundingBox;
     dying_trigger_effect?: TriggerEffect;
     graphics_set?: AsteroidGraphicsSet;
     hide_from_signal_gui?: bool;
@@ -5107,6 +5112,10 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype {
      * Loader will not create stacks on belt that are larger than this value. Must be >= 1.
      */
     max_belt_stack_size?: uint8;
+    /**
+     * If filters are per lane. Can only be set to true if filter_count is equal to 2.
+     */
+    per_lane_filters?: bool;
     structure?: LoaderStructure;
     structure_render_layer?: RenderLayer;
 }
@@ -8200,6 +8209,12 @@ interface SplitterPrototype extends TransportBeltConnectablePrototype {
 interface SpritePrototype {
     /**
      * Only loaded if `layers` is not defined.
+     *
+     * If `true`, the sprite may be downsampled to half its size on load even when 'Sprite quality' graphics setting is set to 'High'. Whether downsampling happens depends on detected hardware and other graphics settings.
+     */
+    allow_forced_downscale?: bool;
+    /**
+     * Only loaded if `layers` is not defined.
      */
     apply_runtime_tint?: bool;
     /**
@@ -9571,9 +9586,9 @@ interface UtilityConstants extends PrototypeBase {
     freezing_temperature: double;
     frozen_color_lookup: ColorLookupTable;
     ghost_layer: CollisionLayerID;
+    ghost_shader_tint: GhostTintSet;
+    ghost_shaderless_tint: GhostTintSet;
     ghost_shimmer_settings: GhostShimmerConfig;
-    ghost_tint: Color;
-    ghost_tint_delivering: Color;
     gui_remark_color: Color;
     gui_search_match_background_color: Color;
     gui_search_match_foreground_color: Color;
@@ -9694,8 +9709,6 @@ interface UtilityConstants extends PrototypeBase {
     space_platform_relative_speed_factor: double;
     space_platform_starfield_movement_vector: Vector;
     spawner_evolution_factor_health_modifier: float;
-    tile_ghost_tint: Color;
-    tile_ghost_tint_delivering: Color;
     /**
      * Must be >= 1.
      */
