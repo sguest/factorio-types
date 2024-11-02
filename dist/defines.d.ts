@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.13
+// Factorio version 2.0.14
 // API version 6
 
 declare namespace defines {
@@ -1151,30 +1151,31 @@ enum input_action {
     switch_connect_to_logistic_network = 240,
     switch_constant_combinator_state = 241,
     switch_inserter_filter_mode_state = 242,
-    switch_mining_drill_filter_mode_state = 243,
-    switch_power_switch_state = 244,
-    take_equipment = 245,
-    toggle_artillery_auto_targeting = 246,
-    toggle_deconstruction_item_entity_filter_mode = 247,
-    toggle_deconstruction_item_tile_filter_mode = 248,
-    toggle_driving = 249,
-    toggle_enable_vehicle_logistics_while_moving = 250,
-    toggle_entity_logistic_requests = 251,
-    toggle_equipment_movement_bonus = 252,
-    toggle_map_editor = 253,
-    toggle_personal_logistic_requests = 254,
-    toggle_personal_roboport = 255,
-    toggle_selected_entity = 256,
-    toggle_show_entity_info = 257,
-    translate_string = 258,
-    trash_not_requested_items = 259,
-    undo = 260,
-    upgrade = 261,
-    upgrade_opened_blueprint_by_item = 262,
-    upgrade_opened_blueprint_by_record = 263,
-    use_item = 264,
-    wire_dragging = 265,
-    write_to_console = 266
+    switch_loader_filter_mode = 243,
+    switch_mining_drill_filter_mode_state = 244,
+    switch_power_switch_state = 245,
+    take_equipment = 246,
+    toggle_artillery_auto_targeting = 247,
+    toggle_deconstruction_item_entity_filter_mode = 248,
+    toggle_deconstruction_item_tile_filter_mode = 249,
+    toggle_driving = 250,
+    toggle_enable_vehicle_logistics_while_moving = 251,
+    toggle_entity_logistic_requests = 252,
+    toggle_equipment_movement_bonus = 253,
+    toggle_map_editor = 254,
+    toggle_personal_logistic_requests = 255,
+    toggle_personal_roboport = 256,
+    toggle_selected_entity = 257,
+    toggle_show_entity_info = 258,
+    translate_string = 259,
+    trash_not_requested_items = 260,
+    undo = 261,
+    upgrade = 262,
+    upgrade_opened_blueprint_by_item = 263,
+    upgrade_opened_blueprint_by_record = 264,
+    use_item = 265,
+    wire_dragging = 266,
+    write_to_console = 267
 }
 enum input_method {
     game_controller = 1,

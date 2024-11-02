@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.13
+// Factorio version 2.0.14
 // API version 6
 
 declare namespace prototype {
@@ -4946,6 +4946,16 @@ interface GhostShimmerOverlayData {
     x: float;
     y: float;
 }
+interface GhostTintSet {
+    ghost_delivery_tint: Color;
+    ghost_tint: Color;
+    tile_ghost_delivery_tint: Color;
+    tile_ghost_tint: Color;
+    /**
+     * Wires are hard to read when the ghost_tint is very satured, so they use a separate tint color for better fine tuning.
+     */
+    wire_tint: Color;
+}
 interface GigaCargoHatchDefinition {
     /**
      * Cannot use `fade_ticks`.
@@ -9723,6 +9733,10 @@ interface SpriteSheet extends SpriteParameters {
 }
 type SpriteSizeType = int16;
 interface SpriteSource {
+    /**
+     * If `true`, the sprite may be downsampled to half its size on load even when 'Sprite quality' graphics setting is set to 'High'. Whether downsampling happens depends on detected hardware and other graphics settings.
+     */
+    allow_forced_downscale?: bool;
     /**
      * The path to the sprite file to use.
      * This property is required, but marked as optional due to typescript inheritance limitations

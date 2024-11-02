@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.13
+// Factorio version 2.0.14
 // API version 6
 
 declare namespace runtime {
@@ -273,7 +273,6 @@ interface LuaAssemblingMachineControlBehavior extends LuaGenericOnOffControlBeha
  * Prototype of an asteroid chunk.
  */
 interface LuaAsteroidChunkPrototype extends LuaPrototypeBase {
-    readonly collision_box: BoundingBox;
     readonly hide_from_signal_gui: boolean;
     readonly item_signal_alias?: LuaItemPrototype;
     readonly mineable_properties: MineableProperties;
@@ -6733,6 +6732,10 @@ interface LuaEntity extends LuaControl {
      */
     readonly loader_container?: LuaEntity;
     /**
+     * The filter mode for this loader. `nil` if this loader does not support filters.
+     */
+    loader_filter_mode?: 'none' | 'whitelist' | 'blacklist';
+    /**
      * Whether this loader gets items from or puts item into a container.
      */
     loader_type: 'input' | 'output';
@@ -7895,6 +7898,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    readonly per_lane_filters?: bool;
     /**
      * The beacon profile: extra multiplier applied to the effects received from beacon by the effect receiver based on amount of beacons that reach that effect receiver
      */
