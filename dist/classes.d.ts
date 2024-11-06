@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.14
+// Factorio version 2.0.15
 // API version 6
 
 declare namespace runtime {
@@ -6753,7 +6753,7 @@ interface LuaEntity extends LuaControl {
      */
     logistic_network: LuaLogisticNetwork;
     /**
-     * Max health of this entity. Quality of entity is taken into account.
+     * Max health of this entity.
      */
     readonly max_health: float;
     /**
@@ -7898,7 +7898,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
-    readonly per_lane_filters?: bool;
+    readonly per_lane_filters?: boolean;
     /**
      * The beacon profile: extra multiplier applied to the effects received from beacon by the effect receiver based on amount of beacons that reach that effect receiver
      */
@@ -8947,7 +8947,7 @@ interface LuaForce {
     create_space_platform(this: void, table: {
         name?: string;
         planet: SpaceLocationID;
-        starter_pack: ItemID;
+        starter_pack: ItemWithQualityID;
     }): LuaSpacePlatform | null;
     /**
      * Disable all recipes and technologies. Only recipes and technologies enabled explicitly will be useable from this point.
@@ -11916,7 +11916,7 @@ interface LuaItemCommon {
     trees_and_rocks_only: boolean;
 }
 /**
- * Prototype of an item. For example, an item prototype can be obtained from {@link LuaGameScript::item_prototypes | runtime:LuaGameScript::item_prototypes} by its name: `prototypes.item["iron-plate"]`.
+ * Prototype of an item. For example, an item prototype can be obtained from {@link LuaPrototypes::item | runtime:LuaPrototypes::item} by its name: `prototypes.item["iron-plate"]`.
  */
 interface LuaItemPrototype extends LuaPrototypeBase {
     /**
@@ -15723,6 +15723,7 @@ interface LuaSimulation {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    smart_belt_building?: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -15883,7 +15884,7 @@ interface LuaSpacePlatform {
     /**
      * The starter pack used to create this space platform.
      */
-    readonly starter_pack: LuaItemPrototype;
+    readonly starter_pack: ItemIDAndQualityIDPair;
     /**
      * The current state of this space platform.
      */
@@ -16794,8 +16795,9 @@ interface LuaSurface {
      * Spawn pollution at the given position.
      * @param source Where to spawn the pollution.
      * @param amount How much pollution to add.
+     * @param prototype The entity prototype to attribute the pollution change to in statistics. If not defined, the pollution change will not show up in statistics.
      */
-    pollute(this: void, source: MapPosition, amount: double): void;
+    pollute(this: void, source: MapPosition, amount: double, prototype?: EntityID): void;
     /**
      * Print text to the chat console of all players on this surface.
      *

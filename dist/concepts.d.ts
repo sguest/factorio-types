@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.14
+// Factorio version 2.0.15
 // API version 6
 
 declare namespace runtime {
@@ -1483,7 +1483,7 @@ interface EntityPrototypeFilterFlag extends BaseEntityPrototypeFilter {
 /**
  * For use within nested filters such as the `place-result` filter of array{@link [ItemPrototypeFilter | runtime:ItemPrototypeFilter}].
  *
- * To get a specific prototype by name, see {@link LuaGameScript::entity_prototypes | runtime:LuaGameScript::entity_prototypes}.
+ * To get a specific prototype by name, see {@link LuaPrototypes::entity | runtime:LuaPrototypes::entity}.
  * Applies to variant case `name`
  */
 interface EntityPrototypeFilterName extends BaseEntityPrototypeFilter {
@@ -1999,7 +1999,7 @@ interface FluidPrototypeFilterMaxTemperature extends BaseFluidPrototypeFilter {
 /**
  * For use within nested filters such as the `has-product-fluid` filter of array{@link [RecipePrototypeFilter | runtime:RecipePrototypeFilter}].
  *
- * To get a specific prototype by name, see {@link LuaGameScript::fluid_prototypes | runtime:LuaGameScript::fluid_prototypes}.
+ * To get a specific prototype by name, see {@link LuaPrototypes::fluid | runtime:LuaPrototypes::fluid}.
  * Applies to variant case `name`
  */
 interface FluidPrototypeFilterName extends BaseFluidPrototypeFilter {
@@ -2705,7 +2705,7 @@ interface ItemPrototypeFilterFuelValue extends BaseItemPrototypeFilter {
 /**
  * For use within nested filters such as the `has-product-item` filter of array{@link [RecipePrototypeFilter | runtime:RecipePrototypeFilter}].
  *
- * To get a specific prototype by name, see {@link LuaGameScript::item_prototypes | runtime:LuaGameScript::item_prototypes}.
+ * To get a specific prototype by name, see {@link LuaPrototypes::item | runtime:LuaPrototypes::item}.
  * Applies to variant case `name`
  */
 interface ItemPrototypeFilterName extends BaseItemPrototypeFilter {
@@ -5527,6 +5527,7 @@ interface PipeConnection {
     target_pipe_connection_index?: uint;
 }
 interface PipeConnectionDefinition {
+    connection_type: 'normal' | 'underground' | 'linked';
     /**
      * The 4 cardinal direction connection points for this pipe.
      */
@@ -5537,6 +5538,10 @@ interface PipeConnectionDefinition {
     max_underground_distance?: uint;
     flow_direction: 'input-output' | 'input' | 'output';
     direction: defines.direction;
+    /**
+     * Only supplied if `connection_type` is `"linked"`.
+     */
+    linked_connection_id?: uint32;
 }
 interface PlaceAsTileResult {
     /**
