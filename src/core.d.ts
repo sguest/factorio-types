@@ -30,8 +30,9 @@ declare const serpent: Serpent;
 // can eventually fix these on a per-case basis
 type Table = any;
 
+// These ones seem to be strangely missing from concepts and therefore not available in the runtime namespace
 type uint = number;
-
+type uint32 = number;
 type bool = boolean;
 
 /*
