@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.15
+// Factorio version 2.0.16
 // API version 6
 
 declare namespace runtime {
@@ -5810,6 +5810,10 @@ interface LuaEntity extends LuaControl {
      */
     get_logistic_point(this: void, index?: defines.logistic_member_index): (LuaLogisticPoint | Record<defines.logistic_member_index, LuaLogisticPoint>) | null;
     /**
+     * Gives logistic sections of this entity if it uses logistic sections.
+     */
+    get_logistic_sections(this: void): LuaLogisticSections | null;
+    /**
      * Get all offers in a market as an array.
      */
     get_market_items(this: void): Offer[];
@@ -9530,10 +9534,6 @@ interface LuaGameScript {
      */
     disable_replay(this: void): void;
     /**
-     * Enables tip triggers in custom scenarios, that unlock new tips and show notices about unlocked tips.
-     */
-    enable_tip_triggers_in_custom_scenarios(this: void): void;
-    /**
      * Force a CRC check. Tells all peers to calculate their current CRC, which are then compared to each other. If a mismatch is detected, the game desyncs and some peers are forced to reconnect.
      */
     force_crc(this: void): void;
@@ -9752,6 +9752,8 @@ interface LuaGameScript {
      * @param table.show_entity_info Whether to include entity info ("Alt mode") or not. Defaults to `false`.
      * @param table.show_cursor_building_preview When `true` and when `player` is specified, the building preview for the item in the player's cursor will also be rendered. Defaults to `false`.
      * @param table.anti_alias Whether to render in double resolution and downscale the result (including GUI). Defaults to `false`.
+     * @param table.hide_clouds If `true` cloud shadows on ground won't be rendered. Defaults to `false`.
+     * @param table.hide_fog If `true` fog effect and foreground space dust effect won't be rendered. Defaults to `false`.
      * @param table.quality The `.jpg` render quality as a percentage (from 0% to 100% inclusive), if used. A lower value means a more compressed image. Defaults to `80`.
      * @param table.allow_in_replay Whether to save the screenshot even during replay playback. Defaults to `false`.
      * @param table.daytime Overrides the current surface daytime for the duration of screenshot rendering.
@@ -9770,6 +9772,8 @@ interface LuaGameScript {
         show_entity_info?: boolean;
         show_cursor_building_preview?: boolean;
         anti_alias?: boolean;
+        hide_clouds?: boolean;
+        hide_fog?: boolean;
         quality?: int;
         allow_in_replay?: boolean;
         daytime?: double;
@@ -9801,6 +9805,12 @@ interface LuaGameScript {
      * @param player The player to unmute.
      */
     unmute_player(this: void, player: PlayerIdentification): void;
+    /**
+     * If the tips are allowed to be activated in this scenario, it is false by default.
+     *
+     * Can't be modified in a simulation (menu screen, tips and tricks simulation, factoriopedia simulation etc.)
+     */
+    allow_tip_activation: boolean;
     /**
      * True by default. Can be used to disable autosaving. Make sure to turn it back on soon after.
      */
@@ -11615,7 +11625,7 @@ interface LuaItemCommon {
      * @param table.surface Surface to create from
      * @param table.force Force to use for the creation
      * @param table.area The bounding box
-     * @param table.always_include_tiles When true, blueprintable tiles are always included in the blueprint. When false they're only included if no entities exist in the setup area.
+     * @param table.always_include_tiles When true, blueprintable tiles are always included in the blueprint. When false they're only included if no entities exist in the setup area. Defaults to false.
      * @param table.include_entities When true, entities are included in the blueprint. Defaults to true.
      * @param table.include_modules When true, modules are included in the blueprint. Defaults to true.
      * @param table.include_station_names When true, station names are included in the blueprint. Defaults to false.
@@ -12032,6 +12042,10 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      * The prototype of this armor's equipment grid, if any.
      */
     readonly equipment_grid?: LuaEquipmentGridPrototype;
+    /**
+     * The durability message key used when displaying the durability of this tool in Factoriopedia.
+     */
+    readonly factoriopedia_durability_description_key?: string;
     /**
      * The filter mode used by this item with inventory.
      */
@@ -12816,6 +12830,44 @@ interface LuaLogisticSection {
      * The type of this logistic section. Sections that are not manual are controlled by game itself and may not be allowed to be changed by script.
      */
     readonly type: defines.logistic_section_type;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
+ * Logistic sections of an entity.
+ */
+interface LuaLogisticSections {
+    /**
+     * Adds a new logistic section if possible.
+     * @param group The group to assign this section to.
+     * @returns Logistic section if added.
+     */
+    add_section(this: void, group?: string): LuaLogisticSection | null;
+    /**
+     * Gets section on the selected index, if it exists.
+     * @param section_index Index of the section.
+     */
+    get_section(this: void, section_index: uint): LuaLogisticSection | null;
+    /**
+     * Removes the given logistic section if possible. Removal may fail if the section index is out of range or the section is not {@link manual | runtime:LuaLogisticSection::is_manual}.
+     * @param section_index Index of the section.
+     * @returns Whether section was removed.
+     */
+    remove_section(this: void, section_index: uint): boolean;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * All logistic sections of this entity.
+     */
+    readonly sections: LuaLogisticSection[];
+    /**
+     * Amount of logistic sections this entity has.
+     */
+    readonly sections_count: uint;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -14666,7 +14718,7 @@ interface LuaRecord {
      * @param table.surface Surface to create from
      * @param table.force Force to use for the creation
      * @param table.area The bounding box
-     * @param table.always_include_tiles When true, blueprintable tiles are always included in the blueprint. When false they're only included if no entities exist in the setup area.
+     * @param table.always_include_tiles When true, blueprintable tiles are always included in the blueprint. When false they're only included if no entities exist in the setup area. Defaults to false.
      * @param table.include_entities When true, entities are included in the blueprint. Defaults to true.
      * @param table.include_modules When true, modules are included in the blueprint. Defaults to true.
      * @param table.include_station_names When true, station names are included in the blueprint. Defaults to false.

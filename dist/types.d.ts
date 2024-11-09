@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.15
+// Factorio version 2.0.16
 // API version 6
 
 declare namespace prototype {
@@ -2424,6 +2424,7 @@ interface ChartUtilityConstants {
     artillery_range_color: Color;
     blue_signal_color: Color;
     chart_construction_robot_color: Color;
+    chart_deconstruct_active_color: Color;
     chart_deconstruct_tint: Color;
     chart_delivery_to_me_logistic_robot_color: Color;
     chart_logistic_robot_color: Color;
@@ -12526,6 +12527,10 @@ interface WorkingVisualisation {
      */
     draw_when_state_filter_matches?: bool;
     east_animation?: Animation;
+    /**
+     * If defined, animation in this visualisation layer will be used only as mask for fog effect and will not render in world.
+     */
+    east_fog_mask?: FogMaskShapeDefinition;
     east_position?: Vector;
     east_secondary_draw_order?: int8;
     effect?: 'flicker' | 'uranium-glow' | 'none';
@@ -12533,11 +12538,21 @@ interface WorkingVisualisation {
     enabled_in_animated_shift_during_transition?: bool;
     enabled_in_animated_shift_during_waypoint_stop?: bool;
     fadeout?: bool;
+    /**
+     * Loaded only if at least one of north_fog_mask, east_fog_mask, south_fog_mask, west_fog_mask is not specified.
+     *
+     * If defined, animation in this visualisation layer will be used only as mask for fog effect and will not render in world.
+     */
+    fog_mask?: FogMaskShapeDefinition;
     frame_based_on_shift_animation_progress?: bool;
     light?: LightDefinition;
     mining_drill_scorch_mark?: bool;
     name?: string;
     north_animation?: Animation;
+    /**
+     * If defined, animation in this visualisation layer will be used only as mask for fog effect and will not render in world.
+     */
+    north_fog_mask?: FogMaskShapeDefinition;
     north_position?: Vector;
     north_secondary_draw_order?: int8;
     render_layer?: RenderLayer;
@@ -12558,10 +12573,18 @@ interface WorkingVisualisation {
      */
     secondary_draw_order?: int8;
     south_animation?: Animation;
+    /**
+     * If defined, animation in this visualisation layer will be used only as mask for fog effect and will not render in world.
+     */
+    south_fog_mask?: FogMaskShapeDefinition;
     south_position?: Vector;
     south_secondary_draw_order?: int8;
     synced_fadeout?: bool;
     west_animation?: Animation;
+    /**
+     * If defined, animation in this visualisation layer will be used only as mask for fog effect and will not render in world.
+     */
+    west_fog_mask?: FogMaskShapeDefinition;
     west_position?: Vector;
     west_secondary_draw_order?: int8;
 }
