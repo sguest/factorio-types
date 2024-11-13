@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.16
+// Factorio version 2.0.17
 // API version 6
 
 declare namespace runtime {
@@ -6236,7 +6236,7 @@ string | /**
 'item-in-inserter-hand' | /**
  * 130
  */
-'above-inserter' | /**
+'above-inserters' | /**
  * 131
  */
 'wires' | /**
