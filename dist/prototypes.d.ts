@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.16
+// Factorio version 2.0.17
 // API version 6
 
 declare namespace prototype {
@@ -6665,7 +6665,7 @@ interface ResearchWithSciencePackAchievementPrototype extends AchievementPrototy
 interface ResourceCategory extends Prototype {
 }
 /**
- * A mineable/gatherable entity. Its {@link collision_mask | prototype:EntityPrototype::collision_mask} must contain "resource-layer" if it should be minable with a {@link MiningDrillPrototype | prototype:MiningDrillPrototype}.
+ * A mineable/gatherable entity.
  * @example ```
 {
   type = "resource",

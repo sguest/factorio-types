@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.16
+// Factorio version 2.0.17
 // API version 6
 
 declare namespace runtime {
@@ -4813,6 +4813,12 @@ interface LuaControl {
      * @returns The number of items that were actually removed.
      */
     remove_item(this: void, items: ItemStackIdentification): uint;
+    /**
+     * Sets if this characer or player is driving. Returns if the player or character is still driving.
+     * @param driving True for enter-vehicle, false for leave.
+     * @param force If true, the player will be ejected and left at the position of the car if normal "leave" is not possible.
+     */
+    set_driving(this: void, driving: bool, force?: bool): void;
     /**
      * Create an arrow which points at this entity. This is used in the tutorial. For examples, see `control.lua` in the campaign missions.
      */
@@ -9842,7 +9848,7 @@ interface LuaGameScript {
      */
     readonly difficulty: defines.difficulty;
     /**
-     * The currently active set of difficulty settings. Even though this property is marked as read-only, the members of the dictionary that is returned can be modified mid-game. This is however not recommended as different difficulties can have differing technology and recipe trees, which can cause problems for players.
+     * The currently active set of difficulty settings. Even though this property is marked as read-only, the members of the dictionary that is returned can be modified mid-game.
      * @example ```
     -- This will set the technology price multiplier to 12.
     game.difficulty_settings.technology_price_multiplier = 12
