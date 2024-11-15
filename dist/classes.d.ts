@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.17
+// Factorio version 2.0.18
 // API version 6
 
 declare namespace runtime {
@@ -5857,11 +5857,10 @@ interface LuaEntity extends LuaControl {
      */
     get_passenger(this: void): (LuaEntity | LuaPlayer) | null;
     /**
-     * Get the entity ID name at the specified position in the turret's priority list.
+     * Get the entity ID at the specified position in the turret's priority list.
      * @param index The index of the entry to fetch.
-     * @returns The name of the entity prototype.
      */
-    get_priority_target(this: void, index: uint): string;
+    get_priority_target(this: void, index: uint): LuaEntityPrototype | null;
     /**
      * The radius of this entity.
      */
@@ -7193,7 +7192,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * Gets the base size of the given inventory on this entity or `nil` if the given inventory doesn't exist.
      */
-    get_inventory_size(this: void, index: defines.inventory): uint | null;
+    get_inventory_size(this: void, index: defines.inventory, quality?: QualityID): uint | null;
     /**
      * The maximum circuit wire distance for this entity. 0 if the entity doesn't support circuit wires.
      */
@@ -8177,6 +8176,10 @@ interface LuaEquipment {
      */
     readonly ghost_type: string;
     /**
+     * Inventory size bonus.
+     */
+    readonly inventory_bonus: uint;
+    /**
      * Maximum amount of energy that can be stored in this equipment.
      */
     readonly max_energy: double;
@@ -8379,6 +8382,10 @@ interface LuaEquipmentGrid {
      */
     inhibit_movement_bonus: boolean;
     /**
+     * The total amount of inventory bonus this equipment grid gives.
+     */
+    readonly inventory_bonus: uint;
+    /**
      * The maximum amount of shields this equipment grid has.
      */
     readonly max_shield: float;
@@ -8386,6 +8393,12 @@ interface LuaEquipmentGrid {
      * Maximum energy per tick that can be created by any solar panels in the equipment grid. Actual generated energy varies depending on the daylight levels.
      */
     readonly max_solar_energy: double;
+    /**
+     * The total amount of movement bonus this equipment grid gives.
+     *
+     * Returns `0` if {@link LuaEquipmentGrid::inhibit_movement_bonus | runtime:LuaEquipmentGrid::inhibit_movement_bonus} is `false`.
+     */
+    readonly movement_bonus: double;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -8440,6 +8453,7 @@ interface LuaEquipmentGridPrototype extends LuaPrototypeBase {
  */
 interface LuaEquipmentPrototype extends LuaPrototypeBase {
     get_energy_consumption(this: void, quality?: QualityID): double;
+    get_inventory_bonus(this: void, quality?: QualityID): uint | null;
     get_movement_bonus(this: void, quality?: QualityID): float | null;
     /**
      * The shield value of this equipment. 0 for non-shield equipment.
@@ -15937,7 +15951,7 @@ interface LuaSpacePlatform {
     /**
      * The space location this space platform is stopped at or `nil`.
      */
-    readonly space_location: LuaSpaceLocationPrototype;
+    readonly space_location?: LuaSpaceLocationPrototype;
     speed: double;
     /**
      * The starter pack used to create this space platform.
@@ -16968,7 +16982,7 @@ interface LuaSurface {
     /**
      * Set tiles at specified locations. Can automatically correct the edges around modified tiles.
      *
-     * Placing a {@link mineable | runtime:LuaTilePrototype::mineable_properties} tile on top of a non-mineable or {@link foundation | runtime:LuaTilePrototype::is_foundation} one will turn the latter into the {@link LuaTile::hidden_tile | runtime:LuaTile::hidden_tile} for that tile. Placing a mineable tile on a mineable one or a non-mineable tile on a non-mineable one or a foundation tile on a foundation one will not modify the hidden tile. This restriction can however be circumvented by using {@link LuaSurface::set_hidden_tile | runtime:LuaSurface::set_hidden_tile}. Placing a non-foundation tile on top of a foundation one when there already exists a hidden tile will push hidden tile to {@link double hidden | runtime:LuaTile::double_hidden_tile}, and foundation tile will turn into hidden.
+     * Placing a {@link mineable | runtime:LuaTilePrototype::mineable_properties} tile on top of a non-mineable or {@link foundation | runtime:LuaTilePrototype::is_foundation} one will turn the latter into the {@link LuaTile::hidden_tile | runtime:LuaTile::hidden_tile} for that tile. Placing a mineable non-foundation tile on a mineable non-foundation one or a mineable foundation tile on a mineable foundation one will not modify the hidden tile. This restriction can however be circumvented by using {@link LuaSurface::set_hidden_tile | runtime:LuaSurface::set_hidden_tile}. Placing a non-foundation tile on top of a foundation one when there already exists a hidden tile will push hidden tile to {@link double hidden | runtime:LuaTile::double_hidden_tile}, and foundation tile will turn into hidden. Placing a mineable foundation tile over a mineable non-foundation tile with hidden mineable foundation tile, the hidden tile will be replaced by previously double hidden tile and double hidden tile will be erased. Placing a non-mineable tile will erase hidden and double hidden tiles.
      *
      * It is recommended to call this method once for all the tiles you want to change rather than calling it individually for every tile. As the tile correction is used after every step, calling it one by one could cause the tile correction logic to redo some of the changes. Also, many small API calls are generally more performance intensive than one big one.
      * @param correct_tiles If `false`, the correction logic is not applied to the changed tiles. Defaults to `true`.

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.17
+// Factorio version 2.0.18
 // API version 6
 
 declare namespace prototype {
@@ -1479,7 +1479,7 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
      */
     footstep_particle_triggers?: FootstepTriggerEffectList;
     /**
-     * The search radius for a non-colliding position to move the player to if they are grounded mid-flight.  Must be >= 0.
+     * The search radius for a non-colliding position to move the player to if they are grounded mid-flight. Must be >= 0.
      */
     grounded_landing_search_radius?: double;
     /**
@@ -1769,6 +1769,7 @@ interface ContainerPrototype extends EntityWithOwnerPrototype {
      * The picture displayed for this entity.
      */
     picture?: Sprite;
+    quality_affects_inventory_size?: bool;
 }
 /**
  * A copy-paste or cut-paste tool.
@@ -4527,6 +4528,10 @@ interface ItemPrototype extends Prototype {
      * When "automated" is set, it will force the existence of "launch to orbit automatically" checkBox in the rocket silo which will then force the silo to automatically send the item to orbit when present.
      */
     send_to_orbit_mode?: SendToOrbitMode;
+    /**
+     * Used by Inserters with spoil priority. Item with higher spoil level is considered more spoiled than item with lower spoil level regardless of progress of spoiling
+     */
+    spoil_level?: uint8;
     spoil_result?: ItemID;
     spoil_ticks?: uint32;
     /**
@@ -9709,6 +9714,10 @@ interface UtilityConstants extends PrototypeBase {
     space_platform_relative_speed_factor: double;
     space_platform_starfield_movement_vector: Vector;
     spawner_evolution_factor_health_modifier: float;
+    /**
+     * The number of ticks to show a segmented unit's health bar after fully regenerating.
+     */
+    time_to_show_full_health_bar: MapTick;
     /**
      * Must be >= 1.
      */
