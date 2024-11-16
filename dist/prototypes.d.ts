@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.18
+// Factorio version 2.0.19
 // API version 6
 
 declare namespace prototype {
@@ -182,6 +182,9 @@ interface AgriculturalTowerPrototype extends EntityWithOwnerPrototype {
      */
     random_growth_offset?: double;
 }
+/**
+ * A type of pollution that can spread throughout the chunks of a map.
+ */
 interface AirbornePollutantPrototype extends Prototype {
     affects_evolution: bool;
     /**
@@ -190,6 +193,10 @@ interface AirbornePollutantPrototype extends Prototype {
     affects_water_tint: bool;
     chart_color: Color;
     icon: Sprite;
+    /**
+     * The translated plural string key to use when displaying this pollution's name with an amount. See {@link Tutorial:Localisation | https://wiki.factorio.com/Tutorial:Localisation}.
+     */
+    localised_name_with_amount?: string;
 }
 /**
  * This prototype is used to make sound while playing the game. This includes the game's {@link music | https://store.steampowered.com/app/436090/Factorio__Soundtrack/}, composed by Daniel James Taylor.
