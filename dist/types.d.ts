@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.19
+// Factorio version 2.0.20
 // API version 6
 
 declare namespace prototype {
@@ -6274,6 +6274,7 @@ interface MinableProperties {
      * The amount of fluid that is used up when this object is mined. If this is > 0, this object cannot be mined by hand.
      */
     fluid_amount?: FluidAmount;
+    include_in_show_counts?: bool;
     /**
      * Name of a {@link ParticlePrototype | prototype:ParticlePrototype}. Which set of particles to use.
      */
