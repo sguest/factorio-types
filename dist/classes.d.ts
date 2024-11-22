@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.20
+// Factorio version 2.0.21
 // API version 6
 
 declare namespace runtime {
@@ -4815,7 +4815,7 @@ interface LuaControl {
      */
     remove_item(this: void, items: ItemStackIdentification): uint;
     /**
-     * Sets if this characer or player is driving. Returns if the player or character is still driving.
+     * Sets if this character or player is driving. Returns if the player or character is still driving.
      * @param driving True for enter-vehicle, false for leave.
      * @param force If true, the player will be ejected and left at the position of the car if normal "leave" is not possible.
      */
@@ -4836,9 +4836,10 @@ interface LuaControl {
      * @param surface Surface to teleport to. If not given, will teleport to the entity's current surface. Only players, cars, and spidertrons can be teleported cross-surface.
      * @param raise_teleported If true, {@link defines.events.script_raised_teleported | runtime:defines.events.script_raised_teleported} will be fired on successful entity teleportation.
      * @param snap_to_grid If false the exact position given is used to instead of snapping to the normal entity grid. This only applies if the entity normally snaps to the grid.
+     * @param build_check_type The build check type done when teleporting to the destination. Defaults to `script`. This is ignored when teleporting between surfaces.
      * @returns `true` if the entity was successfully teleported.
      */
-    teleport(this: void, position: MapPosition, surface?: SurfaceIdentification, raise_teleported?: boolean, snap_to_grid?: boolean): boolean;
+    teleport(this: void, position: MapPosition, surface?: SurfaceIdentification, raise_teleported?: boolean, snap_to_grid?: boolean, build_check_type?: defines.build_check_type): boolean;
     /**
      * Select an entity, as if by hovering the mouse above it.
      * @param position Position of the entity to select.
@@ -7390,7 +7391,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly chain_shooting_cooldown_modifier?: double;
     readonly character_corpse?: LuaEntityPrototype;
     /**
-     * The chunk exploration radius of this spider vehicle prototype.
+     * The chunk exploration radius of this vehicle prototype.
      */
     readonly chunk_exploration_radius?: double;
     /**
@@ -7647,6 +7648,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The heat energy source prototype this entity uses, if any.
      */
     readonly heat_energy_source_prototype?: LuaHeatEnergySourcePrototype;
+    /**
+     * The energy required to keep this entity from freezing. Zero energy means it doesn't freeze.
+     */
+    readonly heating_energy: double;
     /**
      * The height of this spider vehicle prototype.
      */
@@ -8189,7 +8194,7 @@ interface LuaEquipment {
      */
     readonly max_shield: double;
     /**
-     * Maximum solar power generated.
+     * Maximum energy per tick crated by this equipment on the current surface. Actual generated energy varies depending on the daylight levels.
      */
     readonly max_solar_power: double;
     /**
@@ -8391,7 +8396,7 @@ interface LuaEquipmentGrid {
      */
     readonly max_shield: float;
     /**
-     * Maximum energy per tick that can be created by any solar panels in the equipment grid. Actual generated energy varies depending on the daylight levels.
+     * Maximum energy per tick that can be created by all solar panels in the equipment grid on the current surface. Actual generated energy varies depending on the daylight levels.
      */
     readonly max_solar_energy: double;
     /**
@@ -9317,6 +9322,11 @@ interface LuaForce {
      * Number of character trash slots.
      */
     character_trash_slot_count: double;
+    circuit_network_enabled: boolean;
+    /**
+     * When true, cliffs will be marked for deconstruction when trying to force-build things that collide.
+     */
+    cliff_deconstruction_enabled: boolean;
     /**
      * Effective color of this force.
      */
@@ -9394,6 +9404,7 @@ interface LuaForce {
      */
     maximum_following_robot_count: uint;
     mining_drill_productivity_bonus: double;
+    mining_with_fluid: boolean;
     /**
      * Name of the force.
      * @example ```
@@ -9419,6 +9430,8 @@ interface LuaForce {
      * The previous research, if any.
      */
     previous_research?: LuaTechnology;
+    rail_planner_allow_elevated_rails: boolean;
+    rail_support_on_deep_oil_ocean: boolean;
     /**
      * Recipes available to this force, indexed by `name`.
      * @example ```
@@ -9464,6 +9477,10 @@ interface LuaForce {
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean;
+    /**
+     * When true, cars/tanks that support logistics will be able to use them.
+     */
+    vehicle_logistics: boolean;
     worker_robots_battery_modifier: double;
     worker_robots_speed_modifier: double;
     worker_robots_storage_bonus: double;
@@ -13150,7 +13167,7 @@ interface LuaPlanet {
      *
      * {@link LuaPlanet::associate_surface | runtime:LuaPlanet::associate_surface} can be used to create an association with an existing surface.
      */
-    readonly surface: LuaSurface;
+    readonly surface?: LuaSurface;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.20
+// Factorio version 2.0.21
 // API version 6
 
 declare namespace prototype {
@@ -3099,8 +3099,7 @@ interface CraftFluidTechnologyTrigger {
 }
 interface CraftItemTechnologyTrigger {
     count?: ItemCountType;
-    item: ItemID;
-    item_quality?: QualityID;
+    item: ItemIDFilter;
     type: 'craft-item';
 }
 interface CraftItemTipTrigger extends CountBasedTipTrigger {
@@ -9227,6 +9226,16 @@ interface SpaceTileEffectParameters {
     zoom_factor?: float;
     zoom_offset?: float;
 }
+interface SpacingItem {
+    /**
+     * The index of the row or column after which to insert `spacing`.
+     */
+    index: uint32_t;
+    /**
+     * The spacing in scaled pixels between columns `column` and `column + 1`.
+     */
+    spacing: int32_t;
+}
 /**
  * The definition of a evolution and probability weights for a {@link spawnable unit | prototype:UnitSpawnDefinition} for a {@link EnemySpawnerPrototype | prototype:EnemySpawnerPrototype}.
  *
@@ -10197,7 +10206,7 @@ interface TableStyleSpecification extends BaseStyleSpecification {
     default_row_graphical_set?: ElementImageSet;
     even_row_graphical_set?: ElementImageSet;
     horizontal_line_color?: Color;
-    horizontal_spacing?: int32;
+    horizontal_spacing?: int32 | SpacingItem[];
     hovered_graphical_set?: ElementImageSet;
     hovered_row_color?: Color;
     inactive_column_ordering_ascending_button_style?: ButtonStyleSpecification;
@@ -10212,7 +10221,7 @@ interface TableStyleSpecification extends BaseStyleSpecification {
     top_cell_padding?: int16;
     type: 'table_style';
     vertical_line_color?: Color;
-    vertical_spacing?: int32;
+    vertical_spacing?: int32 | SpacingItem[];
     wide_as_column_count?: bool;
 }
 /**
@@ -10231,6 +10240,7 @@ interface TechnologySlotStyleSpecification extends ButtonStyleSpecificationBase 
     default_background_shadow?: ElementImageSet;
     default_ingredients_background?: ElementImageSet;
     disabled_ingredients_background?: ElementImageSet;
+    drag_handle_style?: EmptyWidgetStyle;
     highlighted_graphical_set?: ElementImageSet;
     highlighted_ingredients_background?: ElementImageSet;
     hovered_ingredients_background?: ElementImageSet;

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.20
+// Factorio version 2.0.21
 // API version 6
 
 declare namespace prototype {
@@ -5881,12 +5881,11 @@ interface ProduceAchievementPrototype extends AchievementPrototype {
     item_product = "pistol"
     ```
      */
-    item_product?: ItemID;
+    item_product?: ItemIDFilter;
     /**
      * If this is false, the player carries over their statistics from this achievement through all their saves.
      */
     limited_to_one_game: bool;
-    quality?: QualityID;
 }
 /**
  * This prototype is used for receiving an achievement when the player crafts a specified item a certain amount, in an hour.
@@ -5916,7 +5915,7 @@ interface ProducePerHourAchievementPrototype extends AchievementPrototype {
     item_product = "landfill"
     ```
      */
-    item_product?: ItemID;
+    item_product?: ItemIDFilter;
 }
 /**
  * A {@link programmable speaker | https://wiki.factorio.com/Programmable_speaker}.
@@ -8148,7 +8147,6 @@ interface SpiderVehiclePrototype extends VehiclePrototype {
      * chain_shooting_cooldown_modifier is intended to be in the range of 0 to 1. This means that setting chain_shooting_cooldown_modifier to 0 reduces the remaining shooting cooldown to 0 while a chain_shooting_cooldown_modifier of 1 does not affect the remaining shooting cooldown at all.
      */
     chain_shooting_cooldown_modifier: float;
-    chunk_exploration_radius: uint32;
     energy_source: BurnerEnergySource | VoidEnergySource;
     graphics_set?: SpiderVehicleGraphicsSet;
     /**
@@ -9681,9 +9679,6 @@ interface UtilityConstants extends PrototypeBase {
      * Silently clamped to be between 0 and 1.
      */
     moving_sound_count_reduction_rate: float;
-    music_transition_fade_in_ticks: uint32;
-    music_transition_fade_out_ticks: uint32;
-    music_transition_pause_ticks: uint32;
     /**
      * The table with `name = "default"` must exist and be the first member of the array.
      */
@@ -10434,6 +10429,7 @@ interface VehiclePrototype extends EntityWithOwnerPrototype {
      * Must be positive. There is no functional difference between the two ways to set braking power/force.
      */
     braking_power: Energy | double;
+    chunk_exploration_radius?: uint32;
     crash_trigger?: TriggerEffect;
     /**
      * Name of a {@link DeliverCategory | prototype:DeliverCategory}.
