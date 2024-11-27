@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.20
+// Factorio version 2.0.22
 // API version 6
 
 declare namespace runtime {
@@ -219,6 +219,27 @@ interface on_cancelled_upgrade {
     player_index?: uint;
     quality: LuaQualityPrototype;
     target: LuaEntityPrototype;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when a cargo pod departs a surface.
+ */
+interface on_cargo_pod_finished_ascending {
+    /**
+     * True for pods spawned on a rocket. This event triggers for platform and modded pods as well, but only when true will the pod count towards rocket launch statistics and trigger 'rocket-launched' achievement with objective_condition.
+     */
+    launched_by_rocket: boolean;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The player that is riding the rocket, if any.
+     */
+    player_index?: uint;
     /**
      * Tick the event was generated.
      */
@@ -3632,17 +3653,13 @@ interface on_rocket_launch_ordered {
     tick: uint;
 }
 /**
- * Called when the rocket is launched.
+ * Called when a rocket finishes ascending. (Triggers listening for finished rocket launch past 2.0 have been moved to 'on_cargo_pod_finished_ascending' as rocket and cargo pod are two separate entities)
  */
 interface on_rocket_launched {
     /**
      * Identifier of the event
      */
     name: defines.events;
-    /**
-     * The player that is riding the rocket, if any.
-     */
-    player_index?: uint;
     rocket: LuaEntity;
     rocket_silo?: LuaEntity;
     /**

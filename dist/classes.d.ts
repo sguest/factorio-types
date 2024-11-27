@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.20
+// Factorio version 2.0.22
 // API version 6
 
 declare namespace runtime {
@@ -262,6 +262,14 @@ interface LuaAssemblingMachineControlBehavior extends LuaGenericOnOffControlBeha
      */
     circuit_working_signal?: SignalID;
     /**
+     * `true` if the read contents should include fuel (content of energy source)
+     */
+    include_fuel: boolean;
+    /**
+     * `true` if the read contents should include items in crafting.
+     */
+    include_in_crafting: boolean;
+    /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
@@ -290,6 +298,10 @@ interface LuaAsteroidChunkPrototype extends LuaPrototypeBase {
  * Control behavior for asteroid collectors.
  */
 interface LuaAsteroidCollectorControlBehavior extends LuaGenericOnOffControlBehavior {
+    /**
+     * `true` if read contents should include content of hands (items that were captured but are not yet in the asteroid collector's main inventory).
+     */
+    include_hands: boolean;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -522,6 +534,24 @@ interface LuaBootstrap {
     ```
      */
     on_event(this: void, event: defines.events.on_cancelled_upgrade, handler: ((this: void, arg0: runtime.on_cancelled_upgrade) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_cargo_pod_finished_ascending, handler: ((this: void, arg0: runtime.on_cargo_pod_finished_ascending) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event The event(s) or custom-input to invoke the handler on.
@@ -4743,9 +4773,9 @@ interface LuaControl {
     get_inventory(this: void, inventory: defines.inventory): LuaInventory | null;
     /**
      * Get the number of all or some items in this entity.
-     * @param item Prototype name of the item to count. If not specified, count all items.
+     * @param item The item to count. If not specified, count all items.
      */
-    get_item_count(this: void, item?: ItemID): uint;
+    get_item_count(this: void, item?: ItemFilter): uint;
     /**
      * Gets the main inventory for this character or player if this is a character or player.
      * @returns The inventory or `nil` if this entity is not a character or player.
@@ -4815,11 +4845,11 @@ interface LuaControl {
      */
     remove_item(this: void, items: ItemStackIdentification): uint;
     /**
-     * Sets if this characer or player is driving. Returns if the player or character is still driving.
+     * Sets if this character or player is driving. Returns if the player or character is still driving.
      * @param driving True for enter-vehicle, false for leave.
      * @param force If true, the player will be ejected and left at the position of the car if normal "leave" is not possible.
      */
-    set_driving(this: void, driving: bool, force?: bool): void;
+    set_driving(this: void, driving: boolean, force?: boolean): void;
     /**
      * Create an arrow which points at this entity. This is used in the tutorial. For examples, see `control.lua` in the campaign missions.
      */
@@ -4836,9 +4866,10 @@ interface LuaControl {
      * @param surface Surface to teleport to. If not given, will teleport to the entity's current surface. Only players, cars, and spidertrons can be teleported cross-surface.
      * @param raise_teleported If true, {@link defines.events.script_raised_teleported | runtime:defines.events.script_raised_teleported} will be fired on successful entity teleportation.
      * @param snap_to_grid If false the exact position given is used to instead of snapping to the normal entity grid. This only applies if the entity normally snaps to the grid.
+     * @param build_check_type The build check type done when teleporting to the destination. Defaults to `script`. This is ignored when teleporting between surfaces.
      * @returns `true` if the entity was successfully teleported.
      */
-    teleport(this: void, position: MapPosition, surface?: SurfaceIdentification, raise_teleported?: boolean, snap_to_grid?: boolean): boolean;
+    teleport(this: void, position: MapPosition, surface?: SurfaceIdentification, raise_teleported?: boolean, snap_to_grid?: boolean, build_check_type?: defines.build_check_type): boolean;
     /**
      * Select an entity, as if by hovering the mouse above it.
      * @param position Position of the entity to select.
@@ -5594,7 +5625,7 @@ interface LuaEntity extends LuaControl {
      * @param by_player If provided, the copying is done 'as' this player and {@link on_entity_settings_pasted | runtime:on_entity_settings_pasted} is triggered.
      * @returns Any items removed from this entity as a result of copying the settings.
      */
-    copy_settings(this: void, entity: LuaEntity, by_player?: PlayerIdentification): ItemCountWithQuality[];
+    copy_settings(this: void, entity: LuaEntity, by_player?: PlayerIdentification): ItemWithQualityCounts[];
     /**
      * Creates the same smoke that is created when you place a building by hand.
      *
@@ -6223,7 +6254,7 @@ interface LuaEntity extends LuaControl {
      * @param quality The quality. If not provided `normal` is used.
      * @returns Any items removed from this entity as a result of setting the recipe.
      */
-    set_recipe(this: void, recipe?: RecipeID, quality?: QualityID): ItemCountWithQuality[];
+    set_recipe(this: void, recipe?: RecipeID, quality?: QualityID): ItemWithQualityCounts[];
     /**
      * Revives a ghost silently, so the revival makes no sound and no smoke is created.
      * @param table.raise_revive If true, and an entity ghost; {@link script_raised_revive | runtime:script_raised_revive} will be called. Else if true, and a tile ghost; {@link script_raised_set_tiles | runtime:script_raised_set_tiles} will be called.
@@ -6234,7 +6265,7 @@ interface LuaEntity extends LuaControl {
     silent_revive(this: void, table: {
         raise_revive?: boolean;
     }): LuaMultiReturn<[
-        ItemCountWithQuality[],
+        ItemWithQualityCounts[],
         LuaEntity | null,
         LuaEntity | null
     ]>;
@@ -6706,7 +6737,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Items this ghost will request when revived or items this item request proxy is requesting.
      */
-    readonly item_requests: ItemCountWithQuality[];
+    readonly item_requests: ItemWithQualityCounts[];
     /**
      * The number of units killed by this turret, artillery turret, or artillery wagon.
      */
@@ -7042,7 +7073,14 @@ interface LuaEntity extends LuaControl {
      *
      * Useable only on logistic containers with the `"storage"` {@link logistic_mode | runtime:LuaEntityPrototype::logistic_mode}.
      */
-    storage_filter?: LuaItemPrototype;
+    readonly storage_filter?: ItemIDAndQualityIDPair;
+    /**
+     * The storage filter for this logistic storage container.
+     *
+     * Useable only on logistic containers with the `"storage"` {@link logistic_mode | runtime:LuaEntityPrototype::logistic_mode}.
+     * @customName storage_filter
+     */
+    storage_filter_write?: ItemWithQualityID;
     /**
      * Whether the entity has direction. When it is false for this entity, it will always return north direction when asked for.
      */
@@ -7328,6 +7366,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The attack result of this entity, if any.
      */
     readonly attack_result?: TriggerItem[];
+    readonly auto_setup_collision_box: boolean;
     /**
      * The amount of ammo that inserters automatically insert into this ammo-turret or artillery-turret.
      */
@@ -7390,7 +7429,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly chain_shooting_cooldown_modifier?: double;
     readonly character_corpse?: LuaEntityPrototype;
     /**
-     * The chunk exploration radius of this spider vehicle prototype.
+     * The chunk exploration radius of this vehicle prototype.
      */
     readonly chunk_exploration_radius?: double;
     /**
@@ -7647,6 +7686,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The heat energy source prototype this entity uses, if any.
      */
     readonly heat_energy_source_prototype?: LuaHeatEnergySourcePrototype;
+    /**
+     * The energy required to keep this entity from freezing. Zero energy means it doesn't freeze.
+     */
+    readonly heating_energy: double;
     /**
      * The height of this spider vehicle prototype.
      */
@@ -8189,7 +8232,7 @@ interface LuaEquipment {
      */
     readonly max_shield: double;
     /**
-     * Maximum solar power generated.
+     * Maximum energy per tick crated by this equipment on the current surface. Actual generated energy varies depending on the daylight levels.
      */
     readonly max_solar_power: double;
     /**
@@ -8277,9 +8320,9 @@ interface LuaEquipmentGrid {
     clear(this: void, by_player?: PlayerIdentification): void;
     /**
      * Get the number of all or some equipment in this grid.
-     * @param equipment Prototype name of the equipment to count. If not specified, count all equipment.
+     * @param equipment The equipment to count. If not specified, count all equipment.
      */
-    count(this: void, equipment?: string): uint;
+    count(this: void, equipment?: EquipmentWithQualityID): uint;
     /**
      * Find equipment by name.
      * @param equipment Prototype of the equipment to find.
@@ -8288,16 +8331,16 @@ interface LuaEquipmentGrid {
      */
     find(this: void, equipment: EquipmentWithQualityID, search_ghosts?: boolean): LuaEquipment | null;
     /**
-     * Find equipment in the Equipment Grid based off a position.
+     * Find equipment in the Equipment Grid colliding with this position.
      * @param position The position
-     * @returns The found equipment, or `nil` if equipment could not be found at the given position.
+     * @returns The found equipment, or `nil` if equipment occupying the given position could not be found.
      */
     get(this: void, position: EquipmentPosition): LuaEquipment | null;
     /**
      * Get counts of all equipment in this grid.
      * @returns The counts, indexed by equipment names.
      */
-    get_contents(this: void): Record<string, uint>;
+    get_contents(this: void): EquipmentWithQualityCounts[];
     /**
      * Total energy per tick generated by the equipment inside this grid.
      */
@@ -8355,7 +8398,7 @@ interface LuaEquipmentGrid {
      * @param by_player If provided, the action is done 'as' this player and {@link on_player_removed_equipment | runtime:on_player_removed_equipment} is triggered.
      * @returns List of the equipment that has been removed.
      */
-    take_all(this: void, by_player?: PlayerIdentification): ItemCountWithQuality[];
+    take_all(this: void, by_player?: PlayerIdentification): ItemWithQualityCounts[];
     /**
      * The total energy stored in all batteries in the equipment grid.
      */
@@ -8391,7 +8434,7 @@ interface LuaEquipmentGrid {
      */
     readonly max_shield: float;
     /**
-     * Maximum energy per tick that can be created by any solar panels in the equipment grid. Actual generated energy varies depending on the daylight levels.
+     * Maximum energy per tick that can be created by all solar panels in the equipment grid on the current surface. Actual generated energy varies depending on the daylight levels.
      */
     readonly max_solar_energy: double;
     /**
@@ -8563,14 +8606,14 @@ interface LuaFlowStatistics {
      * Use `sample_index` to access the data used to generate the statistics graphs. Each precision level contains 300 samples of data so at a precision of 1 minute, each sample contains data averaged across 60s / 300 = 0.2s = 12 ticks.
      *
      * All return values are normalized to be per-tick for electric networks and per-minute for all other types.
-     * @param table.name The prototype name.
+     * @param table.id The prototype ID.
      * @param table.category The statistics category to read from. Valid choices are `"input"`, `"output"` and `"storage"`.
      * @param table.precision_index The precision to read.
      * @param table.sample_index The sample index to read from within the precision range. If not provided, the entire precision range is read. Must be between 1 and 300 where 1 is the most recent sample and 300 is the oldest.
      * @param table.count If true, the count of items/fluids/entities is returned instead of the per-time-frame value.
      */
     get_flow_count(this: void, table: {
-        name: string;
+        id: FlowStatisticsID;
         category: string;
         precision_index: defines.flow_precision_index;
         sample_index?: uint16;
@@ -8578,43 +8621,43 @@ interface LuaFlowStatistics {
     }): double;
     /**
      * Gets the total input count for a given prototype.
-     * @param name The prototype name.
+     * @param id The prototype ID.
      */
-    get_input_count(this: void, name: string): uint64 | double;
+    get_input_count(this: void, id: FlowStatisticsID): uint64 | double;
     /**
      * Gets the total output count for a given prototype.
-     * @param name The prototype name.
+     * @param id The prototype ID.
      */
-    get_output_count(this: void, name: string): uint64 | double;
+    get_output_count(this: void, id: FlowStatisticsID): uint64 | double;
     /**
      * Gets the total storage count for a given prototype.
-     * @param name The prototype name.
+     * @param id The prototype ID.
      */
-    get_storage_count(this: void, name: string): uint64 | double;
+    get_storage_count(this: void, id: FlowStatisticsID): uint64 | double;
     /**
      * Adds a value to this flow statistics.
-     * @param name The prototype name.
+     * @param id The prototype ID.
      * @param count The count: positive or negative determines if the value goes in the input or output statistics.
      */
-    on_flow(this: void, name: string, count: float): void;
+    on_flow(this: void, id: FlowStatisticsID, count: float): void;
     /**
      * Sets the total input count for a given prototype.
-     * @param name The prototype name.
+     * @param id The prototype ID.
      * @param count The new count. The type depends on the instance of the statistics.
      */
-    set_input_count(this: void, name: string, count: uint64 | double): void;
+    set_input_count(this: void, id: FlowStatisticsID, count: uint64 | double): void;
     /**
      * Sets the total output count for a given prototype.
-     * @param name The prototype name.
+     * @param id The prototype ID.
      * @param count The new count. The type depends on the instance of the statistics.
      */
-    set_output_count(this: void, name: string, count: uint64 | double): void;
+    set_output_count(this: void, id: FlowStatisticsID, count: uint64 | double): void;
     /**
      * Sets the total storage count for a given prototype.
-     * @param name The prototype name.
+     * @param id The prototype ID.
      * @param count The new count. The type depends on the instance of the statistics.
      */
-    set_storage_count(this: void, name: string, count: uint64 | double): void;
+    set_storage_count(this: void, id: FlowStatisticsID, count: uint64 | double): void;
     /**
      * The force these statistics belong to. `nil` for pollution statistics.
      */
@@ -9317,6 +9360,11 @@ interface LuaForce {
      * Number of character trash slots.
      */
     character_trash_slot_count: double;
+    circuit_network_enabled: boolean;
+    /**
+     * When true, cliffs will be marked for deconstruction when trying to force-build things that collide.
+     */
+    cliff_deconstruction_enabled: boolean;
     /**
      * Effective color of this force.
      */
@@ -9364,7 +9412,7 @@ interface LuaForce {
     /**
      * All of the items that have been launched in rockets.
      */
-    readonly items_launched: ItemCountWithQuality[];
+    readonly items_launched: ItemWithQualityCounts[];
     laboratory_productivity_bonus: double;
     laboratory_speed_modifier: double;
     /**
@@ -9394,6 +9442,7 @@ interface LuaForce {
      */
     maximum_following_robot_count: uint;
     mining_drill_productivity_bonus: double;
+    mining_with_fluid: boolean;
     /**
      * Name of the force.
      * @example ```
@@ -9419,6 +9468,8 @@ interface LuaForce {
      * The previous research, if any.
      */
     previous_research?: LuaTechnology;
+    rail_planner_allow_elevated_rails: boolean;
+    rail_support_on_deep_oil_ocean: boolean;
     /**
      * Recipes available to this force, indexed by `name`.
      * @example ```
@@ -9464,6 +9515,10 @@ interface LuaForce {
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean;
+    /**
+     * When true, cars/tanks that support logistics will be able to use them.
+     */
+    vehicle_logistics: boolean;
     worker_robots_battery_modifier: double;
     worker_robots_speed_modifier: double;
     worker_robots_storage_bonus: double;
@@ -11414,7 +11469,7 @@ interface LuaInventory {
      * Get counts of all items in this inventory.
      * @returns List of all items in the inventory.
      */
-    get_contents(this: void): ItemCountWithQuality[];
+    get_contents(this: void): ItemWithQualityCounts[];
     /**
      * Gets the filter for the given item stack index.
      * @param index The item stack index
@@ -11811,7 +11866,7 @@ interface LuaItemCommon {
     /**
      * List of raw materials required to build this blueprint.
      */
-    readonly cost_to_build: ItemCountWithQuality[];
+    readonly cost_to_build: ItemWithQualityCounts[];
     /**
      * The custom description this item-with-tags. This is shown over the normal item description if this is set to a non-empty value.
      */
@@ -12542,7 +12597,7 @@ interface LuaLogisticNetwork {
      * Get item counts for the entire network, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      * @returns List of all items in the network.
      */
-    get_contents(this: void): ItemCountWithQuality[];
+    get_contents(this: void): ItemWithQualityCounts[];
     /**
      * Count given or all items in the network or given members.
      * @param item Item name to count. If not given, gives counts of all items in the network.
@@ -12763,13 +12818,13 @@ interface LuaLogisticPoint {
      */
     readonly sections_count: uint;
     /**
-     * Items targeted to be dropped off into this logistic point by robots. The attribute is a dictionary mapping the item prototype names to their item counts.
+     * Items targeted to be dropped off into this logistic point by robots.
      */
-    readonly targeted_items_deliver: Record<string, uint>;
+    readonly targeted_items_deliver: ItemWithQualityCounts[];
     /**
-     * Items targeted to be picked up from this logistic point by robots. The attribute is a dictionary mapping the item prototype names to their item counts.
+     * Items targeted to be picked up from this logistic point by robots.
      */
-    readonly targeted_items_pickup: Record<string, uint>;
+    readonly targeted_items_pickup: ItemWithQualityCounts[];
     /**
      * Whether this logistic point is set to trash unrequested items.
      */
@@ -13150,7 +13205,7 @@ interface LuaPlanet {
      *
      * {@link LuaPlanet::associate_surface | runtime:LuaPlanet::associate_surface} can be used to create an association with an existing surface.
      */
-    readonly surface: LuaSurface;
+    readonly surface?: LuaSurface;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -13392,7 +13447,7 @@ interface LuaPlayer extends LuaControl {
      * Gets the quick bar filter for the given slot or `nil`.
      * @param index The slot index. 1 for the first slot of page one, 2 for slot two of page one, 11 for the first slot of page 2, etc.
      */
-    get_quick_bar_slot(this: void, index: uint): LuaItemPrototype | null;
+    get_quick_bar_slot(this: void, index: uint): ItemFilter | null;
     /**
      * If the given alert type is currently enabled.
      */
@@ -14879,7 +14934,7 @@ interface LuaRecord {
     /**
      * List of raw materials required to build this blueprint.
      */
-    readonly cost_to_build: ItemCountWithQuality[];
+    readonly cost_to_build: ItemWithQualityCounts[];
     /**
      * The default icons for a blueprint blueprint.
      */
@@ -18017,7 +18072,7 @@ interface LuaTrain {
      * Get a mapping of the train's inventory.
      * @returns List of all items in the train.
      */
-    get_contents(this: void): ItemCountWithQuality[];
+    get_contents(this: void): ItemWithQualityCounts[];
     /**
      * Gets a mapping of the train's fluid inventory.
      * @returns The counts, indexed by fluid names.
@@ -18030,9 +18085,9 @@ interface LuaTrain {
     get_fluid_count(this: void, fluid?: string): double;
     /**
      * Get the amount of a particular item stored in the train.
-     * @param item Item name to count. If not given, counts all items.
+     * @param item If not given, counts all items.
      */
-    get_item_count(this: void, item?: ItemID): uint;
+    get_item_count(this: void, item?: ItemFilter): uint;
     /**
      * Gets a LuaRailEnd object pointing away from the train at specified end of the train
      */
@@ -18360,16 +18415,16 @@ interface LuaTransportLine {
      * Get counts of all items on this line, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      * @returns List of all items on this line.
      */
-    get_contents(this: void): ItemCountWithQuality[];
+    get_contents(this: void): ItemWithQualityCounts[];
     /**
      * Get detailed information of items on this line, such as their position.
      */
     get_detailed_contents(this: void): DetailedItemOnLine[];
     /**
      * Count some or all items on this line, similar to how {@link LuaInventory::get_item_count | runtime:LuaInventory::get_item_count} does.
-     * @param item Prototype name of the item to count. If not specified, count all items.
+     * @param item If not specified, count all items.
      */
-    get_item_count(this: void, item?: ItemID): uint;
+    get_item_count(this: void, item?: ItemFilter): uint;
     /**
      * Get a map position related to a position on a transport line.
      * @param position Linear position along the transport line. Clamped to the transport line range.

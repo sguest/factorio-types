@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.20
+// Factorio version 2.0.22
 // API version 6
 
 declare namespace runtime {
@@ -1744,6 +1744,20 @@ interface EquipmentPrototypeFilterType extends BaseEquipmentPrototypeFilter {
      */
     'type': string | string[];
 }
+interface EquipmentWithQualityCounts {
+    /**
+     * Name of the equipment prototype.
+     */
+    name: string;
+    /**
+     * The number of equipment items.
+     */
+    count: uint;
+    /**
+     * Name of the equipment's quality prototype.
+     */
+    quality: string;
+}
 /**
  * An equipment prototype with optional quality specification.
  */
@@ -1783,6 +1797,22 @@ interface EventData {
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
 type EventFilter = (LuaPrePlatformMinedEntityEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformMinedEntityEventFilter | LuaScriptRaisedDestroyEventFilter | LuaPlayerBuiltEntityEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPreGhostDeconstructedEventFilter | LuaEntityClonedEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaRobotBuiltEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaPlayerRepairedEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaSectorScannedEventFilter | LuaPostEntityDiedEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaPlayerMinedEntityEventFilter | LuaEntityDamagedEventFilter | LuaScriptRaisedReviveEventFilter | LuaEntityDiedEventFilter | LuaPreRobotMinedEntityEventFilter)[];
+/**
+ * Identifies a statistics prototype, depending on the statistics type.
+ */
+type FlowStatisticsID = /**
+ * Used with item production statistics.
+ */
+ItemWithQualityID | /**
+ * Used with fluid production statistics.
+ */
+FluidID | /**
+ * Used with electric network, entity build count, and kill count statistics.
+ */
+EntityWithQualityID | /**
+ * Used with pollution statistics.
+ */
+EntityID;
 interface Fluid {
     /**
      * Fluid prototype name of the fluid.
@@ -2096,7 +2126,7 @@ interface GameViewSettings {
      */
     show_entity_tooltip: boolean;
     /**
-     * hows or hides the mouse and keyboard/controller button hints in the bottom left corner if they are enabled in the interface settings.
+     * Shows or hides the mouse and keyboard/controller button hints in the bottom left corner if they are enabled in the interface settings.
      */
     show_hotkey_suggestions: boolean;
     /**
@@ -2127,6 +2157,10 @@ interface GameViewSettings {
      * Shows or hides the buttons row.
      */
     show_side_menu: boolean;
+    /**
+     * Shows or hides the surface list while in Remote View.
+     */
+    show_surface_list: boolean;
     /**
      * Shows or hides the tool window with the weapons and armor.
      */
@@ -2450,20 +2484,6 @@ interface InventoryPosition {
     count?: ItemCountType;
 }
 type ItemCountType = uint;
-interface ItemCountWithQuality {
-    /**
-     * The name of the item prototype.
-     */
-    name: string;
-    /**
-     * The number of items.
-     */
-    count: uint;
-    /**
-     * The quality level of the items.
-     */
-    quality: QualityID;
-}
 /**
  * An item filter may be specified in two ways, either as a string which is an item prototype name or as a table.
  */
@@ -2899,6 +2919,20 @@ type ItemStackIndex = uint16;
 interface ItemStackLocation {
     inventory: defines.inventory;
     slot: uint;
+}
+interface ItemWithQualityCounts {
+    /**
+     * Name of the item prototype.
+     */
+    name: string;
+    /**
+     * The number of items.
+     */
+    count: uint;
+    /**
+     * Name of the item's quality prototype.
+     */
+    quality: string;
 }
 /**
  * An item prototype with optional quality specification. Can be specified in one of four ways.
@@ -5541,7 +5575,7 @@ interface PipeConnectionDefinition {
     /**
      * Only supplied if `connection_type` is `"linked"`.
      */
-    linked_connection_id?: uint32;
+    linked_connection_id?: uint;
 }
 interface PlaceAsTileResult {
     /**
@@ -6473,6 +6507,10 @@ interface SelectedPrototypeData {
      * The `name` of the prototype. E.g. `"tree-05"`.
      */
     name: string;
+    /**
+     * The `name` of the quality prototype if any. E.g. `"normal"`.
+     */
+    quality?: string;
 }
 /**
  * A set of flags on a selection tool that define how entities and tiles are selected. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
