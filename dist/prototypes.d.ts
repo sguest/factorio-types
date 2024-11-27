@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.20
+// Factorio version 2.0.22
 // API version 6
 
 declare namespace prototype {
@@ -703,7 +703,10 @@ interface ArtilleryTurretPrototype extends EntityWithOwnerPrototype {
      * Must be > 0.
      */
     ammo_stack_limit: ItemCountType;
-    automated_ammo_count: ItemCountType;
+    /**
+     * Must be > 0.
+     */
+    automated_ammo_count?: ItemCountType;
     base_picture?: Animation4Way;
     base_picture_render_layer?: RenderLayer;
     base_picture_secondary_draw_order?: uint8;
@@ -760,6 +763,10 @@ interface ArtilleryWagonPrototype extends RollingStockPrototype {
      * Must be > 0.
      */
     ammo_stack_limit: ItemCountType;
+    /**
+     * Must be > 0.
+     */
+    automated_ammo_count?: ItemCountType;
     /**
      * Only loaded if `cannon_barrel_recoil_shiftings` is loaded.
      */
@@ -1818,6 +1825,10 @@ interface CorpsePrototype extends EntityPrototype {
     animation_overlay_final_render_layer?: RenderLayer;
     animation_overlay_render_layer?: RenderLayer;
     animation_render_layer?: RenderLayer;
+    /**
+     * If true, and the collision box is unset, this will take the collision box of the first entity that uses this corpse.
+     */
+    auto_setup_collision_box?: bool;
     decay_animation?: RotatedAnimationVariations;
     decay_frame_transition_duration?: float;
     /**
@@ -4224,6 +4235,10 @@ interface InfinityContainerPrototype extends LogisticContainerPrototype {
      */
     logistic_mode?: 'active-provider' | 'passive-provider' | 'requester' | 'storage' | 'buffer';
     /**
+     * When true, items created inside the infinity chest will not start to spoil until they have been removed from the chest.
+     */
+    preserve_contents_when_created?: bool;
+    /**
      * Whether the "no network" icon should be rendered on this entity if the entity is not within a logistics network.
      */
     render_not_in_network_icon?: bool;
@@ -5881,12 +5896,11 @@ interface ProduceAchievementPrototype extends AchievementPrototype {
     item_product = "pistol"
     ```
      */
-    item_product?: ItemID;
+    item_product?: ItemIDFilter;
     /**
      * If this is false, the player carries over their statistics from this achievement through all their saves.
      */
     limited_to_one_game: bool;
-    quality?: QualityID;
 }
 /**
  * This prototype is used for receiving an achievement when the player crafts a specified item a certain amount, in an hour.
@@ -5916,7 +5930,7 @@ interface ProducePerHourAchievementPrototype extends AchievementPrototype {
     item_product = "landfill"
     ```
      */
-    item_product?: ItemID;
+    item_product?: ItemIDFilter;
 }
 /**
  * A {@link programmable speaker | https://wiki.factorio.com/Programmable_speaker}.
@@ -7544,8 +7558,8 @@ interface ShootAchievementPrototype extends AchievementPrototype {
   technology_to_unlock = "construction-robotics",
   item_to_spawn = "deconstruction-planner",
   style = "red",
-  icon = "__base__/graphics/icons/shortcut-toolbar/mip/new-deconstruction-planner-x32.png",
-  icon_size = 32,
+  icon = "__base__/graphics/icons/shortcut-toolbar/mip/new-deconstruction-planner-x56.png",
+  icon_size = 56,
   small_icon = "__base__/graphics/icons/shortcut-toolbar/mip/new-deconstruction-planner-x24.png",
   small_icon_size = 24
 }
@@ -8148,7 +8162,6 @@ interface SpiderVehiclePrototype extends VehiclePrototype {
      * chain_shooting_cooldown_modifier is intended to be in the range of 0 to 1. This means that setting chain_shooting_cooldown_modifier to 0 reduces the remaining shooting cooldown to 0 while a chain_shooting_cooldown_modifier of 1 does not affect the remaining shooting cooldown at all.
      */
     chain_shooting_cooldown_modifier: float;
-    chunk_exploration_radius: uint32;
     energy_source: BurnerEnergySource | VoidEnergySource;
     graphics_set?: SpiderVehicleGraphicsSet;
     /**
@@ -9681,9 +9694,6 @@ interface UtilityConstants extends PrototypeBase {
      * Silently clamped to be between 0 and 1.
      */
     moving_sound_count_reduction_rate: float;
-    music_transition_fade_in_ticks: uint32;
-    music_transition_fade_out_ticks: uint32;
-    music_transition_pause_ticks: uint32;
     /**
      * The table with `name = "default"` must exist and be the first member of the array.
      */
@@ -10434,6 +10444,7 @@ interface VehiclePrototype extends EntityWithOwnerPrototype {
      * Must be positive. There is no functional difference between the two ways to set braking power/force.
      */
     braking_power: Energy | double;
+    chunk_exploration_radius?: uint32;
     crash_trigger?: TriggerEffect;
     /**
      * Name of a {@link DeliverCategory | prototype:DeliverCategory}.
