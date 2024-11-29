@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.22
+// Factorio version 2.0.23
 // API version 6
 
 declare namespace prototype {
@@ -4701,6 +4701,7 @@ interface FogEffectProperties {
      */
     fog_type?: 'vulcanus' | 'gleba';
     shape_noise_texture: EffectTexture;
+    tick_factor?: float;
 }
 interface FogMaskShapeDefinition {
     falloff?: float;
@@ -10960,7 +10961,7 @@ interface TileTransitionsToTiles extends TileTransitions {
 interface TileTransitionsVariants {
     empty_transitions?: bool;
     light?: TileLightPictures[];
-    main: TileMainPictures[];
+    main?: TileMainPictures[];
     material_background?: MaterialTextureParameters;
     /**
      * Must have the same `count` as material_background.

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.22
+// Factorio version 2.0.23
 // API version 6
 
 declare namespace runtime {
@@ -8338,7 +8338,7 @@ interface LuaEquipmentGrid {
     get(this: void, position: EquipmentPosition): LuaEquipment | null;
     /**
      * Get counts of all equipment in this grid.
-     * @returns The counts, indexed by equipment names.
+     * @returns List of all equipment in the grid.
      */
     get_contents(this: void): EquipmentWithQualityCounts[];
     /**
