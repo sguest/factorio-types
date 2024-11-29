@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.22
+// Factorio version 2.0.23
 // API version 6
 
 declare namespace runtime {
@@ -228,6 +228,7 @@ interface on_cancelled_upgrade {
  * Called when a cargo pod departs a surface.
  */
 interface on_cargo_pod_finished_ascending {
+    cargo_pod: LuaEntity;
     /**
      * True for pods spawned on a rocket. This event triggers for platform and modded pods as well, but only when true will the pod count towards rocket launch statistics and trigger 'rocket-launched' achievement with objective_condition.
      */
