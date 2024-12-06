@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.23
+// Factorio version 2.0.24
 // API version 6
 
 declare namespace runtime {
@@ -1422,9 +1422,9 @@ interface on_mod_item_opened {
     tick: uint;
 }
 /**
- * Called after an object is destroyed that has been registered with {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}.
+ * Called after an object is destroyed which was registered with {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed} previously.
  *
- * Depending on when a given object is destroyed, this event will be fired at the end of the current tick or at the end of the next tick.
+ * Depending on when a given object is destroyed, this event will be fired at the end of the current tick or at the end of the next tick. The event's timing is independent of the in-world object being destroyed.
  */
 interface on_object_destroyed {
     /**
@@ -2184,7 +2184,9 @@ interface on_player_fast_transferred {
     tick: uint;
 }
 /**
- * Called when the player flips an entity. This event is only fired when the entity actually changes its orientation or mirroring -- pressing the flip keys on an entity that can't be flipped won't fire this event.
+ * Called when the player flips an entity. This event is only fired when the entity actually changes its orientation or mirroring, so it won't be triggered when pressing the flip keys on an entity that can't be flipped.
+ *
+ * This event reflects a change in the {@link LuaEntity::mirroring | runtime:LuaEntity::mirroring} property.
  */
 interface on_player_flipped_entity {
     /**
@@ -2192,7 +2194,7 @@ interface on_player_flipped_entity {
      */
     entity: LuaEntity;
     /**
-     * The enacted flip. true = Horizontal, false = Vertical
+     * The enacted flip. `true` means a horizontal flip, `false` a vertical one.
      */
     horizontal: boolean;
     /**
