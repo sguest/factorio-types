@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.23
+// Factorio version 2.0.24
 // API version 6
 
 declare namespace runtime {
@@ -3561,6 +3561,22 @@ interface LuaEntityMarkedForUpgradeEventFilterType extends BaseLuaEntityMarkedFo
     'type': string;
 }
 /**
+ * Event name may be specified in one of four ways.
+ */
+type LuaEventType = /**
+ * Custom event prototype.
+ */
+LuaCustomEventPrototype | /**
+ * Custom input prototype.
+ */
+LuaCustomInputPrototype | /**
+ * Event identifier.
+ */
+defines.events | /**
+ * Name of the event.
+ */
+string;
+/**
  * Any LuaObject listed on the {@link Classes | runtime:classes} page.
  */
 type LuaObject = object;
@@ -5293,15 +5309,14 @@ interface ModSettingPrototypeFilterType extends BaseModSettingPrototypeFilter {
 type ModifierType = 'inserter-stack-size-bonus' | 'bulk-inserter-capacity-bonus' | 'laboratory-speed' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' | 'worker-robot-speed' | 'worker-robot-storage' | 'turret-attack' | 'ammo-damage' | 'give-item' | 'gun-speed' | 'unlock-recipe' | 'character-crafting-speed' | 'character-mining-speed' | 'character-running-speed' | 'character-build-distance' | 'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' | 'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' | 'deconstruction-time-to-live' | 'max-failed-attempts-per-tick-per-construction-queue' | 'max-successful-attempts-per-tick-per-construction-queue' | 'character-health-bonus' | 'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'nothing' | 'character-logistic-requests' | 'unlock-space-location' | 'unlock-quality' | 'unlock-space-platforms' | 'unlock-circuit-network' | 'cargo-landing-pad-count' | 'change-recipe-productivity' | 'cliff-deconstruction-enabled' | 'mining-with-fluid' | 'rail-support-on-deep-oil-ocean' | 'rail-planner-allow-elevated-rails' | 'beacon-distribution' | 'create-ghost-on-entity-death' | 'belt-stack-size-bonus' | 'vehicle-logistics';
 /**
  * The percentual increase of the attribute. A value of `0.6` means a 60% increase.
+ *
+ * Quality values are divided by 10 internally, allowing for one more decimal of precision.
  */
 type ModuleEffectValue = float;
 /**
  * @example ```
--- These are the effects of the vanilla Productivity Module 3 (up to floating point imprecisions)
-{consumption=0.6,
-  speed=-0.15,
-  productivity=0.06,
-  pollution=0.075}
+-- These are the effects of the vanilla Speed Module 3
+{speed = 0.5, consumption = 0.7, quality = -0.25}
 ```
  */
 interface ModuleEffects {
@@ -6650,6 +6665,10 @@ interface SignalID {
      * Name of the prototype.
      */
     name?: string;
+    /**
+     * The prototype name of the signal's quality. Defaults to `normal`.
+     */
+    quality?: QualityID;
 }
 type SignalIDType = 'item' | 'fluid' | 'virtual' | 'entity' | 'recipe' | 'space-location' | 'asteroid-chunk' | 'quality';
 /**
@@ -7501,7 +7520,7 @@ interface TriggerEffectItem {
 /**
  * Used by {@link TriggerEffectItem | runtime:TriggerEffectItem}.
  */
-type TriggerEffectItemType = 'damage' | 'create-entity' | 'create-explosion' | 'create-fire' | 'create-smoke' | 'create-trivial-smoke' | 'create-asteroid-chunk' | 'create-particle' | 'create-sticker' | 'create-decorative' | 'nested-result' | 'play-sound' | 'push-back' | 'destroy-cliffs' | 'show-explosion-on-chart' | 'insert-item' | 'script' | 'set-tile' | 'invoke-tile-trigger' | 'destroy-decoratives' | 'camera-effect' | 'activate-impact';
+type TriggerEffectItemType = 'damage' | 'damage-tile' | 'create-entity' | 'create-explosion' | 'create-fire' | 'create-smoke' | 'create-trivial-smoke' | 'create-asteroid-chunk' | 'create-particle' | 'create-sticker' | 'create-decorative' | 'nested-result' | 'play-sound' | 'push-back' | 'destroy-cliffs' | 'show-explosion-on-chart' | 'insert-item' | 'script' | 'set-tile' | 'invoke-tile-trigger' | 'destroy-decoratives' | 'camera-effect' | 'activate-impact';
 interface TriggerItem {
     type: 'direct' | 'area' | 'line' | 'cluster';
     action_delivery?: TriggerDelivery[];
