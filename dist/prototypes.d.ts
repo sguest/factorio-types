@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.23
+// Factorio version 2.0.25
 // API version 6
 
 declare namespace prototype {
@@ -826,6 +826,9 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
     enable_logistic_control_behavior?: bool;
+    /**
+     * Only loaded when fixed_recipe is provided.
+     */
     fixed_quality?: QualityID;
     /**
      * The preset recipe of this machine. This machine does not show a recipe selection if this is set. The base game uses this for the {@link rocket silo | https://wiki.factorio.com/Rocket_silo}.
@@ -1339,6 +1342,7 @@ interface CargoLandingPadPrototype extends EntityWithOwnerPrototype {
     graphics_set?: CargoBayConnectableGraphicsSet;
     inventory_size: ItemStackIndex;
     radar_range?: uint32;
+    radar_visualisation_color?: Color;
     /**
      * Drawn when a robot brings/takes items from this landing pad.
      */
@@ -2712,6 +2716,7 @@ interface EditorControllerPrototype {
     generate_neighbor_chunks: bool;
     gun_inventory_size: ItemStackIndex;
     ignore_surface_conditions: bool;
+    ignore_tile_conditions: bool;
     instant_blueprint_building: bool;
     instant_deconstruction: bool;
     instant_rail_planner: bool;
@@ -3782,6 +3787,9 @@ interface FluidTurretPrototype extends TurretPrototype {
     prepared_muzzle_animation_shift?: AnimatedVector;
     preparing_muzzle_animation_shift?: AnimatedVector;
     starting_attack_muzzle_animation_shift?: AnimatedVector;
+    /**
+     * Always `true`, forcing the turret's collision box to be affected by its rotation.
+     */
     turret_base_has_direction: true;
 }
 /**
@@ -4194,6 +4202,10 @@ interface HeatPipePrototype extends EntityWithOwnerPrototype {
     connection_sprites?: ConnectableEntityGraphics;
     heat_buffer: HeatBuffer;
     heat_glow_sprites?: ConnectableEntityGraphics;
+    /**
+     * Must be >= 0.
+     */
+    heating_radius?: float;
 }
 /**
  * Used to attach graphics for {@link cursor boxes | prototype:CursorBoxType} to entities during runtime. HighlightBoxEntity can also be independent from entities so it is simply drawn somewhere in the world. See {@link LuaSurface::create_entity | runtime:LuaSurface::create_entity} for the available options for type "highlight-box".
@@ -4335,6 +4347,7 @@ interface InserterPrototype extends EntityWithOwnerPrototype {
      * Stack size bonus that is inherent to the prototype without having to be researched.
      */
     stack_size_bonus?: uint8;
+    starting_distance?: double;
     /**
      * Whether the inserter should be able to fish {@link fish | https://wiki.factorio.com/Raw_fish}.
      */
@@ -6395,6 +6408,10 @@ interface ReactorPrototype extends EntityWithOwnerPrototype {
      */
     heat_connection_patches_disconnected?: SpriteVariations;
     heat_lower_layer_picture?: Sprite;
+    /**
+     * Must be >= 0.
+     */
+    heating_radius?: double;
     light?: LightDefinition;
     lower_layer_picture?: Sprite;
     /**
@@ -7020,6 +7037,7 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
      * Defaults to the max of logistic range or construction range rounded up to chunks.
      */
     radar_range?: uint32;
+    radar_visualisation_color?: Color;
     /**
      * Minimum charge that the roboport has to have after a blackout (0 charge/buffered energy) to begin working again. Additionally, freshly placed roboports will have their energy buffer filled with `0.25 × recharge_minimum` energy.
      *
@@ -7825,7 +7843,7 @@ interface SoundPrototype {
     audible_distance_modifier?: double;
     category?: SoundType;
     /**
-     * Supported sound file formats are `.ogg` (Vorbis) and `.wav`.
+     * Supported sound file formats are `.ogg` (Vorbis and Opus) and `.wav`.
      *
      * Only loaded, and mandatory if `variations` is not defined.
      */
@@ -9188,6 +9206,7 @@ interface TurretPrototype extends EntityWithOwnerPrototype {
      */
     attacking_speed?: float;
     call_for_help_radius: double;
+    can_retarget_while_starting_attack?: bool;
     /**
      * Set of {@link circuit connector definitions | prototype:CircuitConnectorDefinition} for all directions used by this turret. Required amount of elements is based on other prototype values: 8 elements if building-direction-8-way flag is set, or 16 elements if building-direction-16-way flag is set, or 4 elements if turret_base_has_direction is set to true, or 1 element.
      */
@@ -9319,7 +9338,7 @@ interface TurretPrototype extends EntityWithOwnerPrototype {
     spawn_decorations_on_expansion?: bool;
     special_effect?: TurretSpecialEffect;
     /**
-     * When `false` turret will enter `starting_attack` state without checking its ammo or energy levels. {@link FluidTurretPrototype | prototype:FluidTurretPrototype} forces this to `true`.
+     * When `false` the turret will enter `starting_attack` state without checking its ammo or energy levels. {@link FluidTurretPrototype | prototype:FluidTurretPrototype} forces this to `true`.
      */
     start_attacking_only_when_can_shoot?: bool;
     starting_attack_animation?: RotatedAnimation8Way;
@@ -9331,6 +9350,9 @@ interface TurretPrototype extends EntityWithOwnerPrototype {
     starting_attack_speed_secondary?: float;
     starting_attack_speed_when_killed?: float;
     starting_attack_starting_progress_when_killed?: float;
+    /**
+     * When `true` the turret's collision box will affected by its rotation.
+     */
     turret_base_has_direction?: bool;
     unfolds_before_dying?: bool;
 }
@@ -9469,7 +9491,7 @@ interface UseEntityInEnergyProductionAchievementPrototype extends AchievementPro
     consumed_condition = "uranium-fuel-cell"
     ```
      */
-    consumed_condition?: ItemID;
+    consumed_condition?: ItemIDFilter;
     /**
      * This entity is needed to produce energy, for the player to complete the achievement.
      * @example ```
@@ -9477,6 +9499,10 @@ interface UseEntityInEnergyProductionAchievementPrototype extends AchievementPro
     ```
      */
     entity: EntityID;
+    /**
+     * This item needs to be produced before gaining the achievement.
+     */
+    produced_condition?: ItemIDFilter;
     /**
      * This item need to be built before gaining the achievement.
      * @example ```
@@ -9833,6 +9859,9 @@ interface UtilitySounds extends PrototypeBase {
     rotated_medium: Sound;
     rotated_small: Sound;
     scenario_message: Sound;
+    /**
+     * Only present when the Space Age mod is loaded.
+     */
     segment_dying_sound?: Sound;
     smart_pipette: Sound;
     switch_gun: Sound;
@@ -10277,7 +10306,10 @@ interface UtilitySprites extends PrototypeBase {
     pin_center: Sprite;
     pipeline_disabled_icon: Sprite;
     placement_indicator_leg: Sprite;
-    platform_entity_build_animations: EntityBuildAnimations;
+    /**
+     * Only present when the Space Age mod is loaded.
+     */
+    platform_entity_build_animations?: EntityBuildAnimations;
     play: Sprite;
     played_dark_green: Sprite;
     played_green: Sprite;

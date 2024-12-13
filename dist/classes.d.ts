@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.23
+// Factorio version 2.0.25
 // API version 6
 
 declare namespace runtime {
@@ -344,21 +344,25 @@ interface LuaAutoplaceControlPrototype extends LuaPrototypeBase {
 interface LuaBootstrap {
     /**
      * Generate a new, unique event ID that can be used to raise custom events with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}.
-     * @returns The newly generated event ID.
+     * @returns The newly generated event ID. This will be a new value that does not correspond to any named entry in defines.events.
      */
-    generate_event_name(this: void): uint;
+    generate_event_name(this: void): defines.events;
     /**
      * Gets the filters for the given event.
      * @param event ID of the event to get.
      * @returns The filters or `nil` if none are defined.
      */
-    get_event_filter(this: void, event: uint): EventFilter | null;
+    get_event_filter(this: void, event: LuaEventType): EventFilter | null;
     /**
      * Find the event handler for an event.
      * @param event The event identifier to get a handler for.
      * @returns Reference to the function currently registered as the handler, if it was found.
      */
-    get_event_handler(this: void, event: uint): ((this: void, arg0: EventData) => any) | null;
+    get_event_handler(this: void, event: LuaEventType): ((this: void, arg0: EventData) => any) | null;
+    /**
+     * Converts LuaEventType into related value of defines.events. Value will be provided also if event was not given a constant inside of defines.events.
+     */
+    get_event_id(this: void, event: LuaEventType): defines.events;
     /**
      * Gets the mod event order as a string.
      */
@@ -3989,7 +3993,7 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
-    on_event(this: void, event: defines.events | string | (defines.events | string)[], handler: ((this: void, arg0: EventData) => any) | nil, filters?: EventFilter): void;
+    on_event(this: void, event: LuaEventType | LuaEventType[], handler: ((this: void, arg0: EventData) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a function to be run on mod initialization.
      *
@@ -4206,7 +4210,7 @@ interface LuaBootstrap {
      * @param event ID of the event to filter.
      * @param filters The filters or `nil` to clear them.
      */
-    set_event_filter(this: void, event: uint, filters?: EventFilter): void;
+    set_event_filter(this: void, event: LuaEventType, filters?: EventFilter): void;
     /**
      * A dictionary listing the names of all currently active mods and mapping them to their version.
      * @example ```
@@ -4336,6 +4340,8 @@ interface LuaBurnerPrototype {
      */
     readonly fuel_categories: Record<string, true>;
     readonly fuel_inventory_size: uint;
+    readonly initial_fuel?: LuaItemPrototype;
+    readonly initial_fuel_percent: double;
     /**
      * The light flicker definition for this burner prototype.
      */
@@ -5260,6 +5266,10 @@ interface LuaCustomChartTag {
  */
 interface LuaCustomEventPrototype extends LuaPrototypeBase {
     /**
+     * Event identifier associated with this custom event.
+     */
+    readonly event_id: defines.events;
+    /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
@@ -5304,6 +5314,10 @@ interface LuaCustomInputPrototype extends LuaPrototypeBase {
      * Whether this custom input is enabled while using the spectator controller.
      */
     readonly enabled_while_spectating: boolean;
+    /**
+     * Event identifier associated with this custom input.
+     */
+    readonly event_id: defines.events;
     /**
      * Whether this custom input will include the selected prototype (if any) when triggered.
      */
@@ -6707,7 +6721,7 @@ interface LuaEntity extends LuaControl {
      */
     inserter_filter_mode?: 'whitelist' | 'blacklist';
     /**
-     * Sets the stack size limit on this inserter. If the stack size is > than the force stack size limit the value is ignored.
+     * Sets the stack size limit on this inserter.
      *
      * Set to `0` to reset.
      */
@@ -6816,7 +6830,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly mining_target?: LuaEntity;
     /**
-     * If the entity is currently mirrored.
+     * If the entity is currently mirrored. This state is referred to as `flipped` elsewhere, such as on the {@link on_player_flipped_entity | runtime:on_player_flipped_entity} event.
      */
     mirroring: boolean;
     /**
@@ -8606,14 +8620,14 @@ interface LuaFlowStatistics {
      * Use `sample_index` to access the data used to generate the statistics graphs. Each precision level contains 300 samples of data so at a precision of 1 minute, each sample contains data averaged across 60s / 300 = 0.2s = 12 ticks.
      *
      * All return values are normalized to be per-tick for electric networks and per-minute for all other types.
-     * @param table.id The prototype ID.
+     * @param table.name The prototype ID.
      * @param table.category The statistics category to read from. Valid choices are `"input"`, `"output"` and `"storage"`.
      * @param table.precision_index The precision to read.
      * @param table.sample_index The sample index to read from within the precision range. If not provided, the entire precision range is read. Must be between 1 and 300 where 1 is the most recent sample and 300 is the oldest.
      * @param table.count If true, the count of items/fluids/entities is returned instead of the per-time-frame value.
      */
     get_flow_count(this: void, table: {
-        id: FlowStatisticsID;
+        name: FlowStatisticsID;
         category: string;
         precision_index: defines.flow_precision_index;
         sample_index?: uint16;
@@ -10037,7 +10051,7 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
     /**
      * `true` if this should connect to the logistic network.
      */
-    readonly connect_to_logistic_network: boolean;
+    connect_to_logistic_network: boolean;
     /**
      * If the entity is currently disabled because of the control behavior.
      */
@@ -10054,7 +10068,7 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
     }
     ```
      */
-    readonly logistic_condition: CircuitConditionDefinition;
+    logistic_condition: CircuitConditionDefinition;
 }
 /**
  * Item group or subgroup.
@@ -15985,6 +15999,10 @@ interface LuaSpacePlatform {
      */
     readonly index: uint;
     /**
+     * The space location this space platform previously went through or stopped at.
+     */
+    readonly last_visited_space_location?: LuaSpaceLocationPrototype;
+    /**
      * The name of this space platform.
      */
     name: string;
@@ -15992,6 +16010,10 @@ interface LuaSpacePlatform {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    /**
+     * When `true`, the platform has paused thrust and does not advance its schedule.
+     */
+    paused: boolean;
     /**
      * This platform's current schedule, if any. Set to `nil` to clear.
      *
@@ -16012,7 +16034,7 @@ interface LuaSpacePlatform {
     /**
      * The starter pack used to create this space platform.
      */
-    readonly starter_pack: ItemIDAndQualityIDPair;
+    readonly starter_pack?: ItemIDAndQualityIDPair;
     /**
      * The current state of this space platform.
      */
@@ -18774,7 +18796,7 @@ interface LuaWireConnector {
      */
     readonly is_ghost: boolean;
     /**
-     * Index of a CircuitNetwork or ElectricSubNetwork which is going through this wire connector. Returns 0 if there is no network associated with this wire connector right now. CircuitNetwork indexes are independent of indexes of ElectricSubNetwork so they may collide with each other
+     * Index of a CircuitNetwork or ElectricSubNetwork which is going through this wire connector. Returns 0 if there is no network associated with this wire connector right now. CircuitNetwork indexes are independent of indexes of ElectricSubNetwork so they may collide with each other.
      */
     readonly network_id: uint;
     /**
