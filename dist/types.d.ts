@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.23
+// Factorio version 2.0.26
 // API version 6
 
 declare namespace prototype {
@@ -2099,6 +2099,8 @@ interface BurnerEnergySource extends BaseEnergySource {
      */
     fuel_categories?: FuelCategoryID[];
     fuel_inventory_size: ItemStackIndex;
+    initial_fuel?: ItemID;
+    initial_fuel_percent?: double;
     light_flicker?: LightFlickeringDefinition;
     smoke?: SmokeSource[];
     type: 'burner';
@@ -2305,6 +2307,12 @@ interface CharacterArmorAnimation {
     idle_with_gun_in_air?: RotatedAnimation;
     landing?: RotatedAnimation;
     mining_with_tool: RotatedAnimation;
+    /**
+     * List of positions in the mining with tool animation when the mining sound and mining particles are created.
+     *
+     * Overrides {@link CharacterPrototype::mining_with_tool_particles_animation_positions | prototype:CharacterPrototype::mining_with_tool_particles_animation_positions} if defined
+     */
+    mining_with_tool_particles_animation_positions?: float[];
     running?: RotatedAnimation;
     /**
      * Must contain exactly 18 or 40 directions, so all of the combination of gun direction and moving direction can be covered. Some of these variations are used in reverse to save space. You can use the character animation in the base game for reference.
@@ -3404,6 +3412,11 @@ interface DamageParameters {
      */
     type: DamageTypeID;
 }
+interface DamageTileTriggerEffectItem extends TriggerEffectItem {
+    damage: DamageParameters;
+    radius?: float;
+    type: 'damage';
+}
 interface DamageTriggerEffectItem extends TriggerEffectItem {
     apply_damage_to_trees?: bool;
     damage: DamageParameters;
@@ -3691,15 +3704,10 @@ interface DropItemTipTrigger extends CountBasedTipTrigger {
     type: 'drop-item';
 }
 /**
- * When applied to {@link modules | prototype:ModulePrototype}, the resulting effect is a sum of all module effects, multiplied through calculations: `(1 + sum module effects)` or, for productivity `(0 + sum)`.
+ * When applied to {@link modules | prototype:ModulePrototype}, the resulting effect is a sum of all module effects, multiplied through calculations: `(1 + sum module effects)`, or `(0 + sum)` for productivity. Quality calculations follow their own separate logic.
  * @example ```
-effect =
-{
-  productivity = 0.04,
-  consumption = 0.4,
-  pollution = 0.05,
-  speed = -0.05
-}
+-- These are the effects of the vanilla Speed Module 3
+{speed = 0.5, consumption = 0.7, quality = -0.25}
 ```
  */
 interface Effect {
@@ -3715,6 +3723,9 @@ interface Effect {
      * Multiplied against work completed, adds to the bonus results of operating. E.g. an extra crafted recipe or immediate research bonus. The minimum possible sum is 0%.
      */
     productivity?: EffectValue;
+    /**
+     * Adds a bonus chance to increase a product's quality. The minimum possible sum is 0%. Quality is a special case because its effect value is divided by 10 internally for actual usage. This allows for one more decimal of precision, as anything beyond two decimals of effect value is ignored.
+     */
     quality?: EffectValue;
     /**
      * Modifier to crafting speed, research speed, etc. The minimum possible sum is -80%.
@@ -3765,7 +3776,10 @@ type EffectTypeLimitation = (/**
 'consumption' | /**
  * Modules that make the machine produce more or less pollution.
  */
-'pollution' | 'quality') | (/**
+'pollution' | /**
+ * Modules that provide a bonus chance to increase a product's quality.
+ */
+'quality') | (/**
  * Modules that increase or decrease the machine's speed.
  */
 'speed' | /**
@@ -3777,11 +3791,19 @@ type EffectTypeLimitation = (/**
 'consumption' | /**
  * Modules that make the machine produce more or less pollution.
  */
-'pollution' | 'quality')[];
+'pollution' | /**
+ * Modules that provide a bonus chance to increase a product's quality.
+ */
+'quality')[];
 /**
  * Precision is ignored beyond two decimals - `0.567` results in `0.56` and means 56% etc. Values can range from `-327.68` to `327.67`. Numbers outside of this range will wrap around.
+ *
+ * Quality values are divided by 10 internally, allowing for one more decimal of precision.
  * @example ```
-0.07 -- 7% bonus
+{speed = 0.07}  -- 7% bonus
+```
+ * @example ```
+{quality = 0.25}  -- 2.5% bonus
 ```
  */
 type EffectValue = float;
@@ -4499,6 +4521,14 @@ interface FluidBox {
     ```
      */
     minimum_temperature?: float;
+    /**
+     * Pipe picture variation used when owner machine is flipped. If no picture is loaded, pipe_picture is used instead.
+     */
+    mirrored_pipe_picture?: Sprite4Way;
+    /**
+     * Frozen pipe picture variation used when owner machine is flipped. If no picture is loaded, pipe_picture_frozen is used instead.
+     */
+    mirrored_pipe_picture_frozen?: Sprite4Way;
     /**
      * Connection points to connect to other fluidboxes. This is also marked as blue arrows in alt mode. Fluid may flow in or out depending on the `type` field of each connection.
      *
@@ -9029,7 +9059,7 @@ type Sound = {
     audible_distance_modifier?: double;
     category?: SoundType;
     /**
-     * Supported sound file formats are `.ogg` (Vorbis) and `.wav`.
+     * Supported sound file formats are `.ogg` (Vorbis and Opus) and `.wav`.
      *
      * Only loaded, and mandatory if `variations` is not defined.
      */
@@ -11497,6 +11527,9 @@ type TriggerEffect = (/**
  * Loaded when the `type` is `"damage"`.
  */
 DamageTriggerEffectItem | /**
+ * Loaded when the `type` is `"damage-tile"`.
+ */
+DamageTileTriggerEffectItem | /**
  * Loaded when the `type` is `"create-entity"`.
  */
 CreateEntityTriggerEffectItem | /**
@@ -11563,6 +11596,9 @@ ActivateImpactTriggerEffectItem) | (/**
  * Loaded when the `type` is `"damage"`.
  */
 DamageTriggerEffectItem | /**
+ * Loaded when the `type` is `"damage-tile"`.
+ */
+DamageTileTriggerEffectItem | /**
  * Loaded when the `type` is `"create-entity"`.
  */
 CreateEntityTriggerEffectItem | /**
