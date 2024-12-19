@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.26
+// Factorio version 2.0.27
 // API version 6
 
 declare namespace prototype {
@@ -11850,9 +11850,17 @@ interface UnitAISettings {
      */
     do_separation?: bool;
     /**
+     * If enabled, the unit is permitted to join attack groups.
+     */
+    join_attacks?: bool;
+    /**
      * Must be between -8 and 8.
      */
     path_resolution_modifier?: int8;
+    /**
+     * The amount of slots in a unit group this unit takes up. For example, a unit with `groupingSize` of 2 will count as 2 normal-sized units when filling up a unit group. Must be greater than 0.
+     */
+    size_in_group?: float;
     strafe_settings?: PrototypeStrafeSettings;
 }
 interface UnitAlternativeFrameSequence {

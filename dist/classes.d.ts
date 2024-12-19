@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.26
+// Factorio version 2.0.27
 // API version 6
 
 declare namespace runtime {
@@ -23,6 +23,10 @@ interface LuaAISettings {
      */
     do_separation: boolean;
     /**
+     * If enabled, the unit will join attack groups.
+     */
+    join_attacks: boolean;
+    /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
@@ -30,6 +34,12 @@ interface LuaAISettings {
      * Defines how coarse the pathfinder's grid is, where smaller values mean a coarser grid. Defaults to `0`, which equals a resolution of `1x1` tiles, centered on tile centers. Values range from `-8` to `8` inclusive, where each integer increment doubles/halves the resolution. So, a resolution of `-8` equals a grid of `256x256` tiles, and a resolution of `8` equals `1/256` of a tile.
      */
     path_resolution_modifier: int8;
+    /**
+     * The number of "slots" that the unit takes up in a unit group. Must be greater than 0.
+     *
+     * If this value is changed after the unit has been added to a group, the exact behavior is undefined.
+     */
+    size_in_group: float;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -7904,6 +7914,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly map_generator_bounding_box: BoundingBox;
     /**
+     * Count of defensive enemies this spawner can sustain.
+     */
+    readonly max_count_of_owned_defensive_units?: double;
+    /**
      * Count of enemies this spawner can sustain.
      */
     readonly max_count_of_owned_units?: double;
@@ -7911,6 +7925,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The maximum darkness at which this unit spawner can spawn entities.
      */
     readonly max_darkness_to_spawn?: float;
+    /**
+     * How many defensive friendly units are required within the spawning_radius of this spawner for it to stop producing more units.
+     */
+    readonly max_defensive_friends_around_to_spawn?: double;
     /**
      * How many friendly units are required within the spawning_radius of this spawner for it to stop producing more units.
      */
@@ -11808,7 +11826,7 @@ interface LuaItemCommon {
     /**
      * Gets the entity filter at the given index for this deconstruction item.
      */
-    get_entity_filter(this: void, index: uint): string | null;
+    get_entity_filter(this: void, index: uint): ItemFilter | null;
     /**
      * Access the inner inventory of an item.
      * @param inventory Index of the inventory to access, which can only be {@link defines.inventory.item_main | runtime:defines.inventory.item_main}.
@@ -11866,7 +11884,7 @@ interface LuaItemCommon {
      * @param filter Writing `nil` removes the filter.
      * @returns Whether the new filter was successfully set (meaning it was valid).
      */
-    set_entity_filter(this: void, index: uint, filter: string | LuaEntityPrototype | LuaEntity | nil): boolean;
+    set_entity_filter(this: void, index: uint, filter: ItemFilter | nil): boolean;
     /**
      * Sets the module filter at the given index for this upgrade item.
      *
@@ -11938,9 +11956,9 @@ interface LuaItemCommon {
      */
     entity_filter_mode: defines.deconstruction_item.entity_filter_mode;
     /**
-     * The entity filters for this deconstruction item. The attribute is a sparse array with the keys representing the index of the filter. All strings in this array must be entity prototype names that don't have the `"not-deconstructable"` flag set and are either a `cliff` or marked as `minable`.
+     * The entity filters for this deconstruction item. The attribute is a sparse array with the keys representing the index of the filter. All prototypes in this array must not have the `"not-deconstructable"` flag set and are either a `cliff` or marked as `minable`.
      */
-    entity_filters: string[];
+    entity_filters: ItemFilter[];
     /**
      * If this is an item with entity data, get the stored entity label.
      */
@@ -14807,7 +14825,7 @@ interface LuaRecord {
         raise_built?: boolean;
     }): LuaEntity[];
     /**
-     * Cancel deconstruct the given area with this deconstruction planner,.
+     * Cancel deconstruct the given area with this deconstruction planner.
      * @param table.surface Surface to cancel deconstruct on
      * @param table.force Force to use for canceling deconstruction
      * @param table.area The area to deconstruct
@@ -14860,7 +14878,7 @@ interface LuaRecord {
         include_fuel?: boolean;
     }): Record<uint, LuaEntity>;
     /**
-     * Deconstruct the given area with this deconstruction planner,.
+     * Deconstruct the given area with this deconstruction planner.
      * @param table.surface Surface to deconstruct on
      * @param table.force Force to use for the deconstruction
      * @param table.area The area to deconstruct
@@ -14899,9 +14917,9 @@ interface LuaRecord {
      */
     get_blueprint_tiles(this: void): Tile[] | null;
     /**
-     * Gets the entity filter at the given index for this deconstruction planner,.
+     * Gets the entity filter at the given index for this deconstruction planner.
      */
-    get_entity_filter(this: void, index: uint): string | null;
+    get_entity_filter(this: void, index: uint): ItemFilter | null;
     /**
      * Gets the filter at the given index for this upgrade item.
      *
@@ -14911,7 +14929,7 @@ interface LuaRecord {
      */
     get_mapper(this: void, index: uint, type: string): UpgradeMapperSource | UpgradeMapperDestination;
     /**
-     * Gets the tile filter at the given index for this deconstruction planner,.
+     * Gets the tile filter at the given index for this deconstruction planner.
      */
     get_tile_filter(this: void, index: uint): string | null;
     /**
@@ -14941,11 +14959,11 @@ interface LuaRecord {
      */
     set_blueprint_tiles(this: void, tiles: Tile[]): void;
     /**
-     * Sets the entity filter at the given index for this deconstruction planner,.
+     * Sets the entity filter at the given index for this deconstruction planner.
      * @param filter Writing `nil` removes the filter.
      * @returns Whether the new filter was successfully set (ie. was valid).
      */
-    set_entity_filter(this: void, index: uint, filter: string | LuaEntityPrototype | LuaEntity | nil): boolean;
+    set_entity_filter(this: void, index: uint, filter: ItemFilter | nil): boolean;
     /**
      * Sets the module filter at the given index for this upgrade item.
      *
@@ -14956,7 +14974,7 @@ interface LuaRecord {
      */
     set_mapper(this: void, index: uint, type: string, mapper: UpgradeMapperSource | UpgradeMapperDestination): void;
     /**
-     * Sets the tile filter at the given index for this deconstruction planner,.
+     * Sets the tile filter at the given index for this deconstruction planner.
      * @param filter Setting to nil erases the filter.
      * @returns Whether the new filter was successfully set (ie. was valid).
      */
@@ -14990,13 +15008,13 @@ interface LuaRecord {
      */
     readonly entity_filter_count: uint;
     /**
-     * The blacklist/whitelist entity filter mode for this deconstruction planner,.
+     * The blacklist/whitelist entity filter mode for this deconstruction planner.
      */
     entity_filter_mode: defines.deconstruction_item.entity_filter_mode;
     /**
-     * The entity filters for this deconstruction planner. The attribute is a sparse array with the keys representing the index of the filter. All strings in this array must be entity prototype names that don't have the `"not-deconstructable"` flag set and are either a `cliff` or marked as `minable`.
+     * The entity filters for this deconstruction planner. The attribute is a sparse array with the keys representing the index of the filter. All prototypes in this array must not have the `"not-deconstructable"` flag set and are either a `cliff` or marked as `minable`.
      */
-    entity_filters: string[];
+    entity_filters: ItemFilter[];
     /**
      * Is this blueprint record a preview? A preview record must be synced by the player before entity and tile data can be read.
      */
@@ -15014,15 +15032,15 @@ interface LuaRecord {
      */
     readonly tile_filter_count: uint;
     /**
-     * The blacklist/whitelist tile filter mode for this deconstruction planner,.
+     * The blacklist/whitelist tile filter mode for this deconstruction planner.
      */
     tile_filter_mode: defines.deconstruction_item.tile_filter_mode;
     /**
-     * The tile filters for this deconstruction planner,. The attribute is a sparse array with the keys representing the index of the filter. Reading filters always returns an array of strings which are the tile prototype names.
+     * The tile filters for this deconstruction planner. The attribute is a sparse array with the keys representing the index of the filter. Reading filters always returns an array of strings which are the tile prototype names.
      */
     tile_filters: TileID[];
     /**
-     * The tile selection mode for this deconstruction planner,.
+     * The tile selection mode for this deconstruction planner.
      */
     tile_selection_mode: defines.deconstruction_item.tile_selection_mode;
     /**
@@ -17194,6 +17212,10 @@ interface LuaSurface {
      * Whether this surface currently has a global electric network.
      */
     readonly has_global_electric_network: boolean;
+    /**
+     * If surface condition checks should not be performed on this surface.
+     */
+    ignore_surface_conditions: bool;
     /**
      * This surface's index in {@link LuaGameScript::surfaces | runtime:LuaGameScript::surfaces} (unique ID). It is assigned when a surface is created, and remains so until it is {@link deleted | runtime:on_surface_deleted}. Indexes of deleted surfaces can be reused.
      */
