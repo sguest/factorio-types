@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.26
+// Factorio version 2.0.27
 // API version 6
 
 declare namespace prototype {
@@ -2865,10 +2865,18 @@ interface EnemySpawnerPrototype extends EntityWithOwnerPrototype {
      */
     is_military_target?: true;
     /**
+     * Count of defensive enemies this spawner can sustain. Defensive units are units with {@link UnitAISettings::join_attacks | prototype:UnitAISettings::join_attacks} set to false. If set below {@link EnemySpawnerPrototype::max_count_of_owned_units | prototype:EnemySpawnerPrototype::max_count_of_owned_units}, the difference will be the space reserved for non-defensive units.
+     */
+    max_count_of_owned_defensive_units?: uint32;
+    /**
      * Count of enemies this spawner can sustain.
      */
     max_count_of_owned_units: uint32;
     max_darkness_to_spawn?: float;
+    /**
+     * How many friendly defensive units are required within the {@link EnemySpawnerPrototype::spawning_radius | prototype:EnemySpawnerPrototype::spawning_radius} of this spawner for it to stop producing more units. Defensive units are units with {@link UnitAISettings::join_attacks | prototype:UnitAISettings::join_attacks} set to false. If set below {@link EnemySpawnerPrototype::max_friends_around_to_spawn | prototype:EnemySpawnerPrototype::max_friends_around_to_spawn}, the difference will be the space reserved for non-defensive units.
+     */
+    max_defensive_friends_around_to_spawn?: uint32;
     /**
      * How many friendly units are required within the {@link EnemySpawnerPrototype::spawning_radius | prototype:EnemySpawnerPrototype::spawning_radius} of this spawner for it to stop producing more units.
      */
