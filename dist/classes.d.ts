@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.27
+// Factorio version 2.0.28
 // API version 6
 
 declare namespace runtime {
@@ -13917,7 +13917,7 @@ interface LuaPlayer extends LuaControl {
      */
     readonly valid: boolean;
     /**
-     * The player's zoom-level.
+     * The player's zoom-level. Must be positive.
      */
     zoom: double;
 }
@@ -17215,7 +17215,7 @@ interface LuaSurface {
     /**
      * If surface condition checks should not be performed on this surface.
      */
-    ignore_surface_conditions: bool;
+    ignore_surface_conditions: boolean;
     /**
      * This surface's index in {@link LuaGameScript::surfaces | runtime:LuaGameScript::surfaces} (unique ID). It is assigned when a surface is created, and remains so until it is {@link deleted | runtime:on_surface_deleted}. Indexes of deleted surfaces can be reused.
      */
