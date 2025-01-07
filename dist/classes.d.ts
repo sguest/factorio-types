@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.28
+// Factorio version 2.0.29
 // API version 6
 
 declare namespace runtime {
@@ -4080,7 +4080,7 @@ interface LuaBootstrap {
     script.raise_event(defines.events.on_console_chat, data)
     ```
      */
-    raise_event(this: void, event: uint | string, data: table): void;
+    raise_event(this: void, event: LuaEventType, data: table): void;
     /**
      * @param table.player_index The player who did the purchasing.
      * @param table.market The market entity.
@@ -4896,6 +4896,10 @@ interface LuaControl {
      */
     readonly build_distance: uint;
     /**
+     * The cargo pod the player is currently sitting in or the cargo pod attached to this rocket silo.
+     */
+    readonly cargo_pod?: LuaEntity;
+    /**
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
      */
     character_additional_mining_categories: string[];
@@ -5030,6 +5034,10 @@ interface LuaControl {
      * Unique {@link index | runtime:LuaForce::index} (ID) associated with the force of this entity.
      */
     readonly force_index: uint;
+    /**
+     * The space platform hub the player is currently sitting in.
+     */
+    readonly hub?: LuaEntity;
     /**
      * Whether this character entity is in combat.
      */
@@ -5797,11 +5805,11 @@ interface LuaEntity extends LuaControl {
      */
     get_electric_output_flow_limit(this: void, quality?: QualityID): double | null;
     /**
-     * Get the filter for a slot in an inserter, loader, or logistic storage container. The entity must allow filters.
+     * Get the filter for a slot in an inserter, loader, mining drill, asteroid collector, or logistic storage container. The entity must allow filters.
      * @param slot_index Index of the slot to get the filter for.
      * @returns The filter, or `nil` if the given slot has no filter.
      */
-    get_filter(this: void, slot_index: uint): ItemFilter | null;
+    get_filter(this: void, slot_index: uint): (ItemFilter | EntityID | AsteroidChunkID) | null;
     /**
      * Gets fluid of the i-th fluid storage.
      * @param index Fluid storage index. Valid values are from 1 up to {@link LuaEntity::fluids_count | runtime:LuaEntity::fluids_count}.
@@ -5906,9 +5914,9 @@ interface LuaEntity extends LuaControl {
      */
     get_parent_signals(this: void): LuaEntity[];
     /**
-     * Gets the passenger of this car or spidertron if any.
+     * Gets the passenger of this car, spidertron, or cargo pod if any.
      *
-     * This differs over {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that the passenger can't drive the car.
+     * This differs over {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that for cars, the passenger can't drive the car.
      * @returns `nil` if the vehicle contains no passenger. To check if there's a driver see {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver}.
      */
     get_passenger(this: void): (LuaEntity | LuaPlayer) | null;
@@ -6229,11 +6237,11 @@ interface LuaEntity extends LuaControl {
      */
     set_driver(this: void, driver?: LuaEntity | PlayerIdentification): void;
     /**
-     * Set the filter for a slot in an inserter (ItemFilter), loader (ItemFilter), mining drill (EntityID) or logistic storage container (ItemWithQualityID). The entity must allow filters.
+     * Set the filter for a slot in an inserter (ItemFilter), loader (ItemFilter), mining drill (EntityID), asteroid collector (AsteroidChunkID) or logistic storage container (ItemWithQualityID). The entity must allow filters.
      * @param index Index of the slot to set the filter for.
      * @param filter The item or entity to filter, or `nil` to clear the filter.
      */
-    set_filter(this: void, index: uint, filter?: ItemFilter | ItemWithQualityID | EntityID): void;
+    set_filter(this: void, index: uint, filter?: ItemFilter | ItemWithQualityID | EntityID | AsteroidChunkID): void;
     /**
      * Sets fluid to the i-th fluid storage.
      *
@@ -6430,10 +6438,6 @@ interface LuaEntity extends LuaControl {
      * The burner energy source for this entity, if any.
      */
     readonly burner?: LuaBurner;
-    /**
-     * Gets the cargo pod attached to this rocket silo rocket if one exists.
-     */
-    readonly cargo_pod?: LuaEntity;
     /**
      * The state of this chain signal.
      */
@@ -6633,7 +6637,7 @@ interface LuaEntity extends LuaControl {
      */
     entity_label?: string;
     /**
-     * The number of filter slots this inserter, loader, mining drill or logistic storage container has. 0 if not one of those entities.
+     * The number of filter slots this inserter, loader, mining drill, asteroid collector or logistic storage container has. 0 if not one of those entities.
      */
     readonly filter_slot_count: uint;
     /**
@@ -7277,6 +7281,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     get_crafting_speed(this: void, quality?: QualityID): double;
     /**
+     * The fluid usage of this generator prototype.
+     */
+    get_fluid_usage_per_tick(this: void, quality?: QualityID): LuaQualityPrototype | null;
+    /**
      * The extension speed of this inserter.
      */
     get_inserter_extension_speed(this: void, quality?: QualityID): double | null;
@@ -7316,6 +7324,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * Max health of this entity. Will be `0` if this is not an entity with health.
      */
     get_max_health(this: void, quality?: QualityID): float;
+    /**
+     * The maximum power output of this burner generator or generator prototype.
+     */
+    get_max_power_output(this: void, quality?: QualityID): double | null;
     /**
      * The maximum wire distance for this entity. 0 if the entity doesn't support wires.
      */
@@ -7689,7 +7701,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly fluid_energy_source_prototype?: LuaFluidEnergySourcePrototype;
     /**
-     * The fluid usage of this generator prototype.
+     * The fluid usage of this generator prototype. This property is deprecated in favor of {@link LuaEntityPrototype::get_fluid_usage_per_tick | runtime:LuaEntityPrototype::get_fluid_usage_per_tick} and should not be used.
      */
     readonly fluid_usage_per_tick?: double;
     /**
@@ -7942,7 +7954,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly max_polyphony?: uint;
     /**
-     * The default maximum power output of this generator prototype.
+     * The default maximum power output of this generator prototype. This property is deprecated in favor of {@link LuaEntityPrototype::get_max_power_output | runtime:LuaEntityPrototype::get_max_power_output} and should not be used.
      */
     readonly max_power_output?: double;
     /**
@@ -8105,6 +8117,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * Whether this generator prototype scales fluid usage.
      */
     readonly scale_fluid_usage?: boolean;
+    /**
+     * How much science pack durability is required to research one science point.
+     */
+    readonly science_pack_drain_rate_percent: uint8;
     /**
      * The secondary bounding box used for collision checking, if any. This is only used in rails and rail remnants.
      */
@@ -13374,6 +13390,11 @@ interface LuaPlayer extends LuaControl {
      */
     clear_local_flying_texts(this: void): void;
     /**
+     * Clears the given recipe from the list of recipe notifications for this player.
+     * @param recipe Recipe to clear.
+     */
+    clear_recipe_notification(this: void, recipe: RecipeID): void;
+    /**
      * Clears all recipe notifications for this player.
      */
     clear_recipe_notifications(this: void): void;
@@ -14894,6 +14915,10 @@ interface LuaRecord {
         by_player?: PlayerIdentification;
         super_forced?: boolean;
     }): void;
+    /**
+     * The active index of this BlueprintBookRecord. For records in "my blueprints", the result will be the same regardless of the player, but records in "game blueprints" may have different active indices per player.
+     */
+    get_active_index(this: void, player: PlayerIdentification): uint;
     /**
      * The entities in this blueprint.
      */
