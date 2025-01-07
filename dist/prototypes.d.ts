@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.28
+// Factorio version 2.0.29
 // API version 6
 
 declare namespace prototype {
@@ -1381,6 +1381,7 @@ interface CargoWagonPrototype extends RollingStockPrototype {
      * Size of the inventory of the wagon. The inventory can be limited using the red bar and filtered. This functionality cannot be turned off.
      */
     inventory_size: ItemStackIndex;
+    quality_affects_inventory_size?: bool;
 }
 /**
  * Jumps between targets and applies a {@link Trigger | prototype:Trigger} to them.
@@ -3805,6 +3806,7 @@ interface FluidTurretPrototype extends TurretPrototype {
  */
 interface FluidWagonPrototype extends RollingStockPrototype {
     capacity: FluidAmount;
+    quality_affects_capacity?: bool;
     /**
      * Must be 1, 2 or 3.
      */

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.28
+// Factorio version 2.0.29
 // API version 6
 
 declare namespace defines {
@@ -1183,23 +1183,24 @@ enum input_method {
     keyboard_and_mouse = 0
 }
 enum inventory {
-    artillery_turret_ammo = 42,
-    artillery_wagon_ammo = 43,
+    artillery_turret_ammo = 43,
+    artillery_wagon_ammo = 44,
     assembling_machine_dump = 25,
     assembling_machine_input = 22,
     assembling_machine_modules = 24,
     assembling_machine_output = 23,
-    beacon_modules = 40,
+    beacon_modules = 41,
     burnt_result = 1,
     car_ammo = 37,
+    car_trash = 38,
     car_trunk = 36,
-    cargo_landing_pad_main = 49,
-    cargo_landing_pad_trash = 50,
+    cargo_landing_pad_main = 50,
+    cargo_landing_pad_trash = 51,
     cargo_unit = 35,
-    cargo_wagon = 38,
+    cargo_wagon = 39,
     character_ammo = 9,
     character_armor = 10,
-    character_corpse = 41,
+    character_corpse = 42,
     character_guns = 8,
     character_main = 7,
     character_trash = 12,
@@ -1214,8 +1215,8 @@ enum inventory {
     furnace_result = 5,
     furnace_source = 4,
     god_main = 13,
-    hub_main = 47,
-    hub_trash = 48,
+    hub_main = 48,
+    hub_trash = 49,
     item_main = 29,
     lab_input = 26,
     lab_modules = 27,
@@ -1230,10 +1231,10 @@ enum inventory {
     rocket_silo_output = 33,
     rocket_silo_rocket = 30,
     rocket_silo_trash = 31,
-    spider_ammo = 45,
-    spider_trash = 46,
-    spider_trunk = 44,
-    turret_ammo = 39
+    spider_ammo = 46,
+    spider_trash = 47,
+    spider_trunk = 45,
+    turret_ammo = 40
 }
 enum logistic_member_index {
     character_provider = 4,
