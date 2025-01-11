@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.29
+// Factorio version 2.0.30
 // API version 6
 
 declare namespace prototype {
@@ -6327,9 +6327,10 @@ interface MinableProperties {
      */
     result?: ItemID;
     /**
-     * The items that are returned when this object is mined.
+     * The items or fluids that are returned when this object is mined.
      */
     results?: ProductPrototype[];
+    transfer_entity_health_to_products?: bool;
 }
 interface MineEntityTechnologyTrigger {
     entity: EntityID;

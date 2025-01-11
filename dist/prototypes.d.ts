@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.29
+// Factorio version 2.0.30
 // API version 6
 
 declare namespace prototype {
@@ -1725,6 +1725,10 @@ interface ConstantCombinatorPrototype extends EntityWithOwnerPrototype {
     circuit_wire_max_distance?: double;
     draw_circuit_wires?: bool;
     draw_copper_wires?: bool;
+    /**
+     * When not zero, toggle entity will enable constant combinator for that amount of ticks and then turn it off.
+     */
+    pulse_duration?: uint;
     sprites?: Sprite4Way;
 }
 /**
@@ -9755,6 +9759,8 @@ interface UtilityConstants extends PrototypeBase {
     show_chunk_components_collision_mask: CollisionMaskConnector;
     small_area_size: float;
     small_blueprint_area_size: float;
+    space_LPF_max_cutoff_frequency: float;
+    space_LPF_min_cutoff_frequency: float;
     /**
      * Variables: speed, thrust, weight, width, height
      */

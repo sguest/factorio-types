@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.29
+// Factorio version 2.0.30
 // API version 6
 
 declare namespace runtime {
@@ -6753,6 +6753,10 @@ interface LuaEntity extends LuaControl {
      */
     inserter_filter_mode?: 'whitelist' | 'blacklist';
     /**
+     * The spoil priority for this inserter.
+     */
+    inserter_spoil_priority: 'fresh_first' | 'none' | 'spoiled_first';
+    /**
      * Sets the stack size limit on this inserter.
      *
      * Set to `0` to reset.
@@ -7283,7 +7287,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * The fluid usage of this generator prototype.
      */
-    get_fluid_usage_per_tick(this: void, quality?: QualityID): LuaQualityPrototype | null;
+    get_fluid_usage_per_tick(this: void, quality?: QualityID): double | null;
     /**
      * The extension speed of this inserter.
      */
