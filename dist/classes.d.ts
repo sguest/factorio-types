@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.30
+// Factorio version 2.0.31
 // API version 6
 
 declare namespace runtime {
@@ -4189,7 +4189,7 @@ interface LuaBootstrap {
      * Depending on when a given object is destroyed, {@link on_object_destroyed | runtime:on_object_destroyed} will either be fired at the end of the current tick or at the end of the next tick.
      * @param object The object to register.
      * @returns [0] - The registration number. It is used to identify the object in the {@link on_object_destroyed | runtime:on_object_destroyed} event.
-     * @returns [1] - Useful identifier of the object if it has one. This identifier is specific to the object type, for example for trains it is the value {@link LuaTrain::id | runtime:LuaTrain::id}.
+     * @returns [1] - The {@link useful identifier | runtime:RegistrationTarget} of the object if it has one. This identifier is specific to the object type, for example for trains it is the value {@link LuaTrain::id | runtime:LuaTrain::id}.
      * @returns [2] - Type of the target object.
      */
     register_on_object_destroyed(this: void, object: RegistrationTarget): LuaMultiReturn<[
@@ -10531,11 +10531,11 @@ interface LuaGuiElement {
      *
      * The `"signal"` type operates with {@link SignalID | runtime:SignalID}.
      *
-     * The `"with-quality"` types operate with `"name"` and optional `"quality"`
+     * The `"with-quality"` types operate with {@link PrototypeWithQuality | runtime:PrototypeWithQuality}.
      *
      * The remaining types use strings.
      */
-    elem_value?: string | SignalID | table;
+    elem_value?: string | SignalID | PrototypeWithQuality;
     /**
      * Whether this GUI element is enabled. Disabled GUI elements don't trigger events when clicked.
      */
@@ -10911,7 +10911,7 @@ interface LuaGuiElementAddParamsChooseElemButton extends BaseLuaGuiElementAddPar
     /**
      * If type is `"entity-with-quality"` - the default value for the button.
      */
-    'entity-with-quality'?: string;
+    'entity-with-quality'?: PrototypeWithQuality;
     /**
      * If type is `"equipment"` - the default value for the button.
      */
@@ -10919,7 +10919,7 @@ interface LuaGuiElementAddParamsChooseElemButton extends BaseLuaGuiElementAddPar
     /**
      * If type is `"equipment-with-quality"` - the default value for the button.
      */
-    'equipment-with-quality'?: string;
+    'equipment-with-quality'?: PrototypeWithQuality;
     /**
      * If type is `"fluid"` - the default value for the button.
      */
@@ -10935,7 +10935,7 @@ interface LuaGuiElementAddParamsChooseElemButton extends BaseLuaGuiElementAddPar
     /**
      * If type is `"item-with-quality"` - the default value for the button.
      */
-    'item-with-quality'?: string;
+    'item-with-quality'?: PrototypeWithQuality;
     /**
      * If type is `"recipe"` - the default value for the button.
      */
@@ -10943,7 +10943,7 @@ interface LuaGuiElementAddParamsChooseElemButton extends BaseLuaGuiElementAddPar
     /**
      * If type is `"recipe-with-quality"` - the default value for the button.
      */
-    'recipe-with-quality'?: string;
+    'recipe-with-quality'?: PrototypeWithQuality;
     /**
      * If type is `"signal"` - the default value for the button.
      */
@@ -13403,7 +13403,7 @@ interface LuaPlayer extends LuaControl {
      */
     clear_recipe_notifications(this: void): void;
     /**
-     * Clears the players selection tool selection position.
+     * Clears the player's selection tool selection position.
      */
     clear_selection(this: void): void;
     /**
@@ -13431,7 +13431,7 @@ interface LuaPlayer extends LuaControl {
     /**
      * Spawn flying text that is only visible to this player. Either `position` or `create_at_cursor` are required. When `create_at_cursor` is `true`, all parameters other than `text` are ignored.
      *
-     * If no custom `speed` is set and the text is longer than 25 characters, its `time_to_live` and `speed` are dynamically adjusted to give players more time to read it.
+     * If no custom `speed` is set and the text is longer than 25 characters, its `time_to_live` and `speed` are dynamically adjusted to give the player more time to read it.
      *
      * Local flying text is not saved, which means it will disappear after a save/load-cycle.
      * @param table.text The flying text to show.
@@ -13610,7 +13610,7 @@ interface LuaPlayer extends LuaControl {
      */
     print_lua_object_statistics(this: void): void;
     /**
-     * Print construction robot job counts to the players console.
+     * Print construction robot job counts to the player's console.
      */
     print_robot_jobs(this: void): void;
     /**
@@ -13653,7 +13653,7 @@ interface LuaPlayer extends LuaControl {
      * @param table.character Entity to control. Mandatory when `type` is {@link defines.controllers.character | runtime:defines.controllers.character}, ignored otherwise.
      * @param table.waypoints List of waypoints for the cutscene controller. This parameter is mandatory when `type` is {@link defines.controllers.cutscene | runtime:defines.controllers.cutscene}.
      * @param table.start_position If specified and `type` is {@link defines.controllers.cutscene | runtime:defines.controllers.cutscene}, the cutscene will start at this position. If not given the start position will be the player position.
-     * @param table.start_zoom If specified and `type` is {@link defines.controllers.cutscene | runtime:defines.controllers.cutscene}, the cutscene will start at this zoom level. If not given the start zoom will be the players zoom.
+     * @param table.start_zoom If specified and `type` is {@link defines.controllers.cutscene | runtime:defines.controllers.cutscene}, the cutscene will start at this zoom level. If not given the start zoom will be the player's zoom.
      * @param table.final_transition_time If specified and `type` is {@link defines.controllers.cutscene | runtime:defines.controllers.cutscene}, it is the time in ticks it will take for the camera to pan from the final waypoint back to the starting position. If not given the camera will not pan back to the start position/zoom.
      * @param table.chart_mode_cutoff If specified and `type` is {@link defines.controllers.cutscene | runtime:defines.controllers.cutscene}, the game will switch to chart-mode (map zoomed out) rendering when the zoom level is less than this value.
      * @param table.position If specified and `type` is {@link defines.controllers.remote | runtime:defines.controllers.remote}, the position the remote controller will be centered on.
@@ -13705,7 +13705,7 @@ interface LuaPlayer extends LuaControl {
      */
     set_shortcut_toggled(this: void, prototype_name: string, toggled: boolean): void;
     /**
-     * Starts selection with selection tool from the specified position. Does nothing if the players cursor is not a selection tool.
+     * Starts selection with selection tool from the specified position. Does nothing if the player's cursor is not a selection tool.
      * @param position The position to start selection from.
      * @param selection_mode The type of selection to start.
      */
@@ -13882,21 +13882,21 @@ interface LuaPlayer extends LuaControl {
      */
     readonly physical_controller_type: defines.controllers;
     /**
-     * The current position of this players physical controller.
+     * The current position of this player's physical controller.
      */
     readonly physical_position: MapPosition;
     /**
-     * The surface this players physical controller is on.
+     * The surface this player's physical controller is on.
      */
     readonly physical_surface: LuaSurface;
     /**
-     * Unique ID associated with the surface this players physical controller is currently on.
+     * Unique ID associated with the surface this player's physical controller is currently on.
      */
     readonly physical_surface_index: uint;
     /**
-     * The current vehicle of this players physical controller.
+     * The current vehicle of this player's physical controller.
      */
-    readonly physical_vehicle: MapPosition;
+    readonly physical_vehicle?: LuaEntity;
     /**
      * If items not included in this map editor infinity inventory filters should be removed.
      */

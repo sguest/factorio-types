@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.30
+// Factorio version 2.0.31
 // API version 6
 
 declare namespace prototype {
@@ -1206,7 +1206,7 @@ interface BurnerGeneratorPrototype extends EntityWithOwnerPrototype {
      */
     max_power_output: Energy;
     /**
-     * Affects animation speed.
+     * Affects animation speed and working sound.
      */
     perceived_performance?: PerceivedPerformance;
 }
@@ -1728,7 +1728,7 @@ interface ConstantCombinatorPrototype extends EntityWithOwnerPrototype {
     /**
      * When not zero, toggle entity will enable constant combinator for that amount of ticks and then turn it off.
      */
-    pulse_duration?: uint;
+    pulse_duration?: uint32;
     sprites?: Sprite4Way;
 }
 /**
@@ -3971,7 +3971,7 @@ interface FusionGeneratorPrototype extends EntityWithOwnerPrototype {
      */
     output_fluid_box: FluidBox;
     /**
-     * Affects animation speed.
+     * Affects animation speed and working sound.
      */
     perceived_performance?: PerceivedPerformance;
 }
@@ -4012,7 +4012,7 @@ interface FusionReactorPrototype extends EntityWithOwnerPrototype {
      */
     output_fluid_box: FluidBox;
     /**
-     * Affects animation speed.
+     * Affects working sound.
      */
     perceived_performance?: PerceivedPerformance;
     /**
@@ -4118,7 +4118,7 @@ interface GeneratorPrototype extends EntityWithOwnerPrototype {
      */
     maximum_temperature: float;
     /**
-     * Affects animation speed.
+     * Affects animation speed and working sound.
      */
     perceived_performance?: PerceivedPerformance;
     /**
@@ -4583,9 +4583,6 @@ interface ItemPrototype extends Prototype {
     spoil_level?: uint8;
     spoil_result?: ItemID;
     spoil_ticks?: uint32;
-    /**
-     * Only loaded if `spoil_result` is not defined.
-     */
     spoil_to_trigger_result?: SpoilToTriggerResult;
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.

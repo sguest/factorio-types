@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.30
+// Factorio version 2.0.31
 // API version 6
 
 declare namespace runtime {
@@ -1444,7 +1444,7 @@ interface on_object_destroyed {
      */
     type: defines.target_type;
     /**
-     * Useful identifier of the object. Same as second value returned by {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}
+     * The {@link useful identifier | runtime:RegistrationTarget} of the object. Same as second value returned by {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}
      */
     useful_id: uint64;
 }
