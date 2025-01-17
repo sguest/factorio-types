@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.30
+// Factorio version 2.0.31
 // API version 6
 
 declare namespace prototype {
@@ -88,11 +88,21 @@ interface AdvancedMapGenSettings {
     pollution?: MapGenPresetPollutionSettings;
 }
 interface AdvancedVolumeControl {
+    /**
+     * Volume reduction (fade-out) controlled by distance (fraction of audible distance).
+     */
     attenuation?: Fade;
     /**
-     * Has to be in the range (-1.0, 1.0).
+     * Has to be in the range [-1.0, 1.0].
+     *
+     * Positive values are used for night sounds, the volume of the sound is 1.0 when darkness = threshold, 0.0 when darkness = 0.0 and linearly interpolated in between.
+     *
+     * Negative values are used for day sounds, the sound of the sound is 0.0  when darkness = -threshold, 1.0 when darkness = 1.0 and linearly interpolated in between.
      */
     darkness_threshold?: float;
+    /**
+     * Volume reduction (fade-out) or increase (fade-in) controlled by zoom level.
+     */
     fades?: Fades;
 }
 interface AggregationSpecification {
@@ -6932,12 +6942,23 @@ interface PathFinderSettings {
     start_to_goal_cost_multiplier_to_terminate_path_find: double;
     use_path_cache: bool;
 }
+/**
+ * Not all prototypes that use this type are affected by all properties.
+ */
 interface PerceivedPerformance {
+    /**
+     * Affects animation speed.
+     */
     maximum?: double;
     /**
+     * Affects animation speed.
+     *
      * Must be less than or equal to `maximum`.
      */
     minimum?: double;
+    /**
+     * Affects {@link MainSound | prototype:MainSound} if {@link MainSound::match_progress_to_activity | prototype:MainSound::match_progress_to_activity}, {@link MainSound::match_volume_to_activity | prototype:MainSound::match_volume_to_activity} or {@link MainSound::match_speed_to_activity | prototype:MainSound::match_speed_to_activity} is `true`.
+     */
     performance_to_activity_rate?: double;
 }
 type PersistentWorldAmbientSoundDefinition = {

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.30
+// Factorio version 2.0.31
 // API version 6
 
 declare namespace runtime {
@@ -5797,6 +5797,16 @@ interface PrototypeHistory {
      */
     changed: string[];
 }
+interface PrototypeWithQuality {
+    /**
+     * Name of a prototype.
+     */
+    name: string;
+    /**
+     * Name of a quality prototype. Always defined when reading, defaults to "normal" when writing.
+     */
+    quality?: string;
+}
 /**
  * An item filter may be specified in two ways, either as a string which is a quality prototype name or as a table.
  */
@@ -6105,7 +6115,7 @@ LuaLogisticCell | /**
  * Target type {@link logistic_network | runtime:defines.target_type.logistic_network}; `useful_id` {@link LuaLogisticNetwork::network_id | runtime:LuaLogisticNetwork::network_id}
  */
 LuaLogisticNetwork | /**
- * Target type {@link logistic_section | runtime:defines.target_type.logistic_section};
+ * Target type {@link logistic_section | runtime:defines.target_type.logistic_section}
  */
 LuaLogisticSection | /**
  * Target type {@link permission_group | runtime:defines.target_type.permission_group}; `useful_id` {@link LuaPermissionGroup::group_id | runtime:LuaPermissionGroup::group_id}
@@ -6117,7 +6127,7 @@ LuaPlanet | /**
  * Target type {@link player | runtime:defines.target_type.player}; `useful_id` {@link LuaPlayer::index | runtime:LuaPlayer::index}
  */
 LuaPlayer | /**
- * Target type {@link rail_path | runtime:defines.target_type.rail_path};
+ * Target type {@link rail_path | runtime:defines.target_type.rail_path}
  */
 LuaRailPath | /**
  * Target type {@link render_object | runtime:defines.target_type.render_object}; `useful_id` {@link LuaRenderObject::id | runtime:LuaRenderObject::id}
