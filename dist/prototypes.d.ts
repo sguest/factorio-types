@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.31
+// Factorio version 2.0.32
 // API version 6
 
 declare namespace prototype {
@@ -3765,6 +3765,7 @@ interface FluidStreamPrototype extends EntityPrototype {
     special_neutral_target_damage?: DamageParameters;
     spine_animation?: Animation;
     stream_light?: LightDefinition;
+    target_initial_position_only?: bool;
     target_position_deviation?: double;
     width?: float;
 }
