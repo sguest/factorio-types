@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.32
+// Factorio version 2.0.33
 // API version 6
 
 declare namespace runtime {
@@ -7337,6 +7337,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     get_max_wire_distance(this: void, quality?: QualityID): double;
     /**
+     * The pumping speed of this offshore or normal pump.
+     */
+    get_pumping_speed(this: void, quality?: QualityID): double;
+    /**
      * The base researching speed of this lab prototype.
      */
     get_researching_speed(this: void, quality?: QualityID): double | null;
@@ -8041,7 +8045,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly protected_from_tile_building: boolean;
     /**
-     * The pumping speed of this offshore or normal pump.
+     * The pumping speed of this offshore or normal pump. This property is deprecated in favor of {@link LuaEntityPrototype::get_pumping_speed | runtime:LuaEntityPrototype::get_pumping_speed} and should not be used.
      */
     readonly pumping_speed?: double;
     /**
@@ -10078,7 +10082,7 @@ interface LuaGameScript {
     /**
      * Current map tick.
      */
-    readonly tick: uint;
+    readonly tick: MapTick;
     /**
      * If the tick has been paused. This means that entity update has been paused.
      */
@@ -10088,7 +10092,7 @@ interface LuaGameScript {
      *
      * This differs from {@link LuaGameScript::tick | runtime:LuaGameScript::tick} in that creating a game from a scenario always starts with this value at `0`, even if the scenario has its own level data where the `tick` has progressed past `0`.
      */
-    readonly ticks_played: uint;
+    readonly ticks_played: MapTick;
     /**
      * The number of ticks to be run while the tick is paused.
      *
@@ -10343,7 +10347,7 @@ interface LuaGuiElement {
     /**
      * Removes the given tab and its associated content from this tabbed pane.
      *
-     * Removing a tab does not destroy the tab or the tab contents. It just removes them from the view. When removing tabs, {@link LuaGuiElement::selected_tab_index | runtime:LuaGuiElement::selected_tab_index} needs to be manually updated.
+     * Removing a tab does not destroy the tab or the tab contents. It just removes them from the view.
      * @param tab The tab to remove or `nil` to remove all tabs.
      */
     remove_tab(this: void, tab?: LuaGuiElement): void;
@@ -12470,7 +12474,7 @@ interface LuaItemStack extends LuaItemCommon {
     /**
      * The tick this item spoils, or `0` if it does not spoil. When writing, setting to anything < the current game tick will spoil the item instantly.
      */
-    spoil_tick: uint;
+    spoil_tick: MapTick;
     /**
      * Type of the item prototype.
      */
@@ -13436,6 +13440,7 @@ interface LuaPlayer extends LuaControl {
      * Local flying text is not saved, which means it will disappear after a save/load-cycle.
      * @param table.text The flying text to show.
      * @param table.position The location on the map at which to show the flying text.
+     * @param table.surface The surface which this text will be shown on. Defaults to player surface.
      * @param table.create_at_cursor If `true`, the flying text is created at the player's cursor. Defaults to `false`.
      * @param table.color The color of the flying text. Defaults to white text.
      * @param table.time_to_live The amount of ticks that the flying text will be shown for. Defaults to `80`.
@@ -13444,6 +13449,7 @@ interface LuaPlayer extends LuaControl {
     create_local_flying_text(this: void, table: {
         text: LocalisedString;
         position?: MapPosition;
+        surface?: SurfaceIdentification;
         create_at_cursor?: boolean;
         color?: Color;
         time_to_live?: uint;
@@ -13902,7 +13908,7 @@ interface LuaPlayer extends LuaControl {
      */
     remove_unfiltered_items: boolean;
     /**
-     * The render mode of the player, like map or zoom to world. The render mode can be set using {@link LuaPlayer::open_map | runtime:LuaPlayer::open_map}, {@link LuaPlayer::zoom_to_world | runtime:LuaPlayer::zoom_to_world} and {@link LuaPlayer::close_map | runtime:LuaPlayer::close_map}.
+     * The render mode of the player, like map or zoom to world.
      */
     readonly render_mode: defines.render_mode;
     /**

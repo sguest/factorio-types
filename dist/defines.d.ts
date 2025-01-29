@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.32
+// Factorio version 2.0.33
 // API version 6
 
 declare namespace defines {
@@ -1185,6 +1185,9 @@ enum input_method {
 enum inventory {
     artillery_turret_ammo = 43,
     artillery_wagon_ammo = 44,
+    /**
+     * Used when items are ejected or items held by inserters cannot be inserted due to changing the recipe with the circuit network.
+     */
     assembling_machine_dump = 25,
     assembling_machine_input = 22,
     assembling_machine_modules = 24,
