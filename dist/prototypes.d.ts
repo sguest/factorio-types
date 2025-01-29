@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.32
+// Factorio version 2.0.33
 // API version 6
 
 declare namespace prototype {
@@ -57,7 +57,7 @@ declare namespace prototype {
       }
     },
     idle_sound = {filename = "__base__/sound/accumulator-idle.ogg", volume = 0.35},
-    max_sounds_per_type = 3,
+    max_sounds_per_prototype = 3,
     audible_distance_modifier = 0.5
   },
 
@@ -4171,6 +4171,10 @@ interface GroupAttackAchievementPrototype extends AchievementPrototype {
     ```
      */
     amount?: uint32;
+    /**
+     * The type of attack that triggers this achievement. "autonomous" attacks are triggered in response to pollution or a territory disturbance. "distraction" attacks are in response to taking damage or seeing a nearby enemy. "scripted" attacks are triggered from mods.
+     */
+    attack_type?: 'autonomous' | 'distraction' | 'scripted';
     /**
      * The achievement is only triggered if the attacking group of enemies contains at least one of the entities listed here.
      */

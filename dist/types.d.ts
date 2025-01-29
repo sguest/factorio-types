@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.32
+// Factorio version 2.0.33
 // API version 6
 
 declare namespace prototype {
@@ -3341,6 +3341,7 @@ interface CreateTrivialSmokeEffectItem extends TriggerEffectItem {
     max_radius?: float;
     offset_deviation?: BoundingBox;
     offsets?: Vector[];
+    only_when_visible?: float;
     smoke_name: TrivialSmokeID;
     speed?: Vector;
     speed_from_center?: float;
@@ -5926,10 +5927,6 @@ interface MainSound {
     activity_to_speed_modifiers?: ActivityMatchingModifiers;
     activity_to_volume_modifiers?: ActivityMatchingModifiers;
     /**
-     * Modifies how far a sound can be heard. Can only be 1 or lower, has to be a positive number.
-     */
-    audible_distance_modifier?: double;
-    /**
      * Can't be used when `match_progress_to_activity` is `true`.
      */
     fade_in_ticks?: uint32;
@@ -5940,6 +5937,11 @@ interface MainSound {
     match_progress_to_activity?: bool;
     match_speed_to_activity?: bool;
     match_volume_to_activity?: bool;
+    /**
+     * Array of {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name}s, individual names cannot be empty.
+     *
+     * The `sound` is played when at least one of the specified working visualisations is drawn.
+     */
     play_for_working_visualisations?: string[];
     /**
      * Modifies how often the sound is played.
@@ -7210,10 +7212,6 @@ interface PlaySoundTriggerEffectItem extends TriggerEffectItem {
     /**
      * Negative values are silently clamped to 0.
      */
-    audible_distance_modifier?: float;
-    /**
-     * Negative values are silently clamped to 0.
-     */
     max_distance?: float;
     /**
      * Negative values are silently clamped to 0.
@@ -7222,10 +7220,6 @@ interface PlaySoundTriggerEffectItem extends TriggerEffectItem {
     play_on_target_position?: bool;
     sound: Sound;
     type: 'play-sound';
-    /**
-     * Negative values are silently clamped to 0.
-     */
-    volume_modifier?: float;
 }
 interface PlayerColorData {
     chat_color: Color;
@@ -9076,7 +9070,7 @@ type Sound = {
     aggregation?: AggregationSpecification;
     allow_random_repeat?: bool;
     /**
-     * Modifies how far a sound can be heard. Must be between `0` and `1` inclusive.
+     * Modifies how far a sound can be heard. Cannot be less than zero.
      */
     audible_distance_modifier?: double;
     category?: SoundType;
@@ -9145,9 +9139,13 @@ type Sound = {
     volume?: float;
 } | SoundDefinition[];
 interface SoundAccent {
-    audible_distance_modifier?: float;
     frame?: uint16;
-    play_for_working_visualisations?: string[];
+    /**
+     * Play the `sound` for a working visualisation of a given {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name}.
+     *
+     * The name cannot be empty.
+     */
+    play_for_working_visualisation?: string;
     sound?: Sound;
 }
 type SoundDefinition = {
@@ -12532,18 +12530,16 @@ interface WorkerRobotStorageModifier extends SimpleModifier {
 -- refinery
 working_sound =
 {
-  sound = { filename = "__base__/sound/oil-refinery.ogg" },
-  idle_sound = { filename = "__base__/sound/idle1.ogg", volume = 0.6 },
-  apparent_volume = 2.5,
+  sound = {filename = "__base__/sound/oil-refinery.ogg"},
+  idle_sound = {filename = "__base__/sound/idle1.ogg", volume = 0.6},
 }
 ```
  * @example ```
 -- roboport
 working_sound =
 {
-  sound = { filename = "__base__/sound/roboport-working.ogg", volume = 0.6 },
-  max_sounds_per_type = 3,
-  audible_distance_modifier = 0.5,
+  sound = {filename = "__base__/sound/roboport-working.ogg", volume = 0.6, audible_distance_modifier = 0.5},
+  max_sounds_per_prototype = 3,
   probability = 1 / (5 * 60) -- average pause between the sound is 5 seconds
 }
 ```
@@ -12553,15 +12549,13 @@ type WorkingSound = {
      * Might not work with all entities that use working_sound.
      */
     activate_sound?: Sound;
-    apparent_volume?: float;
-    /**
-     * Modifies how far a sound can be heard. Can only be 1 or lower, has to be a positive number.
-     */
-    audible_distance_modifier?: double;
     /**
      * Might not work with all entities that use working_sound.
      */
     deactivate_sound?: Sound;
+    /**
+     * If `true`, `max_sounds_per_prototype` is ignored. 'extra sound' refers to `idle_sound`, `activate_sound` or `deactivate_sound`.
+     */
     extra_sounds_ignore_limit?: bool;
     /**
      * The sound to be played when the entity is idle. Might not work with all entities that use working_sound.
@@ -12571,7 +12565,17 @@ type WorkingSound = {
      * If this property is defined, all properties inherited from MainSound (and not overridden here) are ignored.
      */
     main_sounds?: MainSound | MainSound[];
-    max_sounds_per_type?: uint8;
+    /**
+     * Sets a maximum limit on how many entities of the same prototype will play their working sound.
+     *
+     * Inactive entities without an `idle_sound` don't count towards this limit.
+     *
+     * Entities with their working sound fading out don't count towards this limit.
+     */
+    max_sounds_per_prototype?: uint8;
+    /**
+     * When `true`, working sounds for all entities of the same prototype are combined into one and some (most) properties of this are ignored or unused.
+     */
     persistent?: bool;
     sound_accents?: SoundAccent | SoundAccent[];
     use_doppler_shift?: bool;
