@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.34
 // API version 6
 
 declare namespace runtime {
@@ -2009,6 +2009,10 @@ interface on_player_deconstructed_area {
      */
     quality: string;
     /**
+     * The record that was used to select the area.
+     */
+    record?: LuaRecord;
+    /**
      * The item stack used to select the area.
      */
     stack?: LuaItemStack;
@@ -2742,6 +2746,10 @@ interface on_player_setup_blueprint {
      * The item quality used to select the area.
      */
     quality: string;
+    /**
+     * The record that is being reassigned.
+     */
+    record?: LuaRecord;
     /**
      * The item stack used to select the area.
      */
