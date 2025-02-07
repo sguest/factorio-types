@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.34
 // API version 6
 
 declare namespace runtime {
@@ -4394,6 +4394,28 @@ interface LuaBurnerUsagePrototype extends LuaPrototypeBase {
     readonly valid: boolean;
 }
 /**
+ * A cargo hatch.
+ */
+interface LuaCargoHatch {
+    /**
+     * Creates a cargo pod for output at the owning entity hatch location.
+     */
+    create_cargo_pod(this: void): LuaEntity;
+    readonly busy: boolean;
+    readonly is_input_compatible: boolean;
+    readonly is_output_compatible: boolean;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    readonly owner: LuaEntity;
+    readonly reserved: boolean;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
  * Control behavior for cargo landing pad.
  */
 interface LuaCargoLandingPadControlBehavior extends LuaControlBehavior {
@@ -5665,6 +5687,11 @@ interface LuaEntity extends LuaControl {
      */
     create_build_effect_smoke(this: void): void;
     /**
+     * Creates a cargo pod ready to launch if possible.
+     * @param cargo_hatch The hatch to create the pod at. A random (available) one is picked if not provided.
+     */
+    create_cargo_pod(this: void, cargo_hatch?: LuaCargoHatch): LuaEntity | null;
+    /**
      * Damages the entity.
      * @param damage The amount of damage to be done.
      * @param force The force that will be doing the damage.
@@ -6382,6 +6409,10 @@ interface LuaEntity extends LuaControl {
      */
     associated_player?: LuaPlayer | PlayerIdentification;
     /**
+     * The cargo pod attached to this rocket silo rocket if any.
+     */
+    readonly attached_cargo_pod?: LuaEntity;
+    /**
      * Destination of this spidertron's autopilot, if any. Writing `nil` clears all destinations.
      */
     autopilot_destination?: MapPosition;
@@ -6438,6 +6469,20 @@ interface LuaEntity extends LuaControl {
      * The burner energy source for this entity, if any.
      */
     readonly burner?: LuaBurner;
+    /**
+     * The cargo hatches owned by this entity if any.
+     */
+    readonly cargo_hatches: LuaCargoHatch[];
+    /**
+     * The destination of this cargo pod entity.
+     *
+     * Use {@link force_finish_ascending | runtime:LuaEntity::force_finish_ascending} if you want it to only descend from orbit.
+     */
+    cargo_pod_destination: CargoDestination;
+    /**
+     * The state of this cargo pod entity.
+     */
+    readonly cargo_pod_state: 'awaiting_launch' | 'ascending' | 'surface_transition' | 'descending' | 'parking';
     /**
      * The state of this chain signal.
      */
@@ -7045,6 +7090,10 @@ interface LuaEntity extends LuaControl {
      * Get the current queue of robot orders.
      */
     readonly robot_order_queue: WorkerRobotOrder[];
+    /**
+     * The rocket silo rocket this cargo pod is attached to, or rocket silo rocket attached to this rocket silo - if any.
+     */
+    readonly rocket?: LuaEntity;
     /**
      * Number of rocket parts in the silo.
      */
@@ -12352,7 +12401,7 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      */
     readonly valid: boolean;
     /**
-     * Weight of this item
+     * Weight of this item. More information on how item weight is determined can be found on its {@link auxiliary page | runtime:item-weight}.
      */
     readonly weight: double;
 }
@@ -15063,6 +15112,10 @@ interface LuaRecord {
      */
     readonly object_name: string;
     /**
+     * The preview icons for this record.
+     */
+    preview_icons: BlueprintSignalIcon[];
+    /**
      * The number of tile filters this deconstruction planner supports.
      */
     readonly tile_filter_count: uint;
@@ -16010,6 +16063,10 @@ interface LuaSpacePlatform {
      */
     apply_starter_pack(this: void): LuaEntity | null;
     /**
+     * Returns `true` when the space platform isn't waiting on any delivery from the planet.
+     */
+    can_leave_current_location(this: void): boolean;
+    /**
      * Cancels deletion of this space platform if it was scheduled for deletion.
      */
     cancel_deletion(this: void): void;
@@ -16070,6 +16127,12 @@ interface LuaSpacePlatform {
         damage: float;
     }[];
     /**
+     * The point on space connection this platform is at or `nil`.
+     *
+     * It is represented as a number in range `[0, 1]`, with 0 being {@link LuaSpaceConnectionPrototype::from | runtime:LuaSpaceConnectionPrototype::from} and 1 being {@link LuaSpaceConnectionPrototype::to | runtime:LuaSpaceConnectionPrototype::to}.
+     */
+    distance?: double;
+    /**
      * The force of this space platform.
      */
     readonly force: LuaForce;
@@ -16112,9 +16175,17 @@ interface LuaSpacePlatform {
      */
     readonly scheduled_for_deletion: uint;
     /**
-     * The space location this space platform is stopped at or `nil`.
+     * The space connection this space platform is traveling through or `nil`.
+     *
+     * Write operation requires a valid space connection and it sets the distance to 0.5.
      */
-    readonly space_location?: LuaSpaceLocationPrototype;
+    space_connection?: LuaSpaceConnectionPrototype;
+    /**
+     * The space location this space platform is stopped at or `nil`.
+     *
+     * Write operation requires a valid space location and will cancel pending item requests.
+     */
+    space_location?: LuaSpaceLocationPrototype;
     speed: double;
     /**
      * The starter pack used to create this space platform.

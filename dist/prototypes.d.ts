@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.34
 // API version 6
 
 declare namespace prototype {
@@ -1023,7 +1023,7 @@ interface BeaconPrototype extends EntityWithOwnerPrototype {
     /**
      * The maximum distance that this beacon can supply its neighbors with its module's effects. Max distance is 64.
      */
-    supply_area_distance: double;
+    supply_area_distance: uint32;
 }
 /**
  * Used as a laser beam.
@@ -4598,6 +4598,8 @@ interface ItemPrototype extends Prototype {
     stack_size: ItemCountType;
     /**
      * The default weight is calculated automatically from recipes and falls back to {@link UtilityConstants::default_item_weight | prototype:UtilityConstants::default_item_weight}.
+     *
+     * More information on how item weight is determined can be found on its {@link auxiliary page | runtime:item-weight}.
      */
     weight?: Weight;
 }
@@ -7266,7 +7268,6 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      */
     rocket_rising_delay?: uint8;
     rocket_shadow_overlay_sprite?: Sprite;
-    rocket_supply_inventory_size?: ItemStackIndex;
     satellite_animation?: Animation;
     satellite_shadow_animation?: Animation;
     shadow_sprite?: Sprite;
@@ -9659,6 +9660,7 @@ interface UtilityConstants extends PrototypeBase {
     gui_remark_color: Color;
     gui_search_match_background_color: Color;
     gui_search_match_foreground_color: Color;
+    huge_animation_sound_area: float;
     icon_shadow_color: Color;
     icon_shadow_inset: float;
     icon_shadow_radius: float;

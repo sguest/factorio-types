@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.34
 // API version 6
 
 declare namespace defines {
@@ -46,6 +46,25 @@ enum build_mode {
     forced = 1,
     normal = 0,
     superforced = 2
+}
+enum cargo_destination {
+    invalid = 0,
+    /**
+     * Cargo pods with orbit destination are destroyed when ascent is completed.
+     */
+    orbit = 1,
+    /**
+     * Only used for sending a space platform starter pack to a platform that is waiting for one.
+     */
+    space_platform = 4,
+    /**
+     * Any cargo landing pad or space platform hub.
+     */
+    station = 2,
+    /**
+     * Cargo pods will switch destination type from surface to station before starting descent if there is a station available, unless {@link CargoDestination::position | runtime:CargoDestination::position} has also been specified.
+     */
+    surface = 3
 }
 /**
  * State of a chain signal.
@@ -2115,6 +2134,7 @@ enum space_platform_state {
     waiting_for_starter_pack = 0
 }
 enum target_type {
+    cargo_hatch = 18,
     commandable = 15,
     custom_chart_tag = 16,
     entity = 0,
