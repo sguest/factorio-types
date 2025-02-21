@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.35
 // API version 6
 
 declare namespace runtime {
@@ -542,6 +542,43 @@ interface CapsuleActionThrow extends BaseCapsuleAction {
 interface CapsuleActionUseOnSelf extends BaseCapsuleAction {
     'type': 'use-on-self';
     'attack_parameters': AttackParameters;
+}
+/**
+ * The destination of a cargo pod.
+ */
+interface CargoDestination {
+    /**
+     * The type of destination.
+     */
+    type: defines.cargo_destination;
+    /**
+     * Only used if `type` is {@link station | runtime:defines.cargo_destination.station}. Must be entity of type `cargo-landing-pad` or `space-platform-hub`.
+     */
+    station?: LuaEntity;
+    /**
+     * Only used if `type` is {@link station | runtime:defines.cargo_destination.station}. Must be connected to the station and not reserved.
+     */
+    hatch?: LuaCargoHatch;
+    /**
+     * Only used if `type` is {@link station | runtime:defines.cargo_destination.station} or {@link surface | runtime:defines.cargo_destination.surface}. If true, items with {@link rocket_launch_products | prototype:ItemPrototype::rocket_launch_products} defined will be transformed into their products before starting descent. Defaults to `false`.
+     */
+    transform_launch_products?: boolean;
+    /**
+     * Only used if `type` is {@link surface | runtime:defines.cargo_destination.surface}.
+     */
+    surface?: SurfaceIdentification;
+    /**
+     * Only used if `type` is {@link surface | runtime:defines.cargo_destination.surface}. Determines the position on the surface to land near. If not provided, cargo pod will switch destination type from {@link surface | runtime:defines.cargo_destination.surface} to {@link station | runtime:defines.cargo_destination.station} before starting descent if there is a station available, and will land at {0, 0} if there is no station available.
+     */
+    position?: MapPosition;
+    /**
+     * Only used if `type` is {@link surface | runtime:defines.cargo_destination.surface} and `position` is specified. Determines whether to land at `position` exactly or at a random location nearby. Defaults to `false`.
+     */
+    land_at_exact_position?: boolean;
+    /**
+     * Only used if `type` is {@link space_platform | runtime:defines.cargo_destination.space_platform}. Only used for sending space platform starter packs to a platform that is waiting for a starter pack.
+     */
+    space_platform?: SpacePlatformIdentification;
 }
 /**
  * Either `icon`, `text`, or both must be provided.
@@ -6151,7 +6188,10 @@ LuaCommandable | /**
 LuaCustomChartTag | /**
  * Target type {@link gui_element | runtime:defines.target_type.gui_element}; `useful_id` {@link LuaGuiElement::index | runtime:LuaGuiElement::index}
  */
-LuaGuiElement;
+LuaGuiElement | /**
+ * Target type {@link cargo_hatch | runtime:defines.target_type.cargo_hatch}
+ */
+LuaCargoHatch;
 /**
  * A number between 0 and 255 inclusive, represented by one of the following named strings or the string version of the number. For example `"10"` and `"decals"` are both valid. Higher values are rendered above lower values.
  */
@@ -6759,6 +6799,16 @@ interface SpaceConnectionAsteroidSpawnPoint {
     speed: double;
     distance: double;
 }
+/**
+ * A space connection prototype may be specified in one of two ways.
+ */
+type SpaceConnectionID = /**
+ * The space connection prototype.
+ */
+LuaSpaceConnectionPrototype | /**
+ * The prototype name.
+ */
+string;
 interface SpaceLocationAsteroidSpawnDefinition {
     /**
      * `asteroid-chunk` or `entity`
@@ -7390,6 +7440,10 @@ interface TrainFilter {
      * Checks if train is in manual controller.
      */
     is_manual?: boolean;
+    /**
+     * Train must belong to a group of a given name.
+     */
+    group?: string;
 }
 interface TrainPathAllGoalsResult {
     /**
