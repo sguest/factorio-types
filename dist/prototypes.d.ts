@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.35
 // API version 6
 
 declare namespace prototype {
@@ -813,6 +813,12 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
         CircuitConnectorDefinition,
         CircuitConnectorDefinition
     ];
+    circuit_connector_flipped?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
+    ];
     /**
      * The maximum circuit wire distance for this entity.
      */
@@ -844,7 +850,8 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
      *
      * This only counts item ingredients, not fluid ingredients! This means if ingredient count is 2, and the recipe has 2 item ingredients and 1 fluid ingredient, it can still be crafted in the machine.
      */
-    ingredient_count?: uint8;
+    ingredient_count?: uint16;
+    max_item_product_count?: uint16;
 }
 interface AsteroidChunkPrototype extends Prototype {
     dying_trigger_effect?: TriggerEffect;
@@ -1023,7 +1030,7 @@ interface BeaconPrototype extends EntityWithOwnerPrototype {
     /**
      * The maximum distance that this beacon can supply its neighbors with its module's effects. Max distance is 64.
      */
-    supply_area_distance: double;
+    supply_area_distance: uint32;
 }
 /**
  * Used as a laser beam.
@@ -3209,7 +3216,7 @@ interface EntityPrototype extends Prototype {
     /**
      * May also be defined inside `graphics_set` instead of directly in the entity prototype. This is useful for entities that use a `graphics_set` property to define their graphics, because then all graphics can be defined in one place.
      *
-     * {@link Currently only renders | https://forums.factorio.com/100703} for {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype}.
+     * {@link Currently only renders | https://forums.factorio.com/100703} for {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype} and {@link CorpsePrototype | prototype:CorpsePrototype}.
      */
     water_reflection?: WaterReflectionDefinition;
     /**
@@ -3349,6 +3356,10 @@ interface EntityWithOwnerPrototype extends EntityWithHealthPrototype {
      * The default scale is based on the tile distance of the shorter dimension. Where size 3 results into scale 1. The default minimum is 0.5 and maximum 1.0.
      */
     quality_indicator_scale?: double;
+    /**
+     * The shift from the bottom left corner of the selection box.
+     */
+    quality_indicator_shift?: Vector;
 }
 /**
  * This prototype is used for receiving an achievement when the player equips armor.
@@ -3940,10 +3951,30 @@ interface FurnacePrototype extends CraftingMachinePrototype {
      * The locale key is also used with an `_until` suffix for items that cannot be processed until they recipe is unlocked by a technology.
      */
     cant_insert_at_source_message_key?: string;
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
+    ];
+    circuit_connector_flipped?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
+    ];
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
     /**
      * The locale key of the tooltip to be shown in the input slot instead of the automatically generated list of items that fit there
      */
     custom_input_slot_tooltip_key?: string;
+    default_recipe_finished_signal?: SignalIDConnector;
+    default_working_signal?: SignalIDConnector;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
     /**
      * The number of output slots.
      */
@@ -4598,6 +4629,8 @@ interface ItemPrototype extends Prototype {
     stack_size: ItemCountType;
     /**
      * The default weight is calculated automatically from recipes and falls back to {@link UtilityConstants::default_item_weight | prototype:UtilityConstants::default_item_weight}.
+     *
+     * More information on how item weight is determined can be found on its {@link auxiliary page | runtime:item-weight}.
      */
     weight?: Weight;
 }
@@ -5125,6 +5158,10 @@ interface Loader1x2Prototype extends LoaderPrototype {
  * Continuously loads and unloads machines, as an alternative to inserters.
  */
 interface LoaderPrototype extends TransportBeltConnectablePrototype {
+    /**
+     * Loader belt stack size can be adjusted at runtime. Requires {@link LoaderPrototype::max_belt_stack_size | prototype:LoaderPrototype::max_belt_stack_size} to be > 1.
+     */
+    adjustable_belt_stack_size?: boolean;
     /**
      * Whether this loader can load and unload stationary inventories such as containers and crafting machines.
      */
@@ -7266,7 +7303,6 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      */
     rocket_rising_delay?: uint8;
     rocket_shadow_overlay_sprite?: Sprite;
-    rocket_supply_inventory_size?: ItemStackIndex;
     satellite_animation?: Animation;
     satellite_shadow_animation?: Animation;
     shadow_sprite?: Sprite;
@@ -9659,6 +9695,7 @@ interface UtilityConstants extends PrototypeBase {
     gui_remark_color: Color;
     gui_search_match_background_color: Color;
     gui_search_match_foreground_color: Color;
+    huge_animation_sound_area: float;
     icon_shadow_color: Color;
     icon_shadow_inset: float;
     icon_shadow_radius: float;

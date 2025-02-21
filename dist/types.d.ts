@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.35
 // API version 6
 
 declare namespace prototype {
@@ -1622,6 +1622,10 @@ interface BaseAttackParameters {
      * Played once at the start of the attack if these are {@link ProjectileAttackParameters | prototype:ProjectileAttackParameters}.
      */
     sound?: LayeredSound;
+    /**
+     * Projectile will be creation position and orientation will be collinear with shooter and target (unless offset projectile center is specified). Used for railgun turrets to avoid unexpected friendly fire incidents.
+     */
+    true_collinear_ejection?: bool;
     /**
      * If this is <= 0, it is set to 1. Arc from 0 to 1, so for example 0.25 is 90°. Used by the {@link flamethrower turret | https://wiki.factorio.com/Flamethrower_turret} in the base game. Arcs greater than 0.5 but less than 1 will be clamped to 0.5 as targeting in arcs larger than half circle is {@link not implemented | https://forums.factorio.com/94654}.
      */
@@ -5181,7 +5185,7 @@ interface HorizontalScrollBarStyleSpecification extends ScrollBarStyleSpecificat
  *
  * - When the final icon is displayed with a shadow (e.g. an item on the ground or on a belt when item shadows are turned on), each icon layer will {@link cast a shadow | https://forums.factorio.com/84888} and the shadow is cast on the layer below it.
  *
- * - The final icon will always be resized and centered in GUI so that all its layers fit the target slot, but won't be resized when displayed on machines in alt-mode. For example: recipe first icon layer is size 128, scale 1, the icon group will be displayed at resolution /4 to fit the 32px GUI boxes, but will be displayed 4 times as large on buildings.
+ * - The final icon will always be resized and centered in GUI so that all its layers (except the {@link `floating` | prototype:IconData::floating} ones) fit the target slot, but won't be resized when displayed on machines in alt-mode. For example: recipe first icon layer is size 128, scale 1, the icon group will be displayed at resolution /4 to fit the 32px GUI boxes, but will be displayed 4 times as large on buildings.
  *
  * - Shift values are based on {@link `expected_icon_size / 2` | prototype:IconData::scale}.
  *
@@ -5223,9 +5227,13 @@ icons = {
  */
 interface IconData {
     /**
-     * Outline is drawn using signed distance field generated on load.One icon image, will have only one SDF generated. But if the image is used in multiple icon with different scales, outline width won't match the desired width in all the scales but the largest one.
+     * Outline is drawn using signed distance field generated on load. One icon image, will have only one SDF generated. But if the image is used in multiple icon with different scales, outline width won't match the desired width in all the scales but the largest one.
      */
     draw_background?: bool;
+    /**
+     * When `true` the layer is not considered for calculating bounds of the icon, so it can go out of bounds of rectangle into which the icon is drawn in GUI.
+     */
+    floating?: bool;
     /**
      * Path to the icon file.
      */
@@ -5945,11 +5953,16 @@ interface MainSound {
     play_for_working_visualisations?: string[];
     /**
      * Modifies how often the sound is played.
+     *
+     * Silently clamped to the [0.0, 1.0] range.
      * @example ```
     probability = 1 / (3 * 60) -- average pause between the sound is 3 seconds
     ```
      */
     probability?: double;
+    /**
+     * Cannot be empty.
+     */
     sound?: Sound;
     /**
      * Only used if {@link WorkingSound::persistent | prototype:WorkingSound::persistent} is `true`.
@@ -7235,6 +7248,10 @@ interface PlumesSpecification {
     max_y_offset?: float;
     min_probability?: float;
     min_y_offset?: float;
+    /**
+     * If given, the plumes will only render if this area is on screen (relative to the thruster)
+     */
+    render_box?: BoundingBox;
     /**
      * Array may not be empty and may at most have 255 elements.
      *
