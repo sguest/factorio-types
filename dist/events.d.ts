@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.37
 // API version 6
 
 declare namespace runtime {
@@ -16,6 +16,10 @@ end)
 ```
  */
 interface CustomInputEvent {
+    /**
+     * Cursor direction.
+     */
+    cursor_direction?: defines.direction;
     /**
      * The mouse cursor display location when the custom input was activated.
      */
@@ -225,6 +229,24 @@ interface on_cancelled_upgrade {
     tick: uint;
 }
 /**
+ * Called after a cargo pod has delivered its cargo.
+ */
+interface on_cargo_pod_delivered_cargo {
+    cargo_pod: LuaEntity;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The spawned container if any. Created when destination type is {@link surface | runtime:defines.cargo_destination.surface}.
+     */
+    spawned_container?: LuaEntity;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
  * Called when a cargo pod departs a surface.
  */
 interface on_cargo_pod_finished_ascending {
@@ -238,7 +260,29 @@ interface on_cargo_pod_finished_ascending {
      */
     name: defines.events;
     /**
-     * The player that is riding the rocket, if any.
+     * The player that is riding the cargo pod, if any.
+     */
+    player_index?: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when a cargo pods lands on a surface, either at a station or on the ground.
+ */
+interface on_cargo_pod_finished_descending {
+    cargo_pod: LuaEntity;
+    /**
+     * True for pods spawned on a rocket.
+     */
+    launched_by_rocket: boolean;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The player that is riding the cargo pod, if any.
      */
     player_index?: uint;
     /**
@@ -1422,6 +1466,19 @@ interface on_mod_item_opened {
     tick: uint;
 }
 /**
+ * Called when {@link LuaGameScript::is_multiplayer | runtime:LuaGameScript::is_multiplayer} changes to true. May also be raised when it was already true but a game was loaded from a save file and with hosting.
+ */
+interface on_multiplayer_init {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
  * Called after an object is destroyed which was registered with {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed} previously.
  *
  * Depending on when a given object is destroyed, this event will be fired at the end of the current tick or at the end of the next tick. The event's timing is independent of the in-world object being destroyed.
@@ -2008,6 +2065,10 @@ interface on_player_deconstructed_area {
      * The item quality used to select the area.
      */
     quality: string;
+    /**
+     * The record that was used to select the area.
+     */
+    record?: LuaRecord;
     /**
      * The item stack used to select the area.
      */
@@ -2742,6 +2803,10 @@ interface on_player_setup_blueprint {
      * The item quality used to select the area.
      */
     quality: string;
+    /**
+     * The record that is being reassigned.
+     */
+    record?: LuaRecord;
     /**
      * The item stack used to select the area.
      */
@@ -3835,6 +3900,19 @@ interface on_selected_entity_changed {
      * The player whose selected entity changed.
      */
     player_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when {@link LuaGameScript::is_multiplayer | runtime:LuaGameScript::is_multiplayer} changes to false. May also be raised when it was already false but a game was loaded from a save file without hosting.
+ */
+interface on_singleplayer_init {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
     /**
      * Tick the event was generated.
      */
