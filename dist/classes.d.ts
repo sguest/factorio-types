@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.33
+// Factorio version 2.0.37
 // API version 6
 
 declare namespace runtime {
@@ -565,7 +565,43 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.on_cargo_pod_delivered_cargo, handler: ((this: void, arg0: runtime.on_cargo_pod_delivered_cargo) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.on_cargo_pod_finished_ascending, handler: ((this: void, arg0: runtime.on_cargo_pod_finished_ascending) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_cargo_pod_finished_descending, handler: ((this: void, arg0: runtime.on_cargo_pod_finished_descending) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event The event(s) or custom-input to invoke the handler on.
@@ -1484,6 +1520,24 @@ interface LuaBootstrap {
     ```
      */
     on_event(this: void, event: defines.events.on_mod_item_opened, handler: ((this: void, arg0: runtime.on_mod_item_opened) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_multiplayer_init, handler: ((this: void, arg0: runtime.on_multiplayer_init) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event The event(s) or custom-input to invoke the handler on.
@@ -3427,6 +3481,24 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.on_singleplayer_init, handler: ((this: void, arg0: runtime.on_singleplayer_init) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.on_space_platform_built_entity, handler: ((this: void, arg0: runtime.on_space_platform_built_entity) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
@@ -4163,7 +4235,8 @@ interface LuaBootstrap {
      * The metatable first needs to be defined in the mod's root scope, then registered using this method. From then on, it will be properly restored for tables in {@link storage | runtime:storage}.
      *
      * ```
-     * local metatable = {
+     * local metatable =
+     * {
      *   __index = function(key)
      *     return "no value for key " .. key
      *   end
@@ -4388,6 +4461,28 @@ interface LuaBurnerUsagePrototype extends LuaPrototypeBase {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
+ * A cargo hatch.
+ */
+interface LuaCargoHatch {
+    /**
+     * Creates a cargo pod for output at the owning entity hatch location.
+     */
+    create_cargo_pod(this: void): LuaEntity;
+    readonly busy: boolean;
+    readonly is_input_compatible: boolean;
+    readonly is_output_compatible: boolean;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    readonly owner: LuaEntity;
+    readonly reserved: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -5665,6 +5760,13 @@ interface LuaEntity extends LuaControl {
      */
     create_build_effect_smoke(this: void): void;
     /**
+     * Creates a cargo pod if possible.
+     *
+     * Cargo pod will be created with {@link invalid | runtime:defines.cargo_destination.invalid} destination type. Setting {@link cargo_pod_destination | runtime:LuaEntity::cargo_pod_destination} will cause it to launch.
+     * @param cargo_hatch The hatch to create the pod at. A random (available) one is picked if not provided.
+     */
+    create_cargo_pod(this: void, cargo_hatch?: LuaCargoHatch): LuaEntity | null;
+    /**
      * Damages the entity.
      * @param damage The amount of damage to be done.
      * @param force The force that will be doing the damage.
@@ -6159,7 +6261,7 @@ interface LuaEntity extends LuaControl {
      * Plays a note with the given instrument and note.
      * @returns Whether the request is valid. The sound may or may not be played depending on polyphony settings.
      */
-    play_note(this: void, instrument: uint, note: uint): boolean;
+    play_note(this: void, instrument: uint, note: uint, stop_playing_sounds?: boolean): boolean;
     /**
      * Release the unit from the spawner which spawned it. This allows the spawner to continue spawning additional units.
      */
@@ -6382,6 +6484,10 @@ interface LuaEntity extends LuaControl {
      */
     associated_player?: LuaPlayer | PlayerIdentification;
     /**
+     * The cargo pod attached to this rocket silo rocket if any.
+     */
+    readonly attached_cargo_pod?: LuaEntity;
+    /**
      * Destination of this spidertron's autopilot, if any. Writing `nil` clears all destinations.
      */
     autopilot_destination?: MapPosition;
@@ -6438,6 +6544,20 @@ interface LuaEntity extends LuaControl {
      * The burner energy source for this entity, if any.
      */
     readonly burner?: LuaBurner;
+    /**
+     * The cargo hatches owned by this entity if any.
+     */
+    readonly cargo_hatches: LuaCargoHatch[];
+    /**
+     * The destination of this cargo pod entity.
+     *
+     * Use {@link force_finish_ascending | runtime:LuaEntity::force_finish_ascending} if you want it to only descend from orbit.
+     */
+    cargo_pod_destination: CargoDestination;
+    /**
+     * The state of this cargo pod entity.
+     */
+    readonly cargo_pod_state: 'awaiting_launch' | 'ascending' | 'surface_transition' | 'descending' | 'parking';
     /**
      * The state of this chain signal.
      */
@@ -6827,6 +6947,10 @@ interface LuaEntity extends LuaControl {
      */
     linked_belt_type: 'input' | 'output';
     /**
+     * The belt stack size override for this loader. Set to `0` to disable. Writing this value requires {@link LoaderPrototype::adjustable_belt_stack_size | prototype:LoaderPrototype::adjustable_belt_stack_size} to be `true`.
+     */
+    loader_belt_stack_size_override: uint8;
+    /**
      * The container entity this loader is pointing at/pulling from depending on the {@link LuaEntity::loader_type | runtime:LuaEntity::loader_type}, if any.
      */
     readonly loader_container?: LuaEntity;
@@ -7046,6 +7170,10 @@ interface LuaEntity extends LuaControl {
      */
     readonly robot_order_queue: WorkerRobotOrder[];
     /**
+     * The rocket silo rocket this cargo pod is attached to, or rocket silo rocket attached to this rocket silo - if any.
+     */
+    readonly rocket?: LuaEntity;
+    /**
      * Number of rocket parts in the silo.
      */
     rocket_parts: uint;
@@ -7150,7 +7278,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly supports_direction: boolean;
     /**
-     * The tags associated with this entity ghost. `nil` if this is not an entity ghost.
+     * The tags associated with this entity ghost. `nil` if this is not an entity ghost or when the ghost has no tags.
      */
     tags?: Tags;
     /**
@@ -7888,6 +8016,14 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly light_blinking_speed?: double;
     /**
+     * True if this loader supports a runtime-adjustable belt stack size.
+     */
+    readonly loader_adjustable_belt_stack_size?: boolean;
+    /**
+     * The max belt stack size for this loader.
+     */
+    readonly loader_max_belt_stack_size?: uint8;
+    /**
      * The logistic mode of this logistic container.
      */
     readonly logistic_mode?: 'requester' | 'active-provider' | 'passive-provider' | 'buffer' | 'storage' | 'none';
@@ -7953,6 +8089,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * How many friendly units are required within the spawning_radius of this spawner for it to stop producing more units.
      */
     readonly max_friends_around_to_spawn?: double;
+    /**
+     * The max number of item products this crafting machine prototype supports.
+     */
+    readonly max_item_product_count?: uint;
     /**
      * The max payload size of this logistics or construction robot.
      */
@@ -9282,7 +9422,7 @@ interface LuaForce {
      *
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for this force.
      * @param table.path The sound to play.
-     * @param table.position Where the sound should be played. If not given, it's played at the current position of each player.
+     * @param table.position Where the sound should be played. If not given, it's played globally on each player's controller's surface.
      * @param table.volume_modifier The volume of the sound to play. Must be between 0 and 1 inclusive.
      * @param table.override_sound_type The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      */
@@ -9625,6 +9765,51 @@ interface LuaFuelCategoryPrototype extends LuaPrototypeBase {
     readonly valid: boolean;
 }
 /**
+ * Control behavior for furnaces.
+ */
+interface LuaFurnaceControlBehavior extends LuaGenericOnOffControlBehavior {
+    /**
+     * `true` if the furnace reads its ingredients contents, product contents and materials in crafting.
+     */
+    circuit_read_contents: boolean;
+    /**
+     * `true` if the furnace outputs ingredients of current recipe as a signals to circuit network.
+     */
+    circuit_read_ingredients: boolean;
+    /**
+     * `true` if the the furnace sends a signal when the recipe finishes.
+     */
+    circuit_read_recipe_finished: boolean;
+    /**
+     * `true` if the the furnace sends a signal when it is working.
+     */
+    circuit_read_working: boolean;
+    /**
+     * The signal sent when the furnace finishes a recipe.
+     */
+    circuit_recipe_finished_signal?: SignalID;
+    /**
+     * The signal sent when the furnace is working.
+     */
+    circuit_working_signal?: SignalID;
+    /**
+     * `true` if the read contents should include fuel (content of energy source)
+     */
+    include_fuel: boolean;
+    /**
+     * `true` if the read contents should include items in crafting.
+     */
+    include_in_crafting: boolean;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
  * Main toplevel type, provides access to most of the API though its members. An instance of LuaGameScript is available as the global object named `game`.
  */
 interface LuaGameScript {
@@ -9783,7 +9968,7 @@ interface LuaGameScript {
      *
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for that player.
      * @param table.path The sound to play.
-     * @param table.position Where the sound should be played. If not given, it's played at the current position of each player.
+     * @param table.position Where the sound should be played. If not given, it's played globally on each player's controller's surface.
      * @param table.volume_modifier The volume of the sound to play. Must be between 0 and 1 inclusive.
      * @param table.override_sound_type The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      */
@@ -12352,7 +12537,7 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      */
     readonly valid: boolean;
     /**
-     * Weight of this item
+     * Weight of this item. More information on how item weight is determined can be found on its {@link auxiliary page | runtime:item-weight}.
      */
     readonly weight: double;
 }
@@ -13590,7 +13775,7 @@ interface LuaPlayer extends LuaControl {
      *
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for this player.
      * @param table.path The sound to play.
-     * @param table.position Where the sound should be played. If not given, it's played at the current position of the player.
+     * @param table.position Where the sound should be played. If not given, it's played globally on the player's controller's surface.
      * @param table.volume_modifier The volume of the sound to play. Must be between 0 and 1 inclusive.
      * @param table.override_sound_type The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      */
@@ -15027,9 +15212,13 @@ interface LuaRecord {
      */
     blueprint_snap_to_grid?: TilePosition;
     /**
-     * The contents of this BlueprintBookRecord.
+     * The contents of this BlueprintBookRecord. This is sparse array - it may have gaps, so using `#` will not be reliable. Use {@link LuaRecord::contents_size | runtime:LuaRecord::contents_size} or `pairs()` to iterate this table.
      */
-    readonly contents: LuaRecord[];
+    readonly contents: LuaTable<ItemStackIndex, LuaRecord>;
+    /**
+     * The highest populated index in the contents of this BlueprintBookRecord.
+     */
+    readonly contents_size: ItemStackIndex;
     /**
      * List of raw materials required to build this blueprint.
      */
@@ -15062,6 +15251,10 @@ interface LuaRecord {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    /**
+     * The preview icons for this record.
+     */
+    preview_icons: BlueprintSignalIcon[];
     /**
      * The number of tile filters this deconstruction planner supports.
      */
@@ -15753,6 +15946,122 @@ interface LuaRocketSiloControlBehavior extends LuaControlBehavior {
     readonly valid: boolean;
 }
 /**
+ * The schedule of a particular {@link LuaTrain | runtime:LuaTrain} or {@link LuaSpacePlatform | runtime:LuaSpacePlatform}.
+ */
+interface LuaSchedule {
+    /**
+     * Activates the interrupt at the given index, if the index is valid.
+     */
+    activate_interrupt(this: void, index: uint): void;
+    /**
+     * Adds the given interrupt to the schedule if an interrupt with the given name does not already exist.
+     */
+    add_interrupt(this: void, interrupt: ScheduleInterrupt): void;
+    /**
+     * Adds a record to the end of the current schedule using the provided data.
+     */
+    add_record(this: void, data: AddRecordData): void;
+    /**
+     * Adds the given wait condition to the given record.
+     */
+    add_wait_condition(this: void, record_index: ScheduleRecordPosition, condition_index: uint, type: WaitCondition): void;
+    /**
+     * Changes the interrupt at the given index to the provided values. Note, the names must match.
+     */
+    change_interrupt(this: void, index: uint, interrupt: ScheduleInterrupt): void;
+    /**
+     * Changes the wait condition on the given record to the new values.
+     */
+    change_wait_condition(this: void, record_index: ScheduleRecordPosition, condition_index: uint, wait_condition: WaitCondition): void;
+    /**
+     * Copies the record from the given schedule at the given index into this schedule at the given index.
+     */
+    copy_record(this: void, source_schedule: LuaSchedule, source_index: uint, destination_index: uint): void;
+    drag_interrupt(this: void, from: uint, to: uint): void;
+    /**
+     * @param interrupt_index The interrupt to operate on, if any.
+     */
+    drag_record(this: void, from: uint, to: uint, interrupt_index?: uint): void;
+    /**
+     * @param index The record to change.
+     */
+    drag_wait_condition(this: void, index: ScheduleRecordPosition, from: uint, to: uint): void;
+    get_interrupt(this: void, index: uint): ScheduleInterrupt | null;
+    get_record(this: void, index: ScheduleRecordPosition): ScheduleRecord | null;
+    /**
+     * If the given index is invalid, `nil` is returned.
+     * @param interrupt_index If provided, the record count in this interrupt is read.
+     */
+    get_record_count(this: void, interrupt_index?: uint): uint | null;
+    /**
+     * Gets the wait condition at the given index if one exists.
+     */
+    get_wait_condition(this: void, schedule_index: ScheduleRecordPosition, condition_index: uint): WaitCondition | null;
+    /**
+     * The number of wait conditions in the given schedule record.
+     */
+    get_wait_condition_count(this: void, index: ScheduleRecordPosition): uint | null;
+    /**
+     * Gets the wait conditions at the given index if they exist.
+     */
+    get_wait_conditions(this: void, schedule_index: ScheduleRecordPosition): WaitCondition[] | null;
+    /**
+     * @param schedule_index The schedule index
+     */
+    go_to_station(this: void, schedule_index: uint): void;
+    /**
+     * Removes the interrupt at the given index, if the index is valid.
+     */
+    remove_interrupt(this: void, index: uint): void;
+    /**
+     * Removes the record at the given index, if the index is valid.
+     */
+    remove_record(this: void, index: ScheduleRecordPosition): void;
+    /**
+     * Removes the given wait condition from the given record.
+     */
+    remove_wait_condition(this: void, record_index: ScheduleRecordPosition, condition_index: uint): void;
+    /**
+     * @param old_name The interrupt to rename
+     * @param new_name The new name - if it already exists, does nothing.
+     */
+    rename_interrupt(this: void, old_name: string, new_name: string): void;
+    /**
+     * Sets if unloading is allowed at the given schedule index.
+     */
+    set_allow_unloading(this: void, index: ScheduleRecordPosition, allow: boolean): void;
+    set_stopped(this: void, stopped: boolean): void;
+    /**
+     * Sets the comparison on the given wait condition.
+     * @param mode `"and"`, or `"or"`
+     */
+    set_wait_condition_mode(this: void, record_index: ScheduleRecordPosition, condition_index: uint, mode: string): void;
+    readonly current: uint;
+    /**
+     * The group this schedule is part of, if any.
+     */
+    group?: string;
+    readonly interrupt_count: uint;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * The owner of this schedule.
+     */
+    readonly owner?: LuaTrain | LuaSpacePlatform;
+    /**
+     * Note: when writing, value must not be larger than LuaGameScript::tick
+     */
+    tick_of_last_activity: MapTick;
+    readonly tick_of_last_schedule_change: MapTick;
+    readonly ticks_in_station: MapTick;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
  * Control behavior for selector combinators.
  */
 interface LuaSelectorCombinatorControlBehavior extends LuaCombinatorControlBehavior {
@@ -16010,6 +16319,10 @@ interface LuaSpacePlatform {
      */
     apply_starter_pack(this: void): LuaEntity | null;
     /**
+     * Returns `true` when the space platform isn't waiting on any delivery from the planet.
+     */
+    can_leave_current_location(this: void): boolean;
+    /**
      * Cancels deletion of this space platform if it was scheduled for deletion.
      */
     cancel_deletion(this: void): void;
@@ -16058,6 +16371,7 @@ interface LuaSpacePlatform {
         limit?: uint;
         invert?: boolean;
     }): AsteroidChunk[];
+    get_schedule(this: void): LuaSchedule;
     /**
      * Repairs the given tile if it's damaged.
      */
@@ -16069,6 +16383,12 @@ interface LuaSpacePlatform {
         position: TilePosition;
         damage: float;
     }[];
+    /**
+     * The point on space connection this platform is at or `nil`.
+     *
+     * It is represented as a number in range `[0, 1]`, with 0 being {@link LuaSpaceConnectionPrototype::from | runtime:LuaSpaceConnectionPrototype::from} and 1 being {@link LuaSpaceConnectionPrototype::to | runtime:LuaSpaceConnectionPrototype::to}.
+     */
+    distance?: double;
     /**
      * The force of this space platform.
      */
@@ -16112,9 +16432,17 @@ interface LuaSpacePlatform {
      */
     readonly scheduled_for_deletion: uint;
     /**
-     * The space location this space platform is stopped at or `nil`.
+     * The space connection this space platform is traveling through or `nil`.
+     *
+     * Write operation requires a valid space connection and it sets the distance to 0.5.
      */
-    readonly space_location?: LuaSpaceLocationPrototype;
+    space_connection?: LuaSpaceConnectionPrototype;
+    /**
+     * The space location this space platform is stopped at or `nil`.
+     *
+     * Write operation requires a valid space location and will cancel pending item requests.
+     */
+    space_location?: LuaSpaceLocationPrototype;
     speed: double;
     /**
      * The starter pack used to create this space platform.
@@ -17016,7 +17344,7 @@ interface LuaSurface {
      *
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for that player.
      * @param table.path The sound to play.
-     * @param table.position Where the sound should be played. If not given, it's played at the current position of each player.
+     * @param table.position Where the sound should be played. If not given, it's played globally on this surface.
      * @param table.volume_modifier The volume of the sound to play. Must be between 0 and 1 inclusive.
      * @param table.override_sound_type The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
      */
@@ -18207,6 +18535,7 @@ interface LuaTrain {
      * Gets all rails under the train.
      */
     get_rails(this: void): LuaEntity[];
+    get_schedule(this: void): LuaSchedule;
     /**
      * Go to the station specified by the index in the train's schedule.
      */
@@ -18522,6 +18851,13 @@ interface LuaTransportLine {
      * Remove all items from this transport line.
      */
     clear(this: void): void;
+    /**
+     * Force insert item at a given position. Inserts item onto a transport line. If a position is out of range, it is clamped to a closest valid position on the transport line. Item will be inserted regardless of other items nearby, possibly forcing items to become squashed.
+     * @param position Where on the line to insert the items.
+     * @param items Items to insert.
+     * @param belt_stack_size Maximum size of stack created on belt
+     */
+    force_insert_at(this: void, position: float, items: ItemStackIdentification, belt_stack_size?: uint8): void;
     /**
      * Get counts of all items on this line, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      * @returns List of all items on this line.
