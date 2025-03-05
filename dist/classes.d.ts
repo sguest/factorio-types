@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.37
+// Factorio version 2.0.38
 // API version 6
 
 declare namespace runtime {
@@ -197,6 +197,10 @@ interface LuaAirbornePollutantPrototype extends LuaPrototypeBase {
 interface LuaAmmoCategoryPrototype extends LuaPrototypeBase {
     readonly bonus_gui_order: string;
     /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaAmmoCategoryPrototype;
+    /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
@@ -292,6 +296,10 @@ interface LuaAssemblingMachineControlBehavior extends LuaGenericOnOffControlBeha
  * Prototype of an asteroid chunk.
  */
 interface LuaAsteroidChunkPrototype extends LuaPrototypeBase {
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaAsteroidChunkPrototype;
     readonly hide_from_signal_gui: boolean;
     readonly item_signal_alias?: LuaItemPrototype;
     readonly mineable_properties: MineableProperties;
@@ -5849,6 +5857,10 @@ interface LuaEntity extends LuaControl {
      */
     get_burnt_result_inventory(this: void): LuaInventory | null;
     /**
+     * Gets the cargo bays connected to this cargo landing pad or space platform hub.
+     */
+    get_cargo_bays(this: void): LuaEntity[];
+    /**
      * Returns all child signals. Child signals can be either RailSignal or RailChainSignal. Child signals are signals which are checked by this signal to determine a chain state.
      */
     get_child_signals(this: void): LuaEntity[];
@@ -7099,6 +7111,14 @@ interface LuaEntity extends LuaControl {
      */
     readonly proxy_target?: LuaEntity;
     /**
+     * Entity of which inventory is exposed by this ProxyContainer
+     */
+    proxy_target_entity?: LuaEntity;
+    /**
+     * Inventory index of the inventory that is exposed by this ProxyContainer
+     */
+    proxy_target_inventory: defines.inventory;
+    /**
      * The rail target of this pump, if any.
      */
     readonly pump_rail_target?: LuaEntity;
@@ -7806,6 +7826,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * Whether this explosion rotates.
      */
     readonly explosion_rotate?: double;
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaEntityPrototype;
     /**
      * The group of mutually fast-replaceable entities, if any.
      */
@@ -9126,6 +9150,10 @@ interface LuaFluidPrototype extends LuaPrototypeBase {
      * A multiplier on the amount of emissions produced when this fluid is burnt in a generator. A value above `1.0` increases emissions and vice versa. The multiplier can't be negative.
      */
     readonly emissions_multiplier: double;
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaFluidPrototype;
     readonly flow_color: Color;
     /**
      * The amount of energy in Joules one unit of this fluid will produce when burnt in a generator. A value of `0` means this fluid can't be used for energy generation. The value can't be negative.
@@ -12392,6 +12420,10 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      */
     readonly equipment_grid?: LuaEquipmentGridPrototype;
     /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaItemPrototype;
+    /**
      * The durability message key used when displaying the durability of this tool in Factoriopedia.
      */
     readonly factoriopedia_durability_description_key?: string;
@@ -13502,6 +13534,19 @@ interface LuaPlayer extends LuaControl {
      */
     add_custom_alert(this: void, entity: LuaEntity, icon: SignalID, message: LocalisedString, show_on_map: boolean): void;
     /**
+     * Adds a pin to this player for the given pin specification. Either entity, player, or surface and position must be defined.
+     * @param table.entity The entity to pin.
+     * @param table.player The player to pin.
+     * @param table.surface The surface to create the pin on.
+     * @param table.position Where to create the pin. Required when surface is defined.
+     */
+    add_pin(this: void, table: {
+        entity?: LuaEntity;
+        player?: PlayerIdentification;
+        surface?: SurfaceIdentification;
+        position?: MapPosition;
+    }): void;
+    /**
      * Adds the given recipe to the list of recipe notifications for this player.
      * @param recipe Recipe to add.
      */
@@ -14224,6 +14269,10 @@ interface LuaProgrammableSpeakerControlBehavior extends LuaControlBehavior {
  */
 interface LuaPrototypeBase {
     /**
+     * Provides additional description used in factoriopedia.
+     */
+    readonly factoriopedia_description: LocalisedString;
+    /**
      * Group of this prototype.
      */
     readonly group: LuaGroup;
@@ -14518,6 +14567,23 @@ interface LuaPrototypes {
      * A dictionary containing every LuaVirtualSignalPrototype indexed by `name`.
      */
     readonly virtual_signal: Record<string, LuaVirtualSignalPrototype>;
+}
+/**
+ * Control behavior for proxy container.
+ */
+interface LuaProxyContainerControlBehavior extends LuaControlBehavior {
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * `true` if this proxy container is sending inventory contents to a circuit network
+     */
+    read_contents: boolean;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
 }
 /**
  * Control behavior for pumps.
@@ -14939,6 +15005,10 @@ interface LuaRecipePrototype extends LuaPrototypeBase {
      * Energy required to execute this recipe. This directly affects the crafting time: Recipe's energy is exactly its crafting time in seconds, when crafted in an assembling machine with crafting speed exactly equal to one.
      */
     readonly energy: double;
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaRecipePrototype;
     /**
      * Is the recipe hidden from flow statistics (item/fluid production statistics)?
      */
@@ -15958,13 +16028,14 @@ interface LuaSchedule {
      */
     add_interrupt(this: void, interrupt: ScheduleInterrupt): void;
     /**
-     * Adds a record to the end of the current schedule using the provided data.
+     * Adds the given record to the end of the current schedule or at the given index using the provided data.
+     * @returns The index the record was added at.
      */
-    add_record(this: void, data: AddRecordData): void;
+    add_record(this: void, data: AddRecordData): uint | null;
     /**
      * Adds the given wait condition to the given record.
      */
-    add_wait_condition(this: void, record_index: ScheduleRecordPosition, condition_index: uint, type: WaitCondition): void;
+    add_wait_condition(this: void, record_index: ScheduleRecordPosition, condition_index: uint, type: WaitConditionType): void;
     /**
      * Changes the interrupt at the given index to the provided values. Note, the names must match.
      */
@@ -15973,6 +16044,14 @@ interface LuaSchedule {
      * Changes the wait condition on the given record to the new values.
      */
     change_wait_condition(this: void, record_index: ScheduleRecordPosition, condition_index: uint, wait_condition: WaitCondition): void;
+    /**
+     * Removes all interrupts.
+     */
+    clear_interrupts(this: void): void;
+    /**
+     * @param uint If provided, clears the records for this interrupt.
+     */
+    clear_records(this: void, uint?: interrupt_index): void;
     /**
      * Copies the record from the given schedule at the given index into this schedule at the given index.
      */
@@ -15987,12 +16066,17 @@ interface LuaSchedule {
      */
     drag_wait_condition(this: void, index: ScheduleRecordPosition, from: uint, to: uint): void;
     get_interrupt(this: void, index: uint): ScheduleInterrupt | null;
+    get_interrupts(this: void): ScheduleInterrupt[];
     get_record(this: void, index: ScheduleRecordPosition): ScheduleRecord | null;
     /**
      * If the given index is invalid, `nil` is returned.
      * @param interrupt_index If provided, the record count in this interrupt is read.
      */
     get_record_count(this: void, interrupt_index?: uint): uint | null;
+    /**
+     * @param uint If provided, gets the records for this interrupt.
+     */
+    get_records(this: void, uint?: interrupt_index): ScheduleRecord[] | null;
     /**
      * Gets the wait condition at the given index if one exists.
      */
@@ -16030,6 +16114,11 @@ interface LuaSchedule {
      * Sets if unloading is allowed at the given schedule index.
      */
     set_allow_unloading(this: void, index: ScheduleRecordPosition, allow: boolean): void;
+    set_interrupts(this: void, interrupts: ScheduleInterrupt[]): void;
+    /**
+     * @param uint If provided, the records will be set on this interrupt.
+     */
+    set_records(this: void, records: ScheduleRecord[], uint?: interrupt_index): void;
     set_stopped(this: void, stopped: boolean): void;
     /**
      * Sets the comparison on the given wait condition.
@@ -16270,6 +16359,10 @@ interface LuaSimulation {
  */
 interface LuaSpaceConnectionPrototype extends LuaPrototypeBase {
     readonly asteroid_spawn_definitions?: SpaceConnectionAsteroidSpawnDefinition[];
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaSpaceConnectionPrototype;
     readonly from: LuaSpaceLocationPrototype;
     readonly length: uint;
     /**
@@ -16289,6 +16382,10 @@ interface LuaSpaceLocationPrototype extends LuaPrototypeBase {
     readonly asteroid_spawn_definitions?: SpaceLocationAsteroidSpawnDefinition[];
     readonly asteroid_spawn_influence: double;
     readonly entities_require_heating?: boolean;
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaSpaceLocationPrototype;
     readonly map_gen_settings?: MapGenSettings;
     readonly map_seed_offset?: uint;
     /**
@@ -18144,6 +18241,10 @@ interface LuaSurfacePropertyPrototype extends LuaPrototypeBase {
  */
 interface LuaSurfacePrototype extends LuaPrototypeBase {
     /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaSurfacePrototype;
+    /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
@@ -18262,6 +18363,10 @@ interface LuaTechnologyPrototype extends LuaPrototypeBase {
      * If this technology prototype is essential, meaning it is shown in the condensed technology graph.
      */
     readonly essential: boolean;
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaTechnologyPrototype;
     /**
      * If this technology ignores the technology cost multiplier setting.
      *
@@ -18437,6 +18542,10 @@ interface LuaTilePrototype extends LuaPrototypeBase {
     readonly default_cover_tile?: LuaTilePrototype;
     readonly default_destroyed_dropped_item_trigger?: TriggerItem[];
     readonly destroys_dropped_items?: boolean;
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaTilePrototype;
     /**
      * The fluid offshore pump produces on this tile, if any.
      */
@@ -19115,6 +19224,10 @@ interface LuaUndoRedoStack {
  * Prototype of a virtual signal.
  */
 interface LuaVirtualSignalPrototype extends LuaPrototypeBase {
+    /**
+     * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
+     */
+    readonly factoriopedia_alternative?: LuaVirtualSignalPrototype;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
