@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.37
+// Factorio version 2.0.38
 // API version 6
 
 declare namespace prototype {
@@ -355,6 +355,9 @@ interface dataCollection {
     'impact-category': {
         [key: string]: ImpactCategory;
     };
+    'infinity-cargo-wagon': {
+        [key: string]: InfinityCargoWagonPrototype;
+    };
     'infinity-container': {
         [key: string]: InfinityContainerPrototype;
     };
@@ -528,6 +531,9 @@ interface dataCollection {
     };
     'projectile': {
         [key: string]: ProjectilePrototype;
+    };
+    'proxy-container': {
+        [key: string]: ProxyContainerPrototype;
     };
     'pump': {
         [key: string]: PumpPrototype;

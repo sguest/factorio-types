@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.37
+// Factorio version 2.0.38
 // API version 6
 
 declare namespace prototype {
@@ -920,6 +920,9 @@ HighlightBoxEntityPrototype | /**
  * `'impact-category'`
  */
 ImpactCategory | /**
+ * `'infinity-cargo-wagon'`
+ */
+InfinityCargoWagonPrototype | /**
  * `'infinity-container'`
  */
 InfinityContainerPrototype | /**
@@ -1094,6 +1097,9 @@ ProgrammableSpeakerPrototype | /**
  * `'projectile'`
  */
 ProjectilePrototype | /**
+ * `'proxy-container'`
+ */
+ProxyContainerPrototype | /**
  * `'pump'`
  */
 PumpPrototype | /**
@@ -9441,6 +9447,10 @@ interface SpiderVehicleGraphicsSet extends SpiderTorsoGraphicsSet {
     autopilot_destination_visualisation_render_layer?: RenderLayer;
     autopilot_path_visualisation_line_width?: float;
     autopilot_path_visualisation_on_map_line_width?: float;
+    /**
+     * The default mask color for the spider vehicle. Defaults to orange.
+     */
+    default_color?: float;
     /**
      * Placed in multiple positions, as determined by `light_positions`.
      */

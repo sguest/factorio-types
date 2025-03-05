@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.37
+// Factorio version 2.0.38
 // API version 6
 
 declare namespace prototype {
@@ -4280,6 +4280,20 @@ interface ImpactCategory {
     type: 'impact-category';
 }
 /**
+ * A cargo wagon that can spawn or void items at will.
+ */
+interface InfinityCargoWagonPrototype extends CargoWagonPrototype {
+    erase_contents_when_mined?: bool;
+    /**
+     * Controls which players can control what the chest spawns.
+     */
+    gui_mode?: 'all' | 'none' | 'admins';
+    /**
+     * When true, items created inside the infinity cargo wagon will not start to spoil until they have been removed from the wagon.
+     */
+    preserve_contents_when_created?: bool;
+}
+/**
  * A generic container, such as a chest, that can spawn or void items and interact with the logistics network.
  */
 interface InfinityContainerPrototype extends LogisticContainerPrototype {
@@ -6121,6 +6135,23 @@ interface PrototypeBase {
      * For a list of all possible types, see the {@link prototype overview | prototype:prototypes}.
      */
     type: string;
+}
+/**
+ * A container that must be set to point at other entity and inventory index so it can forward all inventory interactions to the other entity.
+ */
+interface ProxyContainerPrototype extends EntityWithOwnerPrototype {
+    circuit_connector?: CircuitConnectorDefinition;
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    draw_circuit_wires?: bool;
+    draw_copper_wires?: bool;
+    /**
+     * If the content of the inventory should be rendered in alt mode.
+     */
+    draw_inventory_content?: bool;
+    picture?: Sprite;
 }
 /**
  * The pump is used to transfer fluids between tanks, fluid wagons and pipes.
@@ -10856,6 +10887,8 @@ type dataExtendType = ({
 } & HighlightBoxEntityPrototype) | ({
     type: 'impact-category';
 } & ImpactCategory) | ({
+    type: 'infinity-cargo-wagon';
+} & InfinityCargoWagonPrototype) | ({
     type: 'infinity-container';
 } & InfinityContainerPrototype) | ({
     type: 'infinity-pipe';
@@ -10972,6 +11005,8 @@ type dataExtendType = ({
 } & ProgrammableSpeakerPrototype) | ({
     type: 'projectile';
 } & ProjectilePrototype) | ({
+    type: 'proxy-container';
+} & ProxyContainerPrototype) | ({
     type: 'pump';
 } & PumpPrototype) | ({
     type: 'quality';
