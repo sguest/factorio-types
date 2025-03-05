@@ -41,7 +41,8 @@ interface AddRecordData {
      */
     station?: string;
     rail?: LuaEntity;
-    rail_direction?: RailDirection;
+    // defined as RailDirection, which has no info on it
+    rail_direction?: any;
     wait_conditions?: WaitCondition[];
     temporary?: boolean;
     allows_unloading?: boolean;
