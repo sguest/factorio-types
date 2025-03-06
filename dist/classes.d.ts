@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.38
+// Factorio version 2.0.39
 // API version 6
 
 declare namespace runtime {
@@ -16049,7 +16049,7 @@ interface LuaSchedule {
      */
     clear_interrupts(this: void): void;
     /**
-     * @param uint If provided, clears the records for this interrupt.
+     * @param interrupt_index If provided, clears the records for this interrupt.
      */
     clear_records(this: void, interrupt_index?: uint): void;
     /**
@@ -16074,7 +16074,7 @@ interface LuaSchedule {
      */
     get_record_count(this: void, interrupt_index?: uint): uint | null;
     /**
-     * @param uint If provided, gets the records for this interrupt.
+     * @param interrupt_index If provided, gets the records for this interrupt.
      */
     get_records(this: void, interrupt_index?: uint): ScheduleRecord[] | null;
     /**
@@ -16116,7 +16116,7 @@ interface LuaSchedule {
     set_allow_unloading(this: void, index: ScheduleRecordPosition, allow: boolean): void;
     set_interrupts(this: void, interrupts: ScheduleInterrupt[]): void;
     /**
-     * @param uint If provided, the records will be set on this interrupt.
+     * @param interrupt_index If provided, the records will be set on this interrupt.
      */
     set_records(this: void, records: ScheduleRecord[], interrupt_index?: uint): void;
     set_stopped(this: void, stopped: boolean): void;
