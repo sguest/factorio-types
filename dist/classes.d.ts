@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.38
+// Factorio version 2.0.39
 // API version 6
 
 declare namespace runtime {
@@ -16051,7 +16051,7 @@ interface LuaSchedule {
     /**
      * @param uint If provided, clears the records for this interrupt.
      */
-    clear_records(this: void, interrupt_index?: uint): void;
+    clear_records(this: void, uint?: interrupt_index): void;
     /**
      * Copies the record from the given schedule at the given index into this schedule at the given index.
      */
@@ -16076,7 +16076,7 @@ interface LuaSchedule {
     /**
      * @param uint If provided, gets the records for this interrupt.
      */
-    get_records(this: void, interrupt_index?: uint): ScheduleRecord[] | null;
+    get_records(this: void, uint?: interrupt_index): ScheduleRecord[] | null;
     /**
      * Gets the wait condition at the given index if one exists.
      */
@@ -16118,7 +16118,7 @@ interface LuaSchedule {
     /**
      * @param uint If provided, the records will be set on this interrupt.
      */
-    set_records(this: void, records: ScheduleRecord[], interrupt_index?: uint): void;
+    set_records(this: void, records: ScheduleRecord[], uint?: interrupt_index): void;
     set_stopped(this: void, stopped: boolean): void;
     /**
      * Sets the comparison on the given wait condition.
