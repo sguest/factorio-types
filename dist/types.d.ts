@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.39
+// Factorio version 2.0.41
 // API version 6
 
 declare namespace prototype {
@@ -71,7 +71,7 @@ interface ActivityBarStyleSpecification extends BaseStyleSpecification {
     type: 'activity_bar_style';
 }
 interface ActivityMatchingModifiers {
-    inverted?: bool;
+    inverted?: boolean;
     maximum?: float;
     /**
      * Cannot be larger than `maximum`.
@@ -109,7 +109,7 @@ interface AggregationSpecification {
     /**
      * If `true`, already playing sounds are taken into account when checking `max_count`.
      */
-    count_already_playing?: bool;
+    count_already_playing?: boolean;
     max_count: uint32;
     priority?: 'closest' | 'farthest' | 'newest' | 'oldest';
     /**
@@ -121,7 +121,7 @@ interface AggregationSpecification {
      *
      * If `true`, sound instances above `max_count` are removed.
      */
-    remove: bool;
+    remove: boolean;
     /**
      * Has to be greater than or equal to 0.0.
      */
@@ -155,7 +155,7 @@ interface AgriculturalCraneSpeedArm {
     turn_rate?: double;
 }
 interface AgriculturalCraneSpeedGrappler {
-    allow_transpolar_movement?: bool;
+    allow_transpolar_movement?: boolean;
     /**
      * Must be positive.
      */
@@ -216,7 +216,7 @@ interface AmmoDamageModifier extends BaseModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     /**
      * Modification value, which will be added to the current ammo damage modifier upon researching.
      */
@@ -225,7 +225,7 @@ interface AmmoDamageModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 /**
  * Used to allow specifying different ammo effects depending on which kind of entity the ammo is used in.
@@ -244,7 +244,7 @@ interface AmmoType {
     /**
      * When true, the gun will be able to shoot even when the target is out of range. Only applies when `target_type` equals `"position"`. The gun will fire at the maximum range in the direction of the target position.
      */
-    clamp_position?: bool;
+    clamp_position?: boolean;
     consumption_modifier?: float;
     cooldown_modifier?: double;
     /**
@@ -378,9 +378,9 @@ type Animation4Way = {
     west?: Animation;
 } | Animation;
 interface AnimationElement {
-    always_draw?: bool;
+    always_draw?: boolean;
     animation?: Animation;
-    apply_tint?: bool;
+    apply_tint?: boolean;
     render_layer?: RenderLayer;
     /**
      * Used to determine render order for sprites with the same `render_layer` in the same position. Sprites with a higher `secondary_draw_order` are drawn on top.
@@ -450,7 +450,7 @@ interface AnimationParameters extends SpriteParameters {
     /**
      * Unused.
      */
-    generate_sdf?: bool;
+    generate_sdf?: boolean;
     /**
      * Mandatory if `size` is not defined.
      *
@@ -1349,29 +1349,29 @@ interface ApplyStarterPackTipTrigger extends CountBasedTipTrigger {
 interface AreaTriggerItem extends TriggerItem {
     collision_mode?: 'distance-from-collision-box' | 'distance-from-center';
     radius: double;
-    show_in_tooltip?: bool;
-    target_enemies?: bool;
-    target_entities?: bool;
-    trigger_from_target?: bool;
+    show_in_tooltip?: boolean;
+    target_enemies?: boolean;
+    target_entities?: boolean;
+    trigger_from_target?: boolean;
     type: 'area';
 }
 interface ArtilleryRangeModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'artillery-range';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface ArtilleryRemoteCapsuleAction {
     /**
      * Name of an {@link ArtilleryFlarePrototype | prototype:ArtilleryFlarePrototype}.
      */
     flare: EntityID;
-    play_sound_on_failure?: bool;
+    play_sound_on_failure?: boolean;
     type: 'artillery-remote';
 }
 interface ArtilleryTriggerDelivery extends TriggerDeliveryItem {
@@ -1386,7 +1386,7 @@ interface ArtilleryTriggerDelivery extends TriggerDeliveryItem {
     range_deviation?: float;
     starting_speed: float;
     starting_speed_deviation?: float;
-    trigger_fired_artillery?: bool;
+    trigger_fired_artillery?: boolean;
     type: 'artillery';
 }
 /**
@@ -1491,7 +1491,7 @@ interface AutoplaceSettings {
     /**
      * Whether missing autoplace names for this type should be default enabled.
      */
-    treat_missing_as_default?: bool;
+    treat_missing_as_default?: boolean;
 }
 /**
  * Autoplace specification is used to determine which entities are placed when generating map. Currently it is used for enemy bases, tiles, resources and other entities (trees, fishes, etc.).
@@ -1508,7 +1508,7 @@ interface AutoplaceSpecification {
      *
      * If true, normal frequency/size/richness (`value=1`) are used in that case. Otherwise it is treated as if 'none' were selected.
      */
-    default_enabled?: bool;
+    default_enabled?: boolean;
     /**
      * Force of the placed entity. Can be a custom force name. Only relevant for {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}.
      */
@@ -1632,12 +1632,12 @@ interface BaseAttackParameters {
     /**
      * Projectile will be creation position and orientation will be collinear with shooter and target (unless offset projectile center is specified). Used for railgun turrets to avoid unexpected friendly fire incidents.
      */
-    true_collinear_ejection?: bool;
+    true_collinear_ejection?: boolean;
     /**
      * If this is <= 0, it is set to 1. Arc from 0 to 1, so for example 0.25 is 90°. Used by the {@link flamethrower turret | https://wiki.factorio.com/Flamethrower_turret} in the base game. Arcs greater than 0.5 but less than 1 will be clamped to 0.5 as targeting in arcs larger than half circle is {@link not implemented | https://forums.factorio.com/94654}.
      */
     turn_range?: float;
-    use_shooter_direction?: bool;
+    use_shooter_direction?: boolean;
     /**
      * Number of ticks it takes for the weapon to actually shoot after the order for shooting has been made. This also allows to "adjust" the shooting animation to the effect of shooting.
      *
@@ -1656,17 +1656,17 @@ interface BaseEnergySource {
     /**
      * Whether to render the "no network" icon if the entity is not connected to an electric network.
      */
-    render_no_network_icon?: bool;
+    render_no_network_icon?: boolean;
     /**
      * Whether to render the "no power" icon if the entity is low on power. Also applies to the "no fuel" icon when using burner energy sources.
      */
-    render_no_power_icon?: bool;
+    render_no_power_icon?: boolean;
 }
 /**
  * The abstract base of all {@link Modifiers | prototype:Modifier}.
  */
 interface BaseModifier {
-    hidden?: bool;
+    hidden?: boolean;
     /**
      * Path to the icon file.
      *
@@ -1712,7 +1712,7 @@ interface BaseStyleSpecification {
     horizontal_align?: HorizontalAlign;
     horizontally_squashable?: StretchRule;
     horizontally_stretchable?: StretchRule;
-    ignored_by_search?: bool;
+    ignored_by_search?: boolean;
     left_margin?: int16;
     left_padding?: int16;
     /**
@@ -1750,7 +1750,7 @@ interface BaseStyleSpecification {
      * Natural width specifies the width of the element tries to have, but it can still be squashed/stretched to have a different size.
      */
     natural_width?: uint32;
-    never_hide_by_search?: bool;
+    never_hide_by_search?: boolean;
     /**
      * Sets `top_padding`, `right_padding`, `bottom_padding` and `left_padding` to the same value.
      */
@@ -1785,12 +1785,12 @@ interface BeaconDistributionModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'beacon-distribution';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface BeaconGraphicsSet {
     animation_layer?: RenderLayer;
@@ -1801,19 +1801,19 @@ interface BeaconGraphicsSet {
      */
     apply_module_tint?: ModuleTint;
     base_layer?: RenderLayer;
-    draw_animation_when_idle?: bool;
-    draw_light_when_idle?: bool;
+    draw_animation_when_idle?: boolean;
+    draw_light_when_idle?: boolean;
     frozen_patch?: Sprite;
     light?: LightDefinition;
-    module_icons_suppressed?: bool;
+    module_icons_suppressed?: boolean;
     module_tint_mode?: 'single-module' | 'mix';
     /**
      * The visualisations available for displaying the modules in the beacon. The visualisation is chosen based on art style, see {@link BeaconModuleVisualizations::art_style | prototype:BeaconModuleVisualizations::art_style} and {@link ModulePrototype::art_style | prototype:ModulePrototype::art_style}.
      */
     module_visualisations?: BeaconModuleVisualizations[];
     no_modules_tint?: Color;
-    random_animation_offset?: bool;
-    reset_animation_when_frozen?: bool;
+    random_animation_offset?: boolean;
+    reset_animation_when_frozen?: boolean;
     top_layer?: RenderLayer;
 }
 interface BeaconModuleVisualization {
@@ -1821,7 +1821,7 @@ interface BeaconModuleVisualization {
      * Which tint set in {@link ModulePrototype::beacon_tint | prototype:ModulePrototype::beacon_tint} should be applied to this, if any.
      */
     apply_module_tint?: ModuleTint;
-    has_empty_slot?: bool;
+    has_empty_slot?: boolean;
     pictures?: SpriteVariations;
     render_layer?: RenderLayer;
     /**
@@ -1863,7 +1863,7 @@ interface BeaconModuleVisualizations {
      */
     slots?: BeaconModuleVisualization[][];
     tier_offset?: int32;
-    use_for_empty_slots?: bool;
+    use_for_empty_slots?: boolean;
 }
 interface BeaconVisualizationTints {
     primary?: Color;
@@ -1906,17 +1906,17 @@ interface BeamGraphicsSet {
      */
     desired_segment_length?: float;
     ground?: BeamAnimationSet;
-    random_end_animation_rotation?: bool;
-    randomize_animation_per_segment?: bool;
-    transparent_start_end_animations?: bool;
+    random_end_animation_rotation?: boolean;
+    randomize_animation_per_segment?: boolean;
+    transparent_start_end_animations?: boolean;
 }
 interface BeamTriggerDelivery extends TriggerDeliveryItem {
-    add_to_shooter?: bool;
+    add_to_shooter?: boolean;
     /**
      * Name of a {@link BeamPrototype | prototype:BeamPrototype}.
      */
     beam: EntityID;
-    destroy_with_source_or_target?: bool;
+    destroy_with_source_or_target?: boolean;
     duration?: uint32;
     max_length?: uint32;
     source_offset?: Vector;
@@ -1934,7 +1934,7 @@ interface BeltStackSizeBonusModifier extends SimpleModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface BeltTraverseTipTrigger extends CountBasedTipTrigger {
     type: 'belt-traverse';
@@ -2006,7 +2006,7 @@ interface BoolModifier extends BaseModifier {
     /**
      * The value this modifier will have upon researching.
      */
-    modifier: bool;
+    modifier: boolean;
 }
 interface BorderImageSet {
     border_width?: int32;
@@ -2061,7 +2061,7 @@ interface BoxSpecification {
     /**
      * Whether this is a complete box or just the top left corner. If this is true, `side_length` and `side_height` must be present. Otherwise `max_side_length` must be present.
      */
-    is_whole_box?: bool;
+    is_whole_box?: boolean;
     /**
      * Only loaded, and mandatory if `is_whole_box` is `false`.
      */
@@ -2084,15 +2084,15 @@ interface BuildEntityTechnologyTrigger {
     type: 'build-entity';
 }
 interface BuildEntityTipTrigger extends CountBasedTipTrigger {
-    build_by_dragging?: bool;
-    build_in_line?: bool;
+    build_by_dragging?: boolean;
+    build_in_line?: boolean;
     /**
      * Building is considered consecutive when the built entity is the same as the last built entity.
      */
-    consecutive?: bool;
+    consecutive?: boolean;
     entity?: EntityID;
-    linear_power_pole_line?: bool;
-    match_type_only?: bool;
+    linear_power_pole_line?: boolean;
+    match_type_only?: boolean;
     quality?: QualityID;
     type: 'build-entity';
 }
@@ -2101,12 +2101,12 @@ interface BulkInserterCapacityBonusModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'bulk-inserter-capacity-bonus';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface BurnerEnergySource extends BaseEnergySource {
     burner_usage?: BurnerUsageID;
@@ -2141,16 +2141,16 @@ interface ButtonStyleSpecificationBase extends StyleWithClickableGraphicalSetSpe
     clicked_vertical_offset?: uint32;
     default_font_color?: Color;
     disabled_font_color?: Color;
-    draw_grayscale_picture?: bool;
-    draw_shadow_under_picture?: bool;
+    draw_grayscale_picture?: boolean;
+    draw_shadow_under_picture?: boolean;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
      */
     font?: string;
     hovered_font_color?: Color;
     icon_horizontal_align?: HorizontalAlign;
-    invert_colors_of_picture_when_disabled?: bool;
-    invert_colors_of_picture_when_hovered_or_toggled?: bool;
+    invert_colors_of_picture_when_disabled?: boolean;
+    invert_colors_of_picture_when_hovered_or_toggled?: boolean;
     pie_progress_color?: Color;
     selected_clicked_font_color?: Color;
     selected_font_color?: Color;
@@ -2268,7 +2268,7 @@ interface CargoLandingPadLimitModifier extends SimpleModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 /**
  * A cargo station is any entity that has the capacity to send cargo units. In Space Age those are {@link RocketSiloPrototype | prototype:RocketSiloPrototype}, {@link SpacePlatformHubPrototype | prototype:SpacePlatformHubPrototype} and {@link CargoLandingPadPrototype | prototype:CargoLandingPadPrototype}. {@link Cargo bays | prototype:CargoBayPrototype} may provide additional cargo hatches to cargo stations which are cargo bay connectable.
@@ -2282,7 +2282,7 @@ interface CargoStationParameters {
     /**
      * Packed cargo units will wait for the full order to be completed. This is useful to save rockets in rocket silos when items trickle in slowly. The platform hub has immediate access to items so false is better to allow partial fulfillments.
      */
-    prefer_packed_cargo_units?: bool;
+    prefer_packed_cargo_units?: boolean;
 }
 interface ChainTriggerDelivery extends TriggerDeliveryItem {
     chain: ActiveTriggerID;
@@ -2295,7 +2295,7 @@ interface ChangeRecipeProductivityModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface ChangeSurfaceTipTrigger extends CountBasedTipTrigger {
     surface: string;
@@ -2354,95 +2354,95 @@ interface CharacterBuildDistanceModifier extends SimpleModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterCraftingSpeedModifier extends SimpleModifier {
     type: 'character-crafting-speed';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterHealthBonusModifier extends SimpleModifier {
     type: 'character-health-bonus';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterInventorySlotsBonusModifier extends SimpleModifier {
     type: 'character-inventory-slots-bonus';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterItemDropDistanceModifier extends SimpleModifier {
     type: 'character-item-drop-distance';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterItemPickupDistanceModifier extends SimpleModifier {
     type: 'character-item-pickup-distance';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterLogisticRequestsModifier extends BoolModifier {
     type: 'character-logistic-requests';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterLogisticTrashSlotsModifier extends SimpleModifier {
     type: 'character-logistic-trash-slots';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterLootPickupDistanceModifier extends SimpleModifier {
     type: 'character-loot-pickup-distance';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterMiningSpeedModifier extends SimpleModifier {
     type: 'character-mining-speed';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterReachDistanceModifier extends SimpleModifier {
     type: 'character-reach-distance';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterResourceReachDistanceModifier extends SimpleModifier {
     type: 'character-resource-reach-distance';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CharacterRunningSpeedModifier extends SimpleModifier {
     type: 'character-running-speed';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface ChargableGraphics {
     charge_animation?: Animation;
-    charge_animation_is_looped?: bool;
+    charge_animation_is_looped?: boolean;
     charge_cooldown?: uint16;
     charge_light?: LightDefinition;
     discharge_animation?: Animation;
@@ -2575,7 +2575,7 @@ interface CircuitNetworkModifier extends BoolModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CircularParticleCreationSpecification {
     center?: Vector;
@@ -2590,7 +2590,7 @@ interface CircularParticleCreationSpecification {
     speed_deviation?: float;
     starting_frame_speed: float;
     starting_frame_speed_deviation?: float;
-    use_source_position?: bool;
+    use_source_position?: boolean;
     vertical_speed?: float;
     vertical_speed_deviation?: float;
 }
@@ -2606,7 +2606,7 @@ interface CliffDeconstructionEnabledModifier extends BoolModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CliffPlacementSettings {
     /**
@@ -2722,11 +2722,11 @@ interface CollisionMaskConnector {
     /**
      * Any prototype with this collision option will only be checked for collision with other prototype's collision masks if they are a tile.
      */
-    colliding_with_tiles_only?: bool;
+    colliding_with_tiles_only?: boolean;
     /**
      * Uses the prototypes position rather than its collision box when doing collision checks with tile prototypes. Allows the prototype to overlap colliding tiles up until its center point. This is only respected for character movement and cars driven by players.
      */
-    consider_tile_transitions?: bool;
+    consider_tile_transitions?: boolean;
     /**
      * Every key in the dictionary is the name of one {@link layer | prototype:CollisionLayerPrototype} the object collides with. The value is meaningless and always `true`. An empty table means that no layers are set.
      */
@@ -2734,7 +2734,7 @@ interface CollisionMaskConnector {
     /**
      * Any two entities that both have this option enabled on their prototype and have an identical collision mask layers list will not collide. Other collision mask options are not included in the identical layer list check. This does mean that two different prototypes with the same collision mask layers and this option enabled will not collide.
      */
-    not_colliding_with_itself?: bool;
+    not_colliding_with_itself?: boolean;
 }
 /**
  * Table of red, green, blue, and alpha float values between 0 and 1. Alternatively, values can be from 0-255, they are interpreted as such if at least one value is `> 1`.
@@ -2978,11 +2978,11 @@ interface CoverGraphicProcessionLayer {
     /**
      * Advanced cloud effect mask modifies the regular mask thresholds instead of being a flat multiplication of the resulting opacity.
      */
-    is_cloud_effect_advanced?: bool;
+    is_cloud_effect_advanced?: boolean;
     /**
      * The texture and mask are interpreted as four smaller textures that are randomly tiled.
      */
-    is_quad_texture?: bool;
+    is_quad_texture?: boolean;
     /**
      * Opacity gradient of the layer.
      */
@@ -2999,7 +2999,7 @@ interface CoverGraphicProcessionLayer {
     /**
      * Add rotation of the pod to the cloud rotation.
      */
-    rotate_with_pod?: bool;
+    rotate_with_pod?: boolean;
     secondary_draw_order?: int8;
     /**
      * Where the tiled texture is centered and rotated.
@@ -3136,7 +3136,7 @@ interface CraftItemTipTrigger extends CountBasedTipTrigger {
     /**
      * Can only be used when `event_type` is `"crafting-finished"`.
      */
-    consecutive?: bool;
+    consecutive?: boolean;
     event_type: 'crafting-of-single-item-ordered' | 'crafting-of-multiple-items-ordered' | 'crafting-finished';
     item?: ItemID;
     type: 'craft-item';
@@ -3152,14 +3152,14 @@ interface CraftingMachineGraphicsSet extends WorkingVisualisations {
      */
     circuit_connector_secondary_draw_order?: int8 | CircuitConnectorSecondaryDrawOrder;
     frozen_patch?: Sprite4Way;
-    reset_animation_when_frozen?: bool;
+    reset_animation_when_frozen?: boolean;
 }
 interface CranePart {
-    allow_sprite_rotation?: bool;
+    allow_sprite_rotation?: boolean;
     dying_effect?: CranePartDyingEffect;
     extendable_length?: Vector3D;
     extendable_length_grappler?: Vector3D;
-    is_contractible_by_cropping?: bool;
+    is_contractible_by_cropping?: boolean;
     layer?: int8;
     name?: string;
     /**
@@ -3180,8 +3180,8 @@ interface CranePart {
      * Only loaded if `sprite_shadow` is not defined.
      */
     rotated_sprite_shadow?: RotatedSprite;
-    scale_to_fit_model?: bool;
-    should_scale_for_perspective?: bool;
+    scale_to_fit_model?: boolean;
+    should_scale_for_perspective?: boolean;
     snap_end?: float;
     snap_end_arm_extent_multiplier?: float;
     snap_start?: float;
@@ -3213,7 +3213,7 @@ interface CreateAsteroidChunkEffectItem extends TriggerEffectItem {
     type: 'create-asteroid-chunk';
 }
 interface CreateDecorativesTriggerEffectItem extends TriggerEffectItem {
-    apply_projection?: bool;
+    apply_projection?: boolean;
     decorative: DecorativeID;
     radius_curve?: float;
     spawn_max: uint16;
@@ -3223,24 +3223,24 @@ interface CreateDecorativesTriggerEffectItem extends TriggerEffectItem {
     spawn_max_radius: float;
     spawn_min?: uint16;
     spawn_min_radius: float;
-    spread_evenly?: bool;
+    spread_evenly?: boolean;
     type: 'create-decorative';
 }
 interface CreateEntityTriggerEffectItemBase extends TriggerEffectItem {
     /**
      * If true, creates the entity as a member of the enemy force. If the surface.no_enemies_mode is true, the entity will not be created.
      */
-    as_enemy?: bool;
-    check_buildability?: bool;
+    as_enemy?: boolean;
+    check_buildability?: boolean;
     /**
      * The name of the entity that should be created.
      */
     entity_name: EntityID;
-    find_non_colliding_position?: bool;
+    find_non_colliding_position?: boolean;
     /**
      * If true and `as_enemy` is true, allows the entity to be created even if the current surface.no_enemies_mode is true.
      */
-    ignore_no_enemies_mode?: bool;
+    ignore_no_enemies_mode?: boolean;
     /**
      * Only loaded if `find_non_colliding_position` is defined.
      */
@@ -3255,8 +3255,8 @@ interface CreateEntityTriggerEffectItemBase extends TriggerEffectItem {
     /**
      * The result entity will be protected from automated attacks of enemies.
      */
-    protected?: bool;
-    show_in_tooltip?: bool;
+    protected?: boolean;
+    show_in_tooltip?: boolean;
     /**
      * Entity creation will not occur if any tile matches the collision condition. Defaults to no collisions.
      */
@@ -3264,12 +3264,12 @@ interface CreateEntityTriggerEffectItemBase extends TriggerEffectItem {
     /**
      * If `true`, the {@link on_trigger_created_entity | runtime:on_trigger_created_entity} event will be raised.
      */
-    trigger_created_entity?: bool;
+    trigger_created_entity?: boolean;
     type: string;
 }
 interface CreateExplosionTriggerEffectItem extends CreateEntityTriggerEffectItemBase {
-    cycle_while_moving?: bool;
-    inherit_movement_distance_from_projectile?: bool;
+    cycle_while_moving?: boolean;
+    inherit_movement_distance_from_projectile?: boolean;
     max_movement_distance?: float;
     max_movement_distance_deviation?: float;
     type: 'create-explosion';
@@ -3283,7 +3283,7 @@ interface CreateGhostOnEntityDeathModifier extends BoolModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface CreateParticleTriggerEffectItemBase extends TriggerEffectItem {
     apply_tile_tint?: 'primary' | 'secondary';
@@ -3299,10 +3299,10 @@ interface CreateParticleTriggerEffectItemBase extends TriggerEffectItem {
     /**
      * Create particles only when they are in 200 tiles range of any connected player.
      */
-    only_when_visible?: bool;
+    only_when_visible?: boolean;
     particle_name: ParticleID;
-    rotate_offsets?: bool;
-    show_in_tooltip?: bool;
+    rotate_offsets?: boolean;
+    show_in_tooltip?: boolean;
     speed_from_center?: float;
     speed_from_center_deviation?: float;
     /**
@@ -3336,7 +3336,7 @@ interface CreateSpacePlatformTechnologyTrigger {
     type: 'create-space-platform';
 }
 interface CreateStickerTriggerEffectItem extends TriggerEffectItem {
-    show_in_tooltip?: bool;
+    show_in_tooltip?: boolean;
     /**
      * Name of a {@link StickerPrototype | prototype:StickerPrototype} that should be created.
      */
@@ -3344,7 +3344,7 @@ interface CreateStickerTriggerEffectItem extends TriggerEffectItem {
     /**
      * If `true`, {@link on_trigger_created_entity | runtime:on_trigger_created_entity} will be triggered when the sticker is created.
      */
-    trigger_created_entity?: bool;
+    trigger_created_entity?: boolean;
     type: 'create-sticker';
 }
 interface CreateTrivialSmokeEffectItem extends TriggerEffectItem {
@@ -3440,18 +3440,18 @@ interface DamageTileTriggerEffectItem extends TriggerEffectItem {
     type: 'damage';
 }
 interface DamageTriggerEffectItem extends TriggerEffectItem {
-    apply_damage_to_trees?: bool;
+    apply_damage_to_trees?: boolean;
     damage: DamageParameters;
     lower_damage_modifier?: float;
     lower_distance_threshold?: uint16;
     type: 'damage';
     upper_damage_modifier?: float;
     upper_distance_threshold?: uint16;
-    use_substitute?: bool;
+    use_substitute?: boolean;
     /**
      * If `true`, no corpse for killed entities will be created.
      */
-    vaporize?: bool;
+    vaporize?: boolean;
 }
 /**
  * @example ```
@@ -3483,7 +3483,7 @@ type DamageTypeFilters = {
     /**
      * Whether this is a whitelist or a blacklist of damage types. Defaults to being a blacklist.
      */
-    whitelist?: bool;
+    whitelist?: boolean;
 } | DamageTypeID | DamageTypeID[];
 /**
  * The name of a {@link DamageType | prototype:DamageType}.
@@ -3526,7 +3526,7 @@ interface Data {
     /**
      * Set by the game based on whether the demo or retail version is running. Should not be used by mods.
      */
-    is_demo: bool;
+    is_demo: boolean;
     /**
      * A dictionary of prototype types to values that themselves are dictionaries of prototype names to specific prototypes.
      *
@@ -3573,7 +3573,7 @@ interface DeconstructionTimeToLiveModifier extends SimpleModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 /**
  * The name of a {@link DecorativePrototype | prototype:DecorativePrototype}.
@@ -3597,14 +3597,14 @@ interface DependenciesMetTipTrigger {
 }
 interface DestroyCliffsCapsuleAction {
     attack_parameters: AttackParameters;
-    play_sound_on_failure?: bool;
+    play_sound_on_failure?: boolean;
     radius: float;
     timeout?: uint32;
     type: 'destroy-cliffs';
     /**
      * Whether using the capsule consumes an item from the stack.
      */
-    uses_stack?: bool;
+    uses_stack?: boolean;
 }
 interface DestroyCliffsTriggerEffectItem extends TriggerEffectItem {
     /**
@@ -3622,14 +3622,14 @@ interface DestroyDecorativesTriggerEffectItem extends TriggerEffectItem {
     /**
      * If `true`, only decoratives with a {@link DecorativePrototype::trigger_effect | prototype:DecorativePrototype::trigger_effect} will be destroyed.
      */
-    decoratives_with_trigger_only?: bool;
+    decoratives_with_trigger_only?: boolean;
     from_render_layer?: RenderLayer;
-    include_decals?: bool;
+    include_decals?: boolean;
     /**
      * Soft decoratives are those where {@link DecorativePrototype::grows_through_rail_path | prototype:DecorativePrototype::grows_through_rail_path} is `true`.
      */
-    include_soft_decoratives?: bool;
-    invoke_decorative_trigger?: bool;
+    include_soft_decoratives?: boolean;
+    invoke_decorative_trigger?: boolean;
     radius: float;
     to_render_layer?: RenderLayer;
     type: 'destroy-decoratives';
@@ -3645,7 +3645,7 @@ interface DifficultySettings {
     technology_price_multiplier?: double;
 }
 interface DirectTriggerItem extends TriggerItem {
-    filter_enabled?: bool;
+    filter_enabled?: boolean;
     type: 'direct';
 }
 /**
@@ -3722,7 +3722,7 @@ interface DropDownStyleSpecification extends BaseStyleSpecification {
     type: 'dropdown_style';
 }
 interface DropItemTipTrigger extends CountBasedTipTrigger {
-    drop_into_entity?: bool;
+    drop_into_entity?: boolean;
     type: 'drop-item';
 }
 /**
@@ -3756,9 +3756,9 @@ interface Effect {
 }
 interface EffectReceiver {
     base_effect?: Effect;
-    uses_beacon_effects?: bool;
-    uses_module_effects?: bool;
-    uses_surface_effects?: bool;
+    uses_beacon_effects?: boolean;
+    uses_module_effects?: boolean;
+    uses_surface_effects?: boolean;
 }
 /**
  * Identifies what {@link CloudEffectStyle | prototype:CloudEffectStyle} refers to.
@@ -3940,7 +3940,7 @@ type ElementImageSet = {
  * If this is loaded as a Sprite, it gets used as `center`.
  */
 type ElementImageSetLayer = {
-    background_blur?: bool;
+    background_blur?: boolean;
     background_blur_sigma?: float;
     /**
      * Sets `top_border`, `right_border`, `bottom_border` and `left_border`.
@@ -3957,7 +3957,7 @@ type ElementImageSetLayer = {
      */
     bottom_border?: int32;
     bottom_outer_border_shift?: int32;
-    bottom_tiling?: bool;
+    bottom_tiling?: boolean;
     /**
      * Only loaded if `corner_size` is defined. Only loaded if `type` is `"composition"`.
      */
@@ -3970,8 +3970,8 @@ type ElementImageSetLayer = {
      * Only loaded if `corner_size` is defined. Only loaded if `type` is `"composition"`.
      */
     center_height?: SpriteSizeType;
-    center_tiling_horizontal?: bool;
-    center_tiling_vertical?: bool;
+    center_tiling_horizontal?: boolean;
+    center_tiling_vertical?: boolean;
     /**
      * Only loaded if `corner_size` is defined. Only loaded if `type` is `"composition"`.
      */
@@ -4020,7 +4020,7 @@ type ElementImageSetLayer = {
     /**
      * Tiling is used to make a side (not corner) texture repeat instead of being stretched.
      */
-    left_tiling?: bool;
+    left_tiling?: boolean;
     /**
      * Only loaded if `type` is `"composition"`.
      */
@@ -4028,7 +4028,7 @@ type ElementImageSetLayer = {
     /**
      * Only loaded if `corner_size` is defined. Only loaded if `type` is `"composition"`.
      */
-    load_in_minimal_mode?: bool;
+    load_in_minimal_mode?: boolean;
     opacity?: double;
     overall_tiling_horizontal_padding?: uint16;
     /**
@@ -4060,7 +4060,7 @@ type ElementImageSetLayer = {
      */
     right_height?: SpriteSizeType;
     right_outer_border_shift?: int32;
-    right_tiling?: bool;
+    right_tiling?: boolean;
     /**
      * Only loaded if `type` is `"composition"`.
      */
@@ -4072,7 +4072,7 @@ type ElementImageSetLayer = {
     /**
      * Only loaded if `type` is `"composition"`.
      */
-    stretch_monolith_image_to_size?: bool;
+    stretch_monolith_image_to_size?: boolean;
     /**
      * Only loaded if `type` is `"composition"`.
      */
@@ -4086,7 +4086,7 @@ type ElementImageSetLayer = {
      */
     top_border?: int32;
     top_outer_border_shift?: int32;
-    top_tiling?: bool;
+    top_tiling?: boolean;
     /**
      * Only loaded if `corner_size` is defined. Only loaded if `type` is `"composition"`.
      */
@@ -4102,7 +4102,7 @@ interface EnemyEvolutionSettings {
      * Percentual increase in the evolution factor for every destroyed spawner
      */
     destroy_factor: double;
-    enabled: bool;
+    enabled: boolean;
     /**
      * Percentual increase in the evolution factor for 1 pollution unit
      */
@@ -4114,7 +4114,7 @@ interface EnemyEvolutionSettings {
 }
 interface EnemyExpansionSettings {
     building_coefficient: double;
-    enabled: bool;
+    enabled: boolean;
     enemy_building_influence_radius: uint32;
     friendly_base_influence_radius: uint32;
     /**
@@ -4146,7 +4146,7 @@ interface EnemySpawnerAbsorption {
 interface EnemySpawnerGraphicsSet {
     animations?: AnimationVariations;
     integration?: SpriteVariations;
-    random_animation_offset?: bool;
+    random_animation_offset?: boolean;
     underwater_animations?: AnimationVariations;
     underwater_layer_offset?: int8;
     water_effect_map_animations?: AnimationVariations;
@@ -4206,7 +4206,7 @@ FluidEnergySource | /**
  */
 VoidEnergySource;
 interface EnterVehicleTipTrigger extends CountBasedTipTrigger {
-    match_type_only?: bool;
+    match_type_only?: boolean;
     type: 'enter-vehicle';
     vehicle?: EntityID;
 }
@@ -4432,7 +4432,7 @@ interface FastBeltBendTipTrigger extends CountBasedTipTrigger {
     type: 'fast-belt-bend';
 }
 interface FastReplaceTipTrigger extends CountBasedTipTrigger {
-    match_type_only?: bool;
+    match_type_only?: boolean;
     source?: EntityID;
     target?: EntityID;
     type: 'fast-replace';
@@ -4447,13 +4447,13 @@ end
 ```
  */
 interface FeatureFlags {
-    expansion_shaders: bool;
-    freezing: bool;
-    quality: bool;
-    rail_bridges: bool;
-    segmented_units: bool;
-    space_travel: bool;
-    spoiling: bool;
+    expansion_shaders: boolean;
+    freezing: boolean;
+    quality: boolean;
+    rail_bridges: boolean;
+    segmented_units: boolean;
+    space_travel: boolean;
+    spoiling: boolean;
 }
 /**
  * A slash `"/"` is always used as the directory delimiter. A path always begins with the specification of a root, which can be one of three formats:
@@ -4509,8 +4509,8 @@ interface FluidBox {
     /**
      * Defaults to true if `pipe_picture` is not defined, otherwise defaults to false.
      */
-    always_draw_covers?: bool;
-    draw_only_when_connected?: bool;
+    always_draw_covers?: boolean;
+    draw_only_when_connected?: boolean;
     /**
      * Array of the {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name} of working visualisations to enable when this fluidbox is present.
      *
@@ -4524,7 +4524,7 @@ interface FluidBox {
     /**
      * Hides the blue input/output arrows and icons at each connection point.
      */
-    hide_connection_info?: bool;
+    hide_connection_info?: boolean;
     /**
      * The max extent that a pipeline with this fluidbox can span. A given pipeline's extent is calculated as the min extent of all the fluidboxes that comprise it.
      */
@@ -4594,13 +4594,13 @@ interface FluidEnergySource extends BaseEnergySource {
     /**
      * If set to `true`, the energy source will calculate power based on the fluid's `fuel_value`, else it will calculate based on fluid temperature.
      */
-    burns_fluid?: bool;
+    burns_fluid?: boolean;
     /**
      * Property is only used when `burns_fluid` is `true` and the fluid has a {@link fuel_value | prototype:FluidPrototype::fuel_value} of `0`, or when `burns_fluid` is `false` and the fluid is at its `default_temperature`.
      *
      * In those cases, this property determines whether the fluid should be destroyed, meaning that the fluid is consumed at the rate of `fluid_usage_per_tick`, without producing any power.
      */
-    destroy_non_fuel_fluid?: bool;
+    destroy_non_fuel_fluid?: boolean;
     /**
      * `1` means 100% effectivity. Must be greater than `0`. Multiplier of the energy output.
      */
@@ -4623,7 +4623,7 @@ interface FluidEnergySource extends BaseEnergySource {
     /**
      * If set to `true`, the energy source will consume as much fluid as required to produce the desired power, otherwise it will consume as much as it is allowed to, wasting any excess.
      */
-    scale_fluid_usage?: bool;
+    scale_fluid_usage?: boolean;
     smoke?: SmokeSource[];
     type: 'fluid';
 }
@@ -4733,7 +4733,7 @@ interface FluidProductPrototype {
     /**
      * When hovering over a recipe in the crafting menu the recipe tooltip will be shown. An additional item tooltip will be shown for every product, as a separate tooltip, if the item tooltip has a description and/or properties to show and if `show_details_in_recipe_tooltip` is `true`.
      */
-    show_details_in_recipe_tooltip?: bool;
+    show_details_in_recipe_tooltip?: boolean;
     /**
      * The temperature of the fluid product.
      */
@@ -4763,12 +4763,12 @@ interface FollowerRobotLifetimeModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'follower-robot-lifetime';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface FootprintParticle {
     /**
@@ -4782,7 +4782,7 @@ interface FootprintParticle {
     /**
      * Whether this footprint particle should be the default particle that is used for `tiles` that don't have an associated footprint particle.
      */
-    use_as_default?: bool;
+    use_as_default?: boolean;
 }
 interface FootstepTriggerEffectItem extends CreateParticleTriggerEffectItemBase {
     /**
@@ -4793,7 +4793,7 @@ interface FootstepTriggerEffectItem extends CreateParticleTriggerEffectItemBase 
     /**
      * When `true`, the trigger(s) defined in `actions` are the default triggers for tiles that don't have an associated footstep particle trigger. (ie. don't show up in one of the "tiles" lists).
      */
-    use_as_default?: bool;
+    use_as_default?: boolean;
 }
 /**
  * @example ```
@@ -4862,7 +4862,7 @@ type ForceCondition = 'all' | 'enemy' | 'ally' | 'friend' | 'not-friend' | 'same
 interface FrameStyleSpecification extends BaseStyleSpecification {
     background_graphical_set?: ElementImageSet;
     border?: BorderImageSet;
-    drag_by_title?: bool;
+    drag_by_title?: boolean;
     graphical_set?: ElementImageSet;
     header_background?: ElementImageSet;
     header_filler_style?: EmptyWidgetStyleSpecification;
@@ -4870,7 +4870,7 @@ interface FrameStyleSpecification extends BaseStyleSpecification {
     horizontal_flow_style?: HorizontalFlowStyleSpecification;
     title_style?: LabelStyleSpecification;
     type: 'frame_style';
-    use_header_filler?: bool;
+    use_header_filler?: boolean;
     vertical_flow_style?: VerticalFlowStyleSpecification;
 }
 interface FrequencySizeRichness {
@@ -4925,7 +4925,7 @@ interface FusionReactorGraphicsSet {
     plasma_category: NeighbourConnectableConnectionCategory;
     render_layer?: RenderLayer;
     structure?: Sprite4Way;
-    use_fuel_glow_color?: bool;
+    use_fuel_glow_color?: boolean;
     working_light_pictures?: Sprite4Way;
 }
 interface GameControllerVibrationData {
@@ -4947,23 +4947,23 @@ interface GameViewSettings {
     /**
      * If this is defined then it sets the default value for all other properties.
      */
-    default_show_value?: bool;
-    show_alert_gui?: bool;
-    show_controller_gui?: bool;
-    show_crafting_queue?: bool;
-    show_entity_info?: bool;
-    show_entity_tooltip?: bool;
-    show_hotkey_suggestions?: bool;
-    show_map_view_options?: bool;
-    show_minimap?: bool;
-    show_quickbar?: bool;
-    show_rail_block_visualisation?: bool;
-    show_research_info?: bool;
-    show_shortcut_bar?: bool;
-    show_side_menu?: bool;
-    show_surface_list?: bool;
-    show_tool_bar?: bool;
-    update_entity_selection?: bool;
+    default_show_value?: boolean;
+    show_alert_gui?: boolean;
+    show_controller_gui?: boolean;
+    show_crafting_queue?: boolean;
+    show_entity_info?: boolean;
+    show_entity_tooltip?: boolean;
+    show_hotkey_suggestions?: boolean;
+    show_map_view_options?: boolean;
+    show_minimap?: boolean;
+    show_quickbar?: boolean;
+    show_rail_block_visualisation?: boolean;
+    show_research_info?: boolean;
+    show_shortcut_bar?: boolean;
+    show_side_menu?: boolean;
+    show_surface_list?: boolean;
+    show_tool_bar?: boolean;
+    update_entity_selection?: boolean;
 }
 interface GateOverRailBuildTipTrigger extends CountBasedTipTrigger {
     type: 'gate-over-rail-build';
@@ -4982,9 +4982,9 @@ interface GhostShimmerConfig {
      * The array must have at least 6 elements.
      */
     overlay_layers: GhostShimmerOverlayData[];
-    proportional_distortion: bool;
+    proportional_distortion: boolean;
     tint: Color;
-    visualize_borders: bool;
+    visualize_borders: boolean;
     world_uv_modulo: int32;
 }
 interface GhostShimmerDistortionData {
@@ -5007,7 +5007,7 @@ interface GhostTintSet {
     tile_ghost_delivery_tint: Color;
     tile_ghost_tint: Color;
     /**
-     * Wires are hard to read when the ghost_tint is very satured, so they use a separate tint color for better fine tuning.
+     * Wires are hard to read when the ghost_tint is very saturated, so they use a separate tint color for better fine tuning.
      */
     wire_tint: Color;
 }
@@ -5034,7 +5034,7 @@ interface GiveItemModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface GlobalRecipeTints {
     primary?: Color;
@@ -5095,7 +5095,7 @@ interface GunSpeedModifier extends BaseModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     /**
      * Modification value, which will be added to the current gun speed modifier upon researching.
      */
@@ -5104,7 +5104,7 @@ interface GunSpeedModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 /**
  * Used to specify heat capacity properties without a {@link heat energy source | prototype:HeatEnergySource}.
@@ -5237,11 +5237,11 @@ interface IconData {
     /**
      * Outline is drawn using signed distance field generated on load. One icon image, will have only one SDF generated. But if the image is used in multiple icon with different scales, outline width won't match the desired width in all the scales but the largest one.
      */
-    draw_background?: bool;
+    draw_background?: boolean;
     /**
      * When `true` the layer is not considered for calculating bounds of the icon, so it can go out of bounds of rectangle into which the icon is drawn in GUI.
      */
-    floating?: bool;
+    floating?: boolean;
     /**
      * Path to the icon file.
      */
@@ -5317,8 +5317,8 @@ data.raw["gui-style"]["default"]["stretchy-sprite"] =
  */
 interface ImageStyleSpecification extends BaseStyleSpecification {
     graphical_set?: ElementImageSet;
-    invert_colors_of_picture_when_hovered_or_toggled?: bool;
-    stretch_image_to_widget_size?: bool;
+    invert_colors_of_picture_when_hovered_or_toggled?: boolean;
+    stretch_image_to_widget_size?: boolean;
     type: 'image_style';
 }
 /**
@@ -5350,12 +5350,12 @@ interface InserterStackSizeBonusModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'inserter-stack-size-bonus';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface InstantTriggerDelivery extends TriggerDeliveryItem {
     type: 'instant';
@@ -5491,7 +5491,7 @@ interface ItemProductPrototype {
     /**
      * When hovering over a recipe in the crafting menu the recipe tooltip will be shown. An additional item tooltip will be shown for every product, as a separate tooltip, if the item tooltip has a description and/or properties to show and if `show_details_in_recipe_tooltip` is `true`.
      */
-    show_details_in_recipe_tooltip?: bool;
+    show_details_in_recipe_tooltip?: boolean;
     type: 'item';
 }
 /**
@@ -5561,7 +5561,7 @@ interface ItemToPlace {
 interface KillTipTrigger extends CountBasedTipTrigger {
     damage_type?: DamageTypeID;
     entity?: EntityID;
-    match_type_only?: bool;
+    match_type_only?: boolean;
     type: 'kill';
 }
 interface LabelStyleSpecification extends BaseStyleSpecification {
@@ -5579,31 +5579,31 @@ interface LabelStyleSpecification extends BaseStyleSpecification {
     rich_text_highlight_ok_color?: Color;
     rich_text_highlight_warning_color?: Color;
     rich_text_setting?: RichTextSetting;
-    single_line?: bool;
+    single_line?: boolean;
     type: 'label_style';
-    underlined?: bool;
+    underlined?: boolean;
 }
 interface LaboratoryProductivityModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'laboratory-productivity';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface LaboratorySpeedModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'laboratory-speed';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 type LayeredSound = {
     layers: Sound[];
@@ -5660,7 +5660,7 @@ light =
 ```
  */
 type LightDefinition = {
-    add_perspective?: bool;
+    add_perspective?: boolean;
     /**
      * Color of the light.
      */
@@ -5676,7 +5676,7 @@ type LightDefinition = {
     /**
      * Offsets tick used to calculate flicker by position hash. Useful to desynchronize flickering of multiple stationary lights.
      */
-    offset_flicker?: bool;
+    offset_flicker?: boolean;
     /**
      * Only loaded, and mandatory if `type` is `"oriented"`.
      */
@@ -5693,7 +5693,7 @@ type LightDefinition = {
     source_orientation_offset?: RealOrientation;
     type?: 'basic' | 'oriented';
 } | {
-    add_perspective?: bool;
+    add_perspective?: boolean;
     /**
      * Color of the light.
      */
@@ -5709,7 +5709,7 @@ type LightDefinition = {
     /**
      * Offsets tick used to calculate flicker by position hash. Useful to desynchronize flickering of multiple stationary lights.
      */
-    offset_flicker?: bool;
+    offset_flicker?: boolean;
     /**
      * Only loaded, and mandatory if `type` is `"oriented"`.
      */
@@ -5951,9 +5951,9 @@ interface MainSound {
      * Can't be used when `match_progress_to_activity` is `true`.
      */
     fade_out_ticks?: uint32;
-    match_progress_to_activity?: bool;
-    match_speed_to_activity?: bool;
-    match_volume_to_activity?: bool;
+    match_progress_to_activity?: boolean;
+    match_speed_to_activity?: boolean;
+    match_volume_to_activity?: boolean;
     /**
      * Array of {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name}s, individual names cannot be empty.
      *
@@ -5982,7 +5982,7 @@ interface ManualTransferTipTrigger extends CountBasedTipTrigger {
     type: 'manual-transfer';
 }
 interface ManualWireDragTipTrigger extends CountBasedTipTrigger {
-    match_type_only?: bool;
+    match_type_only?: boolean;
     source?: EntityID;
     target?: EntityID;
     type: 'manual-wire-drag';
@@ -6020,7 +6020,7 @@ interface MapGenPreset {
      *
      * If no MapGenPreset has `default = true`, the preset selector will have a blank preset label, with default settings. The "blank" preset goes away when another preset is selected.
      */
-    default?: bool;
+    default?: boolean;
     /**
      * Specifies the ordering in the {@link map generator GUI | https://wiki.factorio.com/Map_generator}.
      */
@@ -6038,7 +6038,7 @@ interface MapGenPresetEnemyEvolutionSettings {
      * Percentual increase in the evolution factor for every destroyed spawner
      */
     destroy_factor?: double;
-    enabled?: bool;
+    enabled?: boolean;
     /**
      * Percentual increase in the evolution factor for 1 pollution unit
      */
@@ -6049,7 +6049,7 @@ interface MapGenPresetEnemyEvolutionSettings {
     time_factor?: double;
 }
 interface MapGenPresetEnemyExpansionSettings {
-    enabled?: bool;
+    enabled?: boolean;
     /**
      * In ticks.
      */
@@ -6080,7 +6080,7 @@ interface MapGenPresetPollutionSettings {
      * Must be <= 0.25. Amount that is diffused to neighboring chunks.
      */
     diffusion_ratio?: double;
-    enabled?: bool;
+    enabled?: boolean;
     /**
      * Must be >= 0.1.
      */
@@ -6098,7 +6098,7 @@ interface MapGenSettings {
     /**
      * Whether undefined `autoplace_controls` should fall back to the default controls or not.
      */
-    default_enable_all_autoplace_controls?: bool;
+    default_enable_all_autoplace_controls?: boolean;
     /**
      * Height of the map in tiles. Silently limited to 2 000 000, ie. +/- 1 million tiles from the center in both directions.
      */
@@ -6106,15 +6106,15 @@ interface MapGenSettings {
     /**
      * If true, enemy creatures will not naturally spawn from spawners, map gen, or trigger effects.
      */
-    no_enemies_mode?: bool;
+    no_enemies_mode?: boolean;
     /**
      * If true, enemy creatures will not attack unless the player first attacks them.
      */
-    peaceful_mode?: bool;
+    peaceful_mode?: boolean;
     /**
      * Map of property name (`"elevation"`, etc) to name of noise expression that will provide it. Entries may be omitted. A notable usage is changing autoplace behavior of an entity based on the preset, which cannot be read from a noise expression.
      */
-    property_expression_names?: Record<string, string | bool | double>;
+    property_expression_names?: Record<string, string | boolean | double>;
     /**
      * Read by the game, but not used or set in the GUI.
      */
@@ -6290,25 +6290,25 @@ interface MaxFailedAttemptsPerTickPerConstructionQueueModifier extends SimpleMod
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface MaxSuccessfulAttemptsPerTickPerConstructionQueueModifier extends SimpleModifier {
     type: 'max-successful-attempts-per-tick-per-construction-queue';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface MaximumFollowingRobotsCountModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'maximum-following-robots-count';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 /**
  * The mining properties of objects. For formulas for the mining time, see {@link mining | https://wiki.factorio.com/Mining}.
@@ -6341,7 +6341,7 @@ interface MinableProperties {
      * The amount of fluid that is used up when this object is mined. If this is > 0, this object cannot be mined by hand.
      */
     fluid_amount?: FluidAmount;
-    include_in_show_counts?: bool;
+    include_in_show_counts?: boolean;
     /**
      * Name of a {@link ParticlePrototype | prototype:ParticlePrototype}. Which set of particles to use.
      */
@@ -6365,7 +6365,7 @@ interface MinableProperties {
      * The items or fluids that are returned when this object is mined.
      */
     results?: ProductPrototype[];
-    transfer_entity_health_to_products?: bool;
+    transfer_entity_health_to_products?: boolean;
 }
 interface MineEntityTechnologyTrigger {
     entity: EntityID;
@@ -6392,25 +6392,25 @@ interface MiningDrillGraphicsSet extends WorkingVisualisations {
     circuit_connector_secondary_draw_order?: int8 | CircuitConnectorSecondaryDrawOrder;
     drilling_vertical_movement_duration?: uint16;
     frozen_patch?: Sprite4Way;
-    reset_animation_when_frozen?: bool;
+    reset_animation_when_frozen?: boolean;
 }
 interface MiningDrillProductivityBonusModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'mining-drill-productivity-bonus';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface MiningWithFluidModifier extends BoolModifier {
     type: 'mining-with-fluid';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 type Mirroring = 'horizontal' | 'vertical' | 'diagonal-pos' | 'diagonal-neg';
 /**
@@ -6420,7 +6420,7 @@ interface ModSetting {
     /**
      * The value of the mod setting. The type depends on the kind of setting.
      */
-    value: int32 | double | bool | string | Color;
+    value: int32 | double | boolean | string | Color;
 }
 /**
  * The effect that is applied when a {@link TechnologyPrototype | prototype:TechnologyPrototype} is researched.
@@ -6618,7 +6618,7 @@ interface NeighbourConnectable {
     /**
      * If the connection positions and directions will be affected by entity's direction.
      */
-    affected_by_direction?: bool;
+    affected_by_direction?: boolean;
     /**
      * Definitions of the connection points.
      */
@@ -6698,7 +6698,7 @@ interface NestedTriggerEffectItem extends TriggerEffectItem {
 "clamp(x, -1, 1)"
 ```
  */
-type NoiseExpression = string | bool | double;
+type NoiseExpression = string | boolean | double;
 /**
  * The advantage of noise functions over {@link noise expressions | prototype:NoiseExpression} is that they have parameters.
  */
@@ -6729,7 +6729,7 @@ interface NothingModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface OffshorePumpGraphicsSet {
     /**
@@ -6846,7 +6846,7 @@ interface OtherColors {
  */
 type ParticleID = string;
 interface PasteEntitySettingsTipTrigger extends CountBasedTipTrigger {
-    match_type_only?: bool;
+    match_type_only?: boolean;
     source?: EntityID;
     target?: EntityID;
     type: 'paste-entity-settings';
@@ -6965,7 +6965,7 @@ interface PathFinderSettings {
      * If the current actual cost from start is higher than this times estimate of start to goal then path finding is terminated.
      */
     start_to_goal_cost_multiplier_to_terminate_path_find: double;
-    use_path_cache: bool;
+    use_path_cache: boolean;
 }
 /**
  * Not all prototypes that use this type are affected by all properties.
@@ -7188,7 +7188,7 @@ interface PipePictures {
 interface PlaceAsTile {
     condition: CollisionMaskConnector;
     condition_size: uint32;
-    invert?: bool;
+    invert?: boolean;
     result: TileID;
     tile_condition?: TileID[];
 }
@@ -7209,16 +7209,16 @@ interface PlanetPrototypeMapGenSettings {
     /**
      * Used for showing the planet icon in map generator GUI next to aux climate control.
      */
-    aux_climate_control?: bool;
+    aux_climate_control?: boolean;
     cliff_settings?: CliffPlacementSettings;
     /**
      * Used for showing the planet icon in map generator GUI next to moisture climate control.
      */
-    moisture_climate_control?: bool;
+    moisture_climate_control?: boolean;
     /**
      * Map of property name (e.g. "elevation") to name of noise expression that will provide it. Entries may be omitted. A notable usage is changing autoplace behavior of an entity based on the preset, which cannot be read from a noise expression.
      */
-    property_expression_names?: Record<string, string | bool | double>;
+    property_expression_names?: Record<string, string | boolean | double>;
     territory_settings?: TerritorySettings;
 }
 /**
@@ -7240,7 +7240,7 @@ interface PlaySoundTriggerEffectItem extends TriggerEffectItem {
      * Negative values are silently clamped to 0.
      */
     min_distance?: float;
-    play_on_target_position?: bool;
+    play_on_target_position?: boolean;
     sound: Sound;
     type: 'play-sound';
 }
@@ -7302,7 +7302,7 @@ interface PodDistanceTraveledProcessionBezierControlPoint {
     timestamp?: MapTick;
 }
 interface PodDistanceTraveledProcessionLayer {
-    contribute_to_distance_traveled?: bool;
+    contribute_to_distance_traveled?: boolean;
     distance_traveled_contribution?: float;
     frames: PodDistanceTraveledProcessionBezierControlPoint[];
     /**
@@ -7367,7 +7367,7 @@ interface PodMovementProcessionBezierControlPoint {
 ```
  */
 interface PodMovementProcessionLayer {
-    contribute_to_distance_traveled?: bool;
+    contribute_to_distance_traveled?: boolean;
     distance_traveled_contribution?: float;
     frames: PodMovementProcessionBezierControlPoint[];
     /**
@@ -7445,7 +7445,7 @@ interface PollutionSettings {
      * Amount that is diffused to neighboring chunks.
      */
     diffusion_ratio: double;
-    enabled: bool;
+    enabled: boolean;
     enemy_attack_pollution_consumption_modifier: double;
     /**
      * Anything bigger than this is visualized as this value.
@@ -7763,7 +7763,7 @@ interface ProgressBarStyleSpecification extends BaseStyleSpecification {
     bar_background?: ElementImageSet;
     bar_width?: uint32;
     color?: Color;
-    embed_text_in_bar?: bool;
+    embed_text_in_bar?: boolean;
     filled_font_color?: Color;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
@@ -7775,7 +7775,7 @@ interface ProgressBarStyleSpecification extends BaseStyleSpecification {
     type: 'progressbar_style';
 }
 interface ProjectileAttackParameters extends BaseAttackParameters {
-    apply_projection_to_projectile_creation_position?: bool;
+    apply_projection_to_projectile_creation_position?: boolean;
     /**
      * When used with `projectile_creation_parameters`, this offsets what the turret's sprite looks at. Setting to `{0,1}` will cause the turret to aim one tile up from the target but the projectile will still aim for the entity. Can be used to give the illusion of height but can also confuse aim logic when set too high.
      *
@@ -7831,7 +7831,7 @@ interface PrototypeStrafeSettings {
      * Must be between 0 and 1 inclusive.
      */
     clockwise_chance?: float;
-    face_target?: bool;
+    face_target?: boolean;
     /**
      * Must be between 0 and max_distance inclusive.
      */
@@ -7974,8 +7974,8 @@ interface RadiusVisualisationSpecification {
      * Must be greater than or equal to 0.
      */
     distance?: double;
-    draw_in_cursor?: bool;
-    draw_on_selection?: bool;
+    draw_in_cursor?: boolean;
+    draw_on_selection?: boolean;
     offset?: Vector;
     sprite?: Sprite;
 }
@@ -8081,7 +8081,7 @@ interface RailPlannerAllowElevatedRailsModifier extends BoolModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface RailRenderLayers {
     back_end?: RenderLayer;
@@ -8124,8 +8124,8 @@ interface RailSignalPictureSet {
 }
 interface RailSignalStaticSpriteLayer {
     align_to_frame_index?: uint8[];
-    hide_if_not_connected_to_rails?: bool;
-    hide_if_simulation?: bool;
+    hide_if_not_connected_to_rails?: boolean;
+    hide_if_simulation?: boolean;
     render_layer?: RenderLayer;
     /**
      * Must be an empty array or contain exactly 16 values.
@@ -8144,7 +8144,7 @@ interface RailSupportOnDeepOilOceanModifier extends BoolModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface RailsFogMaskDefinitions {
     east?: FogMaskShapeDefinition;
@@ -8296,7 +8296,7 @@ type RichTextSetting = 'enabled' | 'disabled' | 'highlight';
 interface RollingStockRotatedSlopedGraphics {
     rotated: RotatedSprite;
     slope_angle_between_frames?: double;
-    slope_back_equals_front?: bool;
+    slope_back_equals_front?: boolean;
     sloped?: RotatedSprite;
 }
 interface RotateEntityTipTrigger extends CountBasedTipTrigger {
@@ -8306,17 +8306,17 @@ interface RotatedAnimation extends AnimationParameters {
     /**
      * Only loaded if `layers` is not defined.
      */
-    apply_projection?: bool;
+    apply_projection?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      *
      * If `true`, `direction_count` must be greater than `1`.
      */
-    axially_symmetrical?: bool;
+    axially_symmetrical?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      */
-    counterclockwise?: bool;
+    counterclockwise?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      *
@@ -8430,29 +8430,29 @@ interface RotatedSprite extends SpriteParameters {
     /**
      * Only loaded if `layers` is not defined.
      */
-    allow_low_quality_rotation?: bool;
+    allow_low_quality_rotation?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      *
      * Used to fix the inconsistency of direction of the entity in 3d when rendered and direction on the screen (where the 45 degree angle for projection is used).
      */
-    apply_projection?: bool;
+    apply_projection?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      *
      * When `true`, the same picture is used for left/right direction, just flipped, which can save half of the space required, but is not usable once the picture contains shadows, etc.
      */
-    axially_symmetrical?: bool;
+    axially_symmetrical?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      */
-    back_equals_front?: bool;
+    back_equals_front?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      *
      * Set to `true` to indicate sprites in the spritesheet are in counterclockwise order.
      */
-    counterclockwise?: bool;
+    counterclockwise?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      *
@@ -8496,7 +8496,7 @@ interface RotatedSprite extends SpriteParameters {
      *
      * Unused.
      */
-    generate_sdf?: bool;
+    generate_sdf?: boolean;
     /**
      * If this property is present, all RotatedSprite definitions have to be placed as entries in the array, and they will all be loaded from there. `layers` may not be an empty table. Each definition in the array may also have the `layers` property.
      *
@@ -8551,9 +8551,9 @@ interface ScrollBarStyleSpecification extends BaseStyleSpecification {
     thumb_button_style?: ButtonStyleSpecification;
 }
 interface ScrollPaneStyleSpecification extends BaseStyleSpecification {
-    always_draw_borders?: bool;
+    always_draw_borders?: boolean;
     background_graphical_set?: ElementImageSet;
-    dont_force_clipping_rect_for_contents?: bool;
+    dont_force_clipping_rect_for_contents?: boolean;
     extra_bottom_margin_when_activated?: int32;
     extra_bottom_padding_when_activated?: int32;
     extra_left_margin_when_activated?: int32;
@@ -8572,7 +8572,7 @@ interface ScrollPaneStyleSpecification extends BaseStyleSpecification {
     extra_top_padding_when_activated?: int32;
     graphical_set?: ElementImageSet;
     horizontal_scrollbar_style?: HorizontalScrollBarStyleSpecification;
-    scrollbars_go_outside?: bool;
+    scrollbars_go_outside?: boolean;
     type: 'scroll_pane_style';
     vertical_flow_style?: VerticalFlowStyleSpecification;
     vertical_scrollbar_style?: VerticalScrollBarStyleSpecification;
@@ -8605,7 +8605,7 @@ interface SelectionModeData {
     entity_filters?: EntityID[];
     entity_type_filters?: string[];
     mode: SelectionModeFlags;
-    play_ended_sound_when_nothing_selected?: bool;
+    play_ended_sound_when_nothing_selected?: boolean;
     started_sound?: Sound;
     tile_filter_mode?: 'whitelist' | 'blacklist';
     tile_filters?: TileID[];
@@ -8762,7 +8762,7 @@ interface SendItemToOrbitTechnologyTrigger {
     type: 'send-item-to-orbit';
 }
 interface SendSpidertronTipTrigger extends CountBasedTipTrigger {
-    append?: bool;
+    append?: boolean;
     type: 'send-spidertron';
 }
 type SendToOrbitMode = 'not-sendable' | 'manual' | 'automated';
@@ -8774,27 +8774,27 @@ interface SequenceTipTrigger {
     type: 'sequence';
 }
 interface SetFilterTipTrigger extends CountBasedTipTrigger {
-    consecutive?: bool;
+    consecutive?: boolean;
     entity?: EntityID;
-    match_type_only?: bool;
+    match_type_only?: boolean;
     type: 'set-filter';
 }
 interface SetLogisticRequestTipTrigger extends CountBasedTipTrigger {
     entity?: EntityID;
-    logistic_chest_only?: bool;
+    logistic_chest_only?: boolean;
     type: 'set-logistic-request';
 }
 interface SetRecipeTipTrigger extends CountBasedTipTrigger {
-    any_quality?: bool;
-    consecutive?: bool;
+    any_quality?: boolean;
+    consecutive?: boolean;
     machine?: EntityID;
     recipe?: RecipeID;
     type: 'set-recipe';
-    uses_fluid?: bool;
+    uses_fluid?: boolean;
 }
 interface SetTileTriggerEffectItem extends TriggerEffectItem {
-    apply_on_space_platform?: bool;
-    apply_projection?: bool;
+    apply_on_space_platform?: boolean;
+    apply_projection?: boolean;
     radius: float;
     tile_collision_mask?: CollisionMaskConnector;
     tile_name: TileID;
@@ -8871,14 +8871,14 @@ interface SimulationDefinition {
     /**
      * If this is true, the map of the simulation is set to be a lab-tile checkerboard in the area of `{{-20, -15},{20, 15}}` when the scenario is first initialized (before init/init_file run).
      */
-    checkboard?: bool;
+    checkboard?: boolean;
     game_view_settings?: GameViewSettings;
     /**
      * If `save` is not given and this is true, a map gets generated by the game for use in the simulation.
      */
-    generate_map?: bool;
-    hide_factoriopedia_gradient?: bool;
-    hide_health_bars?: bool;
+    generate_map?: boolean;
+    hide_factoriopedia_gradient?: boolean;
+    hide_health_bars?: boolean;
     /**
      * Only loaded if `init_file` is not defined.
      *
@@ -8901,18 +8901,18 @@ interface SimulationDefinition {
      * An array of mods that will be run in this simulation if they are present and enabled.
      */
     mods?: string[];
-    mute_alert_sounds?: bool;
-    mute_technology_finished_sound?: bool;
+    mute_alert_sounds?: boolean;
+    mute_technology_finished_sound?: boolean;
     /**
      * Overrides whether a simulation has its wind sounds muted.
      *
      * Tips and Tricks simulations and Factoriopedia simulations have their wind sounds muted by default, other simulations don't.
      */
-    mute_wind_sounds?: bool;
+    mute_wind_sounds?: boolean;
     /**
      * If true, overrides the simulation volume set by the player in the sound settings, simply setting the volume modifier to `1`.
      */
-    override_volume?: bool;
+    override_volume?: boolean;
     planet?: SpaceLocationID;
     /**
      * The save file that is used for this simulation. If not given and `generate_map` is `true`, a map is generated by the game.
@@ -8997,12 +8997,12 @@ interface SingleGraphicLayerProcessionBezierControlPoint {
     tint_t?: Color;
 }
 interface SingleGraphicProcessionLayer {
-    animation_driven_by_curve?: bool;
-    clip_with_hatches?: bool;
+    animation_driven_by_curve?: boolean;
+    clip_with_hatches?: boolean;
     /**
      * Swaps the order of sprite shift and rotation.
      */
-    compensated_pivot?: bool;
+    compensated_pivot?: boolean;
     /**
      * Default values if unspecified:
      *
@@ -9020,23 +9020,23 @@ interface SingleGraphicProcessionLayer {
      */
     frames: SingleGraphicLayerProcessionBezierControlPoint[];
     graphic: ProcessionGraphic;
-    is_passenger_only?: bool;
+    is_passenger_only?: boolean;
     /**
      * Where the sprite is centered.
      */
     relative_to?: EffectRelativeTo;
     render_layer?: RenderLayer;
-    rotates_with_pod?: bool;
+    rotates_with_pod?: boolean;
     secondary_draw_order?: int8;
     /**
      * Only applied when the `relative_to` is `pod`.
      */
-    shift_rotates_with_pod?: bool;
+    shift_rotates_with_pod?: boolean;
     type: 'single-graphic';
 }
 interface SliderStyleSpecificationBase extends BaseStyleSpecification {
     button?: ButtonStyleSpecification;
-    draw_notches?: bool;
+    draw_notches?: boolean;
     empty_bar?: ElementImageSet;
     empty_bar_disabled?: ElementImageSet;
     full_bar?: ElementImageSet;
@@ -9055,7 +9055,7 @@ interface SmokeSource {
      * Number of smokes generated per entity animation cycle (or per tick for some entities). Can't be negative or infinite.
      */
     frequency: float;
-    has_8_directions?: bool;
+    has_8_directions?: boolean;
     height?: float;
     height_deviation?: float;
     name: TrivialSmokeID;
@@ -9108,7 +9108,7 @@ interface SmokeSource {
 type Sound = {
     advanced_volume_control?: AdvancedVolumeControl;
     aggregation?: AggregationSpecification;
-    allow_random_repeat?: bool;
+    allow_random_repeat?: boolean;
     /**
      * Modifies how far a sound can be heard. Cannot be less than zero.
      */
@@ -9154,7 +9154,7 @@ type Sound = {
     /**
      * Only loaded if `variations` is not defined.
      */
-    preload?: bool;
+    preload?: boolean;
     /**
      * Sounds with higher priority will replace a sound with lower priority if the maximum sounds limit is reached.
      *
@@ -9218,7 +9218,7 @@ type SoundDefinition = {
      */
     min_volume?: float;
     modifiers?: SoundModifier | SoundModifier[];
-    preload?: bool;
+    preload?: boolean;
     /**
      * Speed must be `>= 1 / 64`. This sets both min and max speeds.
      */
@@ -9295,7 +9295,7 @@ interface SpacePlatformsModifier extends BoolModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 /**
  * Nebulae are rendered only behind tiles with the effect, but stars are rendered behind entire terrain. For that reason using two or more tile types with different space effect on one surface is not supported. The game will allow this to happen, but rendering will chose one star configuration for entire screen.
@@ -9350,7 +9350,7 @@ interface SpeechBubbleStyleSpecification extends BaseStyleSpecification {
     close_color?: Color;
     frame_style?: FrameStyleSpecification;
     label_style?: LabelStyleSpecification;
-    pass_through_mouse?: bool;
+    pass_through_mouse?: boolean;
     type: 'speech_bubble_style';
 }
 /**
@@ -9751,34 +9751,34 @@ interface SpriteNWaySheet extends SpriteParameters {
     /**
      * Unused.
      */
-    generate_sdf?: bool;
+    generate_sdf?: boolean;
 }
 interface SpriteParameters extends SpriteSource {
-    apply_runtime_tint?: bool;
-    apply_special_effect?: bool;
+    apply_runtime_tint?: boolean;
+    apply_special_effect?: boolean;
     blend_mode?: BlendMode;
     /**
      * Only one of `draw_as_shadow`, `draw_as_glow` and `draw_as_light` can be true. This takes precedence over `draw_as_light`.
      *
      * Draws first as a normal sprite, then again as a light layer. See {@link https://forums.factorio.com/91682 | https://forums.factorio.com/91682}.
      */
-    draw_as_glow?: bool;
+    draw_as_glow?: boolean;
     /**
      * Only one of `draw_as_shadow`, `draw_as_glow` and `draw_as_light` can be true.
      */
-    draw_as_light?: bool;
+    draw_as_light?: boolean;
     /**
      * Only one of `draw_as_shadow`, `draw_as_glow` and `draw_as_light` can be true. This takes precedence over `draw_as_glow` and `draw_as_light`.
      */
-    draw_as_shadow?: bool;
+    draw_as_shadow?: boolean;
     flags?: SpriteFlags;
     /**
      * This property is only used by sprites used in {@link UtilitySprites | prototype:UtilitySprites} that have the `"icon"` flag set.
      *
      * If this is set to `true`, the game will generate an icon shadow (using signed distance fields) for the sprite.
      */
-    generate_sdf?: bool;
-    invert_colors?: bool;
+    generate_sdf?: boolean;
+    invert_colors?: boolean;
     /**
      * Only loaded if this is an icon, that is it has the flag `"group=icon"` or `"group=gui"`. Will be clamped to range `[0, 5]`.
      */
@@ -9787,7 +9787,7 @@ interface SpriteParameters extends SpriteSource {
     /**
      * Whether to rotate the `shift` alongside the sprite's rotation. This only applies to sprites which are procedurally rotated by the game engine (like projectiles, wires, inserter hands, etc).
      */
-    rotate_shift?: bool;
+    rotate_shift?: boolean;
     /**
      * Values other than `1` specify the scale of the sprite on default zoom. A scale of `2` means that the picture will be two times bigger on screen (and thus more pixelated).
      */
@@ -9801,7 +9801,7 @@ interface SpriteParameters extends SpriteSource {
      */
     surface?: SpriteUsageSurfaceHint;
     tint?: Color;
-    tint_as_overlay?: bool;
+    tint_as_overlay?: boolean;
     /**
      * Provides hint to sprite atlas system, so it can pack sprites that are related to each other to the same sprite atlas.
      */
@@ -9844,7 +9844,7 @@ interface SpriteSource {
     /**
      * If `true`, the sprite may be downsampled to half its size on load even when 'Sprite quality' graphics setting is set to 'High'. Whether downsampling happens depends on detected hardware and other graphics settings.
      */
-    allow_forced_downscale?: bool;
+    allow_forced_downscale?: boolean;
     /**
      * The path to the sprite file to use.
      * This property is required, but marked as optional due to typescript inheritance limitations
@@ -9859,7 +9859,7 @@ interface SpriteSource {
     /**
      * Minimal mode is entered when mod loading fails. You are in it when you see the gray box after (part of) the loading screen that tells you a mod error. Modders can ignore this property.
      */
-    load_in_minimal_mode?: bool;
+    load_in_minimal_mode?: boolean;
     /**
      * Loaded only when `x` and `y` are both `0`. The first member of the tuple is `x` and the second is `y`.
      */
@@ -9870,7 +9870,7 @@ interface SpriteSource {
     /**
      * Whether alpha should be pre-multiplied.
      */
-    premul_alpha?: bool;
+    premul_alpha?: boolean;
     /**
      * The width and height of the sprite. If this is a tuple, the first member of the tuple is the width and the second is the height. Otherwise the size is both width and height. Width and height may only be in the range of 0-4096.
      */
@@ -9938,7 +9938,7 @@ interface StateSteeringSettings {
     /**
      * Used only for special "to look good" purposes (like in trailer).
      */
-    force_unit_fuzzy_goto_behavior: bool;
+    force_unit_fuzzy_goto_behavior: boolean;
     /**
      * Not including the radius of the unit.
      */
@@ -9950,14 +9950,14 @@ interface StatelessVisualisation {
     acceleration_x?: float;
     acceleration_y?: float;
     acceleration_z?: float;
-    adjust_animation_speed_by_base_scale?: bool;
-    affected_by_wind?: bool;
+    adjust_animation_speed_by_base_scale?: boolean;
+    affected_by_wind?: boolean;
     /**
      * One of `nested_visualisations`, `animation` and `light` needs to be defined.
      */
     animation?: AnimationVariations;
     begin_scale?: float;
-    can_lay_on_the_ground?: bool;
+    can_lay_on_the_ground?: boolean;
     count?: uint16;
     end_scale?: float;
     fade_in_progress_duration?: float;
@@ -10232,7 +10232,7 @@ interface SurfaceRenderParameters {
     /**
      * When set to `true` and `clouds` property is not set, the legacy sprite clouds will be rendered on the surface.
      */
-    draw_sprite_clouds?: bool;
+    draw_sprite_clouds?: boolean;
     fog?: FogEffectProperties;
     shadow_opacity?: float;
     space_dust_background?: SpaceDustEffectProperties;
@@ -10263,15 +10263,15 @@ interface TabStyleSpecification extends StyleWithClickableGraphicalSetSpecificat
     disabled_badge_font_color?: Color;
     disabled_badge_graphical_set?: ElementImageSet;
     disabled_font_color?: Color;
-    draw_grayscale_picture?: bool;
+    draw_grayscale_picture?: boolean;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
      */
     font?: string;
     hover_badge_graphical_set?: ElementImageSet;
-    increase_height_when_selected?: bool;
+    increase_height_when_selected?: boolean;
     left_edge_selected_graphical_set?: ElementImageSet;
-    override_graphics_on_edges?: bool;
+    override_graphics_on_edges?: boolean;
     press_badge_graphical_set?: ElementImageSet;
     right_edge_selected_graphical_set?: ElementImageSet;
     selected_badge_font_color?: Color;
@@ -10286,7 +10286,7 @@ interface TabbedPaneStyleSpecification extends BaseStyleSpecification {
     vertical_spacing?: uint32;
 }
 interface TableStyleSpecification extends BaseStyleSpecification {
-    apply_row_graphical_set_per_column?: bool;
+    apply_row_graphical_set_per_column?: boolean;
     background_graphical_set?: ElementImageSet;
     border?: BorderImageSet;
     bottom_cell_padding?: int16;
@@ -10319,7 +10319,7 @@ interface TableStyleSpecification extends BaseStyleSpecification {
     type: 'table_style';
     vertical_line_color?: Color;
     vertical_spacing?: int32 | SpacingItem[];
-    wide_as_column_count?: bool;
+    wide_as_column_count?: boolean;
 }
 /**
  * The name of a {@link TechnologyPrototype | prototype:TechnologyPrototype}.
@@ -10492,7 +10492,7 @@ interface ThrowCapsuleAction {
     /**
      * Whether using the capsule consumes an item from the stack.
      */
-    uses_stack?: bool;
+    uses_stack?: boolean;
 }
 interface ThrusterGraphicsSet extends WorkingVisualisations {
     flame?: Sprite;
@@ -10532,7 +10532,7 @@ interface TileBuildSound {
 interface TileBuildabilityRule {
     area: SimpleBoundingBox;
     colliding_tiles?: CollisionMaskConnector;
-    remove_on_collision?: bool;
+    remove_on_collision?: boolean;
     required_tiles?: CollisionMaskConnector;
 }
 /**
@@ -10946,10 +10946,10 @@ interface TileTransitionVariantLayout extends TileSpriteLayoutVariant {
  * Use `layout` with `spritesheet` to define all the tile layers inside the `layout` property. The `*_enabled`, `*_layout` and `*_spritesheet` properties can be used to override specific layers of a reused layout.
  */
 interface TileTransitions {
-    apply_effect_color_to_overlay?: bool;
-    apply_waving_effect_on_background_mask?: bool;
-    apply_waving_effect_on_masks?: bool;
-    auxiliary_effect_mask_enabled?: bool;
+    apply_effect_color_to_overlay?: boolean;
+    apply_waving_effect_on_background_mask?: boolean;
+    apply_waving_effect_on_masks?: boolean;
+    auxiliary_effect_mask_enabled?: boolean;
     /**
      * Overrides the `auxiliary_effect_mask` definition inside `layout`.
      */
@@ -10960,14 +10960,14 @@ interface TileTransitions {
      * Default spritesheet for `auxiliary_effect_mask_layout` and `layout.auxiliary_effect_mask`.
      */
     auxiliary_effect_mask_spritesheet?: FileName;
-    background_enabled?: bool;
+    background_enabled?: boolean;
     background_layer_group?: TileRenderLayer;
     background_layer_offset?: int8;
     /**
      * Overrides the `background` definition inside `layout`.
      */
     background_layout?: TileTransitionVariantLayout;
-    background_mask_enabled?: bool;
+    background_mask_enabled?: boolean;
     /**
      * Overrides the `background_mask` definition inside `layout`.
      */
@@ -10986,9 +10986,9 @@ interface TileTransitions {
     background_spritesheet?: FileName;
     double_side_variations_in_group?: uint8;
     double_side_weights?: float[];
-    draw_background_layer_under_tiles?: bool;
-    draw_simple_outer_corner_over_diagonal?: bool;
-    effect_map_enabled?: bool;
+    draw_background_layer_under_tiles?: boolean;
+    draw_simple_outer_corner_over_diagonal?: boolean;
+    effect_map_enabled?: boolean;
     /**
      * Overrides the `effect_map` definition inside `layout`.
      */
@@ -11001,7 +11001,7 @@ interface TileTransitions {
     effect_map_spritesheet?: FileName;
     inner_corner_weights?: float[];
     layout?: TileTransitionSpritesheetLayout;
-    lightmap_enabled?: bool;
+    lightmap_enabled?: boolean;
     /**
      * Overrides the `lightmap` definition inside `layout`.
      */
@@ -11012,7 +11012,7 @@ interface TileTransitions {
      * Default spritesheet for `lightmap_layout` and `layout.lightmap`.
      */
     lightmap_spritesheet?: FileName;
-    mask_enabled?: bool;
+    mask_enabled?: boolean;
     /**
      * Overrides the `mask` definition inside `layout`.
      */
@@ -11025,9 +11025,9 @@ interface TileTransitions {
     mask_spritesheet?: FileName;
     masked_background_layer_offset?: int8;
     masked_overlay_layer_offset?: int8;
-    offset_background_layer_by_tile_layer?: bool;
+    offset_background_layer_by_tile_layer?: boolean;
     outer_corner_weights?: float[];
-    overlay_enabled?: bool;
+    overlay_enabled?: boolean;
     overlay_layer_group?: TileRenderLayer;
     overlay_layer_offset?: int8;
     /**
@@ -11053,7 +11053,7 @@ interface TileTransitionsToTiles extends TileTransitions {
     transition_group: uint8;
 }
 interface TileTransitionsVariants {
-    empty_transitions?: bool;
+    empty_transitions?: boolean;
     light?: TileLightPictures[];
     main?: TileMainPictures[];
     material_background?: MaterialTextureParameters;
@@ -11303,12 +11303,12 @@ interface TrainBrakingForceBonusModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'train-braking-force-bonus';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface TrainPathFinderConstants {
     signal_reserved_by_circuit_network_penalty: uint32;
@@ -11349,12 +11349,12 @@ interface TrainVisualizationConstants {
     stock_number_scale: float;
 }
 interface TransitionApplication {
-    offset?: bool;
-    pod_offset?: bool;
-    rotation?: bool;
+    offset?: boolean;
+    pod_offset?: boolean;
+    rotation?: boolean;
 }
 interface TransportBeltAnimationSet {
-    alternate?: bool;
+    alternate?: boolean;
     animation_set: RotatedAnimation;
     belt_reader?: BeltReaderLayer[];
     east_index?: uint8;
@@ -11730,7 +11730,7 @@ ActivateImpactTriggerEffectItem)[];
  * The abstract base of all {@link TriggerEffects | prototype:TriggerEffect}.
  */
 interface TriggerEffectItem {
-    affects_target?: bool;
+    affects_target?: boolean;
     /**
      * Guaranteed to work with {@link EntityWithHealthPrototype::damaged_trigger_effect | prototype:EntityWithHealthPrototype::damaged_trigger_effect} and {@link EntityWithHealthPrototype::dying_trigger_effect | prototype:EntityWithHealthPrototype::dying_trigger_effect}. Unknown if it works with other properties that use {@link TriggerEffect | prototype:TriggerEffect}.
      */
@@ -11741,7 +11741,7 @@ interface TriggerEffectItem {
     probability?: float;
     repeat_count?: uint16;
     repeat_count_deviation?: uint16;
-    show_in_tooltip?: bool;
+    show_in_tooltip?: boolean;
 }
 /**
  * A {@link TriggerEffect | prototype:TriggerEffect} with cooldown conditions, used to limit the frequency of trigger effects that would otherwise fire every single tick. If multiple cooldown conditions are defined, then all cooldowns must be satisfied before the effect can be triggered.
@@ -11782,7 +11782,7 @@ interface TriggerItem {
      * Only entities meeting the force condition are affected by the trigger item.
      */
     force?: ForceCondition;
-    ignore_collision_condition?: bool;
+    ignore_collision_condition?: boolean;
     /**
      * Must be greater than 0 and less than or equal to 1.
      */
@@ -11811,7 +11811,7 @@ interface TurretAttackModifier extends BaseModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     /**
      * Modification value, which will be added to the current turret attack modifier upon researching.
      */
@@ -11824,16 +11824,16 @@ interface TurretAttackModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface TurretBaseVisualisation {
     animation: Animation4Way;
-    draw_when_frozen?: bool;
-    draw_when_has_ammo?: bool;
-    draw_when_has_energy?: bool;
-    draw_when_no_ammo?: bool;
-    draw_when_no_energy?: bool;
-    draw_when_not_frozen?: bool;
+    draw_when_frozen?: boolean;
+    draw_when_has_ammo?: boolean;
+    draw_when_has_energy?: boolean;
+    draw_when_no_ammo?: boolean;
+    draw_when_no_energy?: boolean;
+    draw_when_not_frozen?: boolean;
     /**
      * If not defined, visualisation will be drawn in all states.
      */
@@ -11904,19 +11904,19 @@ interface UnitAISettings {
     /**
      * If enabled, units that have nothing else to do will attempt to return to a spawner.
      */
-    allow_try_return_to_spawner?: bool;
+    allow_try_return_to_spawner?: boolean;
     /**
      * If enabled, units that repeatedly fail to succeed at commands will be destroyed.
      */
-    destroy_when_commands_fail?: bool;
+    destroy_when_commands_fail?: boolean;
     /**
      * If enabled, units will try to separate themselves from nearby friendly units.
      */
-    do_separation?: bool;
+    do_separation?: boolean;
     /**
      * If enabled, the unit is permitted to join attack groups.
      */
-    join_attacks?: bool;
+    join_attacks?: boolean;
     /**
      * Must be between -8 and 8.
      */
@@ -12030,7 +12030,7 @@ interface UnlockQualityModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface UnlockRecipeModifier extends BaseModifier {
     /**
@@ -12041,7 +12041,7 @@ interface UnlockRecipeModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface UnlockRecipeTipTrigger {
     recipe: RecipeID;
@@ -12053,7 +12053,7 @@ interface UnlockSpaceLocationModifier extends BaseModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface UseConfirmTipTrigger extends CountBasedTipTrigger {
     type: 'use-confirm';
@@ -12064,7 +12064,7 @@ interface UseOnSelfCapsuleAction {
     /**
      * Whether using the capsule consumes an item from the stack.
      */
-    uses_stack?: bool;
+    uses_stack?: boolean;
 }
 interface UsePipetteTipTrigger extends CountBasedTipTrigger {
     type: 'use-pipette';
@@ -12106,11 +12106,11 @@ interface VariableAmbientSoundLayer {
     /**
      * If `true`, the last of {@link Sound::variations | prototype:Sound::variations} is played at the end of a sequence (if the sequence is long enough). The end sample counts towards the {@link VariableAmbientSoundLayerStateProperties::sequence_length | prototype:VariableAmbientSoundLayerStateProperties::sequence_length}.
      */
-    has_end_sample?: bool;
+    has_end_sample?: boolean;
     /**
      * If `true`, the first of {@link Sound::variations | prototype:Sound::variations} is played at the start of a sequence. The start sample counts towards the {@link VariableAmbientSoundLayerStateProperties::sequence_length | prototype:VariableAmbientSoundLayerStateProperties::sequence_length}
      */
-    has_start_sample?: bool;
+    has_start_sample?: boolean;
     /**
      * Name has to be unique across all layers.
      */
@@ -12176,7 +12176,7 @@ type VariableAmbientSoundLayerSample = [
     uint32
 ];
 interface VariableAmbientSoundLayerStateProperties {
-    enabled?: bool;
+    enabled?: boolean;
     /**
      * Pause before a layer finishes playing. The last repetition and consequently the layer being finished is not counted until the pause finishes.
      */
@@ -12425,7 +12425,7 @@ interface VehicleLogisticsModifier extends BoolModifier {
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 type VerticalAlign = 'top' | 'center' | 'bottom';
 interface VerticalFlowStyleSpecification extends BaseStyleSpecification {
@@ -12478,9 +12478,9 @@ interface WallPictures {
  * Entity water reflection. {@link Currently only renders | https://forums.factorio.com/100703} for {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype}.
  */
 interface WaterReflectionDefinition {
-    orientation_to_variation?: bool;
+    orientation_to_variation?: boolean;
     pictures?: SpriteVariations;
-    rotate?: bool;
+    rotate?: boolean;
 }
 interface WaterTileEffectParameters {
     animation_scale: float | [
@@ -12539,34 +12539,34 @@ interface WorkerRobotBatteryModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'worker-robot-battery';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface WorkerRobotSpeedModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'worker-robot-speed';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 interface WorkerRobotStorageModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
      */
-    infer_icon?: bool;
+    infer_icon?: boolean;
     type: 'worker-robot-storage';
     /**
      * If `false`, do not draw the small "constant" icon over the technology effect icon.
      */
-    use_icon_overlay_constant?: bool;
+    use_icon_overlay_constant?: boolean;
 }
 /**
  * This type is used to produce sound from in-game entities when they are working/idle.
@@ -12600,7 +12600,7 @@ type WorkingSound = {
     /**
      * If `true`, `max_sounds_per_prototype` is ignored. 'extra sound' refers to `idle_sound`, `activate_sound` or `deactivate_sound`.
      */
-    extra_sounds_ignore_limit?: bool;
+    extra_sounds_ignore_limit?: boolean;
     /**
      * The sound to be played when the entity is idle. Might not work with all entities that use working_sound.
      */
@@ -12620,17 +12620,17 @@ type WorkingSound = {
     /**
      * When `true`, working sounds for all entities of the same prototype are combined into one and some (most) properties of this are ignored or unused.
      */
-    persistent?: bool;
+    persistent?: boolean;
     sound_accents?: SoundAccent | SoundAccent[];
-    use_doppler_shift?: bool;
+    use_doppler_shift?: boolean;
 } | Sound;
 /**
  * Used by crafting machines to display different graphics when the machine is running.
  */
 interface WorkingVisualisation {
-    align_to_waypoint?: bool;
-    always_draw?: bool;
-    animated_shift?: bool;
+    align_to_waypoint?: boolean;
+    always_draw?: boolean;
+    animated_shift?: boolean;
     animation?: Animation;
     /**
      * Used by {@link CraftingMachinePrototype | prototype:CraftingMachinePrototype}. Has precedence over `apply_tint`.
@@ -12645,7 +12645,7 @@ interface WorkingVisualisation {
     /**
      * Whether the animations are always played at the same speed, not adjusted to the machine speed.
      */
-    constant_speed?: bool;
+    constant_speed?: boolean;
     /**
      * Only loaded if {@link WorkingVisualisations::states | prototype:WorkingVisualisations::states} is defined in the WorkingVisualisations that loads this.
      */
@@ -12653,7 +12653,7 @@ interface WorkingVisualisation {
     /**
      * Only loaded if {@link WorkingVisualisations::states | prototype:WorkingVisualisations::states} is defined in the WorkingVisualisations that loads this.
      */
-    draw_when_state_filter_matches?: bool;
+    draw_when_state_filter_matches?: boolean;
     east_animation?: Animation;
     /**
      * If defined, animation in this visualisation layer will be used only as mask for fog effect and will not render in world.
@@ -12662,19 +12662,19 @@ interface WorkingVisualisation {
     east_position?: Vector;
     east_secondary_draw_order?: int8;
     effect?: 'flicker' | 'uranium-glow' | 'none';
-    enabled_by_name?: bool;
-    enabled_in_animated_shift_during_transition?: bool;
-    enabled_in_animated_shift_during_waypoint_stop?: bool;
-    fadeout?: bool;
+    enabled_by_name?: boolean;
+    enabled_in_animated_shift_during_transition?: boolean;
+    enabled_in_animated_shift_during_waypoint_stop?: boolean;
+    fadeout?: boolean;
     /**
      * Loaded only if at least one of north_fog_mask, east_fog_mask, south_fog_mask, west_fog_mask is not specified.
      *
      * If defined, animation in this visualisation layer will be used only as mask for fog effect and will not render in world.
      */
     fog_mask?: FogMaskShapeDefinition;
-    frame_based_on_shift_animation_progress?: bool;
+    frame_based_on_shift_animation_progress?: boolean;
     light?: LightDefinition;
-    mining_drill_scorch_mark?: bool;
+    mining_drill_scorch_mark?: boolean;
     name?: string;
     north_animation?: Animation;
     /**
@@ -12707,7 +12707,7 @@ interface WorkingVisualisation {
     south_fog_mask?: FogMaskShapeDefinition;
     south_position?: Vector;
     south_secondary_draw_order?: int8;
-    synced_fadeout?: bool;
+    synced_fadeout?: boolean;
     west_animation?: Animation;
     /**
      * If defined, animation in this visualisation layer will be used only as mask for fog effect and will not render in world.
@@ -12720,7 +12720,7 @@ interface WorkingVisualisations {
     /**
      * Only loaded if `idle_animation` is defined.
      */
-    always_draw_idle_animation?: bool;
+    always_draw_idle_animation?: boolean;
     animation?: Animation4Way;
     default_recipe_tint?: GlobalRecipeTints;
     /**
@@ -12764,10 +12764,6 @@ type WorldAmbientSoundDefinition = {
     radius?: double;
     sound?: Sound;
 } | Sound;
-/**
- * A variable type which can have one of two values: `true` or `false`. Wikipedia has a {@link comprehensive article | https://en.wikipedia.org/wiki/Boolean} on Booleans.
- */
-type bool = boolean;
 /**
  * Format uses a dot as its decimal delimiter. Doubles are stored in the {@link double precision | http://en.wikipedia.org/wiki/Double-precision_floating-point_format} floating point format.
  *
