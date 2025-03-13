@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.39
+// Factorio version 2.0.41
 // API version 6
 
 declare namespace runtime {
@@ -8261,6 +8261,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The result units and spawn points with weight and evolution factor for a biter spawner entity.
      */
     readonly result_units?: UnitSpawnDefinition[];
+    readonly rewire_neighbours_when_destroying: boolean;
     /**
      * The rising speed for this rocket silo rocket prototype.
      */
