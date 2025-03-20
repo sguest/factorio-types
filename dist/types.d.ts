@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.41
+// Factorio version 2.0.42
 // API version 6
 
 declare namespace prototype {
@@ -175,7 +175,7 @@ interface AgriculturalCraneSpeedGrappler {
 "pollution"
 ```
  * @example ```
-"pollen"
+"spores"
 ```
  */
 type AirbornePollutantID = string;
@@ -2487,7 +2487,7 @@ interface ChartUtilityConstants {
     elevated_rail_color: Color;
     enabled_switch_color: Color;
     entity_ghost_color: Color;
-    explosion_visualization_duration: uint32;
+    explosion_visualization_duration: MapTick;
     green_signal_color: Color;
     green_wire_color: Color;
     rail_color: Color;
@@ -3195,7 +3195,7 @@ interface CranePartDyingEffect {
     explosion?: ExplosionDefinition;
     explosion_linear_distance_step?: float;
     particle_effect_linear_distance_step?: float;
-    particle_effects?: CreateParticleTriggerEffectItem[];
+    particle_effects?: CreateParticleTriggerEffectItem | CreateParticleTriggerEffectItem[];
 }
 interface CraterPlacementDefinition {
     minimum_segments_to_place?: uint32;
@@ -3352,7 +3352,7 @@ interface CreateTrivialSmokeEffectItem extends TriggerEffectItem {
     max_radius?: float;
     offset_deviation?: BoundingBox;
     offsets?: Vector[];
-    only_when_visible?: float;
+    only_when_visible?: boolean;
     smoke_name: TrivialSmokeID;
     speed?: Vector;
     speed_from_center?: float;
@@ -3372,8 +3372,8 @@ interface CursorBoxSpecification {
     not_allowed: BoxSpecification[];
     pair: BoxSpecification[];
     regular: BoxSpecification[];
-    rts_selected: BoxSpecification[];
-    rts_to_be_selected: BoxSpecification[];
+    spidertron_remote_selected: BoxSpecification[];
+    spidertron_remote_to_be_selected: BoxSpecification[];
     train_visualization: BoxSpecification[];
 }
 /**
@@ -3424,6 +3424,20 @@ interface CyclicSound {
      */
     middle_sound?: Sound;
 }
+interface DamageEntityTriggerEffectItem extends TriggerEffectItem {
+    apply_damage_to_trees?: boolean;
+    damage: DamageParameters;
+    lower_damage_modifier?: float;
+    lower_distance_threshold?: uint16;
+    type: 'damage';
+    upper_damage_modifier?: float;
+    upper_distance_threshold?: uint16;
+    use_substitute?: boolean;
+    /**
+     * If `true`, no corpse for killed entities will be created.
+     */
+    vaporize?: boolean;
+}
 /**
  * Used to specify what type of damage and how much damage something deals.
  */
@@ -3437,21 +3451,7 @@ interface DamageParameters {
 interface DamageTileTriggerEffectItem extends TriggerEffectItem {
     damage: DamageParameters;
     radius?: float;
-    type: 'damage';
-}
-interface DamageTriggerEffectItem extends TriggerEffectItem {
-    apply_damage_to_trees?: boolean;
-    damage: DamageParameters;
-    lower_damage_modifier?: float;
-    lower_distance_threshold?: uint16;
-    type: 'damage';
-    upper_damage_modifier?: float;
-    upper_distance_threshold?: uint16;
-    use_substitute?: boolean;
-    /**
-     * If `true`, no corpse for killed entities will be created.
-     */
-    vaporize?: boolean;
+    type: 'damage-tile';
 }
 /**
  * @example ```
@@ -4287,7 +4287,7 @@ type EntityPrototypeFlags = (/**
  * Used to automatically detect the proper direction, if possible. Used by base with the pump, train stop, and train signal.
  */
 'filter-directions' | /**
- * When set, entity will be possible to obtain by using {@link LuaGameScript::get_entity_by_unit_number | runtime:LuaGameScript::get_entity_by_unit_number}. It also changes input actions sent by a player to be selecting entity by unit number instead of a position which may help players in latency to select moving entities.
+ * When set, entity will be possible to obtain by using {@link LuaGameScript::get_entity_by_unit_number | runtime:LuaGameScript::get_entity_by_unit_number}.
  */
 'get-by-unit-number' | /**
  * This is used to specify that the entity breathes air, and so is affected by poison (currently {@link poison capsules | https://wiki.factorio.com/Poison_capsule} are the only source).
@@ -4582,6 +4582,10 @@ interface FluidBox {
      * Must be greater than 0.
      */
     volume: FluidAmount;
+    /**
+     * A fraction of the volume that will be "reserved" and cannot be removed by flow operations. This does nothing if the fluidbox is part of a fluid segment.
+     */
+    volume_reservation_fraction?: float;
 }
 type FluidBoxLinkedConnectionID = uint32;
 interface FluidBoxSecondaryDrawOrders {
@@ -6196,7 +6200,7 @@ interface MapLocation {
     /**
      * Direction this connection point will be facing to.
      */
-    direction: MapPosition;
+    direction: Direction;
     /**
      * Position relative to entity's position where the connection point will be located at.
      */
@@ -7685,7 +7689,7 @@ interface ProcessionSet {
  * A wrapper for a collection of {@link ProcessionLayers | prototype:ProcessionLayer}.
  */
 interface ProcessionTimeline {
-    audio_events: ProcessionAudioEvent[];
+    audio_events?: ProcessionAudioEvent[];
     /**
      * During procession, the pod will at some point start being drawn above the rest of the game:
      *
@@ -8033,7 +8037,7 @@ interface RailPictureSet {
      *
      * Only loaded if `front_rail_endings` or `back_rail_endings` are not defined.
      */
-    rail_endings: Sprite16Way;
+    rail_endings?: Sprite16Way;
     render_layers: RailRenderLayers;
     secondary_render_layers?: RailRenderLayers;
     /**
@@ -11590,7 +11594,7 @@ interface TriggerDeliveryItem {
 type TriggerEffect = (/**
  * Loaded when the `type` is `"damage"`.
  */
-DamageTriggerEffectItem | /**
+DamageEntityTriggerEffectItem | /**
  * Loaded when the `type` is `"damage-tile"`.
  */
 DamageTileTriggerEffectItem | /**
@@ -11659,7 +11663,7 @@ CameraEffectTriggerEffectItem | /**
 ActivateImpactTriggerEffectItem) | (/**
  * Loaded when the `type` is `"damage"`.
  */
-DamageTriggerEffectItem | /**
+DamageEntityTriggerEffectItem | /**
  * Loaded when the `type` is `"damage-tile"`.
  */
 DamageTileTriggerEffectItem | /**
