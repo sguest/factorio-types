@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.41
+// Factorio version 2.0.42
 // API version 6
 
 declare namespace runtime {
@@ -170,6 +170,9 @@ interface AsteroidChunkPrototypeFilter {
      */
     invert?: boolean;
 }
+/**
+ * Used by {@link MapSettings | runtime:MapSettings} and {@link MapAndDifficultySettings | runtime:MapAndDifficultySettings}.
+ */
 interface AsteroidMapSettings {
     spawning_rate: double;
     max_ray_portals_expanded_per_tick: uint;
@@ -1608,7 +1611,7 @@ type EntityPrototypeFlag = /**
  * Used to automatically detect the proper direction of the entity if possible. Used by the pump, train stop, and train signal by default.
  */
 'filter-directions' | /**
- * When set, entity will be possible to obtain by using {@link LuaGameScript::get_entity_by_unit_number | runtime:LuaGameScript::get_entity_by_unit_number}. It also changes input actions sent by a player to be selecting entity by unit number instead of a position which may help players in latency to select moving entities.
+ * When set, entity will be possible to obtain by using {@link LuaGameScript::get_entity_by_unit_number | runtime:LuaGameScript::get_entity_by_unit_number}.
  */
 'get-by-unit-number' | /**
  * Used to specify that the entity breathes air, and is thus affected by poison.
@@ -2664,7 +2667,7 @@ interface BaseItemPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'tool' | 'mergeable' | 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'item-with-inventory' | 'selection-tool' | 'item-with-label' | 'has-rocket-launch-products' | 'fuel' | 'place-result' | 'burnt-result' | 'place-as-tile' | 'placed-as-equipment-result' | 'name' | 'type' | 'flag' | 'subgroup' | 'fuel-category' | 'stack-size' | 'fuel-value' | 'fuel-acceleration-multiplier' | 'fuel-top-speed-multiplier' | 'fuel-emissions-multiplier';
+    filter: 'tool' | 'mergeable' | 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'item-with-inventory' | 'selection-tool' | 'item-with-label' | 'has-rocket-launch-products' | 'fuel' | 'place-result' | 'burnt-result' | 'place-as-tile' | 'placed-as-equipment-result' | 'plant-result' | 'spoil-result' | 'name' | 'type' | 'flag' | 'subgroup' | 'fuel-category' | 'stack-size' | 'fuel-value' | 'fuel-acceleration-multiplier' | 'fuel-top-speed-multiplier' | 'fuel-emissions-multiplier';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2674,7 +2677,7 @@ interface BaseItemPrototypeFilter {
      */
     invert?: boolean;
 }
-type ItemPrototypeFilter = BaseItemPrototypeFilter | ItemPrototypeFilterBurntResult | ItemPrototypeFilterFlag | ItemPrototypeFilterFuelAccelerationMultiplier | ItemPrototypeFilterFuelCategory | ItemPrototypeFilterFuelEmissionsMultiplier | ItemPrototypeFilterFuelTopSpeedMultiplier | ItemPrototypeFilterFuelValue | ItemPrototypeFilterName | ItemPrototypeFilterPlaceAsTile | ItemPrototypeFilterPlaceResult | ItemPrototypeFilterPlacedAsEquipmentResult | ItemPrototypeFilterStackSize | ItemPrototypeFilterSubgroup | ItemPrototypeFilterType;
+type ItemPrototypeFilter = BaseItemPrototypeFilter | ItemPrototypeFilterBurntResult | ItemPrototypeFilterFlag | ItemPrototypeFilterFuelAccelerationMultiplier | ItemPrototypeFilterFuelCategory | ItemPrototypeFilterFuelEmissionsMultiplier | ItemPrototypeFilterFuelTopSpeedMultiplier | ItemPrototypeFilterFuelValue | ItemPrototypeFilterName | ItemPrototypeFilterPlaceAsTile | ItemPrototypeFilterPlaceResult | ItemPrototypeFilterPlacedAsEquipmentResult | ItemPrototypeFilterPlantResult | ItemPrototypeFilterSpoilResult | ItemPrototypeFilterStackSize | ItemPrototypeFilterSubgroup | ItemPrototypeFilterType;
 /**
  *
  * Applies to variant case `burnt-result`
@@ -2831,6 +2834,34 @@ interface ItemPrototypeFilterPlacedAsEquipmentResult extends BaseItemPrototypeFi
      * Filters for the placed equipment.
      */
     'elem_filters'?: EquipmentPrototypeFilter[];
+}
+/**
+ *
+ * Applies to variant case `plant-result`
+ */
+interface ItemPrototypeFilterPlantResult extends BaseItemPrototypeFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'plant-result';
+    /**
+     * Filters for the plant result.
+     */
+    'elem_filters'?: EntityPrototypeFilter[];
+}
+/**
+ *
+ * Applies to variant case `spoil-result`
+ */
+interface ItemPrototypeFilterSpoilResult extends BaseItemPrototypeFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'spoil-result';
+    /**
+     * Filters for the spoil result.
+     */
+    'elem_filters'?: ItemPrototypeFilter[];
 }
 /**
  * Usage example:
