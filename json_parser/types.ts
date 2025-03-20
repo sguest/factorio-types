@@ -112,12 +112,6 @@ const parseStructParent = (parent?: FactorioPrototype | FactorioPrototypeType) =
 export function parseType(type: FactorioType | undefined, parent?: FactorioPrototype | FactorioPrototypeType): ts.TypeNode {
     type ??= 'void';
     if(typeof type === 'string') {
-        // This type doesn't exist but has been referenced in the spec for several versions now. Adding an exception to get the build working.
-        // https://forums.factorio.com/viewtopic.php?p=650354#p650354
-        if(type === 'DamageEntityTriggerEffectItem')
-        {
-            type = 'DamageTriggerEffectItem';
-        }
         return ts.factory.createTypeReferenceNode(type)
     }
 
