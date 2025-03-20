@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.41
+// Factorio version 2.0.42
 // API version 6
 
 declare namespace runtime {
@@ -5240,7 +5240,7 @@ interface LuaControl {
      */
     readonly vehicle?: LuaEntity;
     /**
-     * Current walking state.
+     * Current walking state of the player, or the spider-vehicle the character is driving.
      * @example ```
     -- Make the player go north. Note that a one-shot action like this will only make the player walk for one tick.
     game.player.walking_state = {walking = true, direction = defines.direction.north}
@@ -6567,6 +6567,10 @@ interface LuaEntity extends LuaControl {
      */
     cargo_pod_destination: CargoDestination;
     /**
+     * The origin of this cargo pod entity. (Must be a silo, hub or pad)
+     */
+    cargo_pod_origin?: LuaEntity;
+    /**
      * The state of this cargo pod entity.
      */
     readonly cargo_pod_state: 'awaiting_launch' | 'ascending' | 'surface_transition' | 'descending' | 'parking';
@@ -6820,7 +6824,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The {@link unit_number | runtime:LuaEntity::unit_number} of the entity contained in this ghost. It is the same as the unit number of the {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype} that was destroyed to create this ghost. If it was created by other means, or if the inner entity does not support unit numbers, this property is `nil`.
      */
-    readonly ghost_unit_number?: uint;
+    readonly ghost_unit_number?: uint64;
     /**
      * Returns a {@link rich text | https://wiki.factorio.com/Rich_text} string containing this entity's position and surface name as a gps tag. {@link Printing | runtime:LuaGameScript::print} it will ping the location of the entity.
      * @example ```
@@ -7404,7 +7408,7 @@ interface LuaEntity extends LuaControl {
      *
      * Only entities inheriting from {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}, as well as {@link ItemRequestProxyPrototype | prototype:ItemRequestProxyPrototype} and {@link EntityGhostPrototype | prototype:EntityGhostPrototype} are assigned a unit number. Returns `nil` otherwise.
      */
-    readonly unit_number?: uint;
+    readonly unit_number?: uint64;
     /**
      * The units associated with this spawner entity.
      */
@@ -12260,7 +12264,7 @@ interface LuaItemCommon {
     /**
      * The unique identifier for this item, if any. Note that this ID stays the same no matter where the item is moved to.
      */
-    readonly item_number?: uint;
+    readonly item_number?: uint64;
     /**
      * The current label for this item, if any.
      */
@@ -16854,7 +16858,7 @@ interface LuaSurface {
      * @param table.force The force that would place the entity. Defaults to the `"neutral"` force.
      */
     can_fast_replace(this: void, table: {
-        name: string;
+        name: EntityID;
         position: MapPosition;
         direction?: defines.direction;
         force?: ForceID;
@@ -16870,7 +16874,7 @@ interface LuaSurface {
      * @param table.inner_name The prototype name of the entity contained in the ghost. Only used if `name` is `entity-ghost`.
      */
     can_place_entity(this: void, table: {
-        name: string;
+        name: EntityID;
         position: MapPosition;
         direction?: defines.direction;
         force?: ForceID;
@@ -17492,7 +17496,7 @@ interface LuaSurface {
      */
     remove_script_position(this: void, id: uint): boolean;
     /**
-     * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | runtime:PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities, such as vehicles. If you want to command actual units (such as biters or spitters) to move, use {@link LuaEntity::set_command | runtime:LuaEntity::set_command} instead.
+     * Generates a path with the specified constraints (as an array of {@link PathfinderWaypoints | runtime:PathfinderWaypoint}) using the unit pathfinding algorithm. This path can be used to emulate pathing behavior by script for non-unit entities, such as vehicles. If you want to command actual units (such as biters or spitters) to move, use {@link LuaCommandable::set_command | runtime:LuaCommandable::set_command} via {@link LuaEntity::commandable | runtime:LuaEntity::commandable} instead.
      *
      * The resulting path is ultimately returned asynchronously via {@link on_script_path_request_finished | runtime:on_script_path_request_finished}.
      * @param table.bounding_box The dimensions of the object that's supposed to travel the path.
