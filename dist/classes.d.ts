@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.42
+// Factorio version 2.0.43
 // API version 6
 
 declare namespace runtime {
@@ -181,6 +181,7 @@ interface LuaAgriculturalTowerControlBehavior extends LuaGenericOnOffControlBeha
 interface LuaAirbornePollutantPrototype extends LuaPrototypeBase {
     readonly affects_evolution: boolean;
     readonly chart_color: Color;
+    readonly damages_trees: boolean;
     readonly localised_name_with_amount_key: string;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -13903,7 +13904,7 @@ interface LuaPlayer extends LuaControl {
     set_controller(this: void, table: {
         type: defines.controllers;
         character?: LuaEntity;
-        waypoints?: CutsceneWaypoint;
+        waypoints?: CutsceneWaypoint[];
         start_position?: MapPosition;
         start_zoom?: double;
         final_transition_time?: uint;

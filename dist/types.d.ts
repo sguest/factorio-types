@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.42
+// Factorio version 2.0.43
 // API version 6
 
 declare namespace prototype {
@@ -5955,19 +5955,26 @@ interface MainSound {
      * Can't be used when `match_progress_to_activity` is `true`.
      */
     fade_out_ticks?: uint32;
-    match_progress_to_activity?: boolean;
-    match_speed_to_activity?: boolean;
-    match_volume_to_activity?: boolean;
+    /**
+     * Unused when {@link WorkingSound::persistent | prototype:WorkingSound::persistent} is `true`.
+     */
+    match_progress_to_activity?: bool;
+    match_speed_to_activity?: bool;
+    match_volume_to_activity?: bool;
     /**
      * Array of {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name}s, individual names cannot be empty.
      *
      * The `sound` is played when at least one of the specified working visualisations is drawn.
+     *
+     * Unused when {@link WorkingSound::persistent | prototype:WorkingSound::persistent} is `true`.
      */
     play_for_working_visualisations?: string[];
     /**
      * Modifies how often the sound is played.
      *
      * Silently clamped to the [0.0, 1.0] range.
+     *
+     * Unused when {@link WorkingSound::persistent | prototype:WorkingSound::persistent} is `true`.
      * @example ```
     probability = 1 / (3 * 60) -- average pause between the sound is 3 seconds
     ```
@@ -12595,18 +12602,26 @@ working_sound =
 type WorkingSound = {
     /**
      * Might not work with all entities that use working_sound.
+     *
+     * Unused when `persistent` is `true`.
      */
     activate_sound?: Sound;
     /**
      * Might not work with all entities that use working_sound.
+     *
+     * Unused when `persistent` is `true`.
      */
     deactivate_sound?: Sound;
     /**
-     * If `true`, `max_sounds_per_prototype` is ignored. 'extra sound' refers to `idle_sound`, `activate_sound` or `deactivate_sound`.
+     * If `true`, entities playing their extra sound don't count towards `max_sounds_per_prototype` limit. 'extra sound' refers to `idle_sound`, `activate_sound` or `deactivate_sound`.
+     *
+     * Unused when `persistent` is `true`.
      */
-    extra_sounds_ignore_limit?: boolean;
+    extra_sounds_ignore_limit?: bool;
     /**
      * The sound to be played when the entity is idle. Might not work with all entities that use working_sound.
+     *
+     * Unused when `persistent` is `true`.
      */
     idle_sound?: Sound;
     /**
@@ -12619,14 +12634,19 @@ type WorkingSound = {
      * Inactive entities without an `idle_sound` don't count towards this limit.
      *
      * Entities with their working sound fading out don't count towards this limit.
+     *
+     * Unused when `persistent` is `true`.
      */
     max_sounds_per_prototype?: uint8;
     /**
-     * When `true`, working sounds for all entities of the same prototype are combined into one and some (most) properties of this are ignored or unused.
+     * When `true`, working sounds for all entities of the same prototype are combined into one.
      */
-    persistent?: boolean;
+    persistent?: bool;
+    /**
+     * Unused when `persistent` is `true`.
+     */
     sound_accents?: SoundAccent | SoundAccent[];
-    use_doppler_shift?: boolean;
+    use_doppler_shift?: bool;
 } | Sound;
 /**
  * Used by crafting machines to display different graphics when the machine is running.
