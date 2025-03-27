@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.42
+// Factorio version 2.0.43
 // API version 6
 
 declare namespace prototype {
@@ -196,6 +196,10 @@ interface AirbornePollutantPrototype extends Prototype {
      */
     affects_water_tint: boolean;
     chart_color: Color;
+    /**
+     * If true, trees will occasionally take damage from this pollutant type. When they do, some amount of pollution is removed from the chunk equal to the map's `pollution_restored_per_tree_damage` setting.
+     */
+    damages_trees?: boolean;
     icon: Sprite;
     /**
      * The translated plural string key to use when displaying this pollution's name with an amount. See {@link Tutorial:Localisation | https://wiki.factorio.com/Tutorial:Localisation}.
