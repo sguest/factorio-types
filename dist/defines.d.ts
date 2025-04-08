@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.43
+// Factorio version 2.0.44
 // API version 6
 
 declare namespace defines {
@@ -65,7 +65,7 @@ enum cargo_destination {
      */
     station = 2,
     /**
-     * Cargo pods will switch destination type from surface to station before starting descent if there is a station available and {@link CargoDestination::position | runtime:CargoDestination::position} has not been specified.
+     * Cargo pods will switch destination type from surface to station before starting descent if there is a station available and {@link CargoDestination::position | runtime:CargoDestination::position} has not been specified. Note, setting the destination to "surface" when the surface is the same as the one the pod is on forces it to find and set a landing position.
      */
     surface = 3
 }
@@ -1292,13 +1292,24 @@ enum inventory {
     turret_ammo = 42
 }
 enum logistic_member_index {
-    character_provider = 4,
-    character_requester = 2,
-    character_storage = 3,
-    generic_on_off_behavior = 5,
+    car_provider = 10,
+    car_requester = 9,
+    character_provider = 5,
+    character_requester = 3,
+    character_storage = 4,
+    generic_on_off_behavior = 6,
     logistic_container = 0,
-    spidertron_requester = 6,
-    vehicle_storage = 1
+    logistic_container_trash_provider = 1,
+    roboport_provider = 11,
+    roboport_requester = 12,
+    rocket_silo_provider = 13,
+    rocket_silo_requester = 14,
+    rocket_silo_trash_provider = 15,
+    space_platform_hub_provider = 17,
+    space_platform_hub_requester = 16,
+    spidertron_provider = 8,
+    spidertron_requester = 7,
+    vehicle_storage = 2
 }
 enum logistic_mode {
     active_provider = 1,

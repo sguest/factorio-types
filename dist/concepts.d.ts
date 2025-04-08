@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.43
+// Factorio version 2.0.44
 // API version 6
 
 declare namespace runtime {
@@ -1851,7 +1851,7 @@ interface EventData {
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type EventFilter = (LuaPrePlatformMinedEntityEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformMinedEntityEventFilter | LuaScriptRaisedDestroyEventFilter | LuaPlayerBuiltEntityEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPreGhostDeconstructedEventFilter | LuaEntityClonedEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaRobotBuiltEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaPlayerRepairedEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaSectorScannedEventFilter | LuaPostEntityDiedEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaPlayerMinedEntityEventFilter | LuaEntityDamagedEventFilter | LuaScriptRaisedReviveEventFilter | LuaEntityDiedEventFilter | LuaPreRobotMinedEntityEventFilter)[];
+type EventFilter = (LuaScriptRaisedTeleportedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPlatformMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPlayerMinedEntityEventFilter | LuaSectorScannedEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaScriptRaisedReviveEventFilter | LuaPlayerBuiltEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaEntityDamagedEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaScriptRaisedDestroyEventFilter)[];
 /**
  * Identifies a statistics prototype, depending on the statistics type.
  */
@@ -5869,7 +5869,7 @@ type PropertyExpressionNames = Record<string, string>;
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type PrototypeFilter = (ModSettingPrototypeFilter | TilePrototypeFilter | DecorativePrototypeFilter | RecipePrototypeFilter | AchievementPrototypeFilter | TechnologyPrototypeFilter | AsteroidChunkPrototypeFilter | ItemPrototypeFilter | EquipmentPrototypeFilter | EntityPrototypeFilter | SpaceLocationPrototypeFilter | FluidPrototypeFilter)[];
+type PrototypeFilter = (ModSettingPrototypeFilter | SpaceLocationPrototypeFilter | DecorativePrototypeFilter | TilePrototypeFilter | AsteroidChunkPrototypeFilter | ItemPrototypeFilter | TechnologyPrototypeFilter | RecipePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | FluidPrototypeFilter | EntityPrototypeFilter)[];
 type PrototypeFilterMode = 'none' | 'whitelist' | 'blacklist';
 interface PrototypeHistory {
     /**
