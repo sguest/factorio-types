@@ -4964,7 +4964,7 @@ interface LuaControl {
     /**
      * Open the Factoriopedia GUI and select a given entry.
      */
-    open_factoriopedia_gui(this: void, prototype?: PrototypeBase): void;
+    open_factoriopedia_gui(this: void, prototype?: LuaPrototypeBase): void;
     /**
      * Open the technology GUI and select a given technology.
      * @param technology The technology to select after opening the GUI.
