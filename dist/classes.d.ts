@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.43
+// Factorio version 2.0.44
 // API version 6
 
 declare namespace runtime {
@@ -4871,11 +4871,19 @@ interface LuaControl {
      */
     clear_selected_entity(this: void): void;
     /**
+     * Closes the Factoriopedia GUI if it's open.
+     */
+    close_factoriopedia_gui(this: void): void;
+    /**
      * Disable the flashlight.
+     *
+     * Applied per controller. Only supported by {@link defines.controllers.character | runtime:defines.controllers.character} and {@link defines.controllers.remote | runtime:defines.controllers.remote}.
      */
     disable_flashlight(this: void): void;
     /**
      * Enable the flashlight.
+     *
+     * Applied per controller. Only supported by {@link defines.controllers.character | runtime:defines.controllers.character} and {@link defines.controllers.remote | runtime:defines.controllers.remote}.
      */
     enable_flashlight(this: void): void;
     /**
@@ -4933,7 +4941,7 @@ interface LuaControl {
      */
     is_cursor_empty(this: void): boolean;
     /**
-     * Is the flashlight enabled.
+     * Is the flashlight enabled for the current controller. Only supported by {@link defines.controllers.character | runtime:defines.controllers.character} and {@link defines.controllers.remote | runtime:defines.controllers.remote}.
      */
     is_flashlight_enabled(this: void): boolean;
     /**
@@ -4953,6 +4961,10 @@ interface LuaControl {
      * @returns Whether the mining succeeded.
      */
     mine_tile(this: void, tile: LuaTile): boolean;
+    /**
+     * Open the Factoriopedia GUI and select a given entry.
+     */
+    open_factoriopedia_gui(this: void, prototype?: PrototypeBase): void;
     /**
      * Open the technology GUI and select a given technology.
      * @param technology The technology to select after opening the GUI.
@@ -5174,9 +5186,9 @@ interface LuaControl {
      *
      * This is the GUI that will asked to close (by firing the {@link on_gui_closed | runtime:on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is non-nil, then writing `nil` or a new GUI to it will ask the existing GUI to close.
      *
-     * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory` or `nil`.
+     * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory`, `item` or `nil`.
      */
-    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | defines.gui_type;
+    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | LuaItemStack | defines.gui_type;
     readonly opened_gui_type?: defines.gui_type;
     /**
      * Current item-picking state.
@@ -6229,7 +6241,7 @@ interface LuaEntity extends LuaControl {
     /**
      * @returns `true` if the rocket was successfully launched. Return value of `false` means the silo is not ready for launch.
      */
-    launch_rocket(this: void): boolean;
+    launch_rocket(this: void, destination?: CargoDestination): boolean;
     /**
      * Mines this entity.
      *
@@ -8365,9 +8377,9 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly tank_driving?: boolean;
     /**
-     * The target temperature of this boiler prototype.
+     * The target temperature of this boiler or fusion reactor prototype. If `nil` on a fusion reactor, the target temperature is the default temperature of the output fluid.
      */
-    readonly target_temperature?: double;
+    readonly target_temperature?: float;
     /**
      * The terrain friction modifier for this vehicle.
      */
@@ -13547,6 +13559,9 @@ interface LuaPlayer extends LuaControl {
      * @param table.position Where to create the pin. Required when surface is defined.
      */
     add_pin(this: void, table: {
+        label?: string;
+        preview_distance?: uint16;
+        always_visible?: boolean;
         entity?: LuaEntity;
         player?: PlayerIdentification;
         surface?: SurfaceIdentification;

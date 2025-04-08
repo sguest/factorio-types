@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.43
+// Factorio version 2.0.44
 // API version 6
 
 declare namespace prototype {
@@ -2475,6 +2475,10 @@ interface DecorativePrototype extends Prototype {
     grows_through_rail_path?: boolean;
     minimal_separation?: double;
     /**
+     * Loaded only if `render_layer` = "decals". Value lower than 1 enables masking by water for decals with `tile_layer` greater or equal to {@link UtilityConstants::capture_water_mask_at_layer | prototype:UtilityConstants::capture_water_mask_at_layer}. Water tiles must use water `tile-effect` with {@link WaterTileEffectParameters::lightmap_alpha | prototype:WaterTileEffectParameters::lightmap_alpha} set to 0 or value less than 1. Graphics option `Occlude light sprites` must be enabled, as water mask is captured into terrain lightmap alpha channel. Tiles rendered in layer between {@link UtilityConstants::capture_water_mask_at_layer | prototype:UtilityConstants::capture_water_mask_at_layer} and decal's `tile_layer` will likely also mask decals in some way, as water mask will likely be 0 at their position, but this is considered undefined behavior.
+     */
+    opacity_over_water?: float;
+    /**
      * Must contain at least 1 picture.
      */
     pictures: SpriteVariations;
@@ -2493,7 +2497,7 @@ interface DecorativePrototype extends Prototype {
     stateless_visualisation_variations?: StatelessVisualisations[];
     target_count?: uint16;
     /**
-     * Mandatory if `render_layer` = "decals". This int16 is converted to a {@link RenderLayer | prototype:RenderLayer} internally.
+     * Mandatory if `render_layer` = "decals". This int16 is converted to a {@link TileRenderLayer | prototype:TileRenderLayer} internally. It is offset from `ground-natural`.
      */
     tile_layer?: int16;
     /**
@@ -4073,6 +4077,10 @@ interface FusionReactorPrototype extends EntityWithOwnerPrototype {
      * Cannot be negative.
      */
     power_input: Energy;
+    /**
+     * The temperature of the fluid to output. If not defined, the default temperature of the output fluid will be used.
+     */
+    target_temperature?: float;
     /**
      * If set to true, only North and East direction will be buildable.
      */
@@ -7260,6 +7268,7 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      * Drawn instead of `base_day_sprite` during the night, that is when {@link LuaSurface::darkness | runtime:LuaSurface::darkness} is larger than 0.3.
      */
     base_night_sprite?: Sprite;
+    can_launch_without_landing_pads?: boolean;
     /**
      * Must have exactly one entry in {@link CargoStationParameters::hatch_definitions | prototype:CargoStationParameters::hatch_definitions}.
      */
@@ -9682,6 +9691,10 @@ interface UtilityConstants extends PrototypeBase {
     building_not_buildable_tint: Color;
     capsule_range_visualization_color: Color;
     /**
+     * Layer within `ground-natural` {@link tile render layer | prototype:TileRenderLayer} group, before which terrain lightmap alpha channel is copiend into water mask. Decals, which need to be masked by water should have their {@link DecorativePrototype::tile_layer | prototype:DecorativePrototype::tile_layer} set to only slightly larger value than `capture_water_mask_at_layer`, to avoid risk of undefined behavior caused by rendering tiles into layers between `capture_water_mask_at_layer` and decal's `tile_layer`.
+     */
+    capture_water_mask_at_layer: uint8;
+    /**
      * Chart means map and minimap.
      */
     chart: ChartUtilityConstants;
@@ -9879,9 +9892,13 @@ interface UtilityConstants extends PrototypeBase {
      */
     space_platform_acceleration_expression: MathExpression;
     /**
-     * Determines how fast space platforms will send items in trash slots to the surface. Each item type has its own cooldown.
+     * Determines how fast space platforms will send items in drop slots to the surface. Each item type has its own cooldown.
      */
     space_platform_dump_cooldown: uint32;
+    /**
+     * Delay after manual transfer until space platform sends items in drop slots to the surface. Overrides remaining space_platform_dump_cooldown in this instance.
+     */
+    space_platform_manual_dump_cooldown: uint32;
     space_platform_max_size: SimpleBoundingBox;
     space_platform_relative_speed_factor: double;
     space_platform_starfield_movement_vector: Vector;
@@ -10311,6 +10328,7 @@ interface UtilitySprites extends PrototypeBase {
     entity_info_dark_background: Sprite;
     equipment_collision: Sprite;
     equipment_grid: Sprite;
+    equipment_grid_small: Sprite;
     equipment_slot: Sprite;
     expand: Sprite;
     expand_dots: Sprite;

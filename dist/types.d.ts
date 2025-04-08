@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.43
+// Factorio version 2.0.44
 // API version 6
 
 declare namespace prototype {
@@ -9794,6 +9794,10 @@ interface SpriteParameters extends SpriteSource {
      * Only loaded if this is an icon, that is it has the flag `"group=icon"` or `"group=gui"`. Will be clamped to range `[0, 5]`.
      */
     mipmap_count?: uint8;
+    /**
+     * Loaded only if `draw_as_shadow`, `draw_as_glow` and `draw_as_light` are `false`, and only by sprites used by tile renderer (decals and underwater patches). Purspose of setting this to `false` is to preserve water mask from sprites that are supposed to be drawn under the water.
+     */
+    occludes_light?: bool;
     priority?: SpritePriority;
     /**
      * Whether to rotate the `shift` alongside the sprite's rotation. This only applies to sprites which are procedurally rotated by the game engine (like projectiles, wires, inserter hands, etc).
@@ -10973,6 +10977,10 @@ interface TileTransitions {
     auxiliary_effect_mask_spritesheet?: FileName;
     background_enabled?: boolean;
     background_layer_group?: TileRenderLayer;
+    /**
+     * If drawing under water which is supposed to yield water mask, set this to `false` to not mess up the water mask.
+     */
+    background_layer_occludes_light?: boolean;
     background_layer_offset?: int8;
     /**
      * Overrides the `background` definition inside `layout`.
@@ -12506,6 +12514,10 @@ interface WaterTileEffectParameters {
     far_zoom?: float;
     foam_color: Color;
     foam_color_multiplier: float;
+    /**
+     * Value 0 makes water appear as water in water mask, but does not occlude lights, and doesn't overwrite lightmap alpha drawn to pixel previously (by background layer of tile transition, or underwater sprite). Light emitted by water-like-tile (for example lava) will blend additively with previously rendered light. Value 1 makes water occlude lights, but won't be recognized as water in water mask used for masking decals by water.
+     */
+    lightmap_alpha?: float;
     near_zoom?: float;
     reflection_threshold: float | [
         float,
