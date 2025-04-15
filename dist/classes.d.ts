@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.44
+// Factorio version 2.0.45
 // API version 6
 
 declare namespace runtime {
@@ -4962,9 +4962,9 @@ interface LuaControl {
      */
     mine_tile(this: void, tile: LuaTile): boolean;
     /**
-     * Open the Factoriopedia GUI and select a given entry.
+     * Open the Factoriopedia GUI and select a given entry, if any valid ID is given.
      */
-    open_factoriopedia_gui(this: void, prototype?: LuaPrototypeBase): void;
+    open_factoriopedia_gui(this: void, prototype?: FactoriopediaID): void;
     /**
      * Open the technology GUI and select a given technology.
      * @param technology The technology to select after opening the GUI.
@@ -7867,6 +7867,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The flags for this entity prototype.
      */
     readonly flags: EntityPrototypeFlags;
+    readonly flow_scaling?: boolean;
     /**
      * The fluid capacity of this entity or 0 if this entity doesn't support fluids.
      *
@@ -8437,6 +8438,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * Whether this logistic container prototype uses exact mode
      */
     readonly use_exact_mode?: boolean;
+    /**
+     * If this drill uses force productivity bonus
+     */
+    readonly uses_force_mining_productivity_bonus?: bool;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -14997,7 +15002,7 @@ interface LuaRecipePrototype extends LuaPrototypeBase {
      */
     readonly allowed_module_categories?: Record<string, true>;
     /**
-     * Alternative technologies that can unlocked this recipe.
+     * Additional technologies listed under "Unlocked by" on a recipe's Factoriopedia page.
      */
     readonly alternative_unlock_methods?: LuaTechnologyPrototype[];
     /**
