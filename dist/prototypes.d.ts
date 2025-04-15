@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.44
+// Factorio version 2.0.45
 // API version 6
 
 declare namespace prototype {
@@ -5517,6 +5517,7 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
      */
     resource_searching_radius: double;
     shuffle_resources_to_mine?: boolean;
+    uses_force_mining_productivity_bonus?: boolean;
     /**
      * The position where any item results are placed, when the mining drill is facing north (default direction). If the drill does not produce any solid items but uses a fluidbox output instead (e.g. pumpjacks), a vector of `{0,0}` disables the yellow arrow alt-mode indicator for the placed item location.
      */
@@ -6212,6 +6213,10 @@ interface PumpPrototype extends EntityWithOwnerPrototype {
      * The amount of energy the pump uses.
      */
     energy_usage: Energy;
+    /**
+     * When true, pump will reduce pumping speed based on fullness of the input fluid segment.
+     */
+    flow_scaling?: boolean;
     fluid_animation?: Animation4Way;
     /**
      * The area of the entity where fluid travels.
@@ -6631,6 +6636,9 @@ interface RecipePrototype extends Prototype {
      * Sets the {@link module categories | prototype:ModuleCategory} that are allowed to be used with this recipe.
      */
     allowed_module_categories?: ModuleCategoryID[];
+    /**
+     * Additional technologies to list under "Unlocked by" on a recipe's Factoriopedia page.
+     */
     alternative_unlock_methods?: TechnologyID[];
     /**
      * Whether the "Made in: <Machine>" part of the tool-tip should always be present, and not only when the recipe can't be hand-crafted.

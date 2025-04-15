@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.44
+// Factorio version 2.0.45
 // API version 6
 
 declare namespace runtime {
@@ -1852,6 +1852,10 @@ interface EventData {
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
 type EventFilter = (LuaScriptRaisedTeleportedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPlatformMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPlayerMinedEntityEventFilter | LuaSectorScannedEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaScriptRaisedReviveEventFilter | LuaPlayerBuiltEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaEntityDamagedEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaScriptRaisedDestroyEventFilter)[];
+type FactoriopediaID = LuaItemPrototype | LuaFluidPrototype | LuaRecipePrototype | LuaEntityPrototype | LuaTilePrototype | LuaSpaceLocationPrototype | /**
+ * Does not actually have an entry in Factoriopedia.
+ */
+LuaTechnologyPrototype | LuaAmmoCategoryPrototype | LuaSpaceConnectionPrototype | LuaAsteroidChunkPrototype | LuaVirtualSignalPrototype | LuaSurfacePrototype;
 /**
  * Identifies a statistics prototype, depending on the statistics type.
  */
