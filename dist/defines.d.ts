@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.45
+// Factorio version 2.0.47
 // API version 6
 
 declare namespace defines {
@@ -975,14 +975,14 @@ enum input_action {
     change_active_quick_bar = 29,
     change_arithmetic_combinator_parameters = 30,
     change_entity_label = 31,
-    change_item_label = 32,
-    change_logistic_point_group = 33,
-    change_multiplayer_config = 34,
-    change_picking_state = 35,
-    change_programmable_speaker_alert_parameters = 36,
-    change_programmable_speaker_circuit_parameters = 37,
-    change_programmable_speaker_parameters = 38,
-    change_relative_riding_state = 39,
+    change_heading_riding_state = 32,
+    change_item_label = 33,
+    change_logistic_point_group = 34,
+    change_multiplayer_config = 35,
+    change_picking_state = 36,
+    change_programmable_speaker_alert_parameters = 37,
+    change_programmable_speaker_circuit_parameters = 38,
+    change_programmable_speaker_parameters = 39,
     change_riding_state = 40,
     change_selector_combinator_parameters = 41,
     change_shooting_state = 42,

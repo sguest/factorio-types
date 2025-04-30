@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.45
+// Factorio version 2.0.47
 // API version 6
 
 declare namespace prototype {
@@ -4307,7 +4307,7 @@ type EntityPrototypeFlags = (/**
 'not-blueprintable' | /**
  * Hides the alt-info of an entity in alt-mode, for example the recipe icon.
  */
-'hide-alt-info' | 'no-gap-fill-while-building' | /**
+'hide-alt-info' | /**
  * Do not apply fire stickers to the entity.
  */
 'not-flammable' | /**
@@ -9797,7 +9797,7 @@ interface SpriteParameters extends SpriteSource {
     /**
      * Loaded only if `draw_as_shadow`, `draw_as_glow` and `draw_as_light` are `false`, and only by sprites used by tile renderer (decals and underwater patches). Purspose of setting this to `false` is to preserve water mask from sprites that are supposed to be drawn under the water.
      */
-    occludes_light?: bool;
+    occludes_light?: boolean;
     priority?: SpritePriority;
     /**
      * Whether to rotate the `shift` alongside the sprite's rotation. This only applies to sprites which are procedurally rotated by the game engine (like projectiles, wires, inserter hands, etc).
@@ -11515,11 +11515,25 @@ interface TransportBeltConnectorFrame {
 interface TreeVariation {
     branch_generation: CreateParticleTriggerEffectItem;
     /**
+     * This value is multiplied with the percent of health lost.
+     */
+    branches_when_damaged?: uint8;
+    branches_when_destroyed?: uint8;
+    branches_when_mined_automatically?: uint8;
+    branches_when_mined_manually?: uint8;
+    /**
      * Only loaded if `shadow` is present. Defaults to `shadow.frame_count - 1`.
      */
     disable_shadow_distortion_beginning_at_frame?: uint32;
     leaf_generation: CreateParticleTriggerEffectItem;
     leaves: Animation;
+    /**
+     * This value is multiplied with the percent of health lost.
+     */
+    leaves_when_damaged?: uint8;
+    leaves_when_destroyed?: uint8;
+    leaves_when_mined_automatically?: uint8;
+    leaves_when_mined_manually?: uint8;
     /**
      * Normal must have the same frame_count as `leaves`.
      */
