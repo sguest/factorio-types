@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.45
+// Factorio version 2.0.47
 // API version 6
 
 declare namespace runtime {
@@ -45,9 +45,10 @@ interface AddRecordData {
      * When `rail` is given, this can be provided to further narrow down direction from which that rail should be approached.
      */
     rail_direction?: defines.rail_direction;
-    wait_conditions?: WaitCondition[];
     temporary?: boolean;
+    created_by_interrupt?: boolean;
     allows_unloading?: boolean;
+    wait_conditions?: WaitCondition[];
     /**
      * If index is not given, the record is appended.
      */
@@ -1631,7 +1632,7 @@ type EntityPrototypeFlag = /**
 'not-blueprintable' | /**
  * Hides the alt-info of this entity when in alt-mode.
  */
-'hide-alt-info' | 'no-gap-fill-while-building' | /**
+'hide-alt-info' | /**
  * Does not apply fire stickers to the entity.
  */
 'not-flammable' | /**
@@ -5687,6 +5688,7 @@ interface PlaceAsTileResult {
     result: LuaTilePrototype;
     condition_size: uint;
     condition: CollisionMask;
+    invert: boolean;
 }
 interface PlatformSchedule {
     /**
@@ -7671,6 +7673,11 @@ interface TriggerItem {
     repeat_count: uint;
     probability: float;
 }
+interface TriggerModifierData {
+    damage_modifier?: float;
+    damage_addition?: float;
+    radius_modifier?: float;
+}
 /**
  * A set of trigger target masks.
  */
@@ -8087,6 +8094,60 @@ interface WorkerRobotOrder {
      * The target count of the pickup or deliver order.
      */
     target_count?: ItemCountType;
+}
+/**
+ * A set of limitations for the player zoom level.
+ * @example ```
+{
+  closest = { zoom = 4 },
+  furthest = { zoom = 1 / 16 },
+  furthest_game_view = { distance = 200, max_distance = 400 }
+}
+```
+ */
+interface ZoomLimits {
+    /**
+     * The closest zoom level that the player's current controller can have. If not defined when overwriting {@link LuaPlayer::zoom_limits | runtime:LuaPlayer::zoom_limits}, then the default value for the current controller as defined by the engine will be used instead. When reading from {@link LuaPlayer::zoom_limits | runtime:LuaPlayer::zoom_limits}, this field will contain the value previously set by a script or the default value defined by the engine.
+     */
+    closest?: ZoomSpecification;
+    /**
+     * The furthest zoom level that the player's current controller can have. If for any reason the `furthest` limit is closer than `closest`, then the player's zoom will be locked to the closer of the two values. If not defined when overwriting {@link LuaPlayer::zoom_limits | runtime:LuaPlayer::zoom_limits}, then the default value for the current controller as defined by the engine will be used instead. When reading from {@link LuaPlayer::zoom_limits | runtime:LuaPlayer::zoom_limits}, this field will contain the value previously set by a script or the default value defined by the engine.
+     */
+    furthest?: ZoomSpecification;
+    /**
+     * The furthest zoom level at which the engine will render the game view. Zoom levels further than this limit will render using chart (map) view. Set this to the same value as `furthest` to force the game view at all zoom levels. Set this to some value closer than `closest` to force chart view at all zoom levels. If not defined when overwriting {@link LuaPlayer::zoom_limits | runtime:LuaPlayer::zoom_limits}, then the default value for the current controller as defined by the engine will be used instead. When reading from {@link LuaPlayer::zoom_limits | runtime:LuaPlayer::zoom_limits}, this field will contain the value previously set by a script or the default value defined by the engine.
+     */
+    furthest_game_view?: ZoomSpecification;
+}
+/**
+ * A table specifying a fixed or dynamically-computed zoom level using one of the supported methods. Used by {@link ZoomLimits | runtime:ZoomLimits}.
+ *
+ * Method 1 only uses the `zoom` field. The zoom level is fixed and will not change at runtime. Directly correlates to the perceived size of objects in the game world.
+ *
+ * Method 2 only uses `distance` and optionally `max_distance`. The zoom level is computed dynamically based on the player's window dimensions and aspect ratio. This method is ideal for limiting how far the player can see.
+ *
+ * If there is ambiguity in which method should be used (i.e. both `zoom` and `distance` fields are provided), an error will be thrown during parsing.
+ * @example ```
+-- Method 1: Specify a fixed zoom level.
+{ zoom = 3.0 }
+
+-- Method 2: Specify a dynamic zoom level based on the window dimensions.
+{ distance = 200, max_distance = 500 }
+```
+ */
+interface ZoomSpecification {
+    /**
+     * A fixed zoom level. Must be a positive value. 1.0 is the default zoom level. Mutually exclusive with `distance`.
+     */
+    zoom?: double;
+    /**
+     * The number of game tiles across the horizontal axis at the game's default 16:9 aspect ratio. Must be a positive number. This specification is designed to comfortably accommodate displays with extreme aspect ratios such as ultrawide monitors. The exact zoom level is calculated at dynamically as follows. For aspect ratios between 16:9 and 9:16, the zoom level is computed so that `distance` number of tiles are visible along the game window's longer axis. For aspect ratios between 16:9 and 1:1, this is the window's width. For aspect ratios between 1:1 and 9:16, this is the window's height. For aspect ratios greater than 16:9 or smaller than 9:16, then the zoom level is actually computed so that `distance * 9 / 16` number of tiles are visible along the game window's shorter axis. So for aspect ratios greater than 16:9, this is the window's height. For aspect ratios smaller than 9:16, this is the window's height. Mutually exclusive with `zoom`. Used with `max_distance`.
+     */
+    distance?: double;
+    /**
+     * The absolute maximum number of game tiles permitted along the window's longest axis, setting a hard limit on how far a player can see by simply manipulating the game window. Must be a positive number. Values greater than the default may allow players to see ungenerated chunks while exploring. The "closest" zoom level calculated from `distance` and `max_distance` is always used. Optionally used with `distance`. Defaults to `500`.
+     */
+    max_distance?: double;
 }
 /**
  * A double-precision floating-point number. This is the same data type as all Lua numbers use.

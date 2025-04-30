@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.45
+// Factorio version 2.0.47
 // API version 6
 
 declare namespace prototype {
@@ -956,6 +956,10 @@ interface AutoplaceControl extends Prototype {
      */
     category: 'resource' | 'terrain' | 'cliff' | 'enemy';
     /**
+     * Whether this settings being lower than default disables fight related achievements
+     */
+    related_to_fight_achievements?: boolean;
+    /**
      * Sets whether this control's richness can be changed. The map generator GUI will only show the richness slider when the `category` is `"resource"`.
      *
      * If the autoplace control is used to generate ores, you probably want this to be true.
@@ -1308,6 +1312,10 @@ interface CarPrototype extends VehiclePrototype {
      */
     light_animation?: RotatedAnimation;
     render_layer?: RenderLayer;
+    /**
+     * Vehicle will snap the vertical, horizontal or diagonal axis if it's within this angle
+     */
+    rotation_snap_angle: double;
     rotation_speed: double;
     sound_no_fuel?: Sound;
     /**
@@ -8651,6 +8659,7 @@ interface StickerPrototype extends EntityPrototype {
      * Effects (with cooldowns) to trigger every tick.
      */
     update_effects?: TriggerEffectWithCooldown[];
+    use_damage_substitute?: boolean;
     vehicle_friction_modifier?: float;
     /**
      * Works similarly to `target_movement_modifier_from`.

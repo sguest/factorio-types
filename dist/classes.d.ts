@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.45
+// Factorio version 2.0.47
 // API version 6
 
 declare namespace runtime {
@@ -6231,7 +6231,7 @@ interface LuaEntity extends LuaControl {
      */
     is_registered_for_deconstruction(this: void, force: ForceID): boolean;
     /**
-     * Is this entity registered for repair? If false, it means a construction robot has been dispatched to upgrade it, or it is not damaged. This is worst-case O(N) complexity where N is the current number of things in the repair queue.
+     * Is this entity registered for repair? If false, it means a construction robot has been dispatched to repair it, or it is not damaged. This is worst-case O(N) complexity where N is the current number of things in the repair queue.
      */
     is_registered_for_repair(this: void): boolean;
     /**
@@ -6526,6 +6526,7 @@ interface LuaEntity extends LuaControl {
      * While train stops get the name of a backer when placed down, players can rename them if they want to. In this case, `backer_name` returns the player-given name of the entity.
      */
     backer_name?: string;
+    base_damage_modifiers: TriggerModifierData;
     /**
      * Number of beacons affecting this effect receiver. Can only be used when the entity has an effect receiver (AssemblingMachine, Furnace, Lab, MiningDrills)
      */
@@ -6553,6 +6554,7 @@ interface LuaEntity extends LuaControl {
      * Whether this underground belt goes into or out of the ground.
      */
     readonly belt_to_ground_type: 'input' | 'output';
+    bonus_damage_modifiers: TriggerModifierData;
     /**
      * The bonus mining progress for this mining drill. Read yields a number in range [0, mining_target.prototype.mineable_properties.mining_time]. `nil` if this isn't a mining drill.
      */
@@ -6941,6 +6943,10 @@ interface LuaEntity extends LuaControl {
      * If the entity is updatable.
      */
     readonly is_updatable: boolean;
+    /**
+     * The first found item request proxy targeting this entity.
+     */
+    readonly item_request_proxy?: LuaEntity;
     /**
      * Items this ghost will request when revived or items this item request proxy is requesting.
      */
@@ -8297,6 +8303,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly rocket_rising_delay?: uint8;
     /**
+     * The rotation snap angle of this car prototype.
+     */
+    readonly rotation_snap_angle?: double;
+    /**
      * The rotation speed of this car prototype.
      */
     readonly rotation_speed?: double;
@@ -8441,7 +8451,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * If this drill uses force productivity bonus
      */
-    readonly uses_force_mining_productivity_bonus?: bool;
+    readonly uses_force_mining_productivity_bonus?: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -12665,9 +12675,9 @@ interface LuaItemStack extends LuaItemCommon {
     swap_stack(this: void, stack: LuaItemStack): boolean;
     /**
      * Transfers the given item stack into this item stack.
-     * @returns `true` if the full stack was transferred.
+     * @returns `true` if the full stack (or requested amount) was transferred.
      */
-    transfer_stack(this: void, stack: ItemStackIdentification): boolean;
+    transfer_stack(this: void, stack: ItemStackIdentification, amount?: uint): boolean;
     /**
      * Use the capsule item with the entity as the source, targeting the given position.
      * @param entity The entity to use the capsule item with.
@@ -14204,9 +14214,63 @@ interface LuaPlayer extends LuaControl {
      */
     readonly valid: boolean;
     /**
-     * The player's zoom-level. Must be positive.
+     * The current player controller's zoom level. Must be positive. The baseline zoom level is 1. Values greater than 1 will zoom in closer to the world and values between 0 and 1 will zoom out away from the world.
+     *
+     * Writing values outside the current zoom limits is always valid, but read values will always be clamped to the range defined by {@link LuaPlayer::zoom_limits | runtime:LuaPlayer::zoom_limits}.
      */
     zoom: double;
+    /**
+     * The current player controller's zoom limits.
+     *
+     * Reading this field creates a copy, so modifying the returned table's fields directly will not alter the player's zoom limits. To change the zoom limits for the player's current controller, set the entire field to the desired {@link ZoomLimits | runtime:ZoomLimits} table.
+     *
+     * Zoom limits may or may not reset to default any time the player controller changes. Use the {@link defines.events.on_player_controller_changed | runtime:defines.events.on_player_controller_changed} event to respond to and correct the new controller's zoom limits.
+     * @example ```
+    -- Lets the player zoom in to 4x the standard zoom level. (3x is the default for most controllers.)
+    -- Increases the player zoom out level so that they can view approximately 800 tiles across.
+    -- Sets furthest_game_view to furthest so that all zoom levels are rendered in game view, never chart (map) view.
+    game.player.zoom_limits = {
+      closest = { zoom = 4 },
+      furthest = { distance = 800, max_distance = 1000 },
+      furthest_game_view = { distance = 800, max_distance = 1000 }
+    }
+    ```
+     * @example ```
+    -- Resets the closest and furthest_game_view limits to their defaults.
+    -- Increases the furthest a player can zoom out to approximately 400 tiles across. There's a hard zoom limit at
+    -- 800 tiles (either vertically or horizontally, whichever is more).
+    game.player.zoom_limits = {
+      furthest = { distance = 400, max_distance = 800 }
+    }
+    ```
+     * @example ```
+    -- Sets the closest that the player can zoom in to 3x (the default for most controllers).
+    -- Sets the furthest that the player can view in game view to some number GREATER than
+    -- closest, guaranteeing that the player can only view the chart. However, this does NOT mean that the player
+    -- can interact with the game as if in remote view if they are not explicitly using remote view.
+    game.player.zoom_limits = {
+      closest = { zoom = 3 },
+      furthest_game_view = { zoom = 4 }
+    }
+    ```
+     * @example ```
+    -- Save a copy of whatever zoom limits any script has previously set.
+    local custom_limits = game.player.zoom_limits
+    -- Resets all zoom limits to default.
+    game.player.zoom_limits = {}
+    -- Save a copy of whatever the default zoom limits are for the current controller.
+    local default_limits = game.player.zoom_limits
+    -- Set the zoom limits to a modification of the engine-default closest zoom limit (or 6 if the engine-default is
+    -- not a fixed zoom value), the furthest limit previously defined by script (or the engine default if not
+    -- previously set by a script), and some arbitrary value for `furthest_game_view`.
+    game.player.zoom_limits = {
+      closest = { zoom = (default_limits.furthest.zoom or 3.0) * 2 },
+      furthest = custom_limits.furthest,
+      furthest_game_view = { zoom = 0.25 }
+    }
+    ```
+     */
+    zoom_limits: ZoomLimits;
 }
 /**
  * Prototype of a procession inheritance group which synchronizes offsets between procession steps.
@@ -17782,7 +17846,7 @@ interface LuaSurface {
      */
     wind_speed: double;
 }
-type LuaSurfaceCreateEntityParams = BaseLuaSurfaceCreateEntityParams | LuaSurfaceCreateEntityParamsArtilleryFlare | LuaSurfaceCreateEntityParamsArtilleryProjectile | LuaSurfaceCreateEntityParamsAssemblingMachine | LuaSurfaceCreateEntityParamsBeam | LuaSurfaceCreateEntityParamsCharacterCorpse | LuaSurfaceCreateEntityParamsCliff | LuaSurfaceCreateEntityParamsContainer | LuaSurfaceCreateEntityParamsElectricPole | LuaSurfaceCreateEntityParamsEntityGhost | LuaSurfaceCreateEntityParamsFire | LuaSurfaceCreateEntityParamsHighlightBox | LuaSurfaceCreateEntityParamsInserter | LuaSurfaceCreateEntityParamsItemEntity | LuaSurfaceCreateEntityParamsItemRequestProxy | LuaSurfaceCreateEntityParamsLamp | LuaSurfaceCreateEntityParamsLoader | LuaSurfaceCreateEntityParamsLoader1x1 | LuaSurfaceCreateEntityParamsLocomotive | LuaSurfaceCreateEntityParamsLogisticContainer | LuaSurfaceCreateEntityParamsParticle | LuaSurfaceCreateEntityParamsPlant | LuaSurfaceCreateEntityParamsProgrammableSpeaker | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsRailChainSignal | LuaSurfaceCreateEntityParamsRailSignal | LuaSurfaceCreateEntityParamsResource | LuaSurfaceCreateEntityParamsRollingStock | LuaSurfaceCreateEntityParamsSimpleEntityWithForce | LuaSurfaceCreateEntityParamsSimpleEntityWithOwner | LuaSurfaceCreateEntityParamsSpeechBubble | LuaSurfaceCreateEntityParamsStream | LuaSurfaceCreateEntityParamsTileGhost | LuaSurfaceCreateEntityParamsUndergroundBelt;
+type LuaSurfaceCreateEntityParams = BaseLuaSurfaceCreateEntityParams | LuaSurfaceCreateEntityParamsArtilleryFlare | LuaSurfaceCreateEntityParamsArtilleryProjectile | LuaSurfaceCreateEntityParamsAssemblingMachine | LuaSurfaceCreateEntityParamsBeam | LuaSurfaceCreateEntityParamsCharacterCorpse | LuaSurfaceCreateEntityParamsCliff | LuaSurfaceCreateEntityParamsContainer | LuaSurfaceCreateEntityParamsElectricPole | LuaSurfaceCreateEntityParamsEntityGhost | LuaSurfaceCreateEntityParamsFire | LuaSurfaceCreateEntityParamsHighlightBox | LuaSurfaceCreateEntityParamsInserter | LuaSurfaceCreateEntityParamsItemEntity | LuaSurfaceCreateEntityParamsItemRequestProxy | LuaSurfaceCreateEntityParamsLamp | LuaSurfaceCreateEntityParamsLoader | LuaSurfaceCreateEntityParamsLoader1x1 | LuaSurfaceCreateEntityParamsLocomotive | LuaSurfaceCreateEntityParamsLogisticContainer | LuaSurfaceCreateEntityParamsParticle | LuaSurfaceCreateEntityParamsPlant | LuaSurfaceCreateEntityParamsProgrammableSpeaker | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsRailChainSignal | LuaSurfaceCreateEntityParamsRailSignal | LuaSurfaceCreateEntityParamsResource | LuaSurfaceCreateEntityParamsRollingStock | LuaSurfaceCreateEntityParamsSimpleEntityWithForce | LuaSurfaceCreateEntityParamsSimpleEntityWithOwner | LuaSurfaceCreateEntityParamsSpeechBubble | LuaSurfaceCreateEntityParamsStream | LuaSurfaceCreateEntityParamsTileGhost | LuaSurfaceCreateEntityParamsUndergroundBelt;
 interface BaseLuaSurfaceCreateEntityParams {
     /**
      * Cause entity / force. The entity or force that triggered the chain of events that led to this entity being created. Used for beams, projectiles, stickers, etc. so that the damage receiver can know which entity or force to retaliate against.
@@ -18136,6 +18200,14 @@ interface LuaSurfaceCreateEntityParamsProjectile extends BaseLuaSurfaceCreateEnt
      * Defaults to 0.
      */
     'speed'?: double;
+}
+/**
+ *
+ * Applies to variant case `projectile`
+ */
+interface LuaSurfaceCreateEntityParamsProjectile extends BaseLuaSurfaceCreateEntityParams {
+    'base_damage_modifiers'?: TriggerModifierData;
+    'bonus_damage_modifiers'?: TriggerModifierData;
 }
 /**
  *
@@ -19058,6 +19130,10 @@ interface LuaTransportLine {
      * The entity this transport line belongs to.
      */
     readonly owner: LuaEntity;
+    /**
+     * Total length of segment which consists of this line, all lines in front and lines in the back directly connected.
+     */
+    readonly total_segment_length: double;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
