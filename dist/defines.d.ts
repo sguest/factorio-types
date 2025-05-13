@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.47
+// Factorio version 2.0.49
 // API version 6
 
 declare namespace defines {
@@ -618,6 +618,10 @@ enum entity_status {
     /**
      * Used by assembling machines.
      */
+    recipe_is_parameter = 66,
+    /**
+     * Used by assembling machines.
+     */
     recipe_not_researched = 65,
     /**
      * Used by thrusters.
@@ -1227,8 +1231,10 @@ enum input_method {
     keyboard_and_mouse = 0
 }
 enum inventory {
-    artillery_turret_ammo = 45,
-    artillery_wagon_ammo = 46,
+    agricultural_tower_input = 56,
+    agricultural_tower_output = 57,
+    artillery_turret_ammo = 46,
+    artillery_wagon_ammo = 47,
     /**
      * Used when items are ejected or items held by inserters cannot be inserted due to changing the recipe with the circuit network.
      */
@@ -1240,23 +1246,28 @@ enum inventory {
      * Used for spoil result items that do not fit into the recipe slots and for items that are ejected when changing the recipe via remote view.
      */
     assembling_machine_trash = 27,
-    beacon_modules = 43,
+    asteroid_collector_output = 63,
+    beacon_modules = 44,
     burnt_result = 1,
-    car_ammo = 39,
-    car_trash = 40,
-    car_trunk = 38,
-    cargo_landing_pad_main = 52,
-    cargo_landing_pad_trash = 53,
-    cargo_unit = 37,
-    cargo_wagon = 41,
+    car_ammo = 40,
+    car_trash = 41,
+    car_trunk = 39,
+    cargo_landing_pad_main = 53,
+    cargo_landing_pad_trash = 54,
+    cargo_unit = 38,
+    cargo_wagon = 42,
     character_ammo = 10,
     character_armor = 11,
-    character_corpse = 44,
+    character_corpse = 45,
     character_guns = 9,
     character_main = 8,
     character_trash = 13,
     character_vehicle = 12,
     chest = 2,
+    crafter_input = 59,
+    crafter_modules = 61,
+    crafter_output = 60,
+    crafter_trash = 62,
     editor_ammo = 17,
     editor_armor = 18,
     editor_guns = 16,
@@ -1270,27 +1281,29 @@ enum inventory {
      */
     furnace_trash = 7,
     god_main = 14,
-    hub_main = 50,
-    hub_trash = 51,
-    item_main = 31,
+    hub_main = 51,
+    hub_trash = 52,
+    item_main = 32,
     lab_input = 28,
     lab_modules = 29,
+    lab_trash = 30,
+    linked_container_main = 58,
     logistic_container_trash = 3,
-    mining_drill_modules = 30,
-    proxy_main = 54,
+    mining_drill_modules = 31,
+    proxy_main = 55,
     roboport_material = 20,
     roboport_robot = 19,
     robot_cargo = 21,
     robot_repair = 22,
-    rocket_silo_input = 34,
-    rocket_silo_modules = 36,
-    rocket_silo_output = 35,
-    rocket_silo_rocket = 32,
-    rocket_silo_trash = 33,
-    spider_ammo = 48,
-    spider_trash = 49,
-    spider_trunk = 47,
-    turret_ammo = 42
+    rocket_silo_input = 35,
+    rocket_silo_modules = 37,
+    rocket_silo_output = 36,
+    rocket_silo_rocket = 33,
+    rocket_silo_trash = 34,
+    spider_ammo = 49,
+    spider_trash = 50,
+    spider_trunk = 48,
+    turret_ammo = 43
 }
 enum logistic_member_index {
     car_provider = 10,
@@ -1623,7 +1636,8 @@ namespace prototypes {
         'underground-belt' = 128,
         unit = 129,
         'unit-spawner' = 130,
-        wall = 131
+        valve = 131,
+        wall = 132
     }
     enum equipment {
         'active-defense-equipment' = 0,

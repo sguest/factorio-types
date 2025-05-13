@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.47
+// Factorio version 2.0.49
 // API version 6
 
 declare namespace prototype {
@@ -1337,6 +1337,9 @@ UtilitySounds | /**
  * `'utility-sprites'`
  */
 UtilitySprites | /**
+ * `'valve'`
+ */
+ValvePrototype | /**
  * `'virtual-signal'`
  */
 VirtualSignalPrototype | /**
@@ -2053,6 +2056,10 @@ type BoundingBox = {
 } | [
     MapPosition,
     MapPosition
+] | [
+    MapPosition,
+    MapPosition,
+    RealOrientation
 ];
 /**
  * A cursor box, for use in {@link UtilitySprites | prototype:UtilitySprites}.
@@ -3758,6 +3765,9 @@ interface EffectReceiver {
     base_effect?: Effect;
     uses_beacon_effects?: boolean;
     uses_module_effects?: boolean;
+    /**
+     * Controls whether {@link LuaSurface::global_effect | runtime:LuaSurface::global_effect} affects this receiver.
+     */
     uses_surface_effects?: boolean;
 }
 /**
@@ -4488,8 +4498,6 @@ type FluidAmount = double;
  * Used to set the fluid amount an entity can hold, as well as the connection points for pipes leading into and out of the entity.
  *
  * Entities can have multiple fluidboxes. These can be part of a {@link FluidEnergySource | prototype:FluidEnergySource}, or be specified directly in the entity prototype.
- *
- * A fluidbox can store only one type of fluid at a time. However, a fluid system (ie. multiple connected fluid boxes) can contain multiple different fluids, see {@link Fluid mixing | https://wiki.factorio.com/Fluid_system#Fluid_mixing}.
  * @example ```
 fluid_box =
 {
@@ -4631,6 +4639,10 @@ interface FluidEnergySource extends BaseEnergySource {
     smoke?: SmokeSource[];
     type: 'fluid';
 }
+type FluidFlowDirection = 'input-output' | 'input' | /**
+ * ,
+ */
+'output';
 /**
  * The name of a {@link FluidPrototype | prototype:FluidPrototype}.
  * @example ```
@@ -5030,6 +5042,9 @@ interface GigaCargoHatchDefinition {
      */
     opening_sound?: InterruptibleSound;
 }
+/**
+ * Note that when any technology prototype changes (regardless of which mod it belongs to), the game re-applies all researched technology effects, including `"give-item"` modifiers. This means that players will receive the item again, even if they already received it previously. This can be undesirable.
+ */
 interface GiveItemModifier extends BaseModifier {
     count?: ItemCountType;
     item: ItemID;
@@ -5801,10 +5816,28 @@ interface LightningPriorityRule extends LightningRuleBaseBase {
 interface LightningProperties {
     exemption_rules: LightningRuleBase[];
     /**
+     * Must be in range [0,1].
+     */
+    lightning_multiplier_at_day?: double;
+    /**
+     * Must be in range [0,1].
+     */
+    lightning_multiplier_at_night?: double;
+    /**
      * Cannot be an empty array. Names of {@link lightning entities | prototype:LightningPrototype}.
      */
     lightning_types: EntityID[];
+    /**
+     * Icon to render on top of entities that are endangered by lightning. When not provided, a {@link UtilitySprites::lightning_warning_icon | prototype:UtilitySprites::lightning_warning_icon} will be used instead.
+     */
+    lightning_warning_icon?: Sprite;
     lightnings_per_chunk_per_tick: double;
+    /**
+     * When set, value of that surface property will be used as an additional multiplier to the lightning frequency.
+     *
+     * Value of that surface property is divided by {@link default_value | prototype:SurfacePropertyPrototype::default_value} which means a default value must be positive (cannot be 0). When surface property has value at default, then this additional multiplier has value of 1.
+     */
+    multiplier_surface_property?: SurfacePropertyID;
     priority_rules: LightningPriorityRule[];
     search_radius: double;
 }
@@ -5868,7 +5901,10 @@ interface LinkedBeltStructure {
 /**
  * The internal name of a game control (key binding).
  */
-type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-technology' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music';
+type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-technology' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music' | /**
+ * Indicates no linked game control.
+ */
+'';
 interface ListBoxStyleSpecification extends BaseStyleSpecification {
     item_style?: ButtonStyleSpecification;
     scroll_pane_style?: ScrollPaneStyleSpecification;
@@ -5958,9 +5994,9 @@ interface MainSound {
     /**
      * Unused when {@link WorkingSound::persistent | prototype:WorkingSound::persistent} is `true`.
      */
-    match_progress_to_activity?: bool;
-    match_speed_to_activity?: bool;
-    match_volume_to_activity?: bool;
+    match_progress_to_activity?: boolean;
+    match_speed_to_activity?: boolean;
+    match_volume_to_activity?: boolean;
     /**
      * Array of {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name}s, individual names cannot be empty.
      *
@@ -7050,7 +7086,7 @@ interface PipeConnectionDefinition {
     /**
      * Allowed direction of fluid flow at this connection. Pipeline entities (`pipe`, `pipe-to-ground`, and `storage-tank`) do not support this property.
      */
-    flow_direction?: 'input-output' | 'input' | 'output';
+    flow_direction?: FluidFlowDirection;
     /**
      * Expected to be unique inside of a single entity. Used to uniquely identify where a linked connection should connect to.
      *
@@ -7684,7 +7720,6 @@ PodAnimationProcessionLayer;
  * The name of an {@link ProcessionLayerInheritanceGroup | prototype:ProcessionLayerInheritanceGroup}.
  */
 type ProcessionLayerInheritanceGroupID = string;
-type ProcessionLayerWithTime = ProcessionLayer;
 /**
  * Lists arrivals and departures available for travel to a given surface.
  */
@@ -8190,7 +8225,9 @@ type RangedValue = [
     float
 ] | float;
 /**
- * Specified by a {@link float | prototype:float} between 0 and 1, including 0 and excluding 1.
+ * The smooth orientation. It is a `float` in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise.
+ *
+ * This means a value of `0` indicates "north", a value of `0.5` indicates "south". For example then, a value of `0.625` would indicate "south-west", and a value of `0.875` would indicate "north-west".
  */
 type RealOrientation = float;
 /**
@@ -8909,7 +8946,7 @@ interface SimulationDefinition {
      */
     length?: uint32;
     /**
-     * An array of mods that will be run in this simulation if they are present and enabled.
+     * An array of mods whose runtime scripts will be loaded for this simulation, if they are present and enabled.
      */
     mods?: string[];
     mute_alert_sounds?: boolean;
@@ -8951,7 +8988,7 @@ interface SingleGraphicLayerProcessionBezierControlPoint {
     /**
      * the frame of the pod animation played. Used only when 'animation_driven_by_curve' is enabled.
      */
-    frame: float;
+    frame?: float;
     /**
      * `opacity` and `opacity_t` interpolate a double smoothly over time.
      */
@@ -9014,21 +9051,6 @@ interface SingleGraphicProcessionLayer {
      * Swaps the order of sprite shift and rotation.
      */
     compensated_pivot?: boolean;
-    /**
-     * Default values if unspecified:
-     *
-     * - opacity : 1.0
-     *
-     * - tint : {1.0, 1.0, 1.0, 1.0}
-     *
-     * - scale : 1.0
-     *
-     * - rotation : 0.0
-     *
-     * - shift : {0.0, 0.0}
-     *
-     * - frame : 0.0
-     */
     frames: SingleGraphicLayerProcessionBezierControlPoint[];
     graphic: ProcessionGraphic;
     is_passenger_only?: boolean;
@@ -9188,7 +9210,7 @@ type Sound = {
      * Must be `>= 0`.
      */
     volume?: float;
-} | SoundDefinition[];
+} | SoundDefinition | SoundDefinition[];
 interface SoundAccent {
     frame?: uint16;
     /**
@@ -12107,6 +12129,19 @@ interface UseRailPlannerTipTrigger extends CountBasedTipTrigger {
     type: 'use-rail-planner';
 }
 /**
+ * Defines the mode of operation for a {@link ValvePrototype | prototype:ValvePrototype}.
+ */
+type ValveMode = /**
+ * Fluid will flow if input level > output level.
+ */
+'one-way' | /**
+ * Fluid will flow if input level > {@link ValvePrototype::threshold | prototype:ValvePrototype::threshold} and input level > output level.
+ */
+'overflow' | /**
+ * Fluid will flow if output level < {@link ValvePrototype::threshold | prototype:ValvePrototype::threshold} and input level > output level.
+ */
+'top-up';
+/**
  * Defines how are individual samples selected and played after each other.
  */
 type VariableAmbientSoundCompositionMode = /**
@@ -12643,7 +12678,7 @@ type WorkingSound = {
      *
      * Unused when `persistent` is `true`.
      */
-    extra_sounds_ignore_limit?: bool;
+    extra_sounds_ignore_limit?: boolean;
     /**
      * The sound to be played when the entity is idle. Might not work with all entities that use working_sound.
      *
@@ -12667,12 +12702,12 @@ type WorkingSound = {
     /**
      * When `true`, working sounds for all entities of the same prototype are combined into one.
      */
-    persistent?: bool;
+    persistent?: boolean;
     /**
      * Unused when `persistent` is `true`.
      */
     sound_accents?: SoundAccent | SoundAccent[];
-    use_doppler_shift?: bool;
+    use_doppler_shift?: boolean;
 } | Sound;
 /**
  * Used by crafting machines to display different graphics when the machine is running.
@@ -12836,34 +12871,44 @@ type double = number;
 type float = number;
 /**
  * 16 bit signed integer. Ranges from `-32 768` to `32 767`, or `[-2^15, 2^15-1]`.
+ *
+ * Decimal numbers are automatically truncated when used in place of `int16`.
  */
 type int16 = number;
 /**
  * 32 bit signed integer. Ranges from `-2 147 483 648` to `2 147 483 647`, or `[-2^31, 2^31-1]`.
+ *
+ * Decimal numbers are automatically truncated when used in place of `int32`.
  */
 type int32 = number;
 /**
- * 64 bit signed integer.
- */
-type int64 = number;
-/**
  * 8 bit signed integer. Ranges from `-128` to `127`, or `[-2^7, 2^7-1]`.
+ *
+ * Decimal numbers are automatically truncated when used in place of `int8`.
  */
 type int8 = number;
 /**
  * 16 bit unsigned integer. Ranges from `0` to `65 535`, or `[0, 2^16-1]`.
+ *
+ * Decimal numbers are automatically truncated when used in place of `uint16`.
  */
 type uint16 = number;
 /**
  * 32 bit unsigned integer. Ranges from `0` to `4 294 967 295`, or `[0, 2^32-1]`.
+ *
+ * Decimal numbers are automatically truncated when used in place of `uint32`.
  */
 type uint32 = number;
 /**
- * 64 bit unsigned integer.
+ * 64 bit unsigned integer. Ranges from `0` to `18 446 744 073 709 551 615`, or `[0, 2^64-1]`.
+ *
+ * Decimal numbers are automatically truncated when used in place of `uint64`.
  */
 type uint64 = number;
 /**
  * 8 bit unsigned integer. Ranges from `0` to `255`, or `[0, 2^8-1]`.
+ *
+ * Decimal numbers are automatically truncated when used in place of `uint8`.
  */
 type uint8 = number;
 

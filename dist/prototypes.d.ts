@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.47
+// Factorio version 2.0.49
 // API version 6
 
 declare namespace prototype {
@@ -127,7 +127,10 @@ interface AchievementPrototype extends Prototype {
     steam_stats_name?: string;
 }
 interface AchievementPrototypeWithCondition extends AchievementPrototype {
-    objective_condition: 'game-finished' | 'rocket-launched' | 'late-research';
+    /**
+     * The condition that needs to be met to receive the achievement. Required for `"complete-objective-achievement"`, `"dont-build-entity-achievement"`, and `"dont-craft-manually-achievement"`. Not allowed for `"dont-kill-manually-achievement"` and `"dont-research-before-researching-achievement"`. Only allowed for `"dont-use-entity-in-energy-production-achievement"` if `"last_hour_only"` is `false`.
+     */
+    objective_condition?: 'game-finished' | 'rocket-launched' | 'late-research';
 }
 /**
  * Used by {@link discharge defense | https://wiki.factorio.com/Discharge_defense} and {@link personal laser defense | https://wiki.factorio.com/Personal_laser_defense}.
@@ -142,6 +145,10 @@ interface ActiveDefenseEquipmentPrototype extends EquipmentPrototype {
 interface ActiveTriggerPrototype extends Prototype {
 }
 interface AgriculturalTowerPrototype extends EntityWithOwnerPrototype {
+    /**
+     * When missing, all items with {@link plant result | prototype:ItemPrototype::plant_result} will be accepted. When provided, only items on this list that have plant result will be accepted.
+     */
+    accepted_seeds?: ItemID[];
     arm_extending_sound?: InterruptibleSound;
     arm_extending_sound_source?: string;
     central_orienting_sound?: InterruptibleSound;
@@ -152,10 +159,16 @@ interface AgriculturalTowerPrototype extends EntityWithOwnerPrototype {
      */
     circuit_wire_max_distance?: double;
     crane: AgriculturalCraneProperties;
+    /**
+     * The amount of energy this agricultural tower uses while the crane is moving.
+     */
     crane_energy_usage: Energy;
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
     energy_source: EnergySource;
+    /**
+     * The amount of energy this agricultural tower uses for each planted or harvested {@link plant | prototype:PlantPrototype}.
+     */
     energy_usage: Energy;
     graphics_set?: CraftingMachineGraphicsSet;
     grappler_extending_sound?: InterruptibleSound;
@@ -163,10 +176,14 @@ interface AgriculturalTowerPrototype extends EntityWithOwnerPrototype {
     grappler_orienting_sound?: InterruptibleSound;
     grappler_orienting_sound_source?: string;
     /**
+     * The minimum radius of empty space a {@link plant | prototype:PlantPrototype} requires around it to be planted.
+     *
      * Must be >= 0 and <= growth_grid_tile_size / 2
      */
     growth_area_radius?: double;
     /**
+     * The size of one grid tile a {@link plant | prototype:PlantPrototype} is planted into.
+     *
      * Must be positive.
      */
     growth_grid_tile_size?: uint32;
@@ -177,14 +194,22 @@ interface AgriculturalTowerPrototype extends EntityWithOwnerPrototype {
     planting_procedure_points?: Vector3D[];
     planting_sound?: Sound;
     /**
+     * The radius represents {@link grid tiles | prototype:AgriculturalTowerPrototype::growth_grid_tile_size} which are created around the agricultural tower from its {@link collision box | prototype:EntityPrototype::collision_box}.
+     *
      * Must be positive.
      */
     radius: double;
     radius_visualisation_picture?: Sprite;
     /**
+     * The maximum offset from the grid tile center which will be applied to the planting spot selected by this agricultural tower.
+     *
      * Must be >= 0 and < 1.
      */
     random_growth_offset?: double;
+    /**
+     * Whether the agricultural tower will start from a random grid tile when given a planting task.
+     */
+    randomize_planting_tile?: boolean;
 }
 /**
  * A type of pollution that can spread throughout the chunks of a map.
@@ -2735,7 +2760,13 @@ interface DontUseEntityInEnergyProductionAchievementPrototype extends Achievemen
     ```
      */
     included?: EntityID | EntityID[];
+    /**
+     * If `true`, the achievements will only be checked for the last hour of the game, independently of finishing the game.
+     */
     last_hour_only?: boolean;
+    /**
+     * The minimum amount of energy that needs to be produced by the allowed entities to trigger the achievement.
+     */
     minimum_energy_produced?: Energy;
 }
 /**
@@ -6614,6 +6645,7 @@ interface RecipeCategory extends Prototype {
 ```
  */
 interface RecipePrototype extends Prototype {
+    additional_categories?: RecipeCategoryID[];
     /**
      * Whether the recipe can be used as an intermediate recipe in hand-crafting.
      */
@@ -6690,6 +6722,9 @@ interface RecipePrototype extends Prototype {
      * Hides the recipe from the player's crafting screen. The recipe will still show up for selection in machines.
      */
     hide_from_player_crafting?: boolean;
+    /**
+     * If left unset, this property will be determined automatically: If the recipe is not `hidden`, and no item, fluid, or virtual signal has the same icon as this recipe, this property will be set to `false`. It'll be `true` otherwise.
+     */
     hide_from_signal_gui?: boolean;
     /**
      * Hides the recipe from item/fluid production statistics.
@@ -7965,6 +8000,8 @@ interface SolarPanelPrototype extends EntityWithOwnerPrototype {
      * Overlay has to be empty or have same number of variations as `picture`.
      */
     overlay?: SpriteVariations;
+    performance_at_day?: double;
+    performance_at_night?: double;
     /**
      * The picture displayed for this solar panel.
      */
@@ -7973,6 +8010,10 @@ interface SolarPanelPrototype extends EntityWithOwnerPrototype {
      * The maximum amount of power this solar panel can produce.
      */
     production: Energy;
+    /**
+     * Surface property must have a positive {@link default value | prototype:SurfacePropertyPrototype::default_value}. When {@link SolarPanelPrototype::solar_coefficient_property | prototype:SolarPanelPrototype::solar_coefficient_property} is set to point at a different surface property than "solar-power", then {@link LuaSurface::solar_power_multiplier | runtime:LuaSurface::solar_power_multiplier} and {@link SpaceLocationPrototype::solar_power_in_space | prototype:SpaceLocationPrototype::solar_power_in_space} will be ignored as the solar panel power output will be only affected by value of this surface property set on the surface using {@link PlanetPrototype::surface_properties | prototype:PlanetPrototype::surface_properties} or {@link LuaSurface::set_property | runtime:LuaSurface::set_property}.
+     */
+    solar_coefficient_property?: SurfacePropertyID;
 }
 /**
  * Specifies a sound that can be used with {@link SoundPath | runtime:SoundPath} at runtime.
@@ -10632,6 +10673,26 @@ interface UtilitySprites extends PrototypeBase {
     worker_robot_storage_modifier_icon: Sprite;
 }
 /**
+ * A passive device that provides limited control of fluid flow between pipelines.
+ */
+interface ValvePrototype extends EntityWithOwnerPrototype {
+    animations?: Animation4Way;
+    /**
+     * The max flow rate through the valve per tick.
+     */
+    flow_rate: FluidAmount;
+    /**
+     * Must have at least one `"output"` {@link FluidFlowDirection | prototype:FluidFlowDirection} and at least one `input-output` {@link FluidFlowDirection | prototype:FluidFlowDirection}.
+     */
+    fluid_box: FluidBox;
+    frozen_patch?: Sprite4Way;
+    mode: ValveMode;
+    /**
+     * Ignored if {@link ValvePrototype::mode | prototype:ValvePrototype::mode} is `"one-way"`. Must be between `0` and `1` inclusive.
+     */
+    threshold?: float;
+}
+/**
  * Abstract base of all vehicles.
  */
 interface VehiclePrototype extends EntityWithOwnerPrototype {
@@ -11243,6 +11304,8 @@ type dataExtendType = ({
 } & UtilitySounds) | ({
     type: 'utility-sprites';
 } & UtilitySprites) | ({
+    type: 'valve';
+} & ValvePrototype) | ({
     type: 'virtual-signal';
 } & VirtualSignalPrototype) | ({
     type: 'wall';
