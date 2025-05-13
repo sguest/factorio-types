@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.47
+// Factorio version 2.0.49
 // API version 6
 
 declare namespace runtime {
@@ -4714,7 +4714,7 @@ interface LuaCommandable {
      */
     readonly is_entity: boolean;
     /**
-     * Whether this unit group is controlled by a script or by the game engine. This can be changed using {@link LuaCommandable::set_autonomous | runtime:LuaCommandable::set_autonomous}.
+     * Whether this unit group is controlled by a script or by the game engine. This can be changed using {@link LuaCommandable::set_autonomous | runtime:LuaCommandable::set_autonomous}. Units created by {@link LuaSurface::create_unit_group | runtime:LuaSurface::create_unit_group} are considered script-driven.
      */
     readonly is_script_driven: boolean;
     /**
@@ -4899,6 +4899,10 @@ interface LuaControl {
      * @returns The inventory or `nil` if none with the given index was found.
      */
     get_inventory(this: void, inventory: defines.inventory): LuaInventory | null;
+    /**
+     * Get name of inventory. Names match keys of {@link defines.inventory | runtime:defines.inventory}.
+     */
+    get_inventory_name(this: void, inventory: defines.inventory): string | null;
     /**
      * Get the number of all or some items in this entity.
      * @param item The item to count. If not specified, count all items.
@@ -5958,6 +5962,15 @@ interface LuaEntity extends LuaControl {
      */
     get_fluid_count(this: void, fluid?: string): double;
     /**
+     * Checks what is expected fluid to be produced from the offshore pump's source tile. It accounts for visible tile, hidden tile and double hidden tile. It ignores currently set fluid box filter.
+     * @returns Name of fluid that should be produced by this offshore pump based on existing tiles.
+     */
+    get_fluid_source_fluid(this: void): string | null;
+    /**
+     * Gives TilePosition of a tile which this offshore pump uses to check what fluid should be produced.
+     */
+    get_fluid_source_tile(this: void): TilePosition;
+    /**
      * The fuel inventory for this entity or `nil` if this entity doesn't have a fuel inventory.
      */
     get_fuel_inventory(this: void): LuaInventory | null;
@@ -6239,9 +6252,10 @@ interface LuaEntity extends LuaControl {
      */
     is_registered_for_upgrade(this: void): boolean;
     /**
+     * @param character If provided, must be of `character` type.
      * @returns `true` if the rocket was successfully launched. Return value of `false` means the silo is not ready for launch.
      */
-    launch_rocket(this: void, destination?: CargoDestination): boolean;
+    launch_rocket(this: void, destination?: CargoDestination, character?: LuaEntity): boolean;
     /**
      * Mines this entity.
      *
@@ -6503,11 +6517,18 @@ interface LuaEntity extends LuaControl {
      *
      * The player will be automatically disassociated when a controller is set on the character. Also, all characters associated to a player will be logged off when the player logs off in multiplayer.
      *
-     * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
-     *
      * A character associated with a player is not directly controlled by any player.
      */
-    associated_player?: LuaPlayer | PlayerIdentification;
+    readonly associated_player?: LuaPlayer;
+    /**
+     * The player this character is associated with, if any. Set to `nil` to clear.
+     *
+     * The player will be automatically disassociated when a controller is set on the character. Also, all characters associated to a player will be logged off when the player logs off in multiplayer.
+     *
+     * A character associated with a player is not directly controlled by any player.
+     * @customName associated_player
+     */
+    associated_player_write?: PlayerIdentification;
     /**
      * The cargo pod attached to this rocket silo rocket if any.
      */
@@ -6571,6 +6592,10 @@ interface LuaEntity extends LuaControl {
      * The burner energy source for this entity, if any.
      */
     readonly burner?: LuaBurner;
+    /**
+     * The space platform hub or cargo landing pad this cargo bay is connected to if any.
+     */
+    readonly cargo_bay_connection_owner?: LuaEntity;
     /**
      * The cargo hatches owned by this entity if any.
      */
@@ -6957,10 +6982,13 @@ interface LuaEntity extends LuaControl {
     kills: uint;
     /**
      * The last player that changed any setting on this entity. This includes building the entity, changing its color, or configuring its circuit network. `nil` if the last user is not part of the save anymore.
-     *
-     * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
      */
-    last_user?: LuaPlayer | PlayerIdentification;
+    readonly last_user?: LuaPlayer;
+    /**
+     * The last player that changed any setting on this entity. This includes building the entity, changing its color, or configuring its circuit network. `nil` if the last user is not part of the save anymore.
+     * @customName last_user
+     */
+    last_user_write?: PlayerIdentification;
     /**
      * The link ID this linked container is using.
      */
@@ -7076,6 +7104,10 @@ interface LuaEntity extends LuaControl {
      * The smooth orientation of this entity.
      */
     orientation: RealOrientation;
+    /**
+     * Plants registered by this agricultural tower.
+     */
+    readonly owned_plants: LuaEntity[];
     parameters: ProgrammableSpeakerParameters;
     /**
      * Where the inserter will pick up items from.
@@ -7179,10 +7211,13 @@ interface LuaEntity extends LuaControl {
     remove_unfiltered_items: boolean;
     /**
      * The player that this `simple-entity-with-owner`, `simple-entity-with-force`, or `highlight-box` is visible to. `nil` when this entity is rendered for all players.
-     *
-     * Reading this property will return a {@link LuaPlayer | runtime:LuaPlayer}, while {@link PlayerIdentification | runtime:PlayerIdentification} can be used when writing.
      */
-    render_player?: LuaPlayer | PlayerIdentification;
+    readonly render_player?: LuaPlayer;
+    /**
+     * The player that this `simple-entity-with-owner`, `simple-entity-with-force`, or `highlight-box` is visible to. `nil` when this entity is rendered for all players.
+     * @customName render_player
+     */
+    render_player_write?: PlayerIdentification;
     /**
      * The forces that this `simple-entity-with-owner` or `simple-entity-with-force` is visible to. `nil` or an empty array when this entity is rendered for all forces.
      *
@@ -7439,9 +7474,21 @@ interface LuaEntity extends LuaControl {
      */
     use_filters: boolean;
     /**
+     * When true, the rocket silo will request items for space platforms in orbit.
+     *
+     * Setting the value will have no effect when the silo doesn't support logistics.
+     */
+    use_transitional_requests: boolean;
+    /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean;
+    /**
+     * The threshold override of this valve, or `nil` if an override is not defined.
+     *
+     * If no override is defined, the threshold is taken from {@link LuaEntityPrototype::valve_threshold | runtime:LuaEntityPrototype::valve_threshold}.
+     */
+    valve_threshold_override?: float;
     /**
      * Read when this spidertron auto-targets enemies
      */
@@ -7520,6 +7567,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     get_supply_area_distance(this: void, quality?: QualityID): double;
     /**
+     * The maximum flow rate through this valve.
+     */
+    get_valve_flow_rate(this: void, quality?: QualityID): double;
+    /**
      * Test whether this entity prototype has a certain flag set.
      * @param flag The flag to test.
      * @returns `true` if this prototype has the given flag set.
@@ -7529,6 +7580,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * A table of pollutions amounts that has to be absorbed by the unit's spawner before the unit will leave the spawner and attack the source of the pollution, indexed by the name of each absorbed pollution type.
      */
     readonly absorptions_to_join_attack?: Record<string, float>;
+    readonly accepted_seeds?: string[];
     /**
      * The active energy usage of this rocket silo or combinator prototype.
      */
@@ -7541,6 +7593,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * Whether this unit prototype is affected by tile walking speed modifiers.
      */
     readonly affected_by_tiles?: boolean;
+    readonly agricultural_tower_radius?: double;
     /**
      * The air resistance of this rolling stock prototype.
      */
@@ -7732,6 +7785,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly crafting_categories?: Record<string, true>;
     /**
+     * The crane energy usage of this agricultural tower prototype.
+     */
+    readonly crane_energy_usage?: double;
+    /**
      * If this prototype will attempt to create a ghost of itself on death.
      *
      * If this is false then a ghost will never be made, if it's true a ghost may be made.
@@ -7884,6 +7941,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The fluid energy source prototype this entity uses, if any.
      */
     readonly fluid_energy_source_prototype?: LuaFluidEnergySourcePrototype;
+    readonly fluid_source_offset?: Vector;
     /**
      * The fluid usage of this generator prototype. This property is deprecated in favor of {@link LuaEntityPrototype::get_fluid_usage_per_tick | runtime:LuaEntityPrototype::get_fluid_usage_per_tick} and should not be used.
      */
@@ -7912,6 +7970,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The equipment grid prototype for this entity, if any.
      */
     readonly grid_prototype?: LuaEquipmentGridPrototype;
+    readonly growth_area_radius?: double;
     readonly growth_grid_tile_size?: uint;
     readonly growth_ticks?: uint;
     /**
@@ -8055,6 +8114,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The lamp energy usage of this rocket silo prototype.
      */
     readonly lamp_energy_usage?: double;
+    readonly launch_to_space_platforms?: boolean;
     /**
      * The rocket launch delay for this rocket silo prototype.
      */
@@ -8342,6 +8402,9 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The cursor size used when shooting at this entity.
      */
     readonly shooting_cursor_size: float;
+    readonly solar_panel_performance_at_day: double;
+    readonly solar_panel_performance_at_night: double;
+    readonly solar_panel_solar_coefficient_property: LuaSurfacePropertyPrototype;
     /**
      * The spawning cooldown for this enemy spawner prototype.
      */
@@ -8456,6 +8519,14 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean;
+    /**
+     * The mode of operation of this valve.
+     */
+    readonly valve_mode?: ValveMode;
+    /**
+     * The default threshold of this valve.
+     */
+    readonly valve_threshold?: float;
     readonly vector_to_place_result?: Vector;
     /**
      * Vertical selection shift used by rolling stocks. It affects selection box vertical position but is also used to shift rolling stock graphics along the rails to fine tune train's look.
@@ -8513,7 +8584,7 @@ interface LuaEquipment {
      */
     readonly max_energy: double;
     /**
-     * Maximum shield value.
+     * Maximum shield value. `0` if this equipment doesn't have a shield.
      */
     readonly max_shield: double;
     /**
@@ -8549,9 +8620,9 @@ interface LuaEquipment {
         height: uint;
     };
     /**
-     * Current shield value of the equipment.
+     * Current shield value of the equipment. Can't be set higher than {@link LuaEquipment::max_shield | runtime:LuaEquipment::max_shield}.
      *
-     * Can't be set higher than {@link LuaEquipment::max_shield | runtime:LuaEquipment::max_shield}.
+     * Trying to write this value on non-shield equipment will throw an error.
      */
     shield: double;
     /**
@@ -8997,7 +9068,7 @@ interface LuaFluidBox {
      */
     flush(this: void, index: uint, fluid?: FluidID): Record<string, float>;
     /**
-     * The capacity of the given fluidbox index.
+     * The capacity of the given fluidbox segment.
      */
     get_capacity(this: void, index: uint): double;
     /**
@@ -9012,6 +9083,8 @@ interface LuaFluidBox {
     get_filter(this: void, index: uint): FluidBoxFilter | null;
     /**
      * Gets counts of all fluids in the fluid segment. May return `nil` for fluid wagon, fluid turret's internal buffer, or a fluidbox which does not belong to a fluid segment.
+     *
+     * Note that this method only ever returns one fluid, since fluids can't be mixed anymore.
      * @returns The counts, indexed by fluid name.
      */
     get_fluid_segment_contents(this: void, index: uint): Record<string, uint> | null;
@@ -10356,10 +10429,10 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
      * @example ```
     -- Tell an entity to be active (for example a lamp to be lit) when it receives a
     -- circuit signal of more than 4 chain signals.
-    a_behavior.circuit_condition = {condition={
+    a_behavior.circuit_condition = {
       comparator=">",
       first_signal={type="item", name="rail-chain-signal"},
-      constant=4}
+      constant=4
     }
     ```
      */
@@ -10381,10 +10454,10 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
      * @example ```
     -- Tell an entity to be active (for example a lamp to be lit) when the logistics
     -- network it's connected to has more than four chain signals.
-    a_behavior.logistic_condition = {condition={
+    a_behavior.logistic_condition = {
       comparator=">",
       first_signal={type="item", name="rail-chain-signal"},
-      constant=4}
+      constant=4
     }
     ```
      */
@@ -10889,6 +10962,15 @@ interface LuaGuiElement {
      * The position this camera or minimap is focused on, if any.
      */
     position: MapPosition;
+    /**
+     * The quality to be shown in the bottom left corner of this sprite-button, or `nil` to show nothing.
+     */
+    readonly quality?: LuaQualityPrototype;
+    /**
+     * The quality to be shown in the bottom left corner of this sprite-button, or `nil` to show nothing.
+     * @customName quality
+     */
+    quality_write?: QualityID;
     /**
      * Whether this element will raise {@link on_gui_hover | runtime:on_gui_hover} and {@link on_gui_leave | runtime:on_gui_leave}.
      */
@@ -11439,6 +11521,10 @@ interface LuaGuiElementAddParamsSpriteButton extends BaseLuaGuiElementAddParams 
      */
     'number'?: double;
     /**
+     * The name of the quality shown on the button.
+     */
+    'quality'?: string;
+    /**
      * Formats small numbers as percentages. Defaults to `false`.
      */
     'show_percent_for_small_numbers'?: boolean;
@@ -11904,6 +11990,10 @@ interface LuaInventory {
      */
     readonly mod_owner?: string;
     /**
+     * Name of this inventory, if any. Names match keys of {@link defines.inventory | runtime:defines.inventory}.
+     */
+    readonly name?: string;
+    /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
@@ -12160,7 +12250,7 @@ interface LuaItemCommon {
      *
      * In contrast to {@link LuaItemCommon::get_mapper | runtime:LuaItemCommon::get_mapper}, indices past the upgrade item's current size are valid and expand the list of mappings accordingly, if within reasonable bounds.
      * @param index The index of the mapper to set.
-     * @param mapper The mapper to set or `nil`
+     * @param mapper The mapper to set. Set `nil` to clear the mapper.
      */
     set_mapper(this: void, index: uint, type: 'from' | 'to', mapper: UpgradeMapperSource | UpgradeMapperDestination | nil): void;
     /**
@@ -14943,9 +15033,18 @@ interface LuaReactorControlBehavior extends LuaControlBehavior {
  */
 interface LuaRecipe {
     /**
+     * Checks if recipe has given category
+     * @returns `true` if recipe has this category.
+     */
+    has_category(this: void, category: RecipeCategoryID): boolean;
+    /**
      * Reload the recipe from the prototype.
      */
     reload(this: void): void;
+    /**
+     * Additional categories of this recipe.
+     */
+    readonly additional_categories: string[];
     /**
      * Category of the recipe.
      */
@@ -15041,6 +15140,15 @@ interface LuaRecipeCategoryPrototype extends LuaPrototypeBase {
  * A crafting recipe prototype.
  */
 interface LuaRecipePrototype extends LuaPrototypeBase {
+    /**
+     * Checks if recipe has given category
+     * @returns `true` if recipe has this category.
+     */
+    has_category(this: void, category: RecipeCategoryID): boolean;
+    /**
+     * Additional categories of the recipe.
+     */
+    readonly additional_categories: string[];
     /**
      * If this recipe is enabled for the purpose of intermediate hand-crafting.
      */
@@ -15305,9 +15413,8 @@ interface LuaRecord {
      *
      * In contrast to {@link LuaRecord::set_mapper | runtime:LuaRecord::set_mapper}, indices past the upgrade item's current size are considered to be out of bounds.
      * @param index The index of the mapper to read.
-     * @param type `"from"` or `"to"`.
      */
-    get_mapper(this: void, index: uint, type: string): UpgradeMapperSource | UpgradeMapperDestination;
+    get_mapper(this: void, index: uint, type: 'from' | 'to'): UpgradeMapperSource | UpgradeMapperDestination;
     /**
      * Gets the tile filter at the given index for this deconstruction planner.
      */
@@ -15349,10 +15456,9 @@ interface LuaRecord {
      *
      * In contrast to {@link LuaRecord::get_mapper | runtime:LuaRecord::get_mapper}, indices past the upgrade item's current size are valid and expand the list of mappings accordingly, if within reasonable bounds.
      * @param index The index of the mapper to set.
-     * @param type `"from"` or `"to"`.
-     * @param mapper The mapper to set or `nil`
+     * @param mapper The mapper to set. Set `nil` to clear the mapper.
      */
-    set_mapper(this: void, index: uint, type: string, mapper: UpgradeMapperSource | UpgradeMapperDestination): void;
+    set_mapper(this: void, index: uint, type: 'from' | 'to', mapper: UpgradeMapperSource | UpgradeMapperDestination | nil): void;
     /**
      * Sets the tile filter at the given index for this deconstruction planner.
      * @param filter Setting to nil erases the filter.
@@ -16372,6 +16478,7 @@ interface LuaSimulation {
      */
     deactivate_rail_planner(this: void): void;
     /**
+     * @param table.slot_index This index is 0-based, unlike other inventory indices.
      * @param table.inventory Defaults to `"character"`.
      * @returns Position of the GUI slot on the screen, if successfully found.
      */
@@ -16514,6 +16621,10 @@ interface LuaSpacePlatform {
      */
     cancel_deletion(this: void): void;
     /**
+     * Removes all ejected items from this space platform.
+     */
+    clear_ejected_items(this: void): void;
+    /**
      * Creates the given asteroid chunks on this platform.
      */
     create_asteroid_chunks(this: void, asteroid_chunks: AsteroidChunk[]): void;
@@ -16541,6 +16652,13 @@ interface LuaSpacePlatform {
         limit?: uint;
         invert?: boolean;
     }): void;
+    /**
+     * Ejects an item into space on this space platform.
+     *
+     * If a LuaItemStack is provided, the actual item is ejected and removed from the source.
+     * @param movement When inserters drop items into space, the {@link InserterPrototype::insert_position | prototype:InserterPrototype::insert_position} rotated to the inserter direction is used.
+     */
+    eject_item(this: void, item: ItemStackIdentification, position: MapPosition, movement: Vector): void;
     /**
      * Find asteroid chunks of a given name in a given area.
      *
@@ -16576,6 +16694,10 @@ interface LuaSpacePlatform {
      * It is represented as a number in range `[0, 1]`, with 0 being {@link LuaSpaceConnectionPrototype::from | runtime:LuaSpaceConnectionPrototype::from} and 1 being {@link LuaSpaceConnectionPrototype::to | runtime:LuaSpaceConnectionPrototype::to}.
      */
     distance?: double;
+    /**
+     * All items that have been thrown overboard.
+     */
+    readonly ejected_items: EjectedItem[];
     /**
      * The force of this space platform.
      */
@@ -17111,6 +17233,28 @@ interface LuaSurface {
         check_collision?: boolean;
         decoratives: Decorative[];
     }): void;
+    /**
+     * This method only works when used in simulations.
+     *
+     * Places entities via the given blueprint string. These entities are force-built.
+     * @param table.string The blueprint string to import.
+     * @param table.position The position to place the blueprint at.
+     * @param table.force The force to place the blueprint for. Defaults to the player force.
+     * @param table.direction The direction to place the blueprint in. Defaults to north.
+     * @param table.flip_horizontal Whether to flip the blueprint horizontally. Defaults to `false`.
+     * @param table.flip_vertical Whether to flip the blueprint vertically. Defaults to `false`.
+     * @param table.by_player The player that placed the blueprint. Defaults to `nil`.
+     * @returns If the blueprint string was invalid, `1` is returned. Otherwise, `nil` is returned.
+     */
+    create_entities_from_blueprint_string(this: void, table: {
+        string: string;
+        position: MapPosition;
+        force?: ForceID;
+        direction?: defines.direction;
+        flip_horizontal?: boolean;
+        flip_vertical?: boolean;
+        by_player?: PlayerIdentification;
+    }): int | null;
     /**
      * Create an entity on this surface.
      * @example ```
@@ -17652,6 +17796,14 @@ interface LuaSurface {
         unit_search_distance?: uint;
     }): uint;
     /**
+     * Set the pollution for a given position.
+     *
+     * Pollution changes by this are not included in pollution statistics and do not affect evolution factors (as opposed to {@link LuaSurface::pollute | runtime:LuaSurface::pollute}).
+     * @param position The position to set the chunk's pollution
+     * @param amount New amount of pollution to be set on the chunk. Must be >= 0.
+     */
+    set_pollution(this: void, position: MapPosition, amount: double): void;
+    /**
      * Sets the value of surface property on this surface.
      * @param property Property to change.
      * @param value The wanted value of the property.
@@ -17680,6 +17832,7 @@ interface LuaSurface {
      * @param table.allow_belts Whether items can be spilled onto belts. Defaults to `true`.
      * @param table.max_radius Max radius from the specified `position` to spill items.
      * @param table.use_start_position_on_failure Allow spilling items at `position` if no non-colliding position is found. Note: Setting to false might cause some items not to be spilled. Defaults to `true`.
+     * @param table.drop_full_stack If item on ground should be made out of an entire provided stack. Defaults to `false`.
      * @returns The created item-on-ground entities.
      */
     spill_item_stack(this: void, table: {
@@ -17690,6 +17843,7 @@ interface LuaSurface {
         allow_belts?: boolean;
         max_radius?: double;
         use_start_position_on_failure?: boolean;
+        drop_full_stack?: boolean;
     }): LuaEntity[];
     /**
      * Place an upgrade request.
@@ -17735,6 +17889,29 @@ interface LuaSurface {
      */
     daytime: double;
     /**
+     * Parameters of daytime. Equivalent as reading {@link dusk | runtime:LuaSurface::dusk}, {@link evening | runtime:LuaSurface::evening}, {@link morning | runtime:LuaSurface::morning} and {@link dawn | runtime:LuaSurface::dawn} at the same time.
+     *
+     * In order for a write to take place, a new table needs to be written in one go: changing individual members of the returned table has no effect as those are value copies.
+     */
+    daytime_parameters: {
+        /**
+         * Must be < evening.
+         */
+        dusk: double;
+        /**
+         * Must be > dusk and < morning.
+         */
+        evening: double;
+        /**
+         * Must be > evening and < dawn.
+         */
+        morning: double;
+        /**
+         * Must be > morning.
+         */
+        dawn: double;
+    };
+    /**
      * If this surface can be deleted.
      */
     readonly deletable: boolean;
@@ -17755,9 +17932,13 @@ interface LuaSurface {
      */
     generate_with_lab_tiles: boolean;
     /**
-     * Surface-wide effects applied to entities with effect receivers. May be `nil` if surface is not using surface-wide effect source.
+     * Surface-wide effects applied to entities with effect receivers. `nil` if this surface is not using surface-wide effect source.
      */
     global_effect?: ModuleEffects;
+    /**
+     * The global electric network statistics for this surface.
+     */
+    readonly global_electric_network_statistics?: LuaFlowStatistics;
     /**
      * Whether this surface currently has a global electric network.
      */
@@ -17817,6 +17998,10 @@ interface LuaSurface {
      * The type of pollutant enabled on the surface, or `nil` if no pollutant is enabled.
      */
     readonly pollutant_type?: LuaAirbornePollutantPrototype;
+    /**
+     * The pollution statistics for this surface.
+     */
+    readonly pollution_statistics: LuaFlowStatistics;
     /**
      * If clouds are shown on this surface. If false, clouds are never shown. If true the player must also have clouds enabled in graphics settings for them to be shown.
      */

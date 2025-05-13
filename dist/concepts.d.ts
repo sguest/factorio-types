@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.47
+// Factorio version 2.0.49
 // API version 6
 
 declare namespace runtime {
@@ -113,27 +113,36 @@ type Any = string | boolean | number | table | LuaObject;
  * Any basic type (string, number, boolean) or table.
  */
 type AnyBasic = string | boolean | number | table;
+type ArithmeticCombinatorParameterOperation = '*' | '/' | '+' | '-' | '%' | '^' | '<<' | '>>' | 'AND' | 'OR' | 'XOR';
 interface ArithmeticCombinatorParameters {
     /**
      * First signal to use in an operation. If not specified, the second argument will be the value of `first_constant`.
      */
     first_signal?: SignalID;
     /**
-     * Second signal to use in an operation. If not specified, the second argument will be the value of `second_constant`.
+     * Which circuit networks (red/green) to read `first_signal` from. Defaults to both.
      */
-    second_signal?: SignalID;
+    first_signal_networks?: CircuitNetworkSelection;
     /**
      * Constant to use as the first argument of the operation. Has no effect when `first_signal` is set. Defaults to `0`.
      */
     first_constant?: int;
     /**
+     * When not specified, defaults to `"*"`.
+     */
+    operation?: ArithmeticCombinatorParameterOperation;
+    /**
+     * Second signal to use in an operation. If not specified, the second argument will be the value of `second_constant`.
+     */
+    second_signal?: SignalID;
+    /**
+     * Which circuit networks (red/green) to read `second_signal` from. Defaults to both.
+     */
+    second_signal_networks?: CircuitNetworkSelection;
+    /**
      * Constant to use as the second argument of the operation. Has no effect when `second_signal` is set. Defaults to `0`.
      */
     second_constant?: int;
-    /**
-     * When not specified, defaults to `"*"`.
-     */
-    operation?: '*' | '/' | '+' | '-' | '%' | '^' | '<<' | '>>' | 'AND' | 'OR' | 'XOR';
     /**
      * Specifies the signal to output.
      */
@@ -434,10 +443,16 @@ interface BlueprintSchedule {
     interrupts?: BlueprintScheduleInterrupt[];
 }
 interface BlueprintScheduleInterrupt {
+    /**
+     * Defaults to an empty string.
+     */
     name?: string;
     conditions?: WaitCondition[];
     targets?: BlueprintScheduleRecord[];
-    inside_interrupt: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    inside_interrupt?: boolean;
 }
 interface BlueprintScheduleRecord {
     /**
@@ -499,13 +514,6 @@ type BoundingBox = {
     MapPosition,
     MapPosition
 ];
-/**
- * The name of a {@link LuaBurnerUsagePrototype | runtime:LuaBurnerUsagePrototype}.
- * @example ```
-"fuel"
-```
- */
-type BurnerUsageID = string;
 interface BaseCapsuleAction {
     type: 'throw' | 'equipment-remote' | 'use-on-self' | 'artillery-remote' | 'destroy-cliffs';
 }
@@ -632,7 +640,7 @@ interface CircuitCondition {
      */
     comparator?: ComparatorString;
     /**
-     * Defaults to blank
+     * Defaults to blank.
      */
     first_signal?: SignalID;
     /**
@@ -646,15 +654,36 @@ interface CircuitCondition {
 }
 interface CircuitConditionDefinition {
     /**
-     * TODOC CircuitConditionDefinition now extends CircuitCondition, all fields of CircuitCondition should be pasted here directly
+     * Specifies how the inputs should be compared. If not specified, defaults to `"<"`.
      */
-    condition: CircuitCondition;
+    comparator?: ComparatorString;
     /**
-     * Whether the condition is currently fulfilled
+     * Defaults to blank.
+     */
+    first_signal?: SignalID;
+    /**
+     * What to compare `first_signal` to. If not specified, `first_signal` will be compared to `constant`.
+     */
+    second_signal?: SignalID;
+    /**
+     * Constant to compare `first_signal` to. Has no effect when `second_signal` is set. When neither `second_signal` nor `constant` are specified, the effect is as though `constant` were specified with the value `0`.
+     */
+    constant?: int;
+    /**
+     * Whether the condition is currently fulfilled.
      */
     fulfilled?: boolean;
 }
-type CircuitNetworkSelection = table;
+interface CircuitNetworkSelection {
+    /**
+     * Defaults to `true`.
+     */
+    red?: boolean;
+    /**
+     * Defaults to `true`.
+     */
+    green?: boolean;
+}
 interface CircularParticleCreationSpecification {
     /**
      * Name of the {@link LuaEntityPrototype | runtime:LuaEntityPrototype}.
@@ -1167,8 +1196,50 @@ LuaDamagePrototype | /**
  * The prototype name.
  */
 string;
-type DeciderCombinatorCondition = table;
-type DeciderCombinatorOutput = table;
+interface DeciderCombinatorCondition {
+    /**
+     * Defaults to blank
+     */
+    first_signal?: SignalID;
+    /**
+     * Which circuit networks (red/green) to read `first_signal` from. Defaults to both.
+     */
+    first_signal_networks?: CircuitNetworkSelection;
+    /**
+     * What to compare `first_signal` to. If not specified, `first_signal` will be compared to `constant`.
+     */
+    second_signal?: SignalID;
+    /**
+     * Which circuit networks (red/green) to read `second_signal` from. Defaults to both.
+     */
+    second_signal_networks?: CircuitNetworkSelection;
+    /**
+     * Constant to compare `first_signal` to. Has no effect when `second_signal` is set. When neither `second_signal` nor `constant` are specified, the effect is as though `constant` were specified with the value `0`.
+     */
+    constant?: int;
+    /**
+     * Specifies how the inputs should be compared. If not specified, defaults to `"<"`.
+     */
+    comparator?: ComparatorString;
+    /**
+     * Either "or" (default) or "and". Tells how this condition is compared with the preceding conditions in the corresponding `conditions` array.
+     */
+    compare_type?: int;
+}
+interface DeciderCombinatorOutput {
+    /**
+     * Specifies a signal to output.
+     */
+    signal: SignalID;
+    /**
+     * Defaults to `true`. When `false`, will output a value of `1` for the given `output_signal`.
+     */
+    copy_count_from_input?: boolean;
+    /**
+     * Sets which input network to read the value of `signal` from if `copy_count_from_input` is `true`. Defaults to both.
+     */
+    networks?: CircuitNetworkSelection;
+}
 interface DeciderCombinatorParameters {
     /**
      * List of conditions.
@@ -1288,7 +1359,21 @@ interface EffectReceiver {
     base_effect: ModuleEffects;
     uses_module_effects: boolean;
     uses_beacon_effects: boolean;
+    /**
+     * Controls whether {@link LuaSurface::global_effect | runtime:LuaSurface::global_effect} affects this receiver.
+     */
     uses_surface_effects: boolean;
+}
+/**
+ * An item thrown overboard on a space platform.
+ */
+interface EjectedItem {
+    item: ItemWithQualityID;
+    position: MapPosition;
+    movement: Vector;
+    platform_speed_at_creation: double;
+    creation_tick: MapTick;
+    expiration_tick: MapTick;
 }
 interface ElemID {
     type: ElemType;
@@ -2535,7 +2620,7 @@ interface InventoryPosition {
      */
     inventory: defines.inventory;
     /**
-     * The stack index of the inventory to insert into.
+     * The stack index of the inventory to insert into. Uses 0-based indexing, in contrast to the 1-based indexing of most other inventory-related functions.
      */
     stack: ItemStackIndex;
     /**
@@ -3035,13 +3120,16 @@ LuaItemPrototype | /**
  * The prototype name. Normal quality will be used.
  */
 string | /**
- * A table of entity prototype and quality.
+ * A table of item prototype and quality.
  */
 ItemIDAndQualityIDPair;
 /**
  * The internal name of a game control (key binding).
  */
-type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-technology' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music';
+type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-technology' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music' | /**
+ * Indicates no linked game control.
+ */
+'';
 /**
  * Localised strings are a way to support translation of in-game text. It is an array where the first element is the key and the remaining elements are parameters that will be substituted for placeholders in the template designated by the key.
  *
@@ -5976,17 +6064,23 @@ interface RailLocation {
     direction: defines.direction;
     rail_layer: defines.rail_layer;
 }
-/**
- * A table containing the parameters required to raise a given game event. See the event being raised for what parameters are required.
- */
-type RaiseEventParameters = table;
 type RangeMode = 'center-to-center' | 'bounding-box-to-bounding-box' | 'center-to-bounding-box';
 /**
- * The smooth orientation. It is a {@link float | runtime:float} in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise. This means a value of `0` indicates "north", a value of `0.5` indicates "south".
+ * The smooth orientation. It is a `float` in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise.
  *
- * For example then, a value of `0.625` would indicate "south-west", and a value of `0.875` would indicate "north-west".
+ * This means a value of `0` indicates "north", a value of `0.5` indicates "south". For example then, a value of `0.625` would indicate "south-west", and a value of `0.875` would indicate "north-west".
  */
 type RealOrientation = float;
+/**
+ * A recipe category may be specified in one of two ways.
+ */
+type RecipeCategoryID = /**
+ * By recipe category prototype.
+ */
+LuaRecipeCategoryPrototype | /**
+ * By name of the recipe category prototype.
+ */
+string;
 /**
  * A recipe may be specified in one of three ways.
  */
@@ -6560,10 +6654,16 @@ interface RollingStockDrawData {
     height: float;
 }
 interface ScheduleInterrupt {
+    /**
+     * Defaults to an empty string.
+     */
     name?: string;
     conditions?: WaitCondition[];
     targets?: ScheduleRecord[];
-    inside_interrupt: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    inside_interrupt?: boolean;
 }
 interface ScheduleRecord {
     /**
@@ -6718,27 +6818,97 @@ type SelectionModeFlags = Record</**
  * Selects entities that are `tile-ghost`s.
  */
 'tile-ghost', true>;
-interface SelectorCombinatorParameters {
+type SelectorCombinatorParameterOperation = 'select' | 'count' | 'random' | 'quality-transfer' | 'rocket-capacity' | 'stack-size' | 'quality-filter';
+interface BaseSelectorCombinatorParameters {
     /**
-     * The signal to use.
+     * Defaults to `"select"`.
      */
-    index_signal: SignalID;
+    operation?: SelectorCombinatorParameterOperation;
+}
+type SelectorCombinatorParameters = BaseSelectorCombinatorParameters | SelectorCombinatorParametersCount | SelectorCombinatorParametersQualityFilter | SelectorCombinatorParametersQualityTransfer | SelectorCombinatorParametersRandom | SelectorCombinatorParametersSelect;
+/**
+ *
+ * Applies to variant case `count`
+ */
+interface SelectorCombinatorParametersCount extends BaseSelectorCombinatorParameters {
     /**
-     * The signal index to use if not using a specific signal.
+     * Defaults to `"select"`.
      */
-    index_constant: uint;
+    'operation'?: 'count';
     /**
      * The signal to emit.
      */
-    count_signal: SignalID;
+    'count_signal': SignalID;
+}
+/**
+ *
+ * Applies to variant case `quality-filter`
+ */
+interface SelectorCombinatorParametersQualityFilter extends BaseSelectorCombinatorParameters {
     /**
-     * Must be one of `"select"`, `"count"`, `"random"`. When not specified, defaults to `"select"`.
+     * Defaults to `"select"`.
      */
-    operation?: string;
+    'operation'?: 'quality-filter';
     /**
-     * If the maximum value is used.
+     * The quality condition to use. Defaults to `null`.
      */
-    select_max: boolean;
+    'quality_filter'?: QualityCondition;
+}
+/**
+ *
+ * Applies to variant case `quality-transfer`
+ */
+interface SelectorCombinatorParametersQualityTransfer extends BaseSelectorCombinatorParameters {
+    /**
+     * Defaults to `"select"`.
+     */
+    'operation'?: 'quality-transfer';
+    'quality_destination_signal': SignalID;
+    'quality_source_signal'?: SignalIDBase;
+    /**
+     * Defaults to normal quality.
+     */
+    'quality_source_static'?: QualityID;
+    /**
+     * Defaults to `false`.
+     */
+    'select_quality_from_signal'?: boolean;
+}
+/**
+ *
+ * Applies to variant case `random`
+ */
+interface SelectorCombinatorParametersRandom extends BaseSelectorCombinatorParameters {
+    /**
+     * Defaults to `"select"`.
+     */
+    'operation'?: 'random';
+    /**
+     * Defaults to `0`.
+     */
+    'random_update_interval'?: uint;
+}
+/**
+ *
+ * Applies to variant case `select`
+ */
+interface SelectorCombinatorParametersSelect extends BaseSelectorCombinatorParameters {
+    /**
+     * Defaults to `"select"`.
+     */
+    'operation'?: 'select';
+    /**
+     * The signal index to use if not using a specific `index_signal`. Defaults to `0`.
+     */
+    'index_constant'?: uint;
+    /**
+     * The signal to use, if any.
+     */
+    'index_signal'?: SignalID;
+    /**
+     * Whether the maximum value is used. Defaults to `true`.
+     */
+    'select_max'?: boolean;
 }
 /**
  * An actual signal transmitted by the network.
@@ -6788,20 +6958,31 @@ interface SignalID {
      */
     quality?: QualityID;
 }
+interface SignalIDBase {
+    /**
+     * The type of the signal. If the type is `"item"`, this will be `nil` when reading.
+     */
+    type?: SignalIDType;
+    /**
+     * Name of the prototype.
+     */
+    name?: string;
+}
 type SignalIDType = 'item' | 'fluid' | 'virtual' | 'entity' | 'recipe' | 'space-location' | 'asteroid-chunk' | 'quality';
 /**
  * An item stack may be specified in one of two ways.
  * @example ```
--- Both of these lines specify an item stack of one iron plate
+-- All of these lines specify an item stack of one iron plate
 {name="iron-plate"}
 {name="iron-plate", count=1}
+{name="iron-plate", count=1, quality="normal"}
 ```
  * @example ```
 -- This is a stack of 47 copper plates
 {name="copper-plate", count=47}
 ```
  * @example ```
-These are both full stacks of iron plates (for iron-plate, a full stack is 100 plates)
+--These are both full stacks of iron plates (for iron-plate, a full stack is 100 plates)
 "iron-plate"
 {name="iron-plate", count=100}
 ```
@@ -6844,6 +7025,21 @@ interface SmokeSource {
  *
  * - `"utility"` - Uses {@link UtilitySounds | prototype:UtilitySounds}. Example: `"utility/wire_connect_pole"`
  * - `"ambient"` - Uses {@link AmbientSound | prototype:AmbientSound}. Example: `"ambient/resource-deficiency"`
+ * The following types can be combined with any tile name as long as its prototype defines the corresponding sound.
+ *
+ * - `"tile-walking"` - Uses {@link TilePrototype::walking_sound | prototype:TilePrototype::walking_sound}. Example: `"tile-walking/concrete"`
+ * - `"tile-mined"` - Uses {@link TilePrototype::mined_sound | prototype:TilePrototype::mined_sound}
+ * - `"tile-build-small"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}. Example: `"tile-build-small/concrete"`
+ * - `"tile-build-medium"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}
+ * - `"tile-build-large"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}
+ * The following types can be combined with any entity name as long as its prototype defines the corresponding sound.
+ *
+ * - `"entity-build"` - Uses {@link Entity::build_sound | prototype:EntityPrototype::build_sound} Example: `"entity-build/wooden-chest"`
+ * - `"entity-mined"` - Uses {@link Entity::mined_sound | prototype:EntityPrototype::mined_sound}
+ * - `"entity-mining"` - Uses {@link Entity::mining_sound | prototype:EntityPrototype::mining_sound}
+ * - `"entity-rotated"` - Uses {@link EntityPrototype::rotated_sound | prototype:EntityPrototype::rotated_sound}
+ * - `"entity-open"` - Uses {@link Entity::open_sound | prototype:EntityPrototype::open_sound}
+ * - `"entity-close"` - Uses {@link Entity::close_sound | prototype:EntityPrototype::close_sound}
  */
 type SoundPath = string;
 /**
@@ -6942,9 +7138,6 @@ interface SpaceLocationPrototypeFilterType extends BaseSpaceLocationPrototypeFil
      */
     'type': string | string[];
 }
-/**
- * Space platform may be specified in one of one ways.
- */
 type SpacePlatformIdentification = LuaSpacePlatform;
 interface SpawnPointDefinition {
     /**
@@ -7980,6 +8173,19 @@ interface UpgradeMapperSource {
      */
     comparator?: ComparatorString;
 }
+/**
+ * Defines the mode of operation for a {@link ValvePrototype | prototype:ValvePrototype}.
+ */
+type ValveMode = /**
+ * Fluid will flow if input level > output level.
+ */
+'one-way' | /**
+ * Fluid will flow if input level > {@link ValvePrototype::threshold | prototype:ValvePrototype::threshold} and input level > output level.
+ */
+'overflow' | /**
+ * Fluid will flow if output level < {@link ValvePrototype::threshold | prototype:ValvePrototype::threshold} and input level > output level.
+ */
+'top-up';
 /**
  * A vector is a two-element array or dictionary containing the `x` and `y` components. The game will always provide the array format. Positive x goes east, positive y goes south.
  * @example ```
