@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.49
+// Factorio version 2.0.50
 // API version 6
 
 declare namespace prototype {
@@ -6792,6 +6792,10 @@ interface RecipePrototype extends Prototype {
     preserve_products_in_machine_output?: boolean;
     requester_paste_multiplier?: uint32;
     /**
+     * When set to true, if the recipe successfully finishes crafting without spoiling, the result is produced fresh (non-spoiled).
+     */
+    reset_freshness_on_craft?: boolean;
+    /**
      * When set to true, the recipe will always produce fresh (non-spoiled) item even when the ingredients are spoiled.
      */
     result_is_always_fresh?: boolean;
@@ -6987,7 +6991,7 @@ interface ResourceEntityPrototype extends EntityPrototype {
      */
     infinite?: boolean;
     /**
-     * Every time an infinite-type resource "ticks" lower it's lowered by that amount. -- {@link Rseding91 | https://forums.factorio.com/viewtopic.php?p=271115#p271115}
+     * Every time an infinite-type resource "ticks" lower it's lowered by that amount.
      */
     infinite_depletion_amount?: uint32;
     /**
@@ -9749,7 +9753,7 @@ interface UtilityConstants extends PrototypeBase {
     building_not_buildable_tint: Color;
     capsule_range_visualization_color: Color;
     /**
-     * Layer within `ground-natural` {@link tile render layer | prototype:TileRenderLayer} group, before which terrain lightmap alpha channel is copiend into water mask. Decals, which need to be masked by water should have their {@link DecorativePrototype::tile_layer | prototype:DecorativePrototype::tile_layer} set to only slightly larger value than `capture_water_mask_at_layer`, to avoid risk of undefined behavior caused by rendering tiles into layers between `capture_water_mask_at_layer` and decal's `tile_layer`.
+     * Layer within `ground-natural` {@link tile render layer | prototype:TileRenderLayer} group, before which terrain lightmap alpha channel is copied into water mask. Decals, which need to be masked by water should have their {@link DecorativePrototype::tile_layer | prototype:DecorativePrototype::tile_layer} set to only slightly larger value than `capture_water_mask_at_layer`, to avoid risk of undefined behavior caused by rendering tiles into layers between `capture_water_mask_at_layer` and decal's `tile_layer`.
      */
     capture_water_mask_at_layer: uint8;
     /**
