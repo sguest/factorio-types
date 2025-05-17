@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.49
+// Factorio version 2.0.50
 // API version 6
 
 declare namespace runtime {
@@ -5997,6 +5997,10 @@ interface LuaEntity extends LuaControl {
      */
     get_infinity_pipe_filter(this: void): InfinityPipeFilter | null;
     /**
+     * Gets the inventory size override of the selected inventory if size override was set using {@link set_inventory_size_override | runtime:LuaEntity::set_inventory_size_override}.
+     */
+    get_inventory_size_override(this: void, inventory_index: defines.inventory): uint16 | null;
+    /**
      * Get an item insert specification onto a belt connectable: for a given map position provides into which line at what position item should be inserted to be closest to the provided position.
      * @param position Position where the item is to be inserted.
      * @returns [0] - Index of the transport line that is closest to the provided map position.
@@ -6409,6 +6413,11 @@ interface LuaEntity extends LuaControl {
      */
     set_infinity_pipe_filter(this: void, filter: InfinityPipeFilter | nil): void;
     /**
+     * Sets inventory size override. When set, supported entity will ignore inventory size from prototype and will instead keep inventory size equal to the override. Setting `nil` will restore default inventory size.
+     * @param overflow Items that would be deleted due to change of inventory size will be transferred to this inventory. Must be a script inventory or inventory of other entity. Inventory references obtained from proxy container are not allowed.
+     */
+    set_inventory_size_override(this: void, inventory_index: defines.inventory, size_override: uint16 | nil, overflow?: LuaInventory): void;
+    /**
      * Sets the passenger of this car or spidertron.
      *
      * This differs from {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that the passenger can't drive the car.
@@ -6698,6 +6707,10 @@ interface LuaEntity extends LuaControl {
      * Destination of the crane of this entity in 3D. Throws when trying to set the destination out of range.
      */
     crane_destination_3d: Vector3D;
+    /**
+     * Returns current position in 3D for the end of the crane of this entity.
+     */
+    readonly crane_end_position_3d: Vector3D;
     /**
      * Will set destination for the grappler of crane of this entity. The crane grappler will start moving to reach the destination, but the rest of the arm will remain stationary. Throws when trying to set the destination out of range.
      */
@@ -7105,7 +7118,7 @@ interface LuaEntity extends LuaControl {
      */
     orientation: RealOrientation;
     /**
-     * Plants registered by this agricultural tower.
+     * Plants registered by this agricultural tower. One plant can be registered in multiple agricultural towers.
      */
     readonly owned_plants: LuaEntity[];
     parameters: ProgrammableSpeakerParameters;
@@ -9555,17 +9568,9 @@ interface LuaForce {
      * Play a sound for every player in this force.
      *
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for this force.
-     * @param table.path The sound to play.
-     * @param table.position Where the sound should be played. If not given, it's played globally on each player's controller's surface.
-     * @param table.volume_modifier The volume of the sound to play. Must be between 0 and 1 inclusive.
-     * @param table.override_sound_type The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
+     * @param sound_specification The sound to play.
      */
-    play_sound(this: void, table: {
-        path: SoundPath;
-        position?: MapPosition;
-        volume_modifier?: double;
-        override_sound_type?: SoundType;
-    }): void;
+    play_sound(this: void, sound_specification: PlaySoundSpecification): void;
     /**
      * Print text to the chat console of all players on this force.
      *
@@ -10101,17 +10106,9 @@ interface LuaGameScript {
      * Play a sound for every player in the game.
      *
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for that player.
-     * @param table.path The sound to play.
-     * @param table.position Where the sound should be played. If not given, it's played globally on each player's controller's surface.
-     * @param table.volume_modifier The volume of the sound to play. Must be between 0 and 1 inclusive.
-     * @param table.override_sound_type The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
+     * @param sound_specification The sound to play.
      */
-    play_sound(this: void, table: {
-        path: SoundPath;
-        position?: MapPosition;
-        volume_modifier?: double;
-        override_sound_type?: SoundType;
-    }): void;
+    play_sound(this: void, sound_specification: PlaySoundSpecification): void;
     /**
      * Print text to the chat console all players.
      *
@@ -13945,17 +13942,9 @@ interface LuaPlayer extends LuaControl {
      * Play a sound for this player.
      *
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for this player.
-     * @param table.path The sound to play.
-     * @param table.position Where the sound should be played. If not given, it's played globally on the player's controller's surface.
-     * @param table.volume_modifier The volume of the sound to play. Must be between 0 and 1 inclusive.
-     * @param table.override_sound_type The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
+     * @param sound_specification The sound to play.
      */
-    play_sound(this: void, table: {
-        path: SoundPath;
-        position?: MapPosition;
-        volume_modifier?: double;
-        override_sound_type?: SoundType;
-    }): void;
+    play_sound(this: void, sound_specification: PlaySoundSpecification): void;
     /**
      * Print text to the chat console.
      *
@@ -15259,6 +15248,8 @@ interface LuaRecipePrototype extends LuaPrototypeBase {
      * The multiplier used when this recipe is copied from an assembling machine to a requester chest. For each item in the recipe the item count * this value is set in the requester chest.
      */
     readonly request_paste_multiplier: uint;
+    readonly reset_freshness_on_craft: boolean;
+    readonly result_is_always_fresh: boolean;
     /**
      * If the amount is shown in the recipe tooltip title when the recipe produces more than 1 product.
      */
@@ -17674,17 +17665,9 @@ interface LuaSurface {
      * Play a sound for every player on this surface.
      *
      * The sound is not played if its location is not {@link charted | runtime:LuaForce::chart} for that player.
-     * @param table.path The sound to play.
-     * @param table.position Where the sound should be played. If not given, it's played globally on this surface.
-     * @param table.volume_modifier The volume of the sound to play. Must be between 0 and 1 inclusive.
-     * @param table.override_sound_type The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
+     * @param sound_specification The sound to play.
      */
-    play_sound(this: void, table: {
-        path: SoundPath;
-        position?: MapPosition;
-        volume_modifier?: double;
-        override_sound_type?: SoundType;
-    }): void;
+    play_sound(this: void, sound_specification: PlaySoundSpecification): void;
     /**
      * Spawn pollution at the given position.
      * @param source Where to spawn the pollution.
@@ -18603,7 +18586,7 @@ interface LuaTechnology {
     /**
      * The types of ingredients that labs will require to research this technology.
      */
-    readonly research_unit_ingredients: Ingredient[];
+    readonly research_unit_ingredients: ResearchIngredient[];
     /**
      * Has this technology been researched? Switching from `false` to `true` will trigger the technology advancement perks; switching from `true` to `false` will reverse them.
      */

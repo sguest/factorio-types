@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.49
+// Factorio version 2.0.50
 // API version 6
 
 declare namespace runtime {
@@ -55,6 +55,7 @@ interface AddRecordData {
     index?: ScheduleRecordPosition;
 }
 interface AdvancedMapGenSettings {
+    asteroids: AsteroidMapSettings;
     pollution: PollutionMapSettings;
     enemy_evolution: EnemyEvolutionMapSettings;
     enemy_expansion: EnemyExpansionMapSettings;
@@ -78,7 +79,7 @@ interface Alert {
     message?: LocalisedString;
 }
 /**
- * A {@link string | runtime:string} that specifies where a GUI element should be.
+ * A string that specifies where a GUI element should be.
  */
 type Alignment = 'top-left' | 'middle-left' | /**
  * The same as `"middle-left"`
@@ -270,7 +271,7 @@ interface AttackParametersProjectile extends BaseAttackParameters {
     'type': 'projectile';
     'projectile_center': Vector;
     'projectile_creation_distance': float;
-    'projectile_creation_parameters'?: CircularProjectileCreationSpecification[];
+    'projectile_creation_parameters'?: CircularProjectileCreationSpecification;
     'projectile_orientation_offset': float;
     'shell_particle'?: CircularParticleCreationSpecification;
 }
@@ -287,7 +288,7 @@ interface AttackParametersStream extends BaseAttackParameters {
     'fluids'?: AttackParameterFluid[];
     'gun_barrel_length': float;
     'gun_center_shift': GunShift4Way;
-    'projectile_creation_parameters'?: CircularProjectileCreationSpecification[];
+    'projectile_creation_parameters'?: CircularProjectileCreationSpecification;
 }
 interface AutoplaceControl {
     /**
@@ -317,25 +318,25 @@ interface AutoplaceSettings {
  * Specifies how probability and richness are calculated when placing something on the map.
  */
 interface AutoplaceSpecification {
+    placement_density: uint;
     /**
      * Control prototype name.
      */
     control?: string;
-    default_enabled: boolean;
-    force: string;
+    probability_expression: NoiseExpressionSourceString;
+    richness_expression?: NoiseExpressionSourceString;
     order: string;
-    placement_density: uint;
+    default_enabled: boolean;
     tile_restriction?: AutoplaceSpecificationRestriction[];
-    probability_expression: NoiseExpression;
-    richness_expression?: NoiseExpression;
+    force: string;
 }
 interface AutoplaceSpecificationRestriction {
     /**
-     * Tile prototype name
+     * Tile prototype name.
      */
     first?: string;
     /**
-     * Second prototype name
+     * Second prototype name.
      */
     second?: string;
 }
@@ -707,7 +708,7 @@ interface CircularParticleCreationSpecification {
 type CircularProjectileCreationSpecification = [
     RealOrientation,
     Vector
-];
+][];
 type CliffOrientation = 'west-to-east' | 'north-to-south' | 'east-to-west' | 'south-to-north' | 'west-to-north' | 'north-to-east' | 'east-to-south' | 'south-to-west' | 'west-to-south' | 'north-to-west' | 'east-to-north' | 'south-to-east' | 'west-to-none' | 'none-to-east' | 'east-to-none' | 'none-to-west' | 'north-to-none' | 'none-to-south' | 'south-to-none' | 'none-to-north';
 interface CliffPlacementSettings {
     /**
@@ -2590,6 +2591,8 @@ type Ingredient = BaseIngredient | IngredientFluid;
  */
 interface IngredientFluid extends BaseIngredient {
     'type': 'fluid';
+    'fluidbox_index'?: uint;
+    'fluidbox_multiplier'?: uint8;
     /**
      * The maximum fluid temperature allowed.
      */
@@ -5385,6 +5388,7 @@ interface MineableProperties {
      * Energy required to mine an entity.
      */
     mining_time: double;
+    transfer_entity_health_to_products: boolean;
     /**
      * Prototype name of the particle produced when mining this entity. Will only be present if this entity produces any particle during mining.
      */
@@ -5509,14 +5513,9 @@ interface ModuleEffects {
  */
 type MouseButtonFlags = Record<'left' | 'right' | 'middle' | 'button-4' | 'button-5' | 'button-6' | 'button-7' | 'button-8' | 'button-9', true>;
 /**
- * A fragment of a functional program used to generate coherent noise, probably for purposes related to terrain generation. These can only be meaningfully written/modified during the data load phase. More detailed information is found on the {@link prototype docs | prototype:NamedNoiseExpression}.
+ * The string representation of a noise expression. More detailed information is found on the {@link prototype docs | prototype:NamedNoiseExpression}.
  */
-interface NoiseExpression {
-    /**
-     * Names the type of the expression and determines what other fields are required.
-     */
-    type: string;
-}
+type NoiseExpressionSourceString = string;
 interface NthTickEventData {
     /**
      * The tick during which the event happened.
@@ -5785,6 +5784,24 @@ interface PlatformSchedule {
     current: uint;
     records: ScheduleRecord[];
 }
+interface PlaySoundSpecification {
+    /**
+     * The sound to play.
+     */
+    path: SoundPath;
+    /**
+     * Where the sound should be played. If not given, it's played globally on the player's controller's surface.
+     */
+    position?: MapPosition;
+    /**
+     * The volume of the sound to play. Must be between 0 and 1 inclusive.
+     */
+    volume_modifier?: double;
+    /**
+     * The volume mixer to play the sound through. Defaults to the default mixer for the given sound type.
+     */
+    override_sound_type?: SoundType;
+}
 /**
  * A player may be specified in one of three ways.
  */
@@ -5913,6 +5930,7 @@ interface ProgrammableSpeakerAlertParameters {
 }
 interface ProgrammableSpeakerCircuitParameters {
     signal_value_is_pitch: boolean;
+    stop_playing_sounds: boolean;
     instrument_id: uint;
     note_id: uint;
 }
@@ -5924,6 +5942,8 @@ interface ProgrammableSpeakerParameters {
     playback_volume: float;
     playback_mode: ProgrammableSpeakerPlaybackMode;
     allow_polyphony: boolean;
+    volume_controlled_by_signal: boolean;
+    volume_signal_id: SignalID;
 }
 /**
  * Specifies from where the programmable speaker's sound will be heard.
@@ -6635,11 +6655,11 @@ interface ResearchTriggerSendItemToOrbit extends BaseResearchTrigger {
 }
 interface Resistance {
     /**
-     * Absolute damage decrease
+     * Absolute damage decrease.
      */
     decrease: float;
     /**
-     * Percentual damage decrease
+     * Percentual damage decrease.
      */
     percent: float;
 }
@@ -7083,6 +7103,7 @@ interface SpaceLocationAsteroidSpawnDefinition {
     asteroid: string;
     probability: double;
     speed: double;
+    angle_when_stopped: float;
 }
 /**
  * A space location prototype may be specified in one of two ways.
@@ -7151,13 +7172,13 @@ interface SpawnPointDefinition {
 }
 interface SpoilToTriggerResult {
     /**
-     * The trigger runs (count-in-stack / items_per_trigger) times; rounded up.
-     */
-    items_per_trigger: uint;
-    /**
      * The trigger items that are run.
      */
     trigger: TriggerItem[];
+    /**
+     * The trigger runs (count-in-stack / items_per_trigger) times; rounded up.
+     */
+    items_per_trigger: uint;
 }
 /**
  * It can be either the name of a {@link SpritePrototype | prototype:SpritePrototype} defined in the data stage, or a path in form "type/name" or "type.name".
@@ -8267,7 +8288,7 @@ type WaitConditionType = 'time' | 'full' | 'empty' | 'not_empty' | 'item_count' 
 interface WireConnection {
     target: LuaWireConnector;
     /**
-     * Defaults to defines.wire_origin.player
+     * Defaults to `defines.wire_origin.player`.
      */
     origin?: defines.wire_origin;
 }
@@ -8347,11 +8368,11 @@ interface ZoomSpecification {
      */
     zoom?: double;
     /**
-     * The number of game tiles across the horizontal axis at the game's default 16:9 aspect ratio. Must be a positive number. This specification is designed to comfortably accommodate displays with extreme aspect ratios such as ultrawide monitors. The exact zoom level is calculated at dynamically as follows. For aspect ratios between 16:9 and 9:16, the zoom level is computed so that `distance` number of tiles are visible along the game window's longer axis. For aspect ratios between 16:9 and 1:1, this is the window's width. For aspect ratios between 1:1 and 9:16, this is the window's height. For aspect ratios greater than 16:9 or smaller than 9:16, then the zoom level is actually computed so that `distance * 9 / 16` number of tiles are visible along the game window's shorter axis. So for aspect ratios greater than 16:9, this is the window's height. For aspect ratios smaller than 9:16, this is the window's height. Mutually exclusive with `zoom`. Used with `max_distance`.
+     * The number of game tiles across the horizontal axis at the game's default 16:9 aspect ratio. Must be a positive number. This specification is designed to comfortably accommodate displays with extreme aspect ratios such as ultra-wide monitors. The exact zoom level is calculated dynamically as follows. For aspect ratios between 16:9 and 9:16, the zoom level is computed so that `distance` number of tiles are visible along the game window's longer axis. For aspect ratios between 16:9 and 1:1, this is the window's width. For aspect ratios between 1:1 and 9:16, this is the window's height. For aspect ratios greater than 16:9 or smaller than 9:16, then the zoom level is actually computed so that `distance * 9 / 16` number of tiles are visible along the game window's shorter axis. So for aspect ratios greater than 16:9, this is the window's height. For aspect ratios smaller than 9:16, this is the window's height. Mutually exclusive with `zoom`. Used with `max_distance`.
      */
     distance?: double;
     /**
-     * The absolute maximum number of game tiles permitted along the window's longest axis, setting a hard limit on how far a player can see by simply manipulating the game window. Must be a positive number. Values greater than the default may allow players to see ungenerated chunks while exploring. The "closest" zoom level calculated from `distance` and `max_distance` is always used. Optionally used with `distance`. Defaults to `500`.
+     * The absolute maximum number of game tiles permitted along the window's longest axis, setting a hard limit on how far a player can see by simply manipulating the game window. Must be a positive number. Values greater than the default may allow players to see un-generated chunks while exploring. The "closest" zoom level calculated from `distance` and `max_distance` is always used. Optionally used with `distance`. Defaults to `500`.
      */
     max_distance?: double;
 }

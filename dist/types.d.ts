@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.49
+// Factorio version 2.0.50
 // API version 6
 
 declare namespace prototype {
@@ -179,6 +179,19 @@ interface AgriculturalCraneSpeedGrappler {
 ```
  */
 type AirbornePollutantID = string;
+/**
+ * A string that specifies where a GUI element should be.
+ */
+type Alignment = 'top-left' | 'middle-left' | /**
+ * The same as `"middle-left"`
+ */
+'left' | 'bottom-left' | 'top-center' | 'middle-center' | /**
+ * The same as `"middle-center"`
+ */
+'center' | 'bottom-center' | 'top-right' | /**
+ * The same as `"middle-right"`
+ */
+'right' | 'bottom-right';
 interface AlternativeBuildTipTrigger extends CountBasedTipTrigger {
     type: 'alternative-build';
 }
@@ -1436,7 +1449,7 @@ interface AsteroidSpawnPoint {
     /**
      * Facing the north. Must be in `[0, 1]` range.
      */
-    angle_when_stopped?: double;
+    angle_when_stopped?: float;
     /**
      * Must be >= 0.
      */
@@ -2808,7 +2821,7 @@ interface ColorHintSpecification {
  */
 type ColorLookupTable = FileName | 'identity';
 interface ColumnAlignment {
-    alignment: 'center' | 'left' | 'right' | 'top-left' | 'middle-left' | 'bottom-left' | 'top-center' | 'middle-center' | 'bottom-center' | 'top-right' | 'middle-right' | 'bottom-right';
+    alignment: Alignment;
     /**
      * Column index.
      */
@@ -4871,10 +4884,28 @@ footstep_particle_triggers =
 ```
  */
 type FootstepTriggerEffectList = FootstepTriggerEffectItem[];
-/**
- * One of the following values:
+type ForceCondition = /**
+ * All forces pass.
  */
-type ForceCondition = 'all' | 'enemy' | 'ally' | 'friend' | 'not-friend' | 'same' | 'not-same';
+'all' | /**
+ * Forces which will attack pass.
+ */
+'enemy' | /**
+ * Forces which won't attack pass.
+ */
+'ally' | /**
+ * Forces which are friends pass.
+ */
+'friend' | /**
+ * Forces which are not friends pass.
+ */
+'not-friend' | /**
+ * The same force pass.
+ */
+'same' | /**
+ * The non-same forces pass.
+ */
+'not-same';
 interface FrameStyleSpecification extends BaseStyleSpecification {
     background_graphical_set?: ElementImageSet;
     border?: BorderImageSet;
@@ -6183,9 +6214,9 @@ interface MapGenSettings {
 /**
  * A floating point number specifying an amount.
  *
- * For backwards compatibility, MapGenSizes can also be specified as one of the following strings, which will be converted to a number:
+ * For backwards compatibility, MapGenSizes can also be specified as a string, which will be converted to a number (when queried, a number will always be returned).
  *
- * Each of the values in a triplet (such as "low", "small", and "poor") are synonymous. In-game the values can be set from `0.166` to `6` via the GUI (respective to the percentages), while `0` is used to disable the autoplace control.
+ * The map generation algorithm officially supports the range of values the in-game map generation screen shows (specifically `0` and values from `1/6` to `6`). Values outside this range are not guaranteed to work as expected.
  */
 type MapGenSize = /**
  * Specifying a map gen dimension.
@@ -9817,7 +9848,7 @@ interface SpriteParameters extends SpriteSource {
      */
     mipmap_count?: uint8;
     /**
-     * Loaded only if `draw_as_shadow`, `draw_as_glow` and `draw_as_light` are `false`, and only by sprites used by tile renderer (decals and underwater patches). Purspose of setting this to `false` is to preserve water mask from sprites that are supposed to be drawn under the water.
+     * Loaded only if `draw_as_shadow`, `draw_as_glow` and `draw_as_light` are `false`, and only by sprites used by tile renderer (decals and underwater patches). The purpose of setting this to `false` is to preserve water mask from sprites that are supposed to be drawn under the water.
      */
     occludes_light?: boolean;
     priority?: SpritePriority;
@@ -11151,7 +11182,7 @@ interface TintProcessionBezierControlPoint {
     tint_upper_t?: Color;
 }
 /**
- * Fullscreen overlay which blends gradient from top to bottom edge of the screen using {@link premultiplied alpha blending | prototype:BlendMode::normal}.
+ * Fullscreen overlay which blends gradient from top to bottom edge of the screen using {@link pre-multiplied alpha blending | prototype:BlendMode::normal}.
  */
 interface TintProcessionLayer {
     frames: TintProcessionBezierControlPoint[];
