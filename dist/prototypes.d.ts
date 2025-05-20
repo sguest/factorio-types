@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.50
+// Factorio version 2.0.51
 // API version 6
 
 declare namespace prototype {
@@ -8399,6 +8399,10 @@ interface SpiderVehiclePrototype extends VehiclePrototype {
  * The {@link spidertron remote | https://wiki.factorio.com/Spidertron_remote}. This remote can only be used for entities of type {@link SpiderVehiclePrototype | prototype:SpiderVehiclePrototype}.
  */
 interface SpidertronRemotePrototype extends SelectionToolPrototype {
+    /**
+     * Color mask for the icon. This is used to show the color of the spidertron remote LEDS in the GUI.
+     */
+    icon_color_indicator_mask?: FileName;
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.
      * @example ```
