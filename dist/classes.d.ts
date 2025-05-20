@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.50
+// Factorio version 2.0.51
 // API version 6
 
 declare namespace runtime {
@@ -17806,6 +17806,28 @@ interface LuaSurface {
      * @param undo_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
      */
     set_tiles(this: void, tiles: Tile[], correct_tiles?: boolean, remove_colliding_entities?: boolean | 'abort_on_collision', remove_colliding_decoratives?: boolean, raise_event?: boolean, player?: PlayerIdentification, undo_index?: uint): void;
+    /**
+     * Spill inventory on the ground centered at a given location.
+     * @param table.position Center of the spillage
+     * @param table.inventory Inventory to spill
+     * @param table.enable_looted When true, each created item will be flagged with the {@link LuaEntity::to_be_looted | runtime:LuaEntity::to_be_looted} flag. Defaults to `false`.
+     * @param table.force When provided (and not `nil`) the items will be marked for deconstruction by this force.
+     * @param table.allow_belts Whether items can be spilled onto belts. Defaults to `true`.
+     * @param table.max_radius Max radius from the specified `position` to spill items.
+     * @param table.use_start_position_on_failure Allow spilling items at `position` if no non-colliding position is found. Note: Setting to false might cause some items not to be spilled. Defaults to `true`.
+     * @param table.drop_full_stack If item on ground should be made out of an entire provided stack. Defaults to `false`.
+     * @returns The created item-on-ground entities.
+     */
+    spill_inventory(this: void, table: {
+        position: MapPosition;
+        inventory: LuaInventory;
+        enable_looted?: boolean;
+        force?: ForceID;
+        allow_belts?: boolean;
+        max_radius?: double;
+        use_start_position_on_failure?: boolean;
+        drop_full_stack?: boolean;
+    }): LuaEntity[];
     /**
      * Spill items on the ground centered at a given location.
      * @param table.position Center of the spillage
