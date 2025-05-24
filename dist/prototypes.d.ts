@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.51
+// Factorio version 2.0.52
 // API version 6
 
 declare namespace prototype {
@@ -2096,14 +2096,12 @@ interface CustomInputPrototype extends Prototype {
      */
     controller_alternative_key_sequence?: string;
     /**
-     * The controller (game pad) keybinding for this control. Use "" (empty string) for unassigned.
+     * The controller (game pad) keybinding for this control. Use `""` (empty string) for unassigned.
      *
-     * " + " is used to separate modifier buttons from normal buttons: <code>"controller-righttrigger + controller-a"</code>.
+     * As modifier buttons, these names are used: `"controller-righttrigger"`, `"controller-lefttrigger"`.
      *
-     * For modifier buttons, the following names are used: "controller-righttrigger", "controller-lefttrigger".
-     *
-     * A key binding can contain an unlimited amount of modifier buttons (listed above) but only one normal button (listed below).
-     * These names are available for the normal controller buttons
+     * `" + "` is used to separate modifier buttons from normal buttons, like so: `"controller-righttrigger + controller-a"`. A key binding can contain any amount of individual modifier buttons, but only a single normal button (listed below).
+     * Available names for the normal controller buttons
      *
      * - controller-a
      * - controller-b
@@ -2147,16 +2145,27 @@ interface CustomInputPrototype extends Prototype {
      */
     item_to_spawn?: ItemID;
     /**
-     * The default key sequence for this custom input. Use "" (empty string) for unassigned.
+     * The default key sequence for this custom input. Use `""` (empty string) for unassigned.
      *
-     * Use "mouse-button-2" etc for mouse buttons, mouse-button-3 for middle mouse button. Use "mouse-wheel-up", "mouse-wheel-down", "mouse-wheel-left", "mouse-wheel-right" for mouse wheel.
+     * As modifier keys, these names are used: `"CONTROL"`, `"SHIFT"`, `"COMMAND"`, `"ALT"`. Note that `"COMMAND"` is loaded as `"CONTROL"` on Windows and Linux.
      *
-     * " + " is used to separate modifier keys from normal keys: <code>"ALT + G"</code>.
+     * `" + "` is used to separate modifier keys from normal keys, like so: `"ALT + G"`. A key binding can contain any amount of individual modifier keys, but only a single normal mouse button or keyboard key (listed below).
+     * Available names for the normal mouse button
      *
-     * For modifier keys, the following names are used: "CONTROL", "SHIFT", "ALT", "COMMAND".
-     *
-     * A key binding can contain an unlimited amount of modifier keys (listed above) but only one normal key (listed below).
-     * These names are available for the normal keyboard keys
+     * - `mouse-button-1` (left)
+     * - `mouse-button-2` (right)
+     * - `mouse-button-3` (middle)
+     * - `mouse-button-4`
+     * - `mouse-button-5`
+     * - `mouse-button-6`
+     * - `mouse-button-7`
+     * - `mouse-button-8`
+     * - `mouse-button-9`
+     * - `mouse-wheel-up`
+     * - `mouse-wheel-down`
+     * - `mouse-wheel-left`
+     * - `mouse-wheel-right`
+     * Available names for the normal keyboard keys
      *
      * - A
      * - B
@@ -4667,6 +4676,10 @@ interface ItemPrototype extends Prototype {
     icons?: IconData[];
     ingredient_to_weight_coefficient?: double;
     inventory_move_sound?: Sound;
+    /**
+     * Whether this item should be moved to the hub when space platform performs building, upgrade or deconstruction and is left with this item. The following items are considered valuable and moved to hub by default: {@link Modules | prototype:ModulePrototype}, {@link items that build entities | prototype:ItemPrototype::place_result}, {@link items that build tiles | prototype:ItemPrototype::place_as_tile} and items {@link not obtainable from asteroid chunks | prototype:AsteroidChunkPrototype::minable} that have {@link subgroup | prototype:PrototypeBase::subgroup} from a {@link group | prototype:ItemSubGroup::group} other than `"intermediate-products"`.
+     */
+    moved_to_hub_when_building?: boolean;
     open_sound?: Sound;
     pick_sound?: Sound;
     /**
@@ -4697,7 +4710,7 @@ interface ItemPrototype extends Prototype {
      *
      * When "manual" is set, it can only be launched by pressing the launch button in the rocket silo.
      *
-     * When "automated" is set, it will force the existence of "launch to orbit automatically" checkBox in the rocket silo which will then force the silo to automatically send the item to orbit when present.
+     * When "automated" is set, it will force the existence of "launch to orbit automatically" checkbox in the rocket silo which will then force the silo to automatically send the item to orbit when present.
      */
     send_to_orbit_mode?: SendToOrbitMode;
     /**
@@ -4953,7 +4966,7 @@ interface LabPrototype extends EntityWithOwnerPrototype {
     on_animation?: Animation;
     researching_speed?: double;
     /**
-     * May not be 0. May not be larger than 100.
+     * May not be `0` or larger than `100`.
      */
     science_pack_drain_rate_percent?: uint8;
     trash_inventory_size?: ItemStackIndex;
@@ -5548,6 +5561,9 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
      * Note: Categories containing resources which produce items, fluids, or items+fluids may be combined on the same entity, but may not work as expected. Examples: Miner does not rotate fluid-resulting resources until depletion. Fluid isn't output (fluid resource change and fluidbox matches previous fluid). Miner with no `vector_to_place_result` can't output an item result and halts.
      */
     resource_categories: ResourceCategoryID[];
+    /**
+     * May not be `0` or larger than `100`.
+     */
     resource_drain_rate_percent?: uint8;
     /**
      * The distance from the centre of the mining drill to search for resources in.
@@ -9770,6 +9786,7 @@ interface UtilityConstants extends PrototypeBase {
     clear_cursor_volume_modifier: float;
     clipboard_history_size: uint32;
     color_filters?: ColorFilterData[];
+    construction_robots_use_busy_robots_queue: boolean;
     count_button_size: int32;
     daytime_color_lookup: DaytimeColorLookupTable;
     deconstruct_mark_tint: Color;
@@ -9894,6 +9911,7 @@ interface UtilityConstants extends PrototypeBase {
     lightning_attractor_protection_range_color: Color;
     logistic_gui_selected_network_highlight_tint: Color;
     logistic_gui_unselected_network_highlight_tint: Color;
+    logistic_robots_use_busy_robots_queue: boolean;
     low_energy_robot_estimate_multiplier: double;
     main_menu_background_image_location: FileName;
     main_menu_background_vignette_intensity: float;

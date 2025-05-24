@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.51
+// Factorio version 2.0.52
 // API version 6
 
 declare namespace runtime {
@@ -6018,11 +6018,9 @@ interface LuaEntity extends LuaControl {
     get_line_item_position(this: void, index: uint, position: float): MapPosition;
     /**
      * Gets all the `LuaLogisticPoint`s that this entity owns. Optionally returns only the point specified by the index parameter.
-     *
-     * When `index` is not given, this will be a single `LuaLogisticPoint` for most entities. For some (such as the player character), it can be zero or more.
-     * @param index If provided, only returns the `LuaLogisticPoint` specified by this index.
+     * @param index If provided, this method only returns the `LuaLogisticPoint` specified by this index, or `nil` if it doesn't exist.
      */
-    get_logistic_point(this: void, index?: defines.logistic_member_index): (LuaLogisticPoint | Record<defines.logistic_member_index, LuaLogisticPoint>) | null;
+    get_logistic_point(this: void, index?: defines.logistic_member_index): (LuaLogisticPoint | LuaLogisticPoint[]) | null;
     /**
      * Gives logistic sections of this entity if it uses logistic sections.
      */
@@ -6656,7 +6654,7 @@ interface LuaEntity extends LuaControl {
      */
     combat_robot_owner?: LuaEntity;
     /**
-     * The description on this combinator
+     * The description on this combinator.
      */
     combinator_description: string;
     /**
@@ -12609,6 +12607,7 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      * Effects of this module.
      */
     readonly module_effects?: ModuleEffects;
+    readonly moved_to_hub_when_building: boolean;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -16252,6 +16251,10 @@ interface LuaSchedule {
      * @param index The record to change.
      */
     drag_wait_condition(this: void, index: ScheduleRecordPosition, from: uint, to: uint): void;
+    /**
+     * Gets if the given interrupt can be triggered inside other interrupts.
+     */
+    get_inside_interrupt(this: void, interrupt_index: uint): boolean;
     get_interrupt(this: void, index: uint): ScheduleInterrupt | null;
     get_interrupts(this: void): ScheduleInterrupt[];
     get_record(this: void, index: ScheduleRecordPosition): ScheduleRecord | null;
@@ -16301,6 +16304,10 @@ interface LuaSchedule {
      * Sets if unloading is allowed at the given schedule index.
      */
     set_allow_unloading(this: void, index: ScheduleRecordPosition, allow: boolean): void;
+    /**
+     * Sets if the given interrupt can be triggered inside other interrupts.
+     */
+    set_inside_interrupt(this: void, interrupt_index: uint, value: boolean): void;
     set_interrupts(this: void, interrupts: ScheduleInterrupt[]): void;
     /**
      * @param interrupt_index If provided, the records will be set on this interrupt.
