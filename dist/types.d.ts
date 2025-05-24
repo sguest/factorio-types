@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.51
+// Factorio version 2.0.52
 // API version 6
 
 declare namespace prototype {
@@ -3247,6 +3247,7 @@ interface CreateDecorativesTriggerEffectItem extends TriggerEffectItem {
     type: 'create-decorative';
 }
 interface CreateEntityTriggerEffectItemBase extends TriggerEffectItem {
+    abort_if_over_space?: boolean;
     /**
      * If true, creates the entity as a member of the enemy force. If the surface.no_enemies_mode is true, the entity will not be created.
      */
@@ -4652,10 +4653,7 @@ interface FluidEnergySource extends BaseEnergySource {
     smoke?: SmokeSource[];
     type: 'fluid';
 }
-type FluidFlowDirection = 'input-output' | 'input' | /**
- * ,
- */
-'output';
+type FluidFlowDirection = 'input-output' | 'input' | 'output';
 /**
  * The name of a {@link FluidPrototype | prototype:FluidPrototype}.
  * @example ```
@@ -8691,6 +8689,8 @@ interface SelectionModeData {
 }
 /**
  * An array containing the following values.
+ *
+ * Some flags only exclude objects from the selection, meaning they need to be combined with another flag to select anything.
  */
 type SelectionModeFlags = (/**
  * Selects entities and tiles as if selecting them for a blueprint.
@@ -8723,16 +8723,16 @@ type SelectionModeFlags = (/**
  * Selects all tiles.
  */
 'any-tile' | /**
- * Selects entities with the same force as the selecting player.
+ * Excludes entities that have a different force than the selecting player from the selection.
  */
 'same-force' | /**
- * Selects entities with a different force as the selecting player.
+ * Excludes entities that have the same force as the selecting player from the selection.
  */
 'not-same-force' | /**
- * Selects entities from a friendly force.
+ * Excludes entities that are not from a friendly force from the selection.
  */
 'friend' | /**
- * Selects entities from an enemy force.
+ * Excludes entities that are not from an enemy force from the selection.
  */
 'enemy' | /**
  * Selects entities as if selecting them for upgrading.
@@ -8753,9 +8753,12 @@ type SelectionModeFlags = (/**
  * Selects entities that are an {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}.
  */
 'entity-with-owner' | /**
- * Selects entities that are not a {@link RollingStockPrototype | prototype:RollingStockPrototype}.
+ * Excludes {@link RollingStockPrototype | prototype:RollingStockPrototype}s from the selection.
  */
-'avoid-rolling-stock' | 'avoid-vehicle' | 'controllable' | 'controllable-add' | 'controllable-remove' | /**
+'avoid-rolling-stock' | /**
+ * Excludes {@link VehiclePrototype | prototype:VehiclePrototype}s from the selection.
+ */
+'avoid-vehicle' | 'controllable' | 'controllable-add' | 'controllable-remove' | /**
  * Selects entities that are an {@link EntityGhostPrototype | prototype:EntityGhostPrototype}.
  */
 'entity-ghost' | /**
@@ -8792,16 +8795,16 @@ type SelectionModeFlags = (/**
  * Selects all tiles.
  */
 'any-tile' | /**
- * Selects entities with the same force as the selecting player.
+ * Excludes entities that have a different force than the selecting player from the selection.
  */
 'same-force' | /**
- * Selects entities with a different force as the selecting player.
+ * Excludes entities that have the same force as the selecting player from the selection.
  */
 'not-same-force' | /**
- * Selects entities from a friendly force.
+ * Excludes entities that are not from a friendly force from the selection.
  */
 'friend' | /**
- * Selects entities from an enemy force.
+ * Excludes entities that are not from an enemy force from the selection.
  */
 'enemy' | /**
  * Selects entities as if selecting them for upgrading.
@@ -8822,9 +8825,12 @@ type SelectionModeFlags = (/**
  * Selects entities that are an {@link EntityWithOwnerPrototype | prototype:EntityWithOwnerPrototype}.
  */
 'entity-with-owner' | /**
- * Selects entities that are not a {@link RollingStockPrototype | prototype:RollingStockPrototype}.
+ * Excludes {@link RollingStockPrototype | prototype:RollingStockPrototype}s from the selection.
  */
-'avoid-rolling-stock' | 'avoid-vehicle' | 'controllable' | 'controllable-add' | 'controllable-remove' | /**
+'avoid-rolling-stock' | /**
+ * Excludes {@link VehiclePrototype | prototype:VehiclePrototype}s from the selection.
+ */
+'avoid-vehicle' | 'controllable' | 'controllable-add' | 'controllable-remove' | /**
  * Selects entities that are an {@link EntityGhostPrototype | prototype:EntityGhostPrototype}.
  */
 'entity-ghost' | /**
@@ -10057,7 +10063,7 @@ interface StatelessVisualisation {
     /**
      * One of `nested_visualisations`, `animation` and `light` needs to be defined.
      */
-    nested_visualisations?: StatelessVisualisation | StatelessVisualisation[];
+    nested_visualisations?: StatelessVisualisations;
     offset_x?: RangedValue;
     offset_y?: RangedValue;
     offset_z?: RangedValue;

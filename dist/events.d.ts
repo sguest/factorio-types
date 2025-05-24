@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.51
+// Factorio version 2.0.52
 // API version 6
 
 declare namespace runtime {
@@ -180,12 +180,21 @@ interface on_build_base_arrived {
  * Called when player builds something.
  */
 interface on_built_entity {
+    /**
+     * A temporary inventory containing all items that the game used to build the entity. This inventory is temporary and thus invalidated after the event.
+     */
     consumed_items: LuaInventory;
+    /**
+     * The entity that was built.
+     */
     entity: LuaEntity;
     /**
      * Identifier of the event
      */
     name: defines.events;
+    /**
+     * The player who did the building.
+     */
     player_index: uint;
     /**
      * The tags associated with this entity if any.
@@ -3832,6 +3841,7 @@ interface on_script_trigger_effect {
      * Identifier of the event
      */
     name: defines.events;
+    quality?: string;
     source_entity?: LuaEntity;
     source_position?: MapPosition;
     /**
