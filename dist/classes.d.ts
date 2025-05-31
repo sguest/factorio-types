@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.52
+// Factorio version 2.0.54
 // API version 6
 
 declare namespace runtime {
@@ -6416,7 +6416,7 @@ interface LuaEntity extends LuaControl {
      */
     set_inventory_size_override(this: void, inventory_index: defines.inventory, size_override: uint16 | nil, overflow?: LuaInventory): void;
     /**
-     * Sets the passenger of this car or spidertron.
+     * Sets the passenger of this car, spidertron, or cargo pod.
      *
      * This differs from {@link LuaEntity::get_driver | runtime:LuaEntity::get_driver} in that the passenger can't drive the car.
      * @param passenger The new passenger. Writing `nil` ejects the current passenger, if any.
@@ -8942,6 +8942,9 @@ interface LuaEquipmentPrototype extends LuaPrototypeBase {
          */
         points?: EquipmentPoint[];
     };
+    readonly solar_panel_performance_at_day: double;
+    readonly solar_panel_performance_at_night: double;
+    readonly solar_panel_solar_coefficient_property: LuaSurfacePropertyPrototype;
     /**
      * The result item when taking this equipment out of an equipment grid, if any.
      */
@@ -12189,12 +12192,12 @@ interface LuaItemCommon {
      */
     get_inventory(this: void, inventory: defines.inventory): LuaInventory | null;
     /**
-     * Gets the filter at the given index for this upgrade item.
+     * Gets the filter at the given index for this upgrade item. Note that sources (`"from"` type) that are undefined will read as `{type = "item"}`, while destinations (`"to"` type) that are undefined will read as `nil`.
      *
      * In contrast to {@link LuaItemCommon::set_mapper | runtime:LuaItemCommon::set_mapper}, indices past the upgrade item's current size are considered to be out of bounds.
      * @param index The index of the mapper to read.
      */
-    get_mapper(this: void, index: uint, type: 'from' | 'to'): UpgradeMapperSource | UpgradeMapperDestination;
+    get_mapper(this: void, index: uint, type: 'from' | 'to'): (UpgradeMapperSource | UpgradeMapperDestination) | null;
     /**
      * Gets the tag with the given name or returns `nil` if it doesn't exist.
      */
@@ -13282,8 +13285,9 @@ interface LuaLogisticSection {
      * This can only be called when the section {@link is manual | runtime:LuaLogisticSection::is_manual}.
      * @param slot_index Index of a slot to set.
      * @param filter The details of the filter to set.
+     * @returns The existing index for the given filter or nil if the filter was successfully set.
      */
-    set_slot(this: void, slot_index: LogisticFilterIndex, filter: LogisticFilter): void;
+    set_slot(this: void, slot_index: LogisticFilterIndex, filter: LogisticFilter): LogisticFilterIndex | null;
     /**
      * Whether this section is active. This can only be written to when the section {@link is manual | runtime:LuaLogisticSection::is_manual}.
      */
@@ -15399,7 +15403,7 @@ interface LuaRecord {
      */
     get_entity_filter(this: void, index: uint): ItemFilter | null;
     /**
-     * Gets the filter at the given index for this upgrade item.
+     * Gets the filter at the given index for this upgrade item. Note that sources (`"from"` type) that are undefined will read as `{type = "item"}`, while destinations (`"to"` type) that are undefined will read as `nil`.
      *
      * In contrast to {@link LuaRecord::set_mapper | runtime:LuaRecord::set_mapper}, indices past the upgrade item's current size are considered to be out of bounds.
      * @param index The index of the mapper to read.
@@ -18273,7 +18277,7 @@ interface LuaSurfaceCreateEntityParamsHighlightBox extends BaseLuaSurfaceCreateE
  */
 interface LuaSurfaceCreateEntityParamsInserter extends BaseLuaSurfaceCreateEntityParams {
     'conditions': InserterCircuitConditions;
-    'filters': InventoryFilter[];
+    'filters'?: InserterItemFilter[];
 }
 /**
  *

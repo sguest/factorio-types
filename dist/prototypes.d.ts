@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.52
+// Factorio version 2.0.54
 // API version 6
 
 declare namespace prototype {
@@ -5145,6 +5145,10 @@ interface LandMinePrototype extends EntityWithOwnerPrototype {
      */
     trigger_collision_mask?: CollisionMaskConnector;
     trigger_force?: ForceCondition;
+    /**
+     * Time between checks to detonate due to nearby enemies. A larger time will be more performant.
+     */
+    trigger_interval?: uint32;
     trigger_radius: double;
 }
 interface LaneSplitterPrototype extends TransportBeltConnectablePrototype {
@@ -8003,10 +8007,18 @@ interface SmokeWithTriggerPrototype extends SmokePrototype {
  * A {@link portable solar panel | https://wiki.factorio.com/Portable_solar_panel}.
  */
 interface SolarPanelEquipmentPrototype extends EquipmentPrototype {
+    performance_at_day?: double;
+    performance_at_night?: double;
     /**
      * How much power should be provided.
      */
     power: Energy;
+    /**
+     * Surface property must have a positive {@link default value | prototype:SurfacePropertyPrototype::default_value}. When {@link SolarPanelEquipmentPrototype::solar_coefficient_property | prototype:SolarPanelEquipmentPrototype::solar_coefficient_property} is set to point at a different surface property than "solar-power", then {@link LuaSurface::solar_power_multiplier | runtime:LuaSurface::solar_power_multiplier} and {@link SpaceLocationPrototype::solar_power_in_space | prototype:SpaceLocationPrototype::solar_power_in_space} will be ignored as the solar panel power output will be only affected by value of this surface property set on the surface using {@link PlanetPrototype::surface_properties | prototype:PlanetPrototype::surface_properties} or {@link LuaSurface::set_property | runtime:LuaSurface::set_property}.
+     *
+     * Due to equipment grid overall description, when solar_coefficient_property is not solar-power, a different locale will be used to show total energy production of solar panels: `description.solar-panel-power-X` where X is the surface property name.
+     */
+    solar_coefficient_property?: SurfacePropertyID;
 }
 /**
  * A {@link solar panel | https://wiki.factorio.com/Solar_panel}.
@@ -8674,11 +8686,11 @@ interface StickerPrototype extends EntityPrototype {
     /**
      * The `hidden` property of stickers is hardcoded to `true`.
      */
-    hidden?: boolean;
+    hidden: true;
     /**
      * The `hidden_in_factoriopedia` property of stickers is hardcoded to `true`.
      */
-    hidden_in_factoriopedia?: boolean;
+    hidden_in_factoriopedia: true;
     render_layer?: RenderLayer;
     /**
      * Using this property marks the sticker as a "selection sticker", meaning that the selection box will be rendered around the entity when the sticker is on it.
@@ -9762,6 +9774,14 @@ interface UtilityConstants extends PrototypeBase {
     asteroid_spawning_offset: SimpleBoundingBox;
     asteroid_spawning_with_random_orientation_max_speed: double;
     /**
+     * Will be clamped to the range [2, 100].
+     */
+    blueprint_big_slots_per_row: uint8;
+    /**
+     * Will be clamped to the range [2, 100].
+     */
+    blueprint_small_slots_per_row: uint8;
+    /**
      * The base game uses more entries here that are applied via the ammo-category.lua file.
      */
     bonus_gui_ordering: BonusGuiOrdering;
@@ -9788,6 +9808,10 @@ interface UtilityConstants extends PrototypeBase {
     color_filters?: ColorFilterData[];
     construction_robots_use_busy_robots_queue: boolean;
     count_button_size: int32;
+    /**
+     * Will be clamped to the range [1, 100].
+     */
+    crafting_queue_slots_per_row: uint8;
     daytime_color_lookup: DaytimeColorLookupTable;
     deconstruct_mark_tint: Color;
     default_alert_icon_scale: float;
@@ -9879,9 +9903,9 @@ interface UtilityConstants extends PrototypeBase {
      */
     inserter_hand_stack_max_sprites: ItemCountType;
     /**
-     * Must be in range [1, 100].
+     * Will be clamped to the range [1, 100].
      */
-    inventory_width: uint32;
+    inventory_width: uint8;
     item_ammo_magazine_left_bar_color: Color;
     item_default_random_tint_strength: Color;
     /**
@@ -9912,6 +9936,10 @@ interface UtilityConstants extends PrototypeBase {
     logistic_gui_selected_network_highlight_tint: Color;
     logistic_gui_unselected_network_highlight_tint: Color;
     logistic_robots_use_busy_robots_queue: boolean;
+    /**
+     * Will be clamped to the range [2, 100].
+     */
+    logistic_slots_per_row: uint8;
     low_energy_robot_estimate_multiplier: double;
     main_menu_background_image_location: FileName;
     main_menu_background_vignette_intensity: float;
@@ -9937,9 +9965,9 @@ interface UtilityConstants extends PrototypeBase {
     minimum_recipe_overload_multiplier: uint32;
     missing_preview_sprite_location: FileName;
     /**
-     * Must be in range [1, 100].
+     * Will be clamped to the range [1, 100].
      */
-    module_inventory_width: uint32;
+    module_inventory_width: uint8;
     /**
      * Silently clamped to be between 0 and 1.
      */
@@ -9957,11 +9985,11 @@ interface UtilityConstants extends PrototypeBase {
     rocket_lift_weight: Weight;
     script_command_console_chat_color: Color;
     /**
-     * Must be in range [1, 100].
+     * Will be clamped to the range [1, 100].
      */
     select_group_row_count: uint8;
     /**
-     * Must be in range [1, 100].
+     * Will be clamped to the range [1, 100].
      */
     select_slot_row_count: uint8;
     selected_chart_search_highlight: Color;
@@ -9976,6 +10004,10 @@ interface UtilityConstants extends PrototypeBase {
      */
     space_platform_acceleration_expression: MathExpression;
     /**
+     * How many asteroid chunks should be processed per tick, see {@link space_platform_max_relative_speed_deviation_for_asteroid_chunks_update | prototype:UtilityConstants::space_platform_max_relative_speed_deviation_for_asteroid_chunks_update}.
+     */
+    space_platform_asteroid_chunk_trajectory_updates_per_tick: uint32;
+    /**
      * Determines how fast space platforms will send items in drop slots to the surface. Each item type has its own cooldown.
      */
     space_platform_dump_cooldown: uint32;
@@ -9983,6 +10015,10 @@ interface UtilityConstants extends PrototypeBase {
      * Delay after manual transfer until space platform sends items in drop slots to the surface. Overrides remaining space_platform_dump_cooldown in this instance.
      */
     space_platform_manual_dump_cooldown: uint32;
+    /**
+     * Space platform remembers relative speed range which asteroids use while it moves. When the range is larger than the specified deviation, the platform will start updating cached trajectories of all asteroid chunks over multiple ticks.
+     */
+    space_platform_max_relative_speed_deviation_for_asteroid_chunks_update: float;
     space_platform_max_size: SimpleBoundingBox;
     space_platform_relative_speed_factor: double;
     space_platform_starfield_movement_vector: Vector;
@@ -10008,6 +10044,10 @@ interface UtilityConstants extends PrototypeBase {
     train_temporary_stop_wait_time: uint32;
     train_time_wait_condition_default: uint32;
     train_visualization: TrainVisualizationConstants;
+    /**
+     * Will be clamped to the range [1, 100].
+     */
+    trash_inventory_width: uint8;
     tree_leaf_distortion_distortion_far: Vector;
     tree_leaf_distortion_distortion_near: Vector;
     tree_leaf_distortion_speed_far: Vector;

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.52
+// Factorio version 2.0.54
 // API version 6
 
 declare namespace runtime {
@@ -181,9 +181,6 @@ interface AsteroidChunkPrototypeFilter {
      */
     invert?: boolean;
 }
-/**
- * Used by {@link MapSettings | runtime:MapSettings} and {@link MapAndDifficultySettings | runtime:MapAndDifficultySettings}.
- */
 interface AsteroidMapSettings {
     spawning_rate: double;
     max_ray_portals_expanded_per_tick: uint;
@@ -2605,6 +2602,24 @@ interface IngredientFluid extends BaseIngredient {
 interface InserterCircuitConditions {
     circuit?: CircuitCondition;
     logistics?: CircuitCondition;
+}
+interface InserterItemFilter {
+    /**
+     * Position of the corresponding filter slot.
+     */
+    index: uint;
+    /**
+     * Item prototype name of the item to filter.
+     */
+    name: string;
+    /**
+     * Quality prototype name of the item to filter.
+     */
+    quality?: string;
+    /**
+     * Quality comparator to use for the quality filter.
+     */
+    comparator?: string;
 }
 interface InventoryFilter {
     /**
@@ -8162,27 +8177,28 @@ interface UnitSpawnDefinition {
     spawn_points: SpawnPointDefinition[];
 }
 interface UpgradeMapperDestination {
+    type: 'item' | 'entity';
     /**
-     * `"item"`, or `"entity"`.
-     */
-    type: string;
-    /**
-     * Name of the item, or entity.
+     * Name of the item or entity.
      */
     name?: string;
     /**
-     * Name of the quality.
+     * Name of the quality prototype.
      */
     quality?: string;
     /**
-     * when type is `"item"` and the mapper is configured to install modules the limit per machine. If `0` then no limit.
+     * When upgrading modules, this defines the maximum number of this module to be installed in the destination entity. `0` or `nil` means no limit.
      */
-    count?: uint;
+    module_limit?: uint16;
+    /**
+     * When upgrading entities, this defines explicit modules to be installed in the destination entity. Lists empty slots as `{}`.
+     */
+    module_slots?: ItemIDAndQualityIDPair[];
 }
 interface UpgradeMapperSource {
     type: 'item' | 'entity';
     /**
-     * Name of the item, or entity.
+     * Name of the item or entity.
      */
     name?: string;
     /**
@@ -8193,6 +8209,10 @@ interface UpgradeMapperSource {
      * The quality comparison type.
      */
     comparator?: ComparatorString;
+    /**
+     * When upgrading modules, this defines the specific entities to apply the upgrade to. `nil` applies it to all entities.
+     */
+    module_filter?: EntityIDFilter;
 }
 /**
  * Defines the mode of operation for a {@link ValvePrototype | prototype:ValvePrototype}.

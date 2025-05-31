@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.52
+// Factorio version 2.0.54
 // API version 6
 
 declare namespace defines {
@@ -442,7 +442,7 @@ enum distraction {
 }
 enum entity_status {
     /**
-     * Only used if set through {@link LuaEntity::status | runtime:LuaEntity::status} or {@link ContainerPrototype::default_status | prototype:ContainerPrototype::default_status}.
+     * Only used if set through {@link ContainerPrototype::default_status | prototype:ContainerPrototype::default_status}.
      */
     broken = 3,
     /**
@@ -1235,14 +1235,23 @@ enum inventory {
     artillery_turret_ammo = 46,
     artillery_wagon_ammo = 47,
     /**
-     * Used when items are ejected or items held by inserters cannot be inserted due to changing the recipe with the circuit network.
+     * Used for ejected items, or items held by inserters that can't be inserted due the recipe being changed with the circuit network.
      */
     assembling_machine_dump = 26,
+    /**
+     * Deprecated, replaced by `"crafter_input"`.
+     */
     assembling_machine_input = 23,
+    /**
+     * Deprecated, replaced by `"crafter_modules"`.
+     */
     assembling_machine_modules = 25,
+    /**
+     * Deprecated, replaced by `"crafter_output"`.
+     */
     assembling_machine_output = 24,
     /**
-     * Used for spoil result items that do not fit into the recipe slots and for items that are ejected when changing the recipe via remote view.
+     * Deprecated, replaced by `"crafter_trash"`.
      */
     assembling_machine_trash = 27,
     asteroid_collector_output = 63,
@@ -1266,17 +1275,29 @@ enum inventory {
     crafter_input = 59,
     crafter_modules = 61,
     crafter_output = 60,
+    /**
+     * Used for spoil result items that do not fit into the recipe slots, and for items that are ejected when changing the recipe via remote view.
+     */
     crafter_trash = 62,
     editor_ammo = 17,
     editor_armor = 18,
     editor_guns = 16,
     editor_main = 15,
     fuel = 0,
+    /**
+     * Deprecated, replaced by `"crafter_modules"`.
+     */
     furnace_modules = 6,
+    /**
+     * Deprecated, replaced by `"crafter_output"`.
+     */
     furnace_result = 5,
+    /**
+     * Deprecated, replaced by `"crafter_input"`.
+     */
     furnace_source = 4,
     /**
-     * Used for spoil result items that do not fit into the recipe slots.
+     * Deprecated, replaced by `"crafter_trash"`.
      */
     furnace_trash = 7,
     god_main = 14,
@@ -1294,8 +1315,17 @@ enum inventory {
     roboport_robot = 19,
     robot_cargo = 21,
     robot_repair = 22,
+    /**
+     * Deprecated, replaced by `"crafter_input"`.
+     */
     rocket_silo_input = 35,
+    /**
+     * Deprecated, replaced by `"crafter_modules"`.
+     */
     rocket_silo_modules = 37,
+    /**
+     * Deprecated, replaced by `"crafter_output"`.
+     */
     rocket_silo_output = 36,
     rocket_silo_rocket = 33,
     rocket_silo_trash = 34,
@@ -2282,8 +2312,17 @@ enum wire_connector_id {
     power_switch_right_copper = 8
 }
 enum wire_origin {
+    /**
+     * These wires can be modified by players, scripts, and the game. They are visible to the player if the entity's `draw_circuit_wires` prototype property is set to `true` and both ends of it are on the same surface.
+     */
     player = 0,
+    /**
+     * These wires can only be modified by the game. They are not visible to the player, irrespective of the `draw_circuit_wires` prototype property.
+     */
     radars = 2,
+    /**
+     * These wires can be modified by scripts and the game. They are not visible to the player, irrespective of the `draw_circuit_wires` prototype property.
+     */
     script = 1
 }
 enum wire_type {
