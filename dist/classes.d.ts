@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.54
+// Factorio version 2.0.55
 // API version 6
 
 declare namespace runtime {
@@ -11707,19 +11707,30 @@ interface LuaHeatEnergySourcePrototype {
     readonly valid: boolean;
 }
 /**
- * Provides various helper and utility functions. It is accessible through the global object named `helpers`.
+ * Provides various helper and utility functions. It is accessible through the global object named `helpers` in all stages (settings, prototype and runtime).
  */
 interface LuaHelpers {
     /**
      * Goes over all items, entities, tiles, recipes, technologies among other things and logs if the locale is incorrect.
      *
      * Also prints true/false if called from the console.
+     *
+     * Not available in settings and prototype stages.
      */
     check_prototype_translations(this: void): void;
+    /**
+     * Compares 2 version strings.
+     * @param first First version string to compare.
+     * @param second Second version string to compare.
+     * @returns -1 if first is smaller than second, 0 if first equal second, 1 if first is greater than second.
+     */
+    compare_versions(this: void, first: string, second: string): int;
     /**
      * Creates a {@link LuaProfiler | runtime:LuaProfiler}, which is used for measuring script performance.
      *
      * LuaProfiler cannot be serialized.
+     *
+     * Not available in settings and prototype stages.
      * @param stopped Create the timer stopped
      */
     create_profiler(this: void, stopped?: boolean): LuaProfiler;
@@ -11752,11 +11763,15 @@ interface LuaHelpers {
     evaluate_expression(this: void, expression: MathExpression, variables?: Record<string, double>): double;
     /**
      * Checks if the given SoundPath is valid.
+     *
+     * Not available in settings and prototype stages.
      * @param sound_path Path to the sound.
      */
     is_valid_sound_path(this: void, sound_path: SoundPath): boolean;
     /**
      * Checks if the given SpritePath is valid and contains a loaded sprite. The existence of the image is not checked for paths of type `file`.
+     *
+     * Not available in settings and prototype stages.
      * @param sprite_path Path to the image.
      */
     is_valid_sprite_path(this: void, sprite_path: SpritePath): boolean;
@@ -11768,6 +11783,8 @@ interface LuaHelpers {
     json_to_table(this: void, json: string): AnyBasic | null;
     /**
      * Convert a map exchange string to map gen settings and map settings.
+     *
+     * Not available in settings and prototype stages.
      */
     parse_map_exchange_string(this: void, map_exchange_string: string): MapExchangeStringData;
     /**
@@ -11784,9 +11801,13 @@ interface LuaHelpers {
      * @param filename The name of the file. Providing a directory path (ex. `"save/here/example.txt"`) will create the necessary folder structure in `script-output`.
      * @param data The content to write to the file.
      * @param append If `true`, `data` will be appended to the end of the file. Defaults to `false`, which will overwrite any pre-existing file with the new `data`.
-     * @param for_player If given, the file will only be written for this `player_index`. Providing `0` will only write to the server's output if present.
+     * @param for_player If given, the file will only be written for this `player_index`. Providing `0` will only write to the server's output if present. `for_player` cannot be used in settings and prototype stages.
      */
     write_file(this: void, filename: string, data: LocalisedString, append?: boolean, for_player?: uint): void;
+    /**
+     * Current version of game
+     */
+    readonly game_version: string;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */

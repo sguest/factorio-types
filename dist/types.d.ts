@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.54
+// Factorio version 2.0.55
 // API version 6
 
 declare namespace prototype {
@@ -4462,7 +4462,7 @@ interface FastReplaceTipTrigger extends CountBasedTipTrigger {
     type: 'fast-replace';
 }
 /**
- * A dictionary of feature flags and their status. It can be used to adjust prototypes based on whether the feature flags are enabled.
+ * A dictionary of feature flags and their status. It can be used to adjust prototypes based on whether the feature flags are enabled. It is accessible through the global object named `feature_flags`.
  * @example ```
 -- sets coal to spoil only when the spoiling feature flag is enabled
 if feature_flags["spoiling"] then
@@ -6657,10 +6657,10 @@ if mods["pizza"] then
 end
 ```
  * @example ```
--- when the only active mod is the space-age mod with version 1.2.0
+-- when the only active mod is the space-age mod with version 2.0.7
 -- then this logs
 for name, version in pairs(mods) do
-  log(name .. " version " .. version) -- => space-age version 1.2.0
+  log(name .. " version " .. version) -- => space-age version 2.0.7
 end
 ```
  */
@@ -8886,7 +8886,7 @@ interface SetTileTriggerEffectItem extends TriggerEffectItem {
     type: 'set-tile';
 }
 /**
- * A struct that provides access to the user-set values of startup {@link mod settings | https://wiki.factorio.com/Tutorial:Mod_settings}.
+ * A struct that provides access to the user-set values of startup {@link mod settings | https://wiki.factorio.com/Tutorial:Mod_settings}. It is accessible through the global object named `settings`.
  * @example ```
 -- Accessing the value of a mod setting
 local val = settings.startup["my-mod-setting-name"].value
