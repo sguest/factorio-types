@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.55
+// Factorio version 2.0.57
 // API version 6
 
 declare namespace runtime {
@@ -28,6 +28,10 @@ interface CustomInputEvent {
      * The mouse cursor position when the custom input was activated.
      */
     cursor_position: MapPosition;
+    /**
+     * The GUI element under the cursor when the custom input was activated.
+     */
+    element?: LuaGuiElement;
     /**
      * The prototype name of the custom input that was activated.
      */
@@ -3423,6 +3427,10 @@ interface on_research_cancelled {
      */
     name: defines.events;
     /**
+     * The player who cancelled the research if any.
+     */
+    player_index?: uint;
+    /**
      * A mapping of technology name to how many times it was cancelled.
      */
     research: Record<string, uint>;
@@ -3464,6 +3472,35 @@ interface on_research_moved {
      * Identifier of the event
      */
     name: defines.events;
+    /**
+     * The player who did the re-arranging if any.
+     */
+    player_index?: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when research is queued.
+ */
+interface on_research_queued {
+    /**
+     * The force whose research was queued.
+     */
+    force: LuaForce;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The player who queued the research if any.
+     */
+    player_index?: uint;
+    /**
+     * The technology queued
+     */
+    research: LuaTechnology;
     /**
      * Tick the event was generated.
      */

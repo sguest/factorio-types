@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.55
+// Factorio version 2.0.57
 // API version 6
 
 declare namespace runtime {
@@ -105,6 +105,10 @@ interface AmmoType {
     range_modifier?: double;
     cooldown_modifier?: double;
     consumption_modifier?: float;
+    /**
+     * The entity prototype filter names.
+     */
+    target_filter?: string[];
 }
 /**
  * Any basic type (string, number, boolean), table, or LuaObject.
@@ -286,6 +290,12 @@ interface AttackParametersStream extends BaseAttackParameters {
     'gun_barrel_length': float;
     'gun_center_shift': GunShift4Way;
     'projectile_creation_parameters'?: CircularProjectileCreationSpecification;
+}
+interface AttackReactionItem {
+    range: float;
+    action?: TriggerItem;
+    reaction_modifier: float;
+    damage_type?: LuaDamagePrototype;
 }
 interface AutoplaceControl {
     /**
@@ -1220,9 +1230,9 @@ interface DeciderCombinatorCondition {
      */
     comparator?: ComparatorString;
     /**
-     * Either "or" (default) or "and". Tells how this condition is compared with the preceding conditions in the corresponding `conditions` array.
+     * Tells how this condition is compared with the preceding conditions in the corresponding `conditions` array. Defaults to `"or"`.
      */
-    compare_type?: int;
+    compare_type?: 'and' | 'or';
 }
 interface DeciderCombinatorOutput {
     /**
@@ -1936,6 +1946,10 @@ interface EventData {
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
 type EventFilter = (LuaScriptRaisedTeleportedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPlatformMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPlayerMinedEntityEventFilter | LuaSectorScannedEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaScriptRaisedReviveEventFilter | LuaPlayerBuiltEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaEntityDamagedEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaScriptRaisedDestroyEventFilter)[];
+interface ExplosionDefinition {
+    name: LuaEntityPrototype;
+    offset: Vector;
+}
 type FactoriopediaID = LuaItemPrototype | LuaFluidPrototype | LuaRecipePrototype | LuaEntityPrototype | LuaTilePrototype | LuaSpaceLocationPrototype | /**
  * Does not actually have an entry in Factoriopedia.
  */
@@ -2328,6 +2342,10 @@ interface GuiAnchor {
      * If provided, only anchors the GUI element when the opened thing matches one of the names. When reading an anchor, `names` is always populated.
      */
     names?: string[];
+    /**
+     * One of `'both'`, `'only_ghosts'`, or `'only_real'`
+     */
+    ghost_mode?: string;
 }
 /**
  * Used for specifying where a GUI arrow should point to.
@@ -2529,13 +2547,17 @@ interface HeatSetting {
  */
 interface InfinityInventoryFilter {
     /**
-     * Name of the item.
+     * Name of the item. When reading a filter, this is a string.
      */
-    name: string;
+    name: ItemID;
     /**
-     * The count of the filter.
+     * Quality of the item. Defaults to `"normal"`. When reading a filter, this is a string.
      */
-    count?: uint;
+    quality?: QualityID;
+    /**
+     * The count of the filter. Defaults to 0.
+     */
+    count?: ItemCountType;
     /**
      * Defaults to `"at-least"`.
      */
@@ -2543,7 +2565,7 @@ interface InfinityInventoryFilter {
     /**
      * The index of this filter in the filters list. Not required when writing a filter.
      */
-    index: uint;
+    index?: uint;
 }
 /**
  * A single filter used by an infinity-pipe type entity.
@@ -2645,6 +2667,13 @@ interface InventoryPosition {
      * How many items to insert. Defaults to `1`.
      */
     count?: ItemCountType;
+}
+interface InventoryWithCustomStackSizePrototype {
+    stack_size_multiplier: double;
+    stack_size_min: ItemCountType;
+    stack_size_max: ItemCountType;
+    stack_size_override: Record<string, ItemCountType>;
+    with_bar: boolean;
 }
 type ItemCountType = uint;
 /**
@@ -3207,6 +3236,10 @@ interface LogisticFilter {
     import_from?: SpaceLocationID;
 }
 type LogisticFilterIndex = uint16;
+interface LogisticGroup {
+    members: LuaLogisticSection[];
+    filters: LogisticFilter[];
+}
 interface LogisticSection {
     index: uint8;
     filters?: BlueprintLogisticFilter[];
@@ -3545,7 +3578,7 @@ interface BaseLuaEntityDiedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name';
+    filter: 'ghost' | 'rail' | 'rail-signal' | 'rolling-stock' | 'robot-with-logistics-interface' | 'vehicle' | 'turret' | 'crafting-machine' | 'wall-connectable' | 'transport-belt-connectable' | 'circuit-network-connectable' | 'type' | 'name' | 'ghost_type' | 'ghost_name' | 'force';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3555,7 +3588,21 @@ interface BaseLuaEntityDiedEventFilter {
      */
     invert?: boolean;
 }
-type LuaEntityDiedEventFilter = BaseLuaEntityDiedEventFilter | LuaEntityDiedEventFilterGhostName | LuaEntityDiedEventFilterGhostType | LuaEntityDiedEventFilterName | LuaEntityDiedEventFilterType;
+type LuaEntityDiedEventFilter = BaseLuaEntityDiedEventFilter | LuaEntityDiedEventFilterForce | LuaEntityDiedEventFilterGhostName | LuaEntityDiedEventFilterGhostType | LuaEntityDiedEventFilterName | LuaEntityDiedEventFilterType;
+/**
+ *
+ * Applies to variant case `force`
+ */
+interface LuaEntityDiedEventFilterForce extends BaseLuaEntityDiedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'force';
+    /**
+     * The entity force
+     */
+    'force': string;
+}
 /**
  *
  * Applies to variant case `ghost_name`
@@ -5738,6 +5785,11 @@ interface PathfinderWaypoint {
      */
     needs_destroy_to_reach: boolean;
 }
+interface PerceivedPerformance {
+    minimum: double;
+    maximum: double;
+    performance_to_activity_rate: double;
+}
 /**
  * A single pipe connection for a given fluidbox.
  */
@@ -6743,6 +6795,7 @@ interface ScriptPosition {
     color: Color;
     id: uint;
 }
+type ScriptRenderMode = 'game' | 'chart';
 /**
  * When writing it is possible to give LuaEntity or MapPosition directly. However, reading always returns the full ScriptRenderTargetTable.
  */
@@ -7175,6 +7228,10 @@ interface SpaceLocationPrototypeFilterType extends BaseSpaceLocationPrototypeFil
     'type': string | string[];
 }
 type SpacePlatformIdentification = LuaSpacePlatform;
+interface SpacePlatformTileDefinition {
+    tile: LuaTilePrototype;
+    position: TilePosition;
+}
 interface SpawnPointDefinition {
     /**
      * Evolution factor for which this weight applies.
@@ -7534,6 +7591,11 @@ interface TerritorySettings {
  * For example, `"right"` aligned text means the right side of the text is at the target position. Or in other words, the target is on the right of the text.
  */
 type TextAlign = 'left' | 'right' | 'center';
+interface ThrusterPerformancePoint {
+    fluid_volume: double;
+    fluid_usage: double;
+    effectivity: double;
+}
 interface Tile {
     /**
      * The position of the tile.
@@ -8305,6 +8367,10 @@ interface WaitCondition {
  * Type of a {@link WaitCondition | runtime:WaitCondition}.
  */
 type WaitConditionType = 'time' | 'full' | 'empty' | 'not_empty' | 'item_count' | 'circuit' | 'inactivity' | 'robots_inactive' | 'fluid_count' | 'passenger_present' | 'passenger_not_present' | 'fuel_item_count_all' | 'fuel_item_count_any' | 'fuel_full' | 'destination_full_or_no_path' | 'request_satisfied' | 'request_not_satisfied' | 'all_requests_satisfied' | 'any_request_not_satisfied' | 'any_request_zero' | 'any_planet_import_zero' | 'specific_destination_full' | 'specific_destination_not_full' | 'at_station' | 'not_at_station' | 'damage_taken';
+/**
+ * Weight of an object. The weight is stored as a fixed-size 64 bit integer, with 16 bits reserved for decimal precision, meaning the smallest value step is `1/2^16`.
+ */
+type Weight = double;
 interface WireConnection {
     target: LuaWireConnector;
     /**
@@ -8410,6 +8476,12 @@ type float = number;
  * Since Lua 5.2 only uses doubles, any API that asks for `int` will floor the given double.
  */
 type int = number;
+/**
+ * 16 bit signed integer. Possible values are `-32 768` to `32 767`.
+ *
+ * Since Lua 5.2 only uses doubles, any API that asks for `int16` will floor the given double.
+ */
+type int16 = number;
 /**
  * 8-bit signed integer. Possible values are `-128` to `127`.
  *
