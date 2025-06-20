@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.55
+// Factorio version 2.0.57
 // API version 6
 
 declare namespace prototype {
@@ -1063,6 +1063,14 @@ interface BeaconPrototype extends EntityWithOwnerPrototype {
     ```
      */
     profile?: double[];
+    /**
+     * If set, {@link QualityPrototype::beacon_module_slots_bonus | prototype:QualityPrototype::beacon_module_slots_bonus} will be added to module slots count.
+     */
+    quality_affects_module_slots?: boolean;
+    /**
+     * If set, {@link QualityPrototype::beacon_supply_area_distance_bonus | prototype:QualityPrototype::beacon_supply_area_distance_bonus} will be added to supply_area_distance. Total value will be clamped to be within range `[0, 64]`.
+     */
+    quality_affects_supply_area_distance?: boolean;
     radius_visualisation_picture?: Sprite;
     /**
      * The maximum distance that this beacon can supply its neighbors with its module's effects. Max distance is 64.
@@ -1519,6 +1527,7 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
      * Names of the crafting categories the character can craft recipes from. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#recipe-category}. See also {@link RecipeCategory | prototype:RecipeCategory}.
      */
     crafting_categories?: RecipeCategoryID[];
+    crafting_speed?: double;
     damage_hit_tint: Color;
     distance_per_frame: double;
     drop_item_distance: uint32;
@@ -1829,13 +1838,21 @@ interface ContainerPrototype extends EntityWithOwnerPrototype {
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
     /**
+     * Only used when `inventory_type` is `"with_custom_stack_size"`.
+     */
+    inventory_properties?: InventoryWithCustomStackSizePrototype;
+    /**
      * The number of slots in this container.
      */
     inventory_size: ItemStackIndex;
     /**
-     * Whether the inventory of this container can be filtered (like cargo wagons) or not.
+     * Determines the type of inventory that this container has. Whether the inventory has a limiter bar, can be filtered (like cargo wagons), uses a custom stack size for contained item stacks (like artillery wagon), or uses a weight limit (like space age rocket silo).
      */
-    inventory_type?: 'normal' | 'with_bar' | 'with_filters_and_bar';
+    inventory_type?: 'normal' | 'with_bar' | 'with_filters_and_bar' | 'with_custom_stack_size' | 'with_weight_limit';
+    /**
+     * Only used when `inventory_type` is `"with_weight_limit"`.
+     */
+    inventory_weight_limit?: Weight;
     /**
      * The picture displayed for this entity.
      */
@@ -1986,7 +2003,7 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
         pipe_picture = assembler2pipepictures(),
         pipe_covers = pipecoverspictures(),
         volume = 1000,
-        pipe_connections = {{ flow_direction="input", direction = defines.direction.north, position = {0, -1} }},
+        pipe_connections = {{ flow_direction = "input", direction = defines.direction.north, position = {0, -1} }},
         secondary_draw_orders = { north = -1 }
       },
       {
@@ -1994,7 +2011,7 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
         pipe_picture = assembler2pipepictures(),
         pipe_covers = pipecoverspictures(),
         volume = 1000,
-        pipe_connections = {{ flow_direction="output", direction = defines.direction.south, position = {0, 1} }},
+        pipe_connections = {{ flow_direction = "output", direction = defines.direction.south, position = {0, 1} }},
         secondary_draw_orders = { north = -1 }
       },
     }
@@ -2018,6 +2035,14 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
      */
     perceived_performance?: PerceivedPerformance;
     production_health_effect?: ProductionHealthEffect;
+    /**
+     * When set, {@link QualityPrototype::crafting_machine_energy_usage_multiplier | prototype:QualityPrototype::crafting_machine_energy_usage_multiplier} will be applied to energy_usage.
+     */
+    quality_affects_energy_usage?: boolean;
+    /**
+     * If set, {@link QualityPrototype::crafting_machine_module_slots_bonus | prototype:QualityPrototype::crafting_machine_module_slots_bonus} will be added to module slots count.
+     */
+    quality_affects_module_slots?: boolean;
     /**
      * Controls whether the ingredients of an in-progress recipe are destroyed when mining the machine/changing the recipe. If set to true, the ingredients do not get destroyed. This affects only the ingredients of the recipe that is currently in progress, so those that visually have already been consumed while their resulting product has not yet been produced.
      */
@@ -4964,6 +4989,10 @@ interface LabPrototype extends EntityWithOwnerPrototype {
      * The animation that plays when the lab is active.
      */
     on_animation?: Animation;
+    /**
+     * If set, {@link QualityPrototype::beacon_module_slots_bonus | prototype:QualityPrototype::beacon_module_slots_bonus} will be added to module slots count.
+     */
+    quality_affects_module_slots?: boolean;
     researching_speed?: double;
     /**
      * May not be `0` or larger than `100`.
@@ -5231,13 +5260,21 @@ interface LinkedContainerPrototype extends EntityWithOwnerPrototype {
      */
     gui_mode?: 'all' | 'none' | 'admins';
     /**
+     * Only used when `inventory_type` is `"with_custom_stack_size"`.
+     */
+    inventory_properties?: InventoryWithCustomStackSizePrototype;
+    /**
      * Must be > 0.
      */
     inventory_size: ItemStackIndex;
     /**
-     * Whether the inventory of this container can be filtered (like cargo wagons) or not.
+     * Determines the type of inventory that this linked container has. Whether the inventory has a limiter bar, can be filtered (like cargo wagons), uses a custom stack size for contained item stacks (like artillery wagon), or uses a weight limit (like space age rocket silo).
      */
-    inventory_type?: 'normal' | 'with_bar' | 'with_filters_and_bar';
+    inventory_type?: 'normal' | 'with_bar' | 'with_filters_and_bar' | 'with_custom_stack_size' | 'with_weight_limit';
+    /**
+     * Only used when `inventory_type` is `"with_weight_limit"`.
+     */
+    inventory_weight_limit?: Weight;
     picture?: Sprite;
 }
 /**
@@ -5315,6 +5352,10 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype {
     per_lane_filters?: boolean;
     structure?: LoaderStructure;
     structure_render_layer?: RenderLayer;
+    /**
+     * When set, loader will ignore items for which there is not enough to create a full belt stack. Relevant only when loader can create belt stacks.
+     */
+    wait_for_full_stack?: boolean;
 }
 /**
  * A {@link locomotive | https://wiki.factorio.com/Locomotive}.
@@ -5555,6 +5596,14 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
      * Affects animation speed.
      */
     perceived_performance?: PerceivedPerformance;
+    /**
+     * If set, {@link QualityPrototype::mining_drill_mining_radius_bonus | prototype:QualityPrototype::mining_drill_mining_radius_bonus} will be added to resource_searching_radius.
+     */
+    quality_affects_mining_radius?: boolean;
+    /**
+     * If set, {@link QualityPrototype::mining_drill_module_slots_bonus | prototype:QualityPrototype::mining_drill_module_slots_bonus} will be added to module slots count.
+     */
+    quality_affects_module_slots?: boolean;
     /**
      * The sprite used to show the range of the mining drill.
      */
@@ -6294,11 +6343,69 @@ interface PumpPrototype extends EntityWithOwnerPrototype {
 }
 interface QualityPrototype extends Prototype {
     /**
+     * Must be >= 0.01.
+     */
+    accumulator_capacity_multiplier?: double;
+    /**
+     * Must be >= 0.
+     *
+     * Performance warning: the navigation has to pre-calculate ranges for the highest tier collector possible, so you should keep this collection radius within reasonable values.
+     */
+    asteroid_collector_collection_radius_bonus?: double;
+    /**
+     * Only affects beacons with {@link BeaconPrototype::quality_affects_module_slots | prototype:BeaconPrototype::quality_affects_module_slots} set.
+     */
+    beacon_module_slots_bonus?: ItemStackIndex;
+    /**
      * Must be >= 0.
      */
     beacon_power_usage_multiplier?: float;
+    /**
+     * Only affects beacons with {@link BeaconPrototype::quality_affects_supply_area | prototype:BeaconPrototype::quality_affects_supply_area} set.
+     *
+     * Must be >= 0 and <= 64.
+     */
+    beacon_supply_area_distance_bonus?: float;
     color: Color;
+    /**
+     * Only affects crafting machines with {@link CraftingMachinePrototype::quality_affects_energy_usage | prototype:CraftingMachinePrototype::quality_affects_energy_usage} set.
+     *
+     * Must be >= 0.01.
+     */
+    crafting_machine_energy_usage_multiplier?: double;
+    /**
+     * Only affects crafting machines with {@link CraftingMachinePrototype::quality_affects_module_slots | prototype:CraftingMachinePrototype::quality_affects_module_slots} set.
+     */
+    crafting_machine_module_slots_bonus?: ItemStackIndex;
+    /**
+     * Must be >= 0.01.
+     */
+    crafting_machine_speed_multiplier?: double;
+    /**
+     * Must be >= 0.01.
+     */
+    default_multiplier?: double;
     draw_sprite_by_default?: boolean;
+    /**
+     * Must be >= 0.
+     */
+    electric_pole_supply_area_distance_bonus?: float;
+    /**
+     * Must be >= 0.
+     */
+    electric_pole_wire_reach_bonus?: float;
+    equipment_grid_height_bonus?: int16;
+    equipment_grid_width_bonus?: int16;
+    /**
+     * Only affects fluid wagons with {@link FluidWagonPrototype::quality_affects_capacity | prototype:FluidWagonPrototype::quality_affects_capacity} set.
+     *
+     * Must be >= 0.01.
+     */
+    fluid_wagon_capacity_multiplier?: double;
+    /**
+     * Must be >= 0.01.
+     */
+    flying_robot_max_energy_multiplier?: double;
     /**
      * Path to the icon file.
      *
@@ -6316,9 +6423,40 @@ interface QualityPrototype extends Prototype {
      */
     icons?: IconData[];
     /**
+     * Must be >= 0.01.
+     */
+    inserter_speed_multiplier?: double;
+    /**
+     * Must be >= 0.01.
+     */
+    inventory_size_multiplier?: double;
+    /**
+     * Only affects labs with {@link LabPrototype::quality_affects_module_slots | prototype:LabPrototype::quality_affects_module_slots} set.
+     */
+    lab_module_slots_bonus?: ItemStackIndex;
+    /**
+     * Must be >= 0.01.
+     */
+    lab_research_speed_multiplier?: double;
+    /**
      * Requires Space Age to use level greater than `0`.
      */
     level: uint32;
+    /**
+     * Must be >= 0.01.
+     */
+    logistic_cell_charging_energy_multiplier?: double;
+    logistic_cell_charging_station_count_bonus?: uint32;
+    /**
+     * Only affects mining drills with {@link MiningDrillPrototype::quality_affects_mining_radius | prototype:MiningDrillPrototype::quality_affects_mining_radius} set.
+     *
+     * Must be >= 0.
+     */
+    mining_drill_mining_radius_bonus?: float;
+    /**
+     * Only affects mining drills with {@link MiningDrillPrototype::quality_affects_module_slots | prototype:MiningDrillPrototype::quality_affects_module_slots} set.
+     */
+    mining_drill_module_slots_bonus?: ItemStackIndex;
     /**
      * Must be in range `[0, 1]`.
      */
@@ -6335,9 +6473,17 @@ interface QualityPrototype extends Prototype {
      */
     next_probability?: double;
     /**
+     * Must be within [1, 3].
+     */
+    range_multiplier?: double;
+    /**
      * Must be in range `[0, 1]`.
      */
     science_pack_drain_multiplier?: float;
+    /**
+     * Must be >= 0.01.
+     */
+    tool_durability_multiplier?: double;
 }
 /**
  * A {@link radar | https://wiki.factorio.com/Radar}.
@@ -9925,6 +10071,7 @@ interface UtilityConstants extends PrototypeBase {
      * Max radius where cargo pods will land.
      */
     landing_area_max_radius: float;
+    landing_squash_immunity: MapTick;
     large_area_size: float;
     large_blueprint_area_size: float;
     /**
@@ -10239,6 +10386,7 @@ interface UtilitySprites extends PrototypeBase {
     close_map_preview: Sprite;
     clouds: Animation;
     collapse: Sprite;
+    collapse_dark: Sprite;
     color_effect: Sprite;
     color_picker: Sprite;
     confirm_slot: Sprite;
@@ -10748,7 +10896,7 @@ interface ValvePrototype extends EntityWithOwnerPrototype {
      */
     flow_rate: FluidAmount;
     /**
-     * Must have at least one `"output"` {@link FluidFlowDirection | prototype:FluidFlowDirection} and at least one `input-output` {@link FluidFlowDirection | prototype:FluidFlowDirection}.
+     * Must have at least one `"output"` {@link FluidFlowDirection | prototype:FluidFlowDirection} and at least one `"input-output"` {@link FluidFlowDirection | prototype:FluidFlowDirection}.
      */
     fluid_box: FluidBox;
     frozen_patch?: Sprite4Way;

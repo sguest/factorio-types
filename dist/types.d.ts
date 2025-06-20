@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.55
+// Factorio version 2.0.57
 // API version 6
 
 declare namespace prototype {
@@ -5424,6 +5424,25 @@ interface InterruptibleSound {
      */
     stopped_sound?: Sound;
 }
+interface InventoryWithCustomStackSizePrototype {
+    /**
+     * Must be >= stack_size_min.
+     */
+    stack_size_max?: ItemCountType;
+    /**
+     * Must be >= 1.
+     */
+    stack_size_min?: ItemCountType;
+    /**
+     * Must be >= 0.
+     */
+    stack_size_multiplier?: double;
+    /**
+     * Each record value must be >= 1. For non-stackable items this value will be ignored.
+     */
+    stack_size_override?: Record<ItemID, ItemCountType>;
+    with_bar?: boolean;
+}
 interface InvokeTileEffectTriggerEffectItem extends TriggerEffectItem {
     tile_collision_mask?: CollisionMaskConnector;
     type: 'invoke-tile-trigger';
@@ -5843,13 +5862,13 @@ interface LightningPriorityRule extends LightningRuleBaseBase {
     priority_bonus: int32;
 }
 interface LightningProperties {
-    exemption_rules: LightningRuleBase[];
+    exemption_rules?: LightningRuleBase[];
     /**
-     * Must be in range [0,1].
+     * Must be in range `[0, 1]`.
      */
     lightning_multiplier_at_day?: double;
     /**
-     * Must be in range [0,1].
+     * Must be in range `[0, 1]`.
      */
     lightning_multiplier_at_night?: double;
     /**
@@ -5867,7 +5886,7 @@ interface LightningProperties {
      * Value of that surface property is divided by {@link default_value | prototype:SurfacePropertyPrototype::default_value} which means a default value must be positive (cannot be 0). When surface property has value at default, then this additional multiplier has value of 1.
      */
     multiplier_surface_property?: SurfacePropertyID;
-    priority_rules: LightningPriorityRule[];
+    priority_rules?: LightningPriorityRule[];
     search_radius: double;
 }
 interface LightningRuleBaseBase {
@@ -9260,7 +9279,7 @@ interface SoundAccent {
 }
 type SoundDefinition = {
     /**
-     * Supported sound file formats are `.ogg` (Vorbis) and `.wav`.
+     * Supported sound file formats are `.ogg` (Vorbis and Opus) and `.wav`.
      */
     filename: FileName;
     /**
