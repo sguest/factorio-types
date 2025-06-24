@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.57
+// Factorio version 2.0.58
 // API version 6
 
 declare namespace runtime {
@@ -8155,7 +8155,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * Properties of custom inventory. Only provided if inventory_type is `"with_custom_stack_size"`.
      */
-    readonly inventory_properties?: InventoryWithCustomStackSizePrototype;
+    readonly inventory_properties?: InventoryWithCustomStackSizeSpecification;
     readonly inventory_size_quality_increase?: uint;
     /**
      * The inventory type this container or linked container uses.
@@ -8170,17 +8170,24 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * These are the objects that are considered buildings:
      *
      * - AccumulatorPrototype
+     * - AgriculturalTowerPrototype
      * - ArtilleryTurretPrototype
+     * - AsteroidCollectorPrototype
      * - BeaconPrototype
      * - BoilerPrototype
      * - BurnerGeneratorPrototype
-     * - CombinatorPrototype → ArithmeticCombinator, DeciderCombinator
+     * - CargoBayPrototype
+     * - CargoLandingPadPrototype
+     * - CombinatorPrototype → ArithmeticCombinator, DeciderCombinator, SelectorCombinator
      * - ConstantCombinatorPrototype
-     * - ContainerPrototype → LogisticContainer, InfinityContainer
+     * - ContainerPrototype → LogisticContainer, InfinityContainer, TemporaryContainer
      * - CraftingMachinePrototype → AssemblingMachine, RocketSilo, Furnace
+     * - DisplayPanelPrototype
      * - ElectricEnergyInterfacePrototype
      * - ElectricPolePrototype
      * - EnemySpawnerPrototype
+     * - FusionGeneratorPrototype
+     * - FusionReactorPrototype
      * - GatePrototype
      * - GeneratorPrototype
      * - HeatInterfacePrototype
@@ -8188,6 +8195,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * - InserterPrototype
      * - LabPrototype
      * - LampPrototype
+     * - LightningAttractorPrototype
      * - LinkedContainerPrototype
      * - MarketPrototype
      * - MiningDrillPrototype
@@ -8196,19 +8204,24 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * - PipeToGroundPrototype
      * - PowerSwitchPrototype
      * - ProgrammableSpeakerPrototype
+     * - ProxyContainerPrototype
      * - PumpPrototype
      * - RadarPrototype
-     * - RailPrototype → CurvedRail, StraightRail
+     * - RailPrototype → CurvedRailA, ElevatedCurvedRailA, CurvedRailB, ElevatedCurvedRailB, HalfDiagonalRail, ElevatedHalfDiagonalRail, LegacyCurvedRail, LegacyStraightRail, RailRamp, StraightRail, ElevatedStraightRail
      * - RailSignalBasePrototype → RailChainSignal, RailSignal
+     * - RailSupportPrototype
      * - ReactorPrototype
      * - RoboportPrototype
      * - SimpleEntityPrototype
      * - SimpleEntityWithOwnerPrototype → SimpleEntityWithForce
      * - SolarPanelPrototype
+     * - SpacePlatformHubPrototype
      * - StorageTankPrototype
+     * - ThrusterPrototype
      * - TrainStopPrototype
-     * - TransportBeltConnectablePrototype → LinkedBelt, Loader1x1, Loader1x2, Splitter, TransportBelt, UndergroundBelt
+     * - TransportBeltConnectablePrototype → LaneSplitter, LinkedBelt, Loader1x1, Loader1x2, Splitter, TransportBelt, UndergroundBelt
      * - TurretPrototype → AmmoTurret, ElectricTurret, FluidTurret
+     * - ValvePrototype
      * - WallPrototype
      */
     readonly is_building: boolean;
@@ -8398,6 +8411,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly move_while_shooting?: boolean;
     readonly neighbour_bonus?: double;
+    readonly neighbour_connectable?: NeighbourConnectable;
     /**
      * The next upgrade for this entity, if any.
      */
@@ -13588,6 +13602,28 @@ interface LuaMiningDrillControlBehavior extends LuaGenericOnOffControlBehavior {
     readonly valid: boolean;
 }
 /**
+ * Arbitrary data provided by mods.
+ */
+interface LuaModData extends LuaPrototypeBase {
+    /**
+     * Provides partial access to the data.
+     */
+    get(this: void, key: string): AnyBasic | null;
+    /**
+     * Provides full data of this prototype.
+     */
+    readonly data: Record<string, AnyBasic>;
+    readonly data_type: string;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
  * Prototype of a mod setting.
  */
 interface LuaModSettingPrototype extends LuaPrototypeBase {
@@ -14848,6 +14884,10 @@ interface LuaPrototypes {
     readonly max_inserter_reach_distance: double;
     readonly max_pipe_to_ground_distance: uint8;
     readonly max_underground_belt_distance: uint8;
+    /**
+     * A dictionary containing every LuaModData indexed by `name`.
+     */
+    readonly mod_data: Record<string, LuaModData>;
     /**
      * A dictionary containing every LuaModSettingPrototype indexed by `name`.
      */

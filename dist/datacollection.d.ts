@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.57
+// Factorio version 2.0.58
 // API version 6
 
 declare namespace prototype {
@@ -456,6 +456,9 @@ interface dataCollection {
     };
     'mining-drill': {
         [key: string]: MiningDrillPrototype;
+    };
+    'mod-data': {
+        [key: string]: ModData;
     };
     'module-category': {
         [key: string]: ModuleCategory;

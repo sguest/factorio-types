@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.57
+// Factorio version 2.0.58
 // API version 6
 
 declare namespace runtime {
@@ -2668,7 +2668,7 @@ interface InventoryPosition {
      */
     count?: ItemCountType;
 }
-interface InventoryWithCustomStackSizePrototype {
+interface InventoryWithCustomStackSizeSpecification {
     stack_size_multiplier: double;
     stack_size_min: ItemCountType;
     stack_size_max: ItemCountType;
@@ -5330,6 +5330,10 @@ float | /**
  * equivalent to `2`.
  */
 'very-good';
+interface MapLocation {
+    position: MapLocation;
+    direction: defines.direction;
+}
 /**
  * Coordinates on a surface, for example of an entity. MapPositions may be specified either as a dictionary with `x`, `y` as keys, or simply as an array with two elements.
  *
@@ -5574,6 +5578,16 @@ interface ModuleEffects {
  * To write to this, use an array{@link [string | runtime:string}] of the mouse buttons that should be possible to use with on button. The flag `"left-and-right"` can also be set, which will set `"left"` and `"right"` to `true`.
  */
 type MouseButtonFlags = Record<'left' | 'right' | 'middle' | 'button-4' | 'button-5' | 'button-6' | 'button-7' | 'button-8' | 'button-9', true>;
+interface NeighbourConnectable {
+    affected_by_direction: boolean;
+    neighbour_search_distance: float;
+    connections: NeighbourConnectableConnectionDefinition[];
+}
+interface NeighbourConnectableConnectionDefinition {
+    location: MapLocation;
+    category: string;
+    neighbour_category: string[];
+}
 /**
  * The string representation of a noise expression. More detailed information is found on the {@link prototype docs | prototype:NamedNoiseExpression}.
  */
