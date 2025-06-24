@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.57
+// Factorio version 2.0.58
 // API version 6
 
 declare namespace defines {
@@ -1776,6 +1776,12 @@ namespace prototypes {
      */
     enum map_settings {
         'map-settings' = 0
+    }
+    /**
+     * @customName mod-data
+     */
+    enum mod_data {
+        'mod-data' = 0
     }
     /**
      * @customName module-category

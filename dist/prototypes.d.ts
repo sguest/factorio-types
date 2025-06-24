@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.57
+// Factorio version 2.0.58
 // API version 6
 
 declare namespace prototype {
@@ -1840,7 +1840,7 @@ interface ContainerPrototype extends EntityWithOwnerPrototype {
     /**
      * Only used when `inventory_type` is `"with_custom_stack_size"`.
      */
-    inventory_properties?: InventoryWithCustomStackSizePrototype;
+    inventory_properties?: InventoryWithCustomStackSizeSpecification;
     /**
      * The number of slots in this container.
      */
@@ -1975,6 +1975,12 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
      */
     crafting_speed: double;
     /**
+     * Each value must be >= 0.01.
+     *
+     * If value is not provided for a quality, then {@link QualityPrototype::crafting_machine_speed_multiplier | prototype:QualityPrototype::crafting_machine_speed_multiplier} will be used as a speed multiplier instead.
+     */
+    crafting_speed_quality_multiplier?: LuaTable<QualityID, double>;
+    /**
      * Whether the "alt-mode icon" should have a black background.
      */
     draw_entity_info_icon_background?: boolean;
@@ -1992,6 +1998,14 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
     ```
      */
     energy_usage: Energy;
+    /**
+     * Each value must be >= 0.01.
+     *
+     * If value is not provided for a quality, then {@link QualityPrototype::crafting_machine_energy_usage_multiplier | prototype:QualityPrototype::crafting_machine_energy_usage_multiplier} will be used as an energy usage multiplier instead.
+     *
+     * Does nothing if {@link CraftingMachinePrototype::quality_affects_energy_usage | prototype:CraftingMachinePrototype::quality_affects_energy_usage} is not set.
+     */
+    energy_usage_quality_multiplier?: LuaTable<QualityID, double>;
     fast_transfer_modules_into_module_slots_only?: boolean;
     /**
      * The crafting machine's fluid boxes. If an assembling machine has fluid boxes *and* {@link AssemblingMachinePrototype::fluid_boxes_off_when_no_fluid_recipe | prototype:AssemblingMachinePrototype::fluid_boxes_off_when_no_fluid_recipe} is true, the assembling machine can only be rotated when a recipe consuming or producing fluid is set, or if it has one of the other properties listed at the top of this page.
@@ -2030,6 +2044,12 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
      * The number of module slots in this machine.
      */
     module_slots?: ItemStackIndex;
+    /**
+     * If value is not provided for a quality, then {@link QualityPrototype::crafting_machine_module_slots_bonus | prototype:QualityPrototype::crafting_machine_module_slots_bonus} will be used as a module slots bonus instead.
+     *
+     * Does nothing if {@link CraftingMachinePrototype::quality_affects_module_slots | prototype:CraftingMachinePrototype::quality_affects_module_slots} is not set.
+     */
+    module_slots_quality_bonus?: LuaTable<QualityID, ItemStackIndex>;
     /**
      * Affects animation speed.
      */
@@ -3154,6 +3174,9 @@ interface EntityPrototype extends Prototype {
     fast_replaceable_group?: string;
     flags?: EntityPrototypeFlags;
     friendly_map_color?: Color;
+    /**
+     * This entity can freeze if heating_energy is larger than zero.
+     */
     heating_energy?: Energy;
     /**
      * Where beams should hit the entity. Useful if the bounding box only covers part of the entity (e.g. feet of the character) and beams only hitting there would look weird.
@@ -5262,7 +5285,7 @@ interface LinkedContainerPrototype extends EntityWithOwnerPrototype {
     /**
      * Only used when `inventory_type` is `"with_custom_stack_size"`.
      */
-    inventory_properties?: InventoryWithCustomStackSizePrototype;
+    inventory_properties?: InventoryWithCustomStackSizeSpecification;
     /**
      * Must be > 0.
      */
@@ -5631,6 +5654,19 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
      */
     vector_to_place_result: Vector;
     wet_mining_graphics_set?: MiningDrillGraphicsSet;
+}
+/**
+ * Block of arbitrary data set by mods in data stage.
+ */
+interface ModData extends Prototype {
+    data: Record<string, AnyBasic>;
+    /**
+     * Arbitrary string that mods can use to declare type of data. Can be used for mod compatibility when one mod declares block of data that is expected to be discovered by another mod.
+     * @example ```
+    data_type = "my-mod.my_structure"
+    ```
+     */
+    data_type?: string;
 }
 /**
  * A module category. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#module-category}. See {@link ModulePrototype::category | prototype:ModulePrototype::category}.
@@ -6341,6 +6377,9 @@ interface PumpPrototype extends EntityWithOwnerPrototype {
      */
     pumping_speed: FluidAmount;
 }
+/**
+ * One quality step. Its effects are specified by the level and the various multiplier and bonus properties. Properties ending in `_multiplier` are applied multiplicatively to their base property, properties ending in `_bonus` are applied additively.
+ */
 interface QualityPrototype extends Prototype {
     /**
      * Must be >= 0.01.
@@ -6368,17 +6407,23 @@ interface QualityPrototype extends Prototype {
     beacon_supply_area_distance_bonus?: float;
     color: Color;
     /**
+     * Must be >= 0.01.
+     *
      * Only affects crafting machines with {@link CraftingMachinePrototype::quality_affects_energy_usage | prototype:CraftingMachinePrototype::quality_affects_energy_usage} set.
      *
-     * Must be >= 0.01.
+     * Will be ignored by crafting machines with {@link CraftingMachinePrototype::energy_usage_quality_multiplier | prototype:CraftingMachinePrototype::energy_usage_quality_multiplier} set.
      */
     crafting_machine_energy_usage_multiplier?: double;
     /**
      * Only affects crafting machines with {@link CraftingMachinePrototype::quality_affects_module_slots | prototype:CraftingMachinePrototype::quality_affects_module_slots} set.
+     *
+     * Will be ignored by crafting machines with {@link CraftingMachinePrototype::module_slots_quality_bonus | prototype:CraftingMachinePrototype::module_slots_quality_bonus} set.
      */
     crafting_machine_module_slots_bonus?: ItemStackIndex;
     /**
      * Must be >= 0.01.
+     *
+     * Will be ignored by crafting machines with {@link CraftingMachinePrototype::crafting_speed_quality_multiplier | prototype:CraftingMachinePrototype::crafting_speed_quality_multiplier} set.
      */
     crafting_machine_speed_multiplier?: double;
     /**
@@ -6397,9 +6442,9 @@ interface QualityPrototype extends Prototype {
     equipment_grid_height_bonus?: int16;
     equipment_grid_width_bonus?: int16;
     /**
-     * Only affects fluid wagons with {@link FluidWagonPrototype::quality_affects_capacity | prototype:FluidWagonPrototype::quality_affects_capacity} set.
-     *
      * Must be >= 0.01.
+     *
+     * Only affects fluid wagons with {@link FluidWagonPrototype::quality_affects_capacity | prototype:FluidWagonPrototype::quality_affects_capacity} set.
      */
     fluid_wagon_capacity_multiplier?: double;
     /**
@@ -6473,7 +6518,9 @@ interface QualityPrototype extends Prototype {
      */
     next_probability?: double;
     /**
-     * Must be within [1, 3].
+     * Must be within `[1, 3]`.
+     *
+     * Affects the range of {@link attack parameters | prototype:AttackParameters}, e.g. those used by combat robots, units, guns and turrets.
      */
     range_multiplier?: double;
     /**
@@ -8313,7 +8360,7 @@ interface SpaceConnectionPrototype extends Prototype {
     to: SpaceLocationID;
 }
 /**
- * A space location, such as a planet.
+ * A space location, such as a planet or the solar system edge.
  */
 interface SpaceLocationPrototype extends Prototype {
     asteroid_spawn_definitions?: SpaceLocationAsteroidSpawnDefinition[];
@@ -11308,6 +11355,8 @@ type dataExtendType = ({
 } & MarketPrototype) | ({
     type: 'mining-drill';
 } & MiningDrillPrototype) | ({
+    type: 'mod-data';
+} & ModData) | ({
     type: 'module-category';
 } & ModuleCategory) | ({
     type: 'module';

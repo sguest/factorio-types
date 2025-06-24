@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.57
+// Factorio version 2.0.58
 // API version 6
 
 declare namespace prototype {
@@ -580,6 +580,10 @@ type AnimationVariations = {
     sheets?: AnimationSheet[];
 } | Animation | Animation[];
 /**
+ * Any basic type (string, number, boolean) or table.
+ */
+type AnyBasic = string | boolean | number | table;
+/**
  * A union of all prototypes. A specific prototype is loaded based on the value of the `type` key.
  *
  * See the {@link Prototypes page | prototype:prototypes} for more information.
@@ -1035,6 +1039,9 @@ MarketPrototype | /**
  * `'mining-drill'`
  */
 MiningDrillPrototype | /**
+ * `'mod-data'`
+ */
+ModData | /**
  * `'module-category'`
  */
 ModuleCategory | /**
@@ -4582,7 +4589,7 @@ interface FluidBox {
      */
     pipe_connections: PipeConnectionDefinition[];
     /**
-     * The pictures to show when another fluid box connects to this one.
+     * The pictures to show when no fluid box is connected to this one.
      */
     pipe_covers?: Sprite4Way;
     pipe_covers_frozen?: Sprite4Way;
@@ -5424,7 +5431,7 @@ interface InterruptibleSound {
      */
     stopped_sound?: Sound;
 }
-interface InventoryWithCustomStackSizePrototype {
+interface InventoryWithCustomStackSizeSpecification {
     /**
      * Must be >= stack_size_min.
      */
@@ -12943,6 +12950,12 @@ type int32 = number;
  * Decimal numbers are automatically truncated when used in place of `int8`.
  */
 type int8 = number;
+/**
+ * A simple {@link Lua table | http://www.lua.org/pil/2.5.html}. An array is a table that uses continuous integer keys starting at `1`, while a dictionary can use numeric or string keys in any order or combination.
+ *
+ * Tables used by prototypes may be parsed via an internal class called "property tree". Errors that reference this class treat tables as 0-indexed. For example `Value must be a number in property tree at ROOT.technology.steel-plate-productivity.effects[0].change` refers to element 0 of the property tree array which in Lua is at index 1.
+ */
+type table = Table;
 /**
  * 16 bit unsigned integer. Ranges from `0` to `65 535`, or `[0, 2^16-1]`.
  *
