@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.58
+// Factorio version 2.0.59
 // API version 6
 
 declare namespace prototype {
@@ -106,7 +106,7 @@ interface AchievementPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -893,7 +893,7 @@ interface AsteroidChunkPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -3811,7 +3811,7 @@ interface FluidPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -4541,6 +4541,10 @@ interface InserterPrototype extends EntityWithOwnerPrototype {
      */
     use_easter_egg?: boolean;
     /**
+     * When set to false, then relevant value of inserter stack size bonus ({@link LuaForce::inserter_stack_size_bonus | runtime:LuaForce::inserter_stack_size_bonus} or {@link LuaForce::bulk_inserter_capacity_bonus | runtime:LuaForce::bulk_inserter_capacity_bonus}) will not affect inserter stack size.
+     */
+    uses_inserter_stack_size_bonus?: boolean;
+    /**
      * Inserter will wait until its hand is full.
      */
     wait_for_full_hand?: boolean;
@@ -4595,7 +4599,7 @@ interface ItemGroup extends Prototype {
     /**
      * Path to the icon that is shown to represent this item group.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -4709,7 +4713,7 @@ interface ItemPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -6262,6 +6266,10 @@ interface ProjectilePrototype extends EntityPrototype {
 }
 interface Prototype extends PrototypeBase {
     /**
+     * Allows to add extra description items to the tooltip and factoriopedia.
+     */
+    custom_tooltip_fields?: CustomTooltipField[];
+    /**
      * The ID type corresponding to the prototype that inherits from this.
      *
      * For example, if this is an {@link EntityPrototype | prototype:EntityPrototype}, this property's type is {@link EntityID | prototype:EntityID}.
@@ -6454,7 +6462,7 @@ interface QualityPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -6827,7 +6835,7 @@ interface RecipeCategory extends Prototype {
   category = "smelting",
   energy_required = 3.5,
   ingredients = {{type = "item", name = "iron-ore", amount = 1}},
-  results = {{type="item", name="iron-plate", amount=1}}
+  results = {{type = "item", name = "iron-plate", amount = 1}}
 }
 ```
  * @example ```
@@ -6843,15 +6851,15 @@ interface RecipeCategory extends Prototype {
   icon_size = 32,
   ingredients =
   {
-    {type="item", name="coal", amount=10},
-    {type="fluid", name="heavy-oil", amount=25},
-    {type="fluid", name="steam", amount=50}
+    {type = "item", name = "coal", amount = 10},
+    {type = "fluid", name = "heavy-oil", amount = 25},
+    {type = "fluid", name = "steam", amount = 50}
   },
   results=
   {
-    {type="fluid", name="heavy-oil", amount=35},
-    {type="fluid", name="light-oil", amount=15},
-    {type="fluid", name="petroleum-gas", amount=20}
+    {type = "fluid", name = "heavy-oil", amount = 35},
+    {type = "fluid", name = "light-oil", amount = 15},
+    {type = "fluid", name = "petroleum-gas", amount = 20}
   },
   allow_decomposition = false
 }
@@ -6946,6 +6954,8 @@ interface RecipePrototype extends Prototype {
     /**
      * If given, this determines the recipe's icon. Otherwise, the icon of `main_product` or the singular product is used.
      *
+     * Only loaded if `icons` is not defined.
+     *
      * Mandatory if `icons` is not defined for a recipe with more than one product and no `main_product`, or no product.
      * @example ```
     icon = "__base__/graphics/icons/fluid/heavy-oil.png"
@@ -6980,8 +6990,8 @@ interface RecipePrototype extends Prototype {
     -- Recipe with fluids
     ingredients =
     {
-      {type="fluid", name="water", amount=50},
-      {type="fluid", name="crude-oil", amount=100}
+      {type = "fluid", name = "water", amount = 50},
+      {type = "fluid", name = "crude-oil", amount = 100}
     }
     ```
      */
@@ -7019,16 +7029,16 @@ interface RecipePrototype extends Prototype {
      * @example ```
     results =
     {
-      {type="fluid", name="heavy-oil", amount=3},
-      {type="fluid", name="light-oil", amount=3},
-      {type="fluid", name="petroleum-gas", amount=4}
+      {type = "fluid", name= "heavy-oil", amount = 3},
+      {type = "fluid", name= "light-oil", amount = 3},
+      {type = "fluid", name= "petroleum-gas", amount = 4}
     }
     ```
      * @example ```
     results =
     {
-      {type = "item", name = "iron-nuggets", amount = 9},
-      {type = "item", name = "gold-nuggets", amount = 1}
+      {type = "item", name = "iron-plate", amount = 9},
+      {type = "item", name = "copper-plate", amount = 1}
     }
     ```
      * @example ```
@@ -7991,7 +8001,7 @@ interface ShortcutPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -8017,7 +8027,7 @@ interface ShortcutPrototype extends Prototype {
     /**
      * Path to the icon file. Used in the shortcut selection popup.
      *
-     * Mandatory if `small_icons` is not defined.
+     * Only loaded, and mandatory if `small_icons` is not defined.
      */
     small_icon?: FileName;
     /**
@@ -8340,7 +8350,7 @@ interface SpaceConnectionPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -8354,6 +8364,8 @@ interface SpaceConnectionPrototype extends Prototype {
      */
     icons?: IconData[];
     /**
+     * Length of the space connection in km.
+     *
      * Cannot be 0.
      */
     length?: uint32;
@@ -8388,7 +8400,7 @@ interface SpaceLocationPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -9024,7 +9036,7 @@ interface SurfacePrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -9086,7 +9098,7 @@ interface TechnologyPrototype extends Prototype {
     /**
      * Path to the icon file.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**
@@ -10154,6 +10166,10 @@ interface UtilityConstants extends PrototypeBase {
     maximum_recipe_overload_multiplier: uint32;
     medium_area_size: float;
     medium_blueprint_area_size: float;
+    /**
+     * If not set, defaults to 'true' when modded and 'false' when vanilla.
+     */
+    merge_bonus_gui_production_bonuses?: boolean;
     minimap_slot_clicked_tint: Color;
     minimap_slot_hovered_tint: Color;
     minimum_recipe_overload_multiplier: uint32;
@@ -11011,7 +11027,7 @@ interface VirtualSignalPrototype extends Prototype {
     /**
      * Path to the icon file that is used to represent this virtual signal.
      *
-     * Mandatory if `icons` is not defined.
+     * Only loaded, and mandatory if `icons` is not defined.
      */
     icon?: FileName;
     /**

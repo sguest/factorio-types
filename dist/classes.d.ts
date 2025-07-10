@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.58
+// Factorio version 2.0.59
 // API version 6
 
 declare namespace runtime {
@@ -3905,6 +3905,24 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.on_udp_packet_received, handler: ((this: void, arg0: runtime.on_udp_packet_received) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.on_undo_applied, handler: ((this: void, arg0: runtime.on_undo_applied) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
@@ -6808,6 +6826,16 @@ interface LuaEntity extends LuaControl {
      * Note: Some entities (Corpse, FireFlame, Roboport, RollingStock, dying entities) need to remain active and will ignore writes.
      */
     disabled_by_script: boolean;
+    display_panel_always_show: boolean;
+    /**
+     * Icon visible on the display panel. Can be written only when it is not set by control behavior.
+     */
+    display_panel_icon: SignalID;
+    display_panel_show_in_chart: boolean;
+    /**
+     * Text visible on the display panel. Can be written only when it is not set by control behavior.
+     */
+    display_panel_text: LocalisedString;
     /**
      * Gives a draw data of the given entity if it supports such data.
      */
@@ -7587,7 +7615,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     get_fluid_capacity(this: void, quality?: QualityID): double;
     /**
-     * The fluid usage of this generator or fusion reactor prototype.
+     * The fluid usage of this generator, fusion generator or fusion reactor prototype.
      */
     get_fluid_usage_per_tick(this: void, quality?: QualityID): double | null;
     /**
@@ -8237,7 +8265,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * Items that when placed will produce this entity, if any. Construction bots will choose the first item in the list to build this entity.
      */
-    readonly items_to_place_this?: ItemStackDefinition[];
+    readonly items_to_place_this?: ItemWithCount[];
     readonly joint_distance?: double;
     /**
      * The item prototype names that are the inputs of this lab prototype.
@@ -8665,6 +8693,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * If this drill uses force productivity bonus
      */
     readonly uses_force_mining_productivity_bonus?: boolean;
+    readonly uses_inserter_stack_size_bonus?: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -8898,7 +8927,7 @@ interface LuaEquipmentGrid {
         position?: EquipmentPosition;
         equipment?: LuaEquipment;
         by_player?: PlayerIdentification;
-    }): SimpleItemStack | null;
+    }): ItemWithCount | null;
     /**
      * Remove all equipment from the grid.
      * @param by_player If provided, the action is done 'as' this player and {@link on_player_removed_equipment | runtime:on_player_removed_equipment} is triggered.
@@ -8935,6 +8964,10 @@ interface LuaEquipmentGrid {
      * The total amount of inventory bonus this equipment grid gives.
      */
     readonly inventory_bonus: uint;
+    /**
+     * The item stack that this equipment grid is owned by.
+     */
+    readonly itemstack_owner?: LuaItemStack;
     /**
      * The maximum amount of shields this equipment grid has.
      */
@@ -11947,10 +11980,32 @@ interface LuaHelpers {
      */
     parse_map_exchange_string(this: void, map_exchange_string: string): MapExchangeStringData;
     /**
+     * Dispatch {@link defines.events.on_udp_packet_received | runtime:defines.events.on_udp_packet_received} events for any new packets received by the specified player or the server.
+     *
+     * This must be enabled per-instance with `--enable-lua-udp`.
+     *
+     * Udp socket when enabled requests 256KB of receive buffer from the operating system. If there is more data than this between two subsequent calls of this method, data will be lost. That also applies to periods when the game is paused or is being saved as in those case the game update is not happening.
+     *
+     * Note: lua event is not raised immediately as the udp packet needs to be introduced into game state by means of input actions. Please keep incoming traffic as small as possible as in case of multiplayer game with many players, all this data will have to go through the multiplayer server and be distributed to all clients.
+     *
+     * Not available in settings and prototype stages.
+     * @param for_player If given, packets will only be read from this `player_index`. Providing `0` will only read from the server if present.
+     */
+    recv_udp(this: void, for_player?: uint): void;
+    /**
      * Remove a file or directory in the `script-output` folder, located in the game's {@link user data directory | https://wiki.factorio.com/User_data_directory}. Can be used to remove files created by {@link LuaHelpers::write_file | runtime:LuaHelpers::write_file}.
      * @param path The path to the file or directory to remove, relative to `script-output`.
      */
     remove_path(this: void, path: string): void;
+    /**
+     * Send data to a UDP port on localhost for a specified player, if enabled.
+     *
+     * This must be enabled per-instance with `--enable-lua-udp`.
+     * @param port Destination port number (localhost only)
+     * @param data The content to send.
+     * @param for_player If given, the packet will only be sent from this `player_index`. Providing `0` will only send from the server if present. `for_player` cannot be used in settings and prototype stages.
+     */
+    send_udp(this: void, port: uint16, data: LocalisedString, for_player?: uint): void;
     /**
      * Convert a table to a JSON string
      */
@@ -14160,6 +14215,12 @@ interface LuaPlayer extends LuaControl {
     mute_alert(this: void, alert_type: defines.alert_type): boolean;
     /**
      * Invokes the "smart pipette" action on the player as if the user pressed it.
+     * @param allow_ghost Defaults to false.
+     * @returns Whether the smart pipette found something to put into the cursor.
+     */
+    pipette(this: void, id: PipetteID, quality?: QualityID, allow_ghost?: boolean): boolean;
+    /**
+     * Invokes the "smart pipette" action on the player as if the user pressed it. This method is deprecated in favor of {@link LuaPlayer::pipette | runtime:LuaPlayer::pipette} and should not be used.
      * @param allow_ghost Defaults to false.
      * @returns Whether the smart pipette found something to place.
      */
@@ -16974,8 +17035,8 @@ interface LuaSpacePlatform {
      * If no filters are given, returns all asteroid chunks in the search area. If multiple filters are specified, returns only asteroid chunks matching every given filter. If no area and no position are given, the entire surface is searched.
      * @param table.invert If the filters should be inverted.
      * @example ```
-    game.surfaces[1].find_asteroid_chunks_filtered{area = {{-10, -10}, {10, 10}}, name = "carbonic-asteroid"} -- gets all asteroids with the given name in the rectangle
-    game.surfaces[1].find_asteroid_chunks_filtered{area = {{-10, -10}, {10, 10}}, limit = 5}  -- gets the first 5 asteroid chunks in the rectangle
+    game.forces.player.platforms[1].find_asteroid_chunks_filtered{area = {{-10, -10}, {10, 10}}, name = "carbonic-asteroid"} -- gets all asteroids with the given name in the rectangle
+    game.forces.player.platforms[1].find_asteroid_chunks_filtered{area = {{-10, -10}, {10, 10}}, limit = 5}  -- gets the first 5 asteroid chunks in the rectangle
     ```
      */
     find_asteroid_chunks_filtered(this: void, table: {
@@ -18366,7 +18427,7 @@ interface LuaSurface {
      */
     wind_speed: double;
 }
-type LuaSurfaceCreateEntityParams = BaseLuaSurfaceCreateEntityParams | LuaSurfaceCreateEntityParamsArtilleryFlare | LuaSurfaceCreateEntityParamsArtilleryProjectile | LuaSurfaceCreateEntityParamsAssemblingMachine | LuaSurfaceCreateEntityParamsBeam | LuaSurfaceCreateEntityParamsCharacterCorpse | LuaSurfaceCreateEntityParamsCliff | LuaSurfaceCreateEntityParamsContainer | LuaSurfaceCreateEntityParamsElectricPole | LuaSurfaceCreateEntityParamsEntityGhost | LuaSurfaceCreateEntityParamsFire | LuaSurfaceCreateEntityParamsHighlightBox | LuaSurfaceCreateEntityParamsInserter | LuaSurfaceCreateEntityParamsItemEntity | LuaSurfaceCreateEntityParamsItemRequestProxy | LuaSurfaceCreateEntityParamsLamp | LuaSurfaceCreateEntityParamsLoader | LuaSurfaceCreateEntityParamsLoader1x1 | LuaSurfaceCreateEntityParamsLocomotive | LuaSurfaceCreateEntityParamsLogisticContainer | LuaSurfaceCreateEntityParamsParticle | LuaSurfaceCreateEntityParamsPlant | LuaSurfaceCreateEntityParamsProgrammableSpeaker | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsRailChainSignal | LuaSurfaceCreateEntityParamsRailSignal | LuaSurfaceCreateEntityParamsResource | LuaSurfaceCreateEntityParamsRollingStock | LuaSurfaceCreateEntityParamsSimpleEntityWithForce | LuaSurfaceCreateEntityParamsSimpleEntityWithOwner | LuaSurfaceCreateEntityParamsSpeechBubble | LuaSurfaceCreateEntityParamsStream | LuaSurfaceCreateEntityParamsTileGhost | LuaSurfaceCreateEntityParamsUndergroundBelt;
+type LuaSurfaceCreateEntityParams = BaseLuaSurfaceCreateEntityParams | LuaSurfaceCreateEntityParamsArtilleryFlare | LuaSurfaceCreateEntityParamsArtilleryProjectile | LuaSurfaceCreateEntityParamsAssemblingMachine | LuaSurfaceCreateEntityParamsBeam | LuaSurfaceCreateEntityParamsCharacterCorpse | LuaSurfaceCreateEntityParamsCliff | LuaSurfaceCreateEntityParamsContainer | LuaSurfaceCreateEntityParamsDisplayPanel | LuaSurfaceCreateEntityParamsElectricPole | LuaSurfaceCreateEntityParamsEntityGhost | LuaSurfaceCreateEntityParamsFire | LuaSurfaceCreateEntityParamsHighlightBox | LuaSurfaceCreateEntityParamsInserter | LuaSurfaceCreateEntityParamsItemEntity | LuaSurfaceCreateEntityParamsItemRequestProxy | LuaSurfaceCreateEntityParamsLamp | LuaSurfaceCreateEntityParamsLoader | LuaSurfaceCreateEntityParamsLoader1x1 | LuaSurfaceCreateEntityParamsLocomotive | LuaSurfaceCreateEntityParamsLogisticContainer | LuaSurfaceCreateEntityParamsParticle | LuaSurfaceCreateEntityParamsPlant | LuaSurfaceCreateEntityParamsProgrammableSpeaker | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsRailChainSignal | LuaSurfaceCreateEntityParamsRailSignal | LuaSurfaceCreateEntityParamsResource | LuaSurfaceCreateEntityParamsRollingStock | LuaSurfaceCreateEntityParamsSimpleEntityWithForce | LuaSurfaceCreateEntityParamsSimpleEntityWithOwner | LuaSurfaceCreateEntityParamsSpeechBubble | LuaSurfaceCreateEntityParamsStream | LuaSurfaceCreateEntityParamsTileGhost | LuaSurfaceCreateEntityParamsUndergroundBelt;
 interface BaseLuaSurfaceCreateEntityParams {
     /**
      * Cause entity / force. The entity or force that triggered the chain of events that led to this entity being created. Used for beams, projectiles, stickers, etc. so that the damage receiver can know which entity or force to retaliate against.
@@ -18532,6 +18593,16 @@ interface LuaSurfaceCreateEntityParamsContainer extends BaseLuaSurfaceCreateEnti
 }
 /**
  *
+ * Applies to variant case `display-panel`
+ */
+interface LuaSurfaceCreateEntityParamsDisplayPanel extends BaseLuaSurfaceCreateEntityParams {
+    'always_show'?: boolean;
+    'icon'?: SignalID;
+    'show_in_chart'?: boolean;
+    'text'?: LocalisedString;
+}
+/**
+ *
  * Applies to variant case `electric-pole`
  */
 interface LuaSurfaceCreateEntityParamsElectricPole extends BaseLuaSurfaceCreateEntityParams {
@@ -18604,9 +18675,9 @@ interface LuaSurfaceCreateEntityParamsInserter extends BaseLuaSurfaceCreateEntit
  */
 interface LuaSurfaceCreateEntityParamsItemEntity extends BaseLuaSurfaceCreateEntityParams {
     /**
-     * The stack of items to create.
+     * The stack of items to create. Either the name of an item, which will create a full stack, or a detailed item stack definition.
      */
-    'stack': SimpleItemStack;
+    'stack': string | ItemStackDefinition;
 }
 /**
  *
@@ -19176,7 +19247,7 @@ interface LuaTilePrototype extends LuaPrototypeBase {
     /**
      * Items that when placed will produce this tile, if any. Construction bots will choose the first item in the list to build this tile.
      */
-    readonly items_to_place_this?: ItemStackDefinition[];
+    readonly items_to_place_this?: ItemWithCount[];
     readonly layer: uint;
     readonly map_color: Color;
     readonly max_health: float;
@@ -19210,7 +19281,6 @@ interface LuaTilePrototype extends LuaPrototypeBase {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
-    readonly placeable_by?: SimpleItemStack[];
     readonly scorch_mark_color?: Color;
     readonly thawed_variant?: LuaTilePrototype;
     readonly trigger_effect?: TriggerEffectItem[];
@@ -19729,6 +19799,8 @@ interface LuaTurretControlBehavior extends LuaGenericOnOffControlBehavior {
 }
 /**
  * The undo queue for a player. The term `item_index` refers to the index of an undo item in the queue, while `action_index` refers to the index of one of the individual actions that make up an undo item.
+ *
+ * Items are added to the undo queue through player actions and Lua methods that emulate player actions like {@link LuaEntity::order_upgrade | runtime:LuaEntity::order_upgrade}.
  */
 interface LuaUndoRedoStack {
     /**

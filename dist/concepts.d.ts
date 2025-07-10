@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.58
+// Factorio version 2.0.59
 // API version 6
 
 declare namespace runtime {
@@ -1093,6 +1093,10 @@ interface ConfigurationChangedData {
      * `true` when mod prototype migrations have been applied since the last time this save was loaded.
      */
     migration_applied: boolean;
+    /**
+     * Dictionary of prototype changes due to {@link migrations | runtime:migrations}. The inner dictionary maps the old prototype name to the new prototype name. The new name will be an empty string if the prototype was removed. Entries are omitted if the old and new prototype name are the same.
+     */
+    migrations: LuaTable<IDType, Record<string, string>>;
 }
 interface CraftingQueueItem {
     /**
@@ -2543,6 +2547,10 @@ interface HeatSetting {
     mode?: 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove';
 }
 /**
+ * All base prototype types.
+ */
+type IDType = 'custom-input' | 'equipment-grid' | 'entity' | 'particle' | 'item' | 'collision-layer' | 'airborne-pollutant' | 'tile' | 'decorative' | 'recipe-category' | 'item-group' | 'item-subgroup' | 'recipe' | 'fluid' | 'ammo-category' | 'fuel-category' | 'resource-category' | 'technology' | 'noise-function' | 'noise-expression' | 'autoplace-control' | 'equipment' | 'damage-type' | 'virtual-signal' | 'achievement' | 'module-category' | 'equipment-category' | 'mod-setting' | 'trivial-smoke' | 'asteroid-chunk' | 'quality' | 'surface-property' | 'procession-layer-inheritance-group' | 'procession' | 'space-location' | 'space-connection' | 'active-trigger' | 'shortcut' | 'burner-usage' | 'surface' | 'mod-data' | 'custom-event';
+/**
  * A single filter used by an infinity-filters instance.
  */
 interface InfinityInventoryFilter {
@@ -2620,6 +2628,10 @@ interface IngredientFluid extends BaseIngredient {
      * The minimum fluid temperature required.
      */
     'minimum_temperature'?: float;
+    /**
+     * When minimum and maximum temperature are the same, this property will be present instead of the other two.
+     */
+    'temperature'?: float;
 }
 interface InserterCircuitConditions {
     circuit?: CircuitCondition;
@@ -3132,13 +3144,44 @@ interface ItemStackDefinition {
     spoil_percent?: double;
 }
 /**
- * An item may be specified in one of two ways.
+ * An item may be specified in one of three ways.
+ * @example ```
+-- All of these lines specify an item stack of one iron plate
+{name="iron-plate"}
+{name="iron-plate", count=1}
+{name="iron-plate", count=1, quality="normal"}
+```
+ * @example ```
+-- This is a stack of 47 copper plates
+{name="copper-plate", count=47}
+```
+ * @example ```
+--These are both full stacks of iron plates (for iron-plate, a full stack is 100 plates)
+"iron-plate"
+{name="iron-plate", count=100}
+```
  */
-type ItemStackIdentification = SimpleItemStack | LuaItemStack;
+type ItemStackIdentification = /**
+ * The name of the item, which represents a full stack of that item.
+ */
+string | /**
+ * The detailed definition of an item stack.
+ */
+ItemStackDefinition | LuaItemStack;
 type ItemStackIndex = uint16;
 interface ItemStackLocation {
     inventory: defines.inventory;
     slot: uint;
+}
+interface ItemWithCount {
+    /**
+     * Name of the item prototype.
+     */
+    name: string;
+    /**
+     * The number of items.
+     */
+    count: ItemCountType;
 }
 interface ItemWithQualityCounts {
     /**
@@ -3148,7 +3191,7 @@ interface ItemWithQualityCounts {
     /**
      * The number of items.
      */
-    count: uint;
+    count: ItemCountType;
     /**
      * Name of the item's quality prototype.
      */
@@ -3173,7 +3216,7 @@ ItemIDAndQualityIDPair;
 /**
  * The internal name of a game control (key binding).
  */
-type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-technology' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music' | /**
+type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'alternative-gui-move-up' | 'alternative-gui-move-down' | 'alternative-gui-move-left' | 'alternative-gui-move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'scroll-tooltip-up' | 'scroll-tooltip-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music' | /**
  * Indicates no linked game control.
  */
 '';
@@ -5849,6 +5892,7 @@ interface PipeConnectionDefinition {
      */
     linked_connection_id?: uint;
 }
+type PipetteID = LuaEntityPrototype | LuaEquipmentPrototype | LuaFluidPrototype | LuaItemPrototype | LuaRecipePrototype | LuaSpaceLocationPrototype | LuaTilePrototype | LuaVirtualSignalPrototype;
 interface PlaceAsTileResult {
     /**
      * The tile prototype.
@@ -6833,7 +6877,7 @@ interface SelectedPrototypeData {
     /**
      * E.g. `"entity"`.
      */
-    base_type: string;
+    base_type: IDType;
     /**
      * The `type` of the prototype. E.g. `"tree"`.
      */
@@ -7071,31 +7115,6 @@ interface SignalIDBase {
     name?: string;
 }
 type SignalIDType = 'item' | 'fluid' | 'virtual' | 'entity' | 'recipe' | 'space-location' | 'asteroid-chunk' | 'quality';
-/**
- * An item stack may be specified in one of two ways.
- * @example ```
--- All of these lines specify an item stack of one iron plate
-{name="iron-plate"}
-{name="iron-plate", count=1}
-{name="iron-plate", count=1, quality="normal"}
-```
- * @example ```
--- This is a stack of 47 copper plates
-{name="copper-plate", count=47}
-```
- * @example ```
---These are both full stacks of iron plates (for iron-plate, a full stack is 100 plates)
-"iron-plate"
-{name="iron-plate", count=100}
-```
- */
-type SimpleItemStack = /**
- * The name of the item, which represents a full stack of that item.
- */
-string | /**
- * The detailed definition of an item stack.
- */
-ItemStackDefinition;
 type SimulationWidgetType = 'signal-id' | 'signal-id-base' | 'signal-or-number' | 'simple-slot' | 'simple-item-slot' | 'recipe-slot' | 'quickbar-slot' | 'logistics-button' | 'logistics-button-space' | 'text-button-localised-substring' | 'text-button' | 'text-button-substring' | 'inventory-limit-slot-button' | 'train-schedule-action-button' | 'choose-button' | 'textfield' | 'item-group-tab' | 'drop-down' | 'check-box' | 'switch' | 'label';
 interface SmokeSource {
     name: string;
@@ -7120,7 +7139,7 @@ interface SmokeSource {
     vertical_speed_slowdown: float;
 }
 /**
- * It can be either the name of a {@link SoundPrototype | prototype:SoundPrototype} defined in the data stage, or a path in the form `"type/name"`. The latter option can be sorted into three categories.
+ * It can be either the name of a {@link SoundPrototype | prototype:SoundPrototype} defined in the data stage, or a path in the form `"type/name"`. The latter option can be sorted into four categories.
  *
  * The validity of a SoundPath can be verified at runtime using {@link LuaHelpers::is_valid_sound_path | runtime:LuaHelpers::is_valid_sound_path}.
  * The utility and ambient types each contain general use sound prototypes defined by the game itself.
@@ -7136,12 +7155,19 @@ interface SmokeSource {
  * - `"tile-build-large"` - Uses {@link TilePrototype::build_sound | prototype:TilePrototype::build_sound}
  * The following types can be combined with any entity name as long as its prototype defines the corresponding sound.
  *
- * - `"entity-build"` - Uses {@link Entity::build_sound | prototype:EntityPrototype::build_sound} Example: `"entity-build/wooden-chest"`
- * - `"entity-mined"` - Uses {@link Entity::mined_sound | prototype:EntityPrototype::mined_sound}
- * - `"entity-mining"` - Uses {@link Entity::mining_sound | prototype:EntityPrototype::mining_sound}
+ * - `"entity-build"` - Uses {@link EntityPrototype::build_sound | prototype:EntityPrototype::build_sound}. Example: `"entity-build/wooden-chest"`
+ * - `"entity-mined"` - Uses {@link EntityPrototype::mined_sound | prototype:EntityPrototype::mined_sound}
+ * - `"entity-mining"` - Uses {@link EntityPrototype::mining_sound | prototype:EntityPrototype::mining_sound}
  * - `"entity-rotated"` - Uses {@link EntityPrototype::rotated_sound | prototype:EntityPrototype::rotated_sound}
- * - `"entity-open"` - Uses {@link Entity::open_sound | prototype:EntityPrototype::open_sound}
- * - `"entity-close"` - Uses {@link Entity::close_sound | prototype:EntityPrototype::close_sound}
+ * - `"entity-open"` - Uses {@link EntityPrototype::open_sound | prototype:EntityPrototype::open_sound}
+ * - `"entity-close"` - Uses {@link EntityPrototype::close_sound | prototype:EntityPrototype::close_sound}
+ * The following types can be combined with any item name as long as its prototype defines the corresponding sound.
+ *
+ * - `"item-open"` - Uses {@link ItemPrototype::open_sound | prototype:ItemPrototype::open_sound}. Example: `"item-open/modular-armor"`
+ * - `"item-close"` - Uses {@link ItemPrototype::close_sound | prototype:ItemPrototype::close_sound}
+ * - `"item-pick"` - Uses {@link ItemPrototype::pick_sound | prototype:ItemPrototype::pick_sound}. Example: `"item-pick/transport-belt"`
+ * - `"item-drop"` - Uses {@link ItemPrototype::drop_sound | prototype:ItemPrototype::drop_sound}
+ * - `"item-move"` - Uses {@link ItemPrototype::inventory_move_sound | prototype:ItemPrototype::inventory_move_sound}
  */
 type SoundPath = string;
 /**
@@ -8404,7 +8430,7 @@ interface WorkerRobotOrder {
     /**
      * The item to place if relevant.
      */
-    item_to_place?: SimpleItemStack;
+    item_to_place?: ItemWithQualityCounts;
     /**
      * The secondary target of the upgrade order.
      */

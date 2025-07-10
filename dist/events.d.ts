@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.58
+// Factorio version 2.0.59
 // API version 6
 
 declare namespace runtime {
@@ -1626,7 +1626,7 @@ interface on_permission_string_imported {
  * Called when a player picks up an item.
  */
 interface on_picked_up_item {
-    item_stack: SimpleItemStack;
+    item_stack: ItemWithCount;
     /**
      * Identifier of the event
      */
@@ -2470,7 +2470,7 @@ interface on_player_mined_item {
     /**
      * The item given to the player
      */
-    item_stack: SimpleItemStack;
+    item_stack: ItemWithQualityCounts;
     /**
      * Identifier of the event
      */
@@ -3658,7 +3658,7 @@ interface on_robot_mined {
     /**
      * The entity the robot just picked up.
      */
-    item_stack: SimpleItemStack;
+    item_stack: ItemWithCount;
     /**
      * Identifier of the event
      */
@@ -4086,7 +4086,7 @@ interface on_space_platform_mined_item {
     /**
      * The entity the platform just picked up.
      */
-    item_stack: SimpleItemStack;
+    item_stack: ItemWithCount;
     /**
      * Identifier of the event
      */
@@ -4381,6 +4381,31 @@ interface on_trigger_fired_artillery {
      */
     name: defines.events;
     source?: LuaEntity;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when new packets are processed by {@link LuaHelpers::recv_udp | runtime:LuaHelpers::recv_udp}.
+ */
+interface on_udp_packet_received {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The packet data
+     */
+    payload: string;
+    /**
+     * The player index whose instance received this packet, or 0 if received on the server
+     */
+    player_index: uint;
+    /**
+     * The source port the packet was received from
+     */
+    source_port: uint16;
     /**
      * Tick the event was generated.
      */
