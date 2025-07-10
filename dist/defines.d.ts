@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.58
+// Factorio version 2.0.59
 // API version 6
 
 declare namespace defines {
@@ -880,17 +880,18 @@ enum events {
     on_train_schedule_changed = 191,
     on_trigger_created_entity = 192,
     on_trigger_fired_artillery = 193,
-    on_undo_applied = 194,
-    on_unit_added_to_group = 195,
-    on_unit_group_created = 196,
-    on_unit_group_finished_gathering = 197,
-    on_unit_removed_from_group = 198,
-    on_worker_robot_expired = 199,
-    script_raised_built = 200,
-    script_raised_destroy = 201,
-    script_raised_revive = 202,
-    script_raised_set_tiles = 203,
-    script_raised_teleported = 204
+    on_udp_packet_received = 194,
+    on_undo_applied = 195,
+    on_unit_added_to_group = 196,
+    on_unit_group_created = 197,
+    on_unit_group_finished_gathering = 198,
+    on_unit_removed_from_group = 199,
+    on_worker_robot_expired = 200,
+    script_raised_built = 201,
+    script_raised_destroy = 202,
+    script_raised_revive = 203,
+    script_raised_set_tiles = 204,
+    script_raised_teleported = 205
 }
 enum flow_precision_index {
     fifty_hours = 5,
