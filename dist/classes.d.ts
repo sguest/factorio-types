@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.59
+// Factorio version 2.0.60
 // API version 6
 
 declare namespace runtime {
@@ -11415,6 +11415,10 @@ interface LuaGuiElementAddParamsChooseElemButton extends BaseLuaGuiElementAddPar
      */
     'achievement'?: string;
     /**
+     * If type is `"asteroid-chunk"` - the default value for the button.
+     */
+    'asteroid-chunk'?: string;
+    /**
      * If type is `"decorative"` - the default value for the button.
      */
     'decorative'?: string;
@@ -11470,6 +11474,10 @@ interface LuaGuiElementAddParamsChooseElemButton extends BaseLuaGuiElementAddPar
      * If type is `"signal"` - the default value for the button.
      */
     'signal'?: SignalID;
+    /**
+     * If type is `"space-location"` - the default value for the button.
+     */
+    'space-location'?: string;
     /**
      * If type is `"technology"` - the default value for the button.
      */
