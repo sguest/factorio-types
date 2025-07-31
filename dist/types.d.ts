@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.60
+// Factorio version 2.0.61
 // API version 6
 
 declare namespace prototype {
@@ -2027,7 +2027,7 @@ interface BonusGuiOrdering {
 }
 interface BoolModifier extends BaseModifier {
     /**
-     * The value this modifier will have upon researching.
+     * The state this modifier will be in upon researching.
      */
     modifier: boolean;
 }
@@ -2055,7 +2055,7 @@ interface BorderImageSet {
  *
  * BoundingBoxes are usually specified with the short-hand notation of passing an array of exactly 2 or 3 items.
  *
- * The first tuple item is left_top, the second tuple item is right_bottom. There is an unused third tuple item, a {@link float | prototype:float} that represents the orientation.
+ * The first tuple item is left_top, the second tuple item is right_bottom. The third tuple item is a {@link float | prototype:float} that represents the orientation.
  *
  * Positive x goes towards east, positive y goes towards south. This means that the upper-left point is the least dimension in x and y, and lower-right is the greatest.
  * @example ```
@@ -2068,9 +2068,6 @@ interface BorderImageSet {
  */
 type BoundingBox = {
     left_top: MapPosition;
-    /**
-     * Unused.
-     */
     orientation?: RealOrientation;
     right_bottom: MapPosition;
 } | [
@@ -3441,7 +3438,7 @@ type CursorBoxType = /**
 interface CustomTooltipField {
     name: LocalisedString;
     /**
-     * Ordering within all description items (modded and unmodded). Items with smaller order values are shown above items with larger values.
+     * Ordering within all description items (modded and un-modded). Items with smaller order values are shown above items with larger values.
      */
     order?: uint8;
     quality_header?: string;
@@ -3792,7 +3789,7 @@ interface Effect {
      */
     productivity?: EffectValue;
     /**
-     * Adds a bonus chance to increase a product's quality. The minimum possible sum is 0%. Quality is a special case because its effect value is divided by 10 internally for actual usage. This allows for one more decimal of precision, as anything beyond two decimals of effect value is ignored.
+     * Adds a bonus chance to increase a product's quality. The minimum possible sum is 0%. The quality effect is is multiplied by {@link QualityPrototype::next_probability | prototype:QualityPrototype::next_probability}. For example, if a module's quality effect is 0.2 and the current quality's next_probability is 0.1, then the chance to get the next quality item is 2%.
      */
     quality?: EffectValue;
     /**
@@ -3869,12 +3866,12 @@ type EffectTypeLimitation = (/**
 /**
  * Precision is ignored beyond two decimals - `0.567` results in `0.56` and means 56% etc. Values can range from `-327.68` to `327.67`. Numbers outside of this range will wrap around.
  *
- * Quality values are divided by 10 internally, allowing for one more decimal of precision.
+ * Quality values are multiplied by {@link QualityPrototype::next_probability | prototype:QualityPrototype::next_probability}. For example, if a module's quality effect is 0.2 and the current quality's next_probability is 0.1, then the chance to get the next quality item is 2%.
  * @example ```
 {speed = 0.07}  -- 7% bonus
 ```
  * @example ```
-{quality = 0.25}  -- 2.5% bonus
+{quality = 0.25}  -- multiplied by quality normal next_probability = 0.1 -> 2.5% bonus
 ```
  */
 type EffectValue = float;
@@ -8425,15 +8422,11 @@ interface RotateEntityTipTrigger extends CountBasedTipTrigger {
 }
 interface RotatedAnimation extends AnimationParameters {
     /**
+     * Used to fix the inconsistency of direction of the entity in 3d when rendered and direction on the screen (where the 45 degree angle for projection is used).
+     *
      * Only loaded if `layers` is not defined.
      */
     apply_projection?: boolean;
-    /**
-     * Only loaded if `layers` is not defined.
-     *
-     * If `true`, `direction_count` must be greater than `1`.
-     */
-    axially_symmetrical?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      */
@@ -8558,12 +8551,6 @@ interface RotatedSprite extends SpriteParameters {
      * Used to fix the inconsistency of direction of the entity in 3d when rendered and direction on the screen (where the 45 degree angle for projection is used).
      */
     apply_projection?: boolean;
-    /**
-     * Only loaded if `layers` is not defined.
-     *
-     * When `true`, the same picture is used for left/right direction, just flipped, which can save half of the space required, but is not usable once the picture contains shadows, etc.
-     */
-    axially_symmetrical?: boolean;
     /**
      * Only loaded if `layers` is not defined.
      */
@@ -8708,7 +8695,7 @@ interface SegmentEngineSpecification {
     segments: SegmentSpecification[];
 }
 /**
- * A container for an individual instance of a {@link SegmentPrototype | prototype:SegmentPrototype} within a {@link SegmentEngineSpecification | prototype:SegmentEngineSpecification}. May contain context-specific customizations unique to the associated segment instance.
+ * A container for a single reference to a {@link SegmentPrototype | prototype:SegmentPrototype} within a {@link SegmentEngineSpecification | prototype:SegmentEngineSpecification}.
  */
 interface SegmentSpecification {
     /**
@@ -9516,6 +9503,11 @@ interface SpiderLegPart {
  * Used by {@link SpiderEngineSpecification | prototype:SpiderEngineSpecification} for {@link SpiderVehiclePrototype | prototype:SpiderVehiclePrototype}.
  */
 interface SpiderLegSpecification {
+    /**
+     * The unprojected offset from the center of the spider's non-elevated torso to the position where the leg touches the ground when the spider is facing due north.
+     *
+     * This value rotates with the spider's orientation, which is rounded to match either the spider torso's {@link SpiderTorsoGraphicsSet::base_animation | prototype:SpiderTorsoGraphicsSet::base_animation} directions or if not base sprite is defined, its {@link SpiderTorsoGraphicsSet::animation | prototype:SpiderTorsoGraphicsSet::animation} directions if defined.
+     */
     ground_position: Vector;
     /**
      * Name of a {@link SpiderLegPrototype | prototype:SpiderLegPrototype}.
@@ -9529,6 +9521,15 @@ interface SpiderLegSpecification {
      * Triggers to activate whenever the leg hits the ground and the owning spider is actively attacking an entity. These effects will trigger after `leg_hit_the_ground_trigger` have triggered. For triggers, the source is the let entity and the target is the leg's current position. Certain effects may not raise as desired.
      */
     leg_hit_the_ground_when_attacking_trigger?: TriggerEffect;
+    /**
+     * Projected offset from the center of the spider's elevated torso to the point where the leg connects to the body of the spider when the spider is facing due north.
+     *
+     * This offset should already be projected, meaning that it should apply the camera's 45 degree overhead angle, same as the spider's torso sprites should. If this mount position rotates with the spider's torso and the torso sprite(s) apply projection, the mount position will automatically account for the camera projection when rotating. See {@link RotatedAnimation::apply_projection | prototype:RotatedAnimation::apply_projection}.
+     *
+     * If the spider's torso sprites do not apply projection, then this mount_position should not apply projection either.
+     *
+     * This value rotates with the spider's orientation, which is rounded to match either the spider torso's {@link SpiderTorsoGraphicsSet::base_animation | prototype:SpiderTorsoGraphicsSet::base_animation} directions or if not base sprite is defined, its {@link SpiderTorsoGraphicsSet::animation | prototype:SpiderTorsoGraphicsSet::animation} directions if defined.
+     */
     mount_position: Vector;
     /**
      * The walking group this leg belongs to. Legs in the same walking group move or stay still at the same time, according to the engine that drives them. Walking groups must start at 1 and increment upward without skipping any numbers. If all legs are part of the same walking_group, they will all move simultaneously.
@@ -11468,6 +11469,7 @@ interface TrainVisualizationConstants {
     joint_distance: float;
     last_box_color: Color;
     not_last_box_color: Color;
+    reverse_box_color: Color;
     stock_number_scale: float;
 }
 interface TransitionApplication {

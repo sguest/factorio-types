@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.60
+// Factorio version 2.0.61
 // API version 6
 
 declare namespace prototype {
@@ -1404,7 +1404,7 @@ interface CargoLandingPadPrototype extends EntityWithOwnerPrototype {
      */
     robot_animation?: Animation;
     /**
-     * Played when a robot brings/takes items from this landing pad. Ignored if `robot_animation` is not defined.
+     * Played when a robot brings/takes items from this landing pad. Only loaded if `robot_animation` is defined.
      */
     robot_animation_sound?: Sound;
     /**
@@ -5038,14 +5038,18 @@ interface LabPrototype extends EntityWithOwnerPrototype {
   type = "lamp",
   name = "small-lamp",
   icon = "__base__/graphics/icons/small-lamp.png",
-  icon_size = 64,
   flags = {"placeable-neutral", "player-creation"},
+  fast_replaceable_group = "lamp",
   minable = {mining_time = 0.1, result = "small-lamp"},
   max_health = 100,
   corpse = "lamp-remnants",
   dying_explosion = "lamp-explosion",
   collision_box = {{-0.15, -0.15}, {0.15, 0.15}},
   selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+  damaged_trigger_effect = hit_effects.entity(),
+  impact_category = "glass",
+  open_sound = {filename = "__base__/sound/open-close/electric-small-open.ogg", volume = 0.7},
+  close_sound = {filename = "__base__/sound/open-close/electric-small-close.ogg", volume = 0.7},
   energy_source =
   {
     type = "electric",
@@ -5054,8 +5058,8 @@ interface LabPrototype extends EntityWithOwnerPrototype {
   energy_usage_per_tick = "5kW",
   darkness_for_all_lamps_on = 0.5,
   darkness_for_all_lamps_off = 0.3,
-  light = {intensity = 0.9, size = 40, color = {r=1.0, g=1.0, b=0.75}},
-  light_when_colored = {intensity = 0, size = 6, color = {r=1.0, g=1.0, b=0.75}},
+  light = {intensity = 0.9, size = 40, color = {1, 1, 0.75}},
+  light_when_colored = {intensity = 0, size = 6, color = {1, 1, 0.75}},
   glow_size = 6,
   glow_color_intensity = 1,
   glow_render_mode = "multiplicative",
@@ -5066,23 +5070,19 @@ interface LabPrototype extends EntityWithOwnerPrototype {
       {
         filename = "__base__/graphics/entity/small-lamp/lamp.png",
         priority = "high",
-        width = 42,
-        height = 36,
-        frame_count = 1,
-        axially_symmetrical = false,
-        direction_count = 1,
-        shift = util.by_pixel(0,3)
+        width = 83,
+        height = 70,
+        shift = util.by_pixel(0.25,3),
+        scale = 0.5
       },
       {
         filename = "__base__/graphics/entity/small-lamp/lamp-shadow.png",
         priority = "high",
-        width = 38,
-        height = 24,
-        frame_count = 1,
-        axially_symmetrical = false,
-        direction_count = 1,
-        shift = util.by_pixel(4,5),
-        draw_as_shadow = true
+        width = 76,
+        height = 47,
+        shift = util.by_pixel(4, 4.75),
+        draw_as_shadow = true,
+        scale = 0.5
       }
     }
   },
@@ -5090,23 +5090,27 @@ interface LabPrototype extends EntityWithOwnerPrototype {
   {
     filename = "__base__/graphics/entity/small-lamp/lamp-light.png",
     priority = "high",
-    width = 46,
-    height = 40,
-    frame_count = 1,
-    axially_symmetrical = false,
-    direction_count = 1,
-    shift = util.by_pixel(0, -7)
+    width = 90,
+    height = 78,
+    shift = util.by_pixel(0, -7),
+    scale = 0.5
   },
   signal_to_color_mapping =
   {
-    {type = "virtual", name = "signal-red",    color = {r = 1, g = 0, b = 0}},
-    {type = "virtual", name = "signal-green",  color = {r = 0, g = 1, b = 0}},
-    {type = "virtual", name = "signal-blue",   color = {r = 0, g = 0, b = 1}},
-    {type = "virtual", name = "signal-yellow", color = {r = 1, g = 1, b = 0}},
-    {type = "virtual", name = "signal-pink",   color = {r = 1, g = 0, b = 1}},
-    {type = "virtual", name = "signal-cyan",   color = {r = 0, g = 1, b = 1}},
-    {type = "virtual", name = "signal-white",  color = {r = 1, g = 1, b = 1}}
+    {type = "virtual", name = "signal-red",    color = {1, 0, 0}},
+    {type = "virtual", name = "signal-green",  color = {0, 1, 0}},
+    {type = "virtual", name = "signal-blue",   color = {0, 0, 1}},
+    {type = "virtual", name = "signal-yellow", color = {1, 1, 0}},
+    {type = "virtual", name = "signal-pink",   color = {1, 0, 1}},
+    {type = "virtual", name = "signal-cyan",   color = {0, 1, 1}},
+    {type = "virtual", name = "signal-white",  color = {1, 1, 1}},
+    {type = "virtual", name = "signal-grey",   color = {0.5, 0.5, 0.5}},
+    {type = "virtual", name = "signal-black",  color = {0, 0, 0}}
   },
+  default_red_signal = { type = "virtual", name = "signal-red" },
+  default_green_signal = { type = "virtual", name = "signal-green" },
+  default_blue_signal = { type = "virtual", name = "signal-blue" },
+  default_rgb_signal = { type = "virtual", name = "signal-white" },
 
   circuit_connector = circuit_connector_definitions["lamp"],
   circuit_wire_max_distance = default_circuit_wire_max_distance
@@ -5408,7 +5412,7 @@ interface LogisticContainerPrototype extends ContainerPrototype {
      */
     animation?: Animation;
     /**
-     * Played when a robot brings/takes items from this container. Ignored if `animation` is not defined.
+     * Played when a robot brings/takes items from this container. Only loaded if `animation` is defined.
      */
     animation_sound?: Sound;
     /**
@@ -6522,6 +6526,8 @@ interface QualityPrototype extends Prototype {
     name: string;
     next?: QualityID;
     /**
+     * The quality {@link effect of the module | prototype:ModulePrototype::effect} is multiplied by this. For example, if a module's quality effect is 0.2 and the current quality's next_probability is 0.1, then the chance to get the next quality item is 2%.
+     *
      * Must be in range [0, 1.0].
      */
     next_probability?: double;
@@ -6939,6 +6945,7 @@ interface RecipePrototype extends Prototype {
      * The amount of time it takes to make this recipe. Must be `> 0.001`. Equals the number of seconds it takes to craft at crafting speed `1`.
      */
     energy_required?: double;
+    hide_from_bonus_gui?: boolean;
     /**
      * Hides the recipe from the player's crafting screen. The recipe will still show up for selection in machines.
      */
@@ -7864,7 +7871,7 @@ interface SegmentedUnitPrototype extends SegmentPrototype {
     /**
      * The number of ticks to remain enraged after last taking damage.
      */
-    enraged_duration: uint32;
+    enraged_duration: MapTick;
     /**
      * The movement speed while enraged, in tiles per tick. Cannot be negative.
      */
@@ -8446,6 +8453,10 @@ interface SpaceLocationPrototype extends Prototype {
      * Only loaded if `starmap_icons` is not defined.
      */
     starmap_icon?: FileName;
+    /**
+     * Orientation of the starmap icon, defaults to pointing towards the parent body.
+     */
+    starmap_icon_orientation?: RealOrientation;
     /**
      * The size of the starmap icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
      *
@@ -9973,7 +9984,7 @@ interface UtilityConstants extends PrototypeBase {
     asteroid_collector_max_nurbs_control_point_separation: double;
     asteroid_collector_navmesh_refresh_tick_interval: uint32;
     asteroid_collector_static_head_swing_segment_count: uint32;
-    asteroid_collector_static_head_swing_strength_scale: double;
+    asteroid_collector_static_head_swing_strength_scale: float;
     asteroid_fading_range: float;
     asteroid_position_offset_to_speed_coefficient: double;
     asteroid_spawning_offset: SimpleBoundingBox;

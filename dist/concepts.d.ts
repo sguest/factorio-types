@@ -2,10 +2,17 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.60
+// Factorio version 2.0.61
 // API version 6
 
 declare namespace runtime {
+interface AccumulatorBlueprintControlBehavior {
+    output_signal: SignalID;
+    /**
+     * Defaults to `true`.
+     */
+    read_charge?: boolean;
+}
 interface BaseAchievementPrototypeFilter {
     /**
      * The condition to filter on.
@@ -60,6 +67,22 @@ interface AdvancedMapGenSettings {
     enemy_evolution: EnemyEvolutionMapSettings;
     enemy_expansion: EnemyExpansionMapSettings;
     difficulty_settings: DifficultySettings;
+}
+interface AgriculturalTowerBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    read_contents?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
 }
 interface Alert {
     /**
@@ -118,6 +141,9 @@ type Any = string | boolean | number | table | LuaObject;
  * Any basic type (string, number, boolean) or table.
  */
 type AnyBasic = string | boolean | number | table;
+interface ArithmeticCombinatorBlueprintControlBehavior {
+    arithmetic_conditions: ArithmeticCombinatorParameters;
+}
 type ArithmeticCombinatorParameterOperation = '*' | '/' | '+' | '-' | '%' | '^' | '<<' | '>>' | 'AND' | 'OR' | 'XOR';
 interface ArithmeticCombinatorParameters {
     /**
@@ -153,6 +179,61 @@ interface ArithmeticCombinatorParameters {
      */
     output_signal?: SignalID;
 }
+interface ArtilleryTurretBlueprintControlBehavior {
+    read_ammo?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
+interface AssemblingMachineBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    set_recipe?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_contents?: boolean;
+    /**
+     * Defaults to `true`.
+     */
+    include_in_crafting?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    include_fuel?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_recipe_finished?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_ingredients?: boolean;
+    /**
+     * Defaults to `false`
+     */
+    read_working?: boolean;
+    recipe_finished_signal?: SignalID;
+    working_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 interface AsteroidChunk {
     /**
      * The name of the asteroid chunk prototype.
@@ -184,6 +265,30 @@ interface AsteroidChunkPrototypeFilter {
      * Inverts the condition. Default is `false`.
      */
     invert?: boolean;
+}
+interface AsteroidCollectorBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    circuit_set_filters?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_read_contents?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    include_hands?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
 }
 interface AsteroidMapSettings {
     spawning_rate: double;
@@ -357,10 +462,11 @@ interface BeamTarget {
      */
     position?: MapPosition;
 }
+type BeltConnectionType = 'input' | 'output';
 /**
- * The representation of an entity inside of a blueprint. It has at least these fields, but can contain additional ones depending on the kind of entity.
+ * The representation of an entity inside of a blueprint.
  */
-interface BlueprintEntity {
+interface BaseBlueprintEntity {
     /**
      * The entity's unique identifier in the blueprint.
      */
@@ -386,10 +492,6 @@ interface BlueprintEntity {
      */
     quality?: string;
     /**
-     * The control behavior of the entity, if it has one. The format of the control behavior depends on the entity's type. Only relevant for entities that support control behaviors.
-     */
-    control_behavior?: BlueprintControlBehavior;
-    /**
      * The items that the entity will request when revived, if any.
      */
     items?: BlueprintInsertPlan[];
@@ -398,13 +500,545 @@ interface BlueprintEntity {
      */
     tags?: Tags;
     /**
-     * The schedule of the entity, if it has one. Only relevant for locomotives.
-     */
-    schedule?: BlueprintSchedule;
-    /**
      * Wires connected to this entity in the blueprint.
      */
     wires?: BlueprintWire[];
+}
+/**
+ * The representation of an entity inside of a blueprint.
+ */
+type BlueprintEntity = BaseBlueprintEntity | BlueprintEntityAccumulator | BlueprintEntityAgriculturalTower | BlueprintEntityAmmoTurret | BlueprintEntityArithmeticCombinator | BlueprintEntityArtilleryTurret | BlueprintEntityArtilleryWagon | BlueprintEntityAssemblingMachine | BlueprintEntityAsteroidCollector | BlueprintEntityCar | BlueprintEntityCargoLandingPad | BlueprintEntityCargoWagon | BlueprintEntityConstantCombinator | BlueprintEntityContainer | BlueprintEntityDeciderCombinator | BlueprintEntityDisplayPanel | BlueprintEntityElectricEnergyInterface | BlueprintEntityElectricTurret | BlueprintEntityFluidTurret | BlueprintEntityFluidWagon | BlueprintEntityFurnace | BlueprintEntityHeatInterface | BlueprintEntityInfinityCargoWagon | BlueprintEntityInfinityContainer | BlueprintEntityInfinityPipe | BlueprintEntityInserter | BlueprintEntityLamp | BlueprintEntityLaneSplitter | BlueprintEntityLinkedBelt | BlueprintEntityLinkedContainer | BlueprintEntityLoader | BlueprintEntityLoader1x1 | BlueprintEntityLocomotive | BlueprintEntityLogisticContainer | BlueprintEntityMiningDrill | BlueprintEntityPowerSwitch | BlueprintEntityProgrammableSpeaker | BlueprintEntityProxyContainer | BlueprintEntityPump | BlueprintEntityRailChainSignal | BlueprintEntityRailSignal | BlueprintEntityReactor | BlueprintEntityRoboport | BlueprintEntitySelectorCombinator | BlueprintEntitySpacePlatformHub | BlueprintEntitySpiderVehicle | BlueprintEntitySplitter | BlueprintEntityStorageTank | BlueprintEntityTrainStop | BlueprintEntityTransportBelt | BlueprintEntityTurret | BlueprintEntityUndergroundBelt | BlueprintEntityValve | BlueprintEntityWall;
+/**
+ *
+ * Applies to variant case `accumulator`
+ */
+interface BlueprintEntityAccumulator extends BaseBlueprintEntity {
+    'control_behavior'?: AccumulatorBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `agricultural-tower`
+ */
+interface BlueprintEntityAgriculturalTower extends BaseBlueprintEntity {
+    'control_behavior'?: AgriculturalTowerBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `ammo-turret`
+ */
+interface BlueprintEntityAmmoTurret extends BaseBlueprintEntity {
+    'control_behavior'?: TurretBlueprintControlBehavior;
+    /**
+     * Defaults to `false`.
+     */
+    'ignore_unprioritised'?: boolean;
+    'priority_list'?: SlotFilter;
+}
+/**
+ *
+ * Applies to variant case `arithmetic-combinator`
+ */
+interface BlueprintEntityArithmeticCombinator extends BaseBlueprintEntity {
+    'control_behavior'?: ArithmeticCombinatorBlueprintControlBehavior;
+    'description'?: string;
+}
+/**
+ *
+ * Applies to variant case `artillery-turret`
+ */
+interface BlueprintEntityArtilleryTurret extends BaseBlueprintEntity {
+    /**
+     * Defaults to `true`.
+     */
+    'artillery_auto_targeting'?: boolean;
+    'control_behavior'?: ArtilleryTurretBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `artillery-wagon`
+ */
+interface BlueprintEntityArtilleryWagon extends BaseBlueprintEntity {
+    /**
+     * Defaults to `true`.
+     */
+    'artillery_auto_targeting'?: boolean;
+    'color'?: Color;
+    'copy_color_from_train_stop': boolean;
+    'enable_logistics_while_moving': boolean;
+    'grid'?: BlueprintEquipment[];
+    'orientation': RealOrientation;
+}
+/**
+ *
+ * Applies to variant case `assembling-machine`
+ */
+interface BlueprintEntityAssemblingMachine extends BaseBlueprintEntity {
+    'control_behavior'?: AssemblingMachineBlueprintControlBehavior;
+    'recipe'?: string;
+    'recipe_quality'?: string;
+}
+/**
+ *
+ * Applies to variant case `asteroid-collector`
+ */
+interface BlueprintEntityAsteroidCollector extends BaseBlueprintEntity {
+    'chunk-filter'?: SlotFilter[];
+    'control_behavior'?: AsteroidCollectorBlueprintControlBehavior;
+    'result-inventory': BlueprintInventory;
+}
+/**
+ *
+ * Applies to variant case `car`
+ */
+interface BlueprintEntityCar extends BaseBlueprintEntity {
+    'ammo_inventory': BlueprintInventoryWithFilters;
+    'driver_is_main_gunner': boolean;
+    'enable_logistics_while_moving': boolean;
+    'grid'?: BlueprintEquipment[];
+    'orientation': RealOrientation;
+    'request_filters': BlueprintLogisticSections;
+    'selected_gun_index': ItemStackIndex;
+    'trunk_inventory': BlueprintInventoryWithFilters;
+}
+/**
+ *
+ * Applies to variant case `cargo-landing-pad`
+ */
+interface BlueprintEntityCargoLandingPad extends BaseBlueprintEntity {
+    'bar'?: uint;
+    'control_behavior'?: CargoLandingPadBlueprintControlBehavior;
+    'request_filters': BlueprintLogisticSections;
+}
+/**
+ *
+ * Applies to variant case `cargo-wagon`
+ */
+interface BlueprintEntityCargoWagon extends BaseBlueprintEntity {
+    'color'?: Color;
+    'copy_color_from_train_stop': boolean;
+    'enable_logistics_while_moving': boolean;
+    'grid'?: BlueprintEquipment[];
+    'inventory': BlueprintInventoryWithFilters;
+    'orientation': RealOrientation;
+}
+/**
+ *
+ * Applies to variant case `constant-combinator`
+ */
+interface BlueprintEntityConstantCombinator extends BaseBlueprintEntity {
+    'control_behavior'?: ConstantCombinatorBlueprintControlBehavior;
+    'description'?: string;
+}
+/**
+ *
+ * Applies to variant case `container`
+ */
+interface BlueprintEntityContainer extends BaseBlueprintEntity {
+    'bar'?: uint;
+    'control_behavior'?: ContainerBlueprintControlBehavior;
+    'filters'?: BlueprintItemFilter[];
+}
+/**
+ *
+ * Applies to variant case `decider-combinator`
+ */
+interface BlueprintEntityDeciderCombinator extends BaseBlueprintEntity {
+    'control_behavior'?: DeciderCombinatorBlueprintControlBehavior;
+    'description'?: string;
+}
+/**
+ *
+ * Applies to variant case `display-panel`
+ */
+interface BlueprintEntityDisplayPanel extends BaseBlueprintEntity {
+    /**
+     * Defaults to `false`.
+     */
+    'always_show'?: boolean;
+    'control_behavior'?: DisplayPanelBlueprintControlBehavior;
+    'icon'?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    'show_in_chart'?: boolean;
+    'text'?: string;
+}
+/**
+ *
+ * Applies to variant case `electric-energy-interface`
+ */
+interface BlueprintEntityElectricEnergyInterface extends BaseBlueprintEntity {
+    'buffer_size': double;
+    'power_production'?: double;
+    'power_usage'?: double;
+}
+/**
+ *
+ * Applies to variant case `electric-turret`
+ */
+interface BlueprintEntityElectricTurret extends BaseBlueprintEntity {
+    'control_behavior'?: TurretBlueprintControlBehavior;
+    /**
+     * Defaults to `false`.
+     */
+    'ignore_unprioritised'?: boolean;
+    'priority_list'?: SlotFilter;
+}
+/**
+ *
+ * Applies to variant case `fluid-turret`
+ */
+interface BlueprintEntityFluidTurret extends BaseBlueprintEntity {
+    'control_behavior'?: TurretBlueprintControlBehavior;
+    /**
+     * Defaults to `false`.
+     */
+    'ignore_unprioritised'?: boolean;
+    'priority_list'?: SlotFilter;
+}
+/**
+ *
+ * Applies to variant case `fluid-wagon`
+ */
+interface BlueprintEntityFluidWagon extends BaseBlueprintEntity {
+    'color'?: Color;
+    'copy_color_from_train_stop': boolean;
+    'enable_logistics_while_moving': boolean;
+    'grid'?: BlueprintEquipment[];
+    'orientation': RealOrientation;
+}
+/**
+ *
+ * Applies to variant case `furnace`
+ */
+interface BlueprintEntityFurnace extends BaseBlueprintEntity {
+    'control_behavior'?: FurnaceBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `heat-interface`
+ */
+interface BlueprintEntityHeatInterface extends BaseBlueprintEntity {
+    'mode'?: HeatSettingMode;
+    'temperature'?: double;
+}
+/**
+ *
+ * Applies to variant case `infinity-cargo-wagon`
+ */
+interface BlueprintEntityInfinityCargoWagon extends BaseBlueprintEntity {
+    'color'?: Color;
+    'copy_color_from_train_stop': boolean;
+    'enable_logistics_while_moving': boolean;
+    'grid'?: BlueprintEquipment[];
+    'infinity_settings': BlueprintInfinityInventorySettings;
+    'orientation': RealOrientation;
+}
+/**
+ *
+ * Applies to variant case `infinity-container`
+ */
+interface BlueprintEntityInfinityContainer extends BaseBlueprintEntity {
+    'bar'?: uint;
+    'control_behavior'?: LogisticContainerBlueprintControlBehavior;
+    'filters'?: BlueprintItemFilter[];
+    'infinity_settings': BlueprintInfinityInventorySettings;
+    'request_filters': BlueprintLogisticSections;
+}
+/**
+ *
+ * Applies to variant case `infinity-pipe`
+ */
+interface BlueprintEntityInfinityPipe extends BaseBlueprintEntity {
+    'infinity_settings': InfinityPipeFilter;
+}
+/**
+ *
+ * Applies to variant case `inserter`
+ */
+interface BlueprintEntityInserter extends BaseBlueprintEntity {
+    'control_behavior'?: InserterBlueprintControlBehavior;
+    /**
+     * Present if position is non-default.
+     */
+    'drop_position'?: Vector;
+    /**
+     * Defaults to `"whitelist"`.
+     */
+    'filter_mode'?: 'whitelist' | 'blacklist';
+    'filters'?: BlueprintItemFilter[];
+    'override_stack_size'?: uint8;
+    /**
+     * Present if position is non-default.
+     */
+    'pickup_position'?: Vector;
+    'spoil_priority'?: SpoilPriority;
+    /**
+     * Defaults to `false`.
+     */
+    'use_filters'?: boolean;
+}
+/**
+ *
+ * Applies to variant case `lamp`
+ */
+interface BlueprintEntityLamp extends BaseBlueprintEntity {
+    /**
+     * Defaults to `false`.
+     */
+    'always_on'?: boolean;
+    'color'?: Color;
+}
+/**
+ *
+ * Applies to variant case `lane-splitter`
+ */
+interface BlueprintEntityLaneSplitter extends BaseBlueprintEntity {
+    'filter'?: ItemFilter;
+    'input_priority'?: SplitterPriority;
+    'output_priority'?: SplitterPriority;
+}
+/**
+ *
+ * Applies to variant case `linked-belt`
+ */
+interface BlueprintEntityLinkedBelt extends BaseBlueprintEntity {
+    'belt_link'?: uint;
+    'type': BeltConnectionType;
+}
+/**
+ *
+ * Applies to variant case `linked-container`
+ */
+interface BlueprintEntityLinkedContainer extends BaseBlueprintEntity {
+    'link_id': uint;
+}
+/**
+ *
+ * Applies to variant case `loader`
+ */
+interface BlueprintEntityLoader extends BaseBlueprintEntity {
+    'belt_stack_size_override'?: uint8;
+    /**
+     * Defaults to `"none"`.
+     */
+    'filter_mode'?: PrototypeFilterMode;
+    'filters'?: BlueprintItemFilter[];
+    'type': BeltConnectionType;
+}
+/**
+ *
+ * Applies to variant case `loader-1x1`
+ */
+interface BlueprintEntityLoader1x1 extends BaseBlueprintEntity {
+    'belt_stack_size_override'?: uint8;
+    /**
+     * Defaults to `"none"`.
+     */
+    'filter_mode'?: PrototypeFilterMode;
+    'filters'?: BlueprintItemFilter[];
+    'type': BeltConnectionType;
+}
+/**
+ *
+ * Applies to variant case `locomotive`
+ */
+interface BlueprintEntityLocomotive extends BaseBlueprintEntity {
+    'color'?: Color;
+    'copy_color_from_train_stop': boolean;
+    'enable_logistics_while_moving': boolean;
+    'grid'?: BlueprintEquipment[];
+    'orientation': RealOrientation;
+    'schedule'?: BlueprintSchedule;
+}
+/**
+ *
+ * Applies to variant case `logistic-container`
+ */
+interface BlueprintEntityLogisticContainer extends BaseBlueprintEntity {
+    'bar'?: uint;
+    'control_behavior'?: LogisticContainerBlueprintControlBehavior;
+    'filters'?: BlueprintItemFilter[];
+    'request_filters': BlueprintLogisticSections;
+}
+/**
+ *
+ * Applies to variant case `mining-drill`
+ */
+interface BlueprintEntityMiningDrill extends BaseBlueprintEntity {
+    'control_behavior'?: MiningDrillBlueprintControlBehavior;
+    'filter'?: BlueprintMiningDrillFilter;
+}
+/**
+ *
+ * Applies to variant case `power-switch`
+ */
+interface BlueprintEntityPowerSwitch extends BaseBlueprintEntity {
+    'control_behavior'?: PowerSwitchBlueprintControlBehavior;
+    'switch_state'?: boolean;
+}
+/**
+ *
+ * Applies to variant case `programmable-speaker`
+ */
+interface BlueprintEntityProgrammableSpeaker extends BaseBlueprintEntity {
+    'alert_parameters': ProgrammableSpeakerAlertParameters;
+    'control_behavior'?: ProgrammableSpeakerBlueprintControlBehavior;
+    'parameters': ProgrammableSpeakerParameters;
+}
+/**
+ *
+ * Applies to variant case `proxy-container`
+ */
+interface BlueprintEntityProxyContainer extends BaseBlueprintEntity {
+    'control_behavior'?: ProxyContainerBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `pump`
+ */
+interface BlueprintEntityPump extends BaseBlueprintEntity {
+    'control_behavior'?: PumpBlueprintControlBehavior;
+    'fluid_filter'?: string;
+}
+/**
+ *
+ * Applies to variant case `rail-chain-signal`
+ */
+interface BlueprintEntityRailChainSignal extends BaseBlueprintEntity {
+    'control_behavior'?: RailSignalBaseBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `rail-signal`
+ */
+interface BlueprintEntityRailSignal extends BaseBlueprintEntity {
+    'control_behavior'?: RailSignalBaseBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `reactor`
+ */
+interface BlueprintEntityReactor extends BaseBlueprintEntity {
+    'control_behavior'?: ReactorBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `roboport`
+ */
+interface BlueprintEntityRoboport extends BaseBlueprintEntity {
+    'control_behavior'?: RoboportBlueprintControlBehavior;
+    'request_filters': BlueprintLogisticSections;
+}
+/**
+ *
+ * Applies to variant case `selector-combinator`
+ */
+interface BlueprintEntitySelectorCombinator extends BaseBlueprintEntity {
+    'control_behavior'?: SelectorCombinatorParameters;
+    'description'?: string;
+}
+/**
+ *
+ * Applies to variant case `space-platform-hub`
+ */
+interface BlueprintEntitySpacePlatformHub extends BaseBlueprintEntity {
+    'bar'?: uint;
+    'control_behavior'?: SpacePlatformHubBlueprintControlBehavior;
+    'request_filters': BlueprintLogisticSections;
+    'request_missing_construction_materials': boolean;
+}
+/**
+ *
+ * Applies to variant case `spider-vehicle`
+ */
+interface BlueprintEntitySpiderVehicle extends BaseBlueprintEntity {
+    'ammo_inventory': BlueprintInventoryWithFilters;
+    'color'?: Color;
+    'driver_is_main_gunner': boolean;
+    'enable_logistics_while_moving': boolean;
+    'grid'?: BlueprintEquipment[];
+    'label'?: string;
+    'request_filters': BlueprintLogisticSections;
+    'selected_gun_index': ItemStackIndex;
+    'trunk_inventory': BlueprintInventoryWithFilters;
+}
+/**
+ *
+ * Applies to variant case `splitter`
+ */
+interface BlueprintEntitySplitter extends BaseBlueprintEntity {
+    'filter'?: ItemFilter;
+    'input_priority'?: SplitterPriority;
+    'output_priority'?: SplitterPriority;
+}
+/**
+ *
+ * Applies to variant case `storage-tank`
+ */
+interface BlueprintEntityStorageTank extends BaseBlueprintEntity {
+    'control_behavior'?: StorageTankBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `train-stop`
+ */
+interface BlueprintEntityTrainStop extends BaseBlueprintEntity {
+    'color'?: Color;
+    'control_behavior'?: TrainStopBlueprintControlBehavior;
+    'manual_trains_limit'?: uint;
+    'priority'?: uint8;
+}
+/**
+ *
+ * Applies to variant case `transport-belt`
+ */
+interface BlueprintEntityTransportBelt extends BaseBlueprintEntity {
+    'control_behavior'?: TransportBeltBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `turret`
+ */
+interface BlueprintEntityTurret extends BaseBlueprintEntity {
+    'control_behavior'?: TurretBlueprintControlBehavior;
+    /**
+     * Defaults to `false`.
+     */
+    'ignore_unprioritised'?: boolean;
+    'priority_list'?: SlotFilter;
+}
+/**
+ *
+ * Applies to variant case `underground-belt`
+ */
+interface BlueprintEntityUndergroundBelt extends BaseBlueprintEntity {
+    'type': BeltConnectionType;
+}
+/**
+ *
+ * Applies to variant case `valve`
+ */
+interface BlueprintEntityValve extends BaseBlueprintEntity {
+    'valve_threshold_override'?: float;
+}
+/**
+ *
+ * Applies to variant case `wall`
+ */
+interface BlueprintEntityWall extends BaseBlueprintEntity {
+    'control_behavior'?: WallBlueprintControlBehavior;
+}
+interface BlueprintEquipment {
+    equipment: EquipmentWithQualityID;
+    position: EquipmentPosition;
+}
+interface BlueprintInfinityInventorySettings {
+    filters?: InfinityInventoryFilter[];
+    /**
+     * Defaults to `false`.
+     */
+    remove_unfiltered_items?: boolean;
 }
 /**
  * Defines an item type that a blueprint entity will request.
@@ -418,6 +1052,26 @@ interface BlueprintInsertPlan {
      * Describes the inventories to insert these items into.
      */
     items: ItemInventoryPositions;
+}
+type BlueprintInventory = table;
+interface BlueprintInventoryWithFilters {
+    bar?: ItemStackIndex;
+    filters?: BlueprintItemFilter[];
+}
+interface BlueprintItemFilter {
+    index: uint;
+    /**
+     * The item.
+     */
+    name?: ItemID;
+    /**
+     * The quality.
+     */
+    quality?: QualityID;
+    /**
+     * The quality comparison type.
+     */
+    comparator?: ComparatorString;
 }
 interface BlueprintLogisticFilter {
     index: LogisticFilterIndex;
@@ -444,6 +1098,24 @@ interface BlueprintLogisticFilter {
      */
     minimum_delivery_count?: ItemCountType;
     import_from?: string;
+}
+interface BlueprintLogisticSections {
+    sections?: LogisticSection[];
+    /**
+     * Defaults to `false`.
+     */
+    trash_not_requested?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    request_from_buffers?: boolean;
+}
+interface BlueprintMiningDrillFilter {
+    filters?: SlotFilter;
+    /**
+     * Defaults to `"whitelist"`.
+     */
+    mode?: 'whitelist' | 'blacklist';
 }
 interface BlueprintSchedule {
     records?: BlueprintScheduleRecord[];
@@ -614,6 +1286,12 @@ interface CargoDestination {
      * Only used if `type` is {@link space_platform | runtime:defines.cargo_destination.space_platform}. Only used for sending space platform starter packs to a platform that is waiting for a starter pack.
      */
     space_platform?: SpacePlatformIdentification;
+}
+interface CargoLandingPadBlueprintControlBehavior {
+    /**
+     * Defaults to `send_contents`.
+     */
+    circuit_mode_of_operation?: defines.control_behavior.cargo_landing_pad.exclusive_mode;
 }
 /**
  * Either `icon`, `text`, or both must be provided.
@@ -1098,6 +1776,19 @@ interface ConfigurationChangedData {
      */
     migrations: LuaTable<IDType, Record<string, string>>;
 }
+interface ConstantCombinatorBlueprintControlBehavior {
+    sections: LogisticSections;
+    /**
+     * Defaults to `true`.
+     */
+    is_on?: boolean;
+}
+interface ContainerBlueprintControlBehavior {
+    /**
+     * Defaults to `true`.
+     */
+    read_contents?: boolean;
+}
 interface CraftingQueueItem {
     /**
      * The index of the item in the crafting queue.
@@ -1208,6 +1899,9 @@ LuaDamagePrototype | /**
  * The prototype name.
  */
 string;
+interface DeciderCombinatorBlueprintControlBehavior {
+    decider_conditions: DeciderCombinatorCondition;
+}
 interface DeciderCombinatorCondition {
     /**
      * Defaults to blank
@@ -1244,9 +1938,13 @@ interface DeciderCombinatorOutput {
      */
     signal: SignalID;
     /**
-     * Defaults to `true`. When `false`, will output a value of `1` for the given `output_signal`.
+     * Defaults to `true`. When `false`, will output the value from `constant` for the given `output_signal`.
      */
     copy_count_from_input?: boolean;
+    /**
+     * The value to output when not copying input. Defaults to `1`.
+     */
+    constant?: int;
     /**
      * Sets which input network to read the value of `signal` from if `copy_count_from_input` is `true`. Defaults to both.
      */
@@ -1341,6 +2039,9 @@ interface DifficultySettings {
      * A value in range [0.001, 1000].
      */
     technology_price_multiplier: double;
+}
+interface DisplayPanelBlueprintControlBehavior {
+    parameters?: DisplayPanelMessageDefinition[];
 }
 interface DisplayPanelMessageDefinition {
     /**
@@ -1949,7 +2650,7 @@ interface EventData {
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type EventFilter = (LuaScriptRaisedTeleportedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPlatformMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPlayerMinedEntityEventFilter | LuaSectorScannedEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaScriptRaisedReviveEventFilter | LuaPlayerBuiltEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaEntityDamagedEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaScriptRaisedDestroyEventFilter)[];
+type EventFilter = (LuaSegmentedUnitDiedEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPlatformMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaScriptRaisedDestroySegmentedUnitEventFilter | LuaSegmentedUnitDamagedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPlayerMinedEntityEventFilter | LuaSectorScannedEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaPostSegmentedUnitDiedEventFilter | LuaScriptRaisedReviveEventFilter | LuaPlayerBuiltEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaEntityDamagedEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaSegmentedUnitCreatedEventFilter | LuaScriptRaisedDestroyEventFilter)[];
 interface ExplosionDefinition {
     name: LuaEntityPrototype;
     offset: Vector;
@@ -2025,6 +2726,7 @@ interface FluidBoxFilterSpec {
      */
     force?: boolean;
 }
+type FluidFlowDirection = 'input-output' | 'input' | 'output';
 /**
  * A fluid may be specified in one of three ways.
  */
@@ -2262,6 +2964,44 @@ ForceID[] | /**
  * A single force.
  */
 ForceID;
+interface FurnaceBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    read_contents?: boolean;
+    /**
+     * Defaults to `true`.
+     */
+    include_in_crafting?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    include_fuel?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_recipe_finished?: boolean;
+    /**
+     * Defaults to `false`
+     */
+    read_ingredients?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_working?: boolean;
+    recipe_finished_signal?: SignalID;
+    working_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 /**
  * Parameters that affect the look and control of the game. Updating any of the member attributes here will immediately take effect in the game engine.
  */
@@ -2544,8 +3284,9 @@ interface HeatSetting {
     /**
      * Defaults to `"at-least"`.
      */
-    mode?: 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove';
+    mode?: HeatSettingMode;
 }
+type HeatSettingMode = 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove';
 /**
  * All base prototype types.
  */
@@ -2633,37 +3374,38 @@ interface IngredientFluid extends BaseIngredient {
      */
     'temperature'?: float;
 }
+interface InserterBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    circuit_set_filters?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_read_hand_contents?: boolean;
+    /**
+     * Defaults to `pulse`.
+     */
+    circuit_hand_read_mode?: defines.control_behavior.inserter.hand_read_mode;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_set_stack_size?: boolean;
+    stack_control_input_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 interface InserterCircuitConditions {
     circuit?: CircuitCondition;
     logistics?: CircuitCondition;
-}
-interface InserterItemFilter {
-    /**
-     * Position of the corresponding filter slot.
-     */
-    index: uint;
-    /**
-     * Item prototype name of the item to filter.
-     */
-    name: string;
-    /**
-     * Quality prototype name of the item to filter.
-     */
-    quality?: string;
-    /**
-     * Quality comparator to use for the quality filter.
-     */
-    comparator?: string;
-}
-interface InventoryFilter {
-    /**
-     * Position of the corresponding filter slot.
-     */
-    index: uint;
-    /**
-     * Item prototype name of the item to filter.
-     */
-    name: string;
 }
 type InventoryIndex = uint8;
 interface InventoryPosition {
@@ -3173,7 +3915,7 @@ interface ItemStackLocation {
     inventory: defines.inventory;
     slot: uint;
 }
-interface ItemWithCount {
+interface ItemToPlace {
     /**
      * Name of the item prototype.
      */
@@ -3183,20 +3925,21 @@ interface ItemWithCount {
      */
     count: ItemCountType;
 }
-interface ItemWithQualityCounts {
+interface ItemWithQualityCount {
     /**
      * Name of the item prototype.
      */
     name: string;
     /**
-     * The number of items.
-     */
-    count: ItemCountType;
-    /**
-     * Name of the item's quality prototype.
+     * Quality of the item prototype.
      */
     quality: string;
+    /**
+     * The number of items.
+     */
+    count: ItemCountType;
 }
+type ItemWithQualityCounts = ItemWithQualityCount[];
 /**
  * An item prototype with optional quality specification. Can be specified in one of four ways.
  */
@@ -3256,6 +3999,14 @@ game.print({"", {"item-name.iron-plate"}, ": ", 60})
 ```
  */
 type LocalisedString = string | number | boolean | LuaObject | nil | LocalisedString[];
+interface LogisticContainerBlueprintControlBehavior {
+    /**
+     * Defaults to `send_contents`.
+     */
+    circuit_mode_of_operation?: defines.control_behavior.logistic_container.exclusive_mode;
+    circuit_condition_enabled: boolean;
+    circuit_condition?: CircuitCondition;
+}
 interface LogisticFilter {
     /**
      * The item filter to put into the slot.
@@ -3299,7 +4050,7 @@ interface LogisticSection {
 interface LogisticSections {
     sections?: LogisticSection[];
     /**
-     * Defaults to false.
+     * Defaults to `false`.
      */
     trash_not_requested?: boolean;
 }
@@ -3370,7 +4121,7 @@ interface LuaEntityClonedEventFilterGhostName extends BaseLuaEntityClonedEventFi
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -3384,7 +4135,7 @@ interface LuaEntityClonedEventFilterGhostType extends BaseLuaEntityClonedEventFi
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -3398,7 +4149,7 @@ interface LuaEntityClonedEventFilterName extends BaseLuaEntityClonedEventFilter 
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -3412,7 +4163,7 @@ interface LuaEntityClonedEventFilterType extends BaseLuaEntityClonedEventFilter 
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -3485,7 +4236,7 @@ interface LuaEntityDamagedEventFilterGhostName extends BaseLuaEntityDamagedEvent
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -3499,7 +4250,7 @@ interface LuaEntityDamagedEventFilterGhostType extends BaseLuaEntityDamagedEvent
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -3513,7 +4264,7 @@ interface LuaEntityDamagedEventFilterName extends BaseLuaEntityDamagedEventFilte
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -3542,7 +4293,7 @@ interface LuaEntityDamagedEventFilterType extends BaseLuaEntityDamagedEventFilte
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -3571,7 +4322,7 @@ interface LuaEntityDeconstructionCancelledEventFilterGhostName extends BaseLuaEn
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -3585,7 +4336,7 @@ interface LuaEntityDeconstructionCancelledEventFilterGhostType extends BaseLuaEn
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -3599,7 +4350,7 @@ interface LuaEntityDeconstructionCancelledEventFilterName extends BaseLuaEntityD
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -3613,7 +4364,7 @@ interface LuaEntityDeconstructionCancelledEventFilterType extends BaseLuaEntityD
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -3656,7 +4407,7 @@ interface LuaEntityDiedEventFilterGhostName extends BaseLuaEntityDiedEventFilter
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -3670,7 +4421,7 @@ interface LuaEntityDiedEventFilterGhostType extends BaseLuaEntityDiedEventFilter
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -3684,7 +4435,7 @@ interface LuaEntityDiedEventFilterName extends BaseLuaEntityDiedEventFilter {
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -3698,7 +4449,7 @@ interface LuaEntityDiedEventFilterType extends BaseLuaEntityDiedEventFilter {
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -3727,7 +4478,7 @@ interface LuaEntityMarkedForDeconstructionEventFilterGhostName extends BaseLuaEn
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -3741,7 +4492,7 @@ interface LuaEntityMarkedForDeconstructionEventFilterGhostType extends BaseLuaEn
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -3755,7 +4506,7 @@ interface LuaEntityMarkedForDeconstructionEventFilterName extends BaseLuaEntityM
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -3769,7 +4520,7 @@ interface LuaEntityMarkedForDeconstructionEventFilterType extends BaseLuaEntityM
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -3798,7 +4549,7 @@ interface LuaEntityMarkedForUpgradeEventFilterGhostName extends BaseLuaEntityMar
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -3812,7 +4563,7 @@ interface LuaEntityMarkedForUpgradeEventFilterGhostType extends BaseLuaEntityMar
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -3826,7 +4577,7 @@ interface LuaEntityMarkedForUpgradeEventFilterName extends BaseLuaEntityMarkedFo
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -3840,7 +4591,7 @@ interface LuaEntityMarkedForUpgradeEventFilterType extends BaseLuaEntityMarkedFo
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -3903,7 +4654,7 @@ interface LuaPlatformBuiltEntityEventFilterGhostName extends BaseLuaPlatformBuil
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -3917,7 +4668,7 @@ interface LuaPlatformBuiltEntityEventFilterGhostType extends BaseLuaPlatformBuil
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -3931,7 +4682,7 @@ interface LuaPlatformBuiltEntityEventFilterName extends BaseLuaPlatformBuiltEnti
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -3945,7 +4696,7 @@ interface LuaPlatformBuiltEntityEventFilterType extends BaseLuaPlatformBuiltEnti
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -3974,7 +4725,7 @@ interface LuaPlatformMinedEntityEventFilterGhostName extends BaseLuaPlatformMine
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -3988,7 +4739,7 @@ interface LuaPlatformMinedEntityEventFilterGhostType extends BaseLuaPlatformMine
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4002,7 +4753,7 @@ interface LuaPlatformMinedEntityEventFilterName extends BaseLuaPlatformMinedEnti
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4016,7 +4767,7 @@ interface LuaPlatformMinedEntityEventFilterType extends BaseLuaPlatformMinedEnti
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4059,7 +4810,7 @@ interface LuaPlayerBuiltEntityEventFilterGhostName extends BaseLuaPlayerBuiltEnt
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4073,7 +4824,7 @@ interface LuaPlayerBuiltEntityEventFilterGhostType extends BaseLuaPlayerBuiltEnt
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4087,7 +4838,7 @@ interface LuaPlayerBuiltEntityEventFilterName extends BaseLuaPlayerBuiltEntityEv
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4101,7 +4852,7 @@ interface LuaPlayerBuiltEntityEventFilterType extends BaseLuaPlayerBuiltEntityEv
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4130,7 +4881,7 @@ interface LuaPlayerMinedEntityEventFilterGhostName extends BaseLuaPlayerMinedEnt
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4144,7 +4895,7 @@ interface LuaPlayerMinedEntityEventFilterGhostType extends BaseLuaPlayerMinedEnt
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4158,7 +4909,7 @@ interface LuaPlayerMinedEntityEventFilterName extends BaseLuaPlayerMinedEntityEv
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4172,7 +4923,7 @@ interface LuaPlayerMinedEntityEventFilterType extends BaseLuaPlayerMinedEntityEv
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4201,7 +4952,7 @@ interface LuaPlayerRepairedEntityEventFilterGhostName extends BaseLuaPlayerRepai
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4215,7 +4966,7 @@ interface LuaPlayerRepairedEntityEventFilterGhostType extends BaseLuaPlayerRepai
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4229,7 +4980,7 @@ interface LuaPlayerRepairedEntityEventFilterName extends BaseLuaPlayerRepairedEn
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4243,7 +4994,7 @@ interface LuaPlayerRepairedEntityEventFilterType extends BaseLuaPlayerRepairedEn
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4251,7 +5002,7 @@ interface LuaPostEntityDiedEventFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'ghost';
+    filter: 'type';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -4260,6 +5011,35 @@ interface LuaPostEntityDiedEventFilter {
      * Inverts the condition. Default is `false`.
      */
     invert?: boolean;
+}
+interface BaseLuaPostSegmentedUnitDiedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'name';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type LuaPostSegmentedUnitDiedEventFilter = BaseLuaPostSegmentedUnitDiedEventFilter | LuaPostSegmentedUnitDiedEventFilterName;
+/**
+ *
+ * Applies to variant case `name`
+ */
+interface LuaPostSegmentedUnitDiedEventFilterName extends BaseLuaPostSegmentedUnitDiedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'name';
+    /**
+     * The prototype name
+     */
+    'name': string;
 }
 interface BaseLuaPreGhostDeconstructedEventFilter {
     /**
@@ -4286,7 +5066,7 @@ interface LuaPreGhostDeconstructedEventFilterGhostName extends BaseLuaPreGhostDe
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4300,7 +5080,7 @@ interface LuaPreGhostDeconstructedEventFilterGhostType extends BaseLuaPreGhostDe
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4314,7 +5094,7 @@ interface LuaPreGhostDeconstructedEventFilterName extends BaseLuaPreGhostDeconst
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4328,7 +5108,7 @@ interface LuaPreGhostDeconstructedEventFilterType extends BaseLuaPreGhostDeconst
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4357,7 +5137,7 @@ interface LuaPreGhostUpgradedEventFilterGhostName extends BaseLuaPreGhostUpgrade
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4371,7 +5151,7 @@ interface LuaPreGhostUpgradedEventFilterGhostType extends BaseLuaPreGhostUpgrade
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4385,7 +5165,7 @@ interface LuaPreGhostUpgradedEventFilterName extends BaseLuaPreGhostUpgradedEven
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4399,7 +5179,7 @@ interface LuaPreGhostUpgradedEventFilterType extends BaseLuaPreGhostUpgradedEven
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4428,7 +5208,7 @@ interface LuaPrePlatformMinedEntityEventFilterGhostName extends BaseLuaPrePlatfo
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4442,7 +5222,7 @@ interface LuaPrePlatformMinedEntityEventFilterGhostType extends BaseLuaPrePlatfo
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4456,7 +5236,7 @@ interface LuaPrePlatformMinedEntityEventFilterName extends BaseLuaPrePlatformMin
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4470,7 +5250,7 @@ interface LuaPrePlatformMinedEntityEventFilterType extends BaseLuaPrePlatformMin
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4499,7 +5279,7 @@ interface LuaPrePlayerMinedEntityEventFilterGhostName extends BaseLuaPrePlayerMi
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4513,7 +5293,7 @@ interface LuaPrePlayerMinedEntityEventFilterGhostType extends BaseLuaPrePlayerMi
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4527,7 +5307,7 @@ interface LuaPrePlayerMinedEntityEventFilterName extends BaseLuaPrePlayerMinedEn
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4541,7 +5321,7 @@ interface LuaPrePlayerMinedEntityEventFilterType extends BaseLuaPrePlayerMinedEn
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4570,7 +5350,7 @@ interface LuaPreRobotMinedEntityEventFilterGhostName extends BaseLuaPreRobotMine
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4584,7 +5364,7 @@ interface LuaPreRobotMinedEntityEventFilterGhostType extends BaseLuaPreRobotMine
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4598,7 +5378,7 @@ interface LuaPreRobotMinedEntityEventFilterName extends BaseLuaPreRobotMinedEnti
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4612,7 +5392,7 @@ interface LuaPreRobotMinedEntityEventFilterType extends BaseLuaPreRobotMinedEnti
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4655,7 +5435,7 @@ interface LuaRobotBuiltEntityEventFilterGhostName extends BaseLuaRobotBuiltEntit
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4669,7 +5449,7 @@ interface LuaRobotBuiltEntityEventFilterGhostType extends BaseLuaRobotBuiltEntit
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4683,7 +5463,7 @@ interface LuaRobotBuiltEntityEventFilterName extends BaseLuaRobotBuiltEntityEven
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4697,7 +5477,7 @@ interface LuaRobotBuiltEntityEventFilterType extends BaseLuaRobotBuiltEntityEven
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4726,7 +5506,7 @@ interface LuaRobotMinedEntityEventFilterGhostName extends BaseLuaRobotMinedEntit
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4740,7 +5520,7 @@ interface LuaRobotMinedEntityEventFilterGhostType extends BaseLuaRobotMinedEntit
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4754,7 +5534,7 @@ interface LuaRobotMinedEntityEventFilterName extends BaseLuaRobotMinedEntityEven
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4768,7 +5548,7 @@ interface LuaRobotMinedEntityEventFilterType extends BaseLuaRobotMinedEntityEven
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4797,7 +5577,7 @@ interface LuaScriptRaisedBuiltEventFilterGhostName extends BaseLuaScriptRaisedBu
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4811,7 +5591,7 @@ interface LuaScriptRaisedBuiltEventFilterGhostType extends BaseLuaScriptRaisedBu
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4825,7 +5605,7 @@ interface LuaScriptRaisedBuiltEventFilterName extends BaseLuaScriptRaisedBuiltEv
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4839,7 +5619,7 @@ interface LuaScriptRaisedBuiltEventFilterType extends BaseLuaScriptRaisedBuiltEv
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -4868,7 +5648,7 @@ interface LuaScriptRaisedDestroyEventFilterGhostName extends BaseLuaScriptRaised
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4882,7 +5662,7 @@ interface LuaScriptRaisedDestroyEventFilterGhostType extends BaseLuaScriptRaised
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4896,7 +5676,7 @@ interface LuaScriptRaisedDestroyEventFilterName extends BaseLuaScriptRaisedDestr
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4910,9 +5690,38 @@ interface LuaScriptRaisedDestroyEventFilterType extends BaseLuaScriptRaisedDestr
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
+}
+interface BaseLuaScriptRaisedDestroySegmentedUnitEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'name';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type LuaScriptRaisedDestroySegmentedUnitEventFilter = BaseLuaScriptRaisedDestroySegmentedUnitEventFilter | LuaScriptRaisedDestroySegmentedUnitEventFilterName;
+/**
+ *
+ * Applies to variant case `name`
+ */
+interface LuaScriptRaisedDestroySegmentedUnitEventFilterName extends BaseLuaScriptRaisedDestroySegmentedUnitEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'name';
+    /**
+     * The prototype name
+     */
+    'name': string;
 }
 interface BaseLuaScriptRaisedReviveEventFilter {
     /**
@@ -4939,7 +5748,7 @@ interface LuaScriptRaisedReviveEventFilterGhostName extends BaseLuaScriptRaisedR
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -4953,7 +5762,7 @@ interface LuaScriptRaisedReviveEventFilterGhostType extends BaseLuaScriptRaisedR
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -4967,7 +5776,7 @@ interface LuaScriptRaisedReviveEventFilterName extends BaseLuaScriptRaisedRevive
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -4981,7 +5790,7 @@ interface LuaScriptRaisedReviveEventFilterType extends BaseLuaScriptRaisedRevive
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -5010,7 +5819,7 @@ interface LuaScriptRaisedTeleportedEventFilterGhostName extends BaseLuaScriptRai
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -5024,7 +5833,7 @@ interface LuaScriptRaisedTeleportedEventFilterGhostType extends BaseLuaScriptRai
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -5038,7 +5847,7 @@ interface LuaScriptRaisedTeleportedEventFilterName extends BaseLuaScriptRaisedTe
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -5052,7 +5861,7 @@ interface LuaScriptRaisedTeleportedEventFilterType extends BaseLuaScriptRaisedTe
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -5081,7 +5890,7 @@ interface LuaSectorScannedEventFilterGhostName extends BaseLuaSectorScannedEvent
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -5095,7 +5904,7 @@ interface LuaSectorScannedEventFilterGhostType extends BaseLuaSectorScannedEvent
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -5109,7 +5918,7 @@ interface LuaSectorScannedEventFilterName extends BaseLuaSectorScannedEventFilte
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -5123,9 +5932,169 @@ interface LuaSectorScannedEventFilterType extends BaseLuaSectorScannedEventFilte
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
+}
+interface BaseLuaSegmentedUnitCreatedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'name' | 'cause';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type LuaSegmentedUnitCreatedEventFilter = BaseLuaSegmentedUnitCreatedEventFilter | LuaSegmentedUnitCreatedEventFilterCause | LuaSegmentedUnitCreatedEventFilterName;
+/**
+ *
+ * Applies to variant case `cause`
+ */
+interface LuaSegmentedUnitCreatedEventFilterCause extends BaseLuaSegmentedUnitCreatedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'cause';
+    /**
+     * The cause of the event.
+     */
+    'cause': defines.segmented_unit_created_cause;
+}
+/**
+ *
+ * Applies to variant case `name`
+ */
+interface LuaSegmentedUnitCreatedEventFilterName extends BaseLuaSegmentedUnitCreatedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'name';
+    /**
+     * The prototype name
+     */
+    'name': string;
+}
+interface BaseLuaSegmentedUnitDamagedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'name' | 'original-damage-amount' | 'final-damage-amount' | 'damage-type' | 'final-health';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type LuaSegmentedUnitDamagedEventFilter = BaseLuaSegmentedUnitDamagedEventFilter | LuaSegmentedUnitDamagedEventFilterDamageType | LuaSegmentedUnitDamagedEventFilterFinalDamageAmount | LuaSegmentedUnitDamagedEventFilterFinalHealth | LuaSegmentedUnitDamagedEventFilterName | LuaSegmentedUnitDamagedEventFilterOriginalDamageAmount;
+/**
+ *
+ * Applies to variant case `damage-type`
+ */
+interface LuaSegmentedUnitDamagedEventFilterDamageType extends BaseLuaSegmentedUnitDamagedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'damage-type';
+    /**
+     * A {@link LuaDamagePrototype | runtime:LuaDamagePrototype} name.
+     */
+    'type': string;
+}
+/**
+ *
+ * Applies to variant case `final-damage-amount`
+ */
+interface LuaSegmentedUnitDamagedEventFilterFinalDamageAmount extends BaseLuaSegmentedUnitDamagedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'final-damage-amount';
+    'comparison': ComparatorString;
+    /**
+     * The value to compare against.
+     */
+    'value': float;
+}
+/**
+ *
+ * Applies to variant case `final-health`
+ */
+interface LuaSegmentedUnitDamagedEventFilterFinalHealth extends BaseLuaSegmentedUnitDamagedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'final-health';
+    'comparison': ComparatorString;
+    /**
+     * The value to compare against.
+     */
+    'value': float;
+}
+/**
+ *
+ * Applies to variant case `name`
+ */
+interface LuaSegmentedUnitDamagedEventFilterName extends BaseLuaSegmentedUnitDamagedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'name';
+    /**
+     * The prototype name
+     */
+    'name': string;
+}
+/**
+ *
+ * Applies to variant case `original-damage-amount`
+ */
+interface LuaSegmentedUnitDamagedEventFilterOriginalDamageAmount extends BaseLuaSegmentedUnitDamagedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'original-damage-amount';
+    'comparison': ComparatorString;
+    /**
+     * The value to compare against.
+     */
+    'value': float;
+}
+interface BaseLuaSegmentedUnitDiedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'name';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
+type LuaSegmentedUnitDiedEventFilter = BaseLuaSegmentedUnitDiedEventFilter | LuaSegmentedUnitDiedEventFilterName;
+/**
+ *
+ * Applies to variant case `name`
+ */
+interface LuaSegmentedUnitDiedEventFilterName extends BaseLuaSegmentedUnitDiedEventFilter {
+    /**
+     * The condition to filter on.
+     */
+    'filter': 'name';
+    /**
+     * The prototype name
+     */
+    'name': string;
 }
 interface BaseLuaUpgradeCancelledEventFilter {
     /**
@@ -5152,7 +6121,7 @@ interface LuaUpgradeCancelledEventFilterGhostName extends BaseLuaUpgradeCancelle
      */
     'filter': 'ghost_name';
     /**
-     * The ghost prototype name.
+     * The ghost prototype name
      */
     'name': string;
 }
@@ -5166,7 +6135,7 @@ interface LuaUpgradeCancelledEventFilterGhostType extends BaseLuaUpgradeCancelle
      */
     'filter': 'ghost_type';
     /**
-     * The ghost prototype type.
+     * The ghost prototype type
      */
     'type': string;
 }
@@ -5180,7 +6149,7 @@ interface LuaUpgradeCancelledEventFilterName extends BaseLuaUpgradeCancelledEven
      */
     'filter': 'name';
     /**
-     * The prototype name.
+     * The prototype name
      */
     'name': string;
 }
@@ -5194,7 +6163,7 @@ interface LuaUpgradeCancelledEventFilterType extends BaseLuaUpgradeCancelledEven
      */
     'filter': 'type';
     /**
-     * The prototype type.
+     * The prototype type
      */
     'type': string;
 }
@@ -5519,6 +6488,20 @@ interface MineableProperties {
      */
     mining_trigger?: TriggerItem[];
 }
+interface MiningDrillBlueprintControlBehavior {
+    circuit_read_resources: boolean;
+    circuit_resource_read_mode: defines.control_behavior.mining_drill.resource_read_mode;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 interface ModChangeData {
     /**
      * Old version of the mod. May be `nil` if the mod wasn't previously present (i.e. it was just added).
@@ -5599,7 +6582,7 @@ type ModifierType = 'inserter-stack-size-bonus' | 'bulk-inserter-capacity-bonus'
 /**
  * The percentual increase of the attribute. A value of `0.6` means a 60% increase.
  *
- * Quality values are divided by 10 internally, allowing for one more decimal of precision.
+ * Quality values are multiplied by {@link LuaQualityPrototype::next_probability | runtime:LuaQualityPrototype::next_probability}. For example, if a module's quality effect is 0.2 and the current quality's next_probability is 0.1, then the chance to get the next quality item is 2%.
  */
 type ModuleEffectValue = float;
 /**
@@ -5851,8 +6834,8 @@ interface PerceivedPerformance {
  * A single pipe connection for a given fluidbox.
  */
 interface PipeConnection {
-    flow_direction: 'input' | 'output' | 'input-output';
-    connection_type: 'normal' | 'underground' | 'linked';
+    flow_direction: FluidFlowDirection;
+    connection_type: PipeConnectionType;
     /**
      * The absolute position of this connection within the entity.
      */
@@ -5875,7 +6858,7 @@ interface PipeConnection {
     target_pipe_connection_index?: uint;
 }
 interface PipeConnectionDefinition {
-    connection_type: 'normal' | 'underground' | 'linked';
+    connection_type: PipeConnectionType;
     /**
      * The 4 cardinal direction connection points for this pipe.
      */
@@ -5884,7 +6867,7 @@ interface PipeConnectionDefinition {
      * The maximum tile distance this underground connection can connect.
      */
     max_underground_distance?: uint;
-    flow_direction: 'input-output' | 'input' | 'output';
+    flow_direction: FluidFlowDirection;
     direction: defines.direction;
     connection_category: string[];
     /**
@@ -5892,6 +6875,16 @@ interface PipeConnectionDefinition {
      */
     linked_connection_id?: uint;
 }
+type PipeConnectionType = /**
+ * 2 connections are required to be adjacent tiles next to each other on their respective directions.
+ */
+'normal' | /**
+ * Allows distant connection up to a certain limit. Those connections may be blocked by tiles.
+ */
+'underground' | /**
+ * For mods, connections between entities have to be explicitly requested by script.
+ */
+'linked';
 type PipetteID = LuaEntityPrototype | LuaEquipmentPrototype | LuaFluidPrototype | LuaItemPrototype | LuaRecipePrototype | LuaSpaceLocationPrototype | LuaTilePrototype | LuaVirtualSignalPrototype;
 interface PlaceAsTileResult {
     /**
@@ -5993,6 +6986,31 @@ interface PollutionMapSettings {
      */
     enemy_attack_pollution_consumption_modifier: double;
 }
+/**
+ * Information about an individual segment in a segmented unit when the unit died.
+ */
+interface PostSegmentDiedData {
+    /**
+     * The segment's position when the unit died, if it had one.
+     */
+    position?: MapPosition;
+    /**
+     * The segment's orientation when the unit died, if it had one.
+     */
+    orientation?: RealOrientation;
+}
+interface PowerSwitchBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 interface PrintSettings {
     /**
      * Color of the message to print. Defaults to white.
@@ -6047,11 +7065,19 @@ FluidProduct | /**
  * Returned when the `type` is `"research-progress"`.
  */
 ResearchProgressProduct;
+/**
+ * Specifies how the entity will utilize this fluidbox. `input-output` should only be used for boilers in fluid heating mode.
+ */
+type ProductionType = 'none' | 'input' | 'input-output' | 'output';
 interface ProgrammableSpeakerAlertParameters {
     show_alert: boolean;
     show_on_map: boolean;
     icon_signal_id: SignalID;
     alert_message: string;
+}
+interface ProgrammableSpeakerBlueprintControlBehavior {
+    circuit_condition: CircuitCondition;
+    circuitParameters: ProgrammableSpeakerCircuitParameters;
 }
 interface ProgrammableSpeakerCircuitParameters {
     signal_value_is_pitch: boolean;
@@ -6129,6 +7155,28 @@ interface PrototypeWithQuality {
      * Name of a quality prototype. Always defined when reading, defaults to "normal" when writing.
      */
     quality?: string;
+}
+interface ProxyContainerBlueprintControlBehavior {
+    /**
+     * Defaults to `true`.
+     */
+    read_contents?: boolean;
+}
+interface PumpBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    set_filter?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
 }
 /**
  * An item filter may be specified in two ways, either as a string which is a quality prototype name or as a table.
@@ -6209,7 +7257,27 @@ interface RailLocation {
     direction: defines.direction;
     rail_layer: defines.rail_layer;
 }
+interface RailSignalBaseBlueprintControlBehavior {
+    circuit_close_signal: boolean;
+    circuit_read_signal: boolean;
+    red_output_signal?: SignalID;
+    orange_output_signal?: SignalID;
+    green_output_signal?: SignalID;
+    blue_output_signal?: SignalID;
+    circuit_condition: CircuitCondition;
+}
 type RangeMode = 'center-to-center' | 'bounding-box-to-bounding-box' | 'center-to-bounding-box';
+interface ReactorBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    read_burner_fuel?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_temperature?: boolean;
+    temperature_signal: SignalID;
+}
 /**
  * The smooth orientation. It is a `float` in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise.
  *
@@ -6485,7 +7553,13 @@ LuaGuiElement | /**
 LuaCargoHatch | /**
  * Target type {@link schedule | runtime:defines.target_type.schedule}
  */
-LuaSchedule;
+LuaSchedule | /**
+ * Target type {@link territory | runtime:defines.target_type.territory}
+ */
+LuaTerritory | /**
+ * Target type {@link segmented_unit | runtime:defines.target_type.segmented_unit}; `useful_id` {@link LuaSegmentedUnit::unit_number | runtime:LuaSegmentedUnit::unit_number}
+ */
+LuaSegmentedUnit;
 /**
  * A number between 0 and 255 inclusive, represented by one of the following named strings or the string version of the number. For example `"10"` and `"decals"` are both valid. Higher values are rendered above lower values.
  */
@@ -6792,6 +7866,21 @@ interface RidingState {
     acceleration: defines.riding.acceleration;
     direction: defines.riding.direction;
 }
+interface RoboportBlueprintControlBehavior {
+    read_items_mode?: boolean;
+    read_robot_stats?: boolean;
+    available_logistic_output_signal?: SignalID;
+    total_logistic_output_signal?: SignalID;
+    available_construction_output_signal?: SignalID;
+    total_construction_output_signal?: SignalID;
+    roboport_count_output_signal?: SignalID;
+}
+interface RocketSiloBlueprintControlBehavior {
+    /**
+     * Defaults to `logistic_inventory`.
+     */
+    read_items_mode?: defines.control_behavior.rocket_silo.read_mode;
+}
 interface RollingStockDrawData {
     position: MapPosition;
     orientation: RealOrientation;
@@ -6873,6 +7962,147 @@ interface ScriptRenderTargetTable {
  * Scroll policy of a {@link scroll pane | runtime:LuaGuiElement}.
  */
 type ScrollPolicy = 'never' | 'dont-show-but-allow-scrolling' | 'always' | 'auto' | 'auto-and-reserve-space';
+/**
+ * A runtime representation of {@link SegmentEngineSpecification | prototype:SegmentEngineSpecification}.
+ */
+interface SegmentEngineSpecification {
+    /**
+     * All segments (except for the head segment) that compose the body of the segmented unit.
+     */
+    segments: SegmentSpecification[];
+    /**
+     * The maximum number of body nodes that a segmented unit instance can have.
+     */
+    max_body_nodes: uint;
+}
+/**
+ * A runtime representation of {@link SegmentSpecification | prototype:SegmentSpecification}.
+ */
+interface SegmentSpecification {
+    /**
+     * The {@link SegmentPrototype | prototype:SegmentPrototype} at this position in the unit.
+     */
+    segment: LuaEntityPrototype;
+    /**
+     * The distance (in tiles) along the unit's body between this segment's center and the head {@link SegmentedUnitPrototype | prototype:SegmentedUnitPrototype}'s center. This value is automatically pre-calculated after the prototype phase.
+     */
+    distance_from_head: double;
+}
+/**
+ * A structure describing the state of a {@link LuaSegmentedUnit | runtime:LuaSegmentedUnit}'s AI.
+ */
+interface BaseSegmentedUnitAIState {
+    /**
+     * Type of the AI state.
+     */
+    type: defines.segmented_unit_ai_state;
+}
+/**
+ * A structure describing the state of a {@link LuaSegmentedUnit | runtime:LuaSegmentedUnit}'s AI.
+ */
+type SegmentedUnitAIState = BaseSegmentedUnitAIState | SegmentedUnitAIStateAttacking | SegmentedUnitAIStateEnragedAtNothing | SegmentedUnitAIStateEnragedAtTarget | SegmentedUnitAIStateInvestigating | SegmentedUnitAIStatePatrolling;
+/**
+ *
+ * Applies to variant case `defines.segmented_unit_ai_state.attacking`
+ */
+interface SegmentedUnitAIStateAttacking extends BaseSegmentedUnitAIState {
+    /**
+     * Type of the AI state.
+     */
+    'type': defines.segmented_unit_ai_state.attacking;
+    /**
+     * Read-only. The position of `target`. This field is provided as a convenience when reading the AI state and is not used during parsing.
+     */
+    'destination'?: MapPosition;
+    /**
+     * The entity that the unit is attacking. May be nil if the entity has been destroyed or is otherwise invalid, but the segmented unit has not had an opportunity to update its AI.
+     */
+    'target'?: LuaEntity;
+}
+/**
+ *
+ * Applies to variant case `defines.segmented_unit_ai_state.enraged_at_nothing`
+ */
+interface SegmentedUnitAIStateEnragedAtNothing extends BaseSegmentedUnitAIState {
+    /**
+     * Type of the AI state.
+     */
+    'type': defines.segmented_unit_ai_state.enraged_at_nothing;
+    /**
+     * The arbitrary position the segmented unit is navigating to while searching for a nearby attack target.
+     */
+    'destination': MapPosition;
+    /**
+     * The map tick when the segmented unit was last attacked. Controls how long the segmented unit will remain enraged before returning to one of the non-enraged states. See {@link SegmentedUnitPrototype::enraged_duration | prototype:SegmentedUnitPrototype::enraged_duration}.
+     */
+    'last_damage_time': MapTick;
+    /**
+     * Read-only. The number of ticks the segmented unit will remain enraged before transitioning to one of the non-enraged states. This field is provided as a convenience when reading the AI state but is not used during parsing.
+     */
+    'remaining_time': MapTick;
+}
+/**
+ *
+ * Applies to variant case `defines.segmented_unit_ai_state.enraged_at_target`
+ */
+interface SegmentedUnitAIStateEnragedAtTarget extends BaseSegmentedUnitAIState {
+    /**
+     * Type of the AI state.
+     */
+    'type': defines.segmented_unit_ai_state.enraged_at_target;
+    /**
+     * True if the `target` entity attacked this segmented unit. Entities that have attacked this segmented unit will have attack priority over those that have not.
+     */
+    'attacked_me': boolean;
+    /**
+     * Read-only. The position of `target`. This field is provided as a convenience when reading the AI state and is not used during parsing.
+     */
+    'destination'?: MapPosition;
+    /**
+     * The map tick when the segmented unit was last attacked. Controls how long the segmented unit will remain enraged before returning to one of the other states. See {@link SegmentedUnitPrototype::enraged_duration | prototype:SegmentedUnitPrototype::enraged_duration}.
+     */
+    'last_damage_time': MapTick;
+    /**
+     * Read-only. The number of ticks the segmented unit will remain enraged before transitioning to one of the non-enraged states. This field is provided as a convenience when reading the AI state but is not used during parsing.
+     */
+    'remaining_time': MapTick;
+    /**
+     * The entity that the unit is attacking. May be nil if the entity has been destroyed or is otherwise invalid, but the segmented unit has not had an opportunity to update its AI.
+     */
+    'target'?: LuaEntity;
+}
+/**
+ *
+ * Applies to variant case `defines.segmented_unit_ai_state.investigating`
+ */
+interface SegmentedUnitAIStateInvestigating extends BaseSegmentedUnitAIState {
+    /**
+     * Type of the AI state.
+     */
+    'type': defines.segmented_unit_ai_state.investigating;
+    /**
+     * The position where the unit detected a disturbance in its territory and is presently navigating towards.
+     */
+    'destination': MapPosition;
+}
+/**
+ *
+ * Applies to variant case `defines.segmented_unit_ai_state.patrolling`
+ */
+interface SegmentedUnitAIStatePatrolling extends BaseSegmentedUnitAIState {
+    /**
+     * Type of the AI state.
+     */
+    'type': defines.segmented_unit_ai_state.patrolling;
+    /**
+     * Read-only. The position of the `waypoint` the unit is navigating to. This field is provided as a convenience when reading the AI state and is not used during parsing.
+     */
+    'destination': MapPosition;
+    /**
+     * Index into the unit's territory's {@link LuaTerritory::get_patrol_path | runtime:LuaTerritory::get_patrol_path} array. If the unit is not assigned to a territory, then this value is an index into a patrol path that the engine internally uses to guide the segmented unit and cannot be directly accessed. See {@link SegmentedUnitPrototype::territory_radius | prototype:SegmentedUnitPrototype::territory_radius}.
+     */
+    'waypoint': uint;
+}
 interface SelectedPrototypeData {
     /**
      * E.g. `"entity"`.
@@ -7116,6 +8346,16 @@ interface SignalIDBase {
 }
 type SignalIDType = 'item' | 'fluid' | 'virtual' | 'entity' | 'recipe' | 'space-location' | 'asteroid-chunk' | 'quality';
 type SimulationWidgetType = 'signal-id' | 'signal-id-base' | 'signal-or-number' | 'simple-slot' | 'simple-item-slot' | 'recipe-slot' | 'quickbar-slot' | 'logistics-button' | 'logistics-button-space' | 'text-button-localised-substring' | 'text-button' | 'text-button-substring' | 'inventory-limit-slot-button' | 'train-schedule-action-button' | 'choose-button' | 'textfield' | 'item-group-tab' | 'drop-down' | 'check-box' | 'switch' | 'label';
+interface SlotFilter {
+    /**
+     * Position of the corresponding filter slot.
+     */
+    index: uint;
+    /**
+     * Name of the prototype to filter for.
+     */
+    name: string;
+}
 interface SmokeSource {
     name: string;
     frequency: float;
@@ -7267,6 +8507,29 @@ interface SpaceLocationPrototypeFilterType extends BaseSpaceLocationPrototypeFil
      */
     'type': string | string[];
 }
+interface SpacePlatformHubBlueprintControlBehavior {
+    /**
+     * Defaults to `true`.
+     */
+    read_contents?: boolean;
+    /**
+     * Defaults to `true`.
+     */
+    send_to_platform?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_moving_from?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_moving_to?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_speed?: boolean;
+    speed_signal?: SignalID;
+}
 type SpacePlatformIdentification = LuaSpacePlatform;
 interface SpacePlatformTileDefinition {
     tile: LuaTilePrototype;
@@ -7282,6 +8545,8 @@ interface SpawnPointDefinition {
      */
     weight: double;
 }
+type SplitterPriority = 'left' | 'none' | 'right';
+type SpoilPriority = 'fresh_first' | 'none' | 'spoiled_first';
 interface SpoilToTriggerResult {
     /**
      * The trigger items that are run.
@@ -7336,6 +8601,12 @@ interface SteeringMapSetting {
 interface SteeringMapSettings {
     default: SteeringMapSetting;
     moving: SteeringMapSetting;
+}
+interface StorageTankBlueprintControlBehavior {
+    /**
+     * Defaults to `true`.
+     */
+    read_contents?: boolean;
 }
 interface SurfaceCondition {
     property: string;
@@ -7409,7 +8680,7 @@ LuaTechnology | /**
  */
 string;
 /**
- * The effect that is applied when a technology is researched. It is a table that contains at least the field `type`.
+ * The effect that is applied when a technology is researched.
  */
 interface BaseTechnologyModifier {
     /**
@@ -7418,19 +8689,9 @@ interface BaseTechnologyModifier {
     type: ModifierType;
 }
 /**
- * The effect that is applied when a technology is researched. It is a table that contains at least the field `type`.
+ * The effect that is applied when a technology is researched.
  */
-type TechnologyModifier = BaseTechnologyModifier | TechnologyModifierOtherTypes | TechnologyModifierAmmoDamage | TechnologyModifierGiveItem | TechnologyModifierGunSpeed | TechnologyModifierNothing | TechnologyModifierTurretAttack | TechnologyModifierUnlockRecipe;
-/**
- *
- * Applies to variant case `OtherTypes`
- */
-interface TechnologyModifierOtherTypes extends BaseTechnologyModifier {
-    /**
-     * Modification value. This value will be added to the variable it modifies.
-     */
-    'modifier': double;
-}
+type TechnologyModifier = BaseTechnologyModifier | TechnologyModifierAmmoDamage | TechnologyModifierArtilleryRange | TechnologyModifierBeaconDistribution | TechnologyModifierBeltStackSizeBonus | TechnologyModifierBulkInserterCapacityBonus | TechnologyModifierCargoLandingPadCount | TechnologyModifierChangeRecipeProductivity | TechnologyModifierCharacterBuildDistance | TechnologyModifierCharacterCraftingSpeed | TechnologyModifierCharacterHealthBonus | TechnologyModifierCharacterInventorySlotsBonus | TechnologyModifierCharacterItemDropDistance | TechnologyModifierCharacterItemPickupDistance | TechnologyModifierCharacterLogisticRequests | TechnologyModifierCharacterLogisticTrashSlots | TechnologyModifierCharacterLootPickupDistance | TechnologyModifierCharacterMiningSpeed | TechnologyModifierCharacterReachDistance | TechnologyModifierCharacterResourceReachDistance | TechnologyModifierCharacterRunningSpeed | TechnologyModifierCliffDeconstructionEnabled | TechnologyModifierCreateGhostOnEntityDeath | TechnologyModifierDeconstructionTimeToLive | TechnologyModifierFollowerRobotLifetime | TechnologyModifierGiveItem | TechnologyModifierGunSpeed | TechnologyModifierInserterStackSizeBonus | TechnologyModifierLaboratoryProductivity | TechnologyModifierLaboratorySpeed | TechnologyModifierMaxFailedAttemptsPerTickPerConstructionQueue | TechnologyModifierMaxSuccessfulAttemptsPerTickPerConstructionQueue | TechnologyModifierMaximumFollowingRobotsCount | TechnologyModifierMiningDrillProductivityBonus | TechnologyModifierMiningWithFluid | TechnologyModifierNothing | TechnologyModifierRailPlannerAllowElevatedRails | TechnologyModifierRailSupportOnDeepOilOcean | TechnologyModifierTurretAttack | TechnologyModifierUnlockCircuitNetwork | TechnologyModifierUnlockQuality | TechnologyModifierUnlockRecipe | TechnologyModifierUnlockSpaceLocation | TechnologyModifierUnlockSpacePlatforms | TechnologyModifierVehicleLogistics | TechnologyModifierVehicleLogistics | TechnologyModifierWorkerRobotBattery | TechnologyModifierWorkerRobotSpeed | TechnologyModifierWorkerRobotStorage;
 /**
  *
  * Applies to variant case `ammo-damage`
@@ -7441,11 +8702,337 @@ interface TechnologyModifierAmmoDamage extends BaseTechnologyModifier {
      */
     'type': 'ammo-damage';
     /**
-     * Prototype name of the ammunition category that is affected
+     * The prototype name of the ammunition category that is affected.
      */
     'ammo_category': string;
     /**
-     * Modification value. This will be added to the current ammo damage modifier upon researching.
+     * The amount to increase the current ammo damage by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `artillery-range`
+ */
+interface TechnologyModifierArtilleryRange extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'artillery-range';
+    /**
+     * The amount to increase the current artillery range by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `beacon-distribution`
+ */
+interface TechnologyModifierBeaconDistribution extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'beacon-distribution';
+    /**
+     * The amount to increase the current beacon distribution by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `belt-stack-size-bonus`
+ */
+interface TechnologyModifierBeltStackSizeBonus extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'belt-stack-size-bonus';
+    /**
+     * The amount to increase the current belt stack size by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `bulk-inserter-capacity-bonus`
+ */
+interface TechnologyModifierBulkInserterCapacityBonus extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'bulk-inserter-capacity-bonus';
+    /**
+     * The amount to increase the current bulk inserter capacity by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `cargo-landing-pad-count`
+ */
+interface TechnologyModifierCargoLandingPadCount extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'cargo-landing-pad-count';
+    /**
+     * The amount to increase the current cargo landing pad count by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `change-recipe-productivity`
+ */
+interface TechnologyModifierChangeRecipeProductivity extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'change-recipe-productivity';
+    /**
+     * The amount to increase the current recipe productivity by upon researching.
+     */
+    'change': float;
+    /**
+     * The prototype name of the recipe that is affected.
+     */
+    'recipe': string;
+}
+/**
+ *
+ * Applies to variant case `character-build-distance`
+ */
+interface TechnologyModifierCharacterBuildDistance extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-build-distance';
+    /**
+     * The amount to increase the current character build distance by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-crafting-speed`
+ */
+interface TechnologyModifierCharacterCraftingSpeed extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-crafting-speed';
+    /**
+     * The amount to increase the current character crafting speed by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-health-bonus`
+ */
+interface TechnologyModifierCharacterHealthBonus extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-health-bonus';
+    /**
+     * The amount to increase the current character health by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-inventory-slots-bonus`
+ */
+interface TechnologyModifierCharacterInventorySlotsBonus extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-inventory-slots-bonus';
+    /**
+     * The amount to increase the current character inventory slots by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-item-drop-distance`
+ */
+interface TechnologyModifierCharacterItemDropDistance extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-item-drop-distance';
+    /**
+     * The amount to increase the current character item drop distance by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-item-pickup-distance`
+ */
+interface TechnologyModifierCharacterItemPickupDistance extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-item-pickup-distance';
+    /**
+     * The amount to increase the current character item pickup distance by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-logistic-requests`
+ */
+interface TechnologyModifierCharacterLogisticRequests extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-logistic-requests';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `character-logistic-trash-slots`
+ */
+interface TechnologyModifierCharacterLogisticTrashSlots extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-logistic-trash-slots';
+    /**
+     * The amount to increase the current character logistic trash slots by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-loot-pickup-distance`
+ */
+interface TechnologyModifierCharacterLootPickupDistance extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-loot-pickup-distance';
+    /**
+     * The amount to increase the current character loot pickup distance by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-mining-speed`
+ */
+interface TechnologyModifierCharacterMiningSpeed extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-mining-speed';
+    /**
+     * The amount to increase the current character mining speed by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-reach-distance`
+ */
+interface TechnologyModifierCharacterReachDistance extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-reach-distance';
+    /**
+     * The amount to increase the current character reach distance by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-resource-reach-distance`
+ */
+interface TechnologyModifierCharacterResourceReachDistance extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-resource-reach-distance';
+    /**
+     * The amount to increase the current character resource reach distance by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `character-running-speed`
+ */
+interface TechnologyModifierCharacterRunningSpeed extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'character-running-speed';
+    /**
+     * The amount to increase the current character running speed by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `cliff-deconstruction-enabled`
+ */
+interface TechnologyModifierCliffDeconstructionEnabled extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'cliff-deconstruction-enabled';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `create-ghost-on-entity-death`
+ */
+interface TechnologyModifierCreateGhostOnEntityDeath extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'create-ghost-on-entity-death';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `deconstruction-time-to-live`
+ */
+interface TechnologyModifierDeconstructionTimeToLive extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'deconstruction-time-to-live';
+    /**
+     * The amount of time to live for deconstruction items in ticks.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `follower-robot-lifetime`
+ */
+interface TechnologyModifierFollowerRobotLifetime extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'follower-robot-lifetime';
+    /**
+     * The amount to increase the current follower robot lifetime by upon researching.
      */
     'modifier': double;
 }
@@ -7459,13 +9046,17 @@ interface TechnologyModifierGiveItem extends BaseTechnologyModifier {
      */
     'type': 'give-item';
     /**
-     * Number of items to give. Defaults to `1`.
+     * The amount of the item that is given upon researching.
      */
-    'count'?: uint;
+    'count': uint;
     /**
-     * Item prototype name to give.
+     * The prototype name of the item that is given.
      */
     'item': string;
+    /**
+     * The prototype name of quality of the item that is given.
+     */
+    'quality': string;
 }
 /**
  *
@@ -7477,13 +9068,125 @@ interface TechnologyModifierGunSpeed extends BaseTechnologyModifier {
      */
     'type': 'gun-speed';
     /**
-     * Prototype name of the ammunition category that is affected
+     * The prototype name of the ammunition category that is affected.
      */
     'ammo_category': string;
     /**
-     * Modification value. This will be added to the current gun speed modifier upon researching.
+     * The amount to increase the current gun speed by upon researching.
      */
     'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `inserter-stack-size-bonus`
+ */
+interface TechnologyModifierInserterStackSizeBonus extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'inserter-stack-size-bonus';
+    /**
+     * The amount to increase the current inserter stack size by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `laboratory-productivity`
+ */
+interface TechnologyModifierLaboratoryProductivity extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'laboratory-productivity';
+    /**
+     * The amount to increase the current laboratory productivity by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `laboratory-speed`
+ */
+interface TechnologyModifierLaboratorySpeed extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'laboratory-speed';
+    /**
+     * The amount to increase the current laboratory speed by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `max-failed-attempts-per-tick-per-construction-queue`
+ */
+interface TechnologyModifierMaxFailedAttemptsPerTickPerConstructionQueue extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'max-failed-attempts-per-tick-per-construction-queue';
+    /**
+     * The maximum number of failed attempts per tick per construction queue.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `max-successful-attempts-per-tick-per-construction-queue`
+ */
+interface TechnologyModifierMaxSuccessfulAttemptsPerTickPerConstructionQueue extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'max-successful-attempts-per-tick-per-construction-queue';
+    /**
+     * The maximum number of successful attempts per tick per construction queue.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `maximum-following-robots-count`
+ */
+interface TechnologyModifierMaximumFollowingRobotsCount extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'maximum-following-robots-count';
+    /**
+     * The amount to increase the current maximum following robots count by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `mining-drill-productivity-bonus`
+ */
+interface TechnologyModifierMiningDrillProductivityBonus extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'mining-drill-productivity-bonus';
+    /**
+     * The amount to increase the current mining drill productivity by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `mining-with-fluid`
+ */
+interface TechnologyModifierMiningWithFluid extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'mining-with-fluid';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
 }
 /**
  *
@@ -7495,9 +9198,37 @@ interface TechnologyModifierNothing extends BaseTechnologyModifier {
      */
     'type': 'nothing';
     /**
-     * Description of this nothing modifier.
+     * The description text for this modifier.
      */
     'effect_description': LocalisedString;
+}
+/**
+ *
+ * Applies to variant case `rail-planner-allow-elevated-rails`
+ */
+interface TechnologyModifierRailPlannerAllowElevatedRails extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'rail-planner-allow-elevated-rails';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `rail-support-on-deep-oil-ocean`
+ */
+interface TechnologyModifierRailSupportOnDeepOilOcean extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'rail-support-on-deep-oil-ocean';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
 }
 /**
  *
@@ -7509,13 +9240,41 @@ interface TechnologyModifierTurretAttack extends BaseTechnologyModifier {
      */
     'type': 'turret-attack';
     /**
-     * Modification value. This will be added to the current turret damage modifier upon researching.
+     * The amount to increase the current turret attack by upon researching.
      */
     'modifier': double;
     /**
-     * Turret prototype name this modifier will affect.
+     * The prototype name of the turret that is affected.
      */
     'turret_id': string;
+}
+/**
+ *
+ * Applies to variant case `unlock-circuit-network`
+ */
+interface TechnologyModifierUnlockCircuitNetwork extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'unlock-circuit-network';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `unlock-quality`
+ */
+interface TechnologyModifierUnlockQuality extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'unlock-quality';
+    /**
+     * The prototype name of the quality that is unlocked upon researching.
+     */
+    'quality': string;
 }
 /**
  *
@@ -7527,9 +9286,107 @@ interface TechnologyModifierUnlockRecipe extends BaseTechnologyModifier {
      */
     'type': 'unlock-recipe';
     /**
-     * Recipe prototype name to unlock.
+     * The prototype name of the recipe that is unlocked upon researching.
      */
     'recipe': string;
+}
+/**
+ *
+ * Applies to variant case `unlock-space-location`
+ */
+interface TechnologyModifierUnlockSpaceLocation extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'unlock-space-location';
+    /**
+     * The prototype name of the space location that is unlocked upon researching.
+     */
+    'space_location': string;
+}
+/**
+ *
+ * Applies to variant case `unlock-space-platforms`
+ */
+interface TechnologyModifierUnlockSpacePlatforms extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'unlock-space-platforms';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `vehicle-logistics`
+ */
+interface TechnologyModifierVehicleLogistics extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'vehicle-logistics';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `vehicle-logistics`
+ */
+interface TechnologyModifierVehicleLogistics extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'vehicle-logistics';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `worker-robot-battery`
+ */
+interface TechnologyModifierWorkerRobotBattery extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'worker-robot-battery';
+    /**
+     * The amount to increase the current worker robot battery by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `worker-robot-speed`
+ */
+interface TechnologyModifierWorkerRobotSpeed extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'worker-robot-speed';
+    /**
+     * The amount to increase the current worker robot speed  by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
+ * Applies to variant case `worker-robot-storage`
+ */
+interface TechnologyModifierWorkerRobotStorage extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'worker-robot-storage';
+    /**
+     * The amount to increase the current worker robot storage by upon researching.
+     */
+    'modifier': double;
 }
 interface BaseTechnologyPrototypeFilter {
     /**
@@ -7645,6 +9502,27 @@ interface Tile {
      * The prototype name of the tile.
      */
     name: string;
+}
+/**
+ * A runtime representation of {@link TileBuildabilityRule | prototype:TileBuildabilityRule}.
+ */
+interface TileBuildabilityRule {
+    /**
+     * The area that this rule applies to.
+     */
+    area: BoundingBox;
+    /**
+     * The tiles that this rule collides with.
+     */
+    colliding_tiles: CollisionMask;
+    /**
+     * The tiles that this rule requires to be present.
+     */
+    required_tiles: CollisionMask;
+    /**
+     * If the entity should be removed upon collision.
+     */
+    remove_on_collision: bool;
 }
 /**
  * A tile may be specified in one of three ways.
@@ -7922,6 +9800,46 @@ interface TrainSchedule {
     current: uint;
     records: ScheduleRecord[];
 }
+interface TrainStopBlueprintControlBehavior {
+    /**
+     * Defaults to `true`.
+     */
+    send_to_train?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_from_train?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_stopped_train?: boolean;
+    train_stopped_signal: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    set_trains_limit?: boolean;
+    trains_limit_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    read_trains_count?: boolean;
+    trains_count_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    set_priority?: boolean;
+    priority_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 interface TrainStopFilter {
     /**
      * Surface the train stop must be on in order to pass
@@ -7966,6 +9884,20 @@ interface TrainStopGoal {
      */
     priority?: uint8;
 }
+interface TransportBeltBlueprintControlBehavior {
+    circuit_read_hand_contents: boolean;
+    circuit_contents_read_mode: defines.control_behavior.transport_belt.content_read_mode;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 interface TriggerDelivery {
     type: 'instant' | 'projectile' | 'beam' | 'stream' | 'artillery' | 'chain' | 'delayed';
     source_effects: TriggerEffectItem[];
@@ -7984,6 +9916,25 @@ interface TriggerEffectItem {
  * Used by {@link TriggerEffectItem | runtime:TriggerEffectItem}.
  */
 type TriggerEffectItemType = 'damage' | 'damage-tile' | 'create-entity' | 'create-explosion' | 'create-fire' | 'create-smoke' | 'create-trivial-smoke' | 'create-asteroid-chunk' | 'create-particle' | 'create-sticker' | 'create-decorative' | 'nested-result' | 'play-sound' | 'push-back' | 'destroy-cliffs' | 'show-explosion-on-chart' | 'insert-item' | 'script' | 'set-tile' | 'invoke-tile-trigger' | 'destroy-decoratives' | 'camera-effect' | 'activate-impact';
+interface TriggerEffectWithCooldown {
+    /**
+     * The travel distance between triggers that the triggerer must travel between effects.
+     */
+    distance_cooldown: double;
+    /**
+     * The travel distance between triggers that the triggerer must travel between effects.
+     */
+    initial_distance_cooldown: double;
+    /**
+     * The number of ticks that elapse between triggers.
+     */
+    time_cooldown: MapTick;
+    /**
+     * The initial amount of time to wait before triggering the effect for the first time.
+     */
+    initial_time_cooldown: MapTick;
+    effect: TriggerEffectItem[];
+}
 interface TriggerItem {
     type: 'direct' | 'area' | 'line' | 'cluster';
     action_delivery?: TriggerDelivery[];
@@ -8023,6 +9974,31 @@ LuaTrivialSmokePrototype | /**
  * The prototype name.
  */
 string;
+interface TurretBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    set_priority_list?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    set_ignore_unlisted_targets?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_ammo?: boolean;
+    ignore_unlisted_targets_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 interface BaseUndoRedoAction {
     /**
      * The type of action that was undone or redone.
@@ -8407,6 +10383,12 @@ interface WaitCondition {
  * Type of a {@link WaitCondition | runtime:WaitCondition}.
  */
 type WaitConditionType = 'time' | 'full' | 'empty' | 'not_empty' | 'item_count' | 'circuit' | 'inactivity' | 'robots_inactive' | 'fluid_count' | 'passenger_present' | 'passenger_not_present' | 'fuel_item_count_all' | 'fuel_item_count_any' | 'fuel_full' | 'destination_full_or_no_path' | 'request_satisfied' | 'request_not_satisfied' | 'all_requests_satisfied' | 'any_request_not_satisfied' | 'any_request_zero' | 'any_planet_import_zero' | 'specific_destination_full' | 'specific_destination_not_full' | 'at_station' | 'not_at_station' | 'damage_taken';
+interface WallBlueprintControlBehavior {
+    circuit_open_gate: boolean;
+    circuit_read_sensor: boolean;
+    output_signal?: SignalID;
+    circuit_condition: CircuitCondition;
+}
 /**
  * Weight of an object. The weight is stored as a fixed-size 64 bit integer, with 16 bits reserved for decimal precision, meaning the smallest value step is `1/2^16`.
  */
@@ -8430,7 +10412,7 @@ interface WorkerRobotOrder {
     /**
      * The item to place if relevant.
      */
-    item_to_place?: ItemWithQualityCounts;
+    item_to_place?: ItemWithQualityCount;
     /**
      * The secondary target of the upgrade order.
      */
