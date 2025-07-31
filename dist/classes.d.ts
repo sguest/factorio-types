@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.60
+// Factorio version 2.0.61
 // API version 6
 
 declare namespace runtime {
@@ -2753,6 +2753,24 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.on_post_segmented_unit_died, handler: ((this: void, arg0: runtime.on_post_segmented_unit_died) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.on_pre_build, handler: ((this: void, arg0: runtime.on_pre_build) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
@@ -3491,6 +3509,60 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.on_segmented_unit_created, handler: ((this: void, arg0: runtime.on_segmented_unit_created) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_segmented_unit_damaged, handler: ((this: void, arg0: runtime.on_segmented_unit_damaged) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_segmented_unit_died, handler: ((this: void, arg0: runtime.on_segmented_unit_died) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.on_selected_entity_changed, handler: ((this: void, arg0: runtime.on_selected_entity_changed) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
@@ -3797,7 +3869,97 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.on_territory_created, handler: ((this: void, arg0: runtime.on_territory_created) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_territory_destroyed, handler: ((this: void, arg0: runtime.on_territory_destroyed) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.on_tick, handler: ((this: void, arg0: runtime.on_tick) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_tower_mined_plant, handler: ((this: void, arg0: runtime.on_tower_mined_plant) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_tower_planted_seed, handler: ((this: void, arg0: runtime.on_tower_planted_seed) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_tower_pre_mined_plant, handler: ((this: void, arg0: runtime.on_tower_pre_mined_plant) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event The event(s) or custom-input to invoke the handler on.
@@ -4067,6 +4229,24 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.script_raised_destroy_segmented_unit, handler: ((this: void, arg0: runtime.script_raised_destroy_segmented_unit) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.script_raised_revive, handler: ((this: void, arg0: runtime.script_raised_revive) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
@@ -4244,6 +4424,12 @@ interface LuaBootstrap {
      */
     raise_script_destroy(this: void, table: {
         entity: LuaEntity;
+    }): void;
+    /**
+     * @param table.segmented_unit The segmented unit that was destroyed.
+     */
+    raise_script_destroy_segmented_unit(this: void, table: {
+        segmented_unit: LuaSegmentedUnit;
     }): void;
     /**
      * @param table.entity The entity that was revived.
@@ -4882,6 +5068,17 @@ interface LuaControl {
      * @returns `true` if at least a part of the given items could be inserted into this inventory.
      */
     can_insert(this: void, items: ItemStackIdentification): boolean;
+    /**
+     * Checks if this character or player can build the given entity at the given location on the surface the character or player is on.
+     * @param table.name Name of the entity that would be built.
+     * @param table.position Where the entity would be placed.
+     * @param table.direction Direction the entity would be facing. Defaults to `north`.
+     */
+    can_place_entity(this: void, table: {
+        name: EntityID;
+        position: MapPosition;
+        direction?: defines.direction;
+    }): boolean;
     /**
      * Can a given entity be opened or accessed?
      */
@@ -5750,11 +5947,20 @@ interface LuaEntity extends LuaControl {
      */
     add_market_item(this: void, offer: Offer): void;
     /**
+     * Upgrades this entity in place if it's marked to be upgraded.
+     * @returns [0] - The first upgraded entity - `nil` if this entity is not marked for upgrade.
+     * @returns [1] - The second upgraded entity - `nil` if this entity is not marked for upgrade.
+     */
+    apply_upgrade(this: void): LuaMultiReturn<[
+        LuaEntity | null,
+        LuaEntity | null
+    ]>;
+    /**
      * Whether the entity can be destroyed
      */
     can_be_destroyed(this: void): boolean;
     /**
-     * The same as {@link LuaInventory::can_set_filter | runtime:LuaInventory::can_set_filter} but also works for ghosts.
+     * The same as {@link LuaInventory::can_set_filter | runtime:LuaInventory::can_set_filter} but also works for ghosts where the inventory is not available through {@link LuaControl::get_inventory | runtime:LuaControl::get_inventory}.
      * @param index The item stack index
      * @param filter The item filter
      */
@@ -5805,8 +6011,6 @@ interface LuaEntity extends LuaControl {
      * Connects current linked belt with another one.
      *
      * Neighbours have to be of different type. If given linked belt is connected to something else it will be disconnected first. If provided neighbour is connected to something else it will also be disconnected first. Automatically updates neighbour to be connected back to this one.
-     *
-     * Can also be used on entity ghost if it contains linked-belt.
      * @param neighbour Another linked belt or entity ghost containing linked belt to connect or nil to disconnect
      */
     connect_linked_belts(this: void, neighbour?: LuaEntity): void;
@@ -5820,7 +6024,7 @@ interface LuaEntity extends LuaControl {
      * @param by_player If provided, the copying is done 'as' this player and {@link on_entity_settings_pasted | runtime:on_entity_settings_pasted} is triggered.
      * @returns Any items removed from this entity as a result of copying the settings.
      */
-    copy_settings(this: void, entity: LuaEntity, by_player?: PlayerIdentification): ItemWithQualityCounts[];
+    copy_settings(this: void, entity: LuaEntity, by_player?: PlayerIdentification): ItemWithQualityCounts;
     /**
      * Creates the same smoke that is created when you place a building by hand.
      *
@@ -5879,8 +6083,6 @@ interface LuaEntity extends LuaControl {
     die(this: void, force?: ForceID, cause?: LuaEntity): boolean;
     /**
      * Disconnects linked belt from its neighbour.
-     *
-     * Can also be used on entity ghost if it contains linked-belt
      */
     disconnect_linked_belts(this: void): void;
     /**
@@ -6040,11 +6242,11 @@ interface LuaEntity extends LuaControl {
      */
     get_infinity_pipe_filter(this: void): InfinityPipeFilter | null;
     /**
-     * The same as {@link LuaInventory::get_bar | runtime:LuaInventory::get_bar} but also works for ghosts.
+     * The same as {@link LuaInventory::get_bar | runtime:LuaInventory::get_bar} but also works for ghosts where the inventory is not available through {@link LuaControl::get_inventory | runtime:LuaControl::get_inventory}.
      */
     get_inventory_bar(this: void, inventory_index: defines.inventory): uint;
     /**
-     * The same as {@link LuaInventory::get_filter | runtime:LuaInventory::get_filter} but also works for ghosts.
+     * The same as {@link LuaInventory::get_filter | runtime:LuaInventory::get_filter} but also works for ghosts where the inventory is not available through {@link LuaControl::get_inventory | runtime:LuaControl::get_inventory}.
      * @param index The item stack index
      * @returns The current filter or `nil` if none.
      */
@@ -6258,11 +6460,11 @@ interface LuaEntity extends LuaControl {
      */
     insert_fluid(this: void, fluid: Fluid): double;
     /**
-     * The same as {@link LuaInventory::supports_bar | runtime:LuaInventory::supports_bar} but also works for ghosts.
+     * The same as {@link LuaInventory::supports_bar | runtime:LuaInventory::supports_bar} but also works for ghosts where the inventory is not available through {@link LuaControl::get_inventory | runtime:LuaControl::get_inventory}.
      */
     inventory_supports_bar(this: void, inventory_index: defines.inventory): boolean;
     /**
-     * The same as {@link LuaInventory::supports_filters | runtime:LuaInventory::supports_filters} but also works for ghosts.
+     * The same as {@link LuaInventory::supports_filters | runtime:LuaInventory::supports_filters} but also works for ghosts where the inventory is not available through {@link LuaControl::get_inventory | runtime:LuaControl::get_inventory}.
      */
     inventory_supports_filters(this: void, inventory_index: defines.inventory): boolean;
     /**
@@ -6282,7 +6484,7 @@ interface LuaEntity extends LuaControl {
      */
     is_crafting(this: void): boolean;
     /**
-     * The same as {@link LuaInventory::is_filtered | runtime:LuaInventory::is_filtered} but also works for ghosts.
+     * The same as {@link LuaInventory::is_filtered | runtime:LuaInventory::is_filtered} but also works for ghosts where the inventory is not available through {@link LuaControl::get_inventory | runtime:LuaControl::get_inventory}.
      */
     is_inventory_filtered(this: void, inventory_index: defines.inventory): boolean;
     /**
@@ -6368,6 +6570,15 @@ interface LuaEntity extends LuaControl {
      * @returns Whether the request is valid. The sound may or may not be played depending on polyphony settings.
      */
     play_note(this: void, instrument: uint, note: uint, stop_playing_sounds?: boolean): boolean;
+    /**
+     * Registers the given tree in this agricultral tower.
+     *
+     * If the tree is not within range of the tower it will not be registered.
+     *
+     * If the tree is already registered with a tower it will not be registered.
+     * @returns If the tree was registered.
+     */
+    register_tree(this: void, tree: LuaEntity): boolean;
     /**
      * Release the unit from the spawner which spawned it. This allows the spawner to continue spawning additional units.
      */
@@ -6476,12 +6687,12 @@ interface LuaEntity extends LuaControl {
      */
     set_infinity_pipe_filter(this: void, filter: InfinityPipeFilter | nil): void;
     /**
-     * The same as {@link LuaInventory::set_bar | runtime:LuaInventory::set_bar} but also works for ghosts.
+     * The same as {@link LuaInventory::set_bar | runtime:LuaInventory::set_bar} but also works for ghosts where the inventory is not available through {@link LuaControl::get_inventory | runtime:LuaControl::get_inventory}.
      * @param bar The new limit. Omitting this parameter or passing `nil` will clear the limit.
      */
     set_inventory_bar(this: void, inventory_index: defines.inventory, bar?: uint): void;
     /**
-     * The same as {@link LuaInventory::set_filter | runtime:LuaInventory::set_filter} but also works for ghosts.
+     * The same as {@link LuaInventory::set_filter | runtime:LuaInventory::set_filter} but also works for ghosts where the inventory is not available through {@link LuaControl::get_inventory | runtime:LuaControl::get_inventory}.
      * @param index The item stack index.
      * @param filter The new filter. `nil` erases any existing filter.
      * @returns If the filter was allowed to be set.
@@ -6511,7 +6722,7 @@ interface LuaEntity extends LuaControl {
      * @param quality The quality. If not provided `normal` is used.
      * @returns Any items removed from this entity as a result of setting the recipe.
      */
-    set_recipe(this: void, recipe?: RecipeID, quality?: QualityID): ItemWithQualityCounts[];
+    set_recipe(this: void, recipe?: RecipeID, quality?: QualityID): ItemWithQualityCounts;
     /**
      * Revives a ghost silently, so the revival makes no sound and no smoke is created.
      * @param table.raise_revive If true, and an entity ghost; {@link script_raised_revive | runtime:script_raised_revive} will be called. Else if true, and a tile ghost; {@link script_raised_set_tiles | runtime:script_raised_set_tiles} will be called.
@@ -6522,7 +6733,7 @@ interface LuaEntity extends LuaControl {
     silent_revive(this: void, table: {
         raise_revive?: boolean;
     }): LuaMultiReturn<[
-        ItemWithQualityCounts[],
+        ItemWithQualityCounts,
         LuaEntity | null,
         LuaEntity | null
     ]>;
@@ -6651,14 +6862,12 @@ interface LuaEntity extends LuaControl {
     };
     /**
      * Gives what is the current shape of a transport-belt.
-     *
-     * Can also be used on entity ghost if it contains transport-belt.
      */
     readonly belt_shape: 'straight' | 'left' | 'right';
     /**
      * Whether this underground belt goes into or out of the ground.
      */
-    readonly belt_to_ground_type: 'input' | 'output';
+    readonly belt_to_ground_type: BeltConnectionType;
     bonus_damage_modifiers: TriggerModifierData;
     /**
      * The bonus mining progress for this mining drill. Read yields a number in range [0, mining_target.prototype.mineable_properties.mining_time]. `nil` if this isn't a mining drill.
@@ -6948,7 +7157,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly ghost_localised_name: LocalisedString;
     /**
-     * Name of the entity or tile contained in this ghost
+     * Name of the entity or tile contained in this ghost.
      */
     readonly ghost_name: string;
     /**
@@ -7029,7 +7238,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The spoil priority for this inserter.
      */
-    inserter_spoil_priority: 'fresh_first' | 'none' | 'spoiled_first';
+    inserter_spoil_priority: SpoilPriority;
     /**
      * Sets the stack size limit on this inserter.
      *
@@ -7073,7 +7282,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Items this ghost will request when revived or items this item request proxy is requesting.
      */
-    readonly item_requests: ItemWithQualityCounts[];
+    readonly item_requests: ItemWithQualityCounts;
     /**
      * The number of units killed by this turret, artillery turret, or artillery wagon.
      */
@@ -7094,8 +7303,6 @@ interface LuaEntity extends LuaControl {
     /**
      * Neighbour to which this linked belt is connected to, if any.
      *
-     * Can also be used on entity ghost if it contains linked-belt.
-     *
      * May return entity ghost which contains linked belt to which connection is made.
      */
     readonly linked_belt_neighbour?: LuaEntity;
@@ -7103,10 +7310,8 @@ interface LuaEntity extends LuaControl {
      * Type of linked belt. Changing type will also flip direction so the belt is out of the same side.
      *
      * Can only be changed when linked belt is disconnected (has no neighbour set).
-     *
-     * Can also be used on entity ghost if it contains linked-belt.
      */
-    linked_belt_type: 'input' | 'output';
+    linked_belt_type: BeltConnectionType;
     /**
      * The belt stack size override for this loader. Set to `0` to disable. Writing this value requires {@link LoaderPrototype::adjustable_belt_stack_size | prototype:LoaderPrototype::adjustable_belt_stack_size} to be `true`.
      */
@@ -7118,11 +7323,11 @@ interface LuaEntity extends LuaControl {
     /**
      * The filter mode for this loader. `nil` if this loader does not support filters.
      */
-    loader_filter_mode?: 'none' | 'whitelist' | 'blacklist';
+    loader_filter_mode?: PrototypeFilterMode;
     /**
      * Whether this loader gets items from or puts item into a container.
      */
-    loader_type: 'input' | 'output';
+    loader_type: BeltConnectionType;
     readonly localised_description: LocalisedString;
     /**
      * Localised name of the entity.
@@ -7284,6 +7489,10 @@ interface LuaEntity extends LuaControl {
      */
     readonly pump_rail_target?: LuaEntity;
     /**
+     * The amount of fluid moved by this offshore pump or normal pump in the last tick.
+     */
+    readonly pumped_last_tick: double;
+    /**
      * The quality of this entity.
      *
      * Not all entities support quality and will give the "normal" quality back if they don't.
@@ -7379,6 +7588,10 @@ interface LuaEntity extends LuaControl {
      * The secondary selection box of this entity or `nil` if it doesn't have one. This only exists for curved rails, and is automatically determined by the game.
      */
     readonly secondary_selection_box?: BoundingBox;
+    /**
+     * The segmented unit object that the segment entity is a part of.
+     */
+    readonly segmented_unit?: LuaSegmentedUnit;
     /**
      * Index of the currently selected weapon slot of this character, car, or spidertron. `nil` if this entity doesn't have guns.
      */
@@ -7671,7 +7884,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     get_mining_drill_radius(this: void, quality?: QualityID): double | null;
     /**
-     * The pumping speed of this offshore or normal pump.
+     * The pumping speed of this offshore pump or normal pump.
      */
     get_pumping_speed(this: void, quality?: QualityID): double;
     /**
@@ -7696,6 +7909,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * A table of pollutions amounts that has to be absorbed by the unit's spawner before the unit will leave the spawner and attack the source of the pollution, indexed by the name of each absorbed pollution type.
      */
     readonly absorptions_to_join_attack?: Record<string, float>;
+    readonly acceleration_rate: double;
     readonly accepted_seeds?: string[];
     /**
      * The active energy usage of this rocket silo or combinator prototype.
@@ -7793,6 +8007,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The attack result of this entity, if any.
      */
     readonly attack_result?: TriggerItem[];
+    readonly attacking_speed?: double;
     readonly auto_setup_collision_box: boolean;
     /**
      * The amount of ammo that inserters automatically insert into this ammo-turret or artillery-turret.
@@ -8031,6 +8246,8 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The engine starting speed for this rocket silo rocket prototype.
      */
     readonly engine_starting_speed?: double;
+    readonly enraged_duration?: MapTick;
+    readonly enraged_speed: double;
     readonly enter_vehicle_distance?: double;
     /**
      * Whether this explosion has a beam.
@@ -8193,6 +8410,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * Weight limit of the inventory if inventory_type is `"with_weight_limit"`.
      */
     readonly inventory_weight_limit?: Weight;
+    readonly investigating_speed?: double;
     /**
      *
      * These are the objects that are considered buildings:
@@ -8265,7 +8483,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * Items that when placed will produce this entity, if any. Construction bots will choose the first item in the list to build this entity.
      */
-    readonly items_to_place_this?: ItemWithCount[];
+    readonly items_to_place_this?: ItemToPlace[];
     readonly joint_distance?: double;
     /**
      * The item prototype names that are the inputs of this lab prototype.
@@ -8454,6 +8672,8 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly object_name: string;
     readonly overkill_fraction?: float;
     readonly passive_energy_usage?: double;
+    readonly patrolling_speed?: double;
+    readonly patrolling_turn_radius?: double;
     readonly per_lane_filters?: boolean;
     readonly perceived_performance?: PerceivedPerformance;
     /**
@@ -8465,7 +8685,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly protected_from_tile_building: boolean;
     /**
-     * The pumping speed of this offshore or normal pump. This property is deprecated in favor of {@link LuaEntityPrototype::get_pumping_speed | runtime:LuaEntityPrototype::get_pumping_speed} and should not be used.
+     * The pumping speed of this offshore pump or normal pump. This property is deprecated in favor of {@link LuaEntityPrototype::get_pumping_speed | runtime:LuaEntityPrototype::get_pumping_speed} and should not be used.
      */
     readonly pumping_speed?: double;
     readonly quality_affects_mining_radius?: boolean;
@@ -8520,6 +8740,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The result units and spawn points with weight and evolution factor for a biter spawner entity.
      */
     readonly result_units?: UnitSpawnDefinition[];
+    /**
+     * The revenge attack parameters for this entity, if any. These attack parameters are used in addition to {@link LuaEntityPrototype::attack_parameters | runtime:LuaEntityPrototype::attack_parameters} if the entity is attacking a target that has previously dealt damage to the entity.
+     */
+    readonly revenge_attack_parameters?: AttackParameters;
     readonly rewire_neighbours_when_destroying: boolean;
     /**
      * The rising speed for this rocket silo rocket prototype.
@@ -8561,6 +8785,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The secondary bounding box used for collision checking, if any. This is only used in rails and rail remnants.
      */
     readonly secondary_collision_box?: BoundingBox;
+    readonly segment_engine?: SegmentEngineSpecification;
     /**
      * Is this entity selectable?
      */
@@ -8633,10 +8858,16 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The terrain friction modifier for this vehicle.
      */
     readonly terrain_friction_modifier?: float;
+    readonly territory_radius?: uint;
     readonly tether_size?: float;
+    readonly ticks_per_scan?: uint;
     readonly ticks_to_keep_aiming_direction?: uint;
     readonly ticks_to_keep_gun?: uint;
     readonly ticks_to_stay_in_combat?: uint;
+    /**
+     * The tile buildability rules of this entity prototype.
+     */
+    readonly tile_buildability_rules?: TileBuildabilityRule[];
     /**
      * Specifies the tiling size of the entity, is used to decide, if the center should be in the center of the tile (odd tile size dimension) or on the tile border (even tile size dimension)
      */
@@ -8675,6 +8906,8 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The values in the dictionary are meaningless and exists just to allow the dictionary type for easy lookup.
      */
     readonly trigger_target_mask: Record<string, boolean>;
+    readonly turn_radius?: double;
+    readonly turn_smoothing?: double;
     /**
      * The range of this turret.
      */
@@ -8685,6 +8918,14 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly turret_rotation_speed?: float;
     readonly two_direction_only?: boolean;
     readonly unpowered_arm_speed_scale?: float;
+    /**
+     * The trigger effects to run every tick when on cooldown.
+     */
+    readonly update_effects?: TriggerEffectWithCooldown[];
+    /**
+     * The trigger effects to run every tick when on cooldown while the owning {@link LuaSegmentedUnit | runtime:LuaSegmentedUnit} is enraged.
+     */
+    readonly update_effects_while_enraged?: TriggerEffectWithCooldown[];
     /**
      * Whether this logistic container prototype uses exact mode
      */
@@ -8927,13 +9168,13 @@ interface LuaEquipmentGrid {
         position?: EquipmentPosition;
         equipment?: LuaEquipment;
         by_player?: PlayerIdentification;
-    }): ItemWithCount | null;
+    }): ItemWithQualityCount | null;
     /**
      * Remove all equipment from the grid.
      * @param by_player If provided, the action is done 'as' this player and {@link on_player_removed_equipment | runtime:on_player_removed_equipment} is triggered.
      * @returns List of the equipment that has been removed.
      */
-    take_all(this: void, by_player?: PlayerIdentification): ItemWithQualityCounts[];
+    take_all(this: void, by_player?: PlayerIdentification): ItemWithQualityCounts;
     /**
      * The total energy stored in all batteries in the equipment grid.
      */
@@ -9381,7 +9622,7 @@ interface LuaFluidBoxPrototype {
     /**
      * The production type.
      */
-    readonly production_type: 'input' | 'input-output' | 'output' | 'none';
+    readonly production_type: ProductionType;
     /**
      * The render layer.
      */
@@ -9615,6 +9856,15 @@ interface LuaForce {
      * Is `other` force in this force's cease fire list?
      */
     get_cease_fire(this: void, other: ForceID): boolean;
+    /**
+     * Gets the raw chart data for a given chunk as a binary string.
+     *
+     * The pixel data is returned in RGB565 format (2 bytes per pixel).
+     *
+     * Returns `nil` if the chunk has not been charted for this force.
+     * @returns The raw pixel data.
+     */
+    get_chunk_chart(this: void, surface: SurfaceIdentification, position: ChunkPosition): string | null;
     /**
      * The entity build statistics for this force (built and mined) for the given surface.
      */
@@ -9968,7 +10218,7 @@ interface LuaForce {
     /**
      * All of the items that have been launched in rockets.
      */
-    readonly items_launched: ItemWithQualityCounts[];
+    readonly items_launched: ItemWithQualityCounts;
     laboratory_productivity_bonus: double;
     laboratory_speed_modifier: double;
     /**
@@ -11992,9 +12242,9 @@ interface LuaHelpers {
      *
      * This must be enabled per-instance with `--enable-lua-udp`.
      *
-     * Udp socket when enabled requests 256KB of receive buffer from the operating system. If there is more data than this between two subsequent calls of this method, data will be lost. That also applies to periods when the game is paused or is being saved as in those case the game update is not happening.
+     * UDP socket when enabled requests 256KB of receive buffer from the operating system. If there is more data than this between two subsequent calls of this method, data will be lost. That also applies to periods when the game is paused or is being saved as in those case the game update is not happening.
      *
-     * Note: lua event is not raised immediately as the udp packet needs to be introduced into game state by means of input actions. Please keep incoming traffic as small as possible as in case of multiplayer game with many players, all this data will have to go through the multiplayer server and be distributed to all clients.
+     * Note: lua event is not raised immediately as the UDP packet needs to be introduced into game state by means of input actions. Please keep incoming traffic as small as possible as in case of multiplayer game with many players, all this data will have to go through the multiplayer server and be distributed to all clients.
      *
      * Not available in settings and prototype stages.
      * @param for_player If given, packets will only be read from this `player_index`. Providing `0` will only read from the server if present.
@@ -12130,7 +12380,7 @@ interface LuaInventory {
      * Get counts of all items in this inventory.
      * @returns List of all items in the inventory.
      */
-    get_contents(this: void): ItemWithQualityCounts[];
+    get_contents(this: void): ItemWithQualityCounts;
     /**
      * Gets the filter for the given item stack index.
      * @param index The item stack index
@@ -12539,7 +12789,7 @@ interface LuaItemCommon {
     /**
      * List of raw materials required to build this blueprint.
      */
-    readonly cost_to_build: ItemWithQualityCounts[];
+    readonly cost_to_build: ItemWithQualityCounts;
     /**
      * The custom description this item-with-tags. This is shown over the normal item description if this is set to a non-empty value.
      */
@@ -12803,7 +13053,7 @@ interface LuaItemPrototype extends LuaPrototypeBase {
     /**
      * The filter mode used by this item with inventory.
      */
-    readonly filter_mode?: 'none' | 'whitelist' | 'blacklist';
+    readonly filter_mode?: PrototypeFilterMode;
     /**
      * The flags for this item prototype.
      */
@@ -13198,7 +13448,7 @@ interface LuaLogisticCell {
      */
     readonly logistics_connection_distance: float;
     /**
-     * `true` if this is a mobile cell. In vanilla, only the logistic cell created by a character's personal roboport is mobile.
+     * `true` if this is a mobile cell. The logistic cell created by roboport equipment considered is mobile.
      */
     readonly mobile: boolean;
     /**
@@ -13282,9 +13532,10 @@ interface LuaLogisticNetwork {
     find_cell_closest_to(this: void, position: MapPosition): LuaLogisticCell | null;
     /**
      * Get item counts for the entire network, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
+     * @param member Logistic members to check. If not given, gives item counts for the entire network.
      * @returns List of all items in the network.
      */
-    get_contents(this: void): ItemWithQualityCounts[];
+    get_contents(this: void, member?: 'storage' | 'providers'): ItemWithQualityCounts;
     /**
      * Count given or all items in the network or given members.
      * @param item Item name to count. If not given, gives counts of all items in the network.
@@ -13507,11 +13758,11 @@ interface LuaLogisticPoint {
     /**
      * Items targeted to be dropped off into this logistic point by robots.
      */
-    readonly targeted_items_deliver: ItemWithQualityCounts[];
+    readonly targeted_items_deliver: ItemWithQualityCounts;
     /**
      * Items targeted to be picked up from this logistic point by robots.
      */
-    readonly targeted_items_pickup: ItemWithQualityCounts[];
+    readonly targeted_items_pickup: ItemWithQualityCounts;
     /**
      * Whether this logistic point is set to trash unrequested items.
      */
@@ -14008,17 +14259,6 @@ interface LuaPlayer extends LuaControl {
         skip_fog_of_war?: boolean;
     }): boolean;
     /**
-     * Checks if this player can build the given entity at the given location on the surface the player is on.
-     * @param table.name Name of the entity to check.
-     * @param table.position Where the entity would be placed.
-     * @param table.direction Direction the entity would be placed. Defaults to `north`.
-     */
-    can_place_entity(this: void, table: {
-        name: EntityID;
-        position: MapPosition;
-        direction?: defines.direction;
-    }): boolean;
-    /**
      * Clear the chat console.
      */
     clear_console(this: void): void;
@@ -14351,6 +14591,12 @@ interface LuaPlayer extends LuaControl {
      */
     set_shortcut_toggled(this: void, prototype_name: string, toggled: boolean): void;
     /**
+     * Sets the zoom limits for a specific controller type. To reset a controller's zoom limits to default, pass an empty table for `zoom_limits`.
+     * @param controller_type The type of the controller to set the zoom limits for.
+     * @param zoom_limits The new zoom limits. See {@link LuaPlayer::zoom_limits | runtime:LuaPlayer::zoom_limits} for usage information.
+     */
+    set_zoom_limits(this: void, controller_type: defines.controllers, zoom_limits: ZoomLimits): void;
+    /**
      * Starts selection with selection tool from the specified position. Does nothing if the player's cursor is not a selection tool.
      * @param position The position to start selection from.
      * @param selection_mode The type of selection to start.
@@ -14594,11 +14840,13 @@ interface LuaPlayer extends LuaControl {
      */
     zoom: double;
     /**
-     * The current player controller's zoom limits.
+     * The player's current controller's zoom limits.
      *
      * Reading this field creates a copy, so modifying the returned table's fields directly will not alter the player's zoom limits. To change the zoom limits for the player's current controller, set the entire field to the desired {@link ZoomLimits | runtime:ZoomLimits} table.
      *
-     * Zoom limits may or may not reset to default any time the player controller changes. Use the {@link defines.events.on_player_controller_changed | runtime:defines.events.on_player_controller_changed} event to respond to and correct the new controller's zoom limits.
+     * Zoom limits are defined and remembered per controller type. If you set the zoom limits of the character controller, then every time the player uses the character controller, it will remember and use the zoom limits previously set. However, other controller types will not use the character controller zoom limits; each controller type must have its zoom limits defined separately.
+     *
+     * To set the zoom limits of ANY controller type, not just the currently active one, use {@link LuaPlayer::set_zoom_limits | runtime:LuaPlayer::set_zoom_limits}.
      * @example ```
     -- Lets the player zoom in to 4x the standard zoom level. (3x is the default for most controllers.)
     -- Increases the player zoom out level so that they can view approximately 800 tiles across.
@@ -15105,7 +15353,7 @@ interface LuaQualityPrototype extends LuaPrototypeBase {
     readonly lab_module_slots_bonus: ItemStackIndex;
     readonly lab_research_speed_multiplier: double;
     /**
-     * Level basically specifies the stat-increasing value of this quality level
+     * Level basically specifies the stat-increasing value of this quality level.
      */
     readonly level: uint;
     readonly logistic_cell_charging_energy_multiplier: double;
@@ -15118,7 +15366,7 @@ interface LuaQualityPrototype extends LuaPrototypeBase {
      */
     readonly next: LuaQualityPrototype;
     /**
-     * The probability multiplier of getting the next level of quality
+     * The probability multiplier of getting the next level of quality.
      */
     readonly next_probability: double;
     /**
@@ -15534,6 +15782,7 @@ interface LuaRecipePrototype extends LuaPrototypeBase {
      * Is the recipe hidden from player crafting? The recipe will still show up for selection in machines.
      */
     readonly hidden_from_player_crafting: boolean;
+    readonly hide_from_bonus_gui: boolean;
     readonly hide_from_flow_stats: boolean;
     readonly hide_from_player_crafting: boolean;
     /**
@@ -15809,7 +16058,7 @@ interface LuaRecord {
     /**
      * List of raw materials required to build this blueprint.
      */
-    readonly cost_to_build: ItemWithQualityCounts[];
+    readonly cost_to_build: ItemWithQualityCounts;
     /**
      * The default icons for a blueprint blueprint.
      */
@@ -16725,6 +16974,212 @@ interface LuaSchedule {
     readonly valid: boolean;
 }
 /**
+ * An individual segment of a {@link LuaSegmentedUnit | runtime:LuaSegmentedUnit}. If the segment exists in a generated chunk, you can access the entity representation using {@link LuaSegment::entity | runtime:LuaSegment::entity}.
+ */
+interface LuaSegment {
+    /**
+     * The actual entity representation of the segment if it exists. A segment's entity will be automatically destroyed if the segment moves into chunks that have not yet been fully generated or onto "out-of-map" tiles. Conversely, if a segment moves into a chunk that is fully generated and onto a non-"out-of-map" tile, then its entity will be created if it doesn't exist yet.
+     */
+    readonly entity?: LuaEntity;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * The relative orientation of the segment if one has been assigned. An orientation may not be assigned if the unit's number of body nodes is fewer than {@link LuaSegmentedUnit::max_body_nodes | runtime:LuaSegmentedUnit::max_body_nodes}.
+     *
+     * If {@link LuaSegment::entity | runtime:LuaSegment::entity} is non-nil, this returns that entity's {@link LuaEntity::orientation | runtime:LuaEntity::orientation}. If the entity is `nil`, then reading this field calculates the entity's would-be position if it existed. This can be expensive to compute, so avoid reading this field too often unless it is really necessary.
+     */
+    readonly orientation?: RealOrientation;
+    /**
+     * The position of the segment if one has been assigned. A position may not be assigned if the unit's number of body nodes is fewer than {@link LuaSegmentedUnit::max_body_nodes | runtime:LuaSegmentedUnit::max_body_nodes}.
+     *
+     * This position may be in an un-generated chunk. Use {@link LuaSurface::is_chunk_generated | runtime:LuaSurface::is_chunk_generated} to check before attempting to access the chunk.
+     *
+     * If {@link LuaSegment::entity | runtime:LuaSegment::entity} is non-nil, this returns that entity's {@link LuaEntity::position | runtime:LuaEntity::position}. If the entity is `nil`, then reading this field calculates the entity's would-be position if it existed. This can be expensive to compute, so avoid reading this field too often unless it is really necessary.
+     */
+    readonly position?: MapPosition;
+    /**
+     * The prototype for the entity representation of the segment.
+     */
+    readonly prototype: LuaEntityPrototype;
+    /**
+     * The segmented unit that owns the segment.
+     */
+    readonly unit: LuaSegmentedUnit;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
+ * A surface-level object composed of one {@link SegmentedUnitPrototype | prototype:SegmentedUnitPrototype} followed by up to 63 {@link SegmentPrototype | prototype:SegmentPrototype}s.
+ *
+ * This object is not an entity, and can exist on chunks that do not exist. Instead, the individual segments that compose its body will be destroyed as the unit's body crosses into un-generated or void terrain, and will be re-created when the body crosses into generated, non-void terrain.
+ *
+ * Use {@link LuaSurface::get_segmented_units | runtime:LuaSurface::get_segmented_units} to iterate over all units on a surface, {@link LuaTerritory::get_segmented_units | runtime:LuaTerritory::get_segmented_units} to iterate over all units that guard a territory, or {@link LuaEntity::segmented_unit | runtime:LuaEntity::segmented_unit} to get the unit that controls any given segment entity.
+ */
+interface LuaSegmentedUnit {
+    /**
+     * Clones this unit.
+     * @param table.position The destination position of the head segment. The rest of the body nodes will be copied relative to this.
+     * @param table.surface The destination surface. If different from this unit's surface, then the clone will not copy the original unit's territory.
+     * @param table.force The new unit's force.
+     * @param table.territory The territory that the clone should guard. Must be on the same surface as the destination surface.
+     * @returns The cloned unit or `nil` if the unit cannot be cloned.
+     */
+    clone(this: void, table: {
+        position: MapPosition;
+        surface?: LuaSurface;
+        force?: ForceID;
+        territory?: LuaTerritory;
+    }): LuaSegmentedUnit | null;
+    /**
+     * Damages the unit.
+     * @param damage The amount of damage to be done.
+     * @param force The force that is doing the damage.
+     * @param type The type of damage being done. Defaults to `"impact"`.
+     * @param source The entity that is directly dealing the damage. This is the projectile, flame, sticker, grenade, laster beam, etc. Must be on the same surface as the entity being damaged.
+     * @param cause The entity that originally triggered the events that led to this damage being dealt. This can be the player character, turret, unit, etc. that pulled the trigger. Does not need to be on the same surface as the segmented unit being damaged.
+     * @returns The total damage actually applied after resistances.
+     */
+    damage(this: void, damage: float, force: ForceID, type?: DamageTypeID, source?: LuaEntity, cause?: LuaEntity): float;
+    /**
+     * Destroys the segmented unit.
+     * @param table.raise_destroy If `true`, {@link script_raised_destroy_segmented_unit | runtime:script_raised_destroy_segmented_unit} will be called. Defaults to `false`.
+     */
+    destroy(this: void, table: {
+        raise_destroy?: boolean;
+    }): void;
+    /**
+     * Immediately kills the unit.
+     *
+     * Unlike {@link LuaSegmentedUnit::destroy | runtime:LuaSegmentedUnit::destroy}, `die` will trigger the {@link on_segmented_unit_died | runtime:on_segmented_unit_died} event and the unit's individual segments will produce a corpse and drop loot if they have any, and if the segment entities exist at the moment of death (are not in non-generated chunks or out-of-map tiles).
+     * @param force The force to attribute the kill to. Defaults to the `"neutral"` force.
+     * @param cause The cause to attribute the kill to.
+     * @param damage_type The final damage type that caused the unit to die.
+     */
+    die(this: void, force?: ForceID, cause?: LuaEntity, damage_type?: DamageTypeID): void;
+    /**
+     * Gets the state of the unit's AI.
+     *
+     * This method returns a copy of the internal AI state. Modifying the returned table will not affect the unit's AI.
+     */
+    get_ai_state(this: void): SegmentedUnitAIState;
+    /**
+     * Gets the nodes that define the shape of the unit's body from front to back. Segments are moved along the path these nodes create.
+     *
+     * The returned array will always contain at least 1 position, but will not contain more than {@link LuaSegmentedUnit::max_body_nodes | runtime:LuaSegmentedUnit::max_body_nodes}.
+     *
+     * The returned table is a copy of the unit's actual body nodes.
+     */
+    get_body_nodes(this: void): MapPosition[];
+    /**
+     * Moves the unit forward by a fixed distance according to its natural movement patterns and AI configuration. This movement occurs in addition to the unit's current speed, but affects neither {@link LuaSegmentedUnit::speed | runtime:LuaSegmentedUnit::speed} nor {@link LuaSegmentedUnit::acceleration | runtime:LuaSegmentedUnit::acceleration}.
+     * @param distance The distance in tiles to move the segmented unit forward.
+     */
+    move_forward(this: void, distance: double): void;
+    /**
+     * Sets the segmented unit's AI.
+     * @param state The new AI state. A copy of this table used, so you can read or write to this table after calling this function without being affected by or affecting the unit's AI.
+     */
+    set_ai_state(this: void, state: SegmentedUnitAIState): void;
+    /**
+     * Overwrites the segmented unit's body nodes, which are a series of points that make up the general shape of the unit. Segments are moved along the path these nodes create. For best results, adjacent nodes should be approximately 1.0 tile apart from each other.
+     *
+     * This array must contain at least 1 position. Positions at indexes greater than {@link LuaSegmentedUnit::max_body_nodes | runtime:LuaSegmentedUnit::max_body_nodes} will be ignored.
+     *
+     * Segment entities may be created, destroyed, or moved as a result of setting this field's value. Any segment entities that have a {@link TriggerEffectWithCooldown | prototype:TriggerEffectWithCooldown}s will reduce that effect's distance cooldown. However, any effects that go off cooldown as a result will not trigger until the next game update.
+     * @param nodes The new positions that make up the segmented unit's body nodes. Must not be empty.
+     */
+    set_body_nodes(this: void, nodes: MapPosition[]): void;
+    /**
+     * The rate at which {@link LuaSegmentedUnit::speed | runtime:LuaSegmentedUnit::speed} is changing over time, in tiles per tick per tick.
+     *
+     * This value represents unit's most recent change in speed. If its speed is not changing, the acceleration value will be 0. If it is gaining speed, the value will be positive. If it is losing speed, the value will be negative.
+     */
+    readonly acceleration: double;
+    /**
+     * The current activity mode of the unit. Setting this field can cause the segmented unit to "wake up" or force it into a lower activity mode, but not permanently. Segmented units will generally try to update their activity mode so that they are fully active whenever they are potentially being observed by players, minimally active when relevant to gameplay but not likely observed, and asleep when not relevant to gameplay.
+     *
+     * Will never be lower than {@link LuaSegmentedUnit::minimum_activity_mode | runtime:LuaSegmentedUnit::minimum_activity_mode}.
+     */
+    activity_mode: defines.segmented_unit_activity_mode;
+    /**
+     * The force that the unit belongs to. Changing this also changes the force of all segment entities.
+     *
+     * Always returns a {@link LuaForce | runtime:LuaForce}, but may be assigned to any {@link ForceID | runtime:ForceID} type.
+     */
+    readonly force: LuaForce;
+    /**
+     * The force that the unit belongs to. Changing this also changes the force of all segment entities.
+     *
+     * Always returns a {@link LuaForce | runtime:LuaForce}, but may be assigned to any {@link ForceID | runtime:ForceID} type.
+     * @customName force
+     */
+    force_write: ForceID;
+    /**
+     * The current health of the unit. Health is automatically clamped to be between `0` and {@link LuaSegmentedUnit::max_health | runtime:LuaSegmentedUnit::max_health}.
+     */
+    health: float;
+    /**
+     * The ratio of {@link LuaSegmentedUnit::health | runtime:LuaSegmentedUnit::health} to {@link LuaSegmentedUnit::max_health | runtime:LuaSegmentedUnit::max_health}. Values are clamped between `0` (no health) and `1` (full health) inclusive.
+     */
+    health_ratio: float;
+    /**
+     * The maximum length of {@link LuaSegmentedUnit::get_body_nodes | runtime:LuaSegmentedUnit::get_body_nodes}.
+     */
+    readonly max_body_nodes: uint;
+    /**
+     * The maximum health of the unit.
+     */
+    readonly max_health: float;
+    /**
+     * The lowest-level activity mode that the unit is allowed to be in. Set this field to prevent the segmented unit from falling asleep or entering minimal mode. Set this field to `nil` or {@link asleep | runtime:defines.segmented_unit_activity_mode} to reset this to the default and allow the engine to use whatever activity mode is appropriate.
+     *
+     * Performance note: it is NOT recommended to force many segmented units to be fully active or minimally active simultaneously, as they can significantly impact performance depending on how they are configured. When using this feature, remember to reset this field to allow irrelevant units to go back to sleep.
+     */
+    minimum_activity_mode: defines.segmented_unit_activity_mode;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * The prototype of the `segmented-unit` entity that defines the traits and behaviors of the unit.
+     */
+    readonly prototype: LuaEntityPrototype;
+    /**
+     * The segments that compose the unit.
+     */
+    readonly segments: LuaSegment[];
+    /**
+     * The current instantaneous speed in tiles per map tick. Must always be greater than or equal to 0; segmented units are currently incapable of naturally moving in reverse.
+     *
+     * When setting this value, note that unless the unit's AI is similarly overridden by a script, the unit's speed will continuously accelerate or decelerate to match {@link LuaSegmentedUnit::target_speed | runtime:LuaSegmentedUnit::target_speed}.
+     */
+    speed: double;
+    /**
+     * The surface on which the unit is located.
+     */
+    readonly surface: LuaSurface;
+    /**
+     * The speed in tiles per tick that the unit is currently attempting to reach, as determined by its AI. Must always be greater than or equal to 0.
+     */
+    readonly target_speed: double;
+    /**
+     * The territory that the unit is protecting.
+     */
+    territory?: LuaTerritory;
+    /**
+     * A unique number identifying this unit for the lifetime of the save. These are allocated sequentially and not re-used (until overflow). These numbers are allocated from the same pool as {@link LuaEntity::unit_number | runtime:LuaEntity::unit_number}, so segmented unit numbers are unique among all segmented units and all entities with owners.
+     */
+    readonly unit_number: uint64;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
  * Control behavior for selector combinators.
  */
 interface LuaSelectorCombinatorControlBehavior extends LuaCombinatorControlBehavior {
@@ -17519,6 +17974,13 @@ interface LuaSurface {
      */
     clear_pollution(this: void): void;
     /**
+     * Removes the chunk from the territory it is associated with (if any) and allows the map generator to potentially generate a new territory for the chunk in the future. To prevent the game from generating a new territory for the chunk, use {@link LuaSurface::set_chunk_territory | runtime:LuaSurface::set_chunk_territory} to set the chunk's territory to `nil`.
+     *
+     * Territories that do not contain at least one generated chunk as a result of calling this method will be automatically deleted.
+     * @param positions The chunk positions. The chunks at these positions does not need to exist.
+     */
+    clear_territory_for_chunks(this: void, positions: ChunkPosition[]): void;
+    /**
      * Clones the given area.
      *
      * Entities are cloned in an order such that they can always be created, eg rails before trains.
@@ -17690,6 +18152,21 @@ interface LuaSurface {
         vertical_speed: float;
         frame_speed: float;
     }): void;
+    /**
+     * Create a segmented unit on the surface. This differs from creating an entity with type `"segmented-unit"` in that this method can create the entity in non-generated chunks and with any arbitrary body shape and pre-assigned to a territory.
+     * @returns The created segmented unit or `nil` if the creation failed or the unit was destroyed during creation.
+     */
+    create_segmented_unit(this: void, table: LuaSurfaceCreateSegmentedUnitParams): LuaSegmentedUnit | null;
+    /**
+     * Create a territory on the surface.
+     * @param table.chunks The chunks to assign to the new territory. Must contain at least one generated chunk. Any chunks already assigned to existing territories will be removed from those territories. Any territories left with no generated chunks will be deleted from the surface as a result.
+     * @param table.patrol_path The path that patrolling units will follow. If `nil` or empty, one will be generated for the new territory based on `chunks`.
+     * @returns The created territory or `nil` if the creation failed or the territory was destroyed during creation.
+     */
+    create_territory(this: void, table: {
+        chunks: ChunkPosition[];
+        patrol_path?: MapPosition[];
+    }): LuaTerritory | null;
     /**
      * @param table.name The smoke prototype name to create.
      * @param table.position Where to create the smoke.
@@ -18038,9 +18515,22 @@ interface LuaSurface {
      */
     get_script_positions(this: void, name?: string): ScriptPosition[];
     /**
+     * Get all segmented units that exist on the surface.
+     */
+    get_segmented_units(this: void): LuaSegmentedUnit[];
+    /**
      * Gets the starting area radius of this surface.
      */
     get_starting_area_radius(this: void): double;
+    /**
+     * Get all territories on the surface.
+     */
+    get_territories(this: void): LuaTerritory[];
+    /**
+     * Get the territory that the given chunk is assigned to. If the chunk is not part of any territory or the territory for the chunk has not yet been generated, then this returns `nil`.
+     * @param position The chunk's position. The chunk at this position does not need to exist.
+     */
+    get_territory_for_chunk(this: void, position: ChunkPosition): LuaTerritory | null;
     /**
      * Get the tile at a given position. An alternative call signature for this method is passing it a single {@link TilePosition | runtime:TilePosition}.
      *
@@ -18191,6 +18681,18 @@ interface LuaSurface {
      * @param value The wanted value of the property.
      */
     set_property(this: void, property: SurfacePropertyID, value: double): void;
+    /**
+     * Removes the given chunks from their current territories and adds them to the given territory if provided.
+     *
+     * This does not affect the {@link LuaTerritory::get_patrol_path | runtime:LuaTerritory::get_patrol_path}. It is your responsibility to update the patrol path if needed.
+     *
+     * It's recommended that territory chunks are connected to each other, but this is not required.
+     *
+     * Territories that do not contain at least one generated chunk as a result of calling this method will be automatically deleted.
+     * @param positions The chunk positions. The chunks at these positions do not need to exist in order to be assigned to a territory.
+     * @param territory The territory to associate the chunks with. If not `nil`, the territory must belong to this same surface or else an error will be produced. If `nil`, then the chunks get removed from the territory it is currently associated with and will prevent the map generator from automatically re-generate a new territory for the chunk in the future.
+     */
+    set_territory_for_chunks(this: void, positions: ChunkPosition[], territory?: LuaTerritory): void;
     /**
      * Set tiles at specified locations. Can automatically correct the edges around modified tiles.
      *
@@ -18498,6 +19000,10 @@ interface BaseLuaSurfaceCreateEntityParams {
      */
     'raise_built'?: boolean;
     /**
+     * If true, plants created will register in any in-range agricultural towers.
+     */
+    'register_plant'?: boolean;
+    /**
      * If false the exact position given is used to instead of snapping to the normal entity grid. This only applies if the entity normally snaps to the grid.
      */
     'snap_to_grid'?: boolean;
@@ -18675,7 +19181,7 @@ interface LuaSurfaceCreateEntityParamsHighlightBox extends BaseLuaSurfaceCreateE
  */
 interface LuaSurfaceCreateEntityParamsInserter extends BaseLuaSurfaceCreateEntityParams {
     'conditions': InserterCircuitConditions;
-    'filters'?: InserterItemFilter[];
+    'filters'?: BlueprintItemFilter[];
 }
 /**
  *
@@ -18724,22 +19230,22 @@ interface LuaSurfaceCreateEntityParamsLamp extends BaseLuaSurfaceCreateEntityPar
  * Applies to variant case `loader`
  */
 interface LuaSurfaceCreateEntityParamsLoader extends BaseLuaSurfaceCreateEntityParams {
-    'filters'?: InventoryFilter[];
+    'filters'?: SlotFilter[];
     /**
      * Defaults to `"input"`.
      */
-    'type'?: 'output' | 'input';
+    'type'?: BeltConnectionType;
 }
 /**
  *
  * Applies to variant case `loader-1x1`
  */
 interface LuaSurfaceCreateEntityParamsLoader1x1 extends BaseLuaSurfaceCreateEntityParams {
-    'filters'?: InventoryFilter[];
+    'filters'?: SlotFilter[];
     /**
      * Defaults to `"input"`.
      */
-    'type'?: 'output' | 'input';
+    'type'?: BeltConnectionType;
 }
 /**
  *
@@ -18756,7 +19262,7 @@ interface LuaSurfaceCreateEntityParamsLocomotive extends BaseLuaSurfaceCreateEnt
  * Applies to variant case `logistic-container`
  */
 interface LuaSurfaceCreateEntityParamsLogisticContainer extends BaseLuaSurfaceCreateEntityParams {
-    'request_filters'?: InventoryFilter[];
+    'request_filters'?: SlotFilter[];
 }
 /**
  *
@@ -18915,7 +19421,54 @@ interface LuaSurfaceCreateEntityParamsUndergroundBelt extends BaseLuaSurfaceCrea
     /**
      * Defaults to `"input"`.
      */
-    'type'?: 'output' | 'input';
+    'type'?: BeltConnectionType;
+}
+type LuaSurfaceCreateSegmentedUnitParams = BaseLuaSurfaceCreateSegmentedUnitParams | LuaSurfaceCreateSegmentedUnitParamsBodyNodes | LuaSurfaceCreateSegmentedUnitParamsPositionAndDirection;
+interface BaseLuaSurfaceCreateSegmentedUnitParams {
+    /**
+     * Force of the segmented unit. Defaults to `enemy`.
+     */
+    'force'?: ForceID;
+    /**
+     * The segmented-unit prototype name to create. Must be of type `"segmented-unit"`.
+     */
+    'name': EntityID;
+    /**
+     * Quality of the entity to be created. Defaults to `normal`.
+     */
+    'quality'?: QualityID;
+    /**
+     * The territory that the segmented unit is assigned to. If `nil`, the segmented unit will patrol around its spawn location. Must be located on this same surface.
+     */
+    'territory'?: LuaTerritory;
+}
+/**
+ *
+ * Applies to variant case `body-nodes`
+ */
+interface LuaSurfaceCreateSegmentedUnitParamsBodyNodes extends BaseLuaSurfaceCreateSegmentedUnitParams {
+    /**
+     * The body nodes that define the shape of the body. The array must contain at least one value and should have no more than {@link SegmentEngineSpecification::max_body_nodes | prototype:SegmentEngineSpecification::max_body_nodes}. The nodes should be about 1 tile apart from each other, but it is not strictly required.
+     */
+    'body_nodes': MapPosition[];
+}
+/**
+ *
+ * Applies to variant case `position-and-direction`
+ */
+interface LuaSurfaceCreateSegmentedUnitParamsPositionAndDirection extends BaseLuaSurfaceCreateSegmentedUnitParams {
+    /**
+     * The initial orientation of the head. Defaults to `defines.direction.north`.
+     */
+    'direction'?: defines.direction;
+    /**
+     * If `true`, will create the segmented unit so that the entire body is stretches in a straight line behind the head. If `false`, then only the head segment will be created and the remainder of the body segments will be created over time as the head moves forward. Defaults to `false`.
+     */
+    'extended'?: boolean;
+    /**
+     * The head position.
+     */
+    'position': MapPosition;
 }
 /**
  * Prototype of a surface property.
@@ -19126,6 +19679,72 @@ interface LuaTechnologyPrototype extends LuaPrototypeBase {
     readonly visible_when_disabled: boolean;
 }
 /**
+ * A set of chunks on a single {@link LuaSurface | runtime:LuaSurface} that can be guarded by one or more {@link LuaSegmentedUnit | runtime:LuaSegmentedUnit}s.
+ *
+ * A territory is owned by the surface for which it was created. It comprises any number of disconnected or connected chunks. A chunk can only be owned by at most one territory. A territory's chunks may or may not be generated.
+ *
+ * Territories may be patrolled by any number of {@link LuaSegmentedUnit | runtime:LuaSegmentedUnit}s. A territory with no units will not appear on player's maps.
+ *
+ * Territories may define a patrol path that {@link LuaSegmentedUnit | runtime:LuaSegmentedUnit}s will follow. If no such path is defined, then units will wander randomly throughout the territory chunks. If a territory contains no patrol path and no chunks, then units will behave as if they are assigned to any territory.
+ *
+ * The game will automatically destroy any territory that does not have at least one chunk that is generated or requested to be generated. This is to prevent bloat when chunks are deleted. This can happen as a result of any operation that modifies a territory's chunks, including but not limited to {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk}, {@link LuaSurface::set_territory_for_chunks | runtime:LuaSurface::set_territory_for_chunks}, and {@link LuaSurface::clear_territory_for_chunks | runtime:LuaSurface::clear_territory_for_chunks}.
+ */
+interface LuaTerritory {
+    /**
+     * Immediately destroys the territory, along with any segmented units guarding it. All associated chunks are cleared from the territory system, allowing the map generator to potentially generate new territories for these chunks in the future.
+     *
+     * This {@link LuaTerritory | runtime:LuaTerritory} is no longer valid after calling this.
+     */
+    destroy(this: void): void;
+    /**
+     * Gets all chunks that are a part of the territory.
+     *
+     * Chunks may or may not be generated; use {@link LuaSurface::is_chunk_generated | runtime:LuaSurface::is_chunk_generated} to check a chunk's state before accessing it.
+     */
+    get_chunks(this: void): ChunkPositionAndArea[];
+    /**
+     * Get the path that the territory's units follow when patrolling the territory. Will not be empty.
+     *
+     * It is common that the territory's patrol path is fully contained within the territory's chunks, but it is not strictly necessary.
+     */
+    get_patrol_path(this: void): MapPosition[];
+    /**
+     * Gets the {@link LuaSegmentedUnit | runtime:LuaSegmentedUnit}s that guard this territory.
+     */
+    get_segmented_units(this: void): LuaSegmentedUnit[];
+    /**
+     * Regenerates the patrol path for the territory according to the game's default territory generation algorithm and overwrites the territory's current patrol path.
+     */
+    regenerate_patrol_path(this: void): void;
+    /**
+     * Regenerates any segmented units that were created when the territory was generated by the map generator. If the territory was created or modified by a script, and the surface's map generator is configured to create segmented units with territories, then this function will create the segmented units that would have been created along with the script-modified or script-created territory. If the surface's map generator is not configured to create segmented units at all, then no segmented units will be created.
+     *
+     * Note: this does not destroy or replace existing units guarding the territory, and existing units will not prevent the generation of new units. Calling this repeatedly on a territory that generates a segmented unit will simply repeatedly add new segmented units to the map, all guarding this territory.
+     */
+    regenerate_segmented_units(this: void): void;
+    /**
+     * Overwrite the territory patrol path for units that guard the territory.
+     *
+     * It is recommended that the territory's patrol path be fully contained within the territory's chunks, but it is not strictly necessary.
+     *
+     * To let the territory system generate a patrol path, use {@link LuaTerritory::regenerate_patrol_path | runtime:LuaTerritory::regenerate_patrol_path}.
+     * @param patrol_path The new patrol path for the territory. Must not be empty.
+     */
+    set_patrol_path(this: void, patrol_path: MapPosition[]): void;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * The surface on which this territory is located.
+     */
+    readonly surface: LuaSurface;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
  * A single "square" on the map.
  */
 interface LuaTile {
@@ -19255,7 +19874,7 @@ interface LuaTilePrototype extends LuaPrototypeBase {
     /**
      * Items that when placed will produce this tile, if any. Construction bots will choose the first item in the list to build this tile.
      */
-    readonly items_to_place_this?: ItemWithCount[];
+    readonly items_to_place_this?: ItemToPlace[];
     readonly layer: uint;
     readonly map_color: Color;
     readonly max_health: float;
@@ -19316,7 +19935,7 @@ interface LuaTrain {
      * Get a mapping of the train's inventory.
      * @returns List of all items in the train.
      */
-    get_contents(this: void): ItemWithQualityCounts[];
+    get_contents(this: void): ItemWithQualityCounts;
     /**
      * Gets a mapping of the train's fluid inventory.
      * @returns The counts, indexed by fluid names.
@@ -19667,7 +20286,7 @@ interface LuaTransportLine {
      * Get counts of all items on this line, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      * @returns List of all items on this line.
      */
-    get_contents(this: void): ItemWithQualityCounts[];
+    get_contents(this: void): ItemWithQualityCounts;
     /**
      * Get detailed information of items on this line, such as their position.
      */

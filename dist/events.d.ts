@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.60
+// Factorio version 2.0.61
 // API version 6
 
 declare namespace runtime {
@@ -1037,27 +1037,27 @@ interface on_gui_click {
  */
 interface on_gui_closed {
     /**
-     * The custom GUI element that was open
+     * The custom GUI element that was closed.
      */
     element?: LuaGuiElement;
     /**
-     * The entity that was open
+     * The entity or entity grid whose GUI was closed.
      */
     entity?: LuaEntity;
     /**
-     * The equipment that was open
+     * The equipment whose GUI was closed.
      */
     equipment?: LuaEquipment;
     /**
-     * The GUI type that was open.
+     * The type of GUI that was closed.
      */
     gui_type: defines.gui_type;
     /**
-     * The script inventory that was open
+     * The script inventory whose GUI was closed.
      */
     inventory?: LuaInventory;
     /**
-     * The item that was open
+     * The item whose GUI was closed.
      */
     item?: LuaItemStack;
     /**
@@ -1065,23 +1065,23 @@ interface on_gui_closed {
      */
     name: defines.events;
     /**
-     * The other player that was open
+     * The other player whose GUI was closed.
      */
     other_player?: LuaPlayer;
     /**
-     * The player.
+     * The player closing the GUI.
      */
     player_index: uint;
     /**
-     * The technology that was automatically selected when opening the research GUI
+     * The surface index of the global electric network whose GUI was closed.
      */
-    technology?: LuaTechnology;
+    surface_index?: uint;
     /**
      * Tick the event was generated.
      */
     tick: uint;
     /**
-     * The tile position that was open
+     * The position of the tile whose GUI was closed.
      */
     tile_position?: TilePosition;
 }
@@ -1211,27 +1211,27 @@ interface on_gui_location_changed {
  */
 interface on_gui_opened {
     /**
-     * The custom GUI element that was opened
+     * The custom GUI element that was opened.
      */
     element?: LuaGuiElement;
     /**
-     * The entity that was opened
+     * The entity or entity grid whose GUI was opened.
      */
     entity?: LuaEntity;
     /**
-     * The equipment that was opened
+     * The equipment whose GUI was opened.
      */
     equipment?: LuaEquipment;
     /**
-     * The GUI type that was opened.
+     * The type of GUI that was opened.
      */
     gui_type: defines.gui_type;
     /**
-     * The script inventory that was opened
+     * The script inventory whose GUI was opened.
      */
     inventory?: LuaInventory;
     /**
-     * The item that was opened
+     * The item whose GUI was opened.
      */
     item?: LuaItemStack;
     /**
@@ -1239,17 +1239,25 @@ interface on_gui_opened {
      */
     name: defines.events;
     /**
-     * The other player that was opened
+     * The other player whose GUI was opened.
      */
     other_player?: LuaPlayer;
     /**
-     * The player.
+     * The player closing the GUI.
      */
     player_index: uint;
+    /**
+     * The surface index of the global electric network whose GUI was opened.
+     */
+    surface_index?: uint;
     /**
      * Tick the event was generated.
      */
     tick: uint;
+    /**
+     * The position of the tile whose GUI was opened.
+     */
+    tile_position?: TilePosition;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} selected tab is changed (related to tabbed-panes).
@@ -1626,7 +1634,7 @@ interface on_permission_string_imported {
  * Called when a player picks up an item.
  */
 interface on_picked_up_item {
-    item_stack: ItemWithCount;
+    item_stack: ItemWithQualityCount;
     /**
      * Identifier of the event
      */
@@ -2470,7 +2478,7 @@ interface on_player_mined_item {
     /**
      * The item given to the player
      */
-    item_stack: ItemWithQualityCounts;
+    item_stack: ItemWithQualityCount;
     /**
      * Identifier of the event
      */
@@ -3023,6 +3031,47 @@ interface on_post_entity_died {
      * The unit number the entity had if any.
      */
     unit_number?: uint;
+}
+/**
+ * Called after a segmented unit dies.
+ */
+interface on_post_segmented_unit_died {
+    /**
+     * The damage type that did the killing if any.
+     */
+    damage_type?: LuaDamagePrototype;
+    /**
+     * The force that did the killing if any.
+     */
+    force?: LuaForce;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The prototype of the unit that died.
+     */
+    prototype: LuaEntityPrototype;
+    /**
+     * The quality of the unit that died.
+     */
+    quality: LuaQualityPrototype;
+    /**
+     * Information about each of the unit's individual segments when it died.
+     */
+    segments: PostSegmentDiedData;
+    /**
+     * The surface the entity was on.
+     */
+    surface_index: uint;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+    /**
+     * The unit number of the unit that died.
+     */
+    unit_number: uint;
 }
 /**
  * Called when players uses an item to build something. Called before {@link on_built_entity | runtime:on_built_entity}.
@@ -3658,7 +3707,7 @@ interface on_robot_mined {
     /**
      * The entity the robot just picked up.
      */
-    item_stack: ItemWithCount;
+    item_stack: ItemWithQualityCount;
     /**
      * Identifier of the event
      */
@@ -3932,6 +3981,99 @@ interface on_segment_entity_created {
     tick: uint;
 }
 /**
+ * Called when a segmented unit is created for any reason.
+ */
+interface on_segmented_unit_created {
+    /**
+     * The reason that the segmented unit was created.
+     */
+    cause: defines.segmented_unit_created_cause;
+    /**
+     * If the new segmented unit was cloned, the segmented unit from which the new unit was cloned.
+     */
+    clone_source?: LuaSegmentedUnit;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The segmented unit that was created.
+     */
+    segmented_unit: LuaSegmentedUnit;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when a segmented unit is damaged. This is not called when a segmented unit's health is set directly by another mod.
+ */
+interface on_segmented_unit_damaged {
+    /**
+     * The entity that originally triggered the events that led to this damage, if available (e.g. the character, turret, etc. that pulled the trigger).
+     */
+    cause?: LuaEntity;
+    damage_type: LuaDamagePrototype;
+    /**
+     * The damage amount after resistances.
+     */
+    final_damage_amount: float;
+    /**
+     * The health of the unit after the damage was applied.
+     */
+    final_health: float;
+    /**
+     * The force that did the attacking.
+     */
+    force?: LuaForce;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The damage amount before resistances.
+     */
+    original_damage_amount: float;
+    segmented_unit: LuaSegmentedUnit;
+    /**
+     * The entity that is directly dealing the damage, if available (e.g. the projectile, flame, sticker, grenade, laser beam, etc.).
+     */
+    source?: LuaEntity;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when a segmented unit dies.
+ */
+interface on_segmented_unit_died {
+    /**
+     * The entity that did the killing if available.
+     */
+    cause?: LuaEntity;
+    /**
+     * The damage type if any.
+     */
+    damage_type?: LuaDamagePrototype;
+    /**
+     * The force that did the killing if any.
+     */
+    force?: LuaForce;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The unit that died.
+     */
+    segmented_unit: LuaSegmentedUnit;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
  * Called after the selected entity changes for a given player.
  */
 interface on_selected_entity_changed {
@@ -4086,7 +4228,7 @@ interface on_space_platform_mined_item {
     /**
      * The entity the platform just picked up.
      */
-    item_stack: ItemWithCount;
+    item_stack: ItemWithQualityCount;
     /**
      * Identifier of the event
      */
@@ -4289,6 +4431,44 @@ interface on_technology_effects_reset {
     tick: uint;
 }
 /**
+ * Called when a territory is created for any reason.
+ */
+interface on_territory_created {
+    /**
+     * The reason the territory was created.
+     */
+    cause: defines.territory_created_cause;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The territory that was created.
+     */
+    territory: LuaTerritory;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * Called when a territory is destroyed from a surface.
+ */
+interface on_territory_destroyed {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The territory that will be destroyed. This object will be valid so that you can still read and modify its properties before it is finally destroyed.
+     */
+    territory: LuaTerritory;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
  * It is fired once every tick. Since this event is fired every tick, its handler shouldn't include performance heavy code.
  */
 interface on_tick {
@@ -4300,6 +4480,81 @@ interface on_tick {
      * Tick the event was generated.
      */
     tick: uint;
+}
+/**
+ * Called after the results of an entity being mined are collected just before the entity is destroyed.
+ *
+ * After this event any items in the buffer will be transferred into the tower as if they came from mining the entity.
+ *
+ * The buffer inventory is special in that it's only valid during this event and has a dynamic size expanding as more items are transferred into it.
+ */
+interface on_tower_mined_plant {
+    /**
+     * The temporary inventory that holds the result of mining the entity.
+     */
+    buffer: LuaInventory;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The entity that has been mined.
+     */
+    plant: LuaEntity;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+    /**
+     * The tower doing the mining.
+     */
+    tower: LuaEntity;
+}
+/**
+ * Called before an agricultural tower planets a seed.
+ */
+interface on_tower_planted_seed {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The plant which was planted.
+     */
+    plant: LuaEntity;
+    /**
+     * The seed that was used.
+     */
+    seed: ItemIDAndQualityIDPair;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+    /**
+     * The tower that's did the planting.
+     */
+    tower: LuaEntity;
+}
+/**
+ * Called before an agricultural tower mines a plant.
+ */
+interface on_tower_pre_mined_plant {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The plant which is about to be mined.
+     */
+    plant: LuaEntity;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+    /**
+     * The tower that's about to do the mining.
+     */
+    tower: LuaEntity;
 }
 /**
  * Called when a train changes state (started to stopped and vice versa)
@@ -4533,6 +4788,23 @@ interface script_raised_destroy {
      * Identifier of the event
      */
     name: defines.events;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint;
+}
+/**
+ * A static event that mods can use to tell other mods they destroyed a segmented unit by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}, or {@link LuaBootstrap::raise_script_destroy_segmented_unit | runtime:LuaBootstrap::raise_script_destroy_segmented_unit}, or when `raise_destroy` is passed to {@link LuaSegmentedUnit::destroy | runtime:LuaSegmentedUnit::destroy}.
+ */
+interface script_raised_destroy_segmented_unit {
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    /**
+     * The segmented unit that was destroyed.
+     */
+    segmented_unit: LuaSegmentedUnit;
     /**
      * Tick the event was generated.
      */
