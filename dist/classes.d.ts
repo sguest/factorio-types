@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.61
+// Factorio version 2.0.62
 // API version 6
 
 declare namespace runtime {
@@ -6547,10 +6547,10 @@ interface LuaEntity extends LuaControl {
      * Sets the entity to be deconstructed by construction robots.
      * @param force The force whose robots are supposed to do the deconstruction.
      * @param player The player to set the last_user to, if any. Also the player whose undo queue this action should be added to.
-     * @param item_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. An index of `1` adds the action to the latest undo action on the stack. Defaults to putting it into the appropriate undo item automatically if one is not specified.
+     * @param undo_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. An index of `1` adds the action to the latest undo action on the stack. Defaults to putting it into the appropriate undo item automatically if one is not specified.
      * @returns if the entity was marked for deconstruction.
      */
-    order_deconstruction(this: void, force: ForceID, player?: PlayerIdentification, item_index?: uint): boolean;
+    order_deconstruction(this: void, force: ForceID, player?: PlayerIdentification, undo_index?: uint): boolean;
     /**
      * Sets the entity to be upgraded by construction robots.
      * @param table.target The prototype of the entity to upgrade to.
@@ -17933,7 +17933,7 @@ interface LuaSurface {
      * @param table.player The player to set the last_user to, if any.  Also the player whose undo queue this action should be added to.
      * @param table.skip_fog_of_war If chunks covered by fog-of-war are skipped. Defaults to `false`.
      * @param table.item The deconstruction item to use if any.
-     * @param table.item_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
+     * @param table.undo_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
      * @param table.super_forced If the cancel deconstruction is super-forced. Defaults to `false`.
      */
     cancel_deconstruct_area(this: void, table: {
@@ -17942,7 +17942,7 @@ interface LuaSurface {
         player?: PlayerIdentification;
         skip_fog_of_war?: boolean;
         item?: LuaItemStack;
-        item_index?: uint;
+        undo_index?: uint;
         super_forced?: boolean;
     }): void;
     /**
@@ -18968,10 +18968,6 @@ interface BaseLuaSurfaceCreateEntityParams {
      */
     'item'?: LuaItemStack;
     /**
-     * The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
-     */
-    'item_index'?: uint;
-    /**
      * If true, any characters that are in the way of the entity are teleported out of the way.
      */
     'move_stuck_players'?: boolean;
@@ -19023,6 +19019,10 @@ interface BaseLuaSurfaceCreateEntityParams {
      * Entity with health for the new entity to target.
      */
     'target'?: LuaEntity | MapPosition;
+    /**
+     * The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
+     */
+    'undo_index'?: uint;
 }
 /**
  *
