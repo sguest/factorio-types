@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.62
+// Factorio version 2.0.64
 // API version 6
 
 declare namespace prototype {
@@ -1183,15 +1183,15 @@ interface BoilerPrototype extends EntityWithOwnerPrototype {
      */
     fluid_box: FluidBox;
     /**
-     * In the `"heat-fluid-inside"` mode, fluid in the `fluid_box` is continuously heated from the input temperature up to its {@link FluidPrototype::max_temperature | prototype:FluidPrototype::max_temperature}.
+     * In the `"output-to-separate-pipe"` mode, fluid is transferred from the `fluid_box` to the `output_fluid_box` when enough energy is available to {@link heat | prototype:FluidPrototype::heat_capacity} the input fluid to the `target_temperature`. Setting a filter on the `output_fluid_box` means that instead of the heated input fluid getting moved to the output, it is converted to the filtered fluid in a ratio based on the heat capacity of the fluids: `output_fluid_amount = input_fluid_amount * (output_fluid_heat_capacity / input_fluid_heat_capacity)`
      *
-     * In the `"output-to-separate-pipe"` mode, fluid is transferred from the `fluid_box` to the `output_fluid_box` when enough energy is available to {@link heat | prototype:FluidPrototype::heat_capacity} the input fluid to the `target_temperature`. Setting a filter on the `output_fluid_box` means that instead of the heated input fluid getting moved to the output, it is converted to the filtered fluid in a 1:1 ratio.
+     * In the `"heat-fluid-inside"` mode, fluid in the `fluid_box` is continuously heated from the input temperature up to its {@link FluidPrototype::max_temperature | prototype:FluidPrototype::max_temperature}.
      */
     mode?: 'heat-fluid-inside' | 'output-to-separate-pipe';
     /**
      * The output fluid box.
      *
-     * If `mode` is `"output-to-separate-pipe"` and this has a {@link filter | prototype:FluidBox::filter}, the heated input fluid is converted to the output fluid that is set in the filter (in a 1:1 ratio).
+     * If `mode` is `"output-to-separate-pipe"` and this has a {@link filter | prototype:FluidBox::filter}, the heated input fluid is converted to the output fluid that is set in the filter. The conversion ratio is based on the heat capacity of the fluids: `output_fluid_amount = input_fluid_amount * (output_fluid_heat_capacity / input_fluid_heat_capacity)`
      *
      * If `mode` is `"heat-fluid-inside"`, this fluidbox is unused.
      */
@@ -2948,21 +2948,45 @@ interface ElectricTurretPrototype extends TurretPrototype {
  * An elevated curved-A rail.
  */
 interface ElevatedCurvedRailAPrototype extends CurvedRailAPrototype {
+    /**
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
+     *
+     * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
+     */
+    name: string;
 }
 /**
  * An elevated curved-B rail.
  */
 interface ElevatedCurvedRailBPrototype extends CurvedRailBPrototype {
+    /**
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
+     *
+     * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
+     */
+    name: string;
 }
 /**
  * An elevated half diagonal rail.
  */
 interface ElevatedHalfDiagonalRailPrototype extends HalfDiagonalRailPrototype {
+    /**
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
+     *
+     * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
+     */
+    name: string;
 }
 /**
  * An elevated straight rail.
  */
 interface ElevatedStraightRailPrototype extends StraightRailPrototype {
+    /**
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
+     *
+     * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
+     */
+    name: string;
 }
 /**
  * Can spawn entities. Used for biter/spitter nests.
@@ -3121,7 +3145,9 @@ interface EntityPrototype extends Prototype {
     /**
      * Supported values are 1 (for 1x1 grid) and 2 (for 2x2 grid, like rails).
      *
-     * Internally forced to be `2` for {@link RailPrototype | prototype:RailPrototype}, {@link RailRemnantsPrototype | prototype:RailRemnantsPrototype} and {@link TrainStopPrototype | prototype:TrainStopPrototype}.
+     * Internally forced to be `2` for {@link RailPrototype | prototype:RailPrototype}, {@link RailRemnantsPrototype | prototype:RailRemnantsPrototype}, {@link TrainStopPrototype | prototype:TrainStopPrototype}, {@link RailSupportPrototype | prototype:RailSupportPrototype} and {@link CargoBayPrototype | prototype:CargoBayPrototype}.
+     *
+     * Internally forced to be `256` for {@link SpacePlatformHubPrototype | prototype:SpacePlatformHubPrototype}.
      */
     build_grid_size?: uint8;
     build_sound?: Sound;
@@ -4367,6 +4393,7 @@ interface HalfDiagonalRailPrototype extends RailPrototype {
 interface HeatInterfacePrototype extends EntityWithOwnerPrototype {
     gui_mode?: 'all' | 'none' | 'admins';
     heat_buffer: HeatBuffer;
+    heating_radius?: float;
     picture?: Sprite;
 }
 /**
@@ -6674,6 +6701,12 @@ interface RailRampPrototype extends RailPrototype {
      */
     collision_mask_allow_on_deep_oil_ocean?: CollisionMaskConnector;
     /**
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
+     *
+     * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
+     */
+    name: string;
+    /**
      * Must be lower than 500 and at least 1.
      */
     support_range?: float;
@@ -6743,6 +6776,12 @@ interface RailSupportPrototype extends EntityWithOwnerPrototype {
      */
     elevated_selection_boxes?: BoundingBox[];
     graphics_set: RailSupportGraphicsSet;
+    /**
+     * Unique textual identification of the prototype. May only contain alphanumeric characters, dashes and underscores. May not exceed a length of 200 characters.
+     *
+     * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
+     */
+    name: string;
     not_buildable_if_no_rails?: boolean;
     snap_to_spots_distance?: float;
     /**
@@ -8393,7 +8432,7 @@ interface SpaceLocationPrototype extends Prototype {
      */
     distance: double;
     /**
-     * If `false`, an orbital ring will not be drawn for this location.
+     * If `false`, the orbital ring around the sun will not be drawn for this location.
      */
     draw_orbit?: boolean;
     /**

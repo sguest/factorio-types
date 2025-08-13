@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.62
+// Factorio version 2.0.64
 // API version 6
 
 declare namespace runtime {
@@ -4875,7 +4875,7 @@ interface LuaCommandProcessor {
     readonly object_name: string;
 }
 /**
- * AI object which can be ordered commands. This can represent a UnitGroup (a set of multiple commandables) or can be a single Unit, SpiderUnit or other commandable entity.
+ * AI object which can be ordered commands. This can represent a UnitGroup (a set of multiple commandables) or can be a single Unit or SpiderUnit.
  */
 interface LuaCommandable {
     /**
@@ -5370,6 +5370,12 @@ interface LuaControl {
      */
     readonly drop_item_distance: uint;
     /**
+     * The current flight height for this player or character entity.
+     *
+     * When called on an entity, only valid if this entity is a character.
+     */
+    readonly flight_height: double;
+    /**
      * The current combat robots following the character.
      *
      * When called on a {@link LuaPlayer | runtime:LuaPlayer}, it must be associated with a character (see {@link LuaPlayer::character | runtime:LuaPlayer::character}).
@@ -5396,6 +5402,12 @@ interface LuaControl {
      * Whether this character entity is in combat.
      */
     readonly in_combat: boolean;
+    /**
+     * If this player or character entity is flying.
+     *
+     * When called on an entity, only valid if this entity is a character.
+     */
+    readonly is_flying: boolean;
     /**
      * The item pickup distance of this character or max double when not a character or player connected to a character.
      */
@@ -5440,6 +5452,10 @@ interface LuaControl {
      * The reach distance of this character or max uint when not a character or player connected to a character.
      */
     readonly reach_distance: uint;
+    /**
+     * The current render position of the entity.
+     */
+    readonly render_position: MapPosition;
     /**
      * Current repair state.
      */
@@ -6059,14 +6075,14 @@ interface LuaEntity extends LuaControl {
      * @param table.do_cliff_correction Whether neighbouring cliffs should be corrected. Defaults to `false`.
      * @param table.raise_destroy If `true`, {@link script_raised_destroy | runtime:script_raised_destroy} will be called. Defaults to `false`.
      * @param table.player The player whose undo queue this action should be added to.
-     * @param table.item_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
+     * @param table.undo_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
      * @returns Returns `false` if the entity was valid and destruction failed, `true` in all other cases.
      */
     destroy(this: void, table: {
         do_cliff_correction?: boolean;
         raise_destroy?: boolean;
         player?: PlayerIdentification;
-        item_index?: uint;
+        undo_index?: uint;
     }): boolean;
     /**
      * Immediately kills the entity. Does nothing if the entity doesn't have health.
@@ -6198,7 +6214,7 @@ interface LuaEntity extends LuaControl {
      * If information about fluid temperatures is required, {@link LuaEntity::fluidbox | runtime:LuaEntity::fluidbox} should be used instead.
      * @returns The amounts, indexed by fluid names.
      */
-    get_fluid_contents(this: void): Record<string, double>;
+    get_fluid_contents(this: void): Record<string, FluidAmount>;
     /**
      * Get the amount of all or some fluid in this entity.
      *
@@ -6556,14 +6572,14 @@ interface LuaEntity extends LuaControl {
      * @param table.target The prototype of the entity to upgrade to.
      * @param table.force The force whose robots are supposed to do the upgrade.
      * @param table.player The player whose undo queue this action should be added to.
-     * @param table.item_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
+     * @param table.undo_index The index of the undo item to add this action to. An index of `0` creates a new undo item for it. Defaults to putting it into the appropriate undo item automatically if not specified.
      * @returns Whether the entity was marked for upgrade.
      */
     order_upgrade(this: void, table: {
         target: EntityWithQualityID;
         force: ForceID;
         player?: PlayerIdentification;
-        item_index?: uint;
+        undo_index?: uint;
     }): boolean;
     /**
      * Plays a note with the given instrument and note.
@@ -6930,7 +6946,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly cliff_orientation: CliffOrientation;
     /**
-     * The color of this character, rolling stock, train stop, car, spider-vehicle, flying text, corpse or simple-entity-with-owner. `nil` if this entity doesn't use custom colors.
+     * The color of this character, rolling stock, corpse, train stop, simple-entity-with-owner, car, spider-vehicle, or lamp. `nil` if this entity doesn't use custom colors.
      *
      * Car color is overridden by the color of the current driver/passenger, if there is one.
      */
@@ -6944,7 +6960,7 @@ interface LuaEntity extends LuaControl {
      */
     combinator_description: string;
     /**
-     * Returns a LuaCommandable for this entity or nil if entity is not commandable.
+     * Returns a LuaCommandable for this entity or nil if entity is not commandable. Units and SpiderUnits are commandable.
      */
     readonly commandable?: LuaCommandable;
     /**
@@ -7003,6 +7019,10 @@ interface LuaEntity extends LuaControl {
      * Will set destination in 3D for the grappler of crane of this entity. The crane grappler will start moving to reach the destination, but the rest of the arm will remain stationary. Throws when trying to set the destination out of range.
      */
     crane_grappler_destination_3d: Vector3D;
+    /**
+     * The corpse that caused this entity ghost to be created, if any.
+     */
+    readonly created_by_corpse?: LuaEntity;
     /**
      * A custom status for this entity that will be displayed in the GUI.
      */
@@ -7198,6 +7218,10 @@ interface LuaEntity extends LuaControl {
      */
     health?: float;
     /**
+     * The entities connected to this entities heat buffer.
+     */
+    readonly heat_neighbours: LuaEntity[];
+    /**
      * The item stack currently held in an inserter's hand.
      */
     readonly held_stack: LuaItemStack;
@@ -7386,7 +7410,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly neighbour_bonus: double;
     /**
-     * A list of neighbours for certain types of entities. Applies to underground belts, walls, gates, reactors, cliffs, and pipe-connectable entities.
+     * A list of neighbours for certain types of entities. Applies to underground belts, walls, gates, reactors, heat pipes, cliffs, and pipe-connectable entities.
      * Differs depending on the type of entity:
      *
      * - When called on a pipe-connectable entity, this is an array of entity arrays of all entities a given fluidbox is connected to.
@@ -7454,6 +7478,10 @@ interface LuaEntity extends LuaControl {
      * The previous recipe this furnace was using, if any.
      */
     readonly previous_recipe?: RecipeIDAndQualityIDPair;
+    /**
+     * The priority targets for this turret (if any).
+     */
+    readonly priority_targets: LuaEntityPrototype[];
     /**
      * how far into the current procession the cargo pod is.
      */
@@ -8045,7 +8073,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly build_base_evolution_requirement: double;
     readonly build_distance?: uint;
     /**
-     * The log2 of grid size of the building
+     * The log2 of {@link grid size | prototype:EntityPrototype::build_grid_size} of the building.
      */
     readonly building_grid_bit_shift: uint;
     /**
@@ -9493,7 +9521,7 @@ interface LuaFluidBox {
      * @param fluid If provided, only this fluid is flushed.
      * @returns The removed fluid.
      */
-    flush(this: void, index: uint, fluid?: FluidID): Record<string, float>;
+    flush(this: void, index: uint, fluid?: FluidID): Record<string, FluidAmount>;
     /**
      * The capacity of the given fluidbox segment.
      */
@@ -9839,7 +9867,7 @@ interface LuaForce {
      */
     enable_research(this: void): void;
     /**
-     * Finds all custom chart tags within the given bounding box on the given surface.
+     * Finds all custom chart tags within a given area on the given surface. If no area is given all custom chart tags on the surface are returned.
      */
     find_chart_tags(this: void, surface: SurfaceIdentification, area?: BoundingBox): LuaCustomChartTag[];
     /**
@@ -10218,7 +10246,7 @@ interface LuaForce {
     /**
      * All of the items that have been launched in rockets.
      */
-    readonly items_launched: ItemWithQualityCounts;
+    readonly items_launched: Record<string, ItemCountType>;
     laboratory_productivity_bonus: double;
     laboratory_speed_modifier: double;
     /**
@@ -12417,6 +12445,8 @@ interface LuaInventory {
     is_filtered(this: void): boolean;
     /**
      * Is every stack in this inventory full? Ignores stacks blocked by the current bar.
+     *
+     * For the input slots of crafting machines that allow counts larger than the item stack size, this may return true even when more items can still be inserted.
      */
     is_full(this: void): boolean;
     /**
@@ -12778,6 +12808,10 @@ interface LuaItemCommon {
      * If absolute snapping is enabled on this blueprint item.
      */
     blueprint_absolute_snapping: boolean;
+    /**
+     * The description for this blueprint or blueprint book
+     */
+    blueprint_description: string;
     /**
      * The offset from the absolute grid. `nil` if absolute snapping is not enabled.
      */
@@ -14146,6 +14180,12 @@ interface LuaPlanet {
      * Creates the associated surface if one doesn't already exist.
      */
     create_surface(this: void): LuaSurface;
+    /**
+     * Gets the built space platforms orbiting this planet on the given force.
+     *
+     * Note, this does not include platforms that have not yet been built.
+     */
+    get_space_platforms(this: void, force: ForceID): LuaSpacePlatform[];
     /**
      * Resets the map gen settings on this planet to the default from-prototype state.
      */
@@ -16040,6 +16080,10 @@ interface LuaRecord {
      */
     blueprint_absolute_snapping: boolean;
     /**
+     * The description for this blueprint or blueprint book
+     */
+    blueprint_description: string;
+    /**
      * The offset from the absolute grid. `nil` if absolute snapping is not enabled.
      */
     blueprint_position_relative_to_grid?: TilePosition;
@@ -16151,7 +16195,7 @@ interface LuaRemote {
      * Providing an unknown interface or function name will result in a script error.
      * @param interface Interface to look up `function` in.
      * @param _function Function name that belongs to the `interface`.
-     * @param args Arguments to pass to the called function. Note that any arguments passed through the interface are a copy of the original, not a reference. Metatables are not retained, while references to LuaObjects stay intact.
+     * @param args Arguments to pass to the called function. Note that any arguments passed through the interface are a copy of the original, not a reference. Metatables are not retained, while references to LuaObjects stay intact. Functions cannot be passed through the interface.
      */
     call(this: void, interface: string, _function: string, ...args: Any[]): Any | null;
     /**
@@ -18937,8 +18981,12 @@ interface LuaSurface {
      */
     wind_speed: double;
 }
-type LuaSurfaceCreateEntityParams = BaseLuaSurfaceCreateEntityParams | LuaSurfaceCreateEntityParamsArtilleryFlare | LuaSurfaceCreateEntityParamsArtilleryProjectile | LuaSurfaceCreateEntityParamsAssemblingMachine | LuaSurfaceCreateEntityParamsBeam | LuaSurfaceCreateEntityParamsCharacterCorpse | LuaSurfaceCreateEntityParamsCliff | LuaSurfaceCreateEntityParamsContainer | LuaSurfaceCreateEntityParamsDisplayPanel | LuaSurfaceCreateEntityParamsElectricPole | LuaSurfaceCreateEntityParamsEntityGhost | LuaSurfaceCreateEntityParamsFire | LuaSurfaceCreateEntityParamsHighlightBox | LuaSurfaceCreateEntityParamsInserter | LuaSurfaceCreateEntityParamsItemEntity | LuaSurfaceCreateEntityParamsItemRequestProxy | LuaSurfaceCreateEntityParamsLamp | LuaSurfaceCreateEntityParamsLoader | LuaSurfaceCreateEntityParamsLoader1x1 | LuaSurfaceCreateEntityParamsLocomotive | LuaSurfaceCreateEntityParamsLogisticContainer | LuaSurfaceCreateEntityParamsParticle | LuaSurfaceCreateEntityParamsPlant | LuaSurfaceCreateEntityParamsProgrammableSpeaker | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsRailChainSignal | LuaSurfaceCreateEntityParamsRailSignal | LuaSurfaceCreateEntityParamsResource | LuaSurfaceCreateEntityParamsRollingStock | LuaSurfaceCreateEntityParamsSimpleEntityWithForce | LuaSurfaceCreateEntityParamsSimpleEntityWithOwner | LuaSurfaceCreateEntityParamsSpeechBubble | LuaSurfaceCreateEntityParamsStream | LuaSurfaceCreateEntityParamsTileGhost | LuaSurfaceCreateEntityParamsUndergroundBelt;
+type LuaSurfaceCreateEntityParams = BaseLuaSurfaceCreateEntityParams | LuaSurfaceCreateEntityParamsAccumulator | LuaSurfaceCreateEntityParamsAgriculturalTower | LuaSurfaceCreateEntityParamsAmmoTurret | LuaSurfaceCreateEntityParamsArithmeticCombinator | LuaSurfaceCreateEntityParamsArtilleryFlare | LuaSurfaceCreateEntityParamsArtilleryProjectile | LuaSurfaceCreateEntityParamsArtilleryTurret | LuaSurfaceCreateEntityParamsArtilleryWagon | LuaSurfaceCreateEntityParamsAssemblingMachine | LuaSurfaceCreateEntityParamsAsteroid | LuaSurfaceCreateEntityParamsAsteroidCollector | LuaSurfaceCreateEntityParamsBeam | LuaSurfaceCreateEntityParamsCar | LuaSurfaceCreateEntityParamsCargoLandingPad | LuaSurfaceCreateEntityParamsCargoWagon | LuaSurfaceCreateEntityParamsCharacterCorpse | LuaSurfaceCreateEntityParamsCliff | LuaSurfaceCreateEntityParamsConstantCombinator | LuaSurfaceCreateEntityParamsContainer | LuaSurfaceCreateEntityParamsDeciderCombinator | LuaSurfaceCreateEntityParamsDeconstructibleTileProxy | LuaSurfaceCreateEntityParamsDisplayPanel | LuaSurfaceCreateEntityParamsElectricEnergyInterface | LuaSurfaceCreateEntityParamsElectricPole | LuaSurfaceCreateEntityParamsElectricTurret | LuaSurfaceCreateEntityParamsEntityGhost | LuaSurfaceCreateEntityParamsFire | LuaSurfaceCreateEntityParamsFluidTurret | LuaSurfaceCreateEntityParamsFluidWagon | LuaSurfaceCreateEntityParamsFurnace | LuaSurfaceCreateEntityParamsHighlightBox | LuaSurfaceCreateEntityParamsInfinityCargoWagon | LuaSurfaceCreateEntityParamsInfinityContainer | LuaSurfaceCreateEntityParamsInfinityPipe | LuaSurfaceCreateEntityParamsInserter | LuaSurfaceCreateEntityParamsItemEntity | LuaSurfaceCreateEntityParamsItemRequestProxy | LuaSurfaceCreateEntityParamsLamp | LuaSurfaceCreateEntityParamsLaneSplitter | LuaSurfaceCreateEntityParamsLinkedBelt | LuaSurfaceCreateEntityParamsLinkedContainer | LuaSurfaceCreateEntityParamsLoader | LuaSurfaceCreateEntityParamsLoader1x1 | LuaSurfaceCreateEntityParamsLocomotive | LuaSurfaceCreateEntityParamsLogisticContainer | LuaSurfaceCreateEntityParamsMiningDrill | LuaSurfaceCreateEntityParamsParticle | LuaSurfaceCreateEntityParamsPlant | LuaSurfaceCreateEntityParamsPowerSwitch | LuaSurfaceCreateEntityParamsProgrammableSpeaker | LuaSurfaceCreateEntityParamsProjectile | LuaSurfaceCreateEntityParamsProxyContainer | LuaSurfaceCreateEntityParamsPump | LuaSurfaceCreateEntityParamsRailChainSignal | LuaSurfaceCreateEntityParamsRailSignal | LuaSurfaceCreateEntityParamsReactor | LuaSurfaceCreateEntityParamsResource | LuaSurfaceCreateEntityParamsRoboport | LuaSurfaceCreateEntityParamsRocketSilo | LuaSurfaceCreateEntityParamsSelectorCombinator | LuaSurfaceCreateEntityParamsSimpleEntityWithForce | LuaSurfaceCreateEntityParamsSimpleEntityWithOwner | LuaSurfaceCreateEntityParamsSpacePlatformHub | LuaSurfaceCreateEntityParamsSpeechBubble | LuaSurfaceCreateEntityParamsSpiderVehicle | LuaSurfaceCreateEntityParamsSplitter | LuaSurfaceCreateEntityParamsStorageTank | LuaSurfaceCreateEntityParamsStream | LuaSurfaceCreateEntityParamsTileGhost | LuaSurfaceCreateEntityParamsTrainStop | LuaSurfaceCreateEntityParamsTransportBelt | LuaSurfaceCreateEntityParamsTurret | LuaSurfaceCreateEntityParamsUndergroundBelt | LuaSurfaceCreateEntityParamsValve | LuaSurfaceCreateEntityParamsWall;
 interface BaseLuaSurfaceCreateEntityParams {
+    /**
+     * Used by entities with a burner energy source.
+     */
+    'burner_fuel_inventory'?: BlueprintInventoryWithFilters;
     /**
      * Cause entity / force. The entity or force that triggered the chain of events that led to this entity being created. Used for beams, projectiles, stickers, etc. so that the damage receiver can know which entity or force to retaliate against.
      */
@@ -19026,6 +19074,40 @@ interface BaseLuaSurfaceCreateEntityParams {
 }
 /**
  *
+ * Applies to variant case `accumulator`
+ */
+interface LuaSurfaceCreateEntityParamsAccumulator extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: AccumulatorBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `agricultural-tower`
+ */
+interface LuaSurfaceCreateEntityParamsAgriculturalTower extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: AgriculturalTowerBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `ammo-turret`
+ */
+interface LuaSurfaceCreateEntityParamsAmmoTurret extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: TurretBlueprintControlBehavior;
+    /**
+     * Defaults to `false`.
+     */
+    'ignore-unprioritised'?: boolean;
+    'priority-list'?: SlotFilter;
+}
+/**
+ *
+ * Applies to variant case `arithmetic-combinator`
+ */
+interface LuaSurfaceCreateEntityParamsArithmeticCombinator extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: ArithmeticCombinatorBlueprintControlBehavior;
+    'player_description'?: string;
+}
+/**
+ *
  * Applies to variant case `artillery-flare`
  */
 interface LuaSurfaceCreateEntityParamsArtilleryFlare extends BaseLuaSurfaceCreateEntityParams {
@@ -19046,10 +19128,54 @@ interface LuaSurfaceCreateEntityParamsArtilleryProjectile extends BaseLuaSurface
 }
 /**
  *
+ * Applies to variant case `artillery-turret`
+ */
+interface LuaSurfaceCreateEntityParamsArtilleryTurret extends BaseLuaSurfaceCreateEntityParams {
+    'artillery_auto_targeting'?: boolean;
+    'control_behavior'?: ArtilleryTurretBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `artillery-wagon`
+ */
+interface LuaSurfaceCreateEntityParamsArtilleryWagon extends BaseLuaSurfaceCreateEntityParams {
+    'artillery_auto_targeting'?: boolean;
+    /**
+     * The color of this rolling stock, if it supports colors.
+     */
+    'color'?: Color;
+    'copy_color_from_train_stop'?: boolean;
+    'enable_logistics_while_moving'?: boolean;
+    'grid'?: BlueprintEquipment[];
+    /**
+     * The orientation of this rolling stock.
+     */
+    'orientation'?: RealOrientation;
+}
+/**
+ *
  * Applies to variant case `assembling-machine`
  */
 interface LuaSurfaceCreateEntityParamsAssemblingMachine extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: AssemblingMachineBlueprintControlBehavior;
     'recipe'?: string;
+    'recipe_quality'?: string;
+}
+/**
+ *
+ * Applies to variant case `asteroid`
+ */
+interface LuaSurfaceCreateEntityParamsAsteroid extends BaseLuaSurfaceCreateEntityParams {
+    'velocity'?: Vector;
+}
+/**
+ *
+ * Applies to variant case `asteroid-collector`
+ */
+interface LuaSurfaceCreateEntityParamsAsteroidCollector extends BaseLuaSurfaceCreateEntityParams {
+    'chunk-filter'?: SlotFilter[];
+    'control_behavior'?: AsteroidCollectorBlueprintControlBehavior;
+    'result-inventory'?: BlueprintInventory;
 }
 /**
  *
@@ -19079,9 +19205,51 @@ interface LuaSurfaceCreateEntityParamsBeam extends BaseLuaSurfaceCreateEntityPar
 }
 /**
  *
+ * Applies to variant case `car`
+ */
+interface LuaSurfaceCreateEntityParamsCar extends BaseLuaSurfaceCreateEntityParams {
+    'ammo_inventory'?: BlueprintInventoryWithFilters;
+    'driver_is_main_gunner'?: boolean;
+    'enable_logistics_while_moving'?: boolean;
+    'grid'?: BlueprintEquipment[];
+    'orientation'?: RealOrientation;
+    'request_filters'?: BlueprintLogisticSections;
+    'selected_gun_index'?: ItemStackIndex;
+    'trunk_inventory'?: BlueprintInventoryWithFilters;
+}
+/**
+ *
+ * Applies to variant case `cargo-landing-pad`
+ */
+interface LuaSurfaceCreateEntityParamsCargoLandingPad extends BaseLuaSurfaceCreateEntityParams {
+    'bar'?: uint;
+    'control_behavior'?: CargoLandingPadBlueprintControlBehavior;
+    'request_filters'?: BlueprintLogisticSections;
+}
+/**
+ *
+ * Applies to variant case `cargo-wagon`
+ */
+interface LuaSurfaceCreateEntityParamsCargoWagon extends BaseLuaSurfaceCreateEntityParams {
+    /**
+     * The color of this rolling stock, if it supports colors.
+     */
+    'color'?: Color;
+    'copy_color_from_train_stop'?: boolean;
+    'enable_logistics_while_moving'?: boolean;
+    'grid'?: BlueprintEquipment[];
+    'inventory'?: BlueprintInventoryWithFilters;
+    /**
+     * The orientation of this rolling stock.
+     */
+    'orientation'?: RealOrientation;
+}
+/**
+ *
  * Applies to variant case `character-corpse`
  */
 interface LuaSurfaceCreateEntityParamsCharacterCorpse extends BaseLuaSurfaceCreateEntityParams {
+    'color'?: Color;
     'inventory_size'?: uint;
     'player_index'?: uint;
 }
@@ -19097,6 +19265,14 @@ interface LuaSurfaceCreateEntityParamsCliff extends BaseLuaSurfaceCreateEntityPa
 }
 /**
  *
+ * Applies to variant case `constant-combinator`
+ */
+interface LuaSurfaceCreateEntityParamsConstantCombinator extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: ConstantCombinatorBlueprintControlBehavior;
+    'player_description'?: string;
+}
+/**
+ *
  * Applies to variant case `container`
  */
 interface LuaSurfaceCreateEntityParamsContainer extends BaseLuaSurfaceCreateEntityParams {
@@ -19104,6 +19280,22 @@ interface LuaSurfaceCreateEntityParamsContainer extends BaseLuaSurfaceCreateEnti
      * Inventory index where the red limiting bar should be set.
      */
     'bar'?: uint;
+    'control_behavior'?: ContainerBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `decider-combinator`
+ */
+interface LuaSurfaceCreateEntityParamsDeciderCombinator extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: DeciderCombinatorBlueprintControlBehavior;
+    'player_description'?: string;
+}
+/**
+ *
+ * Applies to variant case `deconstructible-tile-proxy`
+ */
+interface LuaSurfaceCreateEntityParamsDeconstructibleTileProxy extends BaseLuaSurfaceCreateEntityParams {
+    'proxy_type'?: 'cover' | 'foundation';
 }
 /**
  *
@@ -19111,9 +19303,19 @@ interface LuaSurfaceCreateEntityParamsContainer extends BaseLuaSurfaceCreateEnti
  */
 interface LuaSurfaceCreateEntityParamsDisplayPanel extends BaseLuaSurfaceCreateEntityParams {
     'always_show'?: boolean;
+    'control_behavior'?: DisplayPanelBlueprintControlBehavior;
     'icon'?: SignalID;
     'show_in_chart'?: boolean;
     'text'?: LocalisedString;
+}
+/**
+ *
+ * Applies to variant case `electric-energy-interface`
+ */
+interface LuaSurfaceCreateEntityParamsElectricEnergyInterface extends BaseLuaSurfaceCreateEntityParams {
+    'buffer_size'?: double;
+    'power_production'?: double;
+    'power_usage'?: double;
 }
 /**
  *
@@ -19124,6 +19326,18 @@ interface LuaSurfaceCreateEntityParamsElectricPole extends BaseLuaSurfaceCreateE
      * True by default. If set to false, created electric pole will not auto connect to neighbour electric poles.
      */
     'auto_connect'?: boolean;
+}
+/**
+ *
+ * Applies to variant case `electric-turret`
+ */
+interface LuaSurfaceCreateEntityParamsElectricTurret extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: TurretBlueprintControlBehavior;
+    /**
+     * Defaults to `false`.
+     */
+    'ignore-unprioritised'?: boolean;
+    'priority-list'?: SlotFilter;
 }
 /**
  *
@@ -19148,6 +19362,42 @@ interface LuaSurfaceCreateEntityParamsFire extends BaseLuaSurfaceCreateEntityPar
      * With how many small flames should the fire on ground be created. Defaults to the initial flame count of the prototype.
      */
     'initial_ground_flame_count'?: uint8;
+}
+/**
+ *
+ * Applies to variant case `fluid-turret`
+ */
+interface LuaSurfaceCreateEntityParamsFluidTurret extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: TurretBlueprintControlBehavior;
+    /**
+     * Defaults to `false`.
+     */
+    'ignore-unprioritised'?: boolean;
+    'priority-list'?: SlotFilter;
+}
+/**
+ *
+ * Applies to variant case `fluid-wagon`
+ */
+interface LuaSurfaceCreateEntityParamsFluidWagon extends BaseLuaSurfaceCreateEntityParams {
+    /**
+     * The color of this rolling stock, if it supports colors.
+     */
+    'color'?: Color;
+    'copy_color_from_train_stop'?: boolean;
+    'enable_logistics_while_moving'?: boolean;
+    'grid'?: BlueprintEquipment[];
+    /**
+     * The orientation of this rolling stock.
+     */
+    'orientation'?: RealOrientation;
+}
+/**
+ *
+ * Applies to variant case `furnace`
+ */
+interface LuaSurfaceCreateEntityParamsFurnace extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: FurnaceBlueprintControlBehavior;
 }
 /**
  *
@@ -19177,11 +19427,62 @@ interface LuaSurfaceCreateEntityParamsHighlightBox extends BaseLuaSurfaceCreateE
 }
 /**
  *
+ * Applies to variant case `infinity-cargo-wagon`
+ */
+interface LuaSurfaceCreateEntityParamsInfinityCargoWagon extends BaseLuaSurfaceCreateEntityParams {
+    /**
+     * The color of this rolling stock, if it supports colors.
+     */
+    'color'?: Color;
+    'copy_color_from_train_stop'?: boolean;
+    'enable_logistics_while_moving'?: boolean;
+    'grid'?: BlueprintEquipment[];
+    'infinity_settings'?: BlueprintInfinityInventorySettings;
+    'inventory'?: BlueprintInventoryWithFilters;
+    /**
+     * The orientation of this rolling stock.
+     */
+    'orientation'?: RealOrientation;
+}
+/**
+ *
+ * Applies to variant case `infinity-container`
+ */
+interface LuaSurfaceCreateEntityParamsInfinityContainer extends BaseLuaSurfaceCreateEntityParams {
+    'bar'?: uint;
+    'control_behavior'?: LogisticContainerBlueprintControlBehavior;
+    'infinity_settings'?: BlueprintInfinityInventorySettings;
+    'request_filters'?: BlueprintLogisticSections;
+}
+/**
+ *
+ * Applies to variant case `infinity-pipe`
+ */
+interface LuaSurfaceCreateEntityParamsInfinityPipe extends BaseLuaSurfaceCreateEntityParams {
+    'infinity_settings'?: InfinityPipeFilter;
+}
+/**
+ *
  * Applies to variant case `inserter`
  */
 interface LuaSurfaceCreateEntityParamsInserter extends BaseLuaSurfaceCreateEntityParams {
-    'conditions': InserterCircuitConditions;
+    'control_behavior'?: InserterBlueprintControlBehavior;
+    /**
+     * Used only if {@link InserterPrototype::allow_custom_vectors | prototype:InserterPrototype::allow_custom_vectors} is true.
+     */
+    'drop_position'?: Vector;
+    'filter_mode'?: 'blacklist' | 'whitelist';
     'filters'?: BlueprintItemFilter[];
+    'override_stack_size'?: uint8;
+    /**
+     * Used only if {@link InserterPrototype::allow_custom_vectors | prototype:InserterPrototype::allow_custom_vectors} is true.
+     */
+    'pickup_position'?: Vector;
+    'spoil_priority'?: 'spoiled-first' | 'fresh-first';
+    /**
+     * Defaults to `false`.
+     */
+    'use_filters'?: boolean;
 }
 /**
  *
@@ -19227,9 +19528,34 @@ interface LuaSurfaceCreateEntityParamsLamp extends BaseLuaSurfaceCreateEntityPar
 }
 /**
  *
+ * Applies to variant case `lane-splitter`
+ */
+interface LuaSurfaceCreateEntityParamsLaneSplitter extends BaseLuaSurfaceCreateEntityParams {
+    'filter'?: ItemFilter;
+    'input_priority'?: SplitterPriority;
+    'output_priority'?: SplitterPriority;
+}
+/**
+ *
+ * Applies to variant case `linked-belt`
+ */
+interface LuaSurfaceCreateEntityParamsLinkedBelt extends BaseLuaSurfaceCreateEntityParams {
+    'type'?: BeltConnectionType;
+}
+/**
+ *
+ * Applies to variant case `linked-container`
+ */
+interface LuaSurfaceCreateEntityParamsLinkedContainer extends BaseLuaSurfaceCreateEntityParams {
+    'link_id'?: uint;
+}
+/**
+ *
  * Applies to variant case `loader`
  */
 interface LuaSurfaceCreateEntityParamsLoader extends BaseLuaSurfaceCreateEntityParams {
+    'belt_stack_size_override'?: uint8;
+    'filter_mode'?: PrototypeFilterMode;
     'filters'?: SlotFilter[];
     /**
      * Defaults to `"input"`.
@@ -19241,6 +19567,8 @@ interface LuaSurfaceCreateEntityParamsLoader extends BaseLuaSurfaceCreateEntityP
  * Applies to variant case `loader-1x1`
  */
 interface LuaSurfaceCreateEntityParamsLoader1x1 extends BaseLuaSurfaceCreateEntityParams {
+    'belt_stack_size_override'?: uint8;
+    'filter_mode'?: PrototypeFilterMode;
     'filters'?: SlotFilter[];
     /**
      * Defaults to `"input"`.
@@ -19253,6 +19581,17 @@ interface LuaSurfaceCreateEntityParamsLoader1x1 extends BaseLuaSurfaceCreateEnti
  */
 interface LuaSurfaceCreateEntityParamsLocomotive extends BaseLuaSurfaceCreateEntityParams {
     /**
+     * The color of this rolling stock, if it supports colors.
+     */
+    'color'?: Color;
+    'copy_color_from_train_stop'?: boolean;
+    'enable_logistics_while_moving'?: boolean;
+    'grid'?: BlueprintEquipment[];
+    /**
+     * The orientation of this rolling stock.
+     */
+    'orientation'?: RealOrientation;
+    /**
      * Whether the locomotive should snap to an adjacent train stop. Defaults to true.
      */
     'snap_to_train_stop'?: boolean;
@@ -19262,7 +19601,17 @@ interface LuaSurfaceCreateEntityParamsLocomotive extends BaseLuaSurfaceCreateEnt
  * Applies to variant case `logistic-container`
  */
 interface LuaSurfaceCreateEntityParamsLogisticContainer extends BaseLuaSurfaceCreateEntityParams {
+    'bar'?: uint;
+    'control_behavior'?: LogisticContainerBlueprintControlBehavior;
     'request_filters'?: SlotFilter[];
+}
+/**
+ *
+ * Applies to variant case `mining-drill`
+ */
+interface LuaSurfaceCreateEntityParamsMiningDrill extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: MiningDrillBlueprintControlBehavior;
+    'filter'?: BlueprintMiningDrillFilter;
 }
 /**
  *
@@ -19286,10 +19635,19 @@ interface LuaSurfaceCreateEntityParamsPlant extends BaseLuaSurfaceCreateEntityPa
 }
 /**
  *
+ * Applies to variant case `power-switch`
+ */
+interface LuaSurfaceCreateEntityParamsPowerSwitch extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: PowerSwitchBlueprintControlBehavior;
+    'switch_state'?: boolean;
+}
+/**
+ *
  * Applies to variant case `programmable-speaker`
  */
 interface LuaSurfaceCreateEntityParamsProgrammableSpeaker extends BaseLuaSurfaceCreateEntityParams {
     'alert_parameters'?: ProgrammableSpeakerAlertParameters;
+    'control_behavior'?: ProgrammableSpeakerBlueprintControlBehavior;
     'parameters'?: ProgrammableSpeakerParameters;
 }
 /**
@@ -19297,6 +19655,8 @@ interface LuaSurfaceCreateEntityParamsProgrammableSpeaker extends BaseLuaSurface
  * Applies to variant case `projectile`
  */
 interface LuaSurfaceCreateEntityParamsProjectile extends BaseLuaSurfaceCreateEntityParams {
+    'base_damage_modifiers'?: TriggerModifierData;
+    'bonus_damage_modifiers'?: TriggerModifierData;
     /**
      * Defaults to 1000.
      */
@@ -19308,17 +19668,25 @@ interface LuaSurfaceCreateEntityParamsProjectile extends BaseLuaSurfaceCreateEnt
 }
 /**
  *
- * Applies to variant case `projectile`
+ * Applies to variant case `proxy-container`
  */
-interface LuaSurfaceCreateEntityParamsProjectile extends BaseLuaSurfaceCreateEntityParams {
-    'base_damage_modifiers'?: TriggerModifierData;
-    'bonus_damage_modifiers'?: TriggerModifierData;
+interface LuaSurfaceCreateEntityParamsProxyContainer extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: ProxyContainerBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `pump`
+ */
+interface LuaSurfaceCreateEntityParamsPump extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: PumpBlueprintControlBehavior;
+    'fluid_filter'?: string;
 }
 /**
  *
  * Applies to variant case `rail-chain-signal`
  */
 interface LuaSurfaceCreateEntityParamsRailChainSignal extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: RailSignalBaseBlueprintControlBehavior;
     /**
      * Defaults to {@link defines.rail_layer.ground | runtime:defines.rail_layer.ground}.
      */
@@ -19329,6 +19697,7 @@ interface LuaSurfaceCreateEntityParamsRailChainSignal extends BaseLuaSurfaceCrea
  * Applies to variant case `rail-signal`
  */
 interface LuaSurfaceCreateEntityParamsRailSignal extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: RailSignalBaseBlueprintControlBehavior;
     /**
      * Defaults to {@link defines.rail_layer.ground | runtime:defines.rail_layer.ground}.
      */
@@ -19336,10 +19705,17 @@ interface LuaSurfaceCreateEntityParamsRailSignal extends BaseLuaSurfaceCreateEnt
 }
 /**
  *
+ * Applies to variant case `reactor`
+ */
+interface LuaSurfaceCreateEntityParamsReactor extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: ReactorBlueprintControlBehavior;
+}
+/**
+ *
  * Applies to variant case `resource`
  */
 interface LuaSurfaceCreateEntityParamsResource extends BaseLuaSurfaceCreateEntityParams {
-    'amount': uint;
+    'amount'?: uint;
     /**
      * If colliding cliffs are removed. Default is true.
      */
@@ -19355,31 +19731,58 @@ interface LuaSurfaceCreateEntityParamsResource extends BaseLuaSurfaceCreateEntit
 }
 /**
  *
- * Applies to variant case `rolling-stock`
+ * Applies to variant case `roboport`
  */
-interface LuaSurfaceCreateEntityParamsRollingStock extends BaseLuaSurfaceCreateEntityParams {
-    /**
-     * The color of this rolling stock, if it supports colors.
-     */
-    'color'?: Color;
-    /**
-     * The orientation of this rolling stock.
-     */
-    'orientation'?: RealOrientation;
+interface LuaSurfaceCreateEntityParamsRoboport extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: RoboportBlueprintControlBehavior;
+    'request_filters'?: BlueprintLogisticSections;
+}
+/**
+ *
+ * Applies to variant case `rocket-silo`
+ */
+interface LuaSurfaceCreateEntityParamsRocketSilo extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: RocketSiloBlueprintControlBehavior;
+    'launch_to_orbit_automatically'?: boolean;
+    'recipe'?: string;
+    'recipe_quality'?: string;
+    'use_transitional_requests'?: boolean;
+}
+/**
+ *
+ * Applies to variant case `selector-combinator`
+ */
+interface LuaSurfaceCreateEntityParamsSelectorCombinator extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: SelectorCombinatorParameters;
+    'player_description'?: string;
 }
 /**
  *
  * Applies to variant case `simple-entity-with-force`
  */
 interface LuaSurfaceCreateEntityParamsSimpleEntityWithForce extends BaseLuaSurfaceCreateEntityParams {
+    'color'?: Color;
     'render_player_index'?: uint;
+    'variation'?: uint8;
 }
 /**
  *
  * Applies to variant case `simple-entity-with-owner`
  */
 interface LuaSurfaceCreateEntityParamsSimpleEntityWithOwner extends BaseLuaSurfaceCreateEntityParams {
+    'color'?: Color;
     'render_player_index'?: uint;
+    'variation'?: uint8;
+}
+/**
+ *
+ * Applies to variant case `space-platform-hub`
+ */
+interface LuaSurfaceCreateEntityParamsSpacePlatformHub extends BaseLuaSurfaceCreateEntityParams {
+    'bar'?: ItemStackIndex;
+    'control_behavior'?: SpacePlatformHubBlueprintControlBehavior;
+    'request_filters'?: BlueprintLogisticSections;
+    'request_missing_construction_materials'?: boolean;
 }
 /**
  *
@@ -19388,6 +19791,38 @@ interface LuaSurfaceCreateEntityParamsSimpleEntityWithOwner extends BaseLuaSurfa
 interface LuaSurfaceCreateEntityParamsSpeechBubble extends BaseLuaSurfaceCreateEntityParams {
     'lifetime'?: uint;
     'text': LocalisedString;
+}
+/**
+ *
+ * Applies to variant case `spider-vehicle`
+ */
+interface LuaSurfaceCreateEntityParamsSpiderVehicle extends BaseLuaSurfaceCreateEntityParams {
+    'ammo_inventory'?: BlueprintInventoryWithFilters;
+    'automatic_targeting_parameters'?: VehicleAutomaticTargetingParameters;
+    'color'?: Color;
+    'driver_is_main_gunner'?: boolean;
+    'enable_logistics_while_moving'?: boolean;
+    'grid'?: BlueprintEquipment[];
+    'label'?: string;
+    'request_filters'?: BlueprintLogisticSections;
+    'selected_gun_index'?: ItemStackIndex;
+    'trunk_inventory'?: BlueprintInventoryWithFilters;
+}
+/**
+ *
+ * Applies to variant case `splitter`
+ */
+interface LuaSurfaceCreateEntityParamsSplitter extends BaseLuaSurfaceCreateEntityParams {
+    'filter'?: ItemFilter;
+    'input_priority'?: SplitterPriority;
+    'output_priority'?: SplitterPriority;
+}
+/**
+ *
+ * Applies to variant case `storage-tank`
+ */
+interface LuaSurfaceCreateEntityParamsStorageTank extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: StorageTankBlueprintControlBehavior;
 }
 /**
  *
@@ -19415,6 +19850,36 @@ interface LuaSurfaceCreateEntityParamsTileGhost extends BaseLuaSurfaceCreateEnti
 }
 /**
  *
+ * Applies to variant case `train-stop`
+ */
+interface LuaSurfaceCreateEntityParamsTrainStop extends BaseLuaSurfaceCreateEntityParams {
+    'color'?: Color;
+    'control_behavior'?: TrainStopBlueprintControlBehavior;
+    'manual_trains_limit'?: uint;
+    'priority'?: uint8;
+    'station'?: string;
+}
+/**
+ *
+ * Applies to variant case `transport-belt`
+ */
+interface LuaSurfaceCreateEntityParamsTransportBelt extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: TransportBeltBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `turret`
+ */
+interface LuaSurfaceCreateEntityParamsTurret extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: TurretBlueprintControlBehavior;
+    /**
+     * Defaults to `false`.
+     */
+    'ignore-unprioritised'?: boolean;
+    'priority-list'?: SlotFilter;
+}
+/**
+ *
  * Applies to variant case `underground-belt`
  */
 interface LuaSurfaceCreateEntityParamsUndergroundBelt extends BaseLuaSurfaceCreateEntityParams {
@@ -19422,6 +19887,20 @@ interface LuaSurfaceCreateEntityParamsUndergroundBelt extends BaseLuaSurfaceCrea
      * Defaults to `"input"`.
      */
     'type'?: BeltConnectionType;
+}
+/**
+ *
+ * Applies to variant case `valve`
+ */
+interface LuaSurfaceCreateEntityParamsValve extends BaseLuaSurfaceCreateEntityParams {
+    'valve_threshold_override'?: float;
+}
+/**
+ *
+ * Applies to variant case `wall`
+ */
+interface LuaSurfaceCreateEntityParamsWall extends BaseLuaSurfaceCreateEntityParams {
+    'control_behavior'?: WallBlueprintControlBehavior;
 }
 type LuaSurfaceCreateSegmentedUnitParams = BaseLuaSurfaceCreateSegmentedUnitParams | LuaSurfaceCreateSegmentedUnitParamsBodyNodes | LuaSurfaceCreateSegmentedUnitParamsPositionAndDirection;
 interface BaseLuaSurfaceCreateSegmentedUnitParams {
@@ -19940,7 +20419,7 @@ interface LuaTrain {
      * Gets a mapping of the train's fluid inventory.
      * @returns The counts, indexed by fluid names.
      */
-    get_fluid_contents(this: void): Record<string, double>;
+    get_fluid_contents(this: void): Record<string, FluidAmount>;
     /**
      * Get the amount of a particular fluid stored in the train.
      * @param fluid Fluid name to count. If not given, counts all fluids.
@@ -20667,11 +21146,11 @@ interface LuaWireConnector {
      */
     readonly owner: LuaEntity;
     /**
-     * Amount of real wires going out of this connector. It only includes wires for which both wire connectors are real.
+     * Amount of real wires going out of this connector. It only includes wires for which both wire connectors are real (not ghosts).
      */
     readonly real_connection_count: uint;
     /**
-     * All wire connectors this connector is connected to with real wires.
+     * All wire connectors this connector is connected to with real wires. Wires are considered real if they are between two non-ghost entities.
      */
     readonly real_connections: WireConnection[];
     /**

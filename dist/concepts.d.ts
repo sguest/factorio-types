@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.62
+// Factorio version 2.0.64
 // API version 6
 
 declare namespace runtime {
@@ -503,11 +503,15 @@ interface BaseBlueprintEntity {
      * Wires connected to this entity in the blueprint.
      */
     wires?: BlueprintWire[];
+    /**
+     * Used by entities with a burner energy source.
+     */
+    burner_fuel_inventory?: BlueprintInventoryWithFilters;
 }
 /**
  * The representation of an entity inside of a blueprint.
  */
-type BlueprintEntity = BaseBlueprintEntity | BlueprintEntityAccumulator | BlueprintEntityAgriculturalTower | BlueprintEntityAmmoTurret | BlueprintEntityArithmeticCombinator | BlueprintEntityArtilleryTurret | BlueprintEntityArtilleryWagon | BlueprintEntityAssemblingMachine | BlueprintEntityAsteroidCollector | BlueprintEntityCar | BlueprintEntityCargoLandingPad | BlueprintEntityCargoWagon | BlueprintEntityConstantCombinator | BlueprintEntityContainer | BlueprintEntityDeciderCombinator | BlueprintEntityDisplayPanel | BlueprintEntityElectricEnergyInterface | BlueprintEntityElectricTurret | BlueprintEntityFluidTurret | BlueprintEntityFluidWagon | BlueprintEntityFurnace | BlueprintEntityHeatInterface | BlueprintEntityInfinityCargoWagon | BlueprintEntityInfinityContainer | BlueprintEntityInfinityPipe | BlueprintEntityInserter | BlueprintEntityLamp | BlueprintEntityLaneSplitter | BlueprintEntityLinkedBelt | BlueprintEntityLinkedContainer | BlueprintEntityLoader | BlueprintEntityLoader1x1 | BlueprintEntityLocomotive | BlueprintEntityLogisticContainer | BlueprintEntityMiningDrill | BlueprintEntityPowerSwitch | BlueprintEntityProgrammableSpeaker | BlueprintEntityProxyContainer | BlueprintEntityPump | BlueprintEntityRailChainSignal | BlueprintEntityRailSignal | BlueprintEntityReactor | BlueprintEntityRoboport | BlueprintEntitySelectorCombinator | BlueprintEntitySpacePlatformHub | BlueprintEntitySpiderVehicle | BlueprintEntitySplitter | BlueprintEntityStorageTank | BlueprintEntityTrainStop | BlueprintEntityTransportBelt | BlueprintEntityTurret | BlueprintEntityUndergroundBelt | BlueprintEntityValve | BlueprintEntityWall;
+type BlueprintEntity = BaseBlueprintEntity | BlueprintEntityAccumulator | BlueprintEntityAgriculturalTower | BlueprintEntityAmmoTurret | BlueprintEntityArithmeticCombinator | BlueprintEntityArtilleryTurret | BlueprintEntityArtilleryWagon | BlueprintEntityAssemblingMachine | BlueprintEntityAsteroidCollector | BlueprintEntityCar | BlueprintEntityCargoLandingPad | BlueprintEntityCargoWagon | BlueprintEntityConstantCombinator | BlueprintEntityContainer | BlueprintEntityDeciderCombinator | BlueprintEntityDisplayPanel | BlueprintEntityElectricEnergyInterface | BlueprintEntityElectricTurret | BlueprintEntityFluidTurret | BlueprintEntityFluidWagon | BlueprintEntityFurnace | BlueprintEntityHeatInterface | BlueprintEntityInfinityCargoWagon | BlueprintEntityInfinityContainer | BlueprintEntityInfinityPipe | BlueprintEntityInserter | BlueprintEntityLamp | BlueprintEntityLaneSplitter | BlueprintEntityLinkedBelt | BlueprintEntityLinkedContainer | BlueprintEntityLoader | BlueprintEntityLoader1x1 | BlueprintEntityLocomotive | BlueprintEntityLogisticContainer | BlueprintEntityMiningDrill | BlueprintEntityPowerSwitch | BlueprintEntityProgrammableSpeaker | BlueprintEntityProxyContainer | BlueprintEntityPump | BlueprintEntityRailChainSignal | BlueprintEntityRailSignal | BlueprintEntityReactor | BlueprintEntityRoboport | BlueprintEntityRocketSilo | BlueprintEntitySelectorCombinator | BlueprintEntitySpacePlatformHub | BlueprintEntitySpiderVehicle | BlueprintEntitySplitter | BlueprintEntityStorageTank | BlueprintEntityTrainStop | BlueprintEntityTransportBelt | BlueprintEntityTurret | BlueprintEntityUndergroundBelt | BlueprintEntityValve | BlueprintEntityWall;
 /**
  *
  * Applies to variant case `accumulator`
@@ -531,8 +535,8 @@ interface BlueprintEntityAmmoTurret extends BaseBlueprintEntity {
     /**
      * Defaults to `false`.
      */
-    'ignore_unprioritised'?: boolean;
-    'priority_list'?: SlotFilter;
+    'ignore-unprioritised'?: boolean;
+    'priority-list'?: SlotFilter;
 }
 /**
  *
@@ -540,7 +544,7 @@ interface BlueprintEntityAmmoTurret extends BaseBlueprintEntity {
  */
 interface BlueprintEntityArithmeticCombinator extends BaseBlueprintEntity {
     'control_behavior'?: ArithmeticCombinatorBlueprintControlBehavior;
-    'description'?: string;
+    'player_description'?: string;
 }
 /**
  *
@@ -627,7 +631,7 @@ interface BlueprintEntityCargoWagon extends BaseBlueprintEntity {
  */
 interface BlueprintEntityConstantCombinator extends BaseBlueprintEntity {
     'control_behavior'?: ConstantCombinatorBlueprintControlBehavior;
-    'description'?: string;
+    'player_description'?: string;
 }
 /**
  *
@@ -644,7 +648,7 @@ interface BlueprintEntityContainer extends BaseBlueprintEntity {
  */
 interface BlueprintEntityDeciderCombinator extends BaseBlueprintEntity {
     'control_behavior'?: DeciderCombinatorBlueprintControlBehavior;
-    'description'?: string;
+    'player_description'?: string;
 }
 /**
  *
@@ -681,8 +685,8 @@ interface BlueprintEntityElectricTurret extends BaseBlueprintEntity {
     /**
      * Defaults to `false`.
      */
-    'ignore_unprioritised'?: boolean;
-    'priority_list'?: SlotFilter;
+    'ignore-unprioritised'?: boolean;
+    'priority-list'?: SlotFilter;
 }
 /**
  *
@@ -693,8 +697,8 @@ interface BlueprintEntityFluidTurret extends BaseBlueprintEntity {
     /**
      * Defaults to `false`.
      */
-    'ignore_unprioritised'?: boolean;
-    'priority_list'?: SlotFilter;
+    'ignore-unprioritised'?: boolean;
+    'priority-list'?: SlotFilter;
 }
 /**
  *
@@ -732,6 +736,7 @@ interface BlueprintEntityInfinityCargoWagon extends BaseBlueprintEntity {
     'enable_logistics_while_moving': boolean;
     'grid'?: BlueprintEquipment[];
     'infinity_settings': BlueprintInfinityInventorySettings;
+    'inventory': BlueprintInventoryWithFilters;
     'orientation': RealOrientation;
 }
 /**
@@ -932,11 +937,22 @@ interface BlueprintEntityRoboport extends BaseBlueprintEntity {
 }
 /**
  *
+ * Applies to variant case `rocket-silo`
+ */
+interface BlueprintEntityRocketSilo extends BaseBlueprintEntity {
+    'control_behavior'?: RocketSiloBlueprintControlBehavior;
+    'launch_to_orbit_automatically'?: boolean;
+    'recipe'?: string;
+    'recipe_quality'?: string;
+    'use_transitional_requests'?: boolean;
+}
+/**
+ *
  * Applies to variant case `selector-combinator`
  */
 interface BlueprintEntitySelectorCombinator extends BaseBlueprintEntity {
     'control_behavior'?: SelectorCombinatorParameters;
-    'description'?: string;
+    'player_description'?: string;
 }
 /**
  *
@@ -954,6 +970,7 @@ interface BlueprintEntitySpacePlatformHub extends BaseBlueprintEntity {
  */
 interface BlueprintEntitySpiderVehicle extends BaseBlueprintEntity {
     'ammo_inventory': BlueprintInventoryWithFilters;
+    'automatic_targeting_parameters': VehicleAutomaticTargetingParameters;
     'color'?: Color;
     'driver_is_main_gunner': boolean;
     'enable_logistics_while_moving': boolean;
@@ -988,6 +1005,7 @@ interface BlueprintEntityTrainStop extends BaseBlueprintEntity {
     'control_behavior'?: TrainStopBlueprintControlBehavior;
     'manual_trains_limit'?: uint;
     'priority'?: uint8;
+    'station': string;
 }
 /**
  *
@@ -1005,8 +1023,8 @@ interface BlueprintEntityTurret extends BaseBlueprintEntity {
     /**
      * Defaults to `false`.
      */
-    'ignore_unprioritised'?: boolean;
-    'priority_list'?: SlotFilter;
+    'ignore-unprioritised'?: boolean;
+    'priority-list'?: SlotFilter;
 }
 /**
  *
@@ -2095,9 +2113,13 @@ interface ElemID {
      */
     name: string;
     /**
-     * Name of a quality prototype if `type` use quality.
+     * Name of a quality prototype if `type` uses quality.
      */
     quality?: string;
+    /**
+     * Only loaded, and mandatory if `type` is `"signal"`.
+     */
+    signal_type?: SignalIDType;
 }
 /**
  * A {@link string | runtime:string} specifying a type for {@link choose elem buttons | runtime:LuaGuiElement::elem_type}. It's also used by {@link ElemID | runtime:ElemID} for {@link LuaGuiElement::elem_tooltip | runtime:LuaGuiElement::elem_tooltip}.
@@ -2689,6 +2711,10 @@ interface Fluid {
      */
     temperature?: float;
 }
+/**
+ * A fluid amount. The amount is stored as a fixed-size signed 64 bit integer, with 24 bits reserved for decimal precision, meaning the smallest value step is `1/2^24`.
+ */
+type FluidAmount = double;
 interface FluidBoxConnectionRecord {
     this_linked_connection_id: uint;
     other_entity: LuaEntity;
@@ -3402,10 +3428,6 @@ interface InserterBlueprintControlBehavior {
      */
     connect_to_logistic_network?: boolean;
     logistic_condition?: CircuitCondition;
-}
-interface InserterCircuitConditions {
-    circuit?: CircuitCondition;
-    logistics?: CircuitCondition;
 }
 type InventoryIndex = uint8;
 interface InventoryPosition {
@@ -8105,7 +8127,7 @@ interface SegmentedUnitAIStatePatrolling extends BaseSegmentedUnitAIState {
 }
 interface SelectedPrototypeData {
     /**
-     * E.g. `"entity"`.
+     * The base type of the prototype. E.g. `"entity"`.
      */
     base_type: IDType;
     /**
@@ -8691,7 +8713,7 @@ interface BaseTechnologyModifier {
 /**
  * The effect that is applied when a technology is researched.
  */
-type TechnologyModifier = BaseTechnologyModifier | TechnologyModifierAmmoDamage | TechnologyModifierArtilleryRange | TechnologyModifierBeaconDistribution | TechnologyModifierBeltStackSizeBonus | TechnologyModifierBulkInserterCapacityBonus | TechnologyModifierCargoLandingPadCount | TechnologyModifierChangeRecipeProductivity | TechnologyModifierCharacterBuildDistance | TechnologyModifierCharacterCraftingSpeed | TechnologyModifierCharacterHealthBonus | TechnologyModifierCharacterInventorySlotsBonus | TechnologyModifierCharacterItemDropDistance | TechnologyModifierCharacterItemPickupDistance | TechnologyModifierCharacterLogisticRequests | TechnologyModifierCharacterLogisticTrashSlots | TechnologyModifierCharacterLootPickupDistance | TechnologyModifierCharacterMiningSpeed | TechnologyModifierCharacterReachDistance | TechnologyModifierCharacterResourceReachDistance | TechnologyModifierCharacterRunningSpeed | TechnologyModifierCliffDeconstructionEnabled | TechnologyModifierCreateGhostOnEntityDeath | TechnologyModifierDeconstructionTimeToLive | TechnologyModifierFollowerRobotLifetime | TechnologyModifierGiveItem | TechnologyModifierGunSpeed | TechnologyModifierInserterStackSizeBonus | TechnologyModifierLaboratoryProductivity | TechnologyModifierLaboratorySpeed | TechnologyModifierMaxFailedAttemptsPerTickPerConstructionQueue | TechnologyModifierMaxSuccessfulAttemptsPerTickPerConstructionQueue | TechnologyModifierMaximumFollowingRobotsCount | TechnologyModifierMiningDrillProductivityBonus | TechnologyModifierMiningWithFluid | TechnologyModifierNothing | TechnologyModifierRailPlannerAllowElevatedRails | TechnologyModifierRailSupportOnDeepOilOcean | TechnologyModifierTurretAttack | TechnologyModifierUnlockCircuitNetwork | TechnologyModifierUnlockQuality | TechnologyModifierUnlockRecipe | TechnologyModifierUnlockSpaceLocation | TechnologyModifierUnlockSpacePlatforms | TechnologyModifierVehicleLogistics | TechnologyModifierVehicleLogistics | TechnologyModifierWorkerRobotBattery | TechnologyModifierWorkerRobotSpeed | TechnologyModifierWorkerRobotStorage;
+type TechnologyModifier = BaseTechnologyModifier | TechnologyModifierAmmoDamage | TechnologyModifierArtilleryRange | TechnologyModifierBeaconDistribution | TechnologyModifierBeltStackSizeBonus | TechnologyModifierBulkInserterCapacityBonus | TechnologyModifierCargoLandingPadCount | TechnologyModifierChangeRecipeProductivity | TechnologyModifierCharacterBuildDistance | TechnologyModifierCharacterCraftingSpeed | TechnologyModifierCharacterHealthBonus | TechnologyModifierCharacterInventorySlotsBonus | TechnologyModifierCharacterItemDropDistance | TechnologyModifierCharacterItemPickupDistance | TechnologyModifierCharacterLogisticRequests | TechnologyModifierCharacterLogisticTrashSlots | TechnologyModifierCharacterLootPickupDistance | TechnologyModifierCharacterMiningSpeed | TechnologyModifierCharacterReachDistance | TechnologyModifierCharacterResourceReachDistance | TechnologyModifierCharacterRunningSpeed | TechnologyModifierCliffDeconstructionEnabled | TechnologyModifierCreateGhostOnEntityDeath | TechnologyModifierDeconstructionTimeToLive | TechnologyModifierFollowerRobotLifetime | TechnologyModifierGiveItem | TechnologyModifierGunSpeed | TechnologyModifierInserterStackSizeBonus | TechnologyModifierLaboratoryProductivity | TechnologyModifierLaboratorySpeed | TechnologyModifierMaxFailedAttemptsPerTickPerConstructionQueue | TechnologyModifierMaxSuccessfulAttemptsPerTickPerConstructionQueue | TechnologyModifierMaximumFollowingRobotsCount | TechnologyModifierMiningDrillProductivityBonus | TechnologyModifierMiningWithFluid | TechnologyModifierNothing | TechnologyModifierRailPlannerAllowElevatedRails | TechnologyModifierRailSupportOnDeepOilOcean | TechnologyModifierTrainBrakingForceBonus | TechnologyModifierTurretAttack | TechnologyModifierUnlockCircuitNetwork | TechnologyModifierUnlockQuality | TechnologyModifierUnlockRecipe | TechnologyModifierUnlockSpaceLocation | TechnologyModifierUnlockSpacePlatforms | TechnologyModifierVehicleLogistics | TechnologyModifierWorkerRobotBattery | TechnologyModifierWorkerRobotSpeed | TechnologyModifierWorkerRobotStorage;
 /**
  *
  * Applies to variant case `ammo-damage`
@@ -9232,6 +9254,20 @@ interface TechnologyModifierRailSupportOnDeepOilOcean extends BaseTechnologyModi
 }
 /**
  *
+ * Applies to variant case `train-braking-force-bonus`
+ */
+interface TechnologyModifierTrainBrakingForceBonus extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'train-braking-force-bonus';
+    /**
+     * The amount to increase the current train braking force by upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
  * Applies to variant case `turret-attack`
  */
 interface TechnologyModifierTurretAttack extends BaseTechnologyModifier {
@@ -9313,20 +9349,6 @@ interface TechnologyModifierUnlockSpacePlatforms extends BaseTechnologyModifier 
      * Modifier type. Specifies which of the other fields will be available.
      */
     'type': 'unlock-space-platforms';
-    /**
-     * The state this modifier will be in upon researching.
-     */
-    'modifier': boolean;
-}
-/**
- *
- * Applies to variant case `vehicle-logistics`
- */
-interface TechnologyModifierVehicleLogistics extends BaseTechnologyModifier {
-    /**
-     * Modifier type. Specifies which of the other fields will be available.
-     */
-    'type': 'vehicle-logistics';
     /**
      * The state this modifier will be in upon researching.
      */
@@ -9522,7 +9544,7 @@ interface TileBuildabilityRule {
     /**
      * If the entity should be removed upon collision.
      */
-    remove_on_collision: bool;
+    remove_on_collision: boolean;
 }
 /**
  * A tile may be specified in one of three ways.
@@ -10003,7 +10025,7 @@ interface BaseUndoRedoAction {
     /**
      * The type of action that was undone or redone.
      */
-    type: string;
+    type: 'built-entity' | 'built-tile' | 'copy-entity-settings' | 'removed-entity' | 'removed-tile' | 'upgraded-entity' | 'upgraded-modules' | 'wire-added' | 'wire-removed' | 'rotated-entity';
     /**
      * The tags attached to the undo action, if any.
      */
