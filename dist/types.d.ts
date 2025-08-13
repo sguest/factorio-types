@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.62
+// Factorio version 2.0.64
 // API version 6
 
 declare namespace prototype {
@@ -3278,6 +3278,10 @@ interface CreateEntityTriggerEffectItemBase extends TriggerEffectItem {
      */
     offsets?: Vector[];
     /**
+     * Create the entity only when they are within a 200 tile range of any connected player.
+     */
+    only_when_visible?: boolean;
+    /**
      * The result entity will be protected from automated attacks of enemies.
      */
     protected?: boolean;
@@ -3322,7 +3326,7 @@ interface CreateParticleTriggerEffectItemBase extends TriggerEffectItem {
     offset_deviation?: SimpleBoundingBox;
     offsets?: Vector[];
     /**
-     * Create particles only when they are in 200 tiles range of any connected player.
+     * Create the particle only when they are within a 200 tile range of any connected player.
      */
     only_when_visible?: boolean;
     particle_name: ParticleID;
