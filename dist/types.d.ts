@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.64
+// Factorio version 2.0.65
 // API version 6
 
 declare namespace prototype {
@@ -4961,6 +4961,9 @@ interface FrequencySizeRichness {
 type FuelCategoryID = string;
 interface FusionGeneratorDirectionGraphicsSet {
     animation?: Animation;
+    /**
+     * The amount of items in this array has to match the amount of {@link input fluid connections | prototype:FusionGeneratorPrototype::input_fluid_box}. Empty tables can be used as items to fulfill this requirement without defining graphics.
+     */
     fluid_input_graphics?: FusionGeneratorFluidInputGraphics[];
     fusion_effect_uv_map?: Sprite;
     working_light?: Animation;
@@ -5225,9 +5228,6 @@ interface HeatEnergySource extends BaseEnergySource {
      */
     connections?: HeatConnection[];
     default_temperature?: double;
-    /**
-     * Heat energy sources do not support producing pollution.
-     */
     emissions_per_minute?: Record<AirbornePollutantID, double>;
     heat_glow?: Sprite4Way;
     heat_picture?: Sprite4Way;
