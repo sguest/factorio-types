@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.64
+// Factorio version 2.0.65
 // API version 6
 
 declare namespace runtime {
@@ -8264,9 +8264,9 @@ interface SelectorCombinatorParametersQualityTransfer extends BaseSelectorCombin
     'quality_destination_signal': SignalID;
     'quality_source_signal'?: SignalIDBase;
     /**
-     * Defaults to normal quality.
+     * The name of the quality prototype. Defaults to `"normal"`.
      */
-    'quality_source_static'?: QualityID;
+    'quality_source_static'?: string;
     /**
      * Defaults to `false`.
      */
@@ -8298,7 +8298,7 @@ interface SelectorCombinatorParametersSelect extends BaseSelectorCombinatorParam
     /**
      * The signal index to use if not using a specific `index_signal`. Defaults to `0`.
      */
-    'index_constant'?: uint;
+    'index_constant'?: int;
     /**
      * The signal to use, if any.
      */

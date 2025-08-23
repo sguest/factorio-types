@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.64
+// Factorio version 2.0.65
 // API version 6
 
 declare namespace prototype {
@@ -1906,7 +1906,11 @@ interface CorpsePrototype extends EntityPrototype {
     decay_animation?: RotatedAnimationVariations;
     decay_frame_transition_duration?: float;
     /**
-     * An array of arrays of integers. The inner arrays are called "groups" and must all have the same size.
+     * May not be an empty array. May not be used if there is no `animation` defined.
+     *
+     * The inner arrays are called "groups" and must all have the same size.
+     *
+     * The indices map to the directions of `animation` and they are 1-indexed. After the `shuffle_directions_at_frame` frame of the `animation`, these indices are used as the direction when choosing which frame to render. The chosen shuffled direction can be any direction in the same group as the non-shuffled direction. Which direction is chosen from the group depends on the shuffle variation which is `dying_graphics_variation % group_size`.
      */
     direction_shuffle?: uint16[][];
     /**
@@ -1927,6 +1931,9 @@ interface CorpsePrototype extends EntityPrototype {
     ground_patch_render_layer?: RenderLayer;
     remove_on_entity_placement?: boolean;
     remove_on_tile_placement?: boolean;
+    /**
+     * Defines after which frame in the `animation` the `direction_shuffle` should be applied. Can be set to `0`, frames are 1-indexed.
+     */
     shuffle_directions_at_frame?: uint8;
     splash?: AnimationVariations;
     splash_render_layer?: RenderLayer;
@@ -3180,6 +3187,7 @@ interface EntityPrototype extends Prototype {
      */
     deconstruction_alternative?: EntityID;
     diagonal_tile_grid_size?: TilePosition;
+    draw_stateless_visualisations_in_ghost?: boolean;
     /**
      * Specification of extra vertical space needed to see the whole entity in GUIs. This is used to calculate the correct zoom and positioning in the entity info gui, for example in the entity tooltip.
      * @example ```
@@ -5408,6 +5416,7 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype {
      * If filters are per lane. Can only be set to true if filter_count is equal to 2.
      */
     per_lane_filters?: boolean;
+    respect_insert_limits?: boolean;
     structure?: LoaderStructure;
     structure_render_layer?: RenderLayer;
     /**
@@ -6570,6 +6579,8 @@ interface QualityPrototype extends Prototype {
     science_pack_drain_multiplier?: float;
     /**
      * Must be >= 0.01.
+     *
+     * Affects the durability of {@link tool items | prototype:ToolPrototype} like science packs, repair tools and armor.
      */
     tool_durability_multiplier?: double;
 }
@@ -9846,7 +9857,7 @@ interface TutorialDefinition extends PrototypeBase {
      */
     order?: Order;
     /**
-     * Name of the folder for this tutorial scenario in the {@link `tutorials` folder | https://wiki.factorio.com/Tutorial:Mod_structure#Subfolders}.
+     * Name of the folder for this tutorial scenario in the {@link `tutorials` folder | runtime:mod-structure}.
      */
     scenario: string;
 }

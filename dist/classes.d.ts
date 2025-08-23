@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.64
+// Factorio version 2.0.65
 // API version 6
 
 declare namespace runtime {
@@ -5878,7 +5878,7 @@ interface LuaDecorativePrototype extends LuaPrototypeBase {
      */
     readonly object_name: string;
     readonly placed_effect?: TriggerEffectItem[];
-    readonly render_layer: string;
+    readonly render_layer: RenderLayer;
     readonly target_count: uint;
     readonly trigger_effect?: TriggerEffectItem[];
     /**
@@ -7059,7 +7059,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Icon visible on the display panel. Can be written only when it is not set by control behavior.
      */
-    display_panel_icon: SignalID;
+    display_panel_icon?: SignalID;
     display_panel_show_in_chart: boolean;
     /**
      * Text visible on the display panel. Can be written only when it is not set by control behavior.
@@ -7372,9 +7372,9 @@ interface LuaEntity extends LuaControl {
     /**
      * Not minable entities can still be destroyed.
      *
-     * Tells if entity reports as being minable right now. This takes into account minable_flag and entity specific conditions (for example rail under rolling stocks is not minable, vehicle with passenger is not minable).
+     * Tells if entity reports as being minable right now. This takes into account `minable_flag` and entity specific conditions (for example rail under rolling stocks is not minable, vehicle with passenger is not minable).
      *
-     * Write to this field since 2.0.26 is deprecated and it will result in write to minable_flag instead.
+     * Write to this field since 2.0.26 is deprecated and it will result in write to `minable_flag` instead.
      */
     minable: boolean;
     /**
@@ -8538,6 +8538,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The max belt stack size for this loader.
      */
     readonly loader_max_belt_stack_size?: uint8;
+    readonly loader_respect_insert_limits?: boolean;
     /**
      * True if this loader will not drop items for which total amount is less than a full belt stack.
      */
@@ -9654,7 +9655,7 @@ interface LuaFluidBoxPrototype {
     /**
      * The render layer.
      */
-    readonly render_layer: string;
+    readonly render_layer: RenderLayer;
     /**
      * The secondary draw orders for the 4 possible connection directions.
      */
