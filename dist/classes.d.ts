@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.65
+// Factorio version 2.0.66
 // API version 6
 
 declare namespace runtime {
@@ -89,7 +89,7 @@ interface LuaAchievementPrototype extends LuaPrototypeBase {
     readonly minimum_damage?: float;
     readonly minimum_distance?: double;
     readonly minimum_energy_produced?: double;
-    readonly module?: string[];
+    readonly module?: LuaItemPrototype[];
     readonly more_than_manually?: boolean;
     readonly not_to_kill?: LuaEntityPrototype;
     /**
@@ -6587,7 +6587,7 @@ interface LuaEntity extends LuaControl {
      */
     play_note(this: void, instrument: uint, note: uint, stop_playing_sounds?: boolean): boolean;
     /**
-     * Registers the given tree in this agricultral tower.
+     * Registers the given tree in this agricultural tower.
      *
      * If the tree is not within range of the tower it will not be registered.
      *
@@ -6633,15 +6633,15 @@ interface LuaEntity extends LuaControl {
     request_to_open(this: void, force: ForceID, extra_time?: uint): void;
     /**
      * Revive a ghost, which turns it from a ghost into a real entity or tile.
-     * @param table.return_item_request_proxy If `true` the function will return item request proxy as the third return value.
      * @param table.raise_revive If true, and an entity ghost; {@link script_raised_revive | runtime:script_raised_revive} will be called. Else if true, and a tile ghost; {@link script_raised_set_tiles | runtime:script_raised_set_tiles} will be called.
+     * @param table.overflow Items that would be deleted will be transferred to this inventory. Must be a script inventory or inventory of other entity. Inventory references obtained from proxy container are not allowed.
      * @returns [0] - Any items the new real entity collided with or `nil` if the ghost could not be revived.
      * @returns [1] - The revived entity if an entity ghost was successfully revived.
-     * @returns [2] - The item request proxy if it was requested with `return_item_request_proxy`.
+     * @returns [2] - The item request proxy if one was created.
      */
     revive(this: void, table: {
-        return_item_request_proxy?: boolean;
         raise_revive?: boolean;
+        overflow?: LuaInventory;
     }): LuaMultiReturn<[
         Record<string, uint> | null,
         LuaEntity | null,
@@ -6742,12 +6742,14 @@ interface LuaEntity extends LuaControl {
     /**
      * Revives a ghost silently, so the revival makes no sound and no smoke is created.
      * @param table.raise_revive If true, and an entity ghost; {@link script_raised_revive | runtime:script_raised_revive} will be called. Else if true, and a tile ghost; {@link script_raised_set_tiles | runtime:script_raised_set_tiles} will be called.
+     * @param table.overflow Items that would be deleted will be transferred to this inventory. Must be a script inventory or inventory of other entity. Inventory references obtained from proxy container are not allowed.
      * @returns [0] - Any items the new real entity collided with or `nil` if the ghost could not be revived.
      * @returns [1] - The revived entity if an entity ghost was successfully revived.
-     * @returns [2] - The item request proxy.
+     * @returns [2] - The item request proxy if one was created.
      */
     silent_revive(this: void, table: {
         raise_revive?: boolean;
+        overflow?: LuaInventory;
     }): LuaMultiReturn<[
         ItemWithQualityCounts,
         LuaEntity | null,
@@ -7869,6 +7871,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     get_inserter_rotation_speed(this: void, quality?: QualityID): double | null;
     /**
      * Gets the base size of the given inventory on this entity or `nil` if the given inventory doesn't exist.
+     * @param quality Defaults to `"normal"`.
      */
     get_inventory_size(this: void, index: defines.inventory, quality?: QualityID): uint | null;
     /**
@@ -8389,6 +8392,14 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly held_items_offset?: float;
     readonly held_items_spread?: float;
     readonly hide_resistances?: boolean;
+    /**
+     * The definition of where and how the alt-mode icons of this entity should be drawn.
+     */
+    readonly icon_draw_specification: IconDrawSpecification;
+    /**
+     * The icon positioning for inventories of this entity, if defined.
+     */
+    readonly icons_positioning?: IconSequencePositioning[];
     /**
      * A vector of the gun prototypes of this car, spider vehicle, artillery wagon, or turret.
      */
@@ -9826,6 +9837,7 @@ interface LuaForce {
     copy_from(this: void, force: ForceID): void;
     /**
      * Creates the given group if it doesn't already exist.
+     * @param type Defaults to `defines.logistic_group_type.with_trash`.
      */
     create_logistic_group(this: void, name: string, type?: defines.logistic_group_type): void;
     /**
@@ -9841,6 +9853,7 @@ interface LuaForce {
     }): LuaSpacePlatform | null;
     /**
      * Deletes the given logistic group if it exists.
+     * @param type Defaults to `defines.logistic_group_type.with_trash`.
      */
     delete_logistic_group(this: void, name: string, type?: defines.logistic_group_type): void;
     /**
@@ -9962,10 +9975,12 @@ interface LuaForce {
     get_linked_inventory(this: void, prototype: EntityID, link_id: uint): LuaInventory | null;
     /**
      * Gets the information about the given logistic group.
+     * @param type Defaults to `defines.logistic_group_type.with_trash`.
      */
     get_logistic_group(this: void, name: string, type?: defines.logistic_group_type): LogisticGroup | null;
     /**
      * Gets the names of the current logistic groups.
+     * @param type Defaults to `defines.logistic_group_type.with_trash`.
      */
     get_logistic_groups(this: void, type?: defines.logistic_group_type): string[];
     get_spawn_position(this: void, surface: SurfaceIdentification): MapPosition;
@@ -10753,6 +10768,12 @@ interface LuaGameScript {
      * @param player The player to unmute.
      */
     unmute_player(this: void, player: PlayerIdentification): void;
+    /**
+     * Whether players who are not {@link admins | runtime:LuaPlayer::admin} can access all debug settings. Set this to false to disallow access to most debug settings for non-admins.
+     *
+     * The following debug settings are always available to all players: `"show-fps"`, `"show-clock"`, `"show-time-to-next-autosave"`, `"show-detailed-info"`, `"show-time-usage"`, `"show-entity-time-usage"`, `"show-gpu-time-usage"`, `"show-sprite-counts"`, `"show-particle-counts"`, `"show-collector-navmesh-time-usage"`, `"show-lua-object-statistics"`, `"show-heat-buffer-info"`, `"show-multiplayer-waiting-icon"`, `"show-multiplayer-statistics"`, `"show-multiplayer-server-name"`, `"show-debug-info-in-tooltips"`, `"show-resistances-in-tooltips-always"`, `"hide-mod-guis"`, `"show-tile-grid"`, `"show-blueprint-grid"`, `"show-intermediate-volume-of-working-sounds"`, `"show-decorative-names"`, `"allow-increased-zoom"`, `"show-train-no-path-details"`, `"show-entity-tick"`, `"show-update-tick"`
+     */
+    allow_debug_settings: boolean;
     /**
      * If the tips are allowed to be activated in this scenario, it is false by default.
      *
@@ -14232,6 +14253,8 @@ interface LuaPlayer extends LuaControl {
     add_custom_alert(this: void, entity: LuaEntity, icon: SignalID, message: LocalisedString, show_on_map: boolean): void;
     /**
      * Adds a pin to this player for the given pin specification. Either entity, player, or surface and position must be defined.
+     * @param table.preview_distance Defaults to `16`.
+     * @param table.always_visible Defaults to `true`.
      * @param table.entity The entity to pin.
      * @param table.player The player to pin.
      * @param table.surface The surface to create the pin on.
@@ -16125,6 +16148,10 @@ interface LuaRecord {
      */
     readonly is_blueprint_preview: boolean;
     /**
+     * Checks if this record is in a preview state.
+     */
+    readonly is_preview: boolean;
+    /**
      * The current count of mappers in the upgrade item.
      */
     readonly mapper_count: uint;
@@ -16277,6 +16304,10 @@ interface LuaRenderObject {
      * Dash length of this line.
      */
     dash_length: double;
+    /**
+     * Starting offset to apply to dashes of this line. Cannot be greater than dash_length + gap_length.
+     */
+    dash_offset: double;
     /**
      * If this object is being drawn on the ground, under most entities and sprites.
      *
@@ -18989,7 +19020,7 @@ interface BaseLuaSurfaceCreateEntityParams {
      */
     'burner_fuel_inventory'?: BlueprintInventoryWithFilters;
     /**
-     * Cause entity / force. The entity or force that triggered the chain of events that led to this entity being created. Used for beams, projectiles, stickers, etc. so that the damage receiver can know which entity or force to retaliate against.
+     * Cause entity / force. The entity or force that triggered the chain of events that led to this entity being created. Used for beams, projectiles, stickers, etc. so that the damage receiver can know which entity or force to retaliate against. Defaults to the value of `source`.
      */
     'cause'?: LuaEntity | ForceID;
     /**

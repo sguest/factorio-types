@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.65
+// Factorio version 2.0.66
 // API version 6
 
 declare namespace prototype {
@@ -1532,10 +1532,6 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
     distance_per_frame: double;
     drop_item_distance: uint32;
     /**
-     * The sound played when the character eats (fish for example).
-     */
-    eat: Sound;
-    /**
      * Must be >= 0.
      */
     enter_vehicle_distance?: double;
@@ -1569,7 +1565,7 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
     /**
      * The sound played when the character's health is low.
      */
-    heartbeat: Sound;
+    heartbeat?: Sound;
     /**
      * Number of slots in the main inventory. May be 0.
      */
@@ -2016,6 +2012,8 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
     fast_transfer_modules_into_module_slots_only?: boolean;
     /**
      * The crafting machine's fluid boxes. If an assembling machine has fluid boxes *and* {@link AssemblingMachinePrototype::fluid_boxes_off_when_no_fluid_recipe | prototype:AssemblingMachinePrototype::fluid_boxes_off_when_no_fluid_recipe} is true, the assembling machine can only be rotated when a recipe consuming or producing fluid is set, or if it has one of the other properties listed at the top of this page.
+     *
+     * For assembling machines, any {@link filters | prototype:FluidBox::filter} set on the fluidboxes are ignored.
      * @example ```
     fluid_boxes =
     {
@@ -3228,7 +3226,7 @@ interface EntityPrototype extends Prototype {
      */
     icon?: FileName;
     /**
-     * Used to specify where and how should be the alt-mode icons of entities should be drawn.
+     * Used to specify where and how the alt-mode icons should be drawn.
      * @example ```
     icon_draw_specification = {shift = {0, 0.5}, scale = 0.75, scale_for_many = 0.5, render_layer = "entity-info-icon"}
     ```
@@ -5062,7 +5060,7 @@ interface LabPrototype extends EntityWithOwnerPrototype {
     science_pack_drain_rate_percent?: uint8;
     trash_inventory_size?: ItemStackIndex;
     /**
-     * Whether the {@link QualityPrototype::science_pack_drain_multiplier | prototype:QualityPrototype::science_pack_drain_multiplier} of the quality of the science pack should be considered by the lab.
+     * Whether the {@link QualityPrototype::science_pack_drain_multiplier | prototype:QualityPrototype::science_pack_drain_multiplier} of the quality of this lab should affect how much science is consumed to research one unit of technology.
      */
     uses_quality_drain_modifier?: boolean;
 }
@@ -5416,11 +5414,14 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype {
      * If filters are per lane. Can only be set to true if filter_count is equal to 2.
      */
     per_lane_filters?: boolean;
+    /**
+     * When set, this loader will respect the same automated insertion limits as inserters do, instead of inserting up to the full ingredient stack capacity.
+     */
     respect_insert_limits?: boolean;
     structure?: LoaderStructure;
     structure_render_layer?: RenderLayer;
     /**
-     * When set, loader will ignore items for which there is not enough to create a full belt stack. Relevant only when loader can create belt stacks.
+     * When set, this loader will ignore items for which there is not enough to create a full belt stack. Relevant only when loader can create belt stacks.
      */
     wait_for_full_stack?: boolean;
 }
@@ -6575,6 +6576,8 @@ interface QualityPrototype extends Prototype {
     range_multiplier?: double;
     /**
      * Must be in range `[0, 1]`.
+     *
+     * Only affects labs with {@link LabPrototype::uses_quality_drain_modifier | prototype:LabPrototype::uses_quality_drain_modifier} set.
      */
     science_pack_drain_multiplier?: float;
     /**
@@ -8439,7 +8442,7 @@ interface SpaceLocationPrototype extends Prototype {
     asteroid_spawn_influence?: double;
     auto_save_on_first_trip?: boolean;
     /**
-     * Distance from the location's parent body in map coordinates.
+     * Distance from the sun in map coordinates.
      */
     distance: double;
     /**
@@ -8479,7 +8482,7 @@ interface SpaceLocationPrototype extends Prototype {
      */
     magnitude?: double;
     /**
-     * Angle in relation to the parent body.
+     * Angle in relation to the sun.
      */
     orientation: RealOrientation;
     /**
@@ -8504,7 +8507,7 @@ interface SpaceLocationPrototype extends Prototype {
      */
     starmap_icon?: FileName;
     /**
-     * Orientation of the starmap icon, defaults to pointing towards the parent body.
+     * Orientation of the starmap icon, defaults to pointing towards the sun.
      */
     starmap_icon_orientation?: RealOrientation;
     /**
@@ -9329,7 +9332,7 @@ interface TilePrototype extends Prototype {
      * If items dropped on this tile are destroyed.
      */
     destroys_dropped_items?: boolean;
-    driving_sound?: Sound;
+    driving_sound?: InterruptibleSound;
     /**
      * Triggers when a foundation tile is destroyed by an asteroid.
      */

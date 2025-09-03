@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.65
+// Factorio version 2.0.66
 // API version 6
 
 declare namespace prototype {
@@ -5352,7 +5352,7 @@ interface IconData {
     tint?: Color;
 }
 /**
- * Specification of where and how should be the alt-mode icons of entities be drawn.
+ * Specification of where and how the alt-mode icons of entities should be drawn.
  */
 interface IconDrawSpecification {
     /**
@@ -5612,7 +5612,7 @@ type ItemPrototypeFlags = (/**
  * Item will be preferred by construction bots when building the entity specified by the item's {@link place_result | prototype:ItemPrototype::place_result}.
  */
 'primary-place-result' | /**
- * Only works for {@link SelectionToolPrototype | prototype:SelectionToolPrototype} and derived classes. Corresponds to the runtime {@link on_mod_item_opened | runtime:on_mod_item_opened} event.
+ * Allows the item to be opened by the player, firing the {@link on_mod_item_opened | runtime:on_mod_item_opened} event.
  */
 'mod-openable' | /**
  * Item is deleted when removed from the cursor by pressing `Q` ("clear cursor"). Used for example by the copy/paste tools.
@@ -9947,6 +9947,12 @@ interface SpriteSheet extends SpriteParameters {
      * Same as `dice` above, but this specifies only how many slices there are on the y axis.
      */
     dice_y?: SpriteSizeType;
+    /**
+     * Only loaded, and mandatory if `layers` and `filenames` are not defined.
+     *
+     * The path to the sprite file to use.
+     */
+    filename?: FileName;
     filenames?: FileName[];
     /**
      * If this property is present, all SpriteSheet definitions have to be placed as entries in the array, and they will all be loaded from there. `layers` may not be an empty table. Each definition in the array may also have the `layers` property.

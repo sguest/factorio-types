@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.65
+// Factorio version 2.0.66
 // API version 6
 
 declare namespace runtime {
@@ -4511,7 +4511,7 @@ interface on_tower_mined_plant {
     tower: LuaEntity;
 }
 /**
- * Called before an agricultural tower planets a seed.
+ * Called before an agricultural tower plants a seed.
  */
 interface on_tower_planted_seed {
     /**
@@ -4519,7 +4519,7 @@ interface on_tower_planted_seed {
      */
     name: defines.events;
     /**
-     * The plant which was planted.
+     * The plant that was planted.
      */
     plant: LuaEntity;
     /**
@@ -4531,7 +4531,7 @@ interface on_tower_planted_seed {
      */
     tick: uint;
     /**
-     * The tower that's did the planting.
+     * The tower that did the planting.
      */
     tower: LuaEntity;
 }
@@ -4544,7 +4544,7 @@ interface on_tower_pre_mined_plant {
      */
     name: defines.events;
     /**
-     * The plant which is about to be mined.
+     * The plant that is about to be mined.
      */
     plant: LuaEntity;
     /**
@@ -4552,7 +4552,7 @@ interface on_tower_pre_mined_plant {
      */
     tick: uint;
     /**
-     * The tower that's about to do the mining.
+     * The tower that is about to do the mining.
      */
     tower: LuaEntity;
 }
