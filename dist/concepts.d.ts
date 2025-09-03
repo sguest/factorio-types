@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.65
+// Factorio version 2.0.66
 // API version 6
 
 declare namespace runtime {
@@ -52,8 +52,17 @@ interface AddRecordData {
      * When `rail` is given, this can be provided to further narrow down direction from which that rail should be approached.
      */
     rail_direction?: defines.rail_direction;
+    /**
+     * Defaults to `false`.
+     */
     temporary?: boolean;
+    /**
+     * Defaults to `false`.
+     */
     created_by_interrupt?: boolean;
+    /**
+     * Defaults to `true`.
+     */
     allows_unloading?: boolean;
     wait_conditions?: WaitCondition[];
     /**
@@ -3113,9 +3122,9 @@ interface GuiAnchor {
      */
     names?: string[];
     /**
-     * One of `'both'`, `'only_ghosts'`, or `'only_real'`
+     * Defaults to `"only_real"`.
      */
-    ghost_mode?: string;
+    ghost_mode?: 'both' | 'only_ghosts' | 'only_real';
 }
 /**
  * Used for specifying where a GUI arrow should point to.
@@ -3317,6 +3326,21 @@ type HeatSettingMode = 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove';
  * All base prototype types.
  */
 type IDType = 'custom-input' | 'equipment-grid' | 'entity' | 'particle' | 'item' | 'collision-layer' | 'airborne-pollutant' | 'tile' | 'decorative' | 'recipe-category' | 'item-group' | 'item-subgroup' | 'recipe' | 'fluid' | 'ammo-category' | 'fuel-category' | 'resource-category' | 'technology' | 'noise-function' | 'noise-expression' | 'autoplace-control' | 'equipment' | 'damage-type' | 'virtual-signal' | 'achievement' | 'module-category' | 'equipment-category' | 'mod-setting' | 'trivial-smoke' | 'asteroid-chunk' | 'quality' | 'surface-property' | 'procession-layer-inheritance-group' | 'procession' | 'space-location' | 'space-connection' | 'active-trigger' | 'shortcut' | 'burner-usage' | 'surface' | 'mod-data' | 'custom-event';
+interface IconDrawSpecification {
+    shift: Vector;
+    scale: float;
+    scale_for_many: float;
+    render_layer?: 'entity-info-icon-below' | 'entity-info-icon-above' | 'air-entity-info-icon';
+}
+interface IconSequencePositioning {
+    inventory_index: defines.inventory;
+    max_icons_per_row: uint8;
+    max_icon_rows: uint8;
+    shift: Vector;
+    scale: float;
+    separation_multiplier: float;
+    multi_row_initial_height_modifier: float;
+}
 /**
  * A single filter used by an infinity-filters instance.
  */
@@ -3851,7 +3875,7 @@ type ItemPrototypeFlag = /**
  * Makes construction bots prefer this item when building the entity specified by its `place_result`.
  */
 'primary-place-result' | /**
- * Allows the item to be opened by the player, firing the `on_mod_item_opened` event. Only has an effect for selection tool items.
+ * Allows the item to be opened by the player, firing the {@link on_mod_item_opened | runtime:on_mod_item_opened} event.
  */
 'mod-openable' | /**
  * Makes it so the item is deleted when clearing the cursor, instead of being put into the player's inventory. The copy-paste tools use this by default, for example.
@@ -6916,6 +6940,7 @@ interface PlaceAsTileResult {
     condition_size: uint;
     condition: CollisionMask;
     invert: boolean;
+    tile_condition: LuaTilePrototype[];
 }
 interface PlatformSchedule {
     /**
