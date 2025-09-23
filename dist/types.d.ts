@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.66
+// Factorio version 2.0.67
 // API version 6
 
 declare namespace prototype {
@@ -1432,6 +1432,10 @@ interface AsteroidCollectorGraphicsSet {
     status_lamp_picture_full?: RotatedSprite;
     status_lamp_picture_off?: RotatedSprite;
     status_lamp_picture_on?: RotatedSprite;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface AsteroidGraphicsSet {
     ambient_light?: Color;
@@ -1447,6 +1451,10 @@ interface AsteroidGraphicsSet {
     sss_amount?: float;
     sss_contrast?: float;
     variations?: AsteroidVariation | AsteroidVariation[];
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface AsteroidSettings {
     max_ray_portals_expanded_per_tick: uint32;
@@ -1838,6 +1846,10 @@ interface BeaconGraphicsSet {
     random_animation_offset?: boolean;
     reset_animation_when_frozen?: boolean;
     top_layer?: RenderLayer;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface BeaconModuleVisualization {
     /**
@@ -1932,6 +1944,10 @@ interface BeamGraphicsSet {
     random_end_animation_rotation?: boolean;
     randomize_animation_per_segment?: boolean;
     transparent_start_end_animations?: boolean;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface BeamTriggerDelivery extends TriggerDeliveryItem {
     add_to_shooter?: boolean;
@@ -2223,6 +2239,10 @@ interface CargoBayConnectableGraphicsSet {
     animation_render_layer?: RenderLayer;
     connections?: CargoBayConnections;
     picture?: LayeredSprite;
+    /**
+     * Only loaded if this graphics set is used in a property called `graphics_set`, refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 /**
  * Walls should have an even number of variations because they are interleaved.
@@ -2516,6 +2536,10 @@ interface ChartUtilityConstants {
     green_wire_color: Color;
     rail_color: Color;
     rail_ramp_color: Color;
+    /**
+     * Must be larger than 0. This number is multiplied by the crafting machine's {@link radius | runtime:LuaEntityPrototype::radius} to get the final recipe icon scale for the chart.
+     */
+    recipe_icon_scale: float;
     red_signal_color: Color;
     red_wire_color: Color;
     resource_outline_selection_color: Color;
@@ -2543,6 +2567,11 @@ interface CheckBoxStyleSpecification extends StyleWithClickableGraphicalSetSpeci
     intermediate_mark?: Sprite;
     text_padding?: uint32;
     type: 'checkbox_style';
+}
+interface CircuitConditionConnector {
+    comparator?: ComparatorString;
+    first?: SignalIDConnector;
+    second?: SignalIDConnector | int32;
 }
 /**
  * Definition of a circuit connector.
@@ -3177,6 +3206,10 @@ interface CraftingMachineGraphicsSet extends WorkingVisualisations {
     circuit_connector_secondary_draw_order?: int8 | CircuitConnectorSecondaryDrawOrder;
     frozen_patch?: Sprite4Way;
     reset_animation_when_frozen?: boolean;
+    /**
+     * Only loaded if this graphics set is used in a property called `graphics_set`, refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface CranePart {
     allow_sprite_rotation?: boolean;
@@ -4200,6 +4233,10 @@ interface EnemySpawnerGraphicsSet {
     underwater_animations?: AnimationVariations;
     underwater_layer_offset?: int8;
     water_effect_map_animations?: AnimationVariations;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 /**
  * Specifies an amount of electric energy in joules, or electric energy per time in watts.
@@ -4644,7 +4681,7 @@ interface FluidBoxSecondaryDrawOrders {
 }
 interface FluidEnergySource extends BaseEnergySource {
     /**
-     * If set to `true`, the energy source will calculate power based on the fluid's `fuel_value`, else it will calculate based on fluid temperature.
+     * If set to `true`, the available power output is based on the {@link FluidPrototype::fuel_value | prototype:FluidPrototype::fuel_value}. Otherwise, the available power output will be based on the fluid temperature and {@link FluidPrototype::heat_capacity | prototype:FluidPrototype::heat_capacity}: `energy = fluid_amount * (fluid_temperature - fluid_default_temperature) * fluid_heat_capacity * effectivity`
      */
     burns_fluid?: boolean;
     /**
@@ -4980,6 +5017,10 @@ interface FusionGeneratorGraphicsSet {
     north_graphics_set: FusionGeneratorDirectionGraphicsSet;
     render_layer?: RenderLayer;
     south_graphics_set: FusionGeneratorDirectionGraphicsSet;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
     west_graphics_set: FusionGeneratorDirectionGraphicsSet;
 }
 interface FusionReactorConnectionGraphics {
@@ -5000,6 +5041,10 @@ interface FusionReactorGraphicsSet {
     render_layer?: RenderLayer;
     structure?: Sprite4Way;
     use_fuel_glow_color?: boolean;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
     working_light_pictures?: Sprite4Way;
 }
 interface GameControllerVibrationData {
@@ -5309,7 +5354,7 @@ icons =
  */
 interface IconData {
     /**
-     * Outline is drawn using signed distance field generated on load. One icon image, will have only one SDF generated. But if the image is used in multiple icon with different scales, outline width won't match the desired width in all the scales but the largest one.
+     * Outline is drawn using signed distance field generated on load. One icon image will have only one SDF generated. That means if the image is used in multiple icons with different scales, the outline width won't match the desired width in all the scales except the largest one.
      */
     draw_background?: boolean;
     /**
@@ -5358,7 +5403,7 @@ interface IconDrawSpecification {
     /**
      * Render layer of the icon.
      */
-    renderLayer?: 'entity-info-icon-below' | 'entity-info-icon-above' | 'air-entity-info-icon';
+    render_layer?: 'entity-info-icon' | 'entity-info-icon-above' | 'air-entity-info-icon';
     scale?: float;
     /**
      * Scale of the icon when there are many items.
@@ -5883,6 +5928,10 @@ interface LightningGraphicsSet {
      * If not empty, enables the lightning shader.
      */
     shader_configuration?: LightningShaderConfiguration[];
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface LightningPriorityRule extends LightningRuleBaseBase {
     priority_bonus: int32;
@@ -6514,6 +6563,10 @@ interface MiningDrillGraphicsSet extends WorkingVisualisations {
     drilling_vertical_movement_duration?: uint16;
     frozen_patch?: Sprite4Way;
     reset_animation_when_frozen?: boolean;
+    /**
+     * Only loaded if this graphics set is used in a property called `graphics_set`, refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface MiningDrillProductivityBonusModifier extends SimpleModifier {
     /**
@@ -6793,7 +6846,7 @@ interface NestedTriggerEffectItem extends TriggerEffectItem {
  *
  * - `+x`, `-x`, `~x`: Unary plus and minus and unary bitwise not
  *
- * - `x*y`, `x/y`, `x%y`, `x%%y`: Multiplication and division, modulo and remainder.
+ * - `x*y`, `x/y`, `x%y`, `x%%y`: Multiplication and division, modulo and remainder
  *
  * - `x+y`, `x-y`: Addition and subtraction
  *
@@ -6812,6 +6865,8 @@ interface NestedTriggerEffectItem extends TriggerEffectItem {
  * The boolean operators (less than, less than or equal, equal, not equal, greater than, greater than or equal) take two numbers and return 0 for false or 1 for true.
  *
  * The bitwise operators convert single-precision floating-point numbers to signed 32-bit integers before computing the result.
+ *
+ * Exponentiation and the unary operators are right-to-left associative. The rest of the operators are left-to-right associative.
  * @example ```
 "distance_from_nearest_point{x = x, y = y, points = starting_positions}"
 ```
@@ -6875,6 +6930,10 @@ interface OffshorePumpGraphicsSet {
      * Drawn by tile renderer when water animation is enabled.
      */
     underwater_pictures?: Sprite4Way;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface OrTipTrigger {
     /**
@@ -7712,12 +7771,12 @@ interface ProcessionGraphic {
  */
 type ProcessionGraphicCatalogue = ProcessionGraphicCatalogueItem[];
 /**
- * Either picture or animation must be provided.
+ * Either animation or sprite must be provided.
  */
 interface ProcessionGraphicCatalogueItem {
     animation?: Animation;
     index: uint32;
-    picture?: Sprite;
+    sprite?: Sprite;
 }
 /**
  * Types of {@link ProcessionGraphic | prototype:ProcessionGraphic}.
@@ -7844,10 +7903,7 @@ type ProductPrototype = /**
 ItemProductPrototype | /**
  * Loaded when the `type` is `"fluid"`.
  */
-FluidProductPrototype | /**
- * Loaded when the `type` is `"research-progress"`.
- */
-ResearchProgressProductPrototype;
+FluidProductPrototype;
 interface ProductionHealthEffect {
     not_producing?: float;
     producing?: float;
@@ -8258,6 +8314,10 @@ interface RailSupportGraphicsSet {
     structure: RotatedSprite;
     underwater_layer_offset?: int8;
     underwater_structure?: RotatedSprite;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface RailSupportOnDeepOilOceanModifier extends BoolModifier {
     type: 'rail-support-on-deep-oil-ocean';
@@ -8349,14 +8409,6 @@ type ResearchIngredient = [
     ItemID,
     uint16
 ];
-/**
- * A research progress product definition.
- */
-interface ResearchProgressProductPrototype {
-    amount?: double;
-    research_item: ItemID;
-    type: 'research-progress';
-}
 interface ResearchTechnologyTipTrigger {
     technology: TechnologyID;
     type: 'research';
@@ -9481,6 +9533,10 @@ interface SpiderLegGraphicsSet {
     upper_part?: SpiderLegPart;
     upper_part_shadow?: SpiderLegPart;
     upper_part_water_reflection?: SpiderLegPart;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface SpiderLegPart {
     bottom_end?: RotatedSprite;
@@ -9554,6 +9610,10 @@ interface SpiderTorsoGraphicsSet {
     render_layer?: RenderLayer;
     shadow_animation?: RotatedAnimation;
     shadow_base_animation?: RotatedAnimation;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 /**
  * Used to specify the graphics for {@link SpiderVehiclePrototype | prototype:SpiderVehiclePrototype}.
@@ -10118,7 +10178,7 @@ interface StatelessVisualisation {
     /**
      * One of `nested_visualisations`, `animation` and `light` needs to be defined.
      */
-    nested_visualisations?: StatelessVisualisations;
+    nested_visualisations?: StatelessVisualisation | StatelessVisualisation[];
     offset_x?: RangedValue;
     offset_y?: RangedValue;
     offset_z?: RangedValue;
@@ -10145,7 +10205,6 @@ interface StatelessVisualisation {
     speed_z?: RangedValue;
     spread_progress_duration?: float;
 }
-type StatelessVisualisations = StatelessVisualisation | StatelessVisualisation[];
 interface StatusColors {
     disabled?: Color;
     full_output?: Color;
@@ -10631,6 +10690,10 @@ interface ThrusterGraphicsSet extends WorkingVisualisations {
     flame_effect_width?: float;
     flame_half_height?: float;
     flame_position?: Vector;
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 type ThrusterPerformancePoint = {
     effectivity: double;
@@ -11478,6 +11541,7 @@ interface TrainVisualizationConstants {
     final_margin: float;
     joint_distance: float;
     last_box_color: Color;
+    last_reverse_box_color: Color;
     not_last_box_color: Color;
     reverse_box_color: Color;
     stock_number_scale: float;
@@ -11991,6 +12055,10 @@ interface TurretBaseVisualisation {
 }
 interface TurretGraphicsSet {
     base_visualisation?: TurretBaseVisualisation | TurretBaseVisualisation[];
+    /**
+     * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
+     */
+    water_reflection?: WaterReflectionDefinition;
 }
 interface TurretSpecialEffect {
     /**

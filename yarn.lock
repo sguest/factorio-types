@@ -86,10 +86,10 @@ diff@^4.0.1:
   resolved "https://registry.npmjs.org/diff/-/diff-4.0.2.tgz"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
-enhanced-resolve@^5.8.2:
-  version "5.17.0"
-  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.17.0.tgz#d037603789dd9555b89aaec7eb78845c49089bc5"
-  integrity sha512-dwDPwZL0dmye8Txp2gzFmA6sxALaSvdRDjPH0viLcKrtlOL3tw62nWWweVD1SdILDTJrbrL6tdWVN58Wo6U3eA==
+enhanced-resolve@5.8.2:
+  version "5.8.2"
+  resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.8.2.tgz#15ddc779345cbb73e97c611cd00c01c1e7bf4d8b"
+  integrity sha512-F27oB3WuHDzvR2DOGNTaYy0D5o0cnrv8TeI482VM4kYgQd/FT9lUQwuNsJ0oOHtBUq7eiW5ytqzp7nBFknL+GA==
   dependencies:
     graceful-fs "^4.2.4"
     tapable "^2.2.0"
@@ -181,13 +181,13 @@ ts-node@10.9.2:
     v8-compile-cache-lib "^3.0.1"
     yn "3.1.1"
 
-typescript-to-lua@1.26.0:
-  version "1.26.0"
-  resolved "https://registry.yarnpkg.com/typescript-to-lua/-/typescript-to-lua-1.26.0.tgz#bb032105ba007c4b97c239e9372160664a15487e"
-  integrity sha512-Eg8VytMyHzFmlaB0EyZG+jMyAW1McxP/WMuz2NuCLYwJc73zlQzm62d3RK+3qeU5ivnvFqrDuR7+61gvsuGcsA==
+typescript-to-lua@^1.26.0:
+  version "1.32.0"
+  resolved "https://registry.yarnpkg.com/typescript-to-lua/-/typescript-to-lua-1.32.0.tgz#d23ba2a7d94d6fa600b595fe2224fb06dce7fdc0"
+  integrity sha512-RVopoyoYiYJFrv/0Yw6i77lBI9DhNhAGxuq6TV4b3JzCWjabzwUd/yhTCSVKzWiiAs0zj24Mi7iH9biWG6Phjw==
   dependencies:
     "@typescript-to-lua/language-extensions" "1.19.0"
-    enhanced-resolve "^5.8.2"
+    enhanced-resolve "5.8.2"
     picomatch "^2.3.1"
     resolve "^1.15.1"
     source-map "^0.7.3"
