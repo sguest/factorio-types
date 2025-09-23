@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.66
+// Factorio version 2.0.67
 // API version 6
 
 declare namespace runtime {
@@ -66,7 +66,7 @@ interface AddRecordData {
     allows_unloading?: boolean;
     wait_conditions?: WaitCondition[];
     /**
-     * If index is not given, the record is appended.
+     * If record position is not given, the record is appended.
      */
     index?: ScheduleRecordPosition;
 }
@@ -97,7 +97,7 @@ interface Alert {
     /**
      * The tick this alert was created.
      */
-    tick: uint;
+    tick: uint32;
     target?: LuaEntity;
     prototype?: LuaEntityPrototype;
     position?: MapPosition;
@@ -166,7 +166,7 @@ interface ArithmeticCombinatorParameters {
     /**
      * Constant to use as the first argument of the operation. Has no effect when `first_signal` is set. Defaults to `0`.
      */
-    first_constant?: int;
+    first_constant?: int32;
     /**
      * When not specified, defaults to `"*"`.
      */
@@ -182,7 +182,7 @@ interface ArithmeticCombinatorParameters {
     /**
      * Constant to use as the second argument of the operation. Has no effect when `second_signal` is set. Defaults to `0`.
      */
-    second_constant?: int;
+    second_constant?: int32;
     /**
      * Specifies the signal to output.
      */
@@ -301,7 +301,7 @@ interface AsteroidCollectorBlueprintControlBehavior {
 }
 interface AsteroidMapSettings {
     spawning_rate: double;
-    max_ray_portals_expanded_per_tick: uint;
+    max_ray_portals_expanded_per_tick: uint32;
 }
 interface AttackParameterFluid {
     /**
@@ -365,7 +365,7 @@ interface BaseAttackParameters {
     /**
      * Number of ticks it takes for the weapon to actually shoot after it has been ordered to do so.
      */
-    warmup: uint;
+    warmup: uint32;
     movement_slow_down_factor: double;
     movement_slow_down_cooldown: float;
     ammo_type?: AmmoType;
@@ -439,7 +439,7 @@ interface AutoplaceSettings {
  * Specifies how probability and richness are calculated when placing something on the map.
  */
 interface AutoplaceSpecification {
-    placement_density: uint;
+    placement_density: uint32;
     /**
      * Control prototype name.
      */
@@ -479,7 +479,7 @@ interface BaseBlueprintEntity {
     /**
      * The entity's unique identifier in the blueprint.
      */
-    entity_number: uint;
+    entity_number: uint32;
     /**
      * The prototype name of the entity.
      */
@@ -618,7 +618,7 @@ interface BlueprintEntityCar extends BaseBlueprintEntity {
  * Applies to variant case `cargo-landing-pad`
  */
 interface BlueprintEntityCargoLandingPad extends BaseBlueprintEntity {
-    'bar'?: uint;
+    'bar'?: uint32;
     'control_behavior'?: CargoLandingPadBlueprintControlBehavior;
     'request_filters': BlueprintLogisticSections;
 }
@@ -647,7 +647,7 @@ interface BlueprintEntityConstantCombinator extends BaseBlueprintEntity {
  * Applies to variant case `container`
  */
 interface BlueprintEntityContainer extends BaseBlueprintEntity {
-    'bar'?: uint;
+    'bar'?: uint32;
     'control_behavior'?: ContainerBlueprintControlBehavior;
     'filters'?: BlueprintItemFilter[];
 }
@@ -753,7 +753,7 @@ interface BlueprintEntityInfinityCargoWagon extends BaseBlueprintEntity {
  * Applies to variant case `infinity-container`
  */
 interface BlueprintEntityInfinityContainer extends BaseBlueprintEntity {
-    'bar'?: uint;
+    'bar'?: uint32;
     'control_behavior'?: LogisticContainerBlueprintControlBehavior;
     'filters'?: BlueprintItemFilter[];
     'infinity_settings': BlueprintInfinityInventorySettings;
@@ -817,7 +817,7 @@ interface BlueprintEntityLaneSplitter extends BaseBlueprintEntity {
  * Applies to variant case `linked-belt`
  */
 interface BlueprintEntityLinkedBelt extends BaseBlueprintEntity {
-    'belt_link'?: uint;
+    'belt_link'?: uint32;
     'type': BeltConnectionType;
 }
 /**
@@ -825,7 +825,7 @@ interface BlueprintEntityLinkedBelt extends BaseBlueprintEntity {
  * Applies to variant case `linked-container`
  */
 interface BlueprintEntityLinkedContainer extends BaseBlueprintEntity {
-    'link_id': uint;
+    'link_id': uint32;
 }
 /**
  *
@@ -870,7 +870,7 @@ interface BlueprintEntityLocomotive extends BaseBlueprintEntity {
  * Applies to variant case `logistic-container`
  */
 interface BlueprintEntityLogisticContainer extends BaseBlueprintEntity {
-    'bar'?: uint;
+    'bar'?: uint32;
     'control_behavior'?: LogisticContainerBlueprintControlBehavior;
     'filters'?: BlueprintItemFilter[];
     'request_filters': BlueprintLogisticSections;
@@ -968,7 +968,7 @@ interface BlueprintEntitySelectorCombinator extends BaseBlueprintEntity {
  * Applies to variant case `space-platform-hub`
  */
 interface BlueprintEntitySpacePlatformHub extends BaseBlueprintEntity {
-    'bar'?: uint;
+    'bar'?: uint32;
     'control_behavior'?: SpacePlatformHubBlueprintControlBehavior;
     'request_filters': BlueprintLogisticSections;
     'request_missing_construction_materials': boolean;
@@ -994,6 +994,7 @@ interface BlueprintEntitySpiderVehicle extends BaseBlueprintEntity {
  * Applies to variant case `splitter`
  */
 interface BlueprintEntitySplitter extends BaseBlueprintEntity {
+    'control_behavior'?: SplitterBlueprintControlBehavior;
     'filter'?: ItemFilter;
     'input_priority'?: SplitterPriority;
     'output_priority'?: SplitterPriority;
@@ -1012,7 +1013,7 @@ interface BlueprintEntityStorageTank extends BaseBlueprintEntity {
 interface BlueprintEntityTrainStop extends BaseBlueprintEntity {
     'color'?: Color;
     'control_behavior'?: TrainStopBlueprintControlBehavior;
-    'manual_trains_limit'?: uint;
+    'manual_trains_limit'?: uint32;
     'priority'?: uint8;
     'station': string;
 }
@@ -1074,7 +1075,7 @@ interface BlueprintInsertPlan {
     /**
      * The prototype name and quality of the item to request.
      */
-    id: ItemIDAndQualityIDPair;
+    id: BlueprintItemIDAndQualityIDPair;
     /**
      * Describes the inventories to insert these items into.
      */
@@ -1086,7 +1087,7 @@ interface BlueprintInventoryWithFilters {
     filters?: BlueprintItemFilter[];
 }
 interface BlueprintItemFilter {
-    index: uint;
+    index: uint32;
     /**
      * The item.
      */
@@ -1099,6 +1100,19 @@ interface BlueprintItemFilter {
      * The quality comparison type.
      */
     comparator?: ComparatorString;
+}
+/**
+ * An item prototype with optional quality specification.
+ */
+interface BlueprintItemIDAndQualityIDPair {
+    /**
+     * Item prototype name.
+     */
+    name: string;
+    /**
+     * Quality prototype name. Defaults to "normal".
+     */
+    quality?: string;
 }
 interface BlueprintLogisticFilter {
     index: LogisticFilterIndex;
@@ -1118,7 +1132,7 @@ interface BlueprintLogisticFilter {
      * The comparator for quality. `nil` if any quality.
      */
     comparator?: ComparatorString;
-    count: int;
+    count: int32;
     max_count?: ItemCountType;
     /**
      * Defaults to 0.
@@ -1179,7 +1193,7 @@ interface BlueprintSignalIcon {
     /**
      * Index of the icon in the blueprint icons slots. An integer in the range [1, 4].
      */
-    index: uint;
+    index: uint32;
 }
 /**
  * Describes a single wire in the blueprint. The members of the tuple are, in order:
@@ -1193,13 +1207,14 @@ interface BlueprintSignalIcon {
  * - `target_wire_connector_id`
  */
 type BlueprintWire = [
-    uint,
+    uint32,
     defines.wire_connector_id,
-    uint,
+    uint32,
     defines.wire_connector_id
 ];
 interface BlueprintWireEnd {
     entity: BlueprintEntity;
+    surface_index?: uint32;
     connector: defines.wire_connector_id;
 }
 /**
@@ -1244,7 +1259,7 @@ interface CapsuleActionDestroyCliffs extends BaseCapsuleAction {
     'type': 'destroy-cliffs';
     'attack_parameters': AttackParameters;
     'radius': float;
-    'timeout': uint;
+    'timeout': uint32;
 }
 /**
  *
@@ -1312,7 +1327,7 @@ interface CargoDestination {
     /**
      * Only used if `type` is {@link space_platform | runtime:defines.cargo_destination.space_platform}. Only used for sending space platform starter packs to a platform that is waiting for a starter pack.
      */
-    space_platform?: SpacePlatformIdentification;
+    space_platform?: LuaSpacePlatform;
 }
 interface CargoLandingPadBlueprintControlBehavior {
     /**
@@ -1333,18 +1348,18 @@ interface ChartTagSpec {
  * Coordinates of a chunk in a {@link LuaSurface | runtime:LuaSurface} where each integer `x`/`y` represents a different chunk. This uses the same format as {@link MapPosition | runtime:MapPosition}, meaning it can be specified either with or without explicit keys. A {@link MapPosition | runtime:MapPosition} can be translated to a ChunkPosition by dividing the `x`/`y` values by 32.
  */
 type ChunkPosition = {
-    x: int;
-    y: int;
+    x: int32;
+    y: int32;
 } | [
-    int,
-    int
+    int32,
+    int32
 ];
 /**
  * A {@link ChunkPosition | runtime:ChunkPosition} with an added bounding box for the area of the chunk.
  */
 interface ChunkPositionAndArea {
-    x: int;
-    y: int;
+    x: int32;
+    y: int32;
     area: BoundingBox;
 }
 interface CircuitCondition {
@@ -1363,7 +1378,7 @@ interface CircuitCondition {
     /**
      * Constant to compare `first_signal` to. Has no effect when `second_signal` is set. When neither `second_signal` nor `constant` are specified, the effect is as though `constant` were specified with the value `0`.
      */
-    constant?: int;
+    constant?: int32;
 }
 interface CircuitConditionDefinition {
     /**
@@ -1381,7 +1396,7 @@ interface CircuitConditionDefinition {
     /**
      * Constant to compare `first_signal` to. Has no effect when `second_signal` is set. When neither `second_signal` nor `constant` are specified, the effect is as though `constant` were specified with the value `0`.
      */
-    constant?: int;
+    constant?: int32;
     /**
      * Whether the condition is currently fulfilled.
      */
@@ -1689,9 +1704,9 @@ interface CommandStop extends BaseCommand {
      */
     'distraction'?: defines.distraction;
     /**
-     * Ticks to wander before successfully completing the command. Default is max uint, which means stop forever.
+     * Ticks to wander before successfully completing the command. Default is max uint32, which means stop forever.
      */
-    'ticks_to_wait'?: uint;
+    'ticks_to_wait'?: uint32;
 }
 /**
  *
@@ -1711,9 +1726,9 @@ interface CommandWander extends BaseCommand {
      */
     'radius'?: double;
     /**
-     * Ticks to wander before successfully completing the command. Default is max uint, which means wander forever.
+     * Ticks to wander before successfully completing the command. Default is max uint32, which means wander forever.
      */
-    'ticks_to_wait'?: uint;
+    'ticks_to_wait'?: uint32;
     /**
      * When commanding a group, defines how the group will wander. When `true`, the units in the group will wander around inside the group's radius, just like gathering biters. When `false`, the units will wander as a group, ie they will all walk together in the same random direction. Default is true for groups. Passing true for a single unit is an error.
      */
@@ -1770,7 +1785,7 @@ interface CompiledLogisticFilter {
      * The comparator for quality. `nil` if any quality.
      */
     comparator?: ComparatorString;
-    count: int;
+    count: int32;
     max_count?: ItemCountType;
     /**
      * Defaults to 0.
@@ -1820,7 +1835,7 @@ interface CraftingQueueItem {
     /**
      * The index of the item in the crafting queue.
      */
-    index: uint;
+    index: uint32;
     /**
      * The recipe being crafted.
      */
@@ -1828,7 +1843,7 @@ interface CraftingQueueItem {
     /**
      * The amount of items being crafted.
      */
-    count: uint;
+    count: uint32;
     /**
      * The item is a prerequisite for another item in the queue.
      */
@@ -1870,11 +1885,11 @@ interface CustomCommandData {
     /**
      * The tick the command was used in.
      */
-    tick: uint;
+    tick: uint32;
     /**
      * The player who issued the command, or `nil` if it was issued from the server console.
      */
-    player_index?: uint;
+    player_index?: uint32;
     /**
      * The parameter passed after the command, if there is one.
      */
@@ -1883,6 +1898,18 @@ interface CustomCommandData {
 interface CustomEntityStatus {
     diode: defines.entity_status_diode;
     label: LocalisedString;
+}
+interface CustomTooltipField {
+    name: LocalisedString;
+    value: LocalisedString;
+    quality_header: string;
+    /**
+     * Dictionary of quality name to localised string representing the value.
+     */
+    quality_values: Record<string, LocalisedString>;
+    order: uint8;
+    show_in_factoriopedia: boolean;
+    show_in_tooltip: boolean;
 }
 interface CutsceneWaypoint {
     /**
@@ -1896,11 +1923,11 @@ interface CutsceneWaypoint {
     /**
      * How many ticks it will take to reach this waypoint from the previous one.
      */
-    transition_time: uint;
+    transition_time: uint32;
     /**
      * Time in ticks to wait before moving to the next waypoint.
      */
-    time_to_wait: uint;
+    time_to_wait: uint32;
     /**
      * Zoom level to be set when the waypoint is reached. When not specified, the previous waypoint's zoom is used.
      */
@@ -1927,7 +1954,7 @@ LuaDamagePrototype | /**
  */
 string;
 interface DeciderCombinatorBlueprintControlBehavior {
-    decider_conditions: DeciderCombinatorCondition;
+    decider_conditions: DeciderCombinatorParameters;
 }
 interface DeciderCombinatorCondition {
     /**
@@ -1949,7 +1976,7 @@ interface DeciderCombinatorCondition {
     /**
      * Constant to compare `first_signal` to. Has no effect when `second_signal` is set. When neither `second_signal` nor `constant` are specified, the effect is as though `constant` were specified with the value `0`.
      */
-    constant?: int;
+    constant?: int32;
     /**
      * Specifies how the inputs should be compared. If not specified, defaults to `"<"`.
      */
@@ -1971,7 +1998,7 @@ interface DeciderCombinatorOutput {
     /**
      * The value to output when not copying input. Defaults to `1`.
      */
-    constant?: int;
+    constant?: int32;
     /**
      * Sets which input network to read the value of `signal` from if `copy_count_from_input` is `true`. Defaults to both.
      */
@@ -2041,7 +2068,7 @@ interface DecorativePrototypeFilterCollisionMask extends BaseDecorativePrototype
 interface DecorativeResult {
     position: TilePosition;
     decorative: LuaDecorativePrototype;
-    amount: uint;
+    amount: uint32;
 }
 interface DetailedItemOnLine {
     stack: LuaItemStack;
@@ -2052,7 +2079,7 @@ interface DetailedItemOnLine {
     /**
      * Unique identifier of this item while it is on transport lines.
      */
-    unique_id: uint;
+    unique_id: uint32;
 }
 /**
  * Technology difficulty settings. Updating any of the attributes will immediately take effect in the game engine.
@@ -2085,8 +2112,8 @@ interface DisplayPanelMessageDefinition {
     condition: CircuitConditionDefinition;
 }
 interface DisplayResolution {
-    width: uint;
-    height: uint;
+    width: uint32;
+    height: uint32;
 }
 interface DragTarget {
     target_entity: LuaEntity;
@@ -2108,7 +2135,7 @@ interface EffectReceiver {
  * An item thrown overboard on a space platform.
  */
 interface EjectedItem {
-    item: ItemWithQualityID;
+    item: ItemIDAndQualityIDPair;
     position: MapPosition;
     movement: Vector;
     platform_speed_at_creation: double;
@@ -2182,15 +2209,15 @@ interface EnemyExpansionMapSettings {
     /**
      * Distance in chunks from the furthest base around to prevent expansions from reaching too far into the player's territory. Defaults to `7`.
      */
-    max_expansion_distance: uint;
+    max_expansion_distance: uint32;
     /**
      * Defaults to `2`.
      */
-    friendly_base_influence_radius: uint;
+    friendly_base_influence_radius: uint32;
     /**
      * Defaults to `2`.
      */
-    enemy_building_influence_radius: uint;
+    enemy_building_influence_radius: uint32;
     /**
      * Defaults to `0.1`.
      */
@@ -2214,19 +2241,19 @@ interface EnemyExpansionMapSettings {
     /**
      * The minimum size of a biter group that goes to build a new base. This is multiplied by the evolution factor. Defaults to `5`.
      */
-    settler_group_min_size: uint;
+    settler_group_min_size: uint32;
     /**
      * The maximum size of a biter group that goes to build a new base. This is multiplied by the evolution factor. Defaults to `20`.
      */
-    settler_group_max_size: uint;
+    settler_group_max_size: uint32;
     /**
      * The minimum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `4*3 600=14 400` ticks.
      */
-    min_expansion_cooldown: uint;
+    min_expansion_cooldown: uint32;
     /**
      * The maximum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `60*3 600=216 000` ticks.
      */
-    max_expansion_cooldown: uint;
+    max_expansion_cooldown: uint32;
 }
 /**
  * An entity prototype may be specified in one of three ways.
@@ -2523,7 +2550,7 @@ interface EntitySearchFilters {
     force?: ForceSet;
     to_be_deconstructed?: boolean;
     to_be_upgraded?: boolean;
-    limit?: uint;
+    limit?: uint32;
     is_military_target?: boolean;
     has_item_inside?: ItemWithQualityID;
     quality?: QualityCondition;
@@ -2578,8 +2605,8 @@ interface EquipmentIDAndQualityIDPair {
  * A table used to define a manual shape for a piece of equipment.
  */
 interface EquipmentPoint {
-    x: uint;
-    y: uint;
+    x: uint32;
+    y: uint32;
 }
 /**
  * Position inside an equipment grid. This uses the same format as {@link MapPosition | runtime:MapPosition}, meaning it can be specified either with or without explicit keys.
@@ -2594,11 +2621,11 @@ interface EquipmentPoint {
 ```
  */
 type EquipmentPosition = {
-    x: int;
-    y: int;
+    x: int32;
+    y: int32;
 } | [
-    int,
-    int
+    int32,
+    int32
 ];
 interface BaseEquipmentPrototypeFilter {
     /**
@@ -2637,7 +2664,7 @@ interface EquipmentWithQualityCounts {
     /**
      * The number of equipment items.
      */
-    count: uint;
+    count: uint32;
     /**
      * Name of the equipment's quality prototype.
      */
@@ -2670,7 +2697,7 @@ interface EventData {
     /**
      * The tick during which the event happened.
      */
-    tick: uint;
+    tick: uint32;
     /**
      * The name of the mod that raised the event if it was raised using {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}.
      */
@@ -2725,9 +2752,9 @@ interface Fluid {
  */
 type FluidAmount = double;
 interface FluidBoxConnectionRecord {
-    this_linked_connection_id: uint;
+    this_linked_connection_id: uint32;
     other_entity: LuaEntity;
-    other_linked_connection_id: uint;
+    other_linked_connection_id: uint32;
 }
 interface FluidBoxFilter {
     /**
@@ -2817,7 +2844,7 @@ interface FluidProduct {
      * The fluid temperature of this product.
      */
     temperature?: float;
-    fluidbox_index?: uint;
+    fluidbox_index?: uint32;
 }
 interface BaseFluidPrototypeFilter {
     /**
@@ -3130,7 +3157,7 @@ interface GuiAnchor {
  * Used for specifying where a GUI arrow should point to.
  */
 interface BaseGuiArrowSpecification {
-    margin: uint;
+    margin: uint32;
     /**
      * This determines which of the following fields will be required.
      */
@@ -3152,7 +3179,7 @@ interface GuiArrowSpecificationCraftingQueue extends BaseGuiArrowSpecification {
     /**
      * Index in the crafting queue to point to.
      */
-    'crafting_queueindex': uint;
+    'crafting_queueindex': uint32;
 }
 /**
  *
@@ -3181,7 +3208,7 @@ interface GuiArrowSpecificationItemStack extends BaseGuiArrowSpecification {
     /**
      * Which stack to point to.
      */
-    'item_stack_index': uint;
+    'item_stack_index': uint32;
     'source': 'player' | 'target' | 'player-quickbar';
 }
 /**
@@ -3292,11 +3319,11 @@ type GuiElementType = /**
  * Screen coordinates of a GUI element in a {@link LuaGui | runtime:LuaGui}. This uses the same format as {@link TilePosition | runtime:TilePosition}, meaning it can be specified either with or without explicit keys.
  */
 type GuiLocation = {
-    x: int;
-    y: int;
+    x: int32;
+    y: int32;
 } | [
-    int,
-    int
+    int32,
+    int32
 ];
 interface GunShift4Way {
     north: Vector;
@@ -3330,7 +3357,7 @@ interface IconDrawSpecification {
     shift: Vector;
     scale: float;
     scale_for_many: float;
-    render_layer?: 'entity-info-icon-below' | 'entity-info-icon-above' | 'air-entity-info-icon';
+    render_layer: 'entity-info-icon' | 'entity-info-icon-above' | 'air-entity-info-icon';
 }
 interface IconSequencePositioning {
     inventory_index: defines.inventory;
@@ -3364,7 +3391,7 @@ interface InfinityInventoryFilter {
     /**
      * The index of this filter in the filters list. Not required when writing a filter.
      */
-    index?: uint;
+    index?: uint32;
 }
 /**
  * A single filter used by an infinity-pipe type entity.
@@ -3400,7 +3427,7 @@ interface BaseIngredient {
     /**
      * How much of this ingredient is ignored by statistics.
      */
-    ignored_by_stats?: uint | double;
+    ignored_by_stats?: uint32 | double;
 }
 type Ingredient = BaseIngredient | IngredientFluid;
 /**
@@ -3409,7 +3436,7 @@ type Ingredient = BaseIngredient | IngredientFluid;
  */
 interface IngredientFluid extends BaseIngredient {
     'type': 'fluid';
-    'fluidbox_index'?: uint;
+    'fluidbox_index'?: uint32;
     'fluidbox_multiplier'?: uint8;
     /**
      * The maximum fluid temperature allowed.
@@ -3475,7 +3502,7 @@ interface InventoryWithCustomStackSizeSpecification {
     stack_size_override: Record<string, ItemCountType>;
     with_bar: boolean;
 }
-type ItemCountType = uint;
+type ItemCountType = uint32;
 /**
  * An item filter may be specified in two ways, either as a string which is an item prototype name or as a table.
  */
@@ -3817,7 +3844,7 @@ interface ItemPrototypeFilterStackSize extends BaseItemPrototypeFilter {
     /**
      * The value to compare against.
      */
-    'value': uint;
+    'value': uint32;
 }
 /**
  *
@@ -3959,7 +3986,7 @@ ItemStackDefinition | LuaItemStack;
 type ItemStackIndex = uint16;
 interface ItemStackLocation {
     inventory: defines.inventory;
-    slot: uint;
+    slot: uint32;
 }
 interface ItemToPlace {
     /**
@@ -4059,9 +4086,9 @@ interface LogisticFilter {
      */
     value?: SignalFilter;
     /**
-     * The minimum amount to satisfy.
+     * The minimum amount to satisfy. If `min` is non-zero, and `value` is present, then the quality condition inside `value` does not allow quality ranges.
      */
-    min?: int;
+    min?: int32;
     /**
      * The maximum amount to keep in inventory. `nil` for infinite.
      */
@@ -4104,19 +4131,19 @@ interface LogisticsNetworkSupplyCounts {
     /**
      * Number of available items in the storage members.
      */
-    storage: uint;
+    storage: uint32;
     /**
      * Number of available items in the passive provider members.
      */
-    'passive-provider': uint;
+    'passive-provider': uint32;
     /**
      * Number of available items in the buffer members.
      */
-    buffer: uint;
+    buffer: uint32;
     /**
      * Number of available items in the active provider members.
      */
-    'active-provider': uint;
+    'active-provider': uint32;
 }
 interface LogisticsNetworkSupplyPoints {
     storage: LuaLogisticPoint[];
@@ -6227,7 +6254,7 @@ interface MapAndDifficultySettings {
     /**
      * If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
      */
-    max_failed_behavior_count: uint;
+    max_failed_behavior_count: uint32;
     difficulty_settings: MapDifficultySettings;
 }
 interface MapDifficultySettings {
@@ -6294,15 +6321,15 @@ interface MapGenSettings {
     /**
      * The random seed used to generated this map.
      */
-    seed: uint;
+    seed: uint32;
     /**
      * Width in tiles. If `0`, the map has 'infinite' width, with the actual limitation being one million tiles in each direction from the center.
      */
-    width: uint;
+    width: uint32;
     /**
      * Height in tiles. If `0`, the map has 'infinite' height, with the actual limitation being one million tiles in each direction from the center.
      */
-    height: uint;
+    height: uint32;
     /**
      * Size of the starting area.
      */
@@ -6427,7 +6454,7 @@ interface MapSettings {
     /**
      * If a behavior fails this many times, the enemy (or enemy group) is destroyed. This solves biters getting stuck within their own base.
      */
-    max_failed_behavior_count: uint;
+    max_failed_behavior_count: uint32;
     path_finder: PathFinderMapSettings;
     pollution: PollutionMapSettings;
     steering: SteeringMapSetting;
@@ -6562,7 +6589,7 @@ interface ModSetting {
     /**
      * The value of the mod setting. The type depends on the kind of setting.
      */
-    value: int | double | boolean | string | Color;
+    value: int32 | double | boolean | string | Color;
 }
 interface BaseModSettingPrototypeFilter {
     /**
@@ -6668,11 +6695,11 @@ interface NthTickEventData {
     /**
      * The tick during which the event happened.
      */
-    tick: uint;
+    tick: uint32;
     /**
      * The nth tick this handler was registered to.
      */
-    nth_tick: uint;
+    nth_tick: uint32;
 }
 /**
  * A single offer on a market entity.
@@ -6705,7 +6732,7 @@ interface PathFinderMapSettings {
     /**
      * The pathfinder performs a step of the backward search every `fwd2bwd_ratio`'th step. The minimum allowed value is `2`, which means symmetric search. The default value is `5`.
      */
-    fwd2bwd_ratio: uint;
+    fwd2bwd_ratio: uint32;
     /**
      * When looking at which node to check next, their heuristic value is multiplied by this ratio. The higher it is, the more the search is directed straight at the goal. Defaults to `2`.
      */
@@ -6721,15 +6748,15 @@ interface PathFinderMapSettings {
     /**
      * The maximum amount of work each pathfinding job is allowed to do per tick. Defaults to `8 000`.
      */
-    max_work_done_per_tick: uint;
+    max_work_done_per_tick: uint32;
     /**
      * Number of elements in the short cache. Defaults to `5`.
      */
-    short_cache_size: uint;
+    short_cache_size: uint32;
     /**
      * Number of elements in the long cache. Defaults to `25`.
      */
-    long_cache_size: uint;
+    long_cache_size: uint32;
     /**
      * The minimal distance to the goal in tiles required to be searched in the short path cache. Defaults to `10`.
      */
@@ -6737,7 +6764,7 @@ interface PathFinderMapSettings {
     /**
      * The minimal number of nodes required to be searched in the short path cache. Defaults to `50`.
      */
-    short_cache_min_algo_steps_to_cache: uint;
+    short_cache_min_algo_steps_to_cache: uint32;
     /**
      * The minimal distance to the goal in tiles required to be searched in the long path cache. Defaults to `30`.
      */
@@ -6745,7 +6772,7 @@ interface PathFinderMapSettings {
     /**
      * When looking for a connection to a cached path, search at most for this number of steps times the original estimate. Defaults to `100`.
      */
-    cache_max_connect_to_cache_steps_multiplier: uint;
+    cache_max_connect_to_cache_steps_multiplier: uint32;
     /**
      * When looking for a path from cache, make sure it doesn't start too far from the requested start in relative terms. Defaults to `0.2`.
      */
@@ -6797,19 +6824,19 @@ interface PathFinderMapSettings {
     /**
      * The amount of path finder requests accepted per tick regardless of the requested path's length. Defaults to `10`.
      */
-    max_clients_to_accept_any_new_request: uint;
+    max_clients_to_accept_any_new_request: uint32;
     /**
      * When the `max_clients_to_accept_any_new_request` amount is exhausted, only path finder requests with a short estimate will be accepted until this amount (per tick) is reached. Defaults to `100`.
      */
-    max_clients_to_accept_short_new_request: uint;
+    max_clients_to_accept_short_new_request: uint32;
     /**
      * The maximum direct distance in tiles before a request is no longer considered short. Defaults to `100`.
      */
-    direct_distance_to_consider_short_request: uint;
+    direct_distance_to_consider_short_request: uint32;
     /**
      * The maximum amount of nodes a short request will traverse before being rescheduled as a long request. Defaults to `1000`.
      */
-    short_request_max_steps: uint;
+    short_request_max_steps: uint32;
     /**
      * The amount of steps that are allocated to short requests each tick, as a percentage of all available steps. Defaults to `0.5`, or 50%.
      */
@@ -6817,7 +6844,7 @@ interface PathFinderMapSettings {
     /**
      * The minimum amount of steps that are guaranteed to be performed for every request. Defaults to `2000`.
      */
-    min_steps_to_check_path_find_termination: uint;
+    min_steps_to_check_path_find_termination: uint32;
     /**
      * If the actual amount of steps is higher than the initial estimate by this factor, pathfinding is terminated. Defaults to `2000.0`.
      */
@@ -6825,7 +6852,7 @@ interface PathFinderMapSettings {
     /**
      * The thresholds of waiting clients after each of which the per-tick work limit will be increased by the corresponding value in `overload_multipliers`. This is to avoid clients having to wait too long. Must have the same number of elements as `overload_multipliers`. Defaults to `{0, 100, 500}`.
      */
-    overload_levels: uint[];
+    overload_levels: uint32[];
     /**
      * The multipliers to the amount of per-tick work applied after the corresponding thresholds in `overload_levels` have been reached. Must have the same number of elements as `overload_multipliers`. Defaults to `{2, 3, 4}`.
      */
@@ -6833,7 +6860,7 @@ interface PathFinderMapSettings {
     /**
      * The delay in ticks between decrementing the score of all paths in the negative cache by one. Defaults to `20`.
      */
-    negative_path_cache_delay_interval: uint;
+    negative_path_cache_delay_interval: uint32;
 }
 interface PathfinderFlags {
     /**
@@ -6897,11 +6924,11 @@ interface PipeConnection {
     /**
      * The index of the target fluidbox, if any.
      */
-    target_fluidbox_index?: uint;
+    target_fluidbox_index?: uint32;
     /**
      * The index of the target fluidbox pipe connection, if any.
      */
-    target_pipe_connection_index?: uint;
+    target_pipe_connection_index?: uint32;
 }
 interface PipeConnectionDefinition {
     connection_type: PipeConnectionType;
@@ -6912,14 +6939,14 @@ interface PipeConnectionDefinition {
     /**
      * The maximum tile distance this underground connection can connect.
      */
-    max_underground_distance?: uint;
+    max_underground_distance?: uint32;
     flow_direction: FluidFlowDirection;
     direction: defines.direction;
     connection_category: string[];
     /**
      * Only supplied if `connection_type` is `"linked"`.
      */
-    linked_connection_id?: uint;
+    linked_connection_id?: uint32;
 }
 type PipeConnectionType = /**
  * 2 connections are required to be adjacent tiles next to each other on their respective directions.
@@ -6937,7 +6964,7 @@ interface PlaceAsTileResult {
      * The tile prototype.
      */
     result: LuaTilePrototype;
-    condition_size: uint;
+    condition_size: uint32;
     condition: CollisionMask;
     invert: boolean;
     tile_condition: LuaTilePrototype[];
@@ -6946,7 +6973,7 @@ interface PlatformSchedule {
     /**
      * Index of the currently active record
      */
-    current: uint;
+    current: uint32;
     records: ScheduleRecord[];
 }
 interface PlaySoundSpecification {
@@ -6973,7 +7000,7 @@ interface PlaySoundSpecification {
 type PlayerIdentification = /**
  * The player index.
  */
-uint | /**
+uint32 | /**
  * The player name.
  */
 string | /**
@@ -7108,10 +7135,7 @@ type Product = /**
 ItemProduct | /**
  * Returned when the `type` is `"fluid"`.
  */
-FluidProduct | /**
- * Returned when the `type` is `"research-progress"`.
- */
-ResearchProgressProduct;
+FluidProduct;
 /**
  * Specifies how the entity will utilize this fluidbox. `input-output` should only be used for boilers in fluid heating mode.
  */
@@ -7124,13 +7148,13 @@ interface ProgrammableSpeakerAlertParameters {
 }
 interface ProgrammableSpeakerBlueprintControlBehavior {
     circuit_condition: CircuitCondition;
-    circuitParameters: ProgrammableSpeakerCircuitParameters;
+    circuit_parameters: ProgrammableSpeakerCircuitParameters;
 }
 interface ProgrammableSpeakerCircuitParameters {
     signal_value_is_pitch: boolean;
     stop_playing_sounds: boolean;
-    instrument_id: uint;
-    note_id: uint;
+    instrument_id: uint32;
+    note_id: uint32;
 }
 interface ProgrammableSpeakerInstrument {
     name: string;
@@ -7506,7 +7530,7 @@ interface RecipePrototypeFilterOverloadMultiplier extends BaseRecipePrototypeFil
     /**
      * The value to compare against.
      */
-    'value': uint;
+    'value': uint32;
 }
 /**
  *
@@ -7521,7 +7545,7 @@ interface RecipePrototypeFilterRequestPasteMultiplier extends BaseRecipePrototyp
     /**
      * The value to compare against.
      */
-    'value': uint;
+    'value': uint32;
 }
 /**
  *
@@ -7837,14 +7861,6 @@ interface ResearchIngredient {
      */
     amount: uint16;
 }
-interface ResearchProgressProduct {
-    type: 'research-progress';
-    /**
-     * Prototype name of the research item.
-     */
-    research_item: string;
-    amount: double;
-}
 interface BaseResearchTrigger {
     type: 'craft-item' | 'mine-entity' | 'craft-fluid' | 'send-item-to-orbit' | 'capture-spawner' | 'build-entity' | 'create-space-platform';
 }
@@ -7965,11 +7981,11 @@ interface ScheduleRecordPosition {
     /**
      * The schedule index
      */
-    schedule_index?: uint;
+    schedule_index?: uint32;
     /**
      * The interrupt index
      */
-    interrupt_index?: uint;
+    interrupt_index?: uint32;
 }
 /**
  * An area defined using the map editor.
@@ -7978,7 +7994,7 @@ interface ScriptArea {
     area: BoundingBox;
     name: string;
     color: Color;
-    id: uint;
+    id: uint32;
 }
 /**
  * A position defined using the map editor.
@@ -7987,7 +8003,7 @@ interface ScriptPosition {
     position: MapPosition;
     name: string;
     color: Color;
-    id: uint;
+    id: uint32;
 }
 type ScriptRenderMode = 'game' | 'chart';
 /**
@@ -8020,7 +8036,7 @@ interface SegmentEngineSpecification {
     /**
      * The maximum number of body nodes that a segmented unit instance can have.
      */
-    max_body_nodes: uint;
+    max_body_nodes: uint32;
 }
 /**
  * A runtime representation of {@link SegmentSpecification | prototype:SegmentSpecification}.
@@ -8148,7 +8164,7 @@ interface SegmentedUnitAIStatePatrolling extends BaseSegmentedUnitAIState {
     /**
      * Index into the unit's territory's {@link LuaTerritory::get_patrol_path | runtime:LuaTerritory::get_patrol_path} array. If the unit is not assigned to a territory, then this value is an index into a patrol path that the engine internally uses to guide the segmented unit and cannot be directly accessed. See {@link SegmentedUnitPrototype::territory_radius | prototype:SegmentedUnitPrototype::territory_radius}.
      */
-    'waypoint': uint;
+    'waypoint': uint32;
 }
 interface SelectedPrototypeData {
     /**
@@ -8309,7 +8325,7 @@ interface SelectorCombinatorParametersRandom extends BaseSelectorCombinatorParam
     /**
      * Defaults to `0`.
      */
-    'random_update_interval'?: uint;
+    'random_update_interval'?: uint32;
 }
 /**
  *
@@ -8323,7 +8339,7 @@ interface SelectorCombinatorParametersSelect extends BaseSelectorCombinatorParam
     /**
      * The signal index to use if not using a specific `index_signal`. Defaults to `0`.
      */
-    'index_constant'?: int;
+    'index_constant'?: int32;
     /**
      * The signal to use, if any.
      */
@@ -8344,10 +8360,12 @@ interface Signal {
     /**
      * Value of the signal.
      */
-    count: int;
+    count: int32;
 }
 /**
  * A signal filter may be specified in two ways, either as a string which is a virtual signal name or item prototype name or as a table.
+ *
+ * When the LogisticFilter that this is used in has a non-zero `min` value then `comparator` must be `"="` (the default when writing) and `quality` is mandatory.
  */
 type SignalFilter = {
     /**
@@ -8359,11 +8377,11 @@ type SignalFilter = {
      */
     name: string;
     /**
-     * The prototype name of the signal's quality. `nil` for any quality.
+     * The prototype name of the signal's quality. `nil` for any quality. Mandatory if the LogisticFilter that this SignalFilter is being used in has a non-zero `min` value.
      */
     quality?: QualityID;
     /**
-     * The comparator for quality. `nil` if any quality.
+     * The comparator for quality. When reading, this will be `nil` for any quality. When writing it defaults to `"="`.
      */
     comparator?: ComparatorString;
 } | string;
@@ -8397,7 +8415,7 @@ interface SlotFilter {
     /**
      * Position of the corresponding filter slot.
      */
-    index: uint;
+    index: uint32;
     /**
      * Name of the prototype to filter for.
      */
@@ -8577,7 +8595,6 @@ interface SpacePlatformHubBlueprintControlBehavior {
     read_speed?: boolean;
     speed_signal?: SignalID;
 }
-type SpacePlatformIdentification = LuaSpacePlatform;
 interface SpacePlatformTileDefinition {
     tile: LuaTilePrototype;
     position: TilePosition;
@@ -8592,6 +8609,39 @@ interface SpawnPointDefinition {
      */
     weight: double;
 }
+interface SpiderEngineSpecification {
+    legs: SpiderLegSpecification[];
+    walking_group_overlap: float;
+}
+interface SpiderLegSpecification {
+    /**
+     * Name of the spider leg prototype.
+     */
+    leg: string;
+    mount_position: Vector;
+    ground_position: Vector;
+    leg_hit_the_ground_trigger?: TriggerEffectItem[];
+    leg_hit_the_ground_when_attacking_trigger?: TriggerEffectItem[];
+    walking_group: uint8;
+}
+interface SplitterBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    set_input_side?: boolean;
+    input_left_condition?: CircuitCondition;
+    input_right_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    set_output_side?: boolean;
+    output_left_condition?: CircuitCondition;
+    output_right_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    set_filter?: boolean;
+}
 type SplitterPriority = 'left' | 'none' | 'right';
 type SpoilPriority = 'fresh_first' | 'none' | 'spoiled_first';
 interface SpoilToTriggerResult {
@@ -8602,7 +8652,7 @@ interface SpoilToTriggerResult {
     /**
      * The trigger runs (count-in-stack / items_per_trigger) times; rounded up.
      */
-    items_per_trigger: uint;
+    items_per_trigger: uint32;
 }
 /**
  * It can be either the name of a {@link SpritePrototype | prototype:SpritePrototype} defined in the data stage, or a path in form "type/name" or "type.name".
@@ -8666,7 +8716,7 @@ interface SurfaceCondition {
 type SurfaceIdentification = /**
  * It will be the index of the surface. `nauvis` has index `1`, the first surface-created surface will have index `2` and so on.
  */
-uint | /**
+uint32 | /**
  * It will be the surface name. E.g. `"nauvis"`.
  */
 string | /**
@@ -8695,6 +8745,8 @@ interface TabAndContent {
  * A dictionary of string to the four basic Lua types: `string`, `boolean`, `number`, `table`.
  *
  * Note that the API returns tags as a simple table, meaning any modifications to it will not propagate back to the game. Thus, to modify a set of tags, the whole table needs to be written back to the respective property.
+ *
+ * Tables inside Tags that have numeric keys but are not sequences (e.g. `tags = {foo = {nil, "something"}}` or `tags = {bar = {[4] = "cat"}}`) will have their keys converted to strings when read back from the game (e.g. `{foo = {["2"] = "something"}}` or `{bar = {["4"] = "cat"}}`). Only sequences without gaps will have their keys maintained as numeric.
  * @example ```
 {a = 1, b = true, c = "three", d = {e = "f"}}
 ```
@@ -9095,7 +9147,7 @@ interface TechnologyModifierGiveItem extends BaseTechnologyModifier {
     /**
      * The amount of the item that is given upon researching.
      */
-    'count': uint;
+    'count': uint32;
     /**
      * The prototype name of the item that is given.
      */
@@ -9463,7 +9515,7 @@ interface TechnologyPrototypeFilterLevel extends BaseTechnologyPrototypeFilter {
     /**
      * The value to compare against.
      */
-    'value': uint;
+    'value': uint32;
 }
 /**
  *
@@ -9478,7 +9530,7 @@ interface TechnologyPrototypeFilterMaxLevel extends BaseTechnologyPrototypeFilte
     /**
      * The value to compare against.
      */
-    'value': uint;
+    'value': uint32;
 }
 /**
  *
@@ -9507,7 +9559,7 @@ interface TechnologyPrototypeFilterTime extends BaseTechnologyPrototypeFilter {
     /**
      * The value to compare against.
      */
-    'value': uint;
+    'value': uint32;
 }
 /**
  *
@@ -9527,7 +9579,7 @@ interface TerritorySettings {
     units: string[];
     territory_index_expression: string;
     territory_variation_expression: string;
-    minimum_territory_size: uint;
+    minimum_territory_size: uint32;
 }
 /**
  * The text is aligned so that the target position is at the given side of the text.
@@ -9588,11 +9640,11 @@ string;
  * Coordinates of a tile on a {@link LuaSurface | runtime:LuaSurface} where each integer `x`/`y` represents a different tile. This uses the same format as {@link MapPosition | runtime:MapPosition}, except it rounds any non-integer `x`/`y` down to whole numbers. It can be specified either with or without explicit keys.
  */
 type TilePosition = {
-    x: int;
-    y: int;
+    x: int32;
+    y: int32;
 } | [
-    int,
-    int
+    int32,
+    int32
 ];
 interface BaseTilePrototypeFilter {
     /**
@@ -9705,7 +9757,7 @@ interface TileSearchFilters {
      * An empty array means nothing matches the name filter.
      */
     name?: TileID | TileID[];
-    limit?: uint;
+    limit?: uint32;
     has_hidden_tile?: boolean;
     /**
      * Can be further filtered by supplying a `force` filter.
@@ -9730,7 +9782,7 @@ interface TrainFilter {
     /**
      * Train ID filter
      */
-    train_id?: uint;
+    train_id?: uint32;
     /**
      * Surface the train must be on in order to pass
      */
@@ -9746,11 +9798,11 @@ interface TrainFilter {
     /**
      * Train must have at least that many stocks to pass
      */
-    min_stocks?: uint;
+    min_stocks?: uint32;
     /**
      * Train must have at most that many stocks to pass
      */
-    max_stocks?: uint;
+    max_stocks?: uint32;
     /**
      * Checks if train is moving (has speed != 0) or not moving.
      */
@@ -9772,7 +9824,7 @@ interface TrainPathAllGoalsResult {
     /**
      * Amount of goals that are accessible.
      */
-    amount_accessible: uint;
+    amount_accessible: uint32;
     /**
      * Array of the same length as requested goals: each field will tell if related goal is accessible for the train.
      */
@@ -9784,7 +9836,7 @@ interface TrainPathAllGoalsResult {
     /**
      * Amount of steps pathfinder performed. This is a measure of how expensive this search was.
      */
-    steps_count: uint;
+    steps_count: uint32;
 }
 type TrainPathFinderGoal = TrainStopGoal | RailEndGoal | LuaRailEnd | /**
  * Only if it points at train-stop that is connected to a rail.
@@ -9798,11 +9850,11 @@ interface TrainPathFinderOneGoalResult {
     /**
      * If path was found, provides index of the specific goal to which the path goes to.
      */
-    goal_index?: uint;
+    goal_index?: uint32;
     /**
      * If path was found, provides index of the specific start from which the path to target goes from
      */
-    start_index?: uint;
+    start_index?: uint32;
     /**
      * Penalty of the path to goal if path was found.
      */
@@ -9822,7 +9874,7 @@ interface TrainPathFinderOneGoalResult {
     /**
      * Amount of steps pathfinder performed. This is a measure of how expensive this search was.
      */
-    steps_count: uint;
+    steps_count: uint32;
 }
 /**
  * A {@link string | runtime:string} specifying the type of request for {@link LuaTrainManager::request_train_path | runtime:LuaTrainManager::request_train_path}.
@@ -9844,7 +9896,7 @@ interface TrainSchedule {
     /**
      * Index of the currently active record
      */
-    current: uint;
+    current: uint32;
     records: ScheduleRecord[];
 }
 interface TrainStopBlueprintControlBehavior {
@@ -9999,7 +10051,7 @@ interface TriggerItem {
      * If `"enemy"`, the trigger will only affect entities whose force is different from the attacker's and for which there is no cease-fire set. `"ally"` is the opposite of `"enemy"`.
      */
     force: ForceCondition;
-    repeat_count: uint;
+    repeat_count: uint32;
     probability: float;
 }
 interface TriggerModifierData {
@@ -10067,6 +10119,10 @@ interface UndoRedoActionBuiltEntity extends BaseUndoRedoAction {
      */
     'type': 'built-entity';
     /**
+     * The surface of the built entity.
+     */
+    'surface_index'?: uint32;
+    /**
      * The specification of the built entity.
      */
     'target': BlueprintEntity;
@@ -10095,7 +10151,7 @@ interface UndoRedoActionBuiltTile extends BaseUndoRedoAction {
     /**
      * The surface on which the tile was built.
      */
-    'surface_index': uint;
+    'surface_index': uint32;
 }
 /**
  *
@@ -10107,6 +10163,13 @@ interface UndoRedoActionCopyEntitySettings extends BaseUndoRedoAction {
      */
     'type': 'copy-entity-settings';
     'entity_with_previous_settings'?: BlueprintEntity;
+    /**
+     * The surface of the entity the settings were pasted onto.
+     */
+    'surface_index'?: uint32;
+    /**
+     * The specification of the entity the settings were pasted onto.
+     */
     'target'?: BlueprintEntity;
 }
 /**
@@ -10129,7 +10192,7 @@ interface UndoRedoActionRemovedEntity extends BaseUndoRedoAction {
     /**
      * The surface from which the entity was removed. Not present for entities the game can't restore, like trees or rocks.
      */
-    'surface_index'?: uint;
+    'surface_index'?: uint32;
     /**
      * The specification of the removed entity.
      */
@@ -10155,7 +10218,7 @@ interface UndoRedoActionRemovedTile extends BaseUndoRedoAction {
     /**
      * The surface from which the tile was removed.
      */
-    'surface_index': uint;
+    'surface_index': uint32;
 }
 /**
  *
@@ -10171,6 +10234,10 @@ interface UndoRedoActionRotatedEntity extends BaseUndoRedoAction {
      */
     'original_direction': defines.direction;
     'original_mirroring': boolean;
+    /**
+     * The surface of the rotated entity.
+     */
+    'surface_index'?: uint32;
     /**
      * The specification of the rotated entity.
      */
@@ -10194,6 +10261,10 @@ interface UndoRedoActionUpgradedEntity extends BaseUndoRedoAction {
      */
     'original_quality_name': string;
     /**
+     * The surface of the upgraded entity.
+     */
+    'surface_index'?: uint32;
+    /**
      * The specification of the upgraded entity.
      */
     'target': BlueprintEntity;
@@ -10211,6 +10282,10 @@ interface UndoRedoActionUpgradedModules extends BaseUndoRedoAction {
      * The modules present in the target before the upgrade.
      */
     'modules_before': BlueprintInsertPlan;
+    /**
+     * The surface of the upgraded entity.
+     */
+    'surface_index'?: uint32;
     /**
      * The specification of the upgraded entity.
      */
@@ -10244,15 +10319,15 @@ interface UnitGroupMapSettings {
     /**
      * The minimum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `3 600` ticks.
      */
-    min_group_gathering_time: uint;
+    min_group_gathering_time: uint32;
     /**
      * The maximum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `10*3 600=36 000` ticks.
      */
-    max_group_gathering_time: uint;
+    max_group_gathering_time: uint32;
     /**
      * After gathering has finished, the group is allowed to wait this long in ticks for delayed members. New members are not accepted anymore however. Defaults to `2*3 600=7 200` ticks.
      */
-    max_wait_time_for_late_members: uint;
+    max_wait_time_for_late_members: uint32;
     /**
      * The minimum group radius in tiles. The actual radius is adjusted based on the number of members. Defaults to `5.0`.
      */
@@ -10281,15 +10356,15 @@ interface UnitGroupMapSettings {
      * When a member of a group falls back more than this factor times the group radius, it will be dropped from the group. Defaults to `10`.
      */
     member_disown_distance: double;
-    tick_tolerance_when_member_arrives: uint;
+    tick_tolerance_when_member_arrives: uint32;
     /**
      * The maximum number of automatically created unit groups gathering for attack at any time. Defaults to `30`.
      */
-    max_gathering_unit_groups: uint;
+    max_gathering_unit_groups: uint32;
     /**
      * The maximum number of members for an attack unit group. This only affects automatically created unit groups, manual groups created through the API are unaffected. Defaults to `200`.
      */
-    max_unit_group_size: uint;
+    max_unit_group_size: uint32;
 }
 interface UnitSpawnDefinition {
     /**
@@ -10318,7 +10393,7 @@ interface UpgradeMapperDestination {
     /**
      * When upgrading entities, this defines explicit modules to be installed in the destination entity. Lists empty slots as `{}`.
      */
-    module_slots?: ItemIDAndQualityIDPair[];
+    module_slots?: BlueprintItemIDAndQualityIDPair[];
 }
 interface UpgradeMapperSource {
     type: 'item' | 'entity';
@@ -10408,11 +10483,11 @@ interface WaitCondition {
     /**
      * Number of ticks to wait when `type` is `"time"`, or number of ticks of inactivity when `type` is `"inactivity"`.
      */
-    ticks?: uint;
+    ticks?: uint32;
     /**
-     * This is a CircuitCondition and only present when `type` is `"item_count"`, `"circuit"`, `"fluid_count"`, `"fuel_item_count_all"`, or `"fuel_item_count_any"`, and a circuit condition is configured. This is a ItemIDAndQualityIDPair and only present when `type` is `"request_satisfied"` or `"request_not_satisfied"`
+     * This is a CircuitCondition and only present when `type` is `"item_count"`, `"circuit"`, `"fluid_count"`, `"fuel_item_count_all"`, or `"fuel_item_count_any"`, and a circuit condition is configured. This is a BlueprintItemIDAndQualityIDPair and only present when `type` is `"request_satisfied"` or `"request_not_satisfied"`
      */
-    condition?: CircuitCondition | ItemIDAndQualityIDPair;
+    condition?: CircuitCondition | BlueprintItemIDAndQualityIDPair;
     /**
      * Name of the space location. Only present when `type` is "`any_planet_import_zero`" and a planet is configured.
      */
@@ -10424,7 +10499,7 @@ interface WaitCondition {
     /**
      * Amount of damage to take when `type` is `"damage_taken"`.
      */
-    damage?: uint;
+    damage?: uint32;
 }
 /**
  * Type of a {@link WaitCondition | runtime:WaitCondition}.
@@ -10540,17 +10615,17 @@ type double = number;
  */
 type float = number;
 /**
- * 32-bit signed integer. Possible values are `-2 147 483 648` to `2 147 483 647`.
- *
- * Since Lua 5.2 only uses doubles, any API that asks for `int` will floor the given double.
- */
-type int = number;
-/**
  * 16 bit signed integer. Possible values are `-32 768` to `32 767`.
  *
  * Since Lua 5.2 only uses doubles, any API that asks for `int16` will floor the given double.
  */
 type int16 = number;
+/**
+ * 32-bit signed integer. Possible values are `-2 147 483 648` to `2 147 483 647`.
+ *
+ * Since Lua 5.2 only uses doubles, any API that asks for `int` will floor the given double.
+ */
+type int32 = number;
 /**
  * 8-bit signed integer. Possible values are `-128` to `127`.
  *
@@ -10568,17 +10643,17 @@ type nil = null;
  */
 type table = Table;
 /**
- * 32-bit unsigned integer. Possible values are `0` to `4 294 967 295`.
- *
- * Since Lua 5.2 only uses doubles, any API that asks for `uint` will floor the given double.
- */
-type uint = number;
-/**
  * 16-bit unsigned integer. Possible values are `0` to `65 535`.
  *
  * Since Lua 5.2 only uses doubles, any API that asks for `uint16` will floor the given double.
  */
 type uint16 = number;
+/**
+ * 32-bit unsigned integer. Possible values are `0` to `4 294 967 295`.
+ *
+ * Since Lua 5.2 only uses doubles, any API that asks for `uint` will floor the given double.
+ */
+type uint32 = number;
 /**
  * 64-bit unsigned integer. Possible values are `0` to `18 446 744 073 709 551 615`.
  *

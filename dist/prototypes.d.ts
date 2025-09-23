@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.66
+// Factorio version 2.0.67
 // API version 6
 
 declare namespace prototype {
@@ -981,7 +981,11 @@ interface AutoplaceControl extends Prototype {
      */
     category: 'resource' | 'terrain' | 'cliff' | 'enemy';
     /**
-     * Whether this settings being lower than default disables fight related achievements
+     * Hides the autoplace control from the map generation screen.
+     */
+    hidden?: boolean;
+    /**
+     * Whether this settings being lower than default disables fight related achievements.
      */
     related_to_fight_achievements?: boolean;
     /**
@@ -1191,7 +1195,7 @@ interface BoilerPrototype extends EntityWithOwnerPrototype {
     /**
      * The output fluid box.
      *
-     * If `mode` is `"output-to-separate-pipe"` and this has a {@link filter | prototype:FluidBox::filter}, the heated input fluid is converted to the output fluid that is set in the filter. The conversion ratio is based on the heat capacity of the fluids: `output_fluid_amount = input_fluid_amount * (output_fluid_heat_capacity / input_fluid_heat_capacity)`
+     * If `mode` is `"output-to-separate-pipe"` and this has a {@link filter | prototype:FluidBox::filter}, the heated input fluid is converted to the output fluid that is set in the filter. The conversion ratio is based on the {@link heat capacity | prototype:FluidPrototype::heat_capacity} of the fluids: `output_fluid_amount = input_fluid_amount * (output_fluid_heat_capacity / input_fluid_heat_capacity)`
      *
      * If `mode` is `"heat-fluid-inside"`, this fluidbox is unused.
      */
@@ -1423,6 +1427,7 @@ interface CargoPodPrototype extends EntityWithOwnerPrototype {
      * Has to be of type 'pod-catalogue'.
      */
     default_shadow_graphic?: ProcessionGraphic;
+    impact_trigger?: Trigger;
     inventory_size: ItemStackIndex;
     procession_audio_catalogue?: ProcessionAudioCatalogue;
     procession_graphic_catalogue?: ProcessionGraphicCatalogue;
@@ -2582,11 +2587,11 @@ interface DecorativePrototype extends Prototype {
     /**
      * Can be defined only when decorative is not "decal" (see `render_layer`).
      */
-    stateless_visualisation?: StatelessVisualisations;
+    stateless_visualisation?: StatelessVisualisation | StatelessVisualisation[];
     /**
      * Only loaded if `stateless_visualisation` is not defined. Can be defined only when decorative is not "decal" (see `render_layer`).
      */
-    stateless_visualisation_variations?: StatelessVisualisations[];
+    stateless_visualisation_variations?: (StatelessVisualisation | StatelessVisualisation[])[];
     target_count?: uint16;
     /**
      * Mandatory if `render_layer` = "decals". This int16 is converted to a {@link TileRenderLayer | prototype:TileRenderLayer} internally. It is offset from `ground-natural`.
@@ -3275,7 +3280,7 @@ interface EntityPrototype extends Prototype {
     /**
      * Name of the entity that will be automatically selected as the upgrade of this entity when using the {@link upgrade planner | https://wiki.factorio.com/Upgrade_planner} without configuration.
      *
-     * This entity may not have "not-upgradable" flag set and must be minable. This entity mining result must not contain item product with "hidden" flag set. Mining results with no item products are allowed. This entity may not be a {@link RollingStockPrototype | prototype:RollingStockPrototype}.
+     * This entity may not have "not-upgradable" flag set and must be minable. This entity mining result must not contain item product with {@link hidden | prototype:ItemPrototype::hidden} set to `true`. Mining results with no item products are allowed. This entity may not be a {@link RollingStockPrototype | prototype:RollingStockPrototype}.
      *
      * The upgrade target entity needs to have the same bounding box, collision mask, and fast replaceable group as this entity. The upgrade target entity must have least 1 item that builds it that isn't hidden.
      * @example ```
@@ -3332,7 +3337,7 @@ interface EntityPrototype extends Prototype {
      * The cursor size used when shooting at this entity.
      */
     shooting_cursor_size?: double;
-    stateless_visualisation?: StatelessVisualisations;
+    stateless_visualisation?: StatelessVisualisation | StatelessVisualisation[];
     /**
      * Used to set the area of the entity that can have stickers on it, currently only used for units to specify the area where the green slow down stickers can appear.
      * @example ```
@@ -3841,6 +3846,10 @@ interface FluidPrototype extends Prototype {
      */
     heat_capacity?: Energy;
     /**
+     * Hides the fluid from the signal selection screen.
+     */
+    hidden?: boolean;
+    /**
      * Path to the icon file.
      *
      * Only loaded, and mandatory if `icons` is not defined.
@@ -4017,6 +4026,8 @@ interface FlyingRobotPrototype extends EntityWithOwnerPrototype {
     max_energy?: Energy;
     /**
      * The maximum flying speed of the robot, including bonuses, in tiles/tick. Useful to limit the impact of {@link worker robot speed research | prototype:WorkerRobotSpeedModifier}.
+     *
+     * Must be >= speed.
      */
     max_speed?: double;
     /**
@@ -4136,14 +4147,25 @@ interface FurnacePrototype extends CraftingMachinePrototype {
      */
     source_inventory_size: ItemStackIndex;
 }
+/**
+ * Consumes a fluid to generate electricity and create another fluid.
+ */
 interface FusionGeneratorPrototype extends EntityWithOwnerPrototype {
     /**
-     * `output_flow_limit` is mandatory and must be positive.
+     * If set to `true`, the available power output is based on the {@link FluidPrototype::fuel_value | prototype:FluidPrototype::fuel_value}. Otherwise, the available power output will be based on the fluid temperature and {@link FluidPrototype::heat_capacity | prototype:FluidPrototype::heat_capacity}: `energy = fluid_amount * fluid_temperature * fluid_heat_capacity * effectivity`
+     */
+    burns_fluid?: boolean;
+    /**
+     * `1` means 100% effectivity. Must be greater than `0`. Multiplier of the energy output.
+     */
+    effectivity?: double;
+    /**
+     * `output_flow_limit` is mandatory and must be positive. `output_flow_limit` is the maximum power output of the generator.
      */
     energy_source: ElectricEnergySource;
     graphics_set?: FusionGeneratorGraphicsSet;
     /**
-     * {@link filter | prototype:FluidBox::filter} is mandatory.
+     * {@link filter | prototype:FluidBox::filter} is mandatory. The temperature (or fuel value if `burns_fluid` is true) of this fluid is used to calculate the available power output.
      */
     input_fluid_box: FluidBox;
     /**
@@ -4267,7 +4289,7 @@ interface GeneratorEquipmentPrototype extends EquipmentPrototype {
  */
 interface GeneratorPrototype extends EntityWithOwnerPrototype {
     /**
-     * If set to true, the available power output is based on the {@link FluidPrototype::fuel_value | prototype:FluidPrototype::fuel_value}. Otherwise, the available power output will be based on the fluid temperature.
+     * If set to `true`, the available power output is based on the {@link FluidPrototype::fuel_value | prototype:FluidPrototype::fuel_value}. Otherwise, the available power output will be based on the fluid temperature and {@link FluidPrototype::heat_capacity | prototype:FluidPrototype::heat_capacity}: `energy = fluid_amount * (fluid_temperature - fluid_default_temperature) * fluid_heat_capacity * effectivity`
      */
     burns_fluid?: boolean;
     /**
@@ -4744,6 +4766,10 @@ interface ItemPrototype extends Prototype {
     fuel_value?: Energy;
     has_random_tint?: boolean;
     /**
+     * Item will not appear in lists of all items such as those for logistics requests, filters, etc.
+     */
+    hidden?: boolean;
+    /**
      * Path to the icon file.
      *
      * Only loaded, and mandatory if `icons` is not defined.
@@ -5050,7 +5076,7 @@ interface LabPrototype extends EntityWithOwnerPrototype {
      */
     on_animation?: Animation;
     /**
-     * If set, {@link QualityPrototype::beacon_module_slots_bonus | prototype:QualityPrototype::beacon_module_slots_bonus} will be added to module slots count.
+     * If set, {@link QualityPrototype::lab_module_slots_bonus | prototype:QualityPrototype::lab_module_slots_bonus} will be added to module slots count.
      */
     quality_affects_module_slots?: boolean;
     researching_speed?: double;
@@ -5270,6 +5296,9 @@ interface LegacyStraightRailPrototype extends RailPrototype {
      */
     collision_box?: BoundingBox;
 }
+/**
+ * Absorbs {@link lightning | prototype:LightningPrototype} and optionally converts it into electricity.
+ */
 interface LightningAttractorPrototype extends EntityWithOwnerPrototype {
     chargable_graphics?: ChargableGraphics;
     /**
@@ -5283,15 +5312,35 @@ interface LightningAttractorPrototype extends EntityWithOwnerPrototype {
     lightning_strike_offset?: MapPosition;
     range_elongation?: double;
 }
+/**
+ * Lightning randomly hits entities on planets with {@link lightning_properties | prototype:PlanetPrototype::lightning_properties}.
+ *
+ * If a {@link lightning attractor | prototype:LightningAttractorPrototype} is hit by lightning it will absorb the lightning hit for energy.
+ *
+ * If a something that is not an attractor is hit by lightning it will be damaged by the strike.
+ */
 interface LightningPrototype extends EntityPrototype {
     attracted_volume_modifier?: float;
+    /**
+     * Effect that is triggered when lightning hits  a {@link lightning attractor | prototype:LightningAttractorPrototype}. Triggered after the attractor is charged by the lightning hit.
+     */
+    attractor_hit_effect?: Trigger;
+    /**
+     * When lightning strikes something that is not a lightning attractor, this damage is applied to the target.
+     */
     damage?: double;
     effect_duration: uint16;
+    /**
+     * When lightning hits a {@link lightning attractor | prototype:LightningAttractorPrototype}, this amount of energy is transferred to the lightning attractor.
+     */
     energy?: Energy;
     graphics_set?: LightningGraphicsSet;
     sound?: Sound;
     source_offset?: Vector;
     source_variance?: Vector;
+    /**
+     * Effect that is triggered when lightning strikes something that is not a lightning attractor. Triggered before `damage` is applied.
+     */
     strike_effect?: Trigger;
     /**
      * Must be less than or equal to `effect_duration`.
@@ -6307,7 +6356,7 @@ interface ProjectilePrototype extends EntityPrototype {
 }
 interface Prototype extends PrototypeBase {
     /**
-     * Allows to add extra description items to the tooltip and factoriopedia.
+     * Allows to add extra description items to the tooltip and Factoriopedia.
      */
     custom_tooltip_fields?: CustomTooltipField[];
     /**
@@ -6998,6 +7047,10 @@ interface RecipePrototype extends Prototype {
      * The amount of time it takes to make this recipe. Must be `> 0.001`. Equals the number of seconds it takes to craft at crafting speed `1`.
      */
     energy_required?: double;
+    /**
+     * Hides the recipe from crafting menus and other recipe selection lists.
+     */
+    hidden?: boolean;
     hide_from_bonus_gui?: boolean;
     /**
      * Hides the recipe from the player's crafting screen. The recipe will still show up for selection in machines.
@@ -7521,6 +7574,10 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
      * The light emitted when charging a robot.
      */
     recharging_light?: LightDefinition;
+    /**
+     * Whether to render the {@link no charge | prototype:UtilitySprites::recharge_icon} icon if the roboport has less energy than `recharge_minimum` in its internal buffer and is recovering from a blackout.
+     */
+    render_recharge_icon?: boolean;
     request_to_open_door_timeout: uint32;
     /**
      * Unused.
@@ -7568,6 +7625,12 @@ interface RobotWithLogisticInterfacePrototype extends FlyingRobotPrototype {
      * The robot's cargo carrying capacity. Can be increased by {@link worker robot cargo size research | prototype:WorkerRobotStorageModifier}.
      */
     max_payload_size: ItemCountType;
+    /**
+     * The robot's maximum possible cargo carrying capacity, including bonuses. Useful to limit the impact of {@link worker robot cargo size research | prototype:WorkerRobotStorageModifier}.
+     *
+     * Must be >= max_payload_size.
+     */
+    max_payload_size_after_bonus?: ItemCountType;
     /**
      * Only the first frame of the animation is drawn. This means that the graphics for the idle state cannot be animated.
      */
@@ -8148,7 +8211,7 @@ interface SimpleEntityPrototype extends EntityWithHealthPrototype {
     /**
      * Loaded and drawn with all `pictures`, `picture` and `animations`. If graphics variation is larger than number of `lower_pictures` variations this layer is not drawn.
      */
-    stateless_visualisation_variations?: StatelessVisualisations[];
+    stateless_visualisation_variations?: (StatelessVisualisation | StatelessVisualisation[])[];
 }
 /**
  * By default, this entity will be a priority target for units/turrets, who will choose to attack it even if it does not block their path. Setting {@link EntityWithOwnerPrototype::is_military_target | prototype:EntityWithOwnerPrototype::is_military_target} to `false` will turn this off, which then makes this type equivalent to {@link SimpleEntityWithOwnerPrototype | prototype:SimpleEntityWithOwnerPrototype}.
@@ -8193,7 +8256,7 @@ interface SimpleEntityWithOwnerPrototype extends EntityWithOwnerPrototype {
      * Used to determine render order for entities with the same `render_layer` in the same position. Entities with a higher `secondary_draw_order` are drawn on top.
      */
     secondary_draw_order?: int8;
-    stateless_visualisation_variations?: StatelessVisualisations[];
+    stateless_visualisation_variations?: (StatelessVisualisation | StatelessVisualisation[])[];
 }
 /**
  * Abstract entity that has an animation.
@@ -8458,6 +8521,10 @@ interface SpaceLocationPrototype extends Prototype {
      */
     gravity_pull?: double;
     /**
+     * Hides the space location from the planet selection lists and the space map.
+     */
+    hidden?: boolean;
+    /**
      * Path to the icon file.
      *
      * Only loaded, and mandatory if `icons` is not defined.
@@ -8712,6 +8779,22 @@ interface SpidertronRemotePrototype extends SelectionToolPrototype {
  * A {@link splitter | https://wiki.factorio.com/Splitter}.
  */
 interface SplitterPrototype extends TransportBeltConnectablePrototype {
+    circuit_connector?: [
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition,
+        CircuitConnectorDefinition
+    ];
+    /**
+     * The maximum circuit wire distance for this entity.
+     */
+    circuit_wire_max_distance?: double;
+    default_input_left_condition?: CircuitConditionConnector;
+    default_input_right_condition?: CircuitConditionConnector;
+    default_output_left_condition?: CircuitConditionConnector;
+    default_output_right_condition?: CircuitConditionConnector;
+    draw_circuit_wires?: boolean;
+    draw_copper_wires?: boolean;
     frozen_patch?: Sprite4Way;
     /**
      * The name of the {@link TransportBeltPrototype | prototype:TransportBeltPrototype} which is used for the sound of the underlying belt.
@@ -9160,6 +9243,10 @@ interface TechnologyPrototype extends Prototype {
      */
     essential?: boolean;
     /**
+     * Hides the technology from the tech screen.
+     */
+    hidden?: boolean;
+    /**
      * Path to the icon file.
      *
      * Only loaded, and mandatory if `icons` is not defined.
@@ -9234,7 +9321,13 @@ interface TemporaryContainerPrototype extends ContainerPrototype {
     destroy_on_empty?: boolean;
     time_to_live?: uint32;
 }
+/**
+ * Consumes two fluids as fuel to produce thrust for a space platform.
+ */
 interface ThrusterPrototype extends EntityWithOwnerPrototype {
+    /**
+     * If a {@link filter | prototype:FluidBox::filter} is set for this fluidbox it determines what the thruster considers the first fuel.
+     */
     fuel_fluid_box: FluidBox;
     graphics_set?: ThrusterGraphicsSet;
     /**
@@ -9242,6 +9335,9 @@ interface ThrusterPrototype extends EntityWithOwnerPrototype {
      */
     max_performance: ThrusterPerformancePoint;
     min_performance: ThrusterPerformancePoint;
+    /**
+     * If a {@link filter | prototype:FluidBox::filter} is set for this fluidbox it determines what the thruster considers the second fuel.
+     */
     oxidizer_fluid_box: FluidBox;
     plumes?: PlumesSpecification;
 }
@@ -9634,7 +9730,7 @@ interface TreePrototype extends EntityWithHealthPrototype {
      * Mandatory if `variations` is not defined.
      */
     pictures?: SpriteVariations;
-    stateless_visualisation_variations?: StatelessVisualisations[];
+    stateless_visualisation_variations?: (StatelessVisualisation | StatelessVisualisation[])[];
     variation_weights?: float[];
     /**
      * If defined, it can't be empty.
