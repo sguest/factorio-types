@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.67
+// Factorio version 2.0.69
 // API version 6
 
 declare namespace runtime {
@@ -2142,6 +2142,24 @@ interface LuaBootstrap {
     ```
      */
     on_event(this: void, event: defines.events.on_player_dropped_item, handler: ((this: void, arg0: runtime.on_player_dropped_item) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_player_dropped_item_into_entity, handler: ((this: void, arg0: runtime.on_player_dropped_item_into_entity) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event The event(s) or custom-input to invoke the handler on.
@@ -6830,11 +6848,11 @@ interface LuaEntity extends LuaControl {
     /**
      * Deactivating an entity will stop all its operations (car will stop moving, inserters will stop working, fish will stop moving etc).
      *
-     * Entities that are not active naturally can't be set to be active (setting it to be active will do nothing)
+     * Writing to this is deprecated and affects only the {@link disabled_by_script | runtime:LuaEntity::disabled_by_script} state.
      *
-     * Ghosts, simple smoke, and corpses can't be modified at this time.
+     * Reading from this returns `false` if the entity is deactivated in at least one of the following ways: {@link by script | runtime:LuaEntity::disabled_by_script}, {@link by circuit network | runtime:LuaEntity::disabled_by_control_behavior}, {@link by recipe | runtime:LuaEntity::disabled_by_recipe}, {@link by freezing | runtime:LuaEntity::frozen}, or by deconstruction.
      *
-     * It is even possible to set the character to not be active, so he can't move and perform most of the tasks.
+     * Entities that are not active naturally can't be set to be active (setting it to be active will do nothing). Some entities (Corpse, FireFlame, Roboport, RollingStock, dying entities) need to remain active and will ignore writes.
      */
     active: boolean;
     /**
@@ -7085,7 +7103,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly disabled_by_control_behavior: boolean;
     /**
-     * If the updatable entity is disabled by recipe.
+     * If the assembling machine is disabled by recipe, e.g. due to {@link AssemblingMachinePrototype::disabled_when_recipe_not_researched | prototype:AssemblingMachinePrototype::disabled_when_recipe_not_researched}.
      */
     readonly disabled_by_recipe: boolean;
     /**
@@ -7129,7 +7147,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly effective_speed?: float;
     /**
-     * Multiplies the acceleration the vehicle can create for one unit of energy. Defaults to `1`.
+     * Multiplies the acceleration the car can create for one unit of energy. Defaults to `1`.
      */
     effectivity_modifier: float;
     /**
@@ -7421,6 +7439,10 @@ interface LuaEntity extends LuaControl {
      */
     minable_flag: boolean;
     /**
+     * Area in which this mining drill looks for resources to mine.
+     */
+    readonly mining_area: BoundingBox;
+    /**
      * The filter mode for this mining drill. `nil` if this mining drill doesn't have filters.
      */
     mining_drill_filter_mode?: 'whitelist' | 'blacklist';
@@ -7433,7 +7455,9 @@ interface LuaEntity extends LuaControl {
      */
     readonly mining_target?: LuaEntity;
     /**
-     * If the entity is currently mirrored. This state is referred to as `flipped` elsewhere, such as on the {@link on_player_flipped_entity | runtime:on_player_flipped_entity} event.
+     * Whether the entity is currently mirrored. This state is referred to as `flipped` elsewhere, such as on the {@link on_player_flipped_entity | runtime:on_player_flipped_entity} event.
+     *
+     * If an entity is mirrored, it is flipped over the axis that is pointing in the entity's direction. For example if a mirrored entity is facing north, everything that was defined to be facing east in the prototype now faces west.
      */
     mirroring: boolean;
     /**
@@ -8187,6 +8211,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly color?: Color;
     readonly combat_robot_friction?: double;
+    readonly connection_category: string[];
     readonly connection_distance?: double;
     /**
      * The construction radius for this roboport prototype.
@@ -10167,6 +10192,10 @@ interface LuaForce {
      * Reapplies all possible research effects, including unlocked recipes. Any custom changes are lost. Preserves research state of technologies.
      */
     reset_technology_effects(this: void): void;
+    /**
+     * Trigger the "scripted" {@link research trigger | runtime:ResearchTrigger} of a technology, researching it. Does nothing if the technology does not have a "scripted" research trigger.
+     */
+    script_trigger_research(this: void, technology: TechnologyID): void;
     /**
      * @param ammo Ammo category
      */
@@ -12952,9 +12981,25 @@ interface LuaItemCommon {
      */
     durability: double;
     /**
+     * If this is an item with entity data, get the stored auto target with gunner state.
+     */
+    entity_auto_target_with_gunner: boolean;
+    /**
+     * If this is an item with entity data, get the stored auto target without gunner state.
+     */
+    entity_auto_target_without_gunner: boolean;
+    /**
      * If this is an item with entity data, get the stored entity color.
      */
     entity_color?: Color;
+    /**
+     * If this is an item with entity data, get the stored driver is gunner state.
+     */
+    entity_driver_is_gunner: boolean;
+    /**
+     * If this is an item with entity data, get the stored enable logistics while moving state.
+     */
+    entity_enable_logistics_while_moving: boolean;
     /**
      * The number of entity filters this deconstruction item supports.
      */
@@ -12975,6 +13020,10 @@ interface LuaItemCommon {
      * If this is an item with entity data, get the stored logistic filters.
      */
     entity_logistic_sections: LogisticSections;
+    /**
+     * If this is an item with entity data, get the stored vehicle logistics enabled state.
+     */
+    entity_logistics_enabled: boolean;
     /**
      * If this is an item with entity data, get the stored request from buffer state.
      */
@@ -16160,7 +16209,7 @@ interface LuaRecord {
      */
     get_blueprint_entity_count(this: void): uint32;
     /**
-     * Gets the given tag on the given blueprint entity index in this blueprint blueprint.
+     * Gets the given tag on the given blueprint entity index in this blueprint.
      * @param index The entity index.
      * @param tag The tag to get.
      */
@@ -16204,7 +16253,7 @@ interface LuaRecord {
      */
     set_blueprint_entities(this: void, entities: BlueprintEntity[]): void;
     /**
-     * Sets the given tag on the given blueprint entity index in this blueprint blueprint.
+     * Sets the given tag on the given blueprint entity index in this blueprint.
      * @param index The entity index.
      * @param tag The tag to set.
      * @param value The tag value to set or `nil` to clear the tag.
@@ -16245,7 +16294,7 @@ interface LuaRecord {
      */
     blueprint_absolute_snapping: boolean;
     /**
-     * The description for this blueprint or blueprint book
+     * The description for this blueprint or blueprint book.
      */
     blueprint_description: string;
     /**
@@ -16903,6 +16952,7 @@ interface LuaRendering {
      * @param table.players The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @example ```
     -- This will draw an iron plate icon at the character's feet. The sprite will move together with the character.
     rendering.draw_sprite{sprite = "item.iron-plate", target = game.player.character, surface = game.player.surface}
@@ -16910,7 +16960,6 @@ interface LuaRendering {
      * @example ```
     -- This will draw an iron plate icon at the character's head. The sprite will move together with the character.
     rendering.draw_sprite{sprite = "item.iron-plate", target = {entity = game.player.character, offset = {0, -2}}, surface = game.player.surface}
-    $field(render_mode, ScriptRenderMode, $optional) Mode which this object should render in. Defaults to "game".
     ```
      */
     draw_sprite(this: void, table: {
@@ -16931,6 +16980,7 @@ interface LuaRendering {
         players?: PlayerIdentification[];
         visible?: boolean;
         only_in_alt_mode?: boolean;
+        render_mode?: ScriptRenderMode;
     }): LuaRenderObject;
     /**
      * Create a text.

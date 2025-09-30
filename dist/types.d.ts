@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.67
+// Factorio version 2.0.69
 // API version 6
 
 declare namespace prototype {
@@ -6899,6 +6899,9 @@ interface NoiseFunction {
      */
     parameters: string[];
 }
+/**
+ * Modifier that does nothing. Can be used to show custom scripted effects in the technology GUI.
+ */
 interface NothingModifier extends BaseModifier {
     effect_description?: LocalisedString;
     type: 'nothing';
@@ -7189,9 +7192,9 @@ type PersistentWorldAmbientSoundsDefinitionCrossfade = Fade & {
 };
 interface PipeConnectionDefinition {
     /**
-     * Connection category bitmask makes it possible to define different categories of pipe connections that are not able to connect with each other. For example if a mod should have a "steam pipes" and "cryogenic pipes" category and they should not connect with each other.
+     * Fluidboxes' pipe connections are only allowed to connect with each other if they share a connection category. For example a mod could have a "steam pipes" and "cryogenic pipes" category that should not connect with each other.
      *
-     * In case of a normal connection, a bitmask may contain multiple bits set. This allows to create a mod where pipes of different categories would not connect to each other while still making it possible for crafting machines and other entities to connect to any of the specified pipes.
+     * In case of a normal connection, a pipe connection can be in multiple connection categories. This allows to create a mod where pipes of different categories would not connect to each other while still making it possible for crafting machines and other entities to connect to any of the specified pipes.
      *
      * By default, all pipe connections have the `"default"` category. So a pipe that should connect to a new category and standard pipes can have the `connection_category = {"my-new-pipe", "default"}`.
      *
@@ -8709,6 +8712,29 @@ interface ScriptTriggerEffectItem extends TriggerEffectItem {
      */
     effect_id: string;
     type: 'script';
+}
+/**
+ * Triggered only by calling {@link LuaForce::script_trigger_research | runtime:LuaForce::script_trigger_research}. Can be used to show custom scripted triggers in the technology GUI.
+ */
+interface ScriptedTechnologyTrigger {
+    /**
+     * Path to the icon file.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon?: FileName;
+    /**
+     * The size of the square icon, in pixels. E.g. `32` for a 32px by 32px icon. Must be larger than `0`.
+     *
+     * Only loaded if `icons` is not defined.
+     */
+    icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    icons?: IconData[];
+    trigger_description?: LocalisedString;
+    type: 'scripted';
 }
 interface ScrollBarStyleSpecification extends BaseStyleSpecification {
     background_graphical_set?: ElementImageSet;
@@ -10586,7 +10612,10 @@ CaptureSpawnerTechnologyTrigger | /**
 BuildEntityTechnologyTrigger | /**
  * Loaded when the `type` is `"create-space-platform"`.
  */
-CreateSpacePlatformTechnologyTrigger;
+CreateSpacePlatformTechnologyTrigger | /**
+ * Loaded when the `type` is `"scripted"`.
+ */
+ScriptedTechnologyTrigger;
 /**
  * Either `count` or `count_formula` must be defined, never both.
  * @example ```
