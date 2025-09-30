@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.67
+// Factorio version 2.0.69
 // API version 6
 
 declare namespace runtime {
@@ -7862,9 +7862,9 @@ interface ResearchIngredient {
     amount: uint16;
 }
 interface BaseResearchTrigger {
-    type: 'craft-item' | 'mine-entity' | 'craft-fluid' | 'send-item-to-orbit' | 'capture-spawner' | 'build-entity' | 'create-space-platform';
+    type: 'craft-item' | 'mine-entity' | 'craft-fluid' | 'send-item-to-orbit' | 'capture-spawner' | 'build-entity' | 'create-space-platform' | 'scripted';
 }
-type ResearchTrigger = BaseResearchTrigger | ResearchTriggerBuildEntity | ResearchTriggerCaptureSpawner | ResearchTriggerCraftFluid | ResearchTriggerCraftItem | ResearchTriggerMineEntity | ResearchTriggerSendItemToOrbit;
+type ResearchTrigger = BaseResearchTrigger | ResearchTriggerBuildEntity | ResearchTriggerCaptureSpawner | ResearchTriggerCraftFluid | ResearchTriggerCraftItem | ResearchTriggerMineEntity | ResearchTriggerScripted | ResearchTriggerSendItemToOrbit;
 /**
  *
  * Applies to variant case `build-entity`
@@ -7906,6 +7906,14 @@ interface ResearchTriggerCraftItem extends BaseResearchTrigger {
 interface ResearchTriggerMineEntity extends BaseResearchTrigger {
     'type': 'mine-entity';
     'entity': string;
+}
+/**
+ *
+ * Applies to variant case `scripted`
+ */
+interface ResearchTriggerScripted extends BaseResearchTrigger {
+    'type': 'scripted';
+    'trigger_description': LocalisedString;
 }
 /**
  *

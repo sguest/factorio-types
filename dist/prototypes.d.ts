@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.67
+// Factorio version 2.0.69
 // API version 6
 
 declare namespace prototype {
@@ -691,6 +691,8 @@ interface ArtilleryFlarePrototype extends EntityPrototype {
     render_layer_when_on_ground?: RenderLayer;
     /**
      * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
      */
     selection_priority?: uint8;
     /**
@@ -859,7 +861,7 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
     default_recipe_finished_signal?: SignalIDConnector;
     default_working_signal?: SignalIDConnector;
     /**
-     * Defaults to true if fixed_recipe is not given.
+     * Defaults to true if `fixed_recipe` is not given.
      */
     disabled_when_recipe_not_researched?: boolean;
     draw_circuit_wires?: boolean;
@@ -1401,6 +1403,9 @@ interface CargoLandingPadPrototype extends EntityWithOwnerPrototype {
     draw_copper_wires?: boolean;
     graphics_set?: CargoBayConnectableGraphicsSet;
     inventory_size: ItemStackIndex;
+    /**
+     * In chunks. The radius of how many chunks this cargo landing pad charts around itself.
+     */
     radar_range?: uint32;
     radar_visualisation_color?: Color;
     /**
@@ -1930,6 +1935,7 @@ interface CorpsePrototype extends EntityPrototype {
     ground_patch_fade_out_start?: float;
     ground_patch_higher?: AnimationVariations;
     ground_patch_render_layer?: RenderLayer;
+    protected_from_tile_building?: boolean;
     remove_on_entity_placement?: boolean;
     remove_on_tile_placement?: boolean;
     /**
@@ -3331,6 +3337,8 @@ interface EntityPrototype extends Prototype {
     selection_box?: BoundingBox;
     /**
      * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
      */
     selection_priority?: uint8;
     /**
@@ -3983,6 +3991,10 @@ interface FluidTurretPrototype extends TurretPrototype {
  */
 interface FluidWagonPrototype extends RollingStockPrototype {
     capacity: FluidAmount;
+    /**
+     * Pumps are only allowed to connect to this fluid wagon if the pump's {@link fluid box connection | prototype:PipeConnectionDefinition} and this fluid wagon share a connection category. Pump may have different connection categories on the input and output side, connection categories will be taken from the connection that is facing towards fluid wagon.
+     */
+    connection_category?: string | string[];
     quality_affects_capacity?: boolean;
     /**
      * Must be 1, 2 or 3.
@@ -5736,7 +5748,11 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
      */
     resource_drain_rate_percent?: uint8;
     /**
-     * The distance from the centre of the mining drill to search for resources in.
+     * Offset of the `resource_searching_radius` from the entity center when the mining drill is facing north.
+     */
+    resource_searching_offset?: Vector;
+    /**
+     * The distance from the center of the mining drill to search for resources in.
      *
      * This is 2.49 for electric mining drills (a 5x5 area) and 0.99 for burner mining drills (a 2x2 area). The drill searches resource outside its natural boundary box, which is 0.01 (the middle of the entity); making it 2.5 and 1.0 gives it another block radius.
      */
@@ -6760,7 +6776,7 @@ interface RailRampPrototype extends RailPrototype {
      */
     collision_box?: BoundingBox;
     /**
-     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"allow_on_deep_oil_ocean"`.
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"rail-ramp/allow_on_deep_oil_ocean"`.
      */
     collision_mask_allow_on_deep_oil_ocean?: CollisionMaskConnector;
     /**
@@ -6831,7 +6847,7 @@ interface RailSupportPrototype extends EntityWithOwnerPrototype {
      */
     build_grid_size?: 2;
     /**
-     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"allow_on_deep_oil_ocean"`.
+     * Defaults to the mask from {@link UtilityConstants::default_collision_masks | prototype:UtilityConstants::default_collision_masks} when indexed by `"rail-support/allow_on_deep_oil_ocean"`.
      */
     collision_mask_allow_on_deep_oil_ocean?: CollisionMaskConnector;
     /**
@@ -7553,7 +7569,7 @@ interface RoboportPrototype extends EntityWithOwnerPrototype {
     max_logistic_slots?: LogisticFilterIndex;
     open_door_trigger_effect?: TriggerEffect;
     /**
-     * Defaults to the max of logistic range or construction range rounded up to chunks.
+     * In chunks. The radius of how many chunks this roboport charts around itself. Defaults to the max of logistic range or construction range rounded up to chunks.
      */
     radar_range?: uint32;
     radar_visualisation_color?: Color;
@@ -8702,6 +8718,9 @@ interface SpiderUnitPrototype extends EntityWithOwnerPrototype {
     height: float;
     max_pursue_distance?: double;
     min_pursue_time?: uint32;
+    /**
+     * In chunks. The radius of how many chunks this spider unit charts around itself.
+     */
     radar_range?: uint32;
     spawning_time_modifier?: double;
     spider_engine: SpiderEngineSpecification;
@@ -10019,6 +10038,9 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
      * Movement speed of the unit in the world, in tiles per tick. Must be equal to or greater than 0.
      */
     movement_speed: float;
+    /**
+     * In chunks. The radius of how many chunks this unit charts around itself.
+     */
     radar_range?: uint32;
     render_layer?: RenderLayer;
     rotation_speed?: float;
@@ -10323,6 +10345,10 @@ interface UtilityConstants extends PrototypeBase {
     max_fluid_flow: FluidAmount;
     max_logistic_filter_count: LogisticFilterIndex;
     max_terrain_building_size: uint8;
+    /**
+     * Cap for how many steps of quality the output of something (miner/crafter) may be higher than the input (resource/ingredients). Must be >= 1.
+     */
+    maximum_quality_jump: uint8;
     maximum_recipe_overload_multiplier: uint32;
     medium_area_size: float;
     medium_blueprint_area_size: float;
@@ -10347,6 +10373,7 @@ interface UtilityConstants extends PrototypeBase {
      */
     player_colors: PlayerColorData[];
     probability_product_count_tint: Color;
+    quality_selector_dropdown_threshold: uint8;
     rail_planner_count_button_color: Color;
     rail_segment_colors: Color[];
     recipe_step_limit: uint32;
@@ -11142,6 +11169,9 @@ interface VehiclePrototype extends EntityWithOwnerPrototype {
      * Must be positive. There is no functional difference between the two ways to set braking power/force.
      */
     braking_power: Energy | double;
+    /**
+     * In chunks. The radius of the radar range of the vehicle, so how many chunks it charts around itself.
+     */
     chunk_exploration_radius?: uint32;
     crash_trigger?: TriggerEffect;
     /**

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.67
+// Factorio version 2.0.69
 // API version 6
 
 declare namespace runtime {
@@ -2257,6 +2257,24 @@ interface on_player_driving_changed_state {
 interface on_player_dropped_item {
     /**
      * The item-on-ground entity.
+     */
+    entity: LuaEntity;
+    /**
+     * Identifier of the event
+     */
+    name: defines.events;
+    player_index: uint32;
+    /**
+     * Tick the event was generated.
+     */
+    tick: uint32;
+}
+/**
+ * Called when a player drops a single item into an entity.
+ */
+interface on_player_dropped_item_into_entity {
+    /**
+     * The entity the item was dropped into.
      */
     entity: LuaEntity;
     /**
