@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.69
+// Factorio version 2.0.70
 // API version 6
 
 declare namespace prototype {
@@ -188,7 +188,7 @@ type Alignment = 'top-left' | 'middle-left' | /**
 'left' | 'bottom-left' | 'top-center' | 'middle-center' | /**
  * The same as `"middle-center"`
  */
-'center' | 'bottom-center' | 'top-right' | /**
+'center' | 'bottom-center' | 'top-right' | 'middle-right' | /**
  * The same as `"middle-right"`
  */
 'right' | 'bottom-right';
@@ -2323,6 +2323,14 @@ interface CargoStationParameters {
      */
     giga_hatch_definitions?: GigaCargoHatchDefinition[];
     hatch_definitions?: CargoHatchDefinition[];
+    /**
+     * If set to false, this station will not accept incoming cargo units even if it has hatches that can. (can occur through linked cargo bays)
+     */
+    is_input_station?: boolean;
+    /**
+     * If set to false, this station will not dispatch cargo units even if it has hatches that can. (can occur through linked cargo bays)
+     */
+    is_output_station?: boolean;
     /**
      * Packed cargo units will wait for the full order to be completed. This is useful to save rockets in rocket silos when items trickle in slowly. The platform hub has immediate access to items so false is better to allow partial fulfillments.
      */

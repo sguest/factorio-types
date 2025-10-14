@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.69
+// Factorio version 2.0.70
 // API version 6
 
 declare namespace runtime {
@@ -5942,7 +5942,7 @@ interface LuaDisplayPanelControlBehavior extends LuaControlBehavior {
      * @param index Message index. Use `-1` to append new element.
      * @param message The message definition for the specified index. Specify `nil` to remove the message.
      */
-    set_message(this: void, index: uint32, message: DisplayPanelMessageDefinition): void;
+    set_message(this: void, index: int32, message: DisplayPanelMessageDefinition | nil): void;
     /**
      * The full list of configured messages.
      */
@@ -10008,7 +10008,7 @@ interface LuaForce {
      * Returns `nil` if the chunk has not been charted for this force.
      * @returns The raw pixel data.
      */
-    get_chunk_chart(this: void, surface: SurfaceIdentification, position: ChunkPosition): string | null;
+    get_chunk_chart(this: void, surface: SurfaceIdentification, chunk_position: ChunkPosition): string | null;
     /**
      * The entity build statistics for this force (built and mined) for the given surface.
      */
@@ -10093,18 +10093,18 @@ interface LuaForce {
     get_turret_attack_modifier(this: void, turret: EntityID): double;
     /**
      * Has a chunk been charted?
-     * @param position Position of the chunk.
+     * @param chunk_position Position of the chunk.
      */
-    is_chunk_charted(this: void, surface: SurfaceIdentification, position: ChunkPosition): boolean;
+    is_chunk_charted(this: void, surface: SurfaceIdentification, chunk_position: ChunkPosition): boolean;
     /**
      * Has a chunk been requested for charting?
-     * @param position Position of the chunk.
+     * @param chunk_position Position of the chunk.
      */
-    is_chunk_requested_for_charting(this: void, surface: SurfaceIdentification, position: ChunkPosition): boolean;
+    is_chunk_requested_for_charting(this: void, surface: SurfaceIdentification, chunk_position: ChunkPosition): boolean;
     /**
      * Is the given chunk currently charted and visible (not covered by fog of war) on the map.
      */
-    is_chunk_visible(this: void, surface: SurfaceIdentification, position: ChunkPosition): boolean;
+    is_chunk_visible(this: void, surface: SurfaceIdentification, chunk_position: ChunkPosition): boolean;
     /**
      * Is this force an enemy? This differs from `get_cease_fire` in that it is always false for neutral force. This is equivalent to checking the `enemy` ForceCondition.
      */
@@ -10257,10 +10257,10 @@ interface LuaForce {
      */
     set_turret_attack_modifier(this: void, turret: EntityID, modifier: double): void;
     /**
-     * @param position The chunk position to unchart.
+     * @param chunk_position The chunk position to unchart.
      * @param surface Surface to unchart on.
      */
-    unchart_chunk(this: void, position: ChunkPosition, surface: SurfaceIdentification): void;
+    unchart_chunk(this: void, chunk_position: ChunkPosition, surface: SurfaceIdentification): void;
     /**
      * Unlocks the quality to be accessible to this force.
      * @param quality Name of the quality.
@@ -18277,9 +18277,9 @@ interface LuaSurface {
      * Removes the chunk from the territory it is associated with (if any) and allows the map generator to potentially generate a new territory for the chunk in the future. To prevent the game from generating a new territory for the chunk, use {@link LuaSurface::set_chunk_territory | runtime:LuaSurface::set_chunk_territory} to set the chunk's territory to `nil`.
      *
      * Territories that do not contain at least one generated chunk as a result of calling this method will be automatically deleted.
-     * @param positions The chunk positions. The chunks at these positions does not need to exist.
+     * @param chunk_positions The chunk positions. The chunks at these positions does not need to exist.
      */
-    clear_territory_for_chunks(this: void, positions: ChunkPosition[]): void;
+    clear_territory_for_chunks(this: void, chunk_positions: ChunkPosition[]): void;
     /**
      * Clones the given area.
      *
@@ -18508,9 +18508,9 @@ interface LuaSurface {
      */
     decorative_prototype_collides(this: void, prototype: DecorativeID, position: MapPosition): boolean;
     /**
-     * @param position The chunk position to delete
+     * @param chunk_position The chunk position to delete
      */
-    delete_chunk(this: void, position: ChunkPosition): void;
+    delete_chunk(this: void, chunk_position: ChunkPosition): void;
     /**
      * Removes all decoratives from the given area. If no area and no position are given, then the entire surface is searched.
      * @param table.exclude_soft Soft decoratives can be drawn over rails.
@@ -18729,6 +18729,8 @@ interface LuaSurface {
     force_generate_chunk_requests(this: void): void;
     /**
      * Get an iterator going over every chunk on this surface.
+     *
+     * Chunks may or may not be generated; use {@link LuaSurface::is_chunk_generated | runtime:LuaSurface::is_chunk_generated} to check a chunk's state before accessing it.
      */
     get_chunks(this: void): LuaChunkIterator;
     /**
@@ -18758,10 +18760,10 @@ interface LuaSurface {
     get_double_hidden_tile(this: void, position: TilePosition): string;
     /**
      * Returns all the military targets (entities with force) on this chunk for the given force.
-     * @param position The chunk's position.
+     * @param chunk_position The chunk's position.
      * @param force Entities of this force will be returned.
      */
-    get_entities_with_force(this: void, position: ChunkPosition, force: ForceID): LuaEntity[];
+    get_entities_with_force(this: void, chunk_position: ChunkPosition, force: ForceID): LuaEntity[];
     /**
      * The hidden tile name.
      * @param position The tile position.
@@ -18828,9 +18830,9 @@ interface LuaSurface {
     get_territories(this: void): LuaTerritory[];
     /**
      * Get the territory that the given chunk is assigned to. If the chunk is not part of any territory or the territory for the chunk has not yet been generated, then this returns `nil`.
-     * @param position The chunk's position. The chunk at this position does not need to exist.
+     * @param chunk_position The chunk's position. The chunk at this position does not need to exist.
      */
-    get_territory_for_chunk(this: void, position: ChunkPosition): LuaTerritory | null;
+    get_territory_for_chunk(this: void, chunk_position: ChunkPosition): LuaTerritory | null;
     /**
      * Get the tile at a given position. An alternative call signature for this method is passing it a single {@link TilePosition | runtime:TilePosition}.
      *
@@ -18843,9 +18845,9 @@ interface LuaSurface {
     get_total_pollution(this: void): double;
     /**
      * Is a given chunk generated?
-     * @param position The chunk's position.
+     * @param chunk_position The chunk's position.
      */
-    is_chunk_generated(this: void, position: ChunkPosition): boolean;
+    is_chunk_generated(this: void, chunk_position: ChunkPosition): boolean;
     /**
      * Play a sound for every player on this surface.
      *
@@ -18932,10 +18934,10 @@ interface LuaSurface {
     request_to_generate_chunks(this: void, position: MapPosition, radius?: uint32): void;
     /**
      * Set generated status of a chunk. Useful when copying chunks.
-     * @param position The chunk's position.
+     * @param chunk_position The chunk's position.
      * @param status The chunk's new status.
      */
-    set_chunk_generated_status(this: void, position: ChunkPosition, status: defines.chunk_generated_status): void;
+    set_chunk_generated_status(this: void, chunk_position: ChunkPosition, status: defines.chunk_generated_status): void;
     /**
      * Sets the cover tile for the given force and tile on this surface.
      */
@@ -18989,10 +18991,10 @@ interface LuaSurface {
      * It's recommended that territory chunks are connected to each other, but this is not required.
      *
      * Territories that do not contain at least one generated chunk as a result of calling this method will be automatically deleted.
-     * @param positions The chunk positions. The chunks at these positions do not need to exist in order to be assigned to a territory.
+     * @param chunk_positions The chunk positions. The chunks at these positions do not need to exist in order to be assigned to a territory.
      * @param territory The territory to associate the chunks with. If not `nil`, the territory must belong to this same surface or else an error will be produced. If `nil`, then the chunks get removed from the territory it is currently associated with and will prevent the map generator from automatically re-generate a new territory for the chunk in the future.
      */
-    set_territory_for_chunks(this: void, positions: ChunkPosition[], territory?: LuaTerritory): void;
+    set_territory_for_chunks(this: void, chunk_positions: ChunkPosition[], territory?: LuaTerritory): void;
     /**
      * Set tiles at specified locations. Can automatically correct the edges around modified tiles.
      *
