@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.69
+// Factorio version 2.0.70
 // API version 6
 
 declare namespace prototype {
@@ -699,6 +699,9 @@ interface ArtilleryFlarePrototype extends EntityPrototype {
      * Shadow variation variation count and individual frame count must be equal to picture variation count.
      */
     shadows?: AnimationVariations;
+    /**
+     * Only artillery turrets/wagons whose ammo's {@link ammo_category | prototype:AmmoItemPrototype::ammo_category} matches this category will shoot at this flare. Defaults to all ammo categories being able to shoot at this flare.
+     */
     shot_category?: AmmoCategoryID;
     /**
      * How many artillery shots should be fired at the position of this flare.
@@ -2688,7 +2691,7 @@ interface DeliverImpactCombination {
      * Name of the deliver impact combination.
      */
     name: string;
-    trigger_effect_item: TriggerEffectItem;
+    trigger_effect_item: TriggerEffect;
     type: 'deliver-impact-combination';
 }
 /**
@@ -2712,7 +2715,7 @@ interface DestroyCliffAchievementPrototype extends AchievementPrototype {
     limited_to_one_game?: boolean;
 }
 /**
- * A display panel prototype to provide a prototype for display panels.
+ * Entity that display a signal icon and some text, either configured directly in the entity or through the circuit network.
  */
 interface DisplayPanelPrototype extends EntityWithOwnerPrototype {
     /**
@@ -2732,7 +2735,7 @@ interface DisplayPanelPrototype extends EntityWithOwnerPrototype {
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
     /**
-     * The maximum width of the text on the display panel.
+     * The maximum display width of the text on the display panel. If the text exceeds this width it will be wrapped so that it continues on the next line.
      */
     max_text_width?: uint32;
     /**
@@ -9211,6 +9214,10 @@ interface SurfacePrototype extends Prototype {
      * Only loaded if `icons` is not defined.
      */
     icon_size?: SpriteSizeType;
+    /**
+     * Can't be an empty array.
+     */
+    icons?: IconData[];
     surface_properties?: LuaTable<SurfacePropertyID, double>;
 }
 /**

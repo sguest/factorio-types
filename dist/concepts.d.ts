@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.69
+// Factorio version 2.0.70
 // API version 6
 
 declare namespace runtime {
@@ -119,7 +119,7 @@ type Alignment = 'top-left' | 'middle-left' | /**
 'left' | 'bottom-left' | 'top-center' | 'middle-center' | /**
  * The same as `"middle-center"`
  */
-'center' | 'bottom-center' | 'top-right' | /**
+'center' | 'bottom-center' | 'top-right' | 'middle-right' | /**
  * The same as `"middle-right"`
  */
 'right' | 'bottom-right';
@@ -4118,7 +4118,7 @@ interface LogisticSection {
     /**
      * Defaults to true.
      */
-    active?: float;
+    active?: boolean;
 }
 interface LogisticSections {
     sections?: LogisticSection[];
