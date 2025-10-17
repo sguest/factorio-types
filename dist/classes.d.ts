@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.70
+// Factorio version 2.0.71
 // API version 6
 
 declare namespace runtime {
@@ -6848,9 +6848,9 @@ interface LuaEntity extends LuaControl {
     /**
      * Deactivating an entity will stop all its operations (car will stop moving, inserters will stop working, fish will stop moving etc).
      *
-     * Writing to this is deprecated and affects only the {@link disabled_by_script | runtime:LuaEntity::disabled_by_script} state.
-     *
      * Reading from this returns `false` if the entity is deactivated in at least one of the following ways: {@link by script | runtime:LuaEntity::disabled_by_script}, {@link by circuit network | runtime:LuaEntity::disabled_by_control_behavior}, {@link by recipe | runtime:LuaEntity::disabled_by_recipe}, {@link by freezing | runtime:LuaEntity::frozen}, or by deconstruction.
+     *
+     * Writing to this is deprecated and affects only the {@link disabled_by_script | runtime:LuaEntity::disabled_by_script} state.
      *
      * Entities that are not active naturally can't be set to be active (setting it to be active will do nothing). Some entities (Corpse, FireFlame, Roboport, RollingStock, dying entities) need to remain active and will ignore writes.
      */
@@ -7100,16 +7100,22 @@ interface LuaEntity extends LuaControl {
     direction: defines.direction;
     /**
      * If the updatable entity is disabled by control behavior.
+     *
+     * Always returns `false` if this entity is not considered {@link updatable | runtime:LuaEntity::is_updatable}.
      */
     readonly disabled_by_control_behavior: boolean;
     /**
      * If the assembling machine is disabled by recipe, e.g. due to {@link AssemblingMachinePrototype::disabled_when_recipe_not_researched | prototype:AssemblingMachinePrototype::disabled_when_recipe_not_researched}.
+     *
+     * Always returns `false` if this entity is not considered {@link updatable | runtime:LuaEntity::is_updatable}.
      */
     readonly disabled_by_recipe: boolean;
     /**
      * If the updatable entity is disabled by script.
      *
      * Note: Some entities (Corpse, FireFlame, Roboport, RollingStock, dying entities) need to remain active and will ignore writes.
+     *
+     * If this entity is not considered {@link updatable | runtime:LuaEntity::is_updatable} then this always returns `false` and writes will be ignored.
      */
     disabled_by_script: boolean;
     display_panel_always_show: boolean;
@@ -7225,7 +7231,9 @@ interface LuaEntity extends LuaControl {
      */
     friction_modifier: float;
     /**
-     * If the freezable entity is currently frozen.
+     * Whether the freezable entity is currently frozen.
+     *
+     * Always returns `false` if this entity is not considered {@link freezable | runtime:LuaEntity::is_freezable}.
      */
     readonly frozen: boolean;
     readonly ghost_localised_description: LocalisedString;
@@ -7341,7 +7349,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly is_entity_with_owner: boolean;
     /**
-     * If the entity is freezable.
+     * Whether the entity is freezable and considered a FreezableEntity.
      */
     readonly is_freezable: boolean;
     /**
@@ -7353,7 +7361,7 @@ interface LuaEntity extends LuaControl {
      */
     is_military_target: boolean;
     /**
-     * If the entity is updatable.
+     * Whether the entity is updatable and considered an UpdatableEntity.
      */
     readonly is_updatable: boolean;
     /**
@@ -19354,7 +19362,7 @@ interface LuaSurfaceCreateEntityParamsAmmoTurret extends BaseLuaSurfaceCreateEnt
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -19595,7 +19603,7 @@ interface LuaSurfaceCreateEntityParamsElectricTurret extends BaseLuaSurfaceCreat
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -19631,7 +19639,7 @@ interface LuaSurfaceCreateEntityParamsFluidTurret extends BaseLuaSurfaceCreateEn
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -20135,7 +20143,7 @@ interface LuaSurfaceCreateEntityParamsTurret extends BaseLuaSurfaceCreateEntityP
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *

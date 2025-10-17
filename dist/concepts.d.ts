@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.70
+// Factorio version 2.0.71
 // API version 6
 
 declare namespace runtime {
@@ -545,7 +545,7 @@ interface BlueprintEntityAmmoTurret extends BaseBlueprintEntity {
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -695,7 +695,7 @@ interface BlueprintEntityElectricTurret extends BaseBlueprintEntity {
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -707,7 +707,7 @@ interface BlueprintEntityFluidTurret extends BaseBlueprintEntity {
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -1034,7 +1034,7 @@ interface BlueprintEntityTurret extends BaseBlueprintEntity {
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -1157,6 +1157,12 @@ interface BlueprintMiningDrillFilter {
      * Defaults to `"whitelist"`.
      */
     mode?: 'whitelist' | 'blacklist';
+}
+interface BlueprintQualityID {
+    /**
+     * The name of the quality prototype. Defaults to `"normal"`.
+     */
+    name?: string;
 }
 interface BlueprintSchedule {
     records?: BlueprintScheduleRecord[];
@@ -8285,7 +8291,7 @@ interface SelectorCombinatorParametersCount extends BaseSelectorCombinatorParame
     /**
      * The signal to emit.
      */
-    'count_signal': SignalID;
+    'count_signal'?: SignalID;
 }
 /**
  *
@@ -8312,10 +8318,7 @@ interface SelectorCombinatorParametersQualityTransfer extends BaseSelectorCombin
     'operation'?: 'quality-transfer';
     'quality_destination_signal': SignalID;
     'quality_source_signal'?: SignalIDBase;
-    /**
-     * The name of the quality prototype. Defaults to `"normal"`.
-     */
-    'quality_source_static'?: string;
+    'quality_source_static'?: BlueprintQualityID;
     /**
      * Defaults to `false`.
      */
