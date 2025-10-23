@@ -28,9 +28,13 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: 'yarn'
           registry-url: 'https://registry.npmjs.org'
+
+      # https://github.com/MetroStar/comet/blob/7a9cce0013196057881990aeddbaafdaa6c9fadc/.github/workflows/publish-package.yaml#L35
+      - name: Update NPM
+        run: npm install -g npm@latest
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
