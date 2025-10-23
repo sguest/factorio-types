@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.70
+// Factorio version 2.0.72
 // API version 6
 
 declare namespace runtime {
@@ -545,7 +545,7 @@ interface BlueprintEntityAmmoTurret extends BaseBlueprintEntity {
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -695,7 +695,7 @@ interface BlueprintEntityElectricTurret extends BaseBlueprintEntity {
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -707,7 +707,7 @@ interface BlueprintEntityFluidTurret extends BaseBlueprintEntity {
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -802,6 +802,7 @@ interface BlueprintEntityLamp extends BaseBlueprintEntity {
      */
     'always_on'?: boolean;
     'color'?: Color;
+    'control_behavior'?: LampBlueprintControlBehavior;
 }
 /**
  *
@@ -833,6 +834,7 @@ interface BlueprintEntityLinkedContainer extends BaseBlueprintEntity {
  */
 interface BlueprintEntityLoader extends BaseBlueprintEntity {
     'belt_stack_size_override'?: uint8;
+    'control_behavior'?: LoaderBlueprintControlBehavior;
     /**
      * Defaults to `"none"`.
      */
@@ -846,6 +848,7 @@ interface BlueprintEntityLoader extends BaseBlueprintEntity {
  */
 interface BlueprintEntityLoader1x1 extends BaseBlueprintEntity {
     'belt_stack_size_override'?: uint8;
+    'control_behavior'?: LoaderBlueprintControlBehavior;
     /**
      * Defaults to `"none"`.
      */
@@ -921,6 +924,10 @@ interface BlueprintEntityPump extends BaseBlueprintEntity {
  */
 interface BlueprintEntityRailChainSignal extends BaseBlueprintEntity {
     'control_behavior'?: RailSignalBaseBlueprintControlBehavior;
+    /**
+     * Defaults to `"ground"`.
+     */
+    'rail_layer'?: 'ground' | 'elevated';
 }
 /**
  *
@@ -928,6 +935,10 @@ interface BlueprintEntityRailChainSignal extends BaseBlueprintEntity {
  */
 interface BlueprintEntityRailSignal extends BaseBlueprintEntity {
     'control_behavior'?: RailSignalBaseBlueprintControlBehavior;
+    /**
+     * Defaults to `"ground"`.
+     */
+    'rail_layer'?: 'ground' | 'elevated';
 }
 /**
  *
@@ -1034,7 +1045,7 @@ interface BlueprintEntityTurret extends BaseBlueprintEntity {
      * Defaults to `false`.
      */
     'ignore-unprioritised'?: boolean;
-    'priority-list'?: SlotFilter;
+    'priority-list'?: SlotFilter[];
 }
 /**
  *
@@ -1152,11 +1163,17 @@ interface BlueprintLogisticSections {
     request_from_buffers?: boolean;
 }
 interface BlueprintMiningDrillFilter {
-    filters?: SlotFilter;
+    filters?: SlotFilter[];
     /**
      * Defaults to `"whitelist"`.
      */
     mode?: 'whitelist' | 'blacklist';
+}
+interface BlueprintQualityID {
+    /**
+     * The name of the quality prototype. Defaults to `"normal"`.
+     */
+    name?: string;
 }
 interface BlueprintSchedule {
     records?: BlueprintScheduleRecord[];
@@ -4029,6 +4046,30 @@ string | /**
  * A table of item prototype and quality.
  */
 ItemIDAndQualityIDPair;
+interface LampBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    use_colors?: boolean;
+    red_signal?: SignalID;
+    green_signal?: SignalID;
+    blue_signal?: SignalID;
+    rgb_signal?: SignalID;
+    /**
+     * Defaults to `defines.control_behavior.lamp.color_mapping`.
+     */
+    color_mode?: defines.control_behavior.lamp.color_mode;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 /**
  * The internal name of a game control (key binding).
  */
@@ -4036,6 +4077,26 @@ type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 
  * Indicates no linked game control.
  */
 '';
+interface LoaderBlueprintControlBehavior {
+    /**
+     * Defaults to `false`.
+     */
+    circuit_set_filters?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_read_transfers?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 /**
  * Localised strings are a way to support translation of in-game text. It is an array where the first element is the key and the remaining elements are parameters that will be substituted for placeholders in the template designated by the key.
  *
@@ -6577,13 +6638,13 @@ interface MiningDrillBlueprintControlBehavior {
 }
 interface ModChangeData {
     /**
-     * Old version of the mod. May be `nil` if the mod wasn't previously present (i.e. it was just added).
+     * Old version of the mod. `nil` if the mod wasn't previously present (i.e. it was just added).
      */
-    old_version: string;
+    old_version?: string;
     /**
-     * New version of the mod. May be `nil` if the mod is no longer present (i.e. it was just removed).
+     * New version of the mod. `nil` if the mod is no longer present (i.e. it was just removed).
      */
-    new_version: string;
+    new_version?: string;
 }
 interface ModSetting {
     /**
@@ -8285,7 +8346,7 @@ interface SelectorCombinatorParametersCount extends BaseSelectorCombinatorParame
     /**
      * The signal to emit.
      */
-    'count_signal': SignalID;
+    'count_signal'?: SignalID;
 }
 /**
  *
@@ -8312,10 +8373,7 @@ interface SelectorCombinatorParametersQualityTransfer extends BaseSelectorCombin
     'operation'?: 'quality-transfer';
     'quality_destination_signal': SignalID;
     'quality_source_signal'?: SignalIDBase;
-    /**
-     * The name of the quality prototype. Defaults to `"normal"`.
-     */
-    'quality_source_static'?: string;
+    'quality_source_static'?: BlueprintQualityID;
     /**
      * Defaults to `false`.
      */
@@ -8602,6 +8660,11 @@ interface SpacePlatformHubBlueprintControlBehavior {
      */
     read_speed?: boolean;
     speed_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
+    read_damage_taken?: boolean;
+    damage_taken_signal?: SignalID;
 }
 interface SpacePlatformTileDefinition {
     tile: LuaTilePrototype;
