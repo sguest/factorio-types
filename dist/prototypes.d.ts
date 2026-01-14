@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.72
+// Factorio version 2.0.73
 // API version 6
 
 declare namespace prototype {
@@ -3216,6 +3216,8 @@ interface EntityPrototype extends Prototype {
      * This allows you to replace an entity that's already placed, with a different one in your inventory. For example, replacing a burner inserter with a fast inserter. The replacement entity can be a different rotation to the replaced entity and you can replace an entity with the same type.
      *
      * This is simply a string, so any string can be used here. The entity that should be replaced simply has to use the same string here.
+     *
+     * Entities with the same fast replaceable group can be configured as upgrades for each other in the upgrade planner. Refer to the {@link upgrade planner prototype's page | prototype:UpgradeItemPrototype} the full requirements for entities to be shown in the upgrade planner.
      */
     fast_replaceable_group?: string;
     flags?: EntityPrototypeFlags;
@@ -3287,7 +3289,7 @@ interface EntityPrototype extends Prototype {
     mined_sound?: Sound;
     mining_sound?: Sound;
     /**
-     * Name of the entity that will be automatically selected as the upgrade of this entity when using the {@link upgrade planner | https://wiki.factorio.com/Upgrade_planner} without configuration.
+     * Name of the entity that will be automatically selected as the upgrade of this entity when using the {@link upgrade planner | prototype:UpgradeItemPrototype} without configuration.
      *
      * This entity may not have "not-upgradable" flag set and must be minable. This entity mining result must not contain item product with {@link hidden | prototype:ItemPrototype::hidden} set to `true`. Mining results with no item products are allowed. This entity may not be a {@link RollingStockPrototype | prototype:RollingStockPrototype}.
      *
@@ -6517,7 +6519,7 @@ interface QualityPrototype extends Prototype {
      */
     beacon_power_usage_multiplier?: float;
     /**
-     * Only affects beacons with {@link BeaconPrototype::quality_affects_supply_area | prototype:BeaconPrototype::quality_affects_supply_area} set.
+     * Only affects beacons with {@link BeaconPrototype::quality_affects_supply_area_distance | prototype:BeaconPrototype::quality_affects_supply_area_distance} set.
      *
      * Must be >= 0 and <= 64.
      */
@@ -6608,6 +6610,11 @@ interface QualityPrototype extends Prototype {
      * Must be >= 0.01.
      */
     logistic_cell_charging_energy_multiplier?: double;
+    /**
+     * Only affects roboports with {@link RoboportPrototype::charging_station_count_affected_by_quality | prototype:RoboportPrototype::charging_station_count_affected_by_quality} set.
+     *
+     * Only affects roboport equipment with {@link RoboportEquipmentPrototype::charging_station_count_affected_by_quality | prototype:RoboportEquipmentPrototype::charging_station_count_affected_by_quality} set.
+     */
     logistic_cell_charging_station_count_bonus?: uint32;
     /**
      * Only affects mining drills with {@link MiningDrillPrototype::quality_affects_mining_radius | prototype:MiningDrillPrototype::quality_affects_mining_radius} set.
@@ -10071,6 +10078,14 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
 }
 /**
  * An {@link upgrade planner | https://wiki.factorio.com/Upgrade_planner}.
+ *
+ * For an entity to be allowed as an upgrade source, it must be minable, may not have "not-upgradable" flag set and may not be {@link hidden | prototype:PrototypeBase::hidden}. Additionally, the source entity's mining result must not be an item product that is {@link hidden | prototype:ItemPrototype::hidden}. Mining results with no item products are allowed.
+ *
+ * For an entity to be allowed as an upgrade target, it must have least 1 item that builds it that isn't hidden.
+ *
+ * For two entities to be upgrades of each other, the two entities must have the same {@link fast replaceable group | prototype:EntityPrototype::fast_replaceable_group}, the same {@link collision box | prototype:EntityPrototype::collision_box} and the same {@link collision mask | prototype:EntityPrototype::collision_mask}. Additionally, {@link underground belts | prototype:UndergroundBeltPrototype} cannot be upgraded to {@link transport belts | prototype:TransportBeltPrototype} and vice versa.
+ *
+ * For an entity to be automatically upgraded to another entity without configuring the upgrade planner, the {@link next upgrade | prototype:EntityPrototype::next_upgrade} of the upgrade source entity must be set.
  */
 interface UpgradeItemPrototype extends SelectionToolPrototype {
     /**

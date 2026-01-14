@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.72
+// Factorio version 2.0.73
 // API version 6
 
 declare namespace defines {
@@ -1365,6 +1365,9 @@ enum logistic_group_type {
 enum logistic_member_index {
     car_provider = 10,
     car_requester = 9,
+    cargo_landing_pad_provider = 19,
+    cargo_landing_pad_requester = 18,
+    cargo_landing_pad_trash_provider = 20,
     character_provider = 5,
     character_requester = 3,
     character_storage = 4,

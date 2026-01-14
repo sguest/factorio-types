@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.72
+// Factorio version 2.0.73
 // API version 6
 
 declare namespace runtime {
@@ -5120,7 +5120,7 @@ interface LuaControl {
      */
     can_reach_entity(this: void, entity: LuaEntity): boolean;
     /**
-     * Cancels crafting the given count of the given crafting queue index.
+     * Cancels the given amount of crafts at the given crafting queue position. If this causes any later crafts that depend on the cancelled one to have insufficient ingredients, those crafts will also be cancelled.
      * @param table.index The crafting queue index.
      * @param table.count The count to cancel crafting.
      */
@@ -6327,7 +6327,7 @@ interface LuaEntity extends LuaControl {
      * @param index Index of the transport line. Transport lines are 1-indexed.
      * @param position Linear position along the transport line. Clamped to the transport line range.
      */
-    get_line_item_position(this: void, index: uint32, position: float): MapPosition;
+    get_line_item_position(this: void, index: defines.transport_line, position: float): MapPosition;
     /**
      * Gets all the `LuaLogisticPoint`s that this entity owns. Optionally returns only the point specified by the index parameter.
      * @param index If provided, this method only returns the `LuaLogisticPoint` specified by this index, or `nil` if it doesn't exist.
@@ -6344,7 +6344,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Get the maximum transport line index of a belt or belt connectable entity.
      */
-    get_max_transport_line_index(this: void): uint32;
+    get_max_transport_line_index(this: void): defines.transport_line;
     /**
      * Inventory for storing modules of this entity; `nil` if this entity has no module inventory.
      */
@@ -6481,7 +6481,7 @@ interface LuaEntity extends LuaControl {
      * Get a transport line of a belt or belt connectable entity.
      * @param index Index of the requested transport line. Transport lines are 1-indexed.
      */
-    get_transport_line(this: void, index: uint32): LuaTransportLine;
+    get_transport_line(this: void, index: defines.transport_line): LuaTransportLine;
     /**
      * Returns the new entity prototype and its quality.
      * @returns [0] - `nil` if this entity is not marked for upgrade.
@@ -6492,11 +6492,11 @@ interface LuaEntity extends LuaControl {
         LuaQualityPrototype | null
     ]>;
     /**
-     * Gets a single wire connector of this entity
+     * Gets a single wire connector of this entity, if any.
      * @param wire_connector_id Identifier of a specific connector to get
      * @param or_create If true and connector does not exist, it will be allocated if possible
      */
-    get_wire_connector(this: void, wire_connector_id: defines.wire_connector_id, or_create: boolean): LuaWireConnector;
+    get_wire_connector(this: void, wire_connector_id: defines.wire_connector_id, or_create: boolean): LuaWireConnector | null;
     /**
      * Gets all wire connectors of this entity
      * @param or_create If true, it will try to create all connectors possible
@@ -7486,10 +7486,10 @@ interface LuaEntity extends LuaControl {
      *
      * - When called on a pipe-connectable entity, this is an array of entity arrays of all entities a given fluidbox is connected to.
      * - When called on an underground transport belt, this is the other end of the underground belt connection, or `nil` if none.
-     * - When called on a wall-connectable entity or reactor, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
+     * - When called on a wall-connectable entity, reactor or heat pipe, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
      * - When called on a cliff entity, this is a dictionary of all connections indexed by the connection direction "north", "south", "east", and "west".
      */
-    readonly neighbours?: Record<string, LuaEntity[]> | LuaEntity[][] | LuaEntity;
+    readonly neighbours?: Record<string, LuaEntity> | LuaEntity[][] | LuaEntity;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -7672,7 +7672,7 @@ interface LuaEntity extends LuaControl {
      */
     readonly rocket?: LuaEntity;
     /**
-     * Number of rocket parts in the silo.
+     * Number of rocket parts in this rocket silo.
      */
     rocket_parts: uint32;
     /**
@@ -7705,6 +7705,10 @@ interface LuaEntity extends LuaControl {
      * {@link LuaEntityPrototype::selection_box | runtime:LuaEntityPrototype::selection_box} around entity's given position and respecting the current entity orientation.
      */
     readonly selection_box: BoundingBox;
+    /**
+     * Whether this rocket silo is set to send items to orbit automatically. Only relevant if there is an item prototype with {@link launch products | runtime:LuaItemPrototype::rocket_launch_products} with automated {@link send_to_orbit_mode | runtime:LuaItemPrototype::send_to_orbit_mode}, such as the satellite in vanilla (without Space Age mod).
+     */
+    send_to_orbit_automatically: boolean;
     /**
      * The shooting target for this turret, if any. Can't be set to `nil` via script.
      */
@@ -9009,9 +9013,6 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly ticks_to_keep_aiming_direction?: uint32;
     readonly ticks_to_keep_gun?: uint32;
     readonly ticks_to_stay_in_combat?: uint32;
-    /**
-     * The tile buildability rules of this entity prototype.
-     */
     readonly tile_buildability_rules?: TileBuildabilityRule[];
     /**
      * Specifies the tiling size of the entity, is used to decide, if the center should be in the center of the tile (odd tile size dimension) or on the tile border (even tile size dimension)
@@ -13955,7 +13956,7 @@ interface LuaLogisticPoint {
     /**
      * The Logistic member index of this logistic point.
      */
-    readonly logistic_member_index: uint32;
+    readonly logistic_member_index: defines.logistic_member_index;
     readonly logistic_network: LuaLogisticNetwork;
     /**
      * The logistic mode.
@@ -19281,6 +19282,10 @@ interface BaseLuaSurfaceCreateEntityParams {
      * If provided, the entity will attempt to pull stored values from this item (for example; creating a spidertron from a previously named and mined spidertron)
      */
     'item'?: LuaItemStack;
+    /**
+     * Whether this entity is mirrored. Defaults to `false`.
+     */
+    'mirror'?: boolean;
     /**
      * If true, any characters that are in the way of the entity are teleported out of the way.
      */
