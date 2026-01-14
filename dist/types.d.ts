@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.72
+// Factorio version 2.0.73
 // API version 6
 
 declare namespace prototype {
@@ -3736,58 +3736,6 @@ interface DirectTriggerItem extends TriggerItem {
     filter_enabled?: boolean;
     type: 'direct';
 }
-/**
- * Usually specified by using {@link defines.direction | runtime:defines.direction}.
- */
-type Direction = /**
- * North
- */
-0 | /**
- * NorthNorthEast
- */
-1 | /**
- * NorthEast
- */
-2 | /**
- * EastNorthEast
- */
-3 | /**
- * East
- */
-4 | /**
- * EastSouthEast
- */
-5 | /**
- * SouthEast
- */
-6 | /**
- * SouthSouthEast
- */
-7 | /**
- * South
- */
-8 | /**
- * SouthSouthWest
- */
-9 | /**
- * SouthWest
- */
-10 | /**
- * WestSouthWest
- */
-11 | /**
- * West
- */
-12 | /**
- * WestNorthWest
- */
-13 | /**
- * NorthWest
- */
-14 | /**
- * NorthNorthWest
- */
-15;
 interface DirectionShift {
     east?: Vector;
     north?: Vector;
@@ -5157,6 +5105,9 @@ interface GigaCargoHatchDefinition {
  * Note that when any technology prototype changes (regardless of which mod it belongs to), the game re-applies all researched technology effects, including `"give-item"` modifiers. This means that players will receive the item again, even if they already received it previously. This can be undesirable.
  */
 interface GiveItemModifier extends BaseModifier {
+    /**
+     * Must be >= `1`.
+     */
     count?: ItemCountType;
     item: ItemID;
     quality?: QualityID;
@@ -5269,7 +5220,7 @@ interface HeatConnection {
     /**
      * The "outward" direction of this heat connection. For a connection to succeed, the other heat connection must face the opposite direction (a south-facing connection needs a north-facing connection to succeed). A connection rotates with the entity.
      */
-    direction: Direction;
+    direction: defines.direction;
     /**
      * The location of the heat pipe connection, relative to the center of the entity in the north-facing direction.
      */
@@ -6374,7 +6325,7 @@ interface MapLocation {
     /**
      * Direction this connection point will be facing to.
      */
-    direction: Direction;
+    direction: defines.direction;
     /**
      * Position relative to entity's position where the connection point will be located at.
      */
@@ -7220,7 +7171,7 @@ interface PipeConnectionDefinition {
      *
      * Only loaded, and mandatory if `connection_type` is `"normal"` or `"underground"`.
      */
-    direction?: Direction;
+    direction?: defines.direction;
     /**
      * Array of the {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name} of working visualisations to enable when this pipe connection is present.
      *
@@ -8503,7 +8454,7 @@ interface RotatedAnimation extends AnimationParameters {
      *
      * The sequential animation instance is loaded equal to the entities direction within the `direction_count` setting.
      *
-     * Direction count to {@link Direction | prototype:Direction} (animation sequence number):
+     * Direction count to {@link defines.direction | runtime:defines.direction} (animation sequence number):
      *
      * - `1`: North (1)
      *
@@ -10758,6 +10709,11 @@ interface TileBuildSound {
     medium?: Sound;
     small?: Sound;
 }
+/**
+ * Defines restrictions on what tiles an entity can or must be built on.
+ *
+ * Note that once the entity has been placed, placing new tiles is not always restricted by these rules for performance reasons. In particular, for most entities these rules are only checked when placing tiles within the collision box of the entity. The exception to this are thrusters and asteroid collectors, for which the rules are always checked.
+ */
 interface TileBuildabilityRule {
     area: SimpleBoundingBox;
     colliding_tiles?: CollisionMaskConnector;
