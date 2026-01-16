@@ -4,9 +4,9 @@
 // Definition source https://github.com/sguest/factorio-types
 
 interface Serpent {
-    dump(this: void, a: object, options: SerpentOptions): string
-    line(this: void, a: object, options: SerpentOptions): string
-    block(this: void, a: object, options: SerpentOptions): string
+    dump(this: void, a: object, options?: SerpentOptions): string
+    line(this: void, a: object, options?: SerpentOptions): string
+    block(this: void, a: object, options?: SerpentOptions): string
     load(this: void, str: string, options?: {safe?: boolean}): string
 }
 
@@ -17,6 +17,7 @@ interface SerpentOptions {
     sparse?: boolean
     compact?: boolean
     fatal?: boolean
+    fixradix?: boolean
     nocode?: boolean
     nohuge?: boolean
     maxlevel?: number
