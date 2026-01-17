@@ -6,10 +6,7 @@ on:
     branches:
       - master
     paths:
-      - index.d.ts
-      - dist/*.d.ts
-      - src/*.d.ts
-      - tsconfig.base.json
+      - package.json
 
 permissions:
   id-token: write

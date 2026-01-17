@@ -18,7 +18,10 @@ declare const data: {
  */
 declare const mods: { [key: string] : string}
 
-declare const global: { [key: string]: any };
+/**
+ * Mod-specific storage lookup that is persisted to save files https://lua-api.factorio.com/latest/auxiliary/storage.html
+ */
+declare const storage: { [key: string]: any };
 
 declare function log(str: runtime.LocalisedString): void;
 
