@@ -8,10 +8,12 @@ declare namespace table {
     function compare(this: void, table1: object | [], table2: object | []): boolean;
 }
 
-declare const data: {
-    raw: prototype.dataCollection,
+interface DataType {
+    raw: prototype.dataCollection;
     extend(values: prototype.dataExtendType[]): void,
-};
+}
+
+declare const data: DataType;
 
 /**
  * Mapping of currently loaded mods to their version. Only exists at the data stage.

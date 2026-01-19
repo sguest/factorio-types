@@ -23,7 +23,7 @@ This library includes [tsconfig.base.json](https://github.com/sguest/factorio-ty
 
 ## Stages
 
-Factorio mods and the api go through [three distinct stages](https://lua-api.factorio.com/latest/). Types are organized into namespaces `runtime`, `prototype`, and `settings` representing the types to be used in each stage. These types, and therefore their corresponding namespaces, are a compile-time-only feature as lua does not have types, however using a type from the wrong namespace during the wrong stage is likely to result in a runtime error as you will be attempting to access something Factorio does not let you access at that time.
+Factorio mods and the api go through [three distinct stages](https://lua-api.factorio.com/latest/). Types are organized into namespaces `runtime`, `prototype`, and `settings` representing the types to be used in each stage. These types, and therefore their corresponding namespaces, are a compile-time-only feature as lua does not have types, so accessing a _type_ during the wrong phase is safe. Sometimes this is OK, such as when referencing utility functions that operate on values without interacting with game API like math functions. However, many game APIs will only work with types from the correct phase, so using an API that takes types from the wrong phase should be a red flag that you might encounter a runtime error.
 
 Note there is some overlap between the types for the Settings and Prototype phases since both regularly provide prototype data to `data.extend()`, and in fact the settings-phase prototypes extend `prototype.PrototypeBase`. However, you should only be providing types from the `settings` namespace during the settings phase, and from the `prototype` namespace during the prototype phase.
 
@@ -70,6 +70,20 @@ end
 
 Factorio makes various lua functions available to mods via [LuaLib](https://github.com/wube/factorio-data/tree/master/core/lualib)
 
-Unlike the main parts of the factorio API, these do not exist as ambient globals but instead must be imported
+Unlike the main parts of the factorio API, these do not exist as ambient globals but instead must be imported. If you inherit the recommended [tsconfig.base.json](https://github.com/sguest/factorio-types/blob/master/tsconfig.base.json), these import paths will all be set to `noResolvePaths`, meaning TSTL will not attempt to resolve them and will simply emit `require` statements that will allow Factorio to load the lualib files at runtime.
 
-The `noise` lualib definitions were previous present in this library. However, as of version 2.0.7, `noise.lua` was [removed from lualib in the factorio-data repo](https://github.com/wube/factorio-data/commit/7522d3763e76e09ce1a46cba676dfc2b6d12b127). This was accompanied by many of the required supporting types being removed from the prototype definitions, and therefore the noise definitions have been removed from this library, at least temporarily.
+```typescript
+import { split } from 'util';
+
+let splitStr = split('a|b', '|');
+```
+
+```typescript
+import * as util from 'util';
+
+let result = util.split_whitespace('a b');
+```
+
+The LuaLib definitions are not part of the machine-readable API spec that feeds the generation of the rest of the types in this repo. The devs [have said](https://forums.factorio.com/viewtopic.php?p=599930#p599930) better docs for lualib are in their longterm plans, but for now the only documentation is the files themselves in the `factorio-data` repo and any associated comments. Therefore, the lualib docs are hand-written by reading through the files and are more likely to contain errors. If you encounter any errors, please raise an issue and/or pull request.
+
+The `noise` lualib definitions were previously present in this library. However, as of version 2.0.7, `noise.lua` was [removed from lualib in the factorio-data repo](https://github.com/wube/factorio-data/commit/7522d3763e76e09ce1a46cba676dfc2b6d12b127). This was accompanied by many of the required supporting types being removed from the prototype definitions, and therefore the noise definitions have been removed from this library, at least temporarily.

@@ -1,6 +1,6 @@
 {
   "name": "factorio-types",
-  "version": "1.2.54",
+  "version": "1.2.55",
   "description": "Typescript declarations for the Factorio mod API",
   "main": "index.d.ts",
   "repository": "https://github.com/sguest/factorio-types.git",
