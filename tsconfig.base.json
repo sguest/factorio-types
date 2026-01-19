@@ -11,5 +11,24 @@
         "luaTarget": "JIT",
         "noImplicitSelf": true,
         "noImplicitGlobalVariables": true,
+        "noResolvePaths": [
+            "autoplace_utils",
+            "collision-mask-defaults",
+            "collision-mask-util",
+            "crash-site",
+            "data-duplicate-checker",
+            "event_handler",
+            "kill-score",
+            "math2d",
+            "math3d",
+            "meld",
+            "mod-gui",
+            "production-score",
+            "resource-autoplace",
+            "silo-script",
+            "space-finish-script",
+            "surface-render-parameter-effects",
+            "util"
+        ]
     },
 }
