@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.73
+// Factorio version 2.0.74
 // API version 6
 
 declare namespace runtime {
@@ -580,6 +580,7 @@ interface BlueprintEntityArtilleryWagon extends BaseBlueprintEntity {
     'enable_logistics_while_moving': boolean;
     'grid'?: BlueprintEquipment[];
     'orientation': RealOrientation;
+    'stock_connections'?: BlueprintRollingStockConnection;
 }
 /**
  *
@@ -633,6 +634,7 @@ interface BlueprintEntityCargoWagon extends BaseBlueprintEntity {
     'grid'?: BlueprintEquipment[];
     'inventory': BlueprintInventoryWithFilters;
     'orientation': RealOrientation;
+    'stock_connections'?: BlueprintRollingStockConnection;
 }
 /**
  *
@@ -719,6 +721,7 @@ interface BlueprintEntityFluidWagon extends BaseBlueprintEntity {
     'enable_logistics_while_moving': boolean;
     'grid'?: BlueprintEquipment[];
     'orientation': RealOrientation;
+    'stock_connections'?: BlueprintRollingStockConnection;
 }
 /**
  *
@@ -747,6 +750,7 @@ interface BlueprintEntityInfinityCargoWagon extends BaseBlueprintEntity {
     'infinity_settings': BlueprintInfinityInventorySettings;
     'inventory': BlueprintInventoryWithFilters;
     'orientation': RealOrientation;
+    'stock_connections'?: BlueprintRollingStockConnection;
 }
 /**
  *
@@ -867,6 +871,7 @@ interface BlueprintEntityLocomotive extends BaseBlueprintEntity {
     'grid'?: BlueprintEquipment[];
     'orientation': RealOrientation;
     'schedule'?: BlueprintSchedule;
+    'stock_connections'?: BlueprintRollingStockConnection;
 }
 /**
  *
@@ -1174,6 +1179,20 @@ interface BlueprintQualityID {
      * The name of the quality prototype. Defaults to `"normal"`.
      */
     name?: string;
+}
+interface BlueprintRollingStockConnection {
+    /**
+     * The entity_number of 'this' entity in the blueprint.
+     */
+    stock: uint32;
+    /**
+     * The entity_number of the front stock connection.
+     */
+    front?: uint32;
+    /**
+     * The entity_number of the back stock connection.
+     */
+    back?: uint32;
 }
 interface BlueprintSchedule {
     records?: BlueprintScheduleRecord[];
@@ -4098,7 +4117,9 @@ interface LoaderBlueprintControlBehavior {
     logistic_condition?: CircuitCondition;
 }
 /**
- * Localised strings are a way to support translation of in-game text. It is an array where the first element is the key and the remaining elements are parameters that will be substituted for placeholders in the template designated by the key.
+ * Localised strings are a way to support translation of in-game text. They offer a language-independent code representation of the text that should be shown to players.
+ *
+ * It is an array where the first element is the key and the remaining elements are parameters that will be substituted for placeholders in the template designated by the key.
  *
  * The key identifies the string template. For example, `"gui-alert-tooltip.attack"` (for the template `"__1__ objects are being damaged"`; see the file `data/core/locale/en.cfg`).
  *
@@ -7957,8 +7978,8 @@ interface ResearchTriggerCraftFluid extends BaseResearchTrigger {
  */
 interface ResearchTriggerCraftItem extends BaseResearchTrigger {
     'type': 'craft-item';
-    'item': string;
-    'item_quality'?: string;
+    'count': ItemCountType;
+    'item': ItemIDFilter;
 }
 /**
  *
@@ -7990,7 +8011,7 @@ interface Resistance {
      */
     decrease: float;
     /**
-     * Percentual damage decrease.
+     * Percentual damage decrease. Expected range is from 0 to 1, e.g. 0.5 is 50%.
      */
     percent: float;
 }
