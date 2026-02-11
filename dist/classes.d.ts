@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.73
+// Factorio version 2.0.74
 // API version 6
 
 declare namespace runtime {
@@ -7640,10 +7640,13 @@ interface LuaEntity extends LuaControl {
     render_player_write?: PlayerIdentification;
     /**
      * The forces that this `simple-entity-with-owner` or `simple-entity-with-force` is visible to. `nil` or an empty array when this entity is rendered for all forces.
-     *
-     * Reading will always give an array of {@link LuaForce | runtime:LuaForce}
      */
-    render_to_forces?: ForceSet;
+    readonly render_to_forces?: LuaForce[];
+    /**
+     * The forces that this `simple-entity-with-owner` or `simple-entity-with-force` is visible to. `nil` or an empty array when this entity is rendered for all forces.
+     * @customName render_to_forces
+     */
+    render_to_forces_write?: ForceSet;
     /**
      * Whether this requester chest is set to also request from buffer chests.
      *
@@ -8128,7 +8131,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly attractor_hit_effect?: TriggerItem[];
     readonly auto_setup_collision_box: boolean;
     /**
-     * The amount of ammo that inserters automatically insert into this ammo-turret or artillery-turret.
+     * The amount of ammo that inserters automatically insert into this ammo turret, artillery turret or artillery wagon.
      */
     readonly automated_ammo_count?: uint32;
     /**
@@ -8525,6 +8528,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The drop position for this inserter.
      */
     readonly inserter_drop_position?: Vector;
+    /**
+     * The max belt stack size for this inserter.
+     */
+    readonly inserter_max_belt_stack_size?: uint8;
     /**
      * The pickup position for this inserter.
      */
@@ -16522,9 +16529,14 @@ interface LuaRenderObject {
      */
     font: string;
     /**
-     * Forces for which this object is rendered or `nil` if visible to all forces. Writing nil or empty array will make object to be visible to all forces.
+     * Forces for which this object is rendered or `nil` if visible to all forces. Writing `nil` or empty array will make this object visible to all forces.
      */
-    forces?: LuaForce[] | ForceSet;
+    readonly forces?: LuaForce[];
+    /**
+     * Forces for which this object is rendered or `nil` if visible to all forces. Writing `nil` or empty array will make this object visible to all forces.
+     * @customName forces
+     */
+    forces_write?: ForceSet;
     /**
      * Where this line is drawn from.
      */
@@ -16586,7 +16598,7 @@ interface LuaRenderObject {
      */
     oriented_offset: Vector;
     /**
-     * Players for which this object is visible or `nil` if visible to all players.
+     * Players for which this object is visible or `nil` if visible to all players. Writing `nil` or empty array will make this object visible to all players.
      */
     players?: LuaPlayer[] | PlayerIdentification[];
     /**
@@ -17988,6 +18000,9 @@ interface LuaStorageTankControlBehavior extends LuaControlBehavior {
 interface LuaStyle {
     badge_font: string;
     badge_horizontal_spacing: int32;
+    /**
+     * The thickness of the bar, not the horizontal width.
+     */
     bar_width: uint32;
     /**
      * Space between the table cell contents bottom and border.

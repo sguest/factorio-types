@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.73
+// Factorio version 2.0.74
 // API version 6
 
 declare namespace prototype {
@@ -327,11 +327,14 @@ interface AmmoItemPrototype extends ItemPrototype {
  */
 interface AmmoTurretPrototype extends TurretPrototype {
     /**
-     * Shift of the "alt-mode icon" relative to the turret's position.
+     * The amount of ammo that inserters automatically insert into this turret.
      */
     automated_ammo_count: ItemCountType;
     energy_per_shot?: Energy;
     energy_source?: ElectricEnergySource;
+    /**
+     * Size of the ammo inventory.
+     */
     inventory_size: ItemStackIndex;
     prepare_with_no_ammo?: boolean;
 }
@@ -742,7 +745,7 @@ interface ArtilleryTurretPrototype extends EntityWithOwnerPrototype {
      */
     ammo_stack_limit: ItemCountType;
     /**
-     * Must be > 0.
+     * Must be > 0. The amount of ammo that inserters automatically insert into this artillery turret.
      */
     automated_ammo_count?: ItemCountType;
     base_picture?: Animation4Way;
@@ -802,7 +805,7 @@ interface ArtilleryWagonPrototype extends RollingStockPrototype {
      */
     ammo_stack_limit: ItemCountType;
     /**
-     * Must be > 0.
+     * Must be > 0. The amount of ammo that inserters automatically insert into this artillery wagon.
      */
     automated_ammo_count?: ItemCountType;
     /**
@@ -2955,7 +2958,7 @@ interface ElectricPolePrototype extends EntityWithOwnerPrototype {
      * Max value is 64.
      */
     supply_area_distance: double;
-    track_coverage_during_build_by_moving?: boolean;
+    track_coverage_during_drag_building?: boolean;
 }
 /**
  * A turret that uses electricity as ammunition.
@@ -3352,7 +3355,7 @@ interface EntityPrototype extends Prototype {
     shooting_cursor_size?: double;
     stateless_visualisation?: StatelessVisualisation | StatelessVisualisation[];
     /**
-     * Used to set the area of the entity that can have stickers on it, currently only used for units to specify the area where the green slow down stickers can appear.
+     * Used to specify the area where the {@link sticker | prototype:StickerPrototype} animation can appear for entities that can have stickers on them.
      * @example ```
     sticker_box = {{-0.5, -0.5}, {0.5, 0.5}}
     ```
@@ -7353,7 +7356,7 @@ interface ResourceEntityPrototype extends EntityPrototype {
      */
     infinite?: boolean;
     /**
-     * Every time an infinite-type resource "ticks" lower it's lowered by that amount.
+     * Every time an infinite-type resource is decreased by mining, its current resource amount is lowered by this number.
      */
     infinite_depletion_amount?: uint32;
     /**
