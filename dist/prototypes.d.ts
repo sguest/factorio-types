@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.74
+// Factorio version 2.0.76
 // API version 6
 
 declare namespace prototype {
@@ -1516,7 +1516,7 @@ interface CharacterCorpsePrototype extends EntityPrototype {
      */
     armor_picture_mapping?: Record<ItemID, int32>;
     /**
-     * Mandatory if `pictures` is not defined.
+     * Only loaded, and mandatory if `pictures` is not defined.
      */
     picture?: Animation;
     /**
@@ -9352,9 +9352,21 @@ interface TechnologyPrototype extends Prototype {
      */
     visible_when_disabled?: boolean;
 }
+/**
+ * A container that can automatically destroy itself when it is emptied or after it has existed for a certain time.
+ */
 interface TemporaryContainerPrototype extends ContainerPrototype {
+    /**
+     * If the container has existed for this long, {@link an alert | prototype:UtilitySprites::unclaimed_cargo_icon} is show on it. In ticks, 0 for no alert.
+     */
     alert_after_time?: uint32;
+    /**
+     * Whether the container is automatically destroyed when it is emptied.
+     */
     destroy_on_empty?: boolean;
+    /**
+     * Duration after which the container and its contents are automatically destroyed. In ticks, 0 for infinite.
+     */
     time_to_live?: uint32;
 }
 /**
@@ -9497,9 +9509,12 @@ interface TilePrototype extends Prototype {
     is_foundation?: boolean;
     landing_steps_sound?: Sound;
     /**
-     * Specifies transition drawing priority.
+     * Specifies transition drawing priority. This represents the positive offset from this tile's `layer_group`. Internally, the final layer is computed as `layer_group + layer` (a {@link uint16 | prototype:uint16}), wrapping back to `"zero"` after the `"top"` layer.
      */
     layer: uint8;
+    /**
+     * The base group of render layers this tile belongs to. It can be moved up inside this group using the `layer` property. See the {@link TileRenderLayer | prototype:TileRenderLayer} page to see the sizes of all layer groups.
+     */
     layer_group?: TileRenderLayer;
     /**
      * For surfaces that use {@link fog effect | prototype:SurfaceRenderParameters::fog} of type `gleba`, this property determines whether given tile should contribute to fog intensity on a chunk or not.
@@ -10538,6 +10553,7 @@ interface UtilitySounds extends PrototypeBase {
     game_lost: Sound;
     game_won: Sound;
     gui_click: Sound;
+    gui_switch: Sound;
     inventory_click: Sound;
     inventory_move: Sound;
     item_deleted: Sound;
