@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.74
+// Factorio version 2.0.76
 // API version 6
 
 declare namespace runtime {
@@ -5362,7 +5362,7 @@ interface LuaControl {
     /**
      * The current crafting queue items.
      */
-    readonly crafting_queue: CraftingQueueItem[];
+    readonly crafting_queue?: CraftingQueueItem[];
     /**
      * The crafting queue progress in the range `[0-1]`. `0` when no recipe is being crafted.
      */
@@ -8897,6 +8897,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The revenge attack parameters for this entity, if any. These attack parameters are used in addition to {@link LuaEntityPrototype::attack_parameters | runtime:LuaEntityPrototype::attack_parameters} if the entity is attacking a target that has previously dealt damage to the entity.
      */
     readonly revenge_attack_parameters?: AttackParameters;
+    readonly reversing_power_modifier?: double;
     readonly rewire_neighbours_when_destroying: boolean;
     /**
      * The rising speed for this rocket silo rocket prototype.
@@ -18184,7 +18185,7 @@ interface LuaStyle {
     width: int32;
 }
 /**
- * A "domain" of the world. Surfaces can only be created and deleted through the API. Surfaces are uniquely identified by their name. Every game contains at least the surface "nauvis".
+ * A "domain" of the world, such as a planet or space platform. Surfaces are uniquely identified by their name. Every game contains at least the surface "nauvis".
  */
 interface LuaSurface {
     /**

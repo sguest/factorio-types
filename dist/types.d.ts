@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.74
+// Factorio version 2.0.76
 // API version 6
 
 declare namespace prototype {
@@ -10036,7 +10036,7 @@ interface SpriteSource {
     /**
      * Mandatory if `size` is not defined.
      *
-     * Height of the picture in pixels, from 0-4096.
+     * Height of the sprite in pixels, from 0-4096.
      */
     height?: SpriteSizeType;
     /**
@@ -10064,7 +10064,7 @@ interface SpriteSource {
     /**
      * Mandatory if `size` is not defined.
      *
-     * Width of the picture in pixels, from 0-4096.
+     * Width of the sprite in pixels, from 0-4096.
      */
     width?: SpriteSizeType;
     /**
