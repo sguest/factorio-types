@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.76
+// Factorio version 2.0.77
 // API version 6
 
 declare namespace runtime {
@@ -41,7 +41,7 @@ interface CustomInputEvent {
      */
     input_name: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -55,7 +55,7 @@ interface CustomInputEvent {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an achievement is gained.
@@ -63,7 +63,7 @@ interface CustomInputEvent {
 interface on_achievement_gained {
     achievement: LuaAchievementPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -73,21 +73,21 @@ interface on_achievement_gained {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a unit/group completes a command.
  */
 interface on_ai_command_completed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     result: defines.behavior_result;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * unit_number/group_number of the unit/group which just completed a command.
      */
@@ -110,7 +110,7 @@ interface on_area_cloned {
     destination_force?: LuaForce;
     destination_surface: LuaSurface;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     source_area: BoundingBox;
@@ -118,7 +118,7 @@ interface on_area_cloned {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a biter migration builds a base.
@@ -131,13 +131,13 @@ interface on_biter_base_built {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a set of positions on the map is cloned.
@@ -152,7 +152,7 @@ interface on_brush_cloned {
     destination_offset: TilePosition;
     destination_surface: LuaSurface;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     source_offset: TilePosition;
@@ -161,7 +161,7 @@ interface on_brush_cloned {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a {@link defines.command.build_base | runtime:defines.command.build_base} command reaches its destination, and before building starts.
@@ -172,13 +172,13 @@ interface on_build_base_arrived {
      */
     group?: LuaCommandable;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The unit the command was assigned to.
      */
@@ -197,7 +197,7 @@ interface on_built_entity {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -211,7 +211,7 @@ interface on_built_entity {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the deconstruction of an entity is canceled.
@@ -219,14 +219,14 @@ interface on_built_entity {
 interface on_cancelled_deconstruction {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index?: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the upgrade of an entity is canceled.
@@ -234,7 +234,7 @@ interface on_cancelled_deconstruction {
 interface on_cancelled_upgrade {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index?: uint32;
@@ -243,7 +243,7 @@ interface on_cancelled_upgrade {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a cargo pod has delivered its cargo.
@@ -251,7 +251,7 @@ interface on_cancelled_upgrade {
 interface on_cargo_pod_delivered_cargo {
     cargo_pod: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -261,7 +261,7 @@ interface on_cargo_pod_delivered_cargo {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a cargo pod departs a surface.
@@ -273,7 +273,7 @@ interface on_cargo_pod_finished_ascending {
      */
     launched_by_rocket: boolean;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -283,7 +283,7 @@ interface on_cargo_pod_finished_ascending {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a cargo pods lands on a surface, either at a station or on the ground.
@@ -295,7 +295,7 @@ interface on_cargo_pod_finished_descending {
      */
     launched_by_rocket: boolean;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -305,7 +305,7 @@ interface on_cargo_pod_finished_descending {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a cargo pod departs from a space platform hub or by another method not attached to a rocket.
@@ -313,7 +313,7 @@ interface on_cargo_pod_finished_descending {
 interface on_cargo_pod_started_ascending {
     cargo_pod: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -323,7 +323,7 @@ interface on_cargo_pod_started_ascending {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a character corpse expires due to timeout or all of the items being removed from it.
@@ -336,13 +336,13 @@ interface on_character_corpse_expired {
      */
     corpse: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a chart tag is created.
@@ -350,7 +350,7 @@ interface on_character_corpse_expired {
 interface on_chart_tag_added {
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index?: uint32;
@@ -358,7 +358,7 @@ interface on_chart_tag_added {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a chart tag is modified by a player or by script.
@@ -366,7 +366,7 @@ interface on_chart_tag_added {
 interface on_chart_tag_modified {
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     old_icon: SignalID;
@@ -379,7 +379,7 @@ interface on_chart_tag_modified {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called just before a chart tag is deleted.
@@ -387,7 +387,7 @@ interface on_chart_tag_modified {
 interface on_chart_tag_removed {
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index?: uint32;
@@ -395,7 +395,7 @@ interface on_chart_tag_removed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a chunk is charted or re-charted.
@@ -407,7 +407,7 @@ interface on_chunk_charted {
     area: BoundingBox;
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     position: ChunkPosition;
@@ -415,14 +415,14 @@ interface on_chunk_charted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when one or more chunks are deleted using {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk}.
  */
 interface on_chunk_deleted {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -433,7 +433,7 @@ interface on_chunk_deleted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a chunk is generated.
@@ -444,7 +444,7 @@ interface on_chunk_generated {
      */
     area: BoundingBox;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -458,14 +458,14 @@ interface on_chunk_generated {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a combat robot expires through a lack of energy, or timeout.
  */
 interface on_combat_robot_expired {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -476,7 +476,7 @@ interface on_combat_robot_expired {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a message is sent to the in-game console, either by a player or through the server interface.
@@ -489,7 +489,7 @@ interface on_console_chat {
      */
     message: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -499,7 +499,7 @@ interface on_console_chat {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when someone enters a command-like message regardless of it being a valid command.
@@ -510,7 +510,7 @@ interface on_console_command {
      */
     command: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -524,14 +524,14 @@ interface on_console_command {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a cutscene is cancelled by the player or by script.
  */
 interface on_cutscene_cancelled {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -541,14 +541,14 @@ interface on_cutscene_cancelled {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a cutscene finishes naturally (was not cancelled).
  */
 interface on_cutscene_finished {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -558,14 +558,14 @@ interface on_cutscene_finished {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a cutscene starts.
  */
 interface on_cutscene_started {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -575,7 +575,7 @@ interface on_cutscene_started {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a cutscene is playing, each time it reaches a waypoint in that cutscene.
@@ -584,7 +584,7 @@ interface on_cutscene_started {
  */
 interface on_cutscene_waypoint_reached {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -594,7 +594,7 @@ interface on_cutscene_waypoint_reached {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The index of the waypoint we just completed.
      */
@@ -606,14 +606,14 @@ interface on_cutscene_waypoint_reached {
 interface on_entity_cloned {
     destination: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     source: LuaEntity;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after an entity has been recolored either by the player or through script.
@@ -626,13 +626,13 @@ interface on_entity_color_changed {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an entity is damaged. This is not called when an entities health is set directly by another mod.
@@ -657,7 +657,7 @@ interface on_entity_damaged {
      */
     force?: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -671,7 +671,7 @@ interface on_entity_damaged {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an entity dies.
@@ -698,13 +698,13 @@ interface on_entity_died {
      */
     loot: LuaInventory;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when one of an entity's logistic slots changes.
@@ -715,7 +715,7 @@ interface on_entity_logistic_slot_changed {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -733,7 +733,7 @@ interface on_entity_logistic_slot_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after an entity has been renamed either by the player or through script.
@@ -742,7 +742,7 @@ interface on_entity_renamed {
     by_script: boolean;
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     old_name: string;
@@ -753,7 +753,7 @@ interface on_entity_renamed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after entity copy-paste is done.
@@ -764,7 +764,7 @@ interface on_entity_settings_pasted {
      */
     destination: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -775,7 +775,7 @@ interface on_entity_settings_pasted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an entity is spawned by a EnemySpawner
@@ -783,14 +783,14 @@ interface on_entity_settings_pasted {
 interface on_entity_spawned {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     spawner: LuaEntity;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after equipment is inserted into an equipment grid.
@@ -805,13 +805,13 @@ interface on_equipment_inserted {
      */
     grid: LuaEquipmentGrid;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after equipment is removed from an equipment grid.
@@ -830,7 +830,7 @@ interface on_equipment_removed {
      */
     grid: LuaEquipmentGrid;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -840,7 +840,7 @@ interface on_equipment_removed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the a forces cease fire values change.
@@ -855,7 +855,7 @@ interface on_force_cease_fire_changed {
      */
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -865,7 +865,7 @@ interface on_force_cease_fire_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a new force is created using `game.create_force()`
@@ -878,13 +878,13 @@ interface on_force_created {
      */
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the a forces friends change.
@@ -899,7 +899,7 @@ interface on_force_friends_changed {
      */
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -909,7 +909,7 @@ interface on_force_friends_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaForce::reset | runtime:LuaForce::reset} is finished.
@@ -917,13 +917,13 @@ interface on_force_friends_changed {
 interface on_force_reset {
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after two forces have been merged using `game.merge_forces()`.
@@ -936,7 +936,7 @@ interface on_forces_merged {
      */
     destination: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -950,7 +950,7 @@ interface on_forces_merged {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when two forces are about to be merged using `game.merge_forces()`.
@@ -961,7 +961,7 @@ interface on_forces_merging {
      */
     destination: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -971,7 +971,7 @@ interface on_forces_merging {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a game is created from a scenario. This is fired for every mod, even when the scenario's save data already includes it. In those cases however, {@link LuaBootstrap::on_init | runtime:LuaBootstrap::on_init} is not fired.
@@ -980,13 +980,13 @@ interface on_forces_merging {
  */
 interface on_game_created_from_scenario {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} checked state is changed (related to checkboxes and radio buttons).
@@ -997,7 +997,7 @@ interface on_gui_checked_state_changed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1007,7 +1007,7 @@ interface on_gui_checked_state_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} is clicked.
@@ -1034,7 +1034,7 @@ interface on_gui_click {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1048,7 +1048,7 @@ interface on_gui_click {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player closes the GUI they have open.
@@ -1083,7 +1083,7 @@ interface on_gui_closed {
      */
     item?: LuaItemStack;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1101,7 +1101,7 @@ interface on_gui_closed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The position of the tile whose GUI was closed.
      */
@@ -1124,7 +1124,7 @@ interface on_gui_confirmed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1138,7 +1138,7 @@ interface on_gui_confirmed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} element value is changed (related to choose element buttons).
@@ -1149,7 +1149,7 @@ interface on_gui_elem_changed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1159,7 +1159,7 @@ interface on_gui_elem_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} is hovered by the mouse.
@@ -1172,7 +1172,7 @@ interface on_gui_hover {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1182,7 +1182,7 @@ interface on_gui_hover {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player's cursor leaves a {@link LuaGuiElement | runtime:LuaGuiElement} that was previously hovered.
@@ -1195,7 +1195,7 @@ interface on_gui_leave {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1205,7 +1205,7 @@ interface on_gui_leave {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} element location is changed (related to frames in `player.gui.screen`).
@@ -1216,7 +1216,7 @@ interface on_gui_location_changed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1226,7 +1226,7 @@ interface on_gui_location_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player opens a GUI.
@@ -1257,7 +1257,7 @@ interface on_gui_opened {
      */
     item?: LuaItemStack;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1265,7 +1265,7 @@ interface on_gui_opened {
      */
     other_player?: LuaPlayer;
     /**
-     * The player closing the GUI.
+     * The player opening the GUI.
      */
     player_index: uint32;
     /**
@@ -1275,7 +1275,7 @@ interface on_gui_opened {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The position of the tile whose GUI was opened.
      */
@@ -1290,7 +1290,7 @@ interface on_gui_selected_tab_changed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1300,7 +1300,7 @@ interface on_gui_selected_tab_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} selection state is changed (related to drop-downs and listboxes).
@@ -1311,7 +1311,7 @@ interface on_gui_selection_state_changed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1321,7 +1321,7 @@ interface on_gui_selection_state_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} switch state is changed (related to switches).
@@ -1332,7 +1332,7 @@ interface on_gui_switch_state_changed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1342,7 +1342,7 @@ interface on_gui_switch_state_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} text is changed by the player.
@@ -1353,7 +1353,7 @@ interface on_gui_text_changed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1367,7 +1367,7 @@ interface on_gui_text_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGuiElement | runtime:LuaGuiElement} slider value is changed (related to the slider element).
@@ -1378,7 +1378,7 @@ interface on_gui_value_changed {
      */
     element: LuaGuiElement;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1388,7 +1388,7 @@ interface on_gui_value_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a land mine is armed.
@@ -1396,20 +1396,20 @@ interface on_gui_value_changed {
 interface on_land_mine_armed {
     mine: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a custom {@link Lua shortcut | prototype:ShortcutPrototype} is pressed.
  */
 interface on_lua_shortcut {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -1420,7 +1420,7 @@ interface on_lua_shortcut {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an entity is marked for deconstruction with the Deconstruction planner or via script.
@@ -1428,14 +1428,14 @@ interface on_lua_shortcut {
 interface on_marked_for_deconstruction {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index?: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an entity is marked for upgrade with the upgrade planner or via script.
@@ -1443,7 +1443,7 @@ interface on_marked_for_deconstruction {
 interface on_marked_for_upgrade {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index?: uint32;
@@ -1463,7 +1463,7 @@ interface on_marked_for_upgrade {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player purchases some offer from a `market` entity.
@@ -1478,7 +1478,7 @@ interface on_market_item_purchased {
      */
     market: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1492,7 +1492,7 @@ interface on_market_item_purchased {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player uses the 'Open item GUI' control on an item defined with the 'mod-openable' flag
@@ -1503,7 +1503,7 @@ interface on_mod_item_opened {
      */
     item: LuaItemPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1517,20 +1517,20 @@ interface on_mod_item_opened {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGameScript::is_multiplayer | runtime:LuaGameScript::is_multiplayer} changes to true. May also be raised when it was already true but a game was loaded from a save file and with hosting.
  */
 interface on_multiplayer_init {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after an object is destroyed which was registered with {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed} previously.
@@ -1539,7 +1539,7 @@ interface on_multiplayer_init {
  */
 interface on_object_destroyed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1549,13 +1549,13 @@ interface on_object_destroyed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
-     * Type of the object that was destroyed. Same as third value returned by {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}
+     * Type of the object that was destroyed. Same as third value returned by {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}.
      */
     type: defines.target_type;
     /**
-     * The {@link useful identifier | runtime:RegistrationTarget} of the object. Same as second value returned by {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}
+     * The {@link useful identifier | runtime:RegistrationTarget} of the object or `0` if the object does not have a useful id. Same as second value returned by {@link LuaBootstrap::register_on_object_destroyed | runtime:LuaBootstrap::register_on_object_destroyed}.
      */
     useful_id: uint64;
 }
@@ -1568,7 +1568,7 @@ interface on_permission_group_added {
      */
     group: LuaPermissionGroup;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1578,7 +1578,7 @@ interface on_permission_group_added {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called directly after a permission group is deleted.
@@ -1593,7 +1593,7 @@ interface on_permission_group_deleted {
      */
     id: uint32;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1603,7 +1603,7 @@ interface on_permission_group_deleted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called directly after a permission group is edited in some way.
@@ -1618,7 +1618,7 @@ interface on_permission_group_edited {
      */
     group: LuaPermissionGroup;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1640,7 +1640,7 @@ interface on_permission_group_edited {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The edit type.
      */
@@ -1651,7 +1651,7 @@ interface on_permission_group_edited {
  */
 interface on_permission_string_imported {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1661,7 +1661,7 @@ interface on_permission_string_imported {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player picks up an item.
@@ -1669,14 +1669,14 @@ interface on_permission_string_imported {
 interface on_picked_up_item {
     item_stack: ItemWithQualityCount;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player alt-reverse-selects an area with a selection-tool item.
@@ -1695,7 +1695,7 @@ interface on_player_alt_reverse_selected_area {
      */
     item: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1709,7 +1709,7 @@ interface on_player_alt_reverse_selected_area {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tiles selected.
      */
@@ -1732,7 +1732,7 @@ interface on_player_alt_selected_area {
      */
     item: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1750,7 +1750,7 @@ interface on_player_alt_selected_area {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tiles selected.
      */
@@ -1761,28 +1761,28 @@ interface on_player_alt_selected_area {
  */
 interface on_player_ammo_inventory_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a players armor inventory changed in some way.
  */
 interface on_player_armor_inventory_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player is banned.
@@ -1793,7 +1793,7 @@ interface on_player_banned {
      */
     by_player?: uint32;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1811,7 +1811,7 @@ interface on_player_banned {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player builds tiles.
@@ -1826,7 +1826,7 @@ interface on_player_built_tile {
      */
     item?: LuaItemPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -1841,7 +1841,7 @@ interface on_player_built_tile {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tile prototype that was placed.
      */
@@ -1864,7 +1864,7 @@ interface on_player_cancelled_crafting {
      */
     items: LuaInventory;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1878,7 +1878,7 @@ interface on_player_cancelled_crafting {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player changes forces.
@@ -1889,7 +1889,7 @@ interface on_player_changed_force {
      */
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1899,14 +1899,14 @@ interface on_player_changed_force {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the tile position a player is located at changes.
  */
 interface on_player_changed_position {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1916,14 +1916,14 @@ interface on_player_changed_position {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player changes surfaces.
  */
 interface on_player_changed_surface {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1937,14 +1937,14 @@ interface on_player_changed_surface {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when cheat mode is disabled on a player.
  */
 interface on_player_cheat_mode_disabled {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1954,14 +1954,14 @@ interface on_player_cheat_mode_disabled {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when cheat mode is enabled on a player.
  */
 interface on_player_cheat_mode_enabled {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1971,14 +1971,14 @@ interface on_player_cheat_mode_enabled {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player clicks a gps tag
  */
 interface on_player_clicked_gps_tag {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -1996,14 +1996,14 @@ interface on_player_clicked_gps_tag {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player clicks the "confirm" button in the configure Blueprint GUI.
  */
 interface on_player_configured_blueprint {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2013,14 +2013,14 @@ interface on_player_configured_blueprint {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player changes controller types.
  */
 interface on_player_controller_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2034,7 +2034,7 @@ interface on_player_controller_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player finishes crafting an item. This event fires just before the results are inserted into the player's inventory, not when the crafting is queued (see {@link on_pre_player_crafted_item | runtime:on_pre_player_crafted_item}).
@@ -2045,7 +2045,7 @@ interface on_player_crafted_item {
      */
     item_stack: LuaItemStack;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2059,21 +2059,21 @@ interface on_player_crafted_item {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after the player was created.
  */
 interface on_player_created {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player's {@link cursor stack | runtime:LuaControl::cursor_stack} changed in some way.
@@ -2082,14 +2082,14 @@ interface on_player_created {
  */
 interface on_player_cursor_stack_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player selects an area with a deconstruction planner.
@@ -2108,7 +2108,7 @@ interface on_player_deconstructed_area {
      */
     item: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2134,14 +2134,14 @@ interface on_player_deconstructed_area {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player is demoted.
  */
 interface on_player_demoted {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2151,7 +2151,7 @@ interface on_player_demoted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player dies.
@@ -2159,21 +2159,21 @@ interface on_player_demoted {
 interface on_player_died {
     cause?: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the display density scale changes for a given player. The display density scale is the scale value automatically applied based on the player's display DPI. This is only relevant on platforms that support high-density displays.
  */
 interface on_player_display_density_scale_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2187,14 +2187,14 @@ interface on_player_display_density_scale_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the display resolution changes for a given player.
  */
 interface on_player_display_resolution_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2208,14 +2208,14 @@ interface on_player_display_resolution_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the display scale changes for a given player.
  */
 interface on_player_display_scale_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2229,7 +2229,7 @@ interface on_player_display_scale_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player's driving state has changed, meaning a player has either entered or left a vehicle.
@@ -2242,14 +2242,14 @@ interface on_player_driving_changed_state {
      */
     entity?: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player drops an item on the ground.
@@ -2260,14 +2260,14 @@ interface on_player_dropped_item {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player drops a single item into an entity.
@@ -2278,14 +2278,14 @@ interface on_player_dropped_item_into_entity {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player fast-transfers something to or from an entity.
@@ -2304,7 +2304,7 @@ interface on_player_fast_transferred {
      */
     is_split: boolean;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2314,7 +2314,7 @@ interface on_player_fast_transferred {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player flips an entity. This event is only fired when the entity actually changes its orientation or mirroring, so it won't be triggered when pressing the flip keys on an entity that can't be flipped.
@@ -2331,14 +2331,14 @@ interface on_player_flipped_entity {
      */
     horizontal: boolean;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after player flushed fluid
@@ -2357,7 +2357,7 @@ interface on_player_flushed_fluid {
      */
     fluid: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2371,28 +2371,28 @@ interface on_player_flushed_fluid {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a players gun inventory changed in some way.
  */
 interface on_player_gun_inventory_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player's input method changes. See {@link LuaPlayer::input_method | runtime:LuaPlayer::input_method}.
  */
 interface on_player_input_method_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2402,21 +2402,21 @@ interface on_player_input_method_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player joins the game. This is not called when loading a save file in singleplayer, as the player doesn't actually leave the game, and the save is just on pause until they rejoin.
  */
 interface on_player_joined_game {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player is kicked.
@@ -2427,7 +2427,7 @@ interface on_player_kicked {
      */
     by_player?: uint32;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2441,14 +2441,14 @@ interface on_player_kicked {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player leaves the game. This is not called when closing a save file in singleplayer, as the player doesn't actually leave the game, and the save is just on pause until they rejoin.
  */
 interface on_player_left_game {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -2456,14 +2456,14 @@ interface on_player_left_game {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player's active locale changes. See {@link LuaPlayer::locale | runtime:LuaPlayer::locale}.
  */
 interface on_player_locale_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2477,21 +2477,21 @@ interface on_player_locale_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a players main inventory changed in some way.
  */
 interface on_player_main_inventory_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after the results of an entity being mined are collected just before the entity is destroyed.
@@ -2510,7 +2510,7 @@ interface on_player_mined_entity {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2520,7 +2520,7 @@ interface on_player_mined_entity {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player mines something.
@@ -2531,21 +2531,21 @@ interface on_player_mined_item {
      */
     item_stack: ItemWithQualityCount;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player mines tiles.
  */
 interface on_player_mined_tile {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -2556,7 +2556,7 @@ interface on_player_mined_tile {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The position data.
      */
@@ -2567,7 +2567,7 @@ interface on_player_mined_tile {
  */
 interface on_player_muted {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2577,7 +2577,7 @@ interface on_player_muted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player invokes the "smart pipette" over an entity.
@@ -2588,7 +2588,7 @@ interface on_player_pipette {
      */
     item: LuaItemPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2602,7 +2602,7 @@ interface on_player_pipette {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * If cheat mode was used to give a free stack of the item.
      */
@@ -2621,21 +2621,21 @@ interface on_player_placed_equipment {
      */
     grid: LuaEquipmentGrid;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player is promoted.
  */
 interface on_player_promoted {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2645,14 +2645,14 @@ interface on_player_promoted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | runtime:on_player_left_game} the game, and instead behaves like the player never existed in the save file.
  */
 interface on_player_removed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2662,7 +2662,7 @@ interface on_player_removed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after the player removes equipment from an equipment grid
@@ -2681,7 +2681,7 @@ interface on_player_removed_equipment {
      */
     grid: LuaEquipmentGrid;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -2692,7 +2692,7 @@ interface on_player_removed_equipment {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player repairs an entity.
@@ -2700,21 +2700,21 @@ interface on_player_removed_equipment {
 interface on_player_repaired_entity {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player respawns.
  */
 interface on_player_respawned {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -2725,7 +2725,7 @@ interface on_player_respawned {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player reverse-selects an area with a selection-tool item.
@@ -2744,7 +2744,7 @@ interface on_player_reverse_selected_area {
      */
     item: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2758,7 +2758,7 @@ interface on_player_reverse_selected_area {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tiles selected.
      */
@@ -2775,7 +2775,7 @@ interface on_player_rotated_entity {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -2786,7 +2786,7 @@ interface on_player_rotated_entity {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a player selects an area with a selection-tool item.
@@ -2805,7 +2805,7 @@ interface on_player_selected_area {
      */
     item: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2823,7 +2823,7 @@ interface on_player_selected_area {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tiles selected.
      */
@@ -2834,14 +2834,14 @@ interface on_player_selected_area {
  */
 interface on_player_set_quick_bar_slot {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player selects an area with a blueprint.
@@ -2864,7 +2864,7 @@ interface on_player_setup_blueprint {
      */
     mapping: LuaLazyLoadedValue<LuaTable<uint32, LuaEntity>>;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2876,7 +2876,7 @@ interface on_player_setup_blueprint {
      */
     quality: string;
     /**
-     * The record that is being reassigned.
+     * The record that is being reassigned. This blueprint record is writable even if it is in the "my blueprints" shelf.
      */
     record?: LuaRecord;
     /**
@@ -2890,7 +2890,7 @@ interface on_player_setup_blueprint {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player toggles alt mode, also known as "show entity info".
@@ -2901,42 +2901,42 @@ interface on_player_toggled_alt_mode {
      */
     alt_mode: boolean;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player toggles the map editor on or off.
  */
 interface on_player_toggled_map_editor {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a players trash inventory changed in some way.
  */
 interface on_player_trash_inventory_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player is un-banned.
@@ -2947,7 +2947,7 @@ interface on_player_unbanned {
      */
     by_player?: uint32;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2965,14 +2965,14 @@ interface on_player_unbanned {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player is unmuted.
  */
 interface on_player_unmuted {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -2982,7 +2982,7 @@ interface on_player_unmuted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player uses a capsule that results in some game action.
@@ -2993,7 +2993,7 @@ interface on_player_used_capsule {
      */
     item: LuaItemPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3011,14 +3011,14 @@ interface on_player_used_capsule {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player uses spidertron remote to send all selected units to a given position
  */
 interface on_player_used_spidertron_remote {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3032,7 +3032,7 @@ interface on_player_used_spidertron_remote {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after an entity dies.
@@ -3055,7 +3055,7 @@ interface on_post_entity_died {
      */
     ghost?: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3077,7 +3077,7 @@ interface on_post_entity_died {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The unit number the entity had if any.
      */
@@ -3096,7 +3096,7 @@ interface on_post_segmented_unit_died {
      */
     force?: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3118,7 +3118,7 @@ interface on_post_segmented_unit_died {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The unit number of the unit that died.
      */
@@ -3153,7 +3153,7 @@ interface on_pre_build {
      */
     mirror: boolean;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3167,14 +3167,14 @@ interface on_pre_build {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called before one or more chunks are deleted using {@link LuaSurface::delete_chunk | runtime:LuaSurface::delete_chunk}.
  */
 interface on_pre_chunk_deleted {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3185,7 +3185,7 @@ interface on_pre_chunk_deleted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called before entity copy-paste is done.
@@ -3196,7 +3196,7 @@ interface on_pre_entity_settings_pasted {
      */
     destination: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -3207,7 +3207,7 @@ interface on_pre_entity_settings_pasted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called before a ghost entity is destroyed as a result of being marked for deconstruction.
@@ -3217,7 +3217,7 @@ interface on_pre_entity_settings_pasted {
 interface on_pre_ghost_deconstructed {
     ghost: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3227,7 +3227,7 @@ interface on_pre_ghost_deconstructed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called before a ghost entity is upgraded.
@@ -3235,7 +3235,7 @@ interface on_pre_ghost_deconstructed {
 interface on_pre_ghost_upgraded {
     ghost: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3247,7 +3247,7 @@ interface on_pre_ghost_upgraded {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called directly before a permission group is deleted.
@@ -3258,7 +3258,7 @@ interface on_pre_permission_group_deleted {
      */
     group: LuaPermissionGroup;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3268,14 +3268,14 @@ interface on_pre_permission_group_deleted {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called directly before a permission string is imported.
  */
 interface on_pre_permission_string_imported {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3285,7 +3285,7 @@ interface on_pre_permission_string_imported {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a player queues something to be crafted.
@@ -3296,7 +3296,7 @@ interface on_pre_player_crafted_item {
      */
     items: LuaInventory;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3314,7 +3314,7 @@ interface on_pre_player_crafted_item {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called before a players dies.
@@ -3322,21 +3322,21 @@ interface on_pre_player_crafted_item {
 interface on_pre_player_died {
     cause?: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called before a player leaves the game.
  */
 interface on_pre_player_left_game {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
@@ -3344,7 +3344,7 @@ interface on_pre_player_left_game {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player completes a mining action, but before the entity is potentially removed from the map. This is called even if the entity does not end up being removed.
@@ -3355,21 +3355,21 @@ interface on_pre_player_mined_item {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called before a player is removed (deleted) from the game. This is markedly different from a player temporarily {@link leaving | runtime:on_player_left_game} the game, and instead behaves like the player never existed in the save file.
  */
 interface on_pre_player_removed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3379,21 +3379,21 @@ interface on_pre_player_removed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called before a player toggles the map editor on or off.
  */
 interface on_pre_player_toggled_map_editor {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     player_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called directly before a robot explodes cliffs.
@@ -3405,7 +3405,7 @@ interface on_pre_robot_exploded_cliff {
      */
     item: LuaItemPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3416,14 +3416,14 @@ interface on_pre_robot_exploded_cliff {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called just before the scenario finishes.
  */
 interface on_pre_scenario_finished {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3433,7 +3433,7 @@ interface on_pre_scenario_finished {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called just before a script inventory is resized.
@@ -3445,7 +3445,7 @@ interface on_pre_script_inventory_resized {
      */
     mod: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3463,35 +3463,35 @@ interface on_pre_script_inventory_resized {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called just before a surface is cleared (all entities removed and all chunks deleted).
  */
 interface on_pre_surface_cleared {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     surface_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called just before a surface is deleted.
  */
 interface on_pre_surface_deleted {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     surface_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player triggers "redo".
@@ -3502,7 +3502,7 @@ interface on_redo_applied {
      */
     actions: UndoRedoAction[];
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3512,7 +3512,7 @@ interface on_redo_applied {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when research is cancelled.
@@ -3523,7 +3523,7 @@ interface on_research_cancelled {
      */
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3537,7 +3537,7 @@ interface on_research_cancelled {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a research finishes.
@@ -3548,7 +3548,7 @@ interface on_research_finished {
      */
     by_script: boolean;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3558,7 +3558,7 @@ interface on_research_finished {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when research is moved forwards or backwards in the research queue.
@@ -3569,7 +3569,7 @@ interface on_research_moved {
      */
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3579,7 +3579,7 @@ interface on_research_moved {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when research is queued.
@@ -3590,7 +3590,7 @@ interface on_research_queued {
      */
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3604,7 +3604,7 @@ interface on_research_queued {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a research is reversed (unresearched).
@@ -3615,7 +3615,7 @@ interface on_research_reversed {
      */
     by_script: boolean;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3625,7 +3625,7 @@ interface on_research_reversed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a technology research starts.
@@ -3633,7 +3633,7 @@ interface on_research_reversed {
 interface on_research_started {
     last_research?: LuaTechnology;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3643,7 +3643,7 @@ interface on_research_started {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a resource entity reaches 0 or its minimum yield for infinite resources.
@@ -3651,13 +3651,13 @@ interface on_research_started {
 interface on_resource_depleted {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a construction robot builds an entity.
@@ -3668,7 +3668,7 @@ interface on_robot_built_entity {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3686,7 +3686,7 @@ interface on_robot_built_entity {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a robot builds tiles.
@@ -3701,7 +3701,7 @@ interface on_robot_built_tile {
      */
     item: LuaItemPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3719,7 +3719,7 @@ interface on_robot_built_tile {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tile prototype that was placed.
      */
@@ -3738,7 +3738,7 @@ interface on_robot_exploded_cliff {
      */
     item: LuaItemPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3749,7 +3749,7 @@ interface on_robot_exploded_cliff {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a robot mines an entity.
@@ -3760,7 +3760,7 @@ interface on_robot_mined {
      */
     item_stack: ItemWithQualityCount;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3770,7 +3770,7 @@ interface on_robot_mined {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after the results of an entity being mined are collected just before the entity is destroyed.
@@ -3789,7 +3789,7 @@ interface on_robot_mined_entity {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3799,14 +3799,14 @@ interface on_robot_mined_entity {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a robot mines tiles.
  */
 interface on_robot_mined_tile {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3820,7 +3820,7 @@ interface on_robot_mined_tile {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The position data.
      */
@@ -3835,7 +3835,7 @@ interface on_robot_pre_mined {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3845,14 +3845,14 @@ interface on_robot_pre_mined {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a rocket silo is ordered to be launched.
  */
 interface on_rocket_launch_ordered {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3864,14 +3864,14 @@ interface on_rocket_launch_ordered {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a rocket finishes ascending. (Triggers listening for finished rocket launch past 2.0 have been moved to 'on_cargo_pod_finished_ascending' as rocket and cargo pod are two separate entities)
  */
 interface on_rocket_launched {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     rocket: LuaEntity;
@@ -3879,14 +3879,14 @@ interface on_rocket_launched {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a runtime mod setting is changed by a player.
  */
 interface on_runtime_mod_setting_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3901,7 +3901,7 @@ interface on_runtime_mod_setting_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called just after a script inventory is resized.
@@ -3913,7 +3913,7 @@ interface on_script_inventory_resized {
      */
     mod: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3935,7 +3935,7 @@ interface on_script_inventory_resized {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a {@link LuaSurface::request_path | runtime:LuaSurface::request_path} call completes.
@@ -3946,7 +3946,7 @@ interface on_script_path_request_finished {
      */
     id: uint32;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -3956,7 +3956,7 @@ interface on_script_path_request_finished {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * Indicates that the pathfinder failed because it is too busy, and that you can retry later.
      */
@@ -3975,7 +3975,7 @@ interface on_script_trigger_effect {
      */
     effect_id: string;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     quality?: string;
@@ -3990,7 +3990,7 @@ interface on_script_trigger_effect {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an entity of type `radar` finishes scanning a sector.
@@ -4005,7 +4005,7 @@ interface on_sector_scanned {
      */
     chunk_position: ChunkPosition;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4015,7 +4015,7 @@ interface on_sector_scanned {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an individual segment of a SegmentedUnit is created.
@@ -4023,13 +4023,13 @@ interface on_sector_scanned {
 interface on_segment_entity_created {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a segmented unit is created for any reason.
@@ -4044,7 +4044,7 @@ interface on_segmented_unit_created {
      */
     clone_source?: LuaSegmentedUnit;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4054,7 +4054,7 @@ interface on_segmented_unit_created {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a segmented unit is damaged. This is not called when a segmented unit's health is set directly by another mod.
@@ -4078,7 +4078,7 @@ interface on_segmented_unit_damaged {
      */
     force?: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4093,7 +4093,7 @@ interface on_segmented_unit_damaged {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a segmented unit dies.
@@ -4112,7 +4112,7 @@ interface on_segmented_unit_died {
      */
     force?: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4122,7 +4122,7 @@ interface on_segmented_unit_died {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after the selected entity changes for a given player.
@@ -4133,7 +4133,7 @@ interface on_selected_entity_changed {
      */
     last_entity?: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4143,20 +4143,20 @@ interface on_selected_entity_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaGameScript::is_multiplayer | runtime:LuaGameScript::is_multiplayer} changes to false. May also be raised when it was already false but a game was loaded from a save file without hosting.
  */
 interface on_singleplayer_init {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a space platform builds an entity.
@@ -4167,7 +4167,7 @@ interface on_space_platform_built_entity {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4185,7 +4185,7 @@ interface on_space_platform_built_entity {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a space platform builds tiles.
@@ -4200,7 +4200,7 @@ interface on_space_platform_built_tile {
      */
     item: LuaItemPrototype;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4218,7 +4218,7 @@ interface on_space_platform_built_tile {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tile prototype that was placed.
      */
@@ -4233,7 +4233,7 @@ interface on_space_platform_built_tile {
  */
 interface on_space_platform_changed_state {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     old_state: defines.space_platform_state;
@@ -4241,7 +4241,7 @@ interface on_space_platform_changed_state {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after the results of an entity being mined are collected just before the entity is destroyed.
@@ -4260,7 +4260,7 @@ interface on_space_platform_mined_entity {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4270,7 +4270,7 @@ interface on_space_platform_mined_entity {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a platform mines an entity.
@@ -4281,7 +4281,7 @@ interface on_space_platform_mined_item {
      */
     item_stack: ItemWithQualityCount;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4291,14 +4291,14 @@ interface on_space_platform_mined_item {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a platform mines tiles.
  */
 interface on_space_platform_mined_tile {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4312,7 +4312,7 @@ interface on_space_platform_mined_tile {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The position data.
      */
@@ -4327,7 +4327,7 @@ interface on_space_platform_pre_mined {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4337,20 +4337,20 @@ interface on_space_platform_pre_mined {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a spider finishes moving to its autopilot position.
  */
 interface on_spider_command_completed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * Spider vehicle which was requested to move.
      */
@@ -4369,7 +4369,7 @@ interface on_string_translated {
      */
     localised_string: LocalisedString;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4383,7 +4383,7 @@ interface on_string_translated {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * Whether the requested localised string was valid and could be translated.
      */
@@ -4394,14 +4394,14 @@ interface on_string_translated {
  */
 interface on_surface_cleared {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     surface_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a surface is created.
@@ -4410,35 +4410,35 @@ interface on_surface_cleared {
  */
 interface on_surface_created {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     surface_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a surface is deleted.
  */
 interface on_surface_deleted {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     surface_index: uint32;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after a surface is imported via the map editor.
  */
 interface on_surface_imported {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4449,14 +4449,14 @@ interface on_surface_imported {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a surface is renamed.
  */
 interface on_surface_renamed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     new_name: string;
@@ -4465,7 +4465,7 @@ interface on_surface_renamed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when {@link LuaForce::reset_technology_effects | runtime:LuaForce::reset_technology_effects} is finished.
@@ -4473,13 +4473,13 @@ interface on_surface_renamed {
 interface on_technology_effects_reset {
     force: LuaForce;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a territory is created for any reason.
@@ -4490,7 +4490,7 @@ interface on_territory_created {
      */
     cause: defines.territory_created_cause;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4500,14 +4500,14 @@ interface on_territory_created {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a territory is destroyed from a surface.
  */
 interface on_territory_destroyed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4517,20 +4517,20 @@ interface on_territory_destroyed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * It is fired once every tick. Since this event is fired every tick, its handler shouldn't include performance heavy code.
  */
 interface on_tick {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called after the results of an entity being mined are collected just before the entity is destroyed.
@@ -4545,7 +4545,7 @@ interface on_tower_mined_plant {
      */
     buffer: LuaInventory;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4555,7 +4555,7 @@ interface on_tower_mined_plant {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tower doing the mining.
      */
@@ -4566,7 +4566,7 @@ interface on_tower_mined_plant {
  */
 interface on_tower_planted_seed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4580,7 +4580,7 @@ interface on_tower_planted_seed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tower that did the planting.
      */
@@ -4591,7 +4591,7 @@ interface on_tower_planted_seed {
  */
 interface on_tower_pre_mined_plant {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4601,7 +4601,7 @@ interface on_tower_pre_mined_plant {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tower that is about to do the mining.
      */
@@ -4612,14 +4612,14 @@ interface on_tower_pre_mined_plant {
  */
 interface on_train_changed_state {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     old_state: defines.train_state;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     train: LuaTrain;
 }
 /**
@@ -4627,7 +4627,7 @@ interface on_train_changed_state {
  */
 interface on_train_created {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4641,7 +4641,7 @@ interface on_train_created {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     train: LuaTrain;
 }
 /**
@@ -4649,7 +4649,7 @@ interface on_train_created {
  */
 interface on_train_schedule_changed {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4659,7 +4659,7 @@ interface on_train_schedule_changed {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     train: LuaTrain;
 }
 /**
@@ -4668,14 +4668,14 @@ interface on_train_schedule_changed {
 interface on_trigger_created_entity {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     source?: LuaEntity;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when an entity with a trigger prototype (such as capsules) fire an artillery projectile AND that trigger prototype defined `trigger_fired_artillery=true`.
@@ -4683,21 +4683,21 @@ interface on_trigger_created_entity {
 interface on_trigger_fired_artillery {
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     source?: LuaEntity;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when new packets are processed by {@link LuaHelpers::recv_udp | runtime:LuaHelpers::recv_udp}.
  */
 interface on_udp_packet_received {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4715,7 +4715,7 @@ interface on_udp_packet_received {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when the player triggers "undo".
@@ -4726,7 +4726,7 @@ interface on_undo_applied {
      */
     actions: UndoRedoAction[];
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4736,7 +4736,7 @@ interface on_undo_applied {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a unit is added to a unit group.
@@ -4744,13 +4744,13 @@ interface on_undo_applied {
 interface on_unit_added_to_group {
     group: LuaCommandable;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     unit: LuaEntity;
 }
 /**
@@ -4759,13 +4759,13 @@ interface on_unit_added_to_group {
 interface on_unit_group_created {
     group: LuaCommandable;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a unit group finishes gathering and starts executing its command.
@@ -4773,13 +4773,13 @@ interface on_unit_group_created {
 interface on_unit_group_finished_gathering {
     group: LuaCommandable;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * Called when a unit is removed from a unit group.
@@ -4787,13 +4787,13 @@ interface on_unit_group_finished_gathering {
 interface on_unit_removed_from_group {
     group: LuaCommandable;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     unit: LuaEntity;
 }
 /**
@@ -4801,14 +4801,14 @@ interface on_unit_removed_from_group {
  */
 interface on_worker_robot_expired {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     robot: LuaEntity;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * A static event mods can use to tell other mods they built something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_built | runtime:LuaBootstrap::raise_script_built}, or when `raise_built` is passed to {@link LuaSurface::create_entity | runtime:LuaSurface::create_entity}.
@@ -4819,13 +4819,13 @@ interface script_raised_built {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * A static event mods can use to tell other mods they destroyed something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_destroy | runtime:LuaBootstrap::raise_script_destroy}, or when `raise_destroy` is passed to {@link LuaEntity::destroy | runtime:LuaEntity::destroy}.
@@ -4836,20 +4836,20 @@ interface script_raised_destroy {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * A static event that mods can use to tell other mods they destroyed a segmented unit by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}, or {@link LuaBootstrap::raise_script_destroy_segmented_unit | runtime:LuaBootstrap::raise_script_destroy_segmented_unit}, or when `raise_destroy` is passed to {@link LuaSegmentedUnit::destroy | runtime:LuaSegmentedUnit::destroy}.
  */
 interface script_raised_destroy_segmented_unit {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4859,7 +4859,7 @@ interface script_raised_destroy_segmented_unit {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * A static event mods can use to tell other mods they revived something by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_revive | runtime:LuaBootstrap::raise_script_revive}, or when `raise_revive` is passed to {@link LuaEntity::revive | runtime:LuaEntity::revive}.
@@ -4870,7 +4870,7 @@ interface script_raised_revive {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4880,14 +4880,14 @@ interface script_raised_revive {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 /**
  * A static event mods can use to tell other mods they changed tiles on a surface by script. This event is only raised if a mod does so with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event} or {@link LuaBootstrap::raise_script_set_tiles | runtime:LuaBootstrap::raise_script_set_tiles}, or when `raise_event` is passed to {@link LuaSurface::set_tiles | runtime:LuaSurface::set_tiles}.
  */
 interface script_raised_set_tiles {
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4897,7 +4897,7 @@ interface script_raised_set_tiles {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The tiles that were changed.
      */
@@ -4912,7 +4912,7 @@ interface script_raised_teleported {
      */
     entity: LuaEntity;
     /**
-     * Identifier of the event
+     * Identifier of the event.
      */
     name: defines.events;
     /**
@@ -4926,7 +4926,7 @@ interface script_raised_teleported {
     /**
      * Tick the event was generated.
      */
-    tick: uint32;
+    tick: MapTick;
 }
 
 }

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.76
+// Factorio version 2.0.77
 // API version 6
 
 declare namespace runtime {
@@ -4377,7 +4377,7 @@ interface LuaBootstrap {
      * @param tick The nth-tick(s) to invoke the handler on. Passing `nil` as the only parameter will unregister all nth-tick handlers.
      * @param handler The handler to run. Passing `nil` will unregister it for the provided nth-tick(s).
      */
-    on_nth_tick(this: void, tick: uint32 | uint32[] | nil, handler: ((this: void, arg0: NthTickEventData) => any) | nil): void;
+    on_nth_tick(this: void, tick: MapTick | MapTick[] | nil, handler: ((this: void, arg0: NthTickEventData) => any) | nil): void;
     /**
      * @param table.entity The entity that was built.
      */
@@ -4530,7 +4530,7 @@ interface LuaBootstrap {
      * Depending on when a given object is destroyed, {@link on_object_destroyed | runtime:on_object_destroyed} will either be fired at the end of the current tick or at the end of the next tick.
      * @param object The object to register.
      * @returns [0] - The registration number. It is used to identify the object in the {@link on_object_destroyed | runtime:on_object_destroyed} event.
-     * @returns [1] - The {@link useful identifier | runtime:RegistrationTarget} of the object if it has one. This identifier is specific to the object type, for example for trains it is the value {@link LuaTrain::id | runtime:LuaTrain::id}.
+     * @returns [1] - The {@link useful identifier | runtime:RegistrationTarget} of the object if it has one or `0` if it doesn't. This identifier is specific to the object type, for example for trains it is the value {@link LuaTrain::id | runtime:LuaTrain::id}.
      * @returns [2] - Type of the target object.
      */
     register_on_object_destroyed(this: void, object: RegistrationTarget): LuaMultiReturn<[
@@ -5453,7 +5453,7 @@ interface LuaControl {
      */
     readonly loot_pickup_distance: double;
     /**
-     * Current mining state.
+     * Current mining state. Will error if written to with a {@link controller_type | runtime:LuaPlayer::controller_type} other than `character`, `god`, or `editor`.
      *
      * When the player isn't mining tiles the player will mine whatever entity is currently selected. See {@link LuaControl::selected | runtime:LuaControl::selected} and {@link LuaControl::update_selected_entity | runtime:LuaControl::update_selected_entity}.
      */
@@ -6006,7 +6006,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Upgrades this entity in place if it's marked to be upgraded.
      * @returns [0] - The first upgraded entity - `nil` if this entity is not marked for upgrade.
-     * @returns [1] - The second upgraded entity - `nil` if this entity is not marked for upgrade.
+     * @returns [1] - When upgrading underground belts, the other underground belt end that was also upgraded - `nil` if this entity is not marked for upgrade.
      */
     apply_upgrade(this: void): LuaMultiReturn<[
         LuaEntity | null,
@@ -6081,7 +6081,7 @@ interface LuaEntity extends LuaControl {
      * @param by_player If provided, the copying is done 'as' this player and {@link on_entity_settings_pasted | runtime:on_entity_settings_pasted} is triggered.
      * @returns Any items removed from this entity as a result of copying the settings.
      */
-    copy_settings(this: void, entity: LuaEntity, by_player?: PlayerIdentification): ItemWithQualityCounts;
+    copy_settings(this: void, entity: LuaEntity, by_player?: PlayerIdentification): ItemWithQualityCount[];
     /**
      * Creates the same smoke that is created when you place a building by hand.
      *
@@ -6690,7 +6690,7 @@ interface LuaEntity extends LuaControl {
         raise_revive?: boolean;
         overflow?: LuaInventory;
     }): LuaMultiReturn<[
-        Record<string, uint32> | null,
+        ItemWithQualityCount[] | null,
         LuaEntity | null,
         LuaEntity | null
     ]>;
@@ -6793,7 +6793,7 @@ interface LuaEntity extends LuaControl {
      * @param quality The quality. If not provided `normal` is used.
      * @returns Any items removed from this entity as a result of setting the recipe.
      */
-    set_recipe(this: void, recipe?: RecipeID, quality?: QualityID): ItemWithQualityCounts;
+    set_recipe(this: void, recipe?: RecipeID, quality?: QualityID): ItemWithQualityCount[];
     /**
      * Revives a ghost silently, so the revival makes no sound and no smoke is created.
      * @param table.raise_revive If true, and an entity ghost; {@link script_raised_revive | runtime:script_raised_revive} will be called. Else if true, and a tile ghost; {@link script_raised_set_tiles | runtime:script_raised_set_tiles} will be called.
@@ -6806,7 +6806,7 @@ interface LuaEntity extends LuaControl {
         raise_revive?: boolean;
         overflow?: LuaInventory;
     }): LuaMultiReturn<[
-        ItemWithQualityCounts,
+        ItemWithQualityCount[],
         LuaEntity | null,
         LuaEntity | null
     ]>;
@@ -6848,7 +6848,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Deactivating an entity will stop all its operations (car will stop moving, inserters will stop working, fish will stop moving etc).
      *
-     * Reading from this returns `false` if the entity is deactivated in at least one of the following ways: {@link by script | runtime:LuaEntity::disabled_by_script}, {@link by circuit network | runtime:LuaEntity::disabled_by_control_behavior}, {@link by recipe | runtime:LuaEntity::disabled_by_recipe}, {@link by freezing | runtime:LuaEntity::frozen}, or by deconstruction.
+     * Reading from this returns `false` if the entity is deactivated in at least one of the following ways: {@link by script | runtime:LuaEntity::disabled_by_script}, {@link by circuit network | runtime:LuaEntity::disabled_by_control_behavior}, {@link by recipe | runtime:LuaEntity::disabled_by_recipe}, {@link by freezing | runtime:LuaEntity::frozen}, or by being marked for deconstruction.
      *
      * Writing to this is deprecated and affects only the {@link disabled_by_script | runtime:LuaEntity::disabled_by_script} state.
      *
@@ -7371,7 +7371,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Items this ghost will request when revived or items this item request proxy is requesting.
      */
-    readonly item_requests: ItemWithQualityCounts;
+    readonly item_requests: ItemWithQualityCount[];
     /**
      * The number of units killed by this turret, artillery turret, or artillery wagon.
      */
@@ -8251,6 +8251,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The value in the dictionary is meaningless and exists just to allow for easy lookup.
      */
     readonly crafting_categories?: Record<string, true>;
+    readonly crafting_speed_quality_multiplier: LuaTable<QualityID, double>;
     /**
      * The crane energy usage of this agricultural tower prototype.
      */
@@ -8327,6 +8328,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly drawing_box_vertical_extension: double;
     readonly drop_item_distance?: uint32;
+    /**
+     * If this mining drill puts full belt stacks onto belts.
+     */
+    readonly drops_full_belt_stacks?: boolean;
     readonly dying_explosion?: ExplosionDefinition[];
     /**
      * The dying time of this corpse prototype.
@@ -8373,6 +8378,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The direct energy usage of this entity, if any.
      */
     readonly energy_usage?: double;
+    readonly energy_usage_quality_multiplier: LuaTable<QualityID, double>;
     readonly energy_usage_quality_scaling?: float;
     /**
      * The engine starting speed for this rocket silo rocket prototype.
@@ -8802,8 +8808,11 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly mining_speed?: double;
     /**
      * The module inventory size. `nil` if this entity doesn't support modules.
+     *
+     * Returns the inventory size if this entity is of normal quality. Use {@link LuaEntityPrototype::get_inventory_size | runtime:LuaEntityPrototype::get_inventory_size} for other qualities.
      */
     readonly module_inventory_size?: uint32;
+    readonly module_slots_quality_bonus: LuaTable<QualityID, ItemStackIndex>;
     /**
      * Whether this unit prototype can move while shooting.
      */
@@ -8840,8 +8849,12 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The pumping speed of this offshore pump or normal pump. This property is deprecated in favor of {@link LuaEntityPrototype::get_pumping_speed | runtime:LuaEntityPrototype::get_pumping_speed} and should not be used.
      */
     readonly pumping_speed?: double;
+    readonly quality_affects_capacity?: boolean;
+    readonly quality_affects_energy_usage?: boolean;
+    readonly quality_affects_inventory_size?: boolean;
     readonly quality_affects_mining_radius?: boolean;
     readonly quality_affects_module_slots?: boolean;
+    readonly quality_affects_supply_area_distance?: boolean;
     /**
      * The radar range of this unit prototype.
      */
@@ -9090,6 +9103,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly uses_force_mining_productivity_bonus?: boolean;
     readonly uses_inserter_stack_size_bonus?: boolean;
     /**
+     * If this lab uses the quality drain modifier when consuming science packs.
+     */
+    readonly uses_quality_drain_modifier: boolean;
+    /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean;
@@ -9329,7 +9346,7 @@ interface LuaEquipmentGrid {
      * @param by_player If provided, the action is done 'as' this player and {@link on_player_removed_equipment | runtime:on_player_removed_equipment} is triggered.
      * @returns List of the equipment that has been removed.
      */
-    take_all(this: void, by_player?: PlayerIdentification): ItemWithQualityCounts;
+    take_all(this: void, by_player?: PlayerIdentification): ItemWithQualityCount[];
     /**
      * The total energy stored in all batteries in the equipment grid.
      */
@@ -9871,6 +9888,7 @@ interface LuaFluidPrototype extends LuaPrototypeBase {
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean;
+    readonly visualization_color: Color;
 }
 /**
  * Prototype of a font.
@@ -10202,7 +10220,7 @@ interface LuaForce {
      */
     reset_recipes(this: void): void;
     /**
-     * Load the original versions of technologies from prototypes. Preserves research state of technologies.
+     * Load the original versions of technologies from prototypes. Preserves research, enabled and visible_when_disabled state of technologies.
      */
     reset_technologies(this: void): void;
     /**
@@ -12561,7 +12579,7 @@ interface LuaInventory {
      * Get counts of all items in this inventory.
      * @returns List of all items in the inventory.
      */
-    get_contents(this: void): ItemWithQualityCounts;
+    get_contents(this: void): ItemWithQualityCount[];
     /**
      * Gets the filter for the given item stack index.
      * @param index The item stack index
@@ -12984,7 +13002,7 @@ interface LuaItemCommon {
     /**
      * List of raw materials required to build this blueprint.
      */
-    readonly cost_to_build: ItemWithQualityCounts;
+    readonly cost_to_build: ItemWithQualityCount[];
     /**
      * The custom description this item-with-tags. This is shown over the normal item description if this is set to a non-empty value.
      */
@@ -13762,7 +13780,7 @@ interface LuaLogisticNetwork {
      * @param member Logistic members to check. If not given, gives item counts for the entire network.
      * @returns List of all items in the network.
      */
-    get_contents(this: void, member?: 'storage' | 'providers'): ItemWithQualityCounts;
+    get_contents(this: void, member?: 'storage' | 'providers'): ItemWithQualityCount[];
     /**
      * Count given or all items in the network or given members.
      * @param item Item name to count. If not given, gives counts of all items in the network.
@@ -13842,7 +13860,7 @@ interface LuaLogisticNetwork {
      */
     readonly cells: LuaLogisticCell[];
     /**
-     * All construction robots in this logistic network.
+     * All currently deployed construction robots in this logistic network.
      */
     readonly construction_robots: LuaEntity[];
     /**
@@ -13866,7 +13884,7 @@ interface LuaLogisticNetwork {
      */
     readonly logistic_members: LuaEntity[];
     /**
-     * All logistic robots in this logistic network.
+     * All currently deployed logistic robots in this logistic network.
      */
     readonly logistic_robots: LuaEntity[];
     /**
@@ -13902,7 +13920,7 @@ interface LuaLogisticNetwork {
      */
     readonly robot_limit: uint32;
     /**
-     * All robots in this logistic network.
+     * All currently deployed robots in this logistic network.
      */
     readonly robots: LuaEntity[];
     /**
@@ -13987,13 +14005,13 @@ interface LuaLogisticPoint {
      */
     readonly sections_count: uint32;
     /**
-     * Items targeted to be dropped off into this logistic point by robots.
+     * Items targeted to be dropped off into this logistic point by robots or cargo pods.
      */
-    readonly targeted_items_deliver: ItemWithQualityCounts;
+    readonly targeted_items_deliver: ItemWithQualityCount[];
     /**
      * Items targeted to be picked up from this logistic point by robots.
      */
-    readonly targeted_items_pickup: ItemWithQualityCounts;
+    readonly targeted_items_pickup: ItemWithQualityCount[];
     /**
      * Whether this logistic point is set to trash unrequested items.
      */
@@ -16333,7 +16351,7 @@ interface LuaRecord {
     /**
      * List of raw materials required to build this blueprint.
      */
-    readonly cost_to_build: ItemWithQualityCounts;
+    readonly cost_to_build: ItemWithQualityCount[];
     /**
      * The default icons for a blueprint blueprint.
      */
@@ -16702,7 +16720,7 @@ interface LuaRenderObject {
 /**
  * Allows rendering of geometric shapes, text and sprites in the game world through the global object named `rendering`. Each render object is identified by an id that is universally unique for the lifetime of a whole game.
  *
- * If an entity target of an object is destroyed or changes surface, then the object is also destroyed.
+ * If an entity target of an object (except its `orientation_target`) is destroyed or changes surface, then the object is also destroyed.
  */
 interface LuaRendering {
     /**
@@ -17712,21 +17730,31 @@ interface LuaSpaceConnectionPrototype extends LuaPrototypeBase {
 interface LuaSpaceLocationPrototype extends LuaPrototypeBase {
     readonly asteroid_spawn_definitions?: SpaceLocationAsteroidSpawnDefinition[];
     readonly asteroid_spawn_influence: double;
+    readonly distance: double;
+    readonly draw_orbit: boolean;
     readonly entities_require_heating?: boolean;
     /**
      * An alternative prototype that will be used to display info about this prototype in Factoriopedia.
      */
     readonly factoriopedia_alternative?: LuaSpaceLocationPrototype;
+    readonly fly_condition: boolean;
+    readonly gravity_pull: double;
+    readonly label_orientation: RealOrientation;
+    readonly magnitude: double;
     readonly map_gen_settings?: MapGenSettings;
     readonly map_seed_offset?: uint32;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    readonly orientation: RealOrientation;
+    readonly parked_platforms_orientation: RealOrientation;
+    readonly parked_platforms_position: MapPosition;
     readonly player_effects?: TriggerItem[];
     readonly pollutant_type?: LuaAirbornePollutantPrototype;
     readonly position: MapPosition;
     readonly solar_power_in_space: double;
+    readonly starmap_icon_orientation: RealOrientation;
     /**
      * A mapping of the surface property name to the value.
      */
@@ -17774,7 +17802,7 @@ interface LuaSpacePlatform {
      * Schedules this space platform for deletion.
      * @param ticks The number of ticks from now when this platform will be deleted.
      */
-    destroy(this: void, ticks?: uint32): void;
+    destroy(this: void, ticks?: MapTick): void;
     /**
      * Destroys all asteroid chunks from the given area. If no area and no position are given, then the entire surface is searched.
      * @param table.invert If the filters should be inverted.
@@ -17811,6 +17839,9 @@ interface LuaSpacePlatform {
         limit?: uint32;
         invert?: boolean;
     }): AsteroidChunk[];
+    /**
+     * This allows full access to the space platform schedule, including modifying the schedule records, the group and the interrupts.
+     */
     get_schedule(this: void): LuaSchedule;
     /**
      * Repairs the given tile if it's damaged.
@@ -17871,6 +17902,8 @@ interface LuaSpacePlatform {
      * This platform's current schedule, if any. Set to `nil` to clear.
      *
      * The schedule can't be changed by modifying the returned table. Instead, changes must be made by assigning a new table to this attribute.
+     *
+     * This is a simiplifed schedule that does **not** include groups and interrupts. See {@link LuaSpacePlatform::get_schedule | runtime:LuaSpacePlatform::get_schedule} for full access to the schedule, including interrupts and groups.
      */
     schedule?: PlatformSchedule;
     /**
@@ -18008,15 +18041,15 @@ interface LuaStyle {
     /**
      * Space between the table cell contents bottom and border.
      */
-    bottom_cell_padding: int32;
-    bottom_margin: int32;
-    bottom_padding: int32;
+    bottom_cell_padding: int16;
+    bottom_margin: int16;
+    bottom_padding: int16;
     /**
      * Space between the table cell contents and border. Sets top/right/bottom/left cell paddings to this value.
      */
-    cell_padding: int32;
+    cell_padding: int16;
     clicked_font_color: Color;
-    clicked_vertical_offset: int32;
+    clicked_vertical_offset: uint32;
     color: Color;
     /**
      * Array containing the alignment for every column of this table element. Even though this property is marked as read-only, the alignment can be changed by indexing the LuaCustomTable, like so:
@@ -18081,15 +18114,15 @@ interface LuaStyle {
     /**
      * Space between the table cell contents left and border.
      */
-    left_cell_padding: int32;
-    left_margin: int32;
-    left_padding: int32;
+    left_cell_padding: int16;
+    left_margin: int16;
+    left_padding: int16;
     /**
      * Sets top/right/bottom/left margins to this value.
      *
      * An array with two values sets top/bottom margin to the first value and left/right margin to the second value. An array with four values sets top, right, bottom, left margin respectively.
      */
-    margin: int32 | int32[];
+    margin: int16 | int16[];
     /**
      * Maximal height ensures, that the widget will never be bigger than than that size. It can't be stretched to be bigger.
      */
@@ -18127,7 +18160,7 @@ interface LuaStyle {
      *
      * An array with two values sets top/bottom padding to the first value and left/right padding to the second value. An array with four values sets top, right, bottom, left padding respectively.
      */
-    padding: int32 | int32[];
+    padding: int16 | int16[];
     pie_progress_color: Color;
     /**
      * How this GUI element handles rich text.
@@ -18136,9 +18169,9 @@ interface LuaStyle {
     /**
      * Space between the table cell contents right and border.
      */
-    right_cell_padding: int32;
-    right_margin: int32;
-    right_padding: int32;
+    right_cell_padding: int16;
+    right_margin: int16;
+    right_padding: int16;
     selected_badge_font_color: Color;
     selected_clicked_font_color: Color;
     selected_font_color: Color;
@@ -18153,9 +18186,9 @@ interface LuaStyle {
     /**
      * Space between the table cell contents top and border.
      */
-    top_cell_padding: int32;
-    top_margin: int32;
-    top_padding: int32;
+    top_cell_padding: int16;
+    top_margin: int16;
+    top_padding: int16;
     use_header_filler: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -19237,6 +19270,8 @@ interface LuaSurface {
     readonly pollution_statistics: LuaFlowStatistics;
     /**
      * If clouds are shown on this surface. If false, clouds are never shown. If true the player must also have clouds enabled in graphics settings for them to be shown.
+     *
+     * By default, clouds are shown on all surfaces.
      */
     show_clouds: boolean;
     /**
@@ -19765,7 +19800,7 @@ interface LuaSurfaceCreateEntityParamsInserter extends BaseLuaSurfaceCreateEntit
      * Used only if {@link InserterPrototype::allow_custom_vectors | prototype:InserterPrototype::allow_custom_vectors} is true.
      */
     'pickup_position'?: Vector;
-    'spoil_priority'?: 'spoiled-first' | 'fresh-first';
+    'spoil_priority'?: BlueprintSpoilPriority;
     /**
      * Defaults to `false`.
      */
@@ -19921,7 +19956,7 @@ interface LuaSurfaceCreateEntityParamsPlant extends BaseLuaSurfaceCreateEntityPa
     /**
      * The tick the plant will be fully grown. If not specified, the plants normal growth time is used.
      */
-    'tick_grown'?: uint32;
+    'tick_grown'?: MapTick;
 }
 /**
  *
@@ -20705,7 +20740,7 @@ interface LuaTrain {
      * Get a mapping of the train's inventory.
      * @returns List of all items in the train.
      */
-    get_contents(this: void): ItemWithQualityCounts;
+    get_contents(this: void): ItemWithQualityCount[];
     /**
      * Gets a mapping of the train's fluid inventory.
      * @returns The counts, indexed by fluid names.
@@ -20729,6 +20764,9 @@ interface LuaTrain {
      * Gets all rails under the train.
      */
     get_rails(this: void): LuaEntity[];
+    /**
+     * This allows full access to the train schedule, including modifying the schedule records, the train group and the interrupts.
+     */
     get_schedule(this: void): LuaSchedule;
     /**
      * Go to the station specified by the index in the train's schedule.
@@ -20871,6 +20909,8 @@ interface LuaTrain {
      * This train's current schedule, if any. Set to `nil` to clear.
      *
      * The schedule can't be changed by modifying the returned table. Instead, changes must be made by assigning a new table to this attribute.
+     *
+     * This is a simiplifed schedule that does **not** include train groups and interrupts. See {@link LuaTrain::get_schedule | runtime:LuaTrain::get_schedule} for full access to the train schedule, including interrupts and train groups.
      */
     schedule?: TrainSchedule;
     /**
@@ -21056,7 +21096,7 @@ interface LuaTransportLine {
      * Get counts of all items on this line, similar to how {@link LuaInventory::get_contents | runtime:LuaInventory::get_contents} does.
      * @returns List of all items on this line.
      */
-    get_contents(this: void): ItemWithQualityCounts;
+    get_contents(this: void): ItemWithQualityCount[];
     /**
      * Get detailed information of items on this line, such as their position.
      */

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.76
+// Factorio version 2.0.77
 // API version 6
 
 declare namespace prototype {
@@ -665,6 +665,12 @@ interface ArrowPrototype extends EntityPrototype {
     arrow_picture: Sprite;
     blinking?: boolean;
     circle_picture?: Sprite;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * The entity spawned by the {@link artillery targeting remote | https://wiki.factorio.com/Artillery_targeting_remote}.
@@ -733,6 +739,12 @@ interface ArtilleryProjectilePrototype extends EntityPrototype {
      * Whether the picture of the projectile is rotated to match the direction of travel.
      */
     rotatable?: boolean;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     shadow?: Sprite;
 }
 /**
@@ -887,7 +899,7 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
      */
     gui_title_key?: string;
     /**
-     * Sets the maximum number of ingredients this machine can craft with. Any recipe with more ingredients than this will be unavailable in this machine.
+     * Sets the maximum number of item ingredients this machine can craft with. Any recipe with more item ingredients than this will be unavailable in this machine.
      *
      * This only counts item ingredients, not fluid ingredients! This means if ingredient count is 2, and the recipe has 2 item ingredients and 1 fluid ingredient, it can still be crafted in the machine.
      */
@@ -1104,6 +1116,12 @@ interface BeamPrototype extends EntityPrototype {
     damage_interval: uint32;
     graphics_set: BeamGraphicsSet;
     random_target_offset?: boolean;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     target_offset?: Vector;
     width: float;
 }
@@ -1442,6 +1460,12 @@ interface CargoPodPrototype extends EntityWithOwnerPrototype {
     inventory_size: ItemStackIndex;
     procession_audio_catalogue?: ProcessionAudioCatalogue;
     procession_graphic_catalogue?: ProcessionGraphicCatalogue;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     shadow_slave_entity?: EntityID;
     spawned_container: EntityID;
 }
@@ -1512,7 +1536,9 @@ interface ChangedSurfaceAchievementPrototype extends AchievementPrototype {
  */
 interface CharacterCorpsePrototype extends EntityPrototype {
     /**
-     * Table of key value pairs, the keys are armor names and the values are numbers. The number is the Animation that is associated with the armor, e.g. using `1` will associate the armor with the first Animation in the pictures table.
+     * A mapping of {@link ArmorPrototype | prototype:ArmorPrototype} name to a number. The number is the Animation that is associated with the armor, e.g. using `1` will associate the armor with the first Animation in the `pictures` table.
+     *
+     * This mapping can be empty to have no sprite changes based on armor.
      */
     armor_picture_mapping?: Record<ItemID, int32>;
     /**
@@ -1525,7 +1551,7 @@ interface CharacterCorpsePrototype extends EntityPrototype {
     pictures?: AnimationVariations;
     render_layer?: RenderLayer;
     /**
-     * 0 for infinite.
+     * In ticks. 0 for infinite.
      */
     time_to_live: uint32;
 }
@@ -1614,6 +1640,9 @@ interface CharacterPrototype extends EntityWithOwnerPrototype {
     ```
      */
     mining_with_tool_particles_animation_positions: float[];
+    /**
+     * List of positions in the running animation when the moving sound is played.
+     */
     moving_sound_animation_positions: float[];
     reach_distance: uint32;
     reach_resource_distance: double;
@@ -1944,6 +1973,12 @@ interface CorpsePrototype extends EntityPrototype {
     protected_from_tile_building?: boolean;
     remove_on_entity_placement?: boolean;
     remove_on_tile_placement?: boolean;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     /**
      * Defines after which frame in the `animation` the `direction_shuffle` should be applied. Can be set to `0`, frames are 1-indexed.
      */
@@ -2976,6 +3011,12 @@ interface ElevatedCurvedRailAPrototype extends CurvedRailAPrototype {
      * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
      */
     name: string;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * An elevated curved-B rail.
@@ -2987,6 +3028,12 @@ interface ElevatedCurvedRailBPrototype extends CurvedRailBPrototype {
      * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
      */
     name: string;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * An elevated half diagonal rail.
@@ -2998,6 +3045,12 @@ interface ElevatedHalfDiagonalRailPrototype extends HalfDiagonalRailPrototype {
      * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
      */
     name: string;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * An elevated straight rail.
@@ -3009,6 +3062,12 @@ interface ElevatedStraightRailPrototype extends StraightRailPrototype {
      * Requires Space Age to create prototypes with name not starting with `dummy-`. Dummy prototypes cannot be built.
      */
     name: string;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * Can spawn entities. Used for biter/spitter nests.
@@ -3045,7 +3104,7 @@ interface EnemySpawnerPrototype extends EntityWithOwnerPrototype {
      */
     max_friends_around_to_spawn: uint32;
     /**
-     * Max richness to determine spawn shift. Spawn shift is linear interpolation between 0 and max_spawn_shift.
+     * Max richness to determine spawn shift. Spawn shift is a linear interpolation between 0 and max_spawn_shift.
      */
     max_richness_for_spawn_shift: double;
     /**
@@ -3067,6 +3126,8 @@ interface EnemySpawnerPrototype extends EntityWithOwnerPrototype {
     spawn_decorations_on_expansion?: boolean;
     /**
      * Ticks for cooldown after unit is spawned. The first member of the tuple is min, the second member of the tuple is max.
+     *
+     * The resulting spawning cooldown is a linear interpolation between min and max based on the current evolution factor.
      */
     spawning_cooldown: [
         double,
@@ -3323,6 +3384,19 @@ interface EntityPrototype extends Prototype {
      * When this is true, this entity prototype should be included during tile collision checks with tiles that have {@link TilePrototype::check_collision_with_entities | prototype:TilePrototype::check_collision_with_entities} set to true.
      */
     protected_from_tile_building?: boolean;
+    /**
+     * @example ```
+    radius_visualisation_specification =
+    {
+      sprite =
+      {
+        filename = "__base__/graphics/entity/electric-mining-drill/electric-mining-drill-radius-visualization.png",
+        size = 10
+      },
+      distance = 6
+    }
+    ```
+     */
     radius_visualisation_specification?: RadiusVisualisationSpecification;
     /**
      * The entity that remains when this one is mined, deconstructed or fast-replaced. The entity wont actually be spawned if it would collide with the entity that is in the process of being mined.
@@ -3686,6 +3760,12 @@ interface ExplosionPrototype extends EntityPrototype {
     scale_initial_deviation?: float;
     scale_out_duration?: uint8;
     /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
+    /**
      * Mandatory if `smoke_count` > 0.
      */
     smoke?: TrivialSmokeID;
@@ -3750,6 +3830,12 @@ interface FireFlamePrototype extends EntityPrototype {
     secondary_picture_fade_out_start?: uint32;
     secondary_pictures?: AnimationVariations;
     secondary_render_layer?: RenderLayer;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     small_tree_fire_pictures?: AnimationVariations;
     smoke?: SmokeSource[];
     smoke_fade_in_duration?: uint32;
@@ -3767,7 +3853,7 @@ interface FireFlamePrototype extends EntityPrototype {
     uses_alternative_behavior?: boolean;
 }
 /**
- * Entity that spawns in water tiles, which can be mined. Moves around unless deactivated with {@link LuaEntity::active | runtime:LuaEntity::active} = false.
+ * Entity that spawns in water tiles, which can be mined. Moves around unless it is {@link LuaEntity::disabled_by_script | runtime:LuaEntity::disabled_by_script} or marked for deconstruction.
  * @example ```
 {
   type = "fish",
@@ -3944,6 +4030,12 @@ interface FluidStreamPrototype extends EntityPrototype {
      * The point in the particles projectile arc to start spawning smoke. 0.5 (the default) starts spawning smoke at the halfway point between the source and target.
      */
     progress_to_create_smoke?: float;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     shadow?: Animation;
     shadow_scale_enabled?: boolean;
     /**
@@ -4062,6 +4154,12 @@ interface FlyingRobotPrototype extends EntityWithOwnerPrototype {
      * Used only by {@link robots with logistic interface | prototype:RobotWithLogisticInterfacePrototype}.
      */
     min_to_charge?: float;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     /**
      * The flying speed of the robot, in tiles/tick.
      */
@@ -4455,6 +4553,12 @@ interface HeatPipePrototype extends EntityWithOwnerPrototype {
      * Must be >= 0.
      */
     heating_radius?: float;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * Used to attach graphics for {@link cursor boxes | prototype:CursorBoxType} to entities during runtime. HighlightBoxEntity can also be independent from entities so it is simply drawn somewhere in the world. See {@link LuaSurface::create_entity | runtime:LuaSurface::create_entity} for the available options for type "highlight-box".
@@ -4462,6 +4566,12 @@ interface HeatPipePrototype extends EntityWithOwnerPrototype {
  * The {@link collision_box | prototype:EntityPrototype::collision_box} of the highlight box prototype is ignored during runtime, instead the "bounding_box" given in create_entity() or the selection box of the target entity is used.
  */
 interface HighlightBoxEntityPrototype extends EntityPrototype {
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * @example ```
@@ -5276,6 +5386,12 @@ interface LandMinePrototype extends EntityWithOwnerPrototype {
      */
     picture_set_enemy?: Sprite;
     /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
+    /**
      * Time between placing and the landmine being armed, in ticks.
      */
     timeout?: uint32;
@@ -5774,7 +5890,23 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
     wet_mining_graphics_set?: MiningDrillGraphicsSet;
 }
 /**
- * Block of arbitrary data set by mods in data stage.
+ * Block of arbitrary data set by mods in prototype stage.
+ *
+ * During runtime stage, this arbitrary data can be accessed through {@link LuaPrototypes::mod_data | runtime:LuaPrototypes::mod_data}.
+ * @example ```
+{
+  type = "mod-data",
+  name = "my-own-great-mod-data",
+  data_type = "my-mod.my-data-type",
+  data =
+  {
+    a_string = "a string",
+    a_number = 6.7,
+    a_table = {x=2, y=3, z="yes"},
+    a_bool = true,
+  }
+}
+```
  */
 interface ModData extends Prototype {
     data: Record<string, AnyBasic>;
@@ -6089,6 +6221,12 @@ interface ParticleSourcePrototype extends EntityPrototype {
      */
     particle?: ParticleID;
     /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
+    /**
      * Mandatory if `particle` is not defined.
      */
     smoke?: SmokeSource[];
@@ -6191,6 +6329,12 @@ interface PlayerDamagedAchievementPrototype extends AchievementPrototype {
  * Deprecated in 2.0.
  */
 interface PlayerPortPrototype extends EntityWithOwnerPrototype {
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * A {@link power switch | https://wiki.factorio.com/Power_switch}.
@@ -6369,6 +6513,12 @@ interface ProjectilePrototype extends EntityPrototype {
      * Whether the animation of the projectile is rotated to match the direction of travel.
      */
     rotatable?: boolean;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     shadow?: RotatedAnimationVariations;
     smoke?: SmokeSource[];
     speed_modifier?: Vector;
@@ -6744,7 +6894,7 @@ interface RailChainSignalPrototype extends RailSignalBasePrototype {
 interface RailPlannerPrototype extends ItemPrototype {
     manual_length_limit?: double;
     /**
-     * May not be an empty array. Entities must be rails and their first item-to-place must be this item.
+     * May not be an empty array. Entities must be rails.
      */
     rails: EntityID[];
     /**
@@ -6775,6 +6925,12 @@ interface RailPrototype extends EntityWithOwnerPrototype {
      * The rail {@link selection_boxes | prototype:EntityPrototype::selection_box} are automatically calculated from the collision boxes, which are hardcoded. So effectively the selection boxes also hardcoded.
      */
     selection_box?: BoundingBox;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     /**
      * Sound played when a character walks over this rail.
      */
@@ -6848,6 +7004,12 @@ interface RailSignalBasePrototype extends EntityWithOwnerPrototype {
      */
     flags?: EntityPrototypeFlags;
     ground_picture_set: RailSignalPictureSet;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * A {@link rail signal | https://wiki.factorio.com/Rail_signal}.
@@ -7117,7 +7279,7 @@ interface RecipePrototype extends Prototype {
     /**
      * A table containing ingredient names and amounts. Can also contain information about fluid temperature and whether some of the amount is ignored by production statistics.
      *
-     * The maximum ingredient amount is 65 535. Can be set to an empty table to create a recipe that needs no ingredients.
+     * Can be set to an empty table to create a recipe that needs no ingredients. {@link Assembling machines | prototype:AssemblingMachinePrototype::ingredient_count} do not support recipes with more than 65 535 different item ingredients.
      *
      * Duplicate ingredients, e.g. two entries with the same name, are *not* allowed. In-game, the item ingredients are ordered by {@link ItemGroup::order_in_recipe | prototype:ItemGroup::order_in_recipe}.
      * @example ```
@@ -7167,7 +7329,9 @@ interface RecipePrototype extends Prototype {
     /**
      * A table containing result names and amounts. Products also contain information such as fluid temperature, probability of results and whether some of the amount is ignored by productivity.
      *
-     * Can be set to an empty table to create a recipe that produces nothing. Duplicate results, e.g. two entries with the same name, are allowed.
+     * Can be set to an empty table to create a recipe that produces nothing. {@link Assembling machines | prototype:AssemblingMachinePrototype::max_item_product_count} do not support recipes with more than 65 535 different item products.
+     *
+     * Duplicate results, e.g. two entries with the same name, are allowed.
      * @example ```
     results =
     {
@@ -7391,6 +7555,12 @@ interface ResourceEntityPrototype extends EntityPrototype {
      * When hovering over this resource in the map view: How far to search for other resource patches of this type to display as one (summing amount, white outline).
      */
     resource_patch_search_radius?: uint32;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     /**
      * Number of stages the animation has.
      */
@@ -7864,6 +8034,12 @@ interface RocketSiloRocketPrototype extends EntityPrototype {
     rocket_smoke_top3_animation?: Animation;
     rocket_sprite?: Sprite;
     rocket_visible_distance_from_center: float;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     shadow_fade_out_end_ratio: double;
     shadow_fade_out_start_ratio: double;
     shadow_slave_entity?: EntityID;
@@ -7883,6 +8059,12 @@ interface RocketSiloRocketPrototype extends EntityPrototype {
 ```
  */
 interface RocketSiloRocketShadowPrototype extends EntityPrototype {
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
 }
 /**
  * The abstract base of all rolling stock.
@@ -8328,6 +8510,12 @@ interface SmokePrototype extends EntityPrototype {
      */
     movement_slow_down_factor?: double;
     render_layer?: RenderLayer;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     show_when_smoke_off?: boolean;
     spread_duration?: uint32;
     start_scale?: double;
@@ -8673,6 +8861,12 @@ interface SpectatorControllerPrototype {
 interface SpeechBubblePrototype extends EntityPrototype {
     fade_in_out_ticks?: uint32;
     /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
+    /**
      * Needs a style of the type "speech_bubble_style", defined inside the gui styles.
      */
     style: string;
@@ -8709,6 +8903,12 @@ interface SpiderLegPrototype extends EntityWithOwnerPrototype {
     minimal_step_size: double;
     movement_acceleration: double;
     movement_based_position_selection_distance: double;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     /**
      * A scalar that controls the amount of influence this leg has over the position of the torso. Must be greater than 0.
      */
@@ -9080,6 +9280,12 @@ interface StickerPrototype extends EntityPrototype {
      * Using this property marks the sticker as a "selection sticker", meaning that the selection box will be rendered around the entity when the sticker is on it.
      */
     selection_box_type?: CursorBoxType;
+    /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
     single_particle?: boolean;
     /**
      * If this is given, this sticker is considered a "fire sticker" for some functions, such as {@link BaseAttackParameters::fire_penalty | prototype:BaseAttackParameters::fire_penalty} and {@link EntityPrototypeFlags::not-flammable | prototype:EntityPrototypeFlags::not_flammable}.
@@ -9273,6 +9479,11 @@ interface TechnologyPrototype extends Prototype {
     ```
      */
     effects?: Modifier[];
+    /**
+     * This can be `false` to disable the technology at the start of the game, or `true` to leave it enabled.
+     *
+     * Changes to this property do not affect existing save files, as the enabled state is saved in the save file and not reloaded from the prototype.
+     */
     enabled?: boolean;
     /**
      * Whether the technology should be shown in the technology tree GUI when "Show only essential technologies" is enabled.
@@ -9349,6 +9560,8 @@ interface TechnologyPrototype extends Prototype {
     upgrade?: boolean;
     /**
      * Controls whether the technology is shown in the tech GUI when it is not `enabled`.
+     *
+     * Changes to this property do not affect existing save files, as the visible_when_disabled state is saved in the save file and not reloaded from the prototype.
      */
     visible_when_disabled?: boolean;
 }
@@ -9732,6 +9945,12 @@ interface TransportBeltConnectablePrototype extends EntityWithOwnerPrototype {
      */
     flags?: EntityPrototypeFlags;
     /**
+     * The entity with the higher number is selectable before the entity with the lower number.
+     *
+     * The value `0` will be treated the same as `nil`.
+     */
+    selection_priority?: uint8;
+    /**
      * The speed of the belt: `speed × 480 = x Items/second`.
      *
      * The raw value is expressed as the number of tiles traveled by each item on the belt per tick, relative to the belt's maximum density - e.g. `x items/second ÷ (4 items/lane × 2 lanes/belt × 60 ticks/second) = <speed> belts/tick` where a "belt" is the size of one tile. See {@link Transport_belts/Physics | https://wiki.factorio.com/Transport_belts/Physics} for more details.
@@ -10027,7 +10246,13 @@ interface UndergroundBeltPrototype extends TransportBeltConnectablePrototype {
  * Entity that moves around and attacks players, for example {@link biters and spitters | https://wiki.factorio.com/Enemies#Creatures}.
  */
 interface UnitPrototype extends EntityWithOwnerPrototype {
+    /**
+     * The pollution amount that has to be absorbed by the unit's {@link spawner | prototype:EnemySpawnerPrototype} before the unit will leave the spawner and attack the source of the pollution.
+     */
     absorptions_to_join_attack?: Record<AirbornePollutantID, float>;
+    /**
+     * Whether this unit is affected by tile {@link walking speed modifiers | prototype:TilePrototype::walking_speed_modifier}.
+     */
     affected_by_tiles?: boolean;
     ai_settings?: UnitAISettings;
     /**
@@ -10036,7 +10261,7 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
     allow_run_time_change_of_is_military_target?: false;
     alternative_attacking_frame_sequence?: UnitAlternativeFrameSequence;
     /**
-     * Requires animation in attack_parameters. Requires ammo_type in attack_parameters.
+     * Requires `animation` in attack_parameters. Requires `ammo_type` in attack_parameters.
      */
     attack_parameters: AttackParameters;
     can_open_gates?: boolean;
@@ -10048,11 +10273,11 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
     distance_per_frame: float;
     distraction_cooldown: uint32;
     /**
-     * The sound file to play when entity dies.
+     * The sound file to play this unit dies.
      */
     dying_sound?: Sound;
     /**
-     * If the unit is immune to movement by belts.
+     * If this unit is immune to movement by belts.
      */
     has_belt_immunity?: boolean;
     /**
@@ -10067,7 +10292,7 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
     min_pursue_time?: uint32;
     move_while_shooting?: boolean;
     /**
-     * Movement speed of the unit in the world, in tiles per tick. Must be equal to or greater than 0.
+     * Movement speed of this unit in the world, in tiles per tick. Must be equal to or greater than 0.
      */
     movement_speed: float;
     /**
@@ -10078,9 +10303,14 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
     rotation_speed?: float;
     run_animation: RotatedAnimation;
     /**
+     * List of positions in the `run_animation` when the `walking_sound` is played.
+     *
      * Only loaded if `walking_sound` is defined.
      */
     running_sound_animation_positions?: float[];
+    /**
+     * Multiplier for the {@link EnemySpawnerPrototype::spawning_cooldown | prototype:EnemySpawnerPrototype::spawning_cooldown} after it spawns this unit.
+     */
     spawning_time_modifier?: double;
     /**
      * Max is 100.
@@ -10090,7 +10320,7 @@ interface UnitPrototype extends EntityWithOwnerPrototype {
     vision_distance: double;
     walking_sound?: Sound;
     /**
-     * A sound the unit makes when it sets out to attack.
+     * A sound this unit makes when it sets out to attack.
      */
     warcry?: Sound;
 }

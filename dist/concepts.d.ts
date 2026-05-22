@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.76
+// Factorio version 2.0.77
 // API version 6
 
 declare namespace runtime {
@@ -97,7 +97,7 @@ interface Alert {
     /**
      * The tick this alert was created.
      */
-    tick: uint32;
+    tick: MapTick;
     target?: LuaEntity;
     prototype?: LuaEntityPrototype;
     position?: MapPosition;
@@ -150,6 +150,10 @@ type Any = string | boolean | number | table | LuaObject;
  * Any basic type (string, number, boolean) or table.
  */
 type AnyBasic = string | boolean | number | table;
+/**
+ * Refers to tints defined in {@link TilePrototype::particle_tints | prototype:TilePrototype::particle_tints}.
+ */
+type ApplyTileTint = 'primary' | 'secondary';
 interface ArithmeticCombinatorBlueprintControlBehavior {
     arithmetic_conditions: ArithmeticCombinatorParameters;
 }
@@ -790,7 +794,7 @@ interface BlueprintEntityInserter extends BaseBlueprintEntity {
      * Present if position is non-default.
      */
     'pickup_position'?: Vector;
-    'spoil_priority'?: SpoilPriority;
+    'spoil_priority'?: BlueprintSpoilPriority;
     /**
      * Defaults to `false`.
      */
@@ -1231,6 +1235,7 @@ interface BlueprintSignalIcon {
      */
     index: uint32;
 }
+type BlueprintSpoilPriority = 'fresh-first' | 'spoiled-first';
 /**
  * Describes a single wire in the blueprint. The members of the tuple are, in order:
  *
@@ -1740,9 +1745,9 @@ interface CommandStop extends BaseCommand {
      */
     'distraction'?: defines.distraction;
     /**
-     * Ticks to wander before successfully completing the command. Default is max uint32, which means stop forever.
+     * Ticks to wander before successfully completing the command. Default is max uint64, which means stop forever.
      */
-    'ticks_to_wait'?: uint32;
+    'ticks_to_wait'?: MapTick;
 }
 /**
  *
@@ -1921,7 +1926,7 @@ interface CustomCommandData {
     /**
      * The tick the command was used in.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The player who issued the command, or `nil` if it was issued from the server console.
      */
@@ -1968,6 +1973,13 @@ interface CutsceneWaypoint {
      * Zoom level to be set when the waypoint is reached. When not specified, the previous waypoint's zoom is used.
      */
     zoom?: double;
+}
+/**
+ * Used to specify what type of damage and how much damage something deals.
+ */
+interface DamageParameters {
+    amount: float;
+    type: string;
 }
 interface DamageTypeFilters {
     /**
@@ -2733,7 +2745,7 @@ interface EventData {
     /**
      * The tick during which the event happened.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The name of the mod that raised the event if it was raised using {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}.
      */
@@ -3984,7 +3996,7 @@ interface ItemStackDefinition {
     /**
      * Tags of the items with tags in the stack.
      */
-    tags?: string[];
+    tags?: Tags;
     /**
      * Description of the items with tags in the stack.
      */
@@ -4048,7 +4060,6 @@ interface ItemWithQualityCount {
      */
     count: ItemCountType;
 }
-type ItemWithQualityCounts = ItemWithQualityCount[];
 /**
  * An item prototype with optional quality specification. Can be specified in one of four ways.
  */
@@ -6369,6 +6380,7 @@ interface MapGenPreset {
     advanced_settings?: AdvancedMapGenSettings;
 }
 /**
+ * When reading MapGenSettings, all properties will always be present, but they can be omitted when writing.
  * @example ```
 -- Assuming a NamedNoiseExpression with the name "my-alternate-grass1-probability" is defined...
 local surface = game.player.surface
@@ -6391,52 +6403,52 @@ interface MapGenSettings {
     /**
      * Indexed by autoplace control prototype name.
      */
-    autoplace_controls: Record<string, AutoplaceControl>;
+    autoplace_controls?: Record<string, AutoplaceControl>;
     /**
      * Whether undefined `autoplace_controls` should fall back to the default controls or not. Defaults to `true`.
      */
-    default_enable_all_autoplace_controls: boolean;
+    default_enable_all_autoplace_controls?: boolean;
     /**
      * Each setting in this dictionary maps the string type to the settings for that type.
      */
-    autoplace_settings: Record<'entity' | 'tile' | 'decorative', AutoplaceSettings>;
+    autoplace_settings?: Record<'entity' | 'tile' | 'decorative', AutoplaceSettings>;
     /**
-     * The random seed used to generated this map.
+     * ) The random seed used to generated this map.
      */
-    seed: uint32;
+    seed?: uint32;
     /**
-     * Width in tiles. If `0`, the map has 'infinite' width, with the actual limitation being one million tiles in each direction from the center.
+     * ) Width in tiles. If `0`, the map has 'infinite' width, with the actual limitation being one million tiles in each direction from the center.
      */
-    width: uint32;
+    width?: uint32;
     /**
      * Height in tiles. If `0`, the map has 'infinite' height, with the actual limitation being one million tiles in each direction from the center.
      */
-    height: uint32;
+    height?: uint32;
     /**
-     * Size of the starting area.
+     * Size of the starting area. Defaults to `1`.
      */
-    starting_area: MapGenSize;
+    starting_area?: MapGenSize;
     /**
      * Positions of the starting areas.
      */
-    starting_points: MapPosition[];
+    starting_points?: MapPosition[];
     /**
      * Whether enemy creatures will not attack unless the player first attacks them.
      */
-    peaceful_mode: boolean;
+    peaceful_mode?: boolean;
     /**
      * Whether enemy creatures will not naturally spawn from spawners, map gen, or trigger effects.
      */
-    no_enemies_mode: boolean;
+    no_enemies_mode?: boolean;
     /**
      * Overrides for tile property value generators.
      */
-    property_expression_names: PropertyExpressionNames;
+    property_expression_names?: PropertyExpressionNames;
     /**
      * Map generation settings for entities of the type "cliff".
      */
-    cliff_settings: CliffPlacementSettings;
-    territory_settings: TerritorySettings;
+    cliff_settings?: CliffPlacementSettings;
+    territory_settings?: TerritorySettings;
 }
 /**
  * A floating point number specifying an amount.
@@ -6777,11 +6789,11 @@ interface NthTickEventData {
     /**
      * The tick during which the event happened.
      */
-    tick: uint32;
+    tick: MapTick;
     /**
      * The nth tick this handler was registered to.
      */
-    nth_tick: uint32;
+    nth_tick: MapTick;
 }
 /**
  * A single offer on a market entity.
@@ -7285,7 +7297,7 @@ type PropertyExpressionNames = Record<string, string>;
 /**
  * Types `"signal"` and `"item-group"` do not support filters.
  *
- * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
+ * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding prototype type, and different types of prototype filters can not be mixed.
  */
 type PrototypeFilter = (ModSettingPrototypeFilter | SpaceLocationPrototypeFilter | DecorativePrototypeFilter | TilePrototypeFilter | AsteroidChunkPrototypeFilter | ItemPrototypeFilter | TechnologyPrototypeFilter | RecipePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | FluidPrototypeFilter | EntityPrototypeFilter)[];
 type PrototypeFilterMode = 'none' | 'whitelist' | 'blacklist';
@@ -8098,8 +8110,32 @@ interface ScriptPosition {
 type ScriptRenderMode = 'game' | 'chart';
 /**
  * When writing it is possible to give LuaEntity or MapPosition directly. However, reading always returns the full ScriptRenderTargetTable.
+ *
+ * The full ScriptRenderTargetTable allows specifying an offset for entity targets.
+ *
+ * If an entity target of an object (except its `orientation_target`) is destroyed or changes surface, then the object is also destroyed.
+ * @example ```
+target = some_lua_entity
+```
+ * @example ```
+target = {1, 4}
+```
+ * @example ```
+target = {entity = another_lua_entity, offset = {-0.5, 1}}
+```
+ * @example ```
+target = {position = {2.5, 3}}
+```
  */
 type ScriptRenderTarget = LuaEntity | MapPosition | ScriptRenderTargetTable;
+/**
+ * @example ```
+{entity = some_lua_entity, offset = {-0.5, 1}}
+```
+ * @example ```
+{position = {2.5, 3}}
+```
+ */
 interface ScriptRenderTargetTable {
     entity?: LuaEntity;
     /**
@@ -10089,12 +10125,78 @@ interface TransportBeltBlueprintControlBehavior {
     connect_to_logistic_network?: boolean;
     logistic_condition?: CircuitCondition;
 }
-interface TriggerDelivery {
+interface BaseTriggerDelivery {
     type: 'instant' | 'projectile' | 'beam' | 'stream' | 'artillery' | 'chain' | 'delayed';
     source_effects: TriggerEffectItem[];
     target_effects: TriggerEffectItem[];
 }
-interface TriggerEffectItem {
+type TriggerDelivery = BaseTriggerDelivery | TriggerDeliveryArtillery | TriggerDeliveryBeam | TriggerDeliveryChain | TriggerDeliveryDelayed | TriggerDeliveryProjectile | TriggerDeliveryStream;
+/**
+ *
+ * Applies to variant case `artillery`
+ */
+interface TriggerDeliveryArtillery extends BaseTriggerDelivery {
+    'type': 'artillery';
+    'direction_deviation': float;
+    'projectile': string;
+    'range_deviation': float;
+    'starting_speed': float;
+    'starting_speed_deviation': float;
+    'trigger_fired_artillery': boolean;
+}
+/**
+ *
+ * Applies to variant case `beam`
+ */
+interface TriggerDeliveryBeam extends BaseTriggerDelivery {
+    'type': 'beam';
+    'add_to_shooter': boolean;
+    'beam': string;
+    'destroy_with_source_or_target': boolean;
+    'duration': uint32;
+    'max_length': uint32;
+    'source_offset': Vector;
+}
+/**
+ *
+ * Applies to variant case `chain`
+ */
+interface TriggerDeliveryChain extends BaseTriggerDelivery {
+    'type': 'chain';
+    'chain': string;
+}
+/**
+ *
+ * Applies to variant case `delayed`
+ */
+interface TriggerDeliveryDelayed extends BaseTriggerDelivery {
+    'type': 'delayed';
+    'delayed_trigger': string;
+}
+/**
+ *
+ * Applies to variant case `projectile`
+ */
+interface TriggerDeliveryProjectile extends BaseTriggerDelivery {
+    'type': 'projectile';
+    'direction_deviation': float;
+    'max_range': double;
+    'min_range': double;
+    'projectile': string;
+    'range_deviation': float;
+    'starting_speed': float;
+    'starting_speed_deviation': float;
+}
+/**
+ *
+ * Applies to variant case `stream`
+ */
+interface TriggerDeliveryStream extends BaseTriggerDelivery {
+    'type': 'stream';
+    'source_offset': Vector;
+    'stream': string;
+}
+interface BaseTriggerEffectItem {
     type: TriggerEffectItemType;
     repeat_count: uint16;
     repeat_count_deviation: uint16;
@@ -10102,6 +10204,328 @@ interface TriggerEffectItem {
     affects_target: boolean;
     show_in_tooltip: boolean;
     damage_type_filters?: DamageTypeFilters;
+}
+type TriggerEffectItem = BaseTriggerEffectItem | TriggerEffectItemActivateImpact | TriggerEffectItemCameraEffect | TriggerEffectItemCreateAsteroidChunk | TriggerEffectItemCreateDecorative | TriggerEffectItemCreateEntity | TriggerEffectItemCreateExplosion | TriggerEffectItemCreateFire | TriggerEffectItemCreateParticle | TriggerEffectItemCreateSmoke | TriggerEffectItemCreateSticker | TriggerEffectItemCreateTrivialSmoke | TriggerEffectItemDamage | TriggerEffectItemDamageTile | TriggerEffectItemDestroyCliffs | TriggerEffectItemDestroyDecoratives | TriggerEffectItemInsertItem | TriggerEffectItemInvokeTileTrigger | TriggerEffectItemNestedResult | TriggerEffectItemPlaySound | TriggerEffectItemPushBack | TriggerEffectItemScript | TriggerEffectItemSetTile | TriggerEffectItemShowExplosionOnChart;
+/**
+ *
+ * Applies to variant case `activate-impact`
+ */
+interface TriggerEffectItemActivateImpact extends BaseTriggerEffectItem {
+    'type': 'activate-impact';
+    'deliver_category': string;
+}
+/**
+ *
+ * Applies to variant case `camera-effect`
+ */
+interface TriggerEffectItemCameraEffect extends BaseTriggerEffectItem {
+    'type': 'camera-effect';
+    'delay': uint8;
+    'duration': uint8;
+    'ease_in_duration': uint8;
+    'ease_out_duration': uint8;
+    'full_strength_max_distance': uint16;
+    'max_distance': uint16;
+    'strength': float;
+}
+/**
+ *
+ * Applies to variant case `create-asteroid-chunk`
+ */
+interface TriggerEffectItemCreateAsteroidChunk extends BaseTriggerEffectItem {
+    'type': 'create-asteroid-chunk';
+    'asteroid_name': string;
+    'offset_deviation': BoundingBox;
+    'offsets': Vector[];
+}
+/**
+ *
+ * Applies to variant case `create-decorative`
+ */
+interface TriggerEffectItemCreateDecorative extends BaseTriggerEffectItem {
+    'type': 'create-decorative';
+    'apply_projection': boolean;
+    'decorative': string;
+    'radius_curve': float;
+    'spawn_max': uint16;
+    'spawn_max_radius': float;
+    'spawn_min': uint16;
+    'spawn_min_radius': float;
+    'spread_evenly': boolean;
+}
+/**
+ *
+ * Applies to variant case `create-entity`
+ */
+interface TriggerEffectItemCreateEntity extends BaseTriggerEffectItem {
+    'type': 'create-entity';
+    'abort_if_over_space': boolean;
+    'as_enemy': boolean;
+    'check_buildability': boolean;
+    'entity_name': string;
+    'find_non_colliding_position': boolean;
+    'ignore_no_enemies_mode': boolean;
+    'non_colliding_fail_result'?: TriggerItem[];
+    'non_colliding_search_precision': double;
+    'non_colliding_search_radius': double;
+    'offset_deviation': BoundingBox;
+    'offsets': Vector[];
+    'only_when_visible': boolean;
+    'protected': boolean;
+    'tile_collision_mask': CollisionMask;
+    'trigger_created_entity': boolean;
+}
+/**
+ *
+ * Applies to variant case `create-explosion`
+ */
+interface TriggerEffectItemCreateExplosion extends BaseTriggerEffectItem {
+    'type': 'create-explosion';
+    'abort_if_over_space': boolean;
+    'as_enemy': boolean;
+    'check_buildability': boolean;
+    'cycle_while_moving': boolean;
+    'entity_name': string;
+    'find_non_colliding_position': boolean;
+    'ignore_no_enemies_mode': boolean;
+    'inherit_movement_distance_from_projectile': boolean;
+    'max_movement_distance': float;
+    'max_movement_distance_deviation': float;
+    'non_colliding_fail_result'?: TriggerItem[];
+    'non_colliding_search_precision': double;
+    'non_colliding_search_radius': double;
+    'offset_deviation': BoundingBox;
+    'offsets': Vector[];
+    'only_when_visible': boolean;
+    'protected': boolean;
+    'tile_collision_mask': CollisionMask;
+    'trigger_created_entity': boolean;
+}
+/**
+ *
+ * Applies to variant case `create-fire`
+ */
+interface TriggerEffectItemCreateFire extends BaseTriggerEffectItem {
+    'type': 'create-fire';
+    'abort_if_over_space': boolean;
+    'as_enemy': boolean;
+    'check_buildability': boolean;
+    'entity_name': string;
+    'find_non_colliding_position': boolean;
+    'ignore_no_enemies_mode': boolean;
+    'initial_ground_flame_count'?: uint8;
+    'non_colliding_fail_result'?: TriggerItem[];
+    'non_colliding_search_precision': double;
+    'non_colliding_search_radius': double;
+    'offset_deviation': BoundingBox;
+    'offsets': Vector[];
+    'only_when_visible': boolean;
+    'protected': boolean;
+    'tile_collision_mask': CollisionMask;
+    'trigger_created_entity': boolean;
+}
+/**
+ *
+ * Applies to variant case `create-particle`
+ */
+interface TriggerEffectItemCreateParticle extends BaseTriggerEffectItem {
+    'type': 'create-particle';
+    'apply_tile_tint'?: ApplyTileTint;
+    'frame_speed': float;
+    'frame_speed_deviation': float;
+    'initial_height': float;
+    'initial_height_deviation': float;
+    'initial_vertical_speed': float;
+    'initial_vertical_speed_deviation': float;
+    'movement_multiplier': float;
+    'offset_deviation': BoundingBox;
+    'offsets': Vector[];
+    'only_when_visible': boolean;
+    'particle_name': string;
+    'rotate_offsets': boolean;
+    'speed_from_center': float;
+    'speed_from_center_deviation': float;
+    'tail_length'?: uint8;
+    'tail_length_deviation'?: uint8;
+    'tail_width'?: float;
+    'tile_collision_mask': CollisionMask;
+    'tint'?: Color;
+}
+/**
+ *
+ * Applies to variant case `create-smoke`
+ */
+interface TriggerEffectItemCreateSmoke extends BaseTriggerEffectItem {
+    'type': 'create-smoke';
+    'abort_if_over_space': boolean;
+    'as_enemy': boolean;
+    'check_buildability': boolean;
+    'entity_name': string;
+    'find_non_colliding_position': boolean;
+    'ignore_no_enemies_mode': boolean;
+    'initial_height': float;
+    'non_colliding_fail_result'?: TriggerItem[];
+    'non_colliding_search_precision': double;
+    'non_colliding_search_radius': double;
+    'offset_deviation': BoundingBox;
+    'offsets': Vector[];
+    'only_when_visible': boolean;
+    'protected': boolean;
+    'speed': Vector;
+    'speed_from_center': float;
+    'speed_from_center_deviation': float;
+    'speed_multiplier': float;
+    'speed_multiplier_deviation': float;
+    'starting_frame': float;
+    'starting_frame_deviation': float;
+    'tile_collision_mask': CollisionMask;
+    'trigger_created_entity': boolean;
+}
+/**
+ *
+ * Applies to variant case `create-sticker`
+ */
+interface TriggerEffectItemCreateSticker extends BaseTriggerEffectItem {
+    'type': 'create-sticker';
+    'sticker': string;
+    'trigger_created_entity': boolean;
+}
+/**
+ *
+ * Applies to variant case `create-trivial-smoke`
+ */
+interface TriggerEffectItemCreateTrivialSmoke extends BaseTriggerEffectItem {
+    'type': 'create-trivial-smoke';
+    'initial_height': float;
+    'max_radius'?: float;
+    'offset_deviation': BoundingBox;
+    'offsets': Vector[];
+    'smoke_name': string;
+    'speed': Vector;
+    'speed_from_center': float;
+    'speed_from_center_deviation': float;
+    'speed_multiplier': float;
+    'speed_multiplier_deviation': float;
+    'starting_frame': float;
+    'starting_frame_deviation': float;
+}
+/**
+ *
+ * Applies to variant case `damage`
+ */
+interface TriggerEffectItemDamage extends BaseTriggerEffectItem {
+    'type': 'damage';
+    'apply_damage_to_trees': boolean;
+    'damage': DamageParameters;
+    'lower_damage_modifier': float;
+    'lower_distance_threshold': uint16;
+    'upper_damage_modifier': float;
+    'upper_distance_threshold': uint16;
+    'use_substitute': boolean;
+    'vaporize': boolean;
+}
+/**
+ *
+ * Applies to variant case `damage-tile`
+ */
+interface TriggerEffectItemDamageTile extends BaseTriggerEffectItem {
+    'type': 'damage-tile';
+    'damage': DamageParameters;
+    'radius': float;
+}
+/**
+ *
+ * Applies to variant case `destroy-cliffs`
+ */
+interface TriggerEffectItemDestroyCliffs extends BaseTriggerEffectItem {
+    'type': 'destroy-cliffs';
+    'radius': float;
+}
+/**
+ *
+ * Applies to variant case `destroy-decoratives`
+ */
+interface TriggerEffectItemDestroyDecoratives extends BaseTriggerEffectItem {
+    'type': 'destroy-decoratives';
+    'decoratives_with_trigger_only': boolean;
+    'from_render_layer': RenderLayer;
+    'include_decals': boolean;
+    'include_soft_decoratives': boolean;
+    'invoke_decorative_trigger': boolean;
+    'radius': float;
+    'to_render_layer': RenderLayer;
+}
+/**
+ *
+ * Applies to variant case `insert-item`
+ */
+interface TriggerEffectItemInsertItem extends BaseTriggerEffectItem {
+    'type': 'insert-item';
+    'count': ItemCountType;
+    'item': string;
+    'quality': string;
+}
+/**
+ *
+ * Applies to variant case `invoke-tile-trigger`
+ */
+interface TriggerEffectItemInvokeTileTrigger extends BaseTriggerEffectItem {
+    'type': 'invoke-tile-trigger';
+    'tile_collision_mask': CollisionMask;
+}
+/**
+ *
+ * Applies to variant case `nested-result`
+ */
+interface TriggerEffectItemNestedResult extends BaseTriggerEffectItem {
+    'type': 'nested-result';
+    'action': TriggerItem[];
+}
+/**
+ *
+ * Applies to variant case `play-sound`
+ */
+interface TriggerEffectItemPlaySound extends BaseTriggerEffectItem {
+    'type': 'play-sound';
+    'max_distance': float;
+    'min_distance': float;
+    'play_on_target_position': boolean;
+}
+/**
+ *
+ * Applies to variant case `push-back`
+ */
+interface TriggerEffectItemPushBack extends BaseTriggerEffectItem {
+    'type': 'push-back';
+    'distance': float;
+}
+/**
+ *
+ * Applies to variant case `script`
+ */
+interface TriggerEffectItemScript extends BaseTriggerEffectItem {
+    'type': 'script';
+    'effect_id': string;
+}
+/**
+ *
+ * Applies to variant case `set-tile`
+ */
+interface TriggerEffectItemSetTile extends BaseTriggerEffectItem {
+    'type': 'set-tile';
+    'apply_on_space_platform': boolean;
+    'apply_projection': boolean;
+    'radius': float;
+    'tile_collision_mask': CollisionMask;
+    'tile_name': string;
+}
+/**
+ *
+ * Applies to variant case `show-explosion-on-chart`
+ */
+interface TriggerEffectItemShowExplosionOnChart extends BaseTriggerEffectItem {
+    'type': 'show-explosion-on-chart';
+    'scale': float;
 }
 /**
  * Used by {@link TriggerEffectItem | runtime:TriggerEffectItem}.
@@ -10126,7 +10550,7 @@ interface TriggerEffectWithCooldown {
     initial_time_cooldown: MapTick;
     effect: TriggerEffectItem[];
 }
-interface TriggerItem {
+interface BaseTriggerItem {
     type: 'direct' | 'area' | 'line' | 'cluster';
     action_delivery?: TriggerDelivery[];
     /**
@@ -10145,6 +10569,48 @@ interface TriggerItem {
     force: ForceCondition;
     repeat_count: uint32;
     probability: float;
+}
+type TriggerItem = BaseTriggerItem | TriggerItemArea | TriggerItemCluster | TriggerItemDirect | TriggerItemLine;
+/**
+ *
+ * Applies to variant case `area`
+ */
+interface TriggerItemArea extends BaseTriggerItem {
+    'type': 'area';
+    'collision_mode': 'distance-from-collision-box' | 'distance-from-center';
+    'radius': double;
+    'show_in_tooltip': boolean;
+    'target_enemies': boolean;
+    'target_entities': boolean;
+    'trigger_from_target': boolean;
+}
+/**
+ *
+ * Applies to variant case `cluster`
+ */
+interface TriggerItemCluster extends BaseTriggerItem {
+    'type': 'cluster';
+    'cluster_count': uint32;
+    'distance': float;
+    'distance_deviation': float;
+}
+/**
+ *
+ * Applies to variant case `direct`
+ */
+interface TriggerItemDirect extends BaseTriggerItem {
+    'type': 'direct';
+    'filter_enabled': boolean;
+}
+/**
+ *
+ * Applies to variant case `line`
+ */
+interface TriggerItemLine extends BaseTriggerItem {
+    'type': 'line';
+    'range': double;
+    'range_effects': TriggerEffectItem[];
+    'width': double;
 }
 interface TriggerModifierData {
     damage_modifier?: float;
