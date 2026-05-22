@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.76
+// Factorio version 2.0.77
 // API version 6
 
 declare namespace defines {
@@ -486,7 +486,7 @@ enum entity_status {
      */
     full_burnt_result_output = 31,
     /**
-     * Used by crafting machines, boilers, burner energy sources and reactors: Reactor/burner has full burnt result inventory, boiler has full output fluidbox.
+     * Used by crafting machines, boilers, burner energy sources, and reactors: Reactor/burner has full burnt result inventory, boiler has full output fluidbox.
      */
     full_output = 29,
     /**
@@ -545,7 +545,7 @@ enum entity_status {
      */
     no_ingredients = 22,
     /**
-     * Used by boilers, fluid turrets and fluid energy sources: Boiler has no fluid to work with.
+     * Used by boilers, fluid turrets, and fluid energy sources: Boiler has no fluid to work with.
      */
     no_input_fluid = 23,
     /**
@@ -608,7 +608,7 @@ enum entity_status {
      */
     paused = 13,
     /**
-     * Used by pipes, pipes to ground and storage tanks.
+     * Used by pipes, pipes to ground, and storage tanks.
      */
     pipeline_overextended = 64,
     /**
@@ -656,7 +656,7 @@ enum entity_status {
      */
     waiting_for_source_items = 35,
     /**
-     * Used by inserters and mining drills.
+     * Used by inserters, mining drills, and crafting machines using vector_to_place_result.
      */
     waiting_for_space_in_destination = 37,
     /**

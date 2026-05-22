@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.76
+// Factorio version 2.0.77
 // API version 6
 
 declare namespace prototype {
@@ -1372,6 +1372,10 @@ WallPrototype;
 interface ApplyStarterPackTipTrigger extends CountBasedTipTrigger {
     type: 'apply-starter-pack';
 }
+/**
+ * Refers to tints defined in {@link TilePrototype::particle_tints | prototype:TilePrototype::particle_tints}.
+ */
+type ApplyTileTint = 'primary' | 'secondary';
 interface AreaTriggerItem extends TriggerItem {
     collision_mode?: 'distance-from-collision-box' | 'distance-from-center';
     radius: double;
@@ -2386,7 +2390,7 @@ interface CharacterArmorAnimation {
     /**
      * List of positions in the mining with tool animation when the mining sound and mining particles are created.
      *
-     * Overrides {@link CharacterPrototype::mining_with_tool_particles_animation_positions | prototype:CharacterPrototype::mining_with_tool_particles_animation_positions} if defined
+     * Overrides {@link CharacterPrototype::mining_with_tool_particles_animation_positions | prototype:CharacterPrototype::mining_with_tool_particles_animation_positions} if defined.
      */
     mining_with_tool_particles_animation_positions?: float[];
     running?: RotatedAnimation;
@@ -3359,7 +3363,7 @@ interface CreateGhostOnEntityDeathModifier extends BoolModifier {
     use_icon_overlay_constant?: boolean;
 }
 interface CreateParticleTriggerEffectItemBase extends TriggerEffectItem {
-    apply_tile_tint?: 'primary' | 'secondary';
+    apply_tile_tint?: ApplyTileTint;
     frame_speed?: float;
     frame_speed_deviation?: float;
     initial_height: float;
@@ -3917,7 +3921,7 @@ interface ElectricEnergySource extends BaseEnergySource {
      */
     buffer_capacity?: Energy;
     /**
-     * How much energy (per second) will be continuously removed from the energy buffer. In-game, this is shown in the tooltip as "Min. [Minimum] Consumption". Applied as a constant consumption-per-tick, even when the entity has the property {@link active | runtime:LuaEntity::active} set to `false`.
+     * How much energy (per second) will be continuously removed from the energy buffer. In-game, this is shown in the tooltip as "Min. [Minimum] Consumption". Applied as a constant consumption-per-tick, even when the entity is not {@link active | runtime:LuaEntity::active}.
      * @example ```
     drain = "1kW"
     ```
@@ -4163,6 +4167,9 @@ interface EnemyExpansionSettings {
      * A chunk has to have at most this much percent unbuildable tiles for it to be considered a candidate. This is to avoid chunks full of water to be marked as candidates.
      */
     max_colliding_tiles_coefficient: double;
+    /**
+     * In ticks.
+     */
     max_expansion_cooldown: uint32;
     /**
      * Distance in chunks from the furthest base around. This prevents expansions from reaching too far into the player's territory.
@@ -6802,6 +6809,8 @@ interface NestedTriggerEffectItem extends TriggerEffectItem {
  *
  * All functions accept both named and positional arguments. To differentiate between these function calls, positional arguments start/end with `(`/`)` and named arguments with `{`/`}`, e.g. `clamp(x, -1, 1)` and `clamp{min = -1, max = 1, value = x}` are the same function call. Because of this, positional arguments can't be mixed with named arguments. A function can't have more than 255 parameters.
  *
+ * Recursion is not supported.
+ *
  * The following operators are available, ordered by precedence:
  *
  * - `x^y`: Exponentiation (fast, inaccurate), equivalent to the built-in `pow(x, y)` noise function
@@ -6911,6 +6920,44 @@ interface OrTipTrigger {
  * The order property is a simple `string`. When the game needs to sort prototypes (of the same type), it looks at their order properties and sorts those alphabetically. A prototype with an order string of `"a"` will be listed before other prototypes with order string `"b"` or `"c"`. The `"-"` or `"[]"` structures that can be found in vanilla order strings do *not* have any special meaning.
  *
  * The alphabetical sorting uses {@link lexicographical comparison | https://en.wikipedia.org/wiki/Lexicographic_order} to determine if a given prototype is shown before or after another. If the order strings are equal then the game falls back to comparing the prototype names to determine order.
+ *
+ * The order of special characters can be identified by looking at a UTF-8 character list. This is the order some common characters are sorted in:
+ *
+ * - "-"
+ *
+ * - "0"
+ *
+ * - "9"
+ *
+ * - "A"
+ *
+ * - "Z"
+ *
+ * - "["
+ *
+ * - "]"
+ *
+ * - "a"
+ *
+ * - "z"
+ *
+ * The following order strings would be ordered thusly then:
+ *
+ * - "-"
+ *
+ * - "a"
+ *
+ * - "ab"
+ *
+ * - "azaaa" (`b` is sorted before `z`, so "ab" comes before "az", regardless of the letters following it)
+ *
+ * - "b"
+ *
+ * - "b-zzz"
+ *
+ * - "b[aaa]" (`[` is sorted after `-` in UTF-8)
+ *
+ * - "bb" (`b` is sorted after `[` in UTF-8)
  * @example ```
 {  -- This item will be shown after the below one
   type = "item",
@@ -6922,28 +6969,6 @@ interface OrTipTrigger {
   name = "item-2",
   order = "ab",
 }
-```
- * @example ```
--- The order of special characters can be identified by looking at a UTF-8 character list.
--- This is the order some common characters are sorted in:
-"-"
-"0"
-"9"
-"A"
-"Z"
-"["
-"]"
-"a"
-"z"
--- The following order strings would be ordered thusly then:
-"a"
-"ab"
-"azaaa"  -- "b" is sorted before "z", so "ab" comes before "az", regardless of the letters following it
-"b"
-"b-zzz"
-"b[aaa]" -- "[" is sorted after "-" in UTF-8
-"bb"  -- "b" is sorted after "[" in UTF-8
-]
 ```
  */
 type Order = string;
@@ -8112,15 +8137,39 @@ interface RadioButtonStyleSpecification extends StyleWithClickableGraphicalSetSp
 }
 /**
  * Sprite to be shown around the entity when it is selected/held in the cursor.
+ * @example ```
+radius_visualisation_specification =
+{
+  sprite =
+  {
+    filename = "__base__/graphics/entity/electric-mining-drill/electric-mining-drill-radius-visualization.png",
+    size = 10
+  },
+  distance = 5,
+  offset = {0, -5}
+}
+```
  */
 interface RadiusVisualisationSpecification {
     /**
      * Must be greater than or equal to 0.
+     *
+     * This distance is silently overwritten by prototypes with a custom distance: {@link AgriculturalTowerPrototype::radius | prototype:AgriculturalTowerPrototype::radius}, {@link AsteroidCollectorPrototype::collection_radius | prototype:AsteroidCollectorPrototype::collection_radius}, {@link BeaconPrototype::supply_area_distance | prototype:BeaconPrototype::supply_area_distance}, {@link ElectricPolePrototype::supply_area_distance | prototype:ElectricPolePrototype::supply_area_distance}, {@link MiningDrillPrototype::resource_searching_radius | prototype:MiningDrillPrototype::resource_searching_radius}.
      */
     distance?: double;
     draw_in_cursor?: boolean;
     draw_on_selection?: boolean;
+    /**
+     * Offset of the sprite from the position of the entity. The offset is rotated by the entity's current direction.
+     *
+     * This offset is silently overwritten by prototypes with a custom offset: {@link MiningDrillPrototype::resource_searching_offset | prototype:MiningDrillPrototype::resource_searching_offset}.
+     */
     offset?: Vector;
+    /**
+     * The sprite to show.
+     *
+     * This sprite is silently overwritten by prototypes with a custom radius picture: {@link AgriculturalTowerPrototype::radius_visualisation_picture | prototype:AgriculturalTowerPrototype::radius_visualisation_picture}, {@link AsteroidCollectorPrototype::radius_visualisation_picture | prototype:AsteroidCollectorPrototype::radius_visualisation_picture}, {@link BeaconPrototype::radius_visualisation_picture | prototype:BeaconPrototype::radius_visualisation_picture}, {@link ElectricPolePrototype::radius_visualisation_picture | prototype:ElectricPolePrototype::radius_visualisation_picture}, {@link MiningDrillPrototype::radius_visualisation_picture | prototype:MiningDrillPrototype::radius_visualisation_picture}.
+     */
     sprite?: Sprite;
 }
 interface RailFenceDirectionSet {
@@ -11793,7 +11842,7 @@ DelayedTriggerDelivery;
  */
 interface TriggerDeliveryItem {
     /**
-     * Provides the source of the TriggerDelivery as as both the source and target of the effect.
+     * Provides the source of the TriggerDelivery as both the source and target of the effect.
      */
     source_effects?: TriggerEffect;
     target_effects?: TriggerEffect;
