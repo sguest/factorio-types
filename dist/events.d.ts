@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.77
+// Factorio version 2.1.7
 // API version 6
 
 declare namespace runtime {
@@ -134,6 +134,43 @@ interface on_biter_base_built {
      * Identifier of the event.
      */
     name: defines.events;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+}
+/**
+ * Called when a blueprint entity is pasted over an existing entity or entity ghost.
+ *
+ * The entity's settings, rotation, mirroring, wire connections, etc. may have been updated. This event is raised even if no settings actually changed.
+ *
+ * Note this event is not raised when an entity is upgraded or marked for upgrade, when a new entity is created, or when an entity ghost is instantly revived. {@link on_built_entity | runtime:on_built_entity} is raised instead in those cases.
+ */
+interface on_blueprint_settings_pasted {
+    /**
+     * The entity that was updated. Can be either an entity or an entity ghost.
+     */
+    entity: LuaEntity;
+    /**
+     * Whether the blueprint changed the entity's mirroring.
+     */
+    mirrored: boolean;
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * The player who pasted the blueprint, if any. `nil` if pasted by script.
+     */
+    player_index?: uint32;
+    /**
+     * If the blueprint rotated the entity, provides the entity's direction before the rotation. Note: not provided for rotations due to superforce printing.
+     */
+    previous_direction?: defines.direction;
+    /**
+     * Tags from the source blueprint, if any. Only provided for non-ghost entities. For ghost entities, access tags via `entity.tags`.
+     */
+    tags?: Tags;
     /**
      * Tick the event was generated.
      */
@@ -1185,6 +1222,63 @@ interface on_gui_hover {
     tick: MapTick;
 }
 /**
+ * Called when a player interacts with a custom inventory GUI.
+ */
+interface on_gui_inventory_action {
+    /**
+     * The action performed.
+     */
+    action: defines.inventory_actions;
+    /**
+     * If alt was pressed.
+     */
+    alt: boolean;
+    /**
+     * The final mouse button used if any.
+     */
+    button: defines.mouse_button_type;
+    /**
+     * If control was pressed.
+     */
+    control: boolean;
+    /**
+     * The inventory element interacted with.
+     */
+    element: LuaGuiElement;
+    /**
+     * The item clicked on.
+     */
+    item?: LuaItemPrototype;
+    /**
+     * The item number clicked on (if it had one).
+     */
+    item_number?: uint32;
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * The player doing the action.
+     */
+    player_index: uint32;
+    /**
+     * The item quality clicked on.
+     */
+    quality?: LuaQualityPrototype;
+    /**
+     * If shift was pressed.
+     */
+    shift: boolean;
+    /**
+     * The slot index that was interacted with.
+     */
+    slot: uint32;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+}
+/**
  * Called when the player's cursor leaves a {@link LuaGuiElement | runtime:LuaGuiElement} that was previously hovered.
  *
  * Only fired for events whose {@link LuaGuiElement::raise_hover_events | runtime:LuaGuiElement::raise_hover_events} is `true`.
@@ -1999,6 +2093,35 @@ interface on_player_clicked_gps_tag {
     tick: MapTick;
 }
 /**
+ * Called after a player's color changes.
+ */
+interface on_player_color_changed {
+    /**
+     * If the change was done by script or the player.
+     */
+    by_script: boolean;
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * The old chat color.
+     */
+    old_chat_color: Color;
+    /**
+     * The old color.
+     */
+    old_color: Color;
+    /**
+     * The player whose color changed.
+     */
+    player_index: uint32;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+}
+/**
  * Called when a player clicks the "confirm" button in the configure Blueprint GUI.
  */
 interface on_player_configured_blueprint {
@@ -2563,6 +2686,23 @@ interface on_player_mined_tile {
     tiles: OldTileAndPosition[];
 }
 /**
+ * Called when a player's current music track (ambient sound) changes. This includes when the music track finishes playing.
+ */
+interface on_player_music_changed {
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * The player whose current music has changed.
+     */
+    player_index: uint32;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+}
+/**
  * Called when a player is muted.
  */
 interface on_player_muted {
@@ -2783,6 +2923,7 @@ interface on_player_rotated_entity {
      * The previous direction
      */
     previous_direction: defines.direction;
+    previous_mirroring: boolean;
     /**
      * Tick the event was generated.
      */
