@@ -2,11 +2,12 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.77
+// Factorio version 2.1.7
 // API version 6
 
 declare namespace runtime {
 interface AccumulatorBlueprintControlBehavior {
+    output_networks?: CircuitNetworkSelection;
     output_signal: SignalID;
     /**
      * Defaults to `true`.
@@ -78,6 +79,8 @@ interface AdvancedMapGenSettings {
     difficulty_settings: DifficultySettings;
 }
 interface AgriculturalTowerBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -92,6 +95,16 @@ interface AgriculturalTowerBlueprintControlBehavior {
      */
     connect_to_logistic_network?: boolean;
     logistic_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    enable_harvesting_condition?: boolean;
+    harvesting_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    enable_planting_condition?: boolean;
+    planting_condition?: CircuitCondition;
 }
 interface Alert {
     /**
@@ -110,6 +123,15 @@ interface Alert {
      */
     message?: LocalisedString;
 }
+interface AlertFilter {
+    entity?: LuaEntity;
+    prototype?: EntityID;
+    position?: MapPosition;
+    type?: defines.alert_type;
+    surface?: SurfaceIdentification;
+    icon?: SignalID;
+    message?: LocalisedString;
+}
 /**
  * A string that specifies where a GUI element should be.
  */
@@ -123,6 +145,16 @@ type Alignment = 'top-left' | 'middle-left' | /**
  * The same as `"middle-right"`
  */
 'right' | 'bottom-right';
+/**
+ * An ammo category may be specified in one of two ways.
+ */
+type AmmoCategoryID = /**
+ * By ammo category prototype.
+ */
+LuaAmmoCategoryPrototype | /**
+ * By name of the ammo category prototype.
+ */
+string;
 interface AmmoType {
     action?: TriggerItem[];
     target_type: TargetType;
@@ -193,6 +225,8 @@ interface ArithmeticCombinatorParameters {
     output_signal?: SignalID;
 }
 interface ArtilleryTurretBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     read_ammo?: boolean;
     /**
      * Defaults to `false`.
@@ -206,6 +240,8 @@ interface ArtilleryTurretBlueprintControlBehavior {
     logistic_condition?: CircuitCondition;
 }
 interface AssemblingMachineBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -221,7 +257,7 @@ interface AssemblingMachineBlueprintControlBehavior {
     /**
      * Defaults to `false`.
      */
-    include_fuel?: boolean;
+    read_fuel?: boolean;
     /**
      * Defaults to `false`.
      */
@@ -280,6 +316,8 @@ interface AsteroidChunkPrototypeFilter {
     invert?: boolean;
 }
 interface AsteroidCollectorBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -343,9 +381,13 @@ interface BaseAttackParameters {
      */
     rotate_penalty: float;
     /**
-     * When searching for an enemy to attack, a higher `health_penalty` will discourage targeting enemies with high health. A negative penalty will do the opposite.
+     * When searching for an enemy to attack, a higher `health_penalty` will discourage targeting enemies with high health ratio. A negative penalty will do the opposite.
      */
     health_penalty: float;
+    /**
+     * When searching for an enemy to attack, a higher `threatening_asteroid_penalty` will discourage targeting asteroids that pose a threat. A negative penalty will do the opposite.
+     */
+    threatening_asteroid_penalty: float;
     /**
      * If less than `range`, the entity will choose a random distance between `range` and `min_attack_distance` and attack from that distance. Used for spitters.
      */
@@ -524,7 +566,7 @@ interface BaseBlueprintEntity {
 /**
  * The representation of an entity inside of a blueprint.
  */
-type BlueprintEntity = BaseBlueprintEntity | BlueprintEntityAccumulator | BlueprintEntityAgriculturalTower | BlueprintEntityAmmoTurret | BlueprintEntityArithmeticCombinator | BlueprintEntityArtilleryTurret | BlueprintEntityArtilleryWagon | BlueprintEntityAssemblingMachine | BlueprintEntityAsteroidCollector | BlueprintEntityCar | BlueprintEntityCargoLandingPad | BlueprintEntityCargoWagon | BlueprintEntityConstantCombinator | BlueprintEntityContainer | BlueprintEntityDeciderCombinator | BlueprintEntityDisplayPanel | BlueprintEntityElectricEnergyInterface | BlueprintEntityElectricTurret | BlueprintEntityFluidTurret | BlueprintEntityFluidWagon | BlueprintEntityFurnace | BlueprintEntityHeatInterface | BlueprintEntityInfinityCargoWagon | BlueprintEntityInfinityContainer | BlueprintEntityInfinityPipe | BlueprintEntityInserter | BlueprintEntityLamp | BlueprintEntityLaneSplitter | BlueprintEntityLinkedBelt | BlueprintEntityLinkedContainer | BlueprintEntityLoader | BlueprintEntityLoader1x1 | BlueprintEntityLocomotive | BlueprintEntityLogisticContainer | BlueprintEntityMiningDrill | BlueprintEntityPowerSwitch | BlueprintEntityProgrammableSpeaker | BlueprintEntityProxyContainer | BlueprintEntityPump | BlueprintEntityRailChainSignal | BlueprintEntityRailSignal | BlueprintEntityReactor | BlueprintEntityRoboport | BlueprintEntityRocketSilo | BlueprintEntitySelectorCombinator | BlueprintEntitySpacePlatformHub | BlueprintEntitySpiderVehicle | BlueprintEntitySplitter | BlueprintEntityStorageTank | BlueprintEntityTrainStop | BlueprintEntityTransportBelt | BlueprintEntityTurret | BlueprintEntityUndergroundBelt | BlueprintEntityValve | BlueprintEntityWall;
+type BlueprintEntity = BaseBlueprintEntity | BlueprintEntityAccumulator | BlueprintEntityAgriculturalTower | BlueprintEntityAmmoTurret | BlueprintEntityArithmeticCombinator | BlueprintEntityArtilleryTurret | BlueprintEntityArtilleryWagon | BlueprintEntityAssemblingMachine | BlueprintEntityAsteroidCollector | BlueprintEntityBoiler | BlueprintEntityCar | BlueprintEntityCargoLandingPad | BlueprintEntityCargoWagon | BlueprintEntityConstantCombinator | BlueprintEntityContainer | BlueprintEntityDeciderCombinator | BlueprintEntityDisplayPanel | BlueprintEntityElectricEnergyInterface | BlueprintEntityElectricTurret | BlueprintEntityFluidTurret | BlueprintEntityFluidWagon | BlueprintEntityFurnace | BlueprintEntityHeatInterface | BlueprintEntityHeatPipe | BlueprintEntityInfinityCargoWagon | BlueprintEntityInfinityContainer | BlueprintEntityInfinityPipe | BlueprintEntityInserter | BlueprintEntityLab | BlueprintEntityLamp | BlueprintEntityLandMine | BlueprintEntityLaneSplitter | BlueprintEntityLinkedBelt | BlueprintEntityLinkedContainer | BlueprintEntityLoader | BlueprintEntityLoader1x1 | BlueprintEntityLocomotive | BlueprintEntityLogisticContainer | BlueprintEntityMiningDrill | BlueprintEntityOffshorePump | BlueprintEntityPipe | BlueprintEntityPipeToGround | BlueprintEntityPowerSwitch | BlueprintEntityProgrammableSpeaker | BlueprintEntityProxyContainer | BlueprintEntityPump | BlueprintEntityRadar | BlueprintEntityRailChainSignal | BlueprintEntityRailSignal | BlueprintEntityReactor | BlueprintEntityRoboport | BlueprintEntityRocketSilo | BlueprintEntitySelectorCombinator | BlueprintEntitySpacePlatformHub | BlueprintEntitySpiderVehicle | BlueprintEntitySplitter | BlueprintEntityStorageTank | BlueprintEntityTrainStop | BlueprintEntityTransportBelt | BlueprintEntityTurret | BlueprintEntityUndergroundBelt | BlueprintEntityValve | BlueprintEntityWall;
 /**
  *
  * Applies to variant case `accumulator`
@@ -606,6 +648,13 @@ interface BlueprintEntityAsteroidCollector extends BaseBlueprintEntity {
 }
 /**
  *
+ * Applies to variant case `boiler`
+ */
+interface BlueprintEntityBoiler extends BaseBlueprintEntity {
+    'control_behavior'?: BoilerBlueprintControlBehavior;
+}
+/**
+ *
  * Applies to variant case `car`
  */
 interface BlueprintEntityCar extends BaseBlueprintEntity {
@@ -653,7 +702,7 @@ interface BlueprintEntityConstantCombinator extends BaseBlueprintEntity {
  * Applies to variant case `container`
  */
 interface BlueprintEntityContainer extends BaseBlueprintEntity {
-    'bar'?: uint32;
+    'bar'?: ItemStackIndex;
     'control_behavior'?: ContainerBlueprintControlBehavior;
     'filters'?: BlueprintItemFilter[];
 }
@@ -744,6 +793,13 @@ interface BlueprintEntityHeatInterface extends BaseBlueprintEntity {
 }
 /**
  *
+ * Applies to variant case `heat-pipe`
+ */
+interface BlueprintEntityHeatPipe extends BaseBlueprintEntity {
+    'control_behavior'?: HeatPipeBlueprintControlBehavior;
+}
+/**
+ *
  * Applies to variant case `infinity-cargo-wagon`
  */
 interface BlueprintEntityInfinityCargoWagon extends BaseBlueprintEntity {
@@ -761,11 +817,16 @@ interface BlueprintEntityInfinityCargoWagon extends BaseBlueprintEntity {
  * Applies to variant case `infinity-container`
  */
 interface BlueprintEntityInfinityContainer extends BaseBlueprintEntity {
-    'bar'?: uint32;
+    'bar'?: ItemStackIndex;
     'control_behavior'?: LogisticContainerBlueprintControlBehavior;
     'filters'?: BlueprintItemFilter[];
     'infinity_settings': BlueprintInfinityInventorySettings;
-    'request_filters': BlueprintLogisticSections;
+    'override_logistic_mode'?: LogisticMode;
+    'request_filters'?: BlueprintLogisticSections;
+    'saved_request_filters'?: LogisticSections;
+    'saved_request_from_buffers'?: boolean;
+    'saved_set_requests'?: boolean;
+    'saved_storage_filters'?: LogisticSections;
 }
 /**
  *
@@ -802,6 +863,13 @@ interface BlueprintEntityInserter extends BaseBlueprintEntity {
 }
 /**
  *
+ * Applies to variant case `lab`
+ */
+interface BlueprintEntityLab extends BaseBlueprintEntity {
+    'control_behavior'?: LabBlueprintControlBehavior;
+}
+/**
+ *
  * Applies to variant case `lamp`
  */
 interface BlueprintEntityLamp extends BaseBlueprintEntity {
@@ -811,6 +879,13 @@ interface BlueprintEntityLamp extends BaseBlueprintEntity {
     'always_on'?: boolean;
     'color'?: Color;
     'control_behavior'?: LampBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `land-mine`
+ */
+interface BlueprintEntityLandMine extends BaseBlueprintEntity {
+    'control_behavior'?: LandMineBlueprintControlBehavior;
 }
 /**
  *
@@ -882,7 +957,7 @@ interface BlueprintEntityLocomotive extends BaseBlueprintEntity {
  * Applies to variant case `logistic-container`
  */
 interface BlueprintEntityLogisticContainer extends BaseBlueprintEntity {
-    'bar'?: uint32;
+    'bar'?: ItemStackIndex;
     'control_behavior'?: LogisticContainerBlueprintControlBehavior;
     'filters'?: BlueprintItemFilter[];
     'request_filters': BlueprintLogisticSections;
@@ -897,10 +972,31 @@ interface BlueprintEntityMiningDrill extends BaseBlueprintEntity {
 }
 /**
  *
+ * Applies to variant case `offshore-pump`
+ */
+interface BlueprintEntityOffshorePump extends BaseBlueprintEntity {
+    'control_behavior'?: GenericOnOffBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `pipe`
+ */
+interface BlueprintEntityPipe extends BaseBlueprintEntity {
+    'control_behavior'?: SingleFluidBoxBlueprintControlBehavior;
+}
+/**
+ *
+ * Applies to variant case `pipe-to-ground`
+ */
+interface BlueprintEntityPipeToGround extends BaseBlueprintEntity {
+    'control_behavior'?: SingleFluidBoxBlueprintControlBehavior;
+}
+/**
+ *
  * Applies to variant case `power-switch`
  */
 interface BlueprintEntityPowerSwitch extends BaseBlueprintEntity {
-    'control_behavior'?: PowerSwitchBlueprintControlBehavior;
+    'control_behavior'?: GenericOnOffBlueprintControlBehavior;
     'switch_state'?: boolean;
 }
 /**
@@ -926,6 +1022,13 @@ interface BlueprintEntityProxyContainer extends BaseBlueprintEntity {
 interface BlueprintEntityPump extends BaseBlueprintEntity {
     'control_behavior'?: PumpBlueprintControlBehavior;
     'fluid_filter'?: string;
+}
+/**
+ *
+ * Applies to variant case `radar`
+ */
+interface BlueprintEntityRadar extends BaseBlueprintEntity {
+    'control_behavior'?: RadarBlueprintControlBehavior;
 }
 /**
  *
@@ -990,6 +1093,7 @@ interface BlueprintEntitySelectorCombinator extends BaseBlueprintEntity {
 interface BlueprintEntitySpacePlatformHub extends BaseBlueprintEntity {
     'bar'?: uint32;
     'control_behavior'?: SpacePlatformHubBlueprintControlBehavior;
+    'providing_to_other_platforms'?: boolean;
     'request_filters': BlueprintLogisticSections;
     'request_missing_construction_materials': boolean;
 }
@@ -1024,7 +1128,7 @@ interface BlueprintEntitySplitter extends BaseBlueprintEntity {
  * Applies to variant case `storage-tank`
  */
 interface BlueprintEntityStorageTank extends BaseBlueprintEntity {
-    'control_behavior'?: StorageTankBlueprintControlBehavior;
+    'control_behavior'?: SingleFluidBoxBlueprintControlBehavior;
 }
 /**
  *
@@ -1155,10 +1259,14 @@ interface BlueprintLogisticFilter {
     count: int32;
     max_count?: ItemCountType;
     /**
-     * Defaults to 0.
+     * Defaults to `0`.
      */
     minimum_delivery_count?: ItemCountType;
     import_from?: string;
+    /**
+     * From which sources items should be requested for space platforms. Defaults to `"planet"`.
+     */
+    request_from?: RequestFromLocation;
 }
 interface BlueprintLogisticSections {
     sections?: LogisticSection[];
@@ -1257,6 +1365,38 @@ interface BlueprintWireEnd {
     entity: BlueprintEntity;
     surface_index?: uint32;
     connector: defines.wire_connector_id;
+}
+interface BoilerBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
+    /**
+     * Defaults to `false`.
+     */
+    read_fuel?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
+interface BonusUtilityConstants {
+    artillery_range: string;
+    worker_robots: string;
+    character: string;
+    follower_robots: string;
+    research_speed: string;
+    beacon_distribution: string;
+    inserter: string;
+    stack_inserter: string;
+    bulk_inserter: string;
+    turret_attack: string;
+    mining_productivity: string;
+    train_braking_force: string;
 }
 /**
  * Two positions, specifying the top-left and bottom-right corner of the box respectively. Like with {@link MapPosition | runtime:MapPosition}, the names of the members may be omitted. When read from the game, the third member `orientation` is present if it is non-zero.
@@ -1370,11 +1510,29 @@ interface CargoDestination {
      */
     space_platform?: LuaSpacePlatform;
 }
+interface CargoHatchDefinition {
+    busy_timeout_ticks: uint32;
+    hatch_opening_ticks: uint32;
+    cargo_unit_entity_to_spawn: EntityID;
+    receiving_cargo_units: EntityID[];
+}
 interface CargoLandingPadBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
-     * Defaults to `send_contents`.
+     * Defaults to `true`.
      */
-    circuit_mode_of_operation?: defines.control_behavior.cargo_landing_pad.exclusive_mode;
+    read_contents?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    set_requests?: boolean;
+}
+interface CargoStationParameters {
+    prefer_packed_cargo_units: boolean;
+    is_input_station: boolean;
+    is_output_station: boolean;
+    hatch_definitions: CargoHatchDefinition[];
 }
 /**
  * Either `icon`, `text`, or both must be provided.
@@ -1384,6 +1542,73 @@ interface ChartTagSpec {
     icon?: SignalID;
     text?: string;
     last_user?: PlayerIdentification;
+}
+interface ChartUtilityConstants {
+    copper_wire_color: Color;
+    electric_power_pole_color: Color;
+    enabled_switch_color: Color;
+    disabled_switch_color: Color;
+    electric_line_width: float;
+    electric_line_minimum_absolute_width: float;
+    red_wire_color: Color;
+    green_wire_color: Color;
+    circuit_network_member_color: Color;
+    turret_range_color: Color;
+    artillery_range_color: Color;
+    default_friendly_color: Color;
+    default_enemy_color: Color;
+    default_enemy_territory_color: Color;
+    rail_color: Color;
+    elevated_rail_color: Color;
+    rail_ramp_color: Color;
+    entity_ghost_color: Color;
+    tile_ghost_color: Color;
+    vehicle_outer_color: Color;
+    vehicle_outer_color_selected: Color;
+    vehicle_inner_color: Color;
+    vehicle_wagon_connection_color: Color;
+    resource_outline_selection_color: Color;
+    chart_train_stop_text_color: Color;
+    chart_train_stop_disabled_text_color: Color;
+    chart_train_stop_full_text_color: Color;
+    red_signal_color: Color;
+    green_signal_color: Color;
+    blue_signal_color: Color;
+    yellow_signal_color: Color;
+    chart_deconstruct_tint: Color;
+    chart_deconstruct_active_color: Color;
+    /**
+     * The strings are entity types.
+     */
+    default_friendly_color_by_type?: Record<string, Color>;
+    /**
+     * The strings are entity types.
+     */
+    default_color_by_type?: Record<string, Color>;
+    explosion_visualization_duration: MapTick;
+    train_path_color: Color;
+    train_preview_path_outline_color: Color;
+    train_current_path_outline_color: Color;
+    chart_logistic_robot_color: Color;
+    chart_construction_robot_color: Color;
+    chart_mobile_construction_robot_color: Color;
+    chart_personal_construction_robot_color: Color;
+    chart_delivery_to_me_logistic_robot_color: Color;
+    zoom_threshold_to_draw_spider_path: double;
+    chart_player_circle_size: float;
+    /**
+     * Defaults to `1.0`.
+     */
+    custom_tag_scale?: float;
+    /**
+     * Defaults to `1.0`.
+     */
+    custom_tag_max_scale?: float;
+    custom_tag_selected_overlay_tint?: Color;
+    /**
+     * Must be larger than 0. This number is multiplied by the crafting machine's {@link radius | runtime:LuaEntityPrototype::radius} to get the final recipe icon scale for the chart.
+     */
+    recipe_icon_scale: float;
 }
 /**
  * Coordinates of a chunk in a {@link LuaSurface | runtime:LuaSurface} where each integer `x`/`y` represents a different chunk. This uses the same format as {@link MapPosition | runtime:MapPosition}, meaning it can be specified either with or without explicit keys. A {@link MapPosition | runtime:MapPosition} can be translated to a ChunkPosition by dividing the `x`/`y` values by 32.
@@ -1504,6 +1729,21 @@ interface CliffPlacementSettings {
      */
     richness: MapGenSize;
 }
+interface CloudsEffectProperties {
+    scale: float;
+    clouds_movement_speed_multiplier: float;
+    shape_warp_strength: float;
+    shape_warp_weight: float;
+    opacity_at_day: float;
+    opacity_at_night: float;
+    density_at_day: float;
+    density_at_night: float;
+    detail_factor_at_day: float;
+    detail_factor_at_night: float;
+    shape_factor: float;
+    detail_exponent: float;
+    detail_morph_duration: uint32;
+}
 /**
  * The name of a {@link LuaCollisionLayerPrototype | runtime:LuaCollisionLayerPrototype}.
  * @example ```
@@ -1557,6 +1797,19 @@ type Color = {
     float,
     float
 ];
+interface ColorFilterData {
+    name: string;
+    localised_name: LocalisedString;
+    matrix: float[];
+}
+interface ColorHintSpecification {
+    text: string;
+    text_color: Color;
+}
+/**
+ * Does not return the value at runtime.
+ */
+type ColorLookupTable = nil;
 /**
  * Same as {@link Color | runtime:Color}, but red, green, blue and alpha values can be any floating point number, without any special handling of the range [1, 255].
  */
@@ -1638,10 +1891,6 @@ interface CommandBuildBase extends BaseCommand {
      * Defaults to `defines.distraction.by_enemy`.
      */
     'distraction'?: defines.distraction;
-    /**
-     * Whether the units should ignore expansion candidate chunks. When `false`, they will obey and not build a base in a non-candidate chunk. Defaults to `false`.
-     */
-    'ignore_planner'?: boolean;
 }
 /**
  *
@@ -1832,6 +2081,10 @@ interface CompiledLogisticFilter {
      * Defaults to 0.
      */
     minimum_delivery_count?: ItemCountType;
+    /**
+     * From which sources items should be requested for space platforms.
+     */
+    request_from?: RequestFromLocation;
 }
 interface ConfigurationChangedData {
     /**
@@ -1855,7 +2108,7 @@ interface ConfigurationChangedData {
      */
     migration_applied: boolean;
     /**
-     * Dictionary of prototype changes due to {@link migrations | runtime:migrations}. The inner dictionary maps the old prototype name to the new prototype name. The new name will be an empty string if the prototype was removed. Entries are omitted if the old and new prototype name are the same.
+     * Dictionary of prototype changes due to {@link migrations | auxiliary:migrations}. The inner dictionary maps the old prototype name to the new prototype name. The new name will be an empty string if the prototype was removed. Entries are omitted if the old and new prototype name are the same.
      */
     migrations: LuaTable<IDType, Record<string, string>>;
 }
@@ -1867,6 +2120,7 @@ interface ConstantCombinatorBlueprintControlBehavior {
     is_on?: boolean;
 }
 interface ContainerBlueprintControlBehavior {
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `true`.
      */
@@ -1889,6 +2143,15 @@ interface CraftingQueueItem {
      * The item is a prerequisite for another item in the queue.
      */
     prerequisite: boolean;
+}
+interface CraterPlacementDefinition {
+    minimum_segments_to_place: uint32;
+    segment_probability: float;
+    segments: CraterSegment[];
+}
+interface CraterSegment {
+    orientation: float;
+    offset: Vector;
 }
 type CursorBoxRenderType = /**
  * The normal entity selection box. Yellow by default.
@@ -2001,6 +2264,50 @@ LuaDamagePrototype | /**
  * The prototype name.
  */
 string;
+/**
+ * Returns an empty table at runtime.
+ */
+type DaytimeColorLookupTable = '{}';
+/**
+ * The supported subset of {@link DebugAdapter Variable | https://microsoft.github.io/debug-adapter-protocol/specification#Types_Variable}
+ */
+interface DebugVariable {
+    name: string;
+    value: string;
+    type?: string;
+    variablesReference?: int32;
+    namedVariables?: int32;
+    indexedVariables?: int32;
+    presentationHint?: DebugVariablePresentationHint;
+}
+/**
+ * The supported subset of {@link DebugAdapter VariablePresentationHint | https://microsoft.github.io/debug-adapter-protocol/specification#Types_VariablePresentationHint}
+ */
+interface DebugVariablePresentationHint {
+    /**
+     * The only supported kind is "virtual".
+     */
+    kind?: 'virtual';
+    /**
+     * The only supported attribute is "readOnly".
+     */
+    attributes?: ('readOnly')[];
+    lazy?: boolean;
+}
+interface DebugVariablesFilter {
+    /**
+     * The kind of filter applied to this request. Default "all".
+     */
+    filter?: 'indexed' | 'named' | 'all';
+    /**
+     * When `filter` is "indexed", the index to start at.
+     */
+    start?: int32;
+    /**
+     * When `filter` is "indexed", the size of the requested page.
+     */
+    count?: int32;
+}
 interface DeciderCombinatorBlueprintControlBehavior {
     decider_conditions: DeciderCombinatorParameters;
 }
@@ -2129,6 +2436,10 @@ interface DetailedItemOnLine {
      */
     unique_id: uint32;
 }
+interface DeviatedValue {
+    value: float;
+    deviation: float;
+}
 /**
  * Technology difficulty settings. Updating any of the attributes will immediately take effect in the game engine.
  */
@@ -2170,6 +2481,24 @@ interface DragTarget {
      */
     wire_connector_id: defines.wire_connector_id;
 }
+interface EditorUtilityConstants {
+    clone_editor_copy_source_color: Color;
+    clone_editor_copy_destination_allowed_color: Color;
+    clone_editor_copy_destination_not_allowed_color: Color;
+    clone_editor_brush_source_color: Color;
+    clone_editor_brush_destination_color: Color;
+    clone_editor_brush_cursor_preview_tint: Color;
+    clone_editor_brush_world_preview_tint: Color;
+    script_editor_select_area_color: Color;
+    script_editor_drag_area_color: Color;
+    force_editor_select_area_color: Color;
+    cliff_editor_remove_cliffs_color: Color;
+    tile_editor_selection_preview_tint: Color;
+    tile_editor_area_selection_color: Color;
+    decorative_editor_selection_preview_tint: Color;
+    tile_editor_selection_preview_radius: uint8;
+    decorative_editor_selection_preview_radius: uint8;
+}
 interface EffectReceiver {
     base_effect: ModuleEffects;
     uses_module_effects: boolean;
@@ -2178,6 +2507,15 @@ interface EffectReceiver {
      * Controls whether {@link LuaSurface::global_effect | runtime:LuaSurface::global_effect} affects this receiver.
      */
     uses_surface_effects: boolean;
+    consumption_limits: EffectValueRange;
+    speed_limits: EffectValueRange;
+    productivity_limits: EffectValueRange;
+    pollution_limits: EffectValueRange;
+    quality_limits: EffectValueRange;
+}
+interface EffectValueRange {
+    low: double;
+    high: double;
 }
 /**
  * An item thrown overboard on a space platform.
@@ -2209,6 +2547,20 @@ interface ElemID {
  * A {@link string | runtime:string} specifying a type for {@link choose elem buttons | runtime:LuaGuiElement::elem_type}. It's also used by {@link ElemID | runtime:ElemID} for {@link LuaGuiElement::elem_tooltip | runtime:LuaGuiElement::elem_tooltip}.
  */
 type ElemType = 'achievement' | 'decorative' | 'entity' | 'equipment' | 'fluid' | 'item' | 'item-group' | 'recipe' | 'signal' | 'technology' | 'tile' | 'asteroid-chunk' | 'space-location' | 'item-with-quality' | 'entity-with-quality' | 'recipe-with-quality' | 'equipment-with-quality';
+interface EmptySlotInfo {
+    /**
+     * The icon to use.
+     */
+    sprite?: SpritePath;
+    /**
+     * The tooltip caption to use.
+     */
+    caption?: LocalisedString;
+    /**
+     * The tooltip text to use.
+     */
+    text?: LocalisedString;
+}
 /**
  * These values represent a percentual increase in evolution. This means a value of `0.1` would increase evolution by 10%.
  */
@@ -2231,21 +2583,21 @@ interface EnemyEvolutionMapSettings {
     pollution_factor: double;
 }
 /**
- * Candidate chunks are given scores to determine which one of them should be expanded into. This score takes into account various settings noted below. The iteration is over a square region centered around the chunk for which the calculation is done, and includes the central chunk as well. Distances are calculated as {@link Manhattan distance | https://en.wikipedia.org/wiki/Taxicab_geometry}.
+ * Candidate chunks are given scores to determine which one of them should be expanded into. This score takes into account various settings noted below. The iteration is over a square region centered around the chunk for which the calculation is done, and includes the central chunk as well. Distances are calculated as {@link Euclidean distance | https://en.wikipedia.org/wiki/Euclidean_distance}.
  *
  * The pseudocode algorithm to determine a chunk's score is as follows:
  *
  * ```
  * player = 0
- * for neighbour in all chunks within enemy_building_influence_radius from chunk:
- *   player += number of player buildings on neighbour
- *     * building_coefficient
- *     * neighbouring_chunk_coefficient^distance(chunk, neighbour)
+ * for neighbour in all chunks within enemy_building_influence_radius from chunk :
+ *   if neighbour has player buildings :
+ *     player += neighbouring_chunk_coefficient ^ distance(chunk, neighbour)
+ *       * building_coefficient
  * base = 0
- * for neighbour in all chunk within friendly_base_influence_radius from chunk:
- *   base += num of enemy bases on neighbour
- *     * other_base_coefficient
- *     * neighbouring_base_chunk_coefficient^distance(chunk, neighbour)
+ * for neighbour in all chunks within friendly_base_influence_radius from chunk :
+ *   if neighbour has enemy bases :
+ *     base += neighbouring_base_chunk_coefficient ^ distance(chunk, neighbour)
+ *       * other_base_coefficient
  * score(chunk) = 1 / (1 + player + base)
  * ```
  */
@@ -2255,23 +2607,27 @@ interface EnemyExpansionMapSettings {
      */
     enabled: boolean;
     /**
-     * Distance in chunks from the furthest base around to prevent expansions from reaching too far into the player's territory. Defaults to `7`.
+     * Distance in chunks from the furthest base around to prevent expansions from reaching too far into the player's territory. Defaults to `5`.
      */
     max_expansion_distance: uint32;
     /**
-     * Defaults to `2`.
+     * Distance in chunks from the furthest base around to prevent expansions from being too close to existing bases. Defaults to `3`.
+     */
+    min_expansion_distance: uint32;
+    /**
+     * Defaults to `6`.
      */
     friendly_base_influence_radius: uint32;
     /**
-     * Defaults to `2`.
+     * Defaults to `3`.
      */
     enemy_building_influence_radius: uint32;
     /**
-     * Defaults to `0.1`.
+     * Defaults to `0.5`.
      */
     building_coefficient: double;
     /**
-     * Defaults to `2.0`.
+     * Defaults to `3.0`.
      */
     other_base_coefficient: double;
     /**
@@ -2279,11 +2635,11 @@ interface EnemyExpansionMapSettings {
      */
     neighbouring_chunk_coefficient: double;
     /**
-     * Defaults to `0.4`.
+     * Defaults to `0.5`.
      */
     neighbouring_base_chunk_coefficient: double;
     /**
-     * A chunk has to have at most this high of a percentage of unbuildable tiles for it to be considered a candidate to avoid chunks full of water as candidates. Defaults to `0.9`, or 90%.
+     * A chunk has to have at most this high of a percentage of unbuildable tiles for it to be considered a candidate to avoid chunks full of water as candidates. Defaults to `0.8`, or 80%.
      */
     max_colliding_tiles_coefficient: double;
     /**
@@ -2302,6 +2658,20 @@ interface EnemyExpansionMapSettings {
      * The maximum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `60*3 600=216 000` ticks.
      */
     max_expansion_cooldown: uint32;
+}
+interface EnemySpawnerAbsorption {
+    absolute: double;
+    proportional: double;
+}
+interface EnergyAndCapacityPair {
+    /**
+     * Total energy stored inside of matching accumulators
+     */
+    energy: double;
+    /**
+     * Total capacity of matching accumulators
+     */
+    capacity: double;
 }
 /**
  * An entity prototype may be specified in one of three ways.
@@ -2347,7 +2717,7 @@ interface BaseEntityPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'flying-robot' | 'robot-with-logistics-interface' | 'rail' | 'ghost' | 'explosion' | 'vehicle' | 'crafting-machine' | 'rolling-stock' | 'turret' | 'transport-belt-connectable' | 'wall-connectable' | 'buildable' | 'placable-in-editor' | 'clonable' | 'selectable' | 'hidden' | 'entity-with-health' | 'building' | 'fast-replaceable' | 'uses-direction' | 'minable' | 'circuit-connectable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'name' | 'type' | 'collision-mask' | 'flag' | 'build-base-evolution-requirement' | 'selection-priority' | 'emissions-per-second' | 'crafting-category';
+    filter: 'flying-robot' | 'robot-with-logistics-interface' | 'rail' | 'ghost' | 'explosion' | 'vehicle' | 'crafting-machine' | 'rolling-stock' | 'turret' | 'transport-belt-connectable' | 'wall-connectable' | 'buildable' | 'placable-in-editor' | 'clonable' | 'selectable' | 'hidden' | 'entity-with-health' | 'building' | 'fast-replaceable' | 'uses-direction' | 'minable' | 'circuit-connectable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'name' | 'type' | 'collision-mask' | 'flag' | 'selection-priority' | 'emissions-per-second' | 'crafting-category';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2357,22 +2727,7 @@ interface BaseEntityPrototypeFilter {
      */
     invert?: boolean;
 }
-type EntityPrototypeFilter = BaseEntityPrototypeFilter | EntityPrototypeFilterBuildBaseEvolutionRequirement | EntityPrototypeFilterCollisionMask | EntityPrototypeFilterCraftingCategory | EntityPrototypeFilterEmissionsPerSecond | EntityPrototypeFilterFlag | EntityPrototypeFilterName | EntityPrototypeFilterSelectionPriority | EntityPrototypeFilterType;
-/**
- *
- * Applies to variant case `build-base-evolution-requirement`
- */
-interface EntityPrototypeFilterBuildBaseEvolutionRequirement extends BaseEntityPrototypeFilter {
-    /**
-     * The condition to filter on.
-     */
-    'filter': 'build-base-evolution-requirement';
-    'comparison': ComparatorString;
-    /**
-     * The value to compare against.
-     */
-    'value': double;
-}
+type EntityPrototypeFilter = BaseEntityPrototypeFilter | EntityPrototypeFilterCollisionMask | EntityPrototypeFilterCraftingCategory | EntityPrototypeFilterEmissionsPerSecond | EntityPrototypeFilterFlag | EntityPrototypeFilterName | EntityPrototypeFilterSelectionPriority | EntityPrototypeFilterType;
 /**
  * Usage example:
  *
@@ -2534,6 +2889,9 @@ type EntityPrototypeFlag = /**
  * Prevents the entity from being part of a blueprint.
  */
 'not-blueprintable' | /**
+ * Always show the entity in selection lists/Factoriopedia.
+ */
+'always-show' | /**
  * Hides the alt-info of this entity when in alt-mode.
  */
 'hide-alt-info' | /**
@@ -2557,16 +2915,31 @@ type EntityPrototypeFlag = /**
 'not-upgradable' | /**
  * Prevents the entity from being shown in the kill statistics.
  */
-'not-in-kill-statistics' | 'building-direction-16-way' | 'snap-to-rail-support-spot' | /**
- * Prevents the entity from being shown in the "made in" list in recipe tooltips.
+'not-in-kill-statistics' | 'building-direction-16-way' | /**
+ * For entities with control behavior that supports logistic connection, if this flag is set then entity will not be able to connect to logistic network.
  */
-'not-in-made-in';
+'no-logistic-connection' | 'snap-to-rail-support-spot' | /**
+ * Prevents the entity from being shown in the "made in" list in recipe tooltips and Factoriopedia.
+ */
+'not-in-made-in' | /**
+ * Prevents the entity from being shown in the bonus GUI.
+ */
+'not-in-bonus-gui' | /**
+ * Prevents the entity from being shown in the mined-by tooltip of resources.
+ */
+'not-in-mined-by';
 /**
  * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  *
  * By default, none of these flags are set.
  */
 type EntityPrototypeFlags = Record<EntityPrototypeFlag, true>;
+interface EntityRendererSearchBoxLimits {
+    left: uint8;
+    top: uint8;
+    right: uint8;
+    bottom: uint8;
+}
 interface EntitySearchFilters {
     area?: BoundingBox;
     /**
@@ -2756,7 +3129,7 @@ interface EventData {
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type EventFilter = (LuaSegmentedUnitDiedEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPlatformMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaScriptRaisedDestroySegmentedUnitEventFilter | LuaSegmentedUnitDamagedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPlayerMinedEntityEventFilter | LuaSectorScannedEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaPostSegmentedUnitDiedEventFilter | LuaScriptRaisedReviveEventFilter | LuaPlayerBuiltEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaEntityDamagedEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaSegmentedUnitCreatedEventFilter | LuaScriptRaisedDestroyEventFilter)[];
+type EventFilter = (LuaEntityClonedEventFilter | LuaEntityDamagedEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPlatformMinedEntityEventFilter | LuaPlayerBuiltEntityEventFilter | LuaPlayerMinedEntityEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaPostSegmentedUnitDiedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPreGhostUpgradedEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaPreRobotMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaScriptRaisedDestroyEventFilter | LuaScriptRaisedDestroySegmentedUnitEventFilter | LuaScriptRaisedReviveEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaSectorScannedEventFilter | LuaSegmentedUnitCreatedEventFilter | LuaSegmentedUnitDamagedEventFilter | LuaSegmentedUnitDiedEventFilter | LuaUpgradeCancelledEventFilter)[];
 interface ExplosionDefinition {
     name: LuaEntityPrototype;
     offset: Vector;
@@ -2791,7 +3164,7 @@ interface Fluid {
      */
     amount: double;
     /**
-     * The temperature. When reading from {@link LuaFluidBox | runtime:LuaFluidBox}, this field will always be present. It is not necessary to specify it when writing, however. When not specified, the fluid will be set to the fluid's default temperature as specified in the fluid's prototype.
+     * The temperature. When reading this field will always be present. It is not necessary to specify it when writing, however. When not specified, the fluid will be set to the fluid's default temperature as specified in the fluid's prototype.
      */
     temperature?: float;
 }
@@ -2804,37 +3177,20 @@ interface FluidBoxConnectionRecord {
     other_entity: LuaEntity;
     other_linked_connection_id: uint32;
 }
-interface FluidBoxFilter {
-    /**
-     * Fluid prototype name of the filtered fluid.
-     */
-    name: string;
-    /**
-     * The minimum temperature allowed into the fluidbox.
-     */
-    minimum_temperature: float;
-    /**
-     * The maximum temperature allowed into the fluidbox.
-     */
-    maximum_temperature: float;
+interface FluidBoxNeighbourRecord {
+    entity: LuaEntity;
+    index: FluidStorageIndex;
 }
-interface FluidBoxFilterSpec {
+interface FluidFilter {
+    fluid?: FluidID;
     /**
-     * Fluid prototype name of the filtered fluid.
-     */
-    name: string;
-    /**
-     * The minimum temperature allowed into the fluidbox.
+     * The minimum fluid temperature required.
      */
     minimum_temperature?: float;
     /**
-     * The maximum temperature allowed into the fluidbox.
+     * The maximum fluid temperature allowed.
      */
     maximum_temperature?: float;
-    /**
-     * Force the filter to be set, regardless of current fluid content.
-     */
-    force?: boolean;
 }
 type FluidFlowDirection = 'input-output' | 'input' | 'output';
 /**
@@ -2879,7 +3235,8 @@ interface FluidProduct {
     /**
      * A value in range `[0, 1]`. Fluid is only given with this probability; otherwise no product is produced.
      */
-    probability: double;
+    independent_probability: double;
+    shared_probability: SharedProbabilityDefinition;
     /**
      * How much of this product is ignored by statistics.
      */
@@ -3029,6 +3386,15 @@ interface FluidPrototypeFilterSubgroup extends BaseFluidPrototypeFilter {
      */
     'subgroup': string;
 }
+/**
+ * Valid values are from 1 up to {@link LuaEntity::fluids_count | runtime:LuaEntity::fluids_count}.
+ */
+type FluidStorageIndex = uint32;
+interface FogEffectProperties {
+    color1: Color;
+    color2: Color;
+    tick_factor: float;
+}
 type ForceCondition = /**
  * All forces pass.
  */
@@ -3075,6 +3441,8 @@ ForceID[] | /**
  */
 ForceID;
 interface FurnaceBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -3086,7 +3454,7 @@ interface FurnaceBlueprintControlBehavior {
     /**
      * Defaults to `false`.
      */
-    include_fuel?: boolean;
+    read_fuel?: boolean;
     /**
      * Defaults to `false`.
      */
@@ -3116,6 +3484,10 @@ interface FurnaceBlueprintControlBehavior {
  * Parameters that affect the look and control of the game. Updating any of the member attributes here will immediately take effect in the game engine.
  */
 interface GameViewSettings {
+    /**
+     * Makes tall entities translucent and unselectable.
+     */
+    hide_tall_entities: boolean;
     /**
      * Show the flashing alert icons next to the player's toolbar.
      */
@@ -3149,6 +3521,10 @@ interface GameViewSettings {
      */
     show_minimap: boolean;
     /**
+     * Shows or hides the pins GUI on the right side of the screen.
+     */
+    show_pins_gui: boolean;
+    /**
      * Shows or hides quickbar of shortcuts.
      */
     show_quickbar: boolean;
@@ -3180,6 +3556,56 @@ interface GameViewSettings {
      * When `true` (the default), mousing over an entity will select it. Otherwise, moving the mouse won't update entity selection.
      */
     update_entity_selection: boolean;
+}
+interface GenericOnOffBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
+interface GhostShimmerConfig {
+    tint: Color;
+    distortion: float;
+    blend_mode: int32;
+    visualize_borders: boolean;
+    proportional_distortion: boolean;
+    world_uv_modulo: float;
+    overlay_layers: GhostShimmerOverlayData[];
+    distortion_layers: GhostShimmerDistortionData[];
+}
+interface GhostShimmerDistortionData {
+    shape: int32;
+    intensity: float;
+    x: float;
+    y: float;
+}
+interface GhostShimmerOverlayData {
+    blend_mode: int32;
+    shape: int32;
+    x: float;
+    y: float;
+    tint: Color;
+    cutoff: float;
+}
+interface GhostTintSet {
+    ghost_tint: Color;
+    ghost_delivery_tint: Color;
+    tile_ghost_tint: Color;
+    tile_ghost_delivery_tint: Color;
+    wire_tint: Color;
+}
+interface GlobalTintEffectProperties {
+    global_intensity: float;
+    global_scale: float;
+    zoom_factor: float;
+    zoom_intensity: float;
 }
 interface GuiAnchor {
     gui: defines.relative_gui_type;
@@ -3362,7 +3788,7 @@ type GuiElementType = /**
 'tab' | /**
  * A switch with three possible states. Can have labels attached to either side. Relevant event: {@link on_gui_switch_state_changed | runtime:on_gui_switch_state_changed}
  */
-'switch';
+'switch' | 'inventory';
 /**
  * Screen coordinates of a GUI element in a {@link LuaGui | runtime:LuaGui}. This uses the same format as {@link TilePosition | runtime:TilePosition}, meaning it can be specified either with or without explicit keys.
  */
@@ -3379,9 +3805,17 @@ interface GunShift4Way {
     south: Vector;
     west: Vector;
 }
-interface HeatConnection {
+interface HeatConnectionDefinition {
     position: Vector;
     direction: defines.direction;
+}
+interface HeatPipeBlueprintControlBehavior {
+    output_networks?: CircuitNetworkSelection;
+    /**
+     * Defaults to `false`.
+     */
+    read_temperature?: boolean;
+    temperature_signal: SignalID;
 }
 /**
  * The settings used by a heat-interface type entity.
@@ -3400,7 +3834,7 @@ type HeatSettingMode = 'at-least' | 'at-most' | 'exactly' | 'add' | 'remove';
 /**
  * All base prototype types.
  */
-type IDType = 'custom-input' | 'equipment-grid' | 'entity' | 'particle' | 'item' | 'collision-layer' | 'airborne-pollutant' | 'tile' | 'decorative' | 'recipe-category' | 'item-group' | 'item-subgroup' | 'recipe' | 'fluid' | 'ammo-category' | 'fuel-category' | 'resource-category' | 'technology' | 'noise-function' | 'noise-expression' | 'autoplace-control' | 'equipment' | 'damage-type' | 'virtual-signal' | 'achievement' | 'module-category' | 'equipment-category' | 'mod-setting' | 'trivial-smoke' | 'asteroid-chunk' | 'quality' | 'surface-property' | 'procession-layer-inheritance-group' | 'procession' | 'space-location' | 'space-connection' | 'active-trigger' | 'shortcut' | 'burner-usage' | 'surface' | 'mod-data' | 'custom-event';
+type IDType = 'custom-input' | 'equipment-grid' | 'entity' | 'particle' | 'item' | 'collision-layer' | 'airborne-pollutant' | 'tile' | 'decorative' | 'recipe-category' | 'item-group' | 'item-subgroup' | 'recipe' | 'fluid' | 'ammo-category' | 'fuel-category' | 'resource-category' | 'technology' | 'noise-function' | 'noise-expression' | 'autoplace-control' | 'equipment' | 'damage-type' | 'virtual-signal' | 'achievement' | 'module-category' | 'equipment-category' | 'mod-setting' | 'trivial-smoke' | 'asteroid-chunk' | 'quality' | 'surface-property' | 'space-location' | 'space-connection' | 'procession-layer-inheritance-group' | 'procession' | 'active-trigger' | 'shortcut' | 'burner-usage' | 'surface' | 'mod-data' | 'custom-event';
 interface IconDrawSpecification {
     shift: Vector;
     scale: float;
@@ -3477,7 +3911,7 @@ interface BaseIngredient {
      */
     ignored_by_stats?: uint32 | double;
 }
-type Ingredient = BaseIngredient | IngredientFluid;
+type Ingredient = BaseIngredient | IngredientFluid | IngredientItem;
 /**
  *
  * Applies to variant case `fluid`
@@ -3499,7 +3933,20 @@ interface IngredientFluid extends BaseIngredient {
      */
     'temperature'?: float;
 }
+/**
+ *
+ * Applies to variant case `item`
+ */
+interface IngredientItem extends BaseIngredient {
+    'type': 'item';
+    'quality_change'?: int8;
+    'quality_max'?: QualityID;
+    'quality_min'?: QualityID;
+    'spoil_weight'?: float;
+}
 interface InserterBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -3568,6 +4015,10 @@ type ItemFilter = {
      */
     comparator?: ComparatorString;
 } | string;
+interface ItemHealthColorData {
+    color: Color;
+    threshold: float;
+}
 /**
  * An item prototype may be specified in one of four ways.
  */
@@ -3660,7 +4111,8 @@ interface ItemProduct {
     /**
      * A value in range `[0, 1]`. Item is only given with this probability; otherwise no product is produced.
      */
-    probability: double;
+    independent_probability: double;
+    shared_probability: SharedProbabilityDefinition;
     /**
      * How much of this product is ignored by statistics.
      */
@@ -3674,12 +4126,17 @@ interface ItemProduct {
      */
     extra_count_fraction?: float;
     percent_spoiled?: float;
+    always_fresh?: boolean;
+    quality_min?: QualityID;
+    quality_max?: QualityID;
+    quality_change?: int8;
+    affected_by_quality: boolean;
 }
 interface BaseItemPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'tool' | 'mergeable' | 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'item-with-inventory' | 'selection-tool' | 'item-with-label' | 'has-rocket-launch-products' | 'fuel' | 'place-result' | 'burnt-result' | 'place-as-tile' | 'placed-as-equipment-result' | 'plant-result' | 'spoil-result' | 'name' | 'type' | 'flag' | 'subgroup' | 'fuel-category' | 'stack-size' | 'fuel-value' | 'fuel-acceleration-multiplier' | 'fuel-top-speed-multiplier' | 'fuel-emissions-multiplier';
+    filter: 'tool' | 'mergeable' | 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'item-with-inventory' | 'selection-tool' | 'item-with-label' | 'has-rocket-launch-products' | 'fuel' | 'used-by-labs' | 'place-result' | 'burnt-result' | 'place-as-tile' | 'placed-as-equipment-result' | 'plant-result' | 'spoil-result' | 'name' | 'type' | 'flag' | 'subgroup' | 'fuel-category' | 'stack-size' | 'fuel-value' | 'fuel-acceleration-multiplier' | 'fuel-top-speed-multiplier' | 'fuel-emissions-multiplier';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3935,6 +4392,9 @@ type ItemPrototypeFlag = /**
  * If this item is skipped by the trash-unrequested logic.
  */
 'excluded-from-trash-unrequested' | /**
+ * Whether the rocket passenger feature skips this item when checking lift weight.
+ */
+'excluded-from-character-lift-weight' | /**
  * Always shows the item in the logistic requests and filters GUIs (among others) even when the recipe for that item is locked.
  */
 'always-show' | /**
@@ -3961,7 +4421,7 @@ type ItemPrototypeFlag = /**
 'spawnable' | 'spoil-result' | /**
  * Controls whether the spoil time ignores the spoil time modifier in the {@link DifficultySettings | runtime:DifficultySettings}.
  */
-'ignore-spoil-time-modifier';
+'ignore-spoil-time-modifier' | 'hide-health-bar-in-world' | 'hide-spoilage-bar-in-world';
 /**
  * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  *
@@ -4076,7 +4536,29 @@ string | /**
  * A table of item prototype and quality.
  */
 ItemIDAndQualityIDPair;
+interface LabBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
+    read_contents?: boolean;
+    read_fuel?: boolean;
+    read_research_cost?: boolean;
+    set_research?: boolean;
+    read_technology_level?: boolean;
+    technology_level_signal: SignalID;
+    conditions?: ResearchCondition[];
+}
+interface LabStoredDurability {
+    /**
+     * Quality of the currently consumed item.
+     */
+    quality?: QualityID;
+    /**
+     * Amount of durability stored. Must be >= 0.
+     */
+    durability: double;
+}
 interface LampBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -4100,14 +4582,29 @@ interface LampBlueprintControlBehavior {
     connect_to_logistic_network?: boolean;
     logistic_condition?: CircuitCondition;
 }
+interface LandMineBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_enabled?: boolean;
+    circuit_condition?: CircuitCondition;
+    /**
+     * Defaults to `false`.
+     */
+    connect_to_logistic_network?: boolean;
+    logistic_condition?: CircuitCondition;
+}
 /**
  * The internal name of a game control (key binding).
  */
-type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'alternative-gui-move-up' | 'alternative-gui-move-down' | 'alternative-gui-move-left' | 'alternative-gui-move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'scroll-tooltip-up' | 'scroll-tooltip-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music' | /**
+type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'alternative-gui-move-up' | 'alternative-gui-move-down' | 'alternative-gui-move-left' | 'alternative-gui-move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'hide-tall-entities' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'scroll-tooltip-up' | 'scroll-tooltip-down' | 'visualize-entity-fluid-segments' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'toggle-blueprint-snap-to-grid' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music' | /**
  * Indicates no linked game control.
  */
 '';
 interface LoaderBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -4166,11 +4663,20 @@ game.print({"", {"item-name.iron-plate"}, ": ", 60})
  */
 type LocalisedString = string | number | boolean | LuaObject | nil | LocalisedString[];
 interface LogisticContainerBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
-     * Defaults to `send_contents`.
+     * Defaults to `true`.
      */
-    circuit_mode_of_operation?: defines.control_behavior.logistic_container.exclusive_mode;
-    circuit_condition_enabled: boolean;
+    read_contents?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    set_requests?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    circuit_condition_enabled?: boolean;
     circuit_condition?: CircuitCondition;
 }
 interface LogisticFilter {
@@ -4200,6 +4706,7 @@ interface LogisticGroup {
     members: LuaLogisticSection[];
     filters: LogisticFilter[];
 }
+type LogisticMode = 'active-provider' | 'passive-provider' | 'requester' | 'storage' | 'buffer';
 interface LogisticSection {
     index: uint8;
     filters?: BlueprintLogisticFilter[];
@@ -4243,24 +4750,6 @@ interface LogisticsNetworkSupplyPoints {
     'passive-provider': LuaLogisticPoint[];
     buffer: LuaLogisticPoint[];
     'active-provider': LuaLogisticPoint[];
-}
-interface Loot {
-    /**
-     * Item prototype name of the result.
-     */
-    item: string;
-    /**
-     * Probability that any loot at all will drop, as a number in range [0, 1].
-     */
-    probability: double;
-    /**
-     * Minimum amount of loot to drop.
-     */
-    count_min: double;
-    /**
-     * Maximum amount of loot to drop.
-     */
-    count_max: double;
 }
 interface BaseLuaEntityClonedEventFilter {
     /**
@@ -6341,7 +6830,6 @@ interface MapAndDifficultySettings {
     enemy_evolution: EnemyEvolutionMapSettings;
     enemy_expansion: EnemyExpansionMapSettings;
     unit_group: UnitGroupMapSettings;
-    steering: SteeringMapSettings;
     path_finder: PathFinderMapSettings;
     asteroids: AsteroidMapSettings;
     /**
@@ -6551,7 +7039,6 @@ interface MapSettings {
     max_failed_behavior_count: uint32;
     path_finder: PathFinderMapSettings;
     pollution: PollutionMapSettings;
-    steering: SteeringMapSetting;
     unit_group: UnitGroupMapSettings;
 }
 /**
@@ -6656,6 +7143,8 @@ interface MineableProperties {
     mining_trigger?: TriggerItem[];
 }
 interface MiningDrillBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     circuit_read_resources: boolean;
     circuit_resource_read_mode: defines.control_behavior.mining_drill.resource_read_mode;
     /**
@@ -6745,17 +7234,15 @@ interface ModSettingPrototypeFilterType extends BaseModSettingPrototypeFilter {
 /**
  * Used by {@link TechnologyModifier | runtime:TechnologyModifier}.
  */
-type ModifierType = 'inserter-stack-size-bonus' | 'bulk-inserter-capacity-bonus' | 'laboratory-speed' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' | 'worker-robot-speed' | 'worker-robot-storage' | 'turret-attack' | 'ammo-damage' | 'give-item' | 'gun-speed' | 'unlock-recipe' | 'character-crafting-speed' | 'character-mining-speed' | 'character-running-speed' | 'character-build-distance' | 'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' | 'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' | 'deconstruction-time-to-live' | 'max-failed-attempts-per-tick-per-construction-queue' | 'max-successful-attempts-per-tick-per-construction-queue' | 'character-health-bonus' | 'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'nothing' | 'character-logistic-requests' | 'unlock-space-location' | 'unlock-quality' | 'unlock-space-platforms' | 'unlock-circuit-network' | 'cargo-landing-pad-count' | 'change-recipe-productivity' | 'cliff-deconstruction-enabled' | 'mining-with-fluid' | 'rail-support-on-deep-oil-ocean' | 'rail-planner-allow-elevated-rails' | 'beacon-distribution' | 'create-ghost-on-entity-death' | 'belt-stack-size-bonus' | 'vehicle-logistics';
+type ModifierType = 'inserter-stack-size-bonus' | 'bulk-inserter-capacity-bonus' | 'laboratory-speed' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' | 'worker-robot-speed' | 'worker-robot-storage' | 'turret-attack' | 'ammo-damage' | 'give-item' | 'gun-speed' | 'unlock-recipe' | 'character-crafting-speed' | 'character-mining-speed' | 'character-running-speed' | 'character-build-distance' | 'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' | 'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' | 'deconstruction-time-to-live' | 'max-failed-attempts-per-tick-per-construction-queue' | 'max-successful-attempts-per-tick-per-construction-queue' | 'character-health-bonus' | 'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'nothing' | 'character-logistic-requests' | 'unlock-space-location' | 'unlock-quality' | 'unlock-space-platforms' | 'unlock-circuit-network' | 'cargo-landing-pad-count' | 'max-cargo-bay-unloading-distance' | 'change-recipe-productivity' | 'cliff-deconstruction-enabled' | 'mining-with-fluid' | 'rail-support-on-deep-oil-ocean' | 'rail-planner-allow-elevated-rails' | 'beacon-distribution' | 'create-ghost-on-entity-death' | 'belt-stack-size-bonus' | 'vehicle-logistics' | 'unlock-logistic-network' | 'unlock-travel-to-space-platforms';
 /**
  * The percentual increase of the attribute. A value of `0.6` means a 60% increase.
- *
- * Quality values are multiplied by {@link LuaQualityPrototype::next_probability | runtime:LuaQualityPrototype::next_probability}. For example, if a module's quality effect is 0.2 and the current quality's next_probability is 0.1, then the chance to get the next quality item is 2%.
  */
 type ModuleEffectValue = float;
 /**
  * @example ```
 -- These are the effects of the vanilla Speed Module 3
-{speed = 0.5, consumption = 0.7, quality = -0.25}
+{speed = 0.5, consumption = 0.7, quality = -0.025}
 ```
  */
 interface ModuleEffects {
@@ -6775,6 +7262,22 @@ interface NeighbourConnectable {
     affected_by_direction: boolean;
     neighbour_search_distance: float;
     connections: NeighbourConnectableConnectionDefinition[];
+}
+interface NeighbourConnectableConnection {
+    position: MapPosition;
+    direction: defines.direction;
+    /**
+     * Entity to which this connection is connected to, if any.
+     */
+    target?: LuaEntity;
+    /**
+     * Whether connected entity is real or ghost.
+     */
+    target_real?: boolean;
+    /**
+     * If multiple connections are connected to the same target, only one connection is marked as first and provides neighbour bonuses.
+     */
+    first?: boolean;
 }
 interface NeighbourConnectableConnectionDefinition {
     location: MapLocation;
@@ -6811,6 +7314,28 @@ interface Offer {
 interface OldTileAndPosition {
     old_tile: LuaTilePrototype;
     position: TilePosition;
+}
+interface OrientedCliffPrototypeSet {
+    west_to_east: BoundingBox;
+    north_to_south: BoundingBox;
+    east_to_west: BoundingBox;
+    south_to_north: BoundingBox;
+    west_to_north: BoundingBox;
+    north_to_east: BoundingBox;
+    east_to_south: BoundingBox;
+    south_to_west: BoundingBox;
+    west_to_south: BoundingBox;
+    north_to_west: BoundingBox;
+    east_to_north: BoundingBox;
+    south_to_east: BoundingBox;
+    west_to_none: BoundingBox;
+    none_to_east: BoundingBox;
+    north_to_none: BoundingBox;
+    none_to_south: BoundingBox;
+    east_to_none: BoundingBox;
+    none_to_west: BoundingBox;
+    south_to_none: BoundingBox;
+    none_to_north: BoundingBox;
 }
 /**
  * A particle prototype may be specified in one of two ways.
@@ -7014,7 +7539,7 @@ interface PipeConnection {
     /**
      * The connected fluidbox, if any.
      */
-    target?: LuaFluidBox;
+    target?: LuaEntity;
     /**
      * The index of the target fluidbox, if any.
      */
@@ -7037,10 +7562,19 @@ interface PipeConnectionDefinition {
     flow_direction: FluidFlowDirection;
     direction: defines.direction;
     connection_category: string[];
+    hide_connection_info: boolean;
     /**
-     * Only supplied if `connection_type` is `"linked"`.
+     * Only provided if `connection_type` is `"linked"`.
      */
     linked_connection_id?: uint32;
+    /**
+     * Only provided if different from `direction`.
+     */
+    alt_direction?: defines.direction;
+    /**
+     * Only provided if different from first position inside of `positions`.
+     */
+    alt_position?: MapPosition;
 }
 type PipeConnectionType = /**
  * 2 connections are required to be adjacent tiles next to each other on their respective directions.
@@ -7063,12 +7597,85 @@ interface PlaceAsTileResult {
     invert: boolean;
     tile_condition: LuaTilePrototype[];
 }
+interface PlatformBackdrop {
+    position: Vector;
+    radius: float;
+    rotation_seconds: float;
+    planet_axis: Vector;
+    planet_axis_deviation_amplitude: Vector;
+    planet_axis_deviation_seconds: Vector;
+    parallax_strength: Vector;
+    flight_approach_speed: float;
+    emission_scales_with_shadow: boolean;
+    hero_clouds_are_emissive: boolean;
+    atmosphere_thickness: float;
+    atmosphere_color: Color;
+    specular_color: Color;
+    light_color: Color;
+    light_direction: Vector3D;
+    atmosphere_ray_light_color_1: Color;
+    atmosphere_ray_light_color_2: Color;
+    surface_normal_intensity: float;
+    cloud_normal_intensity: float;
+    specular_intensity: float;
+    cloudiness: float;
+    emission_scalar: float;
+    light_radius: float;
+    light_intensity_contrast: float;
+    surface_vertical_offset: float;
+    cloud_vertical_offset: float;
+    cloud_flow_intensity: float;
+    cloud_flow_seconds: float;
+    cloud_panning_rate: float;
+    hero_clouds: PlatformBackdropHeroCloud[];
+}
+interface PlatformBackdropHeroCloud {
+    sprite_index: uint8;
+    rotation_speed: float;
+    rotate_with_planet: boolean;
+    size: Vector;
+    positions: Vector[];
+    starting_frame_offset: uint16;
+    rotation_deviation: float;
+    position_deviation: Vector;
+    projection_style: 'none' | 'front-only' | 'front-and-back' | 'front-and-back-inverted';
+}
 interface PlatformSchedule {
     /**
      * Index of the currently active record
      */
     current: uint32;
     records: ScheduleRecord[];
+}
+interface PlayMusicSpecification {
+    /**
+     * The name of ambient sound to play.
+     */
+    name: string;
+    /**
+     * Skip the natural pause between music tracks. If there is currently a track playing, this has no effect. Defaults to `false`.
+     */
+    skip_natural_pause?: boolean;
+    /**
+     * Don't transition from this music track on surface change. Defaults to `false`.
+     */
+    dont_transition_from?: boolean;
+    /**
+     * Number of ticks for the music transition delay.
+     */
+    delay_duration?: uint32;
+    /**
+     * Number of ticks for the music transition fade out.
+     */
+    fade_out_duration?: uint32;
+    /**
+     * Number of ticks for the music transition pause.
+     */
+    pause_duration?: uint32;
+    /**
+     * Number of ticks for the music transition fade in.
+     */
+    fade_in_duration?: uint32;
 }
 interface PlaySoundSpecification {
     /**
@@ -7088,6 +7695,11 @@ interface PlaySoundSpecification {
      */
     override_sound_type?: SoundType;
 }
+interface PlayerColorData {
+    name: string;
+    player_color: Color;
+    chat_color: Color;
+}
 /**
  * A player may be specified in one of three ways.
  */
@@ -7101,6 +7713,12 @@ string | /**
  * A reference to {@link LuaPlayer | runtime:LuaPlayer} may be passed directly.
  */
 LuaPlayer;
+interface Pollutant {
+    /**
+     * If nil, pollution is disabled.
+     */
+    pollutant?: LuaAirbornePollutantPrototype;
+}
 /**
  * These values are for the time frame of one second (60 ticks).
  */
@@ -7167,18 +7785,6 @@ interface PostSegmentDiedData {
      */
     orientation?: RealOrientation;
 }
-interface PowerSwitchBlueprintControlBehavior {
-    /**
-     * Defaults to `false`.
-     */
-    circuit_enabled?: boolean;
-    circuit_condition?: CircuitCondition;
-    /**
-     * Defaults to `false`.
-     */
-    connect_to_logistic_network?: boolean;
-    logistic_condition?: CircuitCondition;
-}
 interface PrintSettings {
     /**
      * Color of the message to print. Defaults to white.
@@ -7204,6 +7810,21 @@ interface PrintSettings {
      * If set to false, message will not be part of game state and will disappear from output console after save-load. Defaults to `true`.
      */
     game_state?: boolean;
+}
+/**
+ * The name of a {@link ProcessionPrototype | prototype:ProcessionPrototype}.
+ */
+type ProcessionID = string;
+interface ProcessionSet {
+    arrival: ProcessionID[];
+    departure: ProcessionID[];
+}
+interface ProcessionTimeline {
+    duration: MapTick;
+    special_action_tick: MapTick;
+    draw_switch_tick: MapTick;
+    intermezzo_min_duration: MapTick;
+    intermezzo_max_duration: MapTick;
 }
 /**
  * Returns one of the subtypes, depending on the value of `type`.
@@ -7299,7 +7920,7 @@ type PropertyExpressionNames = Record<string, string>;
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding prototype type, and different types of prototype filters can not be mixed.
  */
-type PrototypeFilter = (ModSettingPrototypeFilter | SpaceLocationPrototypeFilter | DecorativePrototypeFilter | TilePrototypeFilter | AsteroidChunkPrototypeFilter | ItemPrototypeFilter | TechnologyPrototypeFilter | RecipePrototypeFilter | AchievementPrototypeFilter | EquipmentPrototypeFilter | FluidPrototypeFilter | EntityPrototypeFilter)[];
+type PrototypeFilter = (AchievementPrototypeFilter | AsteroidChunkPrototypeFilter | DecorativePrototypeFilter | EquipmentPrototypeFilter | FluidPrototypeFilter | ModSettingPrototypeFilter | RecipePrototypeFilter | SpaceLocationPrototypeFilter | TechnologyPrototypeFilter | TilePrototypeFilter | VirtualSignalPrototypeFilter | EntityPrototypeFilter | ItemPrototypeFilter)[];
 type PrototypeFilterMode = 'none' | 'whitelist' | 'blacklist';
 interface PrototypeHistory {
     /**
@@ -7310,6 +7931,16 @@ interface PrototypeHistory {
      * The mods that changed this prototype in the order they changed it.
      */
     changed: string[];
+}
+interface PrototypeStrafeSettings {
+    max_distance: double;
+    ideal_distance: double;
+    ideal_distance_tolerance: double;
+    ideal_distance_variance: double;
+    ideal_distance_importance: float;
+    ideal_distance_importance_variance: float;
+    clockwise_chance: float;
+    face_target: boolean;
 }
 interface PrototypeWithQuality {
     /**
@@ -7322,12 +7953,14 @@ interface PrototypeWithQuality {
     quality?: string;
 }
 interface ProxyContainerBlueprintControlBehavior {
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `true`.
      */
     read_contents?: boolean;
 }
 interface PumpBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -7366,11 +7999,41 @@ LuaQualityPrototype | /**
  * The prototype name.
  */
 string;
+interface QuickBarSlot {
+    /**
+     * Type of slot content
+     */
+    type: 'record' | 'remote' | 'filter' | 'item';
+    /**
+     * Only present and mandatory when `type` is `record`.
+     */
+    record?: LuaRecord;
+    /**
+     * Only present and mandatory when `type` is `remote` or `filter`. Name must be present (cannot be a quality only item filter).
+     */
+    filter?: ItemFilter;
+    /**
+     * Only present and mandatory  when `type` is `remote`. Entities must be spider-vehicles.
+     */
+    selection?: LuaEntity[];
+    /**
+     * Only present and mandatory when `type` is `item`.
+     */
+    item?: LuaItem;
+}
+interface RadarBlueprintControlBehavior {
+    /**
+     * Defaults to `defines.control_behavior.radar.mode.surface`.
+     */
+    mode?: defines.control_behavior.radar.mode;
+    universe_channel?: SignalID;
+}
 interface RadiusVisualisationSpecification {
     distance: double;
     offset: Vector;
     draw_in_cursor: boolean;
     draw_on_selection: boolean;
+    distance_quality_multiplier?: Record<string, double>;
 }
 interface RailEndGoal {
     /**
@@ -7423,6 +8086,8 @@ interface RailLocation {
     rail_layer: defines.rail_layer;
 }
 interface RailSignalBaseBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     circuit_close_signal: boolean;
     circuit_read_signal: boolean;
     red_output_signal?: SignalID;
@@ -7433,10 +8098,11 @@ interface RailSignalBaseBlueprintControlBehavior {
 }
 type RangeMode = 'center-to-center' | 'bounding-box-to-bounding-box' | 'center-to-bounding-box';
 interface ReactorBlueprintControlBehavior {
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
-    read_burner_fuel?: boolean;
+    read_fuel?: boolean;
     /**
      * Defaults to `false`.
      */
@@ -7489,7 +8155,7 @@ interface BaseRecipePrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'enabled' | 'hidden' | 'hidden-from-flow-stats' | 'hidden-from-player-crafting' | 'allow-as-intermediate' | 'allow-intermediates' | 'allow-decomposition' | 'always-show-made-in' | 'always-show-products' | 'show-amount-in-title' | 'has-ingredients' | 'has-products' | 'has-ingredient-item' | 'has-ingredient-fluid' | 'has-product-item' | 'has-product-fluid' | 'subgroup' | 'category' | 'energy' | 'emissions-multiplier' | 'request-paste-multiplier' | 'overload-multiplier';
+    filter: 'enabled' | 'hidden' | 'hidden-from-flow-stats' | 'hidden-from-player-crafting' | 'allow-as-intermediate' | 'allow-intermediates' | 'allow-decomposition' | 'always-show-made-in' | 'has-ingredients' | 'has-products' | 'has-ingredient-item' | 'has-ingredient-fluid' | 'has-product-item' | 'has-product-fluid' | 'subgroup' | 'category' | 'energy' | 'emissions-multiplier' | 'request-paste-multiplier' | 'overload-multiplier';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -7724,7 +8390,16 @@ LuaSchedule | /**
 LuaTerritory | /**
  * Target type {@link segmented_unit | runtime:defines.target_type.segmented_unit}; `useful_id` {@link LuaSegmentedUnit::unit_number | runtime:LuaSegmentedUnit::unit_number}
  */
-LuaSegmentedUnit;
+LuaSegmentedUnit | /**
+ * Target type {@link electric_network | runtime:defines.target_type.electric_network}
+ */
+LuaElectricNetwork | /**
+ * Target type {@link electric_sub_network | runtime:defines.target_type.electric_sub_network}; `useful_id` {@link LuaElectricSubNetwork::id | runtime:LuaElectricSubNetwork::id}
+ */
+LuaElectricSubNetwork | /**
+ * Target type {@link force | runtime:defines.target_type.force}; `useful_id` {@link LuaForce::index | runtime:LuaForce::index}
+ */
+LuaForce;
 /**
  * A number between 0 and 255 inclusive, represented by one of the following named strings or the string version of the number. For example `"10"` and `"decals"` are both valid. Higher values are rendered above lower values.
  */
@@ -7945,6 +8620,18 @@ string | /**
  * 226
  */
 'cursor';
+type RequestFromLocation = 'planet' | 'platforms' | 'all';
+interface ResearchCondition {
+    condition?: CircuitCondition;
+    /**
+     * The technology to research when the condition passes.
+     */
+    name?: string;
+    /**
+     * The technology level to research (only applicable for infinite technologies) defaults to 0.
+     */
+    count?: uint32;
+}
 interface ResearchIngredient {
     /**
      * Prototype name of the required item.
@@ -8032,6 +8719,7 @@ interface RidingState {
     direction: defines.riding.direction;
 }
 interface RoboportBlueprintControlBehavior {
+    output_networks?: CircuitNetworkSelection;
     read_items_mode?: boolean;
     read_robot_stats?: boolean;
     available_logistic_output_signal?: SignalID;
@@ -8041,6 +8729,7 @@ interface RoboportBlueprintControlBehavior {
     roboport_count_output_signal?: SignalID;
 }
 interface RocketSiloBlueprintControlBehavior {
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `logistic_inventory`.
      */
@@ -8051,6 +8740,22 @@ interface RollingStockDrawData {
     orientation: RealOrientation;
     slope: float;
     height: float;
+}
+interface RuntimeTooltipField {
+    id?: uint32;
+    name: LocalisedString;
+    value: LocalisedString;
+    order?: uint8;
+}
+interface SavedLogisticFilters {
+    trash_not_requested: boolean;
+    sections: SavedLogisticSection[];
+}
+interface SavedLogisticSection {
+    group: string;
+    filters: LogisticFilter[];
+    multiplier: float;
+    active: boolean;
 }
 interface ScheduleInterrupt {
     /**
@@ -8107,11 +8812,20 @@ interface ScriptPosition {
     color: Color;
     id: uint32;
 }
-type ScriptRenderMode = 'game' | 'chart';
+type ScriptRenderMode = /**
+ * Draw the object in the game world.
+ */
+'game' | /**
+ * Draw the object on the map.
+ */
+'chart' | /**
+ * Draw the object only when the player holds a buildable item trying to build an entity.
+ */
+'build-cursor';
 /**
  * When writing it is possible to give LuaEntity or MapPosition directly. However, reading always returns the full ScriptRenderTargetTable.
  *
- * The full ScriptRenderTargetTable allows specifying an offset for entity targets.
+ * The full ScriptRenderTargetTable allows specifying cursor targets and an offset for entity targets.
  *
  * If an entity target of an object (except its `orientation_target`) is destroyed or changes surface, then the object is also destroyed.
  * @example ```
@@ -8121,32 +8835,72 @@ target = some_lua_entity
 target = {1, 4}
 ```
  * @example ```
-target = {entity = another_lua_entity, offset = {-0.5, 1}}
+target = {type = "entity", entity = another_lua_entity, offset = {-0.5, 1}}
 ```
  * @example ```
-target = {position = {2.5, 3}}
+target = {type = "position", position = {2.5, 3}}
+```
+ * @example ```
+target = {type = "cursor", offset = {6, 7}}
+```
+ * @example ```
+target = {type = "build-cursor", offset = {3.2, -4.5}}
 ```
  */
 type ScriptRenderTarget = LuaEntity | MapPosition | ScriptRenderTargetTable;
 /**
+ * If an entity target of an object (except its `orientation_target`) is destroyed or changes surface, then the object is also destroyed.
+ *
+ * Targets of type `"cursor"` draw at the position of the player's cursor.
+ *
+ * Targets of type `"build-cursor"` draw at the position of the player's build cursor, including snapping to the build position. The offset is rotated by the entity's direction and mirrored if the entity to be built is mirrored. Recommended to be combined with {@link ScriptRenderMode::build-cursor | runtime:ScriptRenderMode::build-cursor}.
  * @example ```
-{entity = some_lua_entity, offset = {-0.5, 1}}
+{type = "entity", entity = some_lua_entity, offset = {-0.5, 1}}
 ```
  * @example ```
-{position = {2.5, 3}}
+{entity = some_lua_entity, offset = {-0.5, 1}} -- same target as previous example
+```
+ * @example ```
+{type = "position", position = {2.5, 3}}
+```
+ * @example ```
+{position = {2.5, 3}} -- same target as previous example
+```
+ * @example ```
+{type = "cursor", offset = {6, 7}}
+```
+ * @example ```
+{type = "build-cursor", offset = {3.2, -4.5}}
 ```
  */
 interface ScriptRenderTargetTable {
+    /**
+     * Defaults to `"entity"` if `entity` is given. Defaults to `"position"` if `position` is given.
+     */
+    type?: 'entity' | 'position' | 'cursor' | 'build-cursor';
+    /**
+     * Only used, and mandatory if `type` is `entity`.
+     */
     entity?: LuaEntity;
     /**
-     * Only used if `entity` was given.
+     * Only used if `type` is `entity`, `cursor` or `build-cursor`. Defaults to `{0, 0}`.
      */
     offset?: Vector;
     /**
-     * Only used, and mandatory if `entity` is not given.
+     * Only used, and mandatory if `type` is `position`.
      */
     position?: MapPosition;
 }
+type ScriptSpriteLightMode = /**
+ * Draw as a regular sprite which occludes light under it if this option is enabled in graphics settings.
+ */
+'occluder' | /**
+ * Draw as light.
+ */
+'light' | /**
+ * Draw as both occluder and light at once to make the sprite visible during the day and glow at night.
+ */
+'glow';
 /**
  * Scroll policy of a {@link scroll pane | runtime:LuaGuiElement}.
  */
@@ -8314,13 +9068,13 @@ interface SelectedPrototypeData {
  * A set of flags on a selection tool that define how entities and tiles are selected. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  */
 type SelectionModeFlags = Record</**
- * Selects entities and tiles as if selecting them for a blueprint.
+ * Excludes entities and tiles that can't be selected for blueprinting.
  */
 'blueprint' | /**
- * Selects entities and tiles as if selecting them for deconstruction.
+ * Excludes entities and tiles that can't be selected for deconstruction.
  */
 'deconstruct' | /**
- * Selects entities and tiles as if selecting them for deconstruction cancellation.
+ * Excludes entities that can't be selected for deconstruction cancellation.
  */
 'cancel-deconstruct' | /**
  * Selects items on the ground.
@@ -8356,13 +9110,13 @@ type SelectionModeFlags = Record</**
  * Selects entities from an {@link enemy | runtime:LuaForce::is_enemy} force.
  */
 'enemy' | /**
- * Selects entities as if selecting them for upgrading.
+ * Excludes entities that can't be selected for upgrading.
  */
 'upgrade' | /**
- * Selects entities as if selecting them for upgrade cancellation.
+ * Excludes entities that can't be selected for upgrade cancellation.
  */
 'cancel-upgrade' | /**
- * Selects entities as if selecting them for downgrading.
+ * Excludes entities that can't be selected for downgrading.
  */
 'downgrade' | /**
  * Selects entities that are {@link entities with health | runtime:LuaEntity::is_entity_with_health}.
@@ -8383,14 +9137,14 @@ type SelectionModeFlags = Record</**
  * Selects entities that are `tile-ghost`s.
  */
 'tile-ghost', true>;
-type SelectorCombinatorParameterOperation = 'select' | 'count' | 'random' | 'quality-transfer' | 'rocket-capacity' | 'stack-size' | 'quality-filter';
+type SelectorCombinatorParameterOperation = 'select' | 'count' | 'random' | 'quality-transfer' | 'rocket-capacity' | 'stack-size' | 'quality-filter' | 'time';
 interface BaseSelectorCombinatorParameters {
     /**
      * Defaults to `"select"`.
      */
     operation?: SelectorCombinatorParameterOperation;
 }
-type SelectorCombinatorParameters = BaseSelectorCombinatorParameters | SelectorCombinatorParametersCount | SelectorCombinatorParametersQualityFilter | SelectorCombinatorParametersQualityTransfer | SelectorCombinatorParametersRandom | SelectorCombinatorParametersSelect;
+type SelectorCombinatorParameters = BaseSelectorCombinatorParameters | SelectorCombinatorParametersCount | SelectorCombinatorParametersQualityFilter | SelectorCombinatorParametersQualityTransfer | SelectorCombinatorParametersRandom | SelectorCombinatorParametersSelect | SelectorCombinatorParametersTime;
 /**
  *
  * Applies to variant case `count`
@@ -8473,6 +9227,38 @@ interface SelectorCombinatorParametersSelect extends BaseSelectorCombinatorParam
     'select_max'?: boolean;
 }
 /**
+ *
+ * Applies to variant case `time`
+ */
+interface SelectorCombinatorParametersTime extends BaseSelectorCombinatorParameters {
+    /**
+     * Defaults to `"select"`.
+     */
+    'operation'?: 'time';
+    /**
+     * ;
+     */
+    'day_length_signal'?: SignalID;
+    /**
+     * ;
+     */
+    'day_tick_signal'?: SignalID;
+    /**
+     * ;
+     */
+    'game_tick_signal'?: SignalID;
+}
+interface SharedProbabilityDefinition {
+    /**
+     * Lower end of the range of shared roll values that will allow product to be given. Must be >= `0` and <= `max`.
+     */
+    min: double;
+    /**
+     * Upper end of the range of shared roll values that will allow product to be given. Must be >= `min` and <= `1`.
+     */
+    max: double;
+}
+/**
  * An actual signal transmitted by the network.
  */
 interface Signal {
@@ -8492,7 +9278,7 @@ interface Signal {
  */
 type SignalFilter = {
     /**
-     * The type of the signal filter.
+     * The type of the signal filter. If not provided, and `name` is the name of a {@link SignalIDType | runtime:SignalIDType}-type prototype, its type is used. Defaults to `"item"` otherwise.
      */
     type?: SignalIDType;
     /**
@@ -8533,7 +9319,42 @@ interface SignalIDBase {
     name?: string;
 }
 type SignalIDType = 'item' | 'fluid' | 'virtual' | 'entity' | 'recipe' | 'space-location' | 'asteroid-chunk' | 'quality';
+interface SimpleBoundingBox {
+    left_top: MapPosition;
+    right_bottom: MapPosition;
+}
+interface SimulationDefinition {
+    planet: SpaceLocationID;
+    game_view_settings: GameViewSettings;
+    save: string;
+    init: string;
+    update: string;
+    mods: string[];
+    init_update_count: uint32;
+    length: uint32;
+    generate_map: boolean;
+    checkboard: boolean;
+    hide_health_bars: boolean;
+    mute_technology_finished_sound: boolean;
+    mute_alert_sounds: boolean;
+    volume_modifier?: float;
+    override_volume?: boolean;
+    mute_wind_sounds?: boolean;
+    hide_factoriopedia_gradient?: boolean;
+}
 type SimulationWidgetType = 'signal-id' | 'signal-id-base' | 'signal-or-number' | 'simple-slot' | 'simple-item-slot' | 'recipe-slot' | 'quickbar-slot' | 'logistics-button' | 'logistics-button-space' | 'text-button-localised-substring' | 'text-button' | 'text-button-substring' | 'inventory-limit-slot-button' | 'train-schedule-action-button' | 'choose-button' | 'textfield' | 'item-group-tab' | 'drop-down' | 'check-box' | 'switch' | 'label';
+interface SingleFluidBoxBlueprintControlBehavior {
+    output_networks?: CircuitNetworkSelection;
+    /**
+     * Defaults to `send_contents`.
+     */
+    circuit_mode_of_operation?: defines.control_behavior.single_fluid_box.exclusive_mode;
+    /**
+     * Defaults to `false`.
+     */
+    read_temperature?: boolean;
+    temperature_signal: SignalID;
+}
 interface SlotFilter {
     /**
      * Position of the corresponding filter slot.
@@ -8573,7 +9394,7 @@ interface SmokeSource {
  * The utility and ambient types each contain general use sound prototypes defined by the game itself.
  *
  * - `"utility"` - Uses {@link UtilitySounds | prototype:UtilitySounds}. Example: `"utility/wire_connect_pole"`
- * - `"ambient"` - Uses {@link AmbientSound | prototype:AmbientSound}. Example: `"ambient/resource-deficiency"`
+ * - `"ambient"` - Uses {@link AmbientSound::sound | prototype:AmbientSound::sound}. Variable sounds cannot be used. Example: `"ambient/resource-deficiency"`
  * The following types can be combined with any tile name as long as its prototype defines the corresponding sound.
  *
  * - `"tile-walking"` - Uses {@link TilePrototype::walking_sound | prototype:TilePrototype::walking_sound}. Example: `"tile-walking/concrete"`
@@ -8628,6 +9449,9 @@ LuaSpaceConnectionPrototype | /**
  * The prototype name.
  */
 string;
+interface SpaceDustEffectProperties {
+    animation_speed: float;
+}
 interface SpaceLocationAsteroidSpawnDefinition {
     /**
      * `asteroid-chunk` or `entity`
@@ -8696,10 +9520,16 @@ interface SpaceLocationPrototypeFilterType extends BaseSpaceLocationPrototypeFil
     'type': string | string[];
 }
 interface SpacePlatformHubBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `true`.
      */
     read_contents?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    set_requests?: boolean;
     /**
      * Defaults to `true`.
      */
@@ -8737,6 +9567,11 @@ interface SpawnPointDefinition {
      */
     weight: double;
 }
+interface SpentFluidSpecification {
+    name: string;
+    amount: double;
+    temperature: float;
+}
 interface SpiderEngineSpecification {
     legs: SpiderLegSpecification[];
     walking_group_overlap: float;
@@ -8753,6 +9588,7 @@ interface SpiderLegSpecification {
     walking_group: uint8;
 }
 interface SplitterBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -8771,7 +9607,7 @@ interface SplitterBlueprintControlBehavior {
     set_filter?: boolean;
 }
 type SplitterPriority = 'left' | 'none' | 'right';
-type SpoilPriority = 'fresh_first' | 'none' | 'spoiled_first';
+type SpoilPriority = 'fresh-first' | 'none' | 'spoiled-first';
 interface SpoilToTriggerResult {
     /**
      * The trigger items that are run.
@@ -8811,27 +9647,21 @@ interface SpoilToTriggerResult {
  * - `"utility"` - sprite defined in the utility-sprites object, these are the pictures used by the game internally for the UI.
  */
 type SpritePath = string;
-interface SteeringMapSetting {
+interface StateSteeringSettings {
     /**
-     * Does not include the radius of the unit.
+     * Not including the radius of the unit.
      */
     radius: double;
     separation_factor: double;
     separation_force: double;
+}
+interface SteeringSettings {
+    stay: StateSteeringSettings;
+    move: StateSteeringSettings;
     /**
-     * Used to make steering look better for aesthetic purposes.
+     * Used only for special "to look good" purposes (like in trailer).
      */
     force_unit_fuzzy_goto_behavior: boolean;
-}
-interface SteeringMapSettings {
-    default: SteeringMapSetting;
-    moving: SteeringMapSetting;
-}
-interface StorageTankBlueprintControlBehavior {
-    /**
-     * Defaults to `true`.
-     */
-    read_contents?: boolean;
 }
 interface SurfaceCondition {
     property: string;
@@ -8861,6 +9691,14 @@ LuaSurfacePropertyPrototype | /**
  * The prototype name.
  */
 string;
+interface SurfaceRenderParameters {
+    clouds: CloudsEffectProperties;
+    fog: FogEffectProperties;
+    terrain_tint_effect: GlobalTintEffectProperties;
+    space_dust_background: SpaceDustEffectProperties;
+    space_dust_foreground: SpaceDustEffectProperties;
+    platform_backdrop: PlatformBackdrop;
+}
 /**
  * State of a GUI {@link switch | runtime:LuaGuiElement::switch_state}.
  */
@@ -8918,7 +9756,7 @@ interface BaseTechnologyModifier {
 /**
  * The effect that is applied when a technology is researched.
  */
-type TechnologyModifier = BaseTechnologyModifier | TechnologyModifierAmmoDamage | TechnologyModifierArtilleryRange | TechnologyModifierBeaconDistribution | TechnologyModifierBeltStackSizeBonus | TechnologyModifierBulkInserterCapacityBonus | TechnologyModifierCargoLandingPadCount | TechnologyModifierChangeRecipeProductivity | TechnologyModifierCharacterBuildDistance | TechnologyModifierCharacterCraftingSpeed | TechnologyModifierCharacterHealthBonus | TechnologyModifierCharacterInventorySlotsBonus | TechnologyModifierCharacterItemDropDistance | TechnologyModifierCharacterItemPickupDistance | TechnologyModifierCharacterLogisticRequests | TechnologyModifierCharacterLogisticTrashSlots | TechnologyModifierCharacterLootPickupDistance | TechnologyModifierCharacterMiningSpeed | TechnologyModifierCharacterReachDistance | TechnologyModifierCharacterResourceReachDistance | TechnologyModifierCharacterRunningSpeed | TechnologyModifierCliffDeconstructionEnabled | TechnologyModifierCreateGhostOnEntityDeath | TechnologyModifierDeconstructionTimeToLive | TechnologyModifierFollowerRobotLifetime | TechnologyModifierGiveItem | TechnologyModifierGunSpeed | TechnologyModifierInserterStackSizeBonus | TechnologyModifierLaboratoryProductivity | TechnologyModifierLaboratorySpeed | TechnologyModifierMaxFailedAttemptsPerTickPerConstructionQueue | TechnologyModifierMaxSuccessfulAttemptsPerTickPerConstructionQueue | TechnologyModifierMaximumFollowingRobotsCount | TechnologyModifierMiningDrillProductivityBonus | TechnologyModifierMiningWithFluid | TechnologyModifierNothing | TechnologyModifierRailPlannerAllowElevatedRails | TechnologyModifierRailSupportOnDeepOilOcean | TechnologyModifierTrainBrakingForceBonus | TechnologyModifierTurretAttack | TechnologyModifierUnlockCircuitNetwork | TechnologyModifierUnlockQuality | TechnologyModifierUnlockRecipe | TechnologyModifierUnlockSpaceLocation | TechnologyModifierUnlockSpacePlatforms | TechnologyModifierVehicleLogistics | TechnologyModifierWorkerRobotBattery | TechnologyModifierWorkerRobotSpeed | TechnologyModifierWorkerRobotStorage;
+type TechnologyModifier = BaseTechnologyModifier | TechnologyModifierAmmoDamage | TechnologyModifierArtilleryRange | TechnologyModifierBeaconDistribution | TechnologyModifierBeltStackSizeBonus | TechnologyModifierBulkInserterCapacityBonus | TechnologyModifierCargoLandingPadCount | TechnologyModifierChangeRecipeProductivity | TechnologyModifierCharacterBuildDistance | TechnologyModifierCharacterCraftingSpeed | TechnologyModifierCharacterHealthBonus | TechnologyModifierCharacterInventorySlotsBonus | TechnologyModifierCharacterItemDropDistance | TechnologyModifierCharacterItemPickupDistance | TechnologyModifierCharacterLogisticRequests | TechnologyModifierCharacterLogisticTrashSlots | TechnologyModifierCharacterLootPickupDistance | TechnologyModifierCharacterMiningSpeed | TechnologyModifierCharacterReachDistance | TechnologyModifierCharacterResourceReachDistance | TechnologyModifierCharacterRunningSpeed | TechnologyModifierCliffDeconstructionEnabled | TechnologyModifierCreateGhostOnEntityDeath | TechnologyModifierDeconstructionTimeToLive | TechnologyModifierFollowerRobotLifetime | TechnologyModifierGiveItem | TechnologyModifierGunSpeed | TechnologyModifierInserterStackSizeBonus | TechnologyModifierLaboratoryProductivity | TechnologyModifierLaboratorySpeed | TechnologyModifierMaxCargoBayUnloadingDistance | TechnologyModifierMaxFailedAttemptsPerTickPerConstructionQueue | TechnologyModifierMaxSuccessfulAttemptsPerTickPerConstructionQueue | TechnologyModifierMaximumFollowingRobotsCount | TechnologyModifierMiningDrillProductivityBonus | TechnologyModifierMiningWithFluid | TechnologyModifierNothing | TechnologyModifierRailPlannerAllowElevatedRails | TechnologyModifierRailSupportOnDeepOilOcean | TechnologyModifierTrainBrakingForceBonus | TechnologyModifierTurretAttack | TechnologyModifierUnlockCircuitNetwork | TechnologyModifierUnlockLogisticNetwork | TechnologyModifierUnlockQuality | TechnologyModifierUnlockRecipe | TechnologyModifierUnlockSpaceLocation | TechnologyModifierUnlockSpacePlatforms | TechnologyModifierUnlockTravelToSpacePlatforms | TechnologyModifierVehicleLogistics | TechnologyModifierWorkerRobotBattery | TechnologyModifierWorkerRobotSpeed | TechnologyModifierWorkerRobotStorage;
 /**
  *
  * Applies to variant case `ammo-damage`
@@ -9347,6 +10185,20 @@ interface TechnologyModifierLaboratorySpeed extends BaseTechnologyModifier {
 }
 /**
  *
+ * Applies to variant case `max-cargo-bay-unloading-distance`
+ */
+interface TechnologyModifierMaxCargoBayUnloadingDistance extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'max-cargo-bay-unloading-distance';
+    /**
+     * The amount to increase the current max cargo bay unloading distance by upon researching.
+     */
+    'modifier': double;
+}
+/**
+ *
  * Applies to variant case `max-failed-attempts-per-tick-per-construction-queue`
  */
 interface TechnologyModifierMaxFailedAttemptsPerTickPerConstructionQueue extends BaseTechnologyModifier {
@@ -9505,6 +10357,20 @@ interface TechnologyModifierUnlockCircuitNetwork extends BaseTechnologyModifier 
 }
 /**
  *
+ * Applies to variant case `unlock-logistic-network`
+ */
+interface TechnologyModifierUnlockLogisticNetwork extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'unlock-logistic-network';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
  * Applies to variant case `unlock-quality`
  */
 interface TechnologyModifierUnlockQuality extends BaseTechnologyModifier {
@@ -9554,6 +10420,20 @@ interface TechnologyModifierUnlockSpacePlatforms extends BaseTechnologyModifier 
      * Modifier type. Specifies which of the other fields will be available.
      */
     'type': 'unlock-space-platforms';
+    /**
+     * The state this modifier will be in upon researching.
+     */
+    'modifier': boolean;
+}
+/**
+ *
+ * Applies to variant case `unlock-travel-to-space-platforms`
+ */
+interface TechnologyModifierUnlockTravelToSpacePlatforms extends BaseTechnologyModifier {
+    /**
+     * Modifier type. Specifies which of the other fields will be available.
+     */
+    'type': 'unlock-travel-to-space-platforms';
     /**
      * The state this modifier will be in upon researching.
      */
@@ -9709,6 +10589,7 @@ interface TerritorySettings {
     territory_variation_expression: string;
     minimum_territory_size: uint32;
 }
+type TerritoryVisibilityCondition = 'never' | 'has-unit' | 'always';
 /**
  * The text is aligned so that the target position is at the given side of the text.
  *
@@ -9750,6 +10631,12 @@ interface TileBuildabilityRule {
      * If the entity should be removed upon collision.
      */
     remove_on_collision: boolean;
+}
+interface TileCollisionMask {
+    /**
+     * Every key in the dictionary is the name of one {@link layer | runtime:LuaCollisionLayerPrototype} the object collides with. The value is meaningless and always `true`. An empty table means that no layers are set.
+     */
+    layers: Record<string, true>;
 }
 /**
  * A tile may be specified in one of three ways.
@@ -9966,6 +10853,20 @@ interface TrainPathAllGoalsResult {
      */
     steps_count: uint32;
 }
+interface TrainPathFinderConstants {
+    train_stop_penalty: uint32;
+    stopped_manually_controlled_train_penalty: uint32;
+    stopped_manually_controlled_train_without_passenger_penalty: uint32;
+    signal_reserved_by_circuit_network_penalty: uint32;
+    train_in_station_penalty: uint32;
+    train_in_station_with_no_other_valid_stops_in_schedule: uint32;
+    train_arriving_to_station_penalty: uint32;
+    train_arriving_to_signal_penalty: uint32;
+    train_waiting_at_signal_penalty: uint32;
+    train_waiting_at_signal_tick_multiplier_penalty: float;
+    train_with_no_path_penalty: uint32;
+    train_auto_without_schedule_penalty: uint32;
+}
 type TrainPathFinderGoal = TrainStopGoal | RailEndGoal | LuaRailEnd | /**
  * Only if it points at train-stop that is connected to a rail.
  */
@@ -10028,6 +10929,8 @@ interface TrainSchedule {
     records: ScheduleRecord[];
 }
 interface TrainStopBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `true`.
      */
@@ -10111,7 +11014,21 @@ interface TrainStopGoal {
      */
     priority?: uint8;
 }
+interface TrainVisualizationConstants {
+    not_last_box_color: Color;
+    last_box_color: Color;
+    reverse_box_color: Color;
+    last_reverse_box_color: Color;
+    box_width: float;
+    box_length: float;
+    joint_distance: float;
+    connection_distance: float;
+    final_margin: float;
+    stock_number_scale: float;
+}
 interface TransportBeltBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     circuit_read_hand_contents: boolean;
     circuit_contents_read_mode: defines.control_behavior.transport_belt.content_read_mode;
     /**
@@ -10180,6 +11097,7 @@ interface TriggerDeliveryDelayed extends BaseTriggerDelivery {
 interface TriggerDeliveryProjectile extends BaseTriggerDelivery {
     'type': 'projectile';
     'direction_deviation': float;
+    'inherit_speed': boolean;
     'max_range': double;
     'min_range': double;
     'projectile': string;
@@ -10205,7 +11123,7 @@ interface BaseTriggerEffectItem {
     show_in_tooltip: boolean;
     damage_type_filters?: DamageTypeFilters;
 }
-type TriggerEffectItem = BaseTriggerEffectItem | TriggerEffectItemActivateImpact | TriggerEffectItemCameraEffect | TriggerEffectItemCreateAsteroidChunk | TriggerEffectItemCreateDecorative | TriggerEffectItemCreateEntity | TriggerEffectItemCreateExplosion | TriggerEffectItemCreateFire | TriggerEffectItemCreateParticle | TriggerEffectItemCreateSmoke | TriggerEffectItemCreateSticker | TriggerEffectItemCreateTrivialSmoke | TriggerEffectItemDamage | TriggerEffectItemDamageTile | TriggerEffectItemDestroyCliffs | TriggerEffectItemDestroyDecoratives | TriggerEffectItemInsertItem | TriggerEffectItemInvokeTileTrigger | TriggerEffectItemNestedResult | TriggerEffectItemPlaySound | TriggerEffectItemPushBack | TriggerEffectItemScript | TriggerEffectItemSetTile | TriggerEffectItemShowExplosionOnChart;
+type TriggerEffectItem = BaseTriggerEffectItem | TriggerEffectItemActivateImpact | TriggerEffectItemCameraEffect | TriggerEffectItemCreateAsteroidChunk | TriggerEffectItemCreateDecorative | TriggerEffectItemCreateEntity | TriggerEffectItemCreateExplosion | TriggerEffectItemCreateFire | TriggerEffectItemCreateParticle | TriggerEffectItemCreatePollution | TriggerEffectItemCreateSmoke | TriggerEffectItemCreateSticker | TriggerEffectItemCreateTrivialSmoke | TriggerEffectItemDamage | TriggerEffectItemDamageTile | TriggerEffectItemDestroyCliffs | TriggerEffectItemDestroyDecoratives | TriggerEffectItemInsertItem | TriggerEffectItemInvokeTileTrigger | TriggerEffectItemNestedResult | TriggerEffectItemPlaySound | TriggerEffectItemPushBack | TriggerEffectItemScript | TriggerEffectItemSetTile | TriggerEffectItemShowExplosionOnChart;
 /**
  *
  * Applies to variant case `activate-impact`
@@ -10350,6 +11268,16 @@ interface TriggerEffectItemCreateParticle extends BaseTriggerEffectItem {
     'tail_width'?: float;
     'tile_collision_mask': CollisionMask;
     'tint'?: Color;
+}
+/**
+ *
+ * Applies to variant case `create-pollution`
+ */
+interface TriggerEffectItemCreatePollution extends BaseTriggerEffectItem {
+    'type': 'create-pollution';
+    'amount': double;
+    'entity'?: string;
+    'use_entity_from_trigger': boolean;
 }
 /**
  *
@@ -10530,7 +11458,7 @@ interface TriggerEffectItemShowExplosionOnChart extends BaseTriggerEffectItem {
 /**
  * Used by {@link TriggerEffectItem | runtime:TriggerEffectItem}.
  */
-type TriggerEffectItemType = 'damage' | 'damage-tile' | 'create-entity' | 'create-explosion' | 'create-fire' | 'create-smoke' | 'create-trivial-smoke' | 'create-asteroid-chunk' | 'create-particle' | 'create-sticker' | 'create-decorative' | 'nested-result' | 'play-sound' | 'push-back' | 'destroy-cliffs' | 'show-explosion-on-chart' | 'insert-item' | 'script' | 'set-tile' | 'invoke-tile-trigger' | 'destroy-decoratives' | 'camera-effect' | 'activate-impact';
+type TriggerEffectItemType = 'damage' | 'damage-tile' | 'create-entity' | 'create-explosion' | 'create-fire' | 'create-smoke' | 'create-trivial-smoke' | 'create-asteroid-chunk' | 'create-particle' | 'create-sticker' | 'create-decorative' | 'nested-result' | 'play-sound' | 'push-back' | 'destroy-cliffs' | 'show-explosion-on-chart' | 'insert-item' | 'script' | 'set-tile' | 'invoke-tile-trigger' | 'destroy-decoratives' | 'camera-effect' | 'activate-impact' | 'create-pollution';
 interface TriggerEffectWithCooldown {
     /**
      * The travel distance between triggers that the triggerer must travel between effects.
@@ -10632,6 +11560,8 @@ LuaTrivialSmokePrototype | /**
  */
 string;
 interface TurretBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     /**
      * Defaults to `false`.
      */
@@ -10873,6 +11803,33 @@ interface UndoRedoActionWireRemoved extends BaseUndoRedoAction {
     'a': BlueprintWireEnd;
     'b': BlueprintWireEnd;
 }
+interface UnitAISettings {
+    /**
+     * If enabled, units that repeatedly fail to succeed at commands will be destroyed.
+     */
+    destroy_when_commands_fail: boolean;
+    /**
+     * If enabled, units that have nothing else to do will attempt to return to a spawner.
+     */
+    allow_try_return_to_spawner: boolean;
+    /**
+     * If enabled, units will try to separate themselves from nearby friendly units.
+     */
+    do_separation: boolean;
+    /**
+     * Must be between -8 and 8.
+     */
+    path_resolution_modifier: int8;
+    strafe_settings?: PrototypeStrafeSettings;
+    /**
+     * The amount of slots in a unit group this unit takes up. For example, a unit with `groupingSize` of 2 will count as 2 normal-sized units when filling up a unit group. Must be greater than 0.
+     */
+    size_in_group: float;
+    /**
+     * If enabled, the unit is permitted to join attack groups.
+     */
+    join_attacks: boolean;
+}
 interface UnitGroupMapSettings {
     /**
      * The minimum amount of time in ticks a group will spend gathering before setting off. The actual time is a random time between the minimum and maximum times. Defaults to `3 600` ticks.
@@ -10934,6 +11891,14 @@ interface UnitSpawnDefinition {
      */
     spawn_points: SpawnPointDefinition[];
 }
+interface UnlockableID {
+    type: UnlockableIDType;
+    /**
+     * Name of a prototype as defined by `type`. Only used if the type is one of `"space-location"`, `"recipe"`, `"quality"`, `"item"`, `"entity"`, `"fluid"`, `"asteroid-chunk"`, `"tile"`, `"ammo-category"`
+     */
+    name?: string;
+}
+type UnlockableIDType = 'space-location' | 'recipe' | 'quality' | 'item' | 'entity' | 'fluid' | 'asteroid-chunk' | 'tile' | 'ammo-category' | 'mining-with-fluid' | 'space-platform-unlocked' | 'space-platforms-buildable' | 'space-platform-travel' | 'asteroid-collectors' | 'silo-unlocked' | 'starter-packs-available' | 'thrusters-available' | 'capture-robots-available';
 interface UpgradeMapperDestination {
     type: 'item' | 'entity';
     /**
@@ -10971,6 +11936,350 @@ interface UpgradeMapperSource {
      * When upgrading modules, this defines the specific entities to apply the upgrade to. `nil` applies it to all entities.
      */
     module_filter?: EntityIDFilter;
+}
+/**
+ * Constants used by the game that are not specific to certain prototypes. See {@link utility-constants.lua | https://github.com/wube/factorio-data/blob/master/core/prototypes/utility-constants.lua} for the values used by the base game.
+ *
+ * Note that this is actually implemented as a {@link LuaCustomTable | runtime:LuaCustomTable}, not a regular table.
+ */
+interface UtilityConstants {
+    /**
+     * Chart means map and minimap.
+     */
+    chart: ChartUtilityConstants;
+    /**
+     * The base game uses more entries here that are applied via the `ammo-category.lua` file.
+     */
+    bonus_gui_ordering: BonusUtilityConstants;
+    map_editor: EditorUtilityConstants;
+    entity_button_background_color: Color;
+    building_buildable_too_far_tint: Color;
+    building_buildable_tint: Color;
+    building_not_buildable_tint: Color;
+    building_ignorable_tint: Color;
+    building_no_tint: Color;
+    /**
+     * Tall entities will be tinted with this value when "Hide tall entities" mode is active.
+     */
+    tall_entity_tint: Color;
+    /**
+     * All trivial smoke will be tinted with this value when "Hide tall entities" mode is active.
+     */
+    tall_entity_smoke_tint: Color;
+    underground_belt_max_distance_tint: Color;
+    underground_pipe_max_distance_tint: Color;
+    ghost_shader_tint: GhostTintSet;
+    ghost_shaderless_tint: GhostTintSet;
+    ghost_shimmer_settings: GhostShimmerConfig;
+    probability_product_count_tint: Color;
+    ghost_product_count_tint: Color;
+    zero_count_value_tint: Color;
+    equipment_default_background_color: Color;
+    equipment_default_background_border_color: Color;
+    equipment_default_grabbed_background_color: Color;
+    equipment_disabled_background_tint: Color;
+    equipment_disabled_tint: Color;
+    turret_range_visualization_color: Color;
+    capsule_range_visualization_color: Color;
+    agricultural_range_visualization_color: Color;
+    artillery_range_visualization_color: Color;
+    gui_remark_color: Color;
+    gui_search_match_foreground_color: Color;
+    gui_search_match_background_color: Color;
+    default_player_force_color: Color;
+    default_enemy_force_color: Color;
+    default_other_force_color: Color;
+    deconstruct_mark_tint: Color;
+    rail_planner_count_button_color: Color;
+    count_button_size: int32;
+    logistic_gui_unselected_network_highlight_tint: Color;
+    logistic_gui_selected_network_highlight_tint: Color;
+    chart_search_highlight: Color;
+    selected_chart_search_highlight: Color;
+    zoom_to_world_can_use_nightvision: boolean;
+    zoom_to_world_effect_strength: float;
+    max_logistic_filter_count: LogisticFilterIndex;
+    /**
+     * Will be clamped to the range [1, 100].
+     */
+    select_group_row_count: uint8;
+    /**
+     * Will be clamped to the range [1, 100].
+     */
+    select_slot_row_count: uint8;
+    /**
+     * Will be clamped to the range [2, 100].
+     */
+    logistic_slots_per_row: uint8;
+    /**
+     * Will be clamped to the range [1, 100].
+     */
+    crafting_queue_slots_per_row: uint8;
+    /**
+     * Will be clamped to the range [2, 100].
+     */
+    blueprint_big_slots_per_row: uint8;
+    /**
+     * Will be clamped to the range [2, 100].
+     */
+    blueprint_small_slots_per_row: uint8;
+    /**
+     * Will be clamped to the range [1, 100].
+     */
+    inventory_width: uint8;
+    /**
+     * Will be clamped to the range [1, 100].
+     */
+    module_inventory_width: uint8;
+    /**
+     * Will be clamped to the range [1, 100].
+     */
+    trash_inventory_width: uint8;
+    max_terrain_building_size: uint8;
+    small_area_size: float;
+    medium_area_size: float;
+    large_area_size: float;
+    huge_area_size: float;
+    huge_platform_animation_sound_area: float;
+    small_blueprint_area_size: float;
+    medium_blueprint_area_size: float;
+    large_blueprint_area_size: float;
+    enabled_recipe_slot_tint: Color;
+    disabled_recipe_slot_tint: Color;
+    disabled_recipe_slot_background_tint: Color;
+    forced_enabled_recipe_slot_background_tint: Color;
+    rail_segment_colors: Color[];
+    /**
+     * The table with `name = "default"` must exist and be the first member of the array.
+     */
+    player_colors: PlayerColorData[];
+    server_command_console_chat_color: Color;
+    script_command_console_chat_color: Color;
+    default_alert_icon_scale: float;
+    default_alert_icon_shift_by_type?: Record<string, Vector>;
+    default_alert_icon_scale_by_type?: Record<string, float>;
+    /**
+     * If not set, defaults to `true` when modded and `false` when vanilla.
+     */
+    merge_bonus_gui_production_bonuses?: boolean;
+    daytime_color_lookup: DaytimeColorLookupTable;
+    zoom_to_world_daytime_color_lookup: DaytimeColorLookupTable;
+    frozen_color_lookup: ColorLookupTable;
+    default_platform_surface_render_parameters: SurfaceRenderParameters;
+    drop_item_radius: double;
+    checkerboard_white: Color;
+    checkerboard_black: Color;
+    item_outline_color: Color;
+    item_outline_radius: float;
+    item_outline_inset: float;
+    item_outline_sharpness: float;
+    item_default_random_tint_strength: Color;
+    spawner_evolution_factor_health_modifier: float;
+    /**
+     * There must be one array item with a threshold of `0`.
+     */
+    item_health_bar_colors: ItemHealthColorData[];
+    item_ammo_magazine_left_bar_color: Color;
+    item_tool_durability_bar_color: Color;
+    filter_outline_color: Color;
+    icon_shadow_radius: float;
+    icon_shadow_inset: float;
+    icon_shadow_sharpness: float;
+    icon_shadow_color: Color;
+    clipboard_history_size: uint32;
+    recipe_step_limit: uint32;
+    manual_rail_building_reach_modifier: double;
+    train_temporary_stop_wait_time: uint32;
+    train_time_wait_condition_default: uint32;
+    train_inactivity_wait_condition_default: uint32;
+    /**
+     * The strings are entity types.
+     */
+    default_trigger_target_mask_by_type?: Record<string, TriggerTargetMask>;
+    unit_group_pathfind_resolution: int8;
+    unit_group_max_pursue_distance: double;
+    dynamic_recipe_overload_factor: double;
+    minimum_recipe_overload_multiplier: uint32;
+    maximum_recipe_overload_multiplier: uint32;
+    entity_renderer_search_box_limits: EntityRendererSearchBoxLimits;
+    /**
+     * Can be set to anything from range 0 to 255, but larger values will be clamped to 160. Setting it to larger values can have performance impact (growing geometrically).
+     */
+    light_renderer_search_distance_limit: uint8;
+    far_away_chunk_generation_radius: uint8;
+    tree_leaf_distortion_strength_far: Vector;
+    tree_leaf_distortion_distortion_far: Vector;
+    tree_leaf_distortion_speed_far: Vector;
+    tree_leaf_distortion_strength_near: Vector;
+    tree_leaf_distortion_distortion_near: Vector;
+    tree_leaf_distortion_speed_near: Vector;
+    tree_shadow_roughness: float;
+    tree_shadow_speed: float;
+    missing_preview_sprite_location: string;
+    main_menu_background_image_location: string;
+    /**
+     * The strings represent the names of the simulations.
+     */
+    main_menu_simulations?: Record<string, SimulationDefinition>;
+    main_menu_background_vignette_intensity: float;
+    main_menu_background_vignette_sharpness: float;
+    feedback_screenshot_subfolder_name: string;
+    feedback_screenshot_file_name: string;
+    default_scorch_mark_color: Color;
+    color_filters?: ColorFilterData[];
+    clear_cursor_volume_modifier: float;
+    weapons_in_simulation_volume_modifier: float;
+    explosions_in_simulation_volume_modifier: float;
+    enemies_in_simulation_volume_modifier: float;
+    low_energy_robot_estimate_multiplier: double;
+    asteroid_spawning_offset: SimpleBoundingBox;
+    asteroid_fading_range: float;
+    asteroid_spawning_with_random_orientation_max_speed: double;
+    asteroid_position_offset_to_speed_coefficient: double;
+    asteroid_collector_navmesh_refresh_tick_interval: uint32;
+    asteroid_collector_blockage_update_tile_distance: uint32;
+    asteroid_collector_max_nurbs_control_point_separation: double;
+    asteroid_collector_static_head_swing_strength_scale: float;
+    asteroid_collector_static_head_swing_segment_count: uint32;
+    /**
+     * Variables: `speed, thrust, weight, width, height`
+     */
+    space_platform_acceleration_expression: MathExpression;
+    space_platform_relative_speed_factor: double;
+    space_platform_starfield_movement_vector: Vector;
+    space_platform_max_size: SimpleBoundingBox;
+    /**
+     * Determines how fast space platforms will send items in drop slots to the surface. Each item type has its own cooldown.
+     */
+    space_platform_dump_cooldown: uint32;
+    /**
+     * Delay after manual transfer until space platform sends items in drop slots to the surface. Overrides remaining space_platform_dump_cooldown in this instance.
+     */
+    space_platform_manual_dump_cooldown: uint32;
+    /**
+     * Space platform remembers relative speed range which asteroids use while it moves. When the range is larger than the specified deviation, the platform will start updating cached trajectories of all asteroid chunks over multiple ticks.
+     */
+    space_platform_max_relative_speed_deviation_for_asteroid_chunks_update: float;
+    /**
+     * How many asteroid chunks should be processed per tick, see {@link space_platform_max_relative_speed_deviation_for_asteroid_chunks_update | prototype:UtilityConstants::space_platform_max_relative_speed_deviation_for_asteroid_chunks_update}.
+     */
+    space_platform_asteroid_chunk_trajectory_updates_per_tick: uint32;
+    default_item_weight: Weight;
+    /**
+     * Used for "Rocket capacity" item tooltip and for comparing rocket silo lift weight in GUI to this value.
+     */
+    default_rocket_lift_weight: Weight;
+    factoriopedia_recycling_recipe_categories: RecipeCategoryID[];
+    /**
+     * The default value of {@link FluidBox::max_pipeline_extent | prototype:FluidBox::max_pipeline_extent}.
+     */
+    default_pipeline_extent: double;
+    /**
+     * Must contain arrival and departure with {@link procession_style | prototype:ProcessionPrototype::procession_style} containing 0.
+     */
+    default_platform_procession_set: ProcessionSet;
+    /**
+     * Must contain arrival and departure with {@link procession_style | prototype:ProcessionPrototype::procession_style} containing 0.
+     */
+    default_planet_procession_set: ProcessionSet;
+    /**
+     * Radius of area where cargo pods won't land.
+     */
+    landing_area_clear_zone_radius: float;
+    /**
+     * Max radius where cargo pods will land.
+     */
+    landing_area_max_radius: float;
+    lightning_attractor_collection_range_color: Color;
+    lightning_attractor_protection_range_color: Color;
+    landing_squash_immunity: MapTick;
+    /**
+     * Silently clamped to be between 1 tick and 5 minutes (`5 * 60 * 60` ticks).
+     */
+    ejected_item_lifetime: MapTick;
+    /**
+     * Silently clamped to be between 0 and 1/60.
+     */
+    ejected_item_speed: double;
+    /**
+     * Silently clamped to be between 0 and 0.99.
+     */
+    ejected_item_direction_variation: double;
+    /**
+     * Silently clamped to be between 0 and 1.
+     */
+    ejected_item_friction: double;
+    train_visualization: TrainVisualizationConstants;
+    /**
+     * The strings can be entity types or custom strings.
+     */
+    default_collision_masks: Record<string, CollisionMask>;
+    show_chunk_components_collision_mask: CollisionMask;
+    building_collision_mask: CollisionMask;
+    water_collision_mask: TileCollisionMask;
+    ghost_layer: CollisionLayerID;
+    train_pushed_by_player_max_speed: double;
+    train_pushed_by_player_max_acceleration: double;
+    train_pushed_by_player_ignores_friction: boolean;
+    /**
+     * Must be >= 1.
+     */
+    tooltip_monitor_edge_border: int32;
+    /**
+     * Must be >= 1.
+     */
+    flying_text_ttl: int32;
+    train_path_finding: TrainPathFinderConstants;
+    /**
+     * Will be clamped to a positive number, starting at 0.
+     */
+    freezing_temperature: double;
+    train_on_elevated_rail_shadow_shift_multiplier: Vector;
+    /**
+     * Must be >= 1.
+     */
+    max_belt_stack_size: uint8;
+    /**
+     * Must be >= 1.
+     */
+    inserter_hand_stack_items_per_sprite: ItemCountType;
+    /**
+     * Must be >= 1.
+     */
+    inserter_hand_stack_max_sprites: ItemCountType;
+    remote_view_LPF_min_cutoff_frequency: float;
+    remote_view_LPF_max_cutoff_frequency: float;
+    space_LPF_min_cutoff_frequency: float;
+    space_LPF_max_cutoff_frequency: float;
+    /**
+     * Silently clamped to be between 0 and 1.
+     */
+    walking_sound_count_reduction_rate: float;
+    /**
+     * Silently clamped to be between 0 and 1.
+     */
+    moving_sound_count_reduction_rate: float;
+    environment_sounds_transition_fade_in_ticks: uint32;
+    sound_fade_ticks: uint32;
+    starmap_orbit_default_color: Color;
+    starmap_orbit_hovered_color: Color;
+    starmap_orbit_clicked_color: Color;
+    starmap_orbit_disabled_color: Color;
+    /**
+     * The number of ticks to show a segmented unit's health bar after fully regenerating.
+     */
+    time_to_show_full_health_bar: MapTick;
+    /**
+     * Layer within `ground-natural` {@link tile render layer | prototype:TileRenderLayer} group, before which terrain lightmap alpha channel is copied into water mask. Decals, which need to be masked by water should have their {@link DecorativePrototype::tile_layer | prototype:DecorativePrototype::tile_layer} set to only slightly larger value than `capture_water_mask_at_layer`, to avoid risk of undefined behavior caused by rendering tiles into layers between `capture_water_mask_at_layer` and decal's `tile_layer`.
+     */
+    capture_water_mask_at_layer: uint8;
+    logistic_robots_use_busy_robots_queue: boolean;
+    construction_robots_use_busy_robots_queue: boolean;
+    quality_selector_dropdown_threshold: uint8;
+    /**
+     * Cap for how many steps of quality the output of something (miner/crafter) may be higher than the input (resource/ingredients). Must be >= 1.
+     */
+    maximum_quality_jump: uint8;
 }
 /**
  * Defines the mode of operation for a {@link ValvePrototype | prototype:ValvePrototype}.
@@ -11032,6 +12341,20 @@ LuaVirtualSignalPrototype | /**
  * The prototype name.
  */
 string;
+interface VirtualSignalPrototypeFilter {
+    /**
+     * The condition to filter on.
+     */
+    filter: 'special-signal';
+    /**
+     * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
+     */
+    mode?: 'or' | 'and';
+    /**
+     * Inverts the condition. Default is `false`.
+     */
+    invert?: boolean;
+}
 interface WaitCondition {
     type: WaitConditionType;
     /**
@@ -11064,6 +12387,8 @@ interface WaitCondition {
  */
 type WaitConditionType = 'time' | 'full' | 'empty' | 'not_empty' | 'item_count' | 'circuit' | 'inactivity' | 'robots_inactive' | 'fluid_count' | 'passenger_present' | 'passenger_not_present' | 'fuel_item_count_all' | 'fuel_item_count_any' | 'fuel_full' | 'destination_full_or_no_path' | 'request_satisfied' | 'request_not_satisfied' | 'all_requests_satisfied' | 'any_request_not_satisfied' | 'any_request_zero' | 'any_planet_import_zero' | 'specific_destination_full' | 'specific_destination_not_full' | 'at_station' | 'not_at_station' | 'damage_taken';
 interface WallBlueprintControlBehavior {
+    input_networks?: CircuitNetworkSelection;
+    output_networks?: CircuitNetworkSelection;
     circuit_open_gate: boolean;
     circuit_read_sensor: boolean;
     output_signal?: SignalID;
@@ -11197,7 +12522,7 @@ type nil = null;
 /**
  * Tables are enclosed in curly brackets, like this `{}`.
  *
- * Throughout the API docs, the terms "array" and "dictionary" are used. These are fundamentally just {@link Lua tables | http://www.lua.org/pil/2.5.html}, but have a limitation on which kind of table keys can be used. An array is a table that uses continuous integer keys starting at `1`, while a dictionary can use numeric or string keys in any order or combination.
+ * Throughout the API docs, the terms "array" and "dictionary" are used. These are fundamentally just {@link Lua tables | https://www.lua.org/pil/2.5.html}, but have a limitation on which kind of table keys can be used. An array is a table that uses continuous integer keys starting at `1`, while a dictionary can use numeric or string keys in any order or combination.
  */
 type table = Table;
 /**

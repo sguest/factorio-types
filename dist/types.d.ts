@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.77
+// Factorio version 2.1.7
 // API version 6
 
 declare namespace prototype {
@@ -61,15 +61,35 @@ interface ActivatePasteTipTrigger extends CountBasedTipTrigger {
 ```
  */
 type ActiveTriggerID = string;
+/**
+ * Root style: `"activity_bar"`
+ */
 interface ActivityBarStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     bar?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     bar_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     bar_size_ratio?: float;
     /**
      * The thickness of the bar, not the horizontal size.
+     *
+     * Required on the root style.
      */
     bar_width?: uint32;
+    /**
+     * Required on the root style.
+     */
     color?: Color;
+    /**
+     * Required on the root style.
+     */
     speed?: float;
     type: 'activity_bar_style';
 }
@@ -213,7 +233,10 @@ type AmbientSoundType = /**
 'hero-track' | /**
  * This track is played interleaved (alternating) with `"main-track"` tracks.
  */
-'interlude';
+'interlude' | /**
+ * This track is only played by script.
+ */
+'script-track';
 /**
  * The name of an {@link AmmoCategory | prototype:AmmoCategory}.
  * @example ```
@@ -267,6 +290,10 @@ interface AmmoType {
      * Energy consumption of a single shot, if applicable.
      */
     energy_consumption?: Energy;
+    /**
+     * If true, attacks will always be clamped to max range even if the target is within range. Used for shotguns.
+     */
+    force_clamp_to_max_range?: boolean;
     /**
      * Affects the `range` value of the shooting gun prototype's {@link BaseAttackParameters | prototype:BaseAttackParameters} to give a modified maximum range. The `min_range` value of the gun is unaffected.
      *
@@ -442,6 +469,10 @@ layers =
  */
 type AnimationFrameSequence = uint16[];
 interface AnimationParameters extends SpriteParameters {
+    /**
+     * If `true`, the animation frame count may be cut to half depending on detected hardware and other graphics settings.
+     */
+    allow_reducing_frames?: boolean;
     /**
      * Modifier of the animation playing speed, the default of `1` means one animation frame per tick (60 fps). The speed of playing can often vary depending on the usage (output of steam engine for example). Has to be greater than `0`.
      */
@@ -826,6 +857,9 @@ DontUseEntityInEnergyProductionAchievementPrototype | /**
  * `'editor-controller'`
  */
 EditorControllerPrototype | /**
+ * `'electric-energy-interface-equipment'`
+ */
+ElectricEnergyInterfaceEquipmentPrototype | /**
  * `'electric-energy-interface'`
  */
 ElectricEnergyInterfacePrototype | /**
@@ -1379,6 +1413,7 @@ type ApplyTileTint = 'primary' | 'secondary';
 interface AreaTriggerItem extends TriggerItem {
     collision_mode?: 'distance-from-collision-box' | 'distance-from-center';
     radius: double;
+    require_origin_is_valid?: boolean;
     show_in_tooltip?: boolean;
     target_enemies?: boolean;
     target_entities?: boolean;
@@ -1629,7 +1664,7 @@ interface BaseAttackParameters {
      */
     fire_penalty?: float;
     /**
-     * A higher penalty will discourage turrets from targeting units with higher health. A negative penalty will encourage turrets to target units with higher health.
+     * A higher penalty will discourage turrets from targeting units with higher health ratio. A negative penalty will encourage turrets to target units with higher health ratio.
      */
     health_penalty?: float;
     /**
@@ -1667,6 +1702,10 @@ interface BaseAttackParameters {
      * Played once at the start of the attack if these are {@link ProjectileAttackParameters | prototype:ProjectileAttackParameters}.
      */
     sound?: LayeredSound;
+    /**
+     * A higher penalty will discourage turrets from targeting asteroids that are threatening. A negative penalty will encourage turrets to target threatening asteroids.
+     */
+    threatening_asteroid_penalty?: float;
     /**
      * Projectile will be creation position and orientation will be collinear with shooter and target (unless offset projectile center is specified). Used for railgun turrets to avoid unexpected friendly fire incidents.
      */
@@ -1721,6 +1760,16 @@ interface BaseModifier {
      * Can't be an empty array.
      */
     icons?: IconData[];
+}
+interface BasePumpWagonConnectionAnimations {
+    input?: BasePumpWagonConnectionAnimations4Way;
+    output?: BasePumpWagonConnectionAnimations4Way;
+}
+interface BasePumpWagonConnectionAnimations4Way {
+    east: Animation;
+    north: Animation;
+    south: Animation;
+    west: Animation;
 }
 /**
  * The abstract base of all {@link StyleSpecifications | prototype:StyleSpecification}.
@@ -2034,19 +2083,19 @@ interface BoilerPictures {
     patch?: Sprite;
     structure: Animation;
 }
-interface BonusGuiOrdering {
-    artillery_range: Order;
-    beacon_distribution: Order;
-    bulk_inserter: Order;
-    character: Order;
-    follower_robots: Order;
-    inserter: Order;
-    mining_productivity: Order;
-    research_speed: Order;
-    stack_inserter: Order;
-    train_braking_force: Order;
-    turret_attack: Order;
-    worker_robots: Order;
+interface BonusUtilityConstants {
+    artillery_range: string;
+    beacon_distribution: string;
+    bulk_inserter: string;
+    character: string;
+    follower_robots: string;
+    inserter: string;
+    mining_productivity: string;
+    research_speed: string;
+    stack_inserter: string;
+    train_braking_force: string;
+    turret_attack: string;
+    worker_robots: string;
 }
 interface BoolModifier extends BaseModifier {
     /**
@@ -2156,6 +2205,10 @@ interface BulkInserterCapacityBonusModifier extends SimpleModifier {
     use_icon_overlay_constant?: boolean;
 }
 interface BurnerEnergySource extends BaseEnergySource {
+    /**
+     * If this burner attempts to auto-refill fuel from the owner character, car, spider vehicle, cargo wagon, or artillery wagon.
+     */
+    auto_refuel?: boolean;
     burner_usage?: BurnerUsageID;
     burnt_inventory_size?: ItemStackIndex;
     /**
@@ -2183,25 +2236,57 @@ interface BurnerEnergySource extends BaseEnergySource {
 ```
  */
 type BurnerUsageID = string;
+/**
+ * Root style: `"button"`
+ */
 interface ButtonStyleSpecificationBase extends StyleWithClickableGraphicalSetSpecification {
+    /**
+     * Required on the root style.
+     */
     clicked_font_color?: Color;
     clicked_vertical_offset?: uint32;
+    /**
+     * Required on the root style.
+     */
     default_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     disabled_font_color?: Color;
     draw_grayscale_picture?: boolean;
     draw_shadow_under_picture?: boolean;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     font?: string;
+    /**
+     * Required on the root style.
+     */
     hovered_font_color?: Color;
     icon_horizontal_align?: HorizontalAlign;
     invert_colors_of_picture_when_disabled?: boolean;
     invert_colors_of_picture_when_hovered_or_toggled?: boolean;
+    /**
+     * Required on the root style.
+     */
     pie_progress_color?: Color;
+    /**
+     * Required on the root style.
+     */
     selected_clicked_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     selected_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     selected_hovered_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     strikethrough_color?: Color;
     type: string;
 }
@@ -2215,6 +2300,9 @@ interface CameraEffectTriggerEffectItem extends TriggerEffectItem {
     strength?: float;
     type: 'camera-effect';
 }
+/**
+ * Root style: `"camera"`
+ */
 interface CameraStyleSpecification extends EmptyWidgetStyleSpecificationBase {
     type: 'camera_style';
 }
@@ -2245,33 +2333,32 @@ interface CargoBayConnectableGraphicsSet {
     animation?: Animation;
     animation_render_layer?: RenderLayer;
     connections?: CargoBayConnections;
-    picture?: LayeredSprite;
+    picture?: LayeredSprite4Way;
     /**
      * Only loaded if this graphics set is used in a property called `graphics_set`, refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
      */
     water_reflection?: WaterReflectionDefinition;
 }
-/**
- * Walls should have an even number of variations because they are interleaved.
- */
 interface CargoBayConnections {
-    bottom_left_inner_corner?: LayeredSpriteVariations;
-    bottom_left_outer_corner?: LayeredSpriteVariations;
-    bottom_right_inner_corner?: LayeredSpriteVariations;
-    bottom_right_outer_corner?: LayeredSpriteVariations;
-    bottom_wall?: LayeredSpriteVariations;
     bridge_crossing?: LayeredSpriteVariations;
     bridge_horizontal_narrow?: LayeredSpriteVariations;
     bridge_horizontal_wide?: LayeredSpriteVariations;
     bridge_vertical_narrow?: LayeredSpriteVariations;
     bridge_vertical_wide?: LayeredSpriteVariations;
-    left_wall?: LayeredSpriteVariations;
-    right_wall?: LayeredSpriteVariations;
-    top_left_inner_corner?: LayeredSpriteVariations;
-    top_left_outer_corner?: LayeredSpriteVariations;
-    top_right_inner_corner?: LayeredSpriteVariations;
-    top_right_outer_corner?: LayeredSpriteVariations;
-    top_wall?: LayeredSpriteVariations;
+    /**
+     * An array of LayeredSpriteVariations groups. One tile can have a maximum of two groups. A group is selected based on tile position and a random variation is picked from that group. This allows having interleaved variations and makes sure the same variation isn't picked for surrounding tiles.
+     *
+     * Supports at most 255 items.
+     */
+    tileset?: LayeredSpriteVariations[][];
+    /**
+     * A mapping from a bitmask index to a tileset index. A bitmask index mapped to 0 won't be drawn.
+     *
+     * Tile bitmask uses 8 bits. Bits are assigned from the top-left corner and going clockwise (top-left tile has bit 0 and right tile has bit 7).
+     *
+     * Mandatory if `tileset` is defined.
+     */
+    tileset_mapping?: LuaTable<uint8, uint8 | uint8[]>;
 }
 interface CargoHatchDefinition {
     busy_timeout_ticks?: uint32;
@@ -2525,7 +2612,13 @@ interface ChartUtilityConstants {
     chart_train_stop_text_color: Color;
     circuit_network_member_color: Color;
     copper_wire_color: Color;
+    /**
+     * Defaults to `1.0`.
+     */
     custom_tag_max_scale?: float;
+    /**
+     * Defaults to `1.0`.
+     */
     custom_tag_scale?: float;
     custom_tag_selected_overlay_tint?: Color;
     /**
@@ -2570,16 +2663,39 @@ interface ChartUtilityConstants {
     yellow_signal_color: Color;
     zoom_threshold_to_draw_spider_path: double;
 }
+/**
+ * Root style: `"checkbox"`
+ */
 interface CheckBoxStyleSpecification extends StyleWithClickableGraphicalSetSpecification {
+    /**
+     * Required on the root style.
+     */
     checkmark?: Sprite;
+    /**
+     * Required on the root style.
+     */
     disabled_checkmark?: Sprite;
+    /**
+     * Required on the root style.
+     */
     disabled_font_color?: Color;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     font?: string;
+    /**
+     * Required on the root style.
+     */
     font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     intermediate_mark?: Sprite;
+    /**
+     * Required on the root style.
+     */
     text_padding?: uint32;
     type: 'checkbox_style';
 }
@@ -3330,14 +3446,19 @@ interface CreateEntityTriggerEffectItemBase extends TriggerEffectItem {
      */
     only_when_visible?: boolean;
     /**
+     * If `true`, colliding ghosts and corpses will not be removed by the creation of some entity types.
+     */
+    preserve_ghosts_and_corpses?: boolean;
+    /**
      * The result entity will be protected from automated attacks of enemies.
      */
     protected?: boolean;
+    show_details_in_tooltip?: boolean;
     show_in_tooltip?: boolean;
     /**
      * Entity creation will not occur if any tile matches the collision condition. Defaults to no collisions.
      */
-    tile_collision_mask?: CollisionMaskConnector;
+    tile_collision_mask?: TileCollisionMaskConnector;
     /**
      * If `true`, the {@link on_trigger_created_entity | runtime:on_trigger_created_entity} event will be raised.
      */
@@ -3397,6 +3518,21 @@ interface CreateParticleTriggerEffectItemBase extends TriggerEffectItem {
      */
     tint?: Color;
     type: string;
+}
+interface CreatePollutionTriggerEffectItem extends TriggerEffectItem {
+    /**
+     * This may be negative which will reduce pollution when run.
+     */
+    amount: double;
+    /**
+     * If not defined, and use_entity_from_trigger is false, the pollution does not show in statistics.
+     */
+    entity?: EntityID;
+    type: 'create-pollution';
+    /**
+     * If not set, and entity is not set, the pollution does not show in statistics.
+     */
+    use_entity_from_trigger?: boolean;
 }
 interface CreateSmokeTriggerEffectItem extends CreateEntityTriggerEffectItemBase {
     initial_height?: float;
@@ -3593,7 +3729,7 @@ type DamageTypeID = string;
 /**
  * The data table is read by the game to load all prototypes.
  *
- * At the end of the prototype stage, the data table is loaded by the game engine and the format of the prototypes is validated. Any extra properties are ignored. See {@link Data Lifecycle | runtime:data-lifecycle} for more information.
+ * At the end of the prototype stage, the data table is loaded by the game engine and the format of the prototypes is validated. Any extra properties are ignored. See {@link Data Lifecycle | auxiliary:data-lifecycle} for more information.
  *
  * The data table and its properties are defined in Lua, so their source code can be viewed in {@link dataloader.lua | https://github.com/wube/factorio-data/blob/master/core/lualib/dataloader.lua}.
  */
@@ -3753,14 +3889,35 @@ interface DirectionShift {
  * One of the 16 directions, specified with a string.
  */
 type DirectionString = 'north' | 'north_north_east' | 'north_east' | 'east_north_east' | 'east' | 'east_south_east' | 'south_east' | 'south_south_east' | 'south' | 'south_south_west' | 'south_west' | 'west_south_west' | 'west' | 'west_north_west' | 'north_west' | 'north_north_west';
+/**
+ * Root style: `"double_slider"`
+ */
 interface DoubleSliderStyleSpecification extends SliderStyleSpecificationBase {
     type: 'double_slider_style';
 }
+/**
+ * Root style: `"dropdown"`
+ */
 interface DropDownStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     button_style?: ButtonStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     icon?: Sprite;
+    /**
+     * Required on the root style.
+     */
     list_box_style?: ListBoxStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     opened_sound?: Sound;
+    /**
+     * Required on the root style.
+     */
     selector_and_title_spacing?: int16;
     type: 'dropdown_style';
 }
@@ -3768,11 +3925,29 @@ interface DropItemTipTrigger extends CountBasedTipTrigger {
     drop_into_entity?: boolean;
     type: 'drop-item';
 }
+interface EditorUtilityConstants {
+    cliff_editor_remove_cliffs_color: Color;
+    clone_editor_brush_cursor_preview_tint: Color;
+    clone_editor_brush_destination_color: Color;
+    clone_editor_brush_source_color: Color;
+    clone_editor_brush_world_preview_tint: Color;
+    clone_editor_copy_destination_allowed_color: Color;
+    clone_editor_copy_destination_not_allowed_color: Color;
+    clone_editor_copy_source_color: Color;
+    decorative_editor_selection_preview_radius: uint8;
+    decorative_editor_selection_preview_tint: Color;
+    force_editor_select_area_color: Color;
+    script_editor_drag_area_color: Color;
+    script_editor_select_area_color: Color;
+    tile_editor_area_selection_color: Color;
+    tile_editor_selection_preview_radius: uint8;
+    tile_editor_selection_preview_tint: Color;
+}
 /**
- * When applied to {@link modules | prototype:ModulePrototype}, the resulting effect is a sum of all module effects, multiplied through calculations: `(1 + sum module effects)`, or `(0 + sum)` for productivity. Quality calculations follow their own separate logic.
+ * When applied to {@link modules | prototype:ModulePrototype}, the resulting effect is a sum of all module effects, multiplied through calculations: `(1 + sum module effects)`, or `(0 + sum)` for productivity.
  * @example ```
 -- These are the effects of the vanilla Speed Module 3
-{speed = 0.5, consumption = 0.7, quality = -0.25}
+{speed = 0.5, consumption = 0.7, quality = -0.025}
 ```
  */
 interface Effect {
@@ -3789,7 +3964,7 @@ interface Effect {
      */
     productivity?: EffectValue;
     /**
-     * Adds a bonus chance to increase a product's quality. The minimum possible sum is 0%. The quality effect is is multiplied by {@link QualityPrototype::next_probability | prototype:QualityPrototype::next_probability}. For example, if a module's quality effect is 0.2 and the current quality's next_probability is 0.1, then the chance to get the next quality item is 2%.
+     * Adds a bonus chance to increase a product's quality. The minimum possible sum is 0%.
      */
     quality?: EffectValue;
     /**
@@ -3799,6 +3974,36 @@ interface Effect {
 }
 interface EffectReceiver {
     base_effect?: Effect;
+    /**
+     * Limits total consumption effect value.
+     *
+     * Low limit cannot be less than `-0.9999`. High limit cannot be greater than `1000`.
+     */
+    consumption_limits?: EffectValueRange;
+    /**
+     * Limits total pollution effect value.
+     *
+     * Low limit cannot be less than `-0.9999`. High limit cannot be greater than `1000`.
+     */
+    pollution_limits?: EffectValueRange;
+    /**
+     * Limits total productivity effect value. This limit is applied before any productivity gained from research is added. Afterwards, productivity is clamped again to be non-negative. For crafting machines, it is also clamped to {@link RecipePrototype::maximum_productivity | prototype:RecipePrototype::maximum_productivity}.
+     *
+     * Low limit cannot be less than `-0.9999`. High limit cannot be greater than `1000`.
+     */
+    productivity_limits?: EffectValueRange;
+    /**
+     * Limits total quality effect value.
+     *
+     * Low limit cannot be less than `-1000`. High limit cannot be greater than `1000`.
+     */
+    quality_limits?: EffectValueRange;
+    /**
+     * Limits total speed effect value.
+     *
+     * Low limit cannot be less than `-0.9999`. High limit cannot be greater than `1000`.
+     */
+    speed_limits?: EffectValueRange;
     uses_beacon_effects?: boolean;
     uses_module_effects?: boolean;
     /**
@@ -3864,17 +4069,19 @@ type EffectTypeLimitation = (/**
  */
 'quality')[];
 /**
- * Precision is ignored beyond two decimals - `0.567` results in `0.56` and means 56% etc. Values can range from `-327.68` to `327.67`. Numbers outside of this range will wrap around.
- *
- * Quality values are multiplied by {@link QualityPrototype::next_probability | prototype:QualityPrototype::next_probability}. For example, if a module's quality effect is 0.2 and the current quality's next_probability is 0.1, then the chance to get the next quality item is 2%.
+ * Precision is ignored beyond four decimals - `0.56789` results in `0.5678` and means 56.78% etc. Values can range from `-1000.0000` to `1000.0000`.
  * @example ```
 {speed = 0.07}  -- 7% bonus
 ```
  * @example ```
-{quality = 0.25}  -- multiplied by quality normal next_probability = 0.1 -> 2.5% bonus
+{quality = 0.025}  -- 2.5% bonus
 ```
  */
 type EffectValue = float;
+interface EffectValueRange {
+    high?: EffectValue;
+    low?: EffectValue;
+}
 type EffectVariation = /**
  * Valid only when {@link expansion_shaders | prototype:FeatureFlags::expansion_shaders} feature flag is enabled.
  */
@@ -3973,7 +4180,10 @@ type ElectricUsagePriority = /**
 'solar' | /**
  * Can only be used by {@link LampPrototype | prototype:LampPrototype}, will be ignored otherwise.
  */
-'lamp';
+'lamp' | /**
+ * Can only be used by {@link ElectricEnergyInterfacePrototype | prototype:ElectricEnergyInterfacePrototype}, will be ignored otherwise.
+ */
+'dynamic';
 /**
  * If this is loaded as a single ElementImageSetLayer, it gets used as `base`.
  */
@@ -4139,7 +4349,13 @@ type ElementImageSetLayer = {
     top_width?: SpriteSizeType;
     type?: 'none' | 'composition';
 } | Sprite;
+/**
+ * Root style: `"empty_widget"`
+ */
 interface EmptyWidgetStyleSpecificationBase extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     graphical_set?: ElementImageSet;
     type: string;
 }
@@ -4162,6 +4378,10 @@ interface EnemyExpansionSettings {
     building_coefficient: double;
     enabled: boolean;
     enemy_building_influence_radius: uint32;
+    /**
+     * Exponential factor used to determine the size of the settler group based on the evolution factor. The size is calculated as: `size = random(min_size, max_size) * (evolution_group_size_factor ^ evolution_factor)`
+     */
+    evolution_group_size_factor: double;
     friendly_base_influence_radius: uint32;
     /**
      * A chunk has to have at most this much percent unbuildable tiles for it to be considered a candidate. This is to avoid chunks full of water to be marked as candidates.
@@ -4179,12 +4399,16 @@ interface EnemyExpansionSettings {
      * Ticks to expand to a single position for a base is used. Cooldown is calculated as follows: `cooldown = lerp(max_expansion_cooldown, min_expansion_cooldown, -e^2 + 2 * e)` where `lerp` is the linear interpolation function, and e is the current evolution factor.
      */
     min_expansion_cooldown: uint32;
+    /**
+     * Distance in chunks from the furthest base around to prevent expansions from being too close to existing bases.
+     */
+    min_expansion_distance: uint32;
     neighbouring_base_chunk_coefficient: double;
     neighbouring_chunk_coefficient: double;
     other_base_coefficient: double;
     settler_group_max_size: uint32;
     /**
-     * Size of the group that goes to build new base (the game interpolates between min size and max size based on evolution factor).
+     * Size of the group that goes to build new base.
      */
     settler_group_min_size: uint32;
 }
@@ -4358,6 +4582,9 @@ type EntityPrototypeFlags = (/**
  * The entity can not be used in blueprints.
  */
 'not-blueprintable' | /**
+ * Always show the entity in selection lists/Factoriopedia.
+ */
+'always-show' | /**
  * Hides the alt-info of an entity in alt-mode, for example the recipe icon.
  */
 'hide-alt-info' | /**
@@ -4381,10 +4608,19 @@ type EntityPrototypeFlags = (/**
 'not-upgradable' | /**
  * The entity is not shown in the kill statistics.
  */
-'not-in-kill-statistics' | 'building-direction-16-way' | 'snap-to-rail-support-spot' | /**
- * The entity is not shown in the made in property of recipe tooltips.
+'not-in-kill-statistics' | 'building-direction-16-way' | /**
+ * For entities with control behavior that supports logistic connection, if this flag is set then entity will not be able to connect to logistic network.
  */
-'not-in-made-in')[];
+'no-logistic-connection' | 'snap-to-rail-support-spot' | /**
+ * The entity is not shown in the made in property of recipe tooltips and Factoriopedia.
+ */
+'not-in-made-in' | /**
+ * The entity is not shown in the bonus GUI.
+ */
+'not-in-bonus-gui' | /**
+ * The entity is not shown in the mined-by tooltip for resources.
+ */
+'not-in-mined-by')[];
 /**
  * How far (in tiles) entities should be rendered outside the visible area of the screen.
  */
@@ -4406,7 +4642,7 @@ interface EntityRendererSearchBoxLimits {
      */
     top: uint8;
 }
-type EntityStatus = 'working' | 'normal' | 'ghost' | 'not-plugged-in-electric-network' | 'networks-connected' | 'networks-disconnected' | 'no-ammo' | 'waiting-for-target-to-be-built' | 'waiting-for-train' | 'no-power' | 'low-temperature' | 'charging' | 'discharging' | 'fully-charged' | 'no-fuel' | 'no-food' | 'out-of-logistic-network' | 'no-recipe' | 'no-ingredients' | 'no-input-fluid' | 'no-research-in-progress' | 'no-minable-resources' | 'low-input-fluid' | 'low-power' | 'not-connected-to-rail' | 'cant-divide-segments' | 'recharging-after-power-outage' | 'no-modules-to-transmit' | 'disabled-by-control-behavior' | 'opened-by-circuit-network' | 'closed-by-circuit-network' | 'disabled-by-script' | 'disabled' | 'turned-off-during-daytime' | 'fluid-ingredient-shortage' | 'item-ingredient-shortage' | 'full-output' | 'not-enough-space-in-output' | 'full-burnt-result-output' | 'marked-for-deconstruction' | 'missing-required-fluid' | 'missing-science-packs' | 'waiting-for-source-items' | 'waiting-for-space-in-destination' | 'preparing-rocket-for-launch' | 'waiting-to-launch-rocket' | 'waiting-for-space-in-platform-hub' | 'launching-rocket' | 'thrust-not-required' | 'not-enough-thrust' | 'on-the-way' | 'waiting-in-orbit' | 'waiting-for-rocket-to-arrive' | 'no-path' | 'broken' | 'none' | 'frozen' | 'paused' | 'not-connected-to-hub-or-pad' | 'computing-navigation' | 'no-filter' | 'waiting-at-stop' | 'destination-stop-full' | 'pipeline-overextended' | 'no-spot-seedable-by-inputs' | 'waiting-for-plants-to-grow' | 'recipe-not-researched';
+type EntityStatus = 'working' | 'normal' | 'ghost' | 'not-plugged-in-electric-network' | 'networks-connected' | 'networks-disconnected' | 'no-ammo' | 'waiting-for-target-to-be-built' | 'waiting-for-train' | 'no-power' | 'low-temperature' | 'charging' | 'discharging' | 'fully-charged' | 'no-fuel' | 'no-food' | 'out-of-logistic-network' | 'no-recipe' | 'no-ingredients' | 'no-input-fluid' | 'no-research-in-progress' | 'no-minable-resources' | 'low-input-fluid' | 'low-power' | 'not-connected-to-rail' | 'cant-divide-segments' | 'recharging-after-power-outage' | 'no-modules-to-transmit' | 'disabled-by-control-behavior' | 'opened-by-circuit-network' | 'closed-by-circuit-network' | 'disabled-by-script' | 'disabled' | 'turned-off-during-daytime' | 'fluid-ingredient-shortage' | 'item-ingredient-shortage' | 'full-output' | 'not-enough-space-in-output' | 'full-burnt-result-output' | 'marked-for-deconstruction' | 'missing-required-fluid' | 'missing-science-packs' | 'waiting-for-source-items' | 'waiting-for-space-in-destination' | 'preparing-rocket-for-launch' | 'waiting-to-launch-rocket' | 'waiting-for-space-in-platform-hub' | 'launching-rocket' | 'thrust-not-required' | 'not-enough-thrust' | 'on-the-way' | 'waiting-in-orbit' | 'waiting-for-rocket-to-arrive' | 'waiting-to-clear-drop-slots' | 'no-path' | 'broken' | 'none' | 'frozen' | 'paused' | 'not-connected-to-hub-or-pad' | 'too-far-from-pad-to-unload' | 'computing-navigation' | 'no-filter' | 'waiting-at-stop' | 'waiting-for-upgrade' | 'destination-stop-full' | 'pipeline-overextended' | 'no-spot-seedable-by-inputs' | 'waiting-for-plants-to-grow' | 'recipe-not-researched' | 'armed';
 interface EntityTransferTipTrigger extends CountBasedTipTrigger {
     transfer?: 'in' | 'out';
     type: 'entity-transfer';
@@ -4492,6 +4728,8 @@ interface FastReplaceTipTrigger extends CountBasedTipTrigger {
 }
 /**
  * A dictionary of feature flags and their status. It can be used to adjust prototypes based on whether the feature flags are enabled. It is accessible through the global object named `feature_flags`.
+ *
+ * See the {@link mod structure | auxiliary:mod-structure} documentation for more information on what each feature flag affects.
  * @example ```
 -- sets coal to spoil only when the spoiling feature flag is enabled
 if feature_flags["spoiling"] then
@@ -4500,6 +4738,7 @@ end
 ```
  */
 interface FeatureFlags {
+    expansion: boolean;
     expansion_shaders: boolean;
     freezing: boolean;
     quality: boolean;
@@ -4516,6 +4755,8 @@ interface FeatureFlags {
  * - **base**: A path starting with `__base__` will access the resources in the base mod in data/base directory. These resources are usually available, as long as the base mod isn't removed/deactivated.
  *
  * - **mod path**: The format `__<mod-name>__` is placeholder for root of any other mod (mods/<mod-name>), and is accessible as long as the mod is active.
+ *
+ * Relative paths using `..` are not supported.
  * @example ```
 filename = "__base__/graphics/entity/accumulator/accumulator.png"
 ```
@@ -4527,10 +4768,22 @@ type FileName = string;
 interface FlipEntityTipTrigger extends CountBasedTipTrigger {
     type: 'flip-entity';
 }
+/**
+ * Root style: `"flow"`
+ */
 interface FlowStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     horizontal_spacing?: int32;
+    /**
+     * Required on the root style.
+     */
     max_on_row?: int32;
     type: 'flow_style';
+    /**
+     * Required on the root style.
+     */
     vertical_spacing?: int32;
 }
 /**
@@ -4572,10 +4825,6 @@ interface FluidBox {
      * Can be used to specify which fluid is allowed to enter this fluid box. See {@link here | https://forums.factorio.com/viewtopic.php?f=28&t=46302}.
      */
     filter?: FluidID;
-    /**
-     * Hides the blue input/output arrows and icons at each connection point.
-     */
-    hide_connection_info?: boolean;
     /**
      * The max extent that a pipeline with this fluidbox can span. A given pipeline's extent is calculated as the min extent of all the fluidboxes that comprise it.
      */
@@ -4675,11 +4924,16 @@ interface FluidEnergySource extends BaseEnergySource {
      * Only loaded if `burns_fluid` is `false`.
      */
     maximum_temperature?: float;
+    output_fluid_box?: FluidBox;
     /**
      * If set to `true`, the energy source will consume as much fluid as required to produce the desired power, otherwise it will consume as much as it is allowed to, wasting any excess.
      */
     scale_fluid_usage?: boolean;
     smoke?: SmokeSource[];
+    /**
+     * Fluid and amount produced per 1 unit of fluid consumed. Only used when `output_fluid_box` is defined. If this value is not provided, {@link FluidPrototype::spent_fluid | prototype:FluidPrototype::spent_fluid} will be used based on the input fluid being consumed.
+     */
+    spent_fluid?: SpentFluidSpecification;
     type: 'fluid';
 }
 type FluidFlowDirection = 'input-output' | 'input' | 'output';
@@ -4729,6 +4983,12 @@ interface FluidIngredientPrototype {
      */
     name: FluidID;
     /**
+     * Additional fluid boxes that will be also used by this fluid ingredient. If a machine does not have a fluid box with that index, then this index will be silently skipped without making recipe uncraftable.
+     *
+     * Only loaded if `fluidbox_index` is defined.
+     */
+    optional_fluidbox_indexes?: uint32[];
+    /**
      * Sets the expected temperature of the fluid ingredient.
      */
     temperature?: float;
@@ -4737,7 +4997,7 @@ interface FluidIngredientPrototype {
 /**
  * A fluid product definition.
  */
-interface FluidProductPrototype {
+interface FluidProductPrototype extends ProductPrototypeBase {
     /**
      * Can not be `< 0`.
      */
@@ -4759,6 +5019,10 @@ interface FluidProductPrototype {
      */
     fluidbox_index?: uint32;
     /**
+     * Used to set crafting machine fluidbox volumes. Must be at least 1.
+     */
+    fluidbox_multiplier?: uint8;
+    /**
      * Amount that should be deducted from any productivity induced bonus crafts.
      *
      * This value can safely be set larger than the maximum expected craft amount, any excess is ignored.
@@ -4779,26 +5043,16 @@ interface FluidProductPrototype {
      */
     name: FluidID;
     /**
-     * Value between 0 and 1, `0` for 0% chance and `1` for 100% chance.
+     * Additional fluid boxes that will be also used by this fluid product. If a machine does not have a fluid box with that index, then this index will be silently skipped without making recipe uncraftable.
      *
-     * The effect of probability is no product, or a linear distribution on [min, max]. For a recipe with probability `p`, amount_min `min`, and amount_max `max`, the Expected Value of this product can be expressed as `p * (0.5 * (max + min))`. This is what will be shown in a recipe tooltip. The effect of `ignored_by_productivity` on the product is not shown.
-     *
-     * When `amount_min` and `amount_max` are not provided, `amount` applies as min and max. The Expected Value simplifies to `p * amount`, providing `0` product, or `amount` product, on recipe completion.
+     * Only loaded if `fluidbox_index` is defined.
      */
-    probability?: double;
-    /**
-     * When hovering over a recipe in the crafting menu the recipe tooltip will be shown. An additional item tooltip will be shown for every product, as a separate tooltip, if the item tooltip has a description and/or properties to show and if `show_details_in_recipe_tooltip` is `true`.
-     */
-    show_details_in_recipe_tooltip?: boolean;
+    optional_fluidbox_indexes?: uint32[];
     /**
      * The temperature of the fluid product.
      */
     temperature?: float;
     type: 'fluid';
-}
-interface FluidWagonConnectorGraphics {
-    load_animations: PumpConnectorGraphics;
-    unload_animations: PumpConnectorGraphics;
 }
 interface FogEffectProperties {
     color1?: Color;
@@ -4933,18 +5187,48 @@ type ForceCondition = /**
  * The non-same forces pass.
  */
 'not-same';
+/**
+ * Root style: `"frame"`
+ */
 interface FrameStyleSpecification extends BaseStyleSpecification {
     background_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     border?: BorderImageSet;
+    /**
+     * Required on the root style.
+     */
     drag_by_title?: boolean;
+    /**
+     * Required on the root style.
+     */
     graphical_set?: ElementImageSet;
     header_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     header_filler_style?: EmptyWidgetStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     header_flow_style?: HorizontalFlowStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     horizontal_flow_style?: HorizontalFlowStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     title_style?: LabelStyleSpecification;
     type: 'frame_style';
+    /**
+     * Required on the root style.
+     */
     use_header_filler?: boolean;
+    /**
+     * Required on the root style.
+     */
     vertical_flow_style?: VerticalFlowStyleSpecification;
 }
 interface FrequencySizeRichness {
@@ -5033,6 +5317,7 @@ interface GameViewSettings {
      * If this is defined then it sets the default value for all other properties.
      */
     default_show_value?: boolean;
+    hide_tall_entities?: boolean;
     show_alert_gui?: boolean;
     show_controller_gui?: boolean;
     show_crafting_queue?: boolean;
@@ -5041,6 +5326,7 @@ interface GameViewSettings {
     show_hotkey_suggestions?: boolean;
     show_map_view_options?: boolean;
     show_minimap?: boolean;
+    show_pins_gui?: boolean;
     show_quickbar?: boolean;
     show_rail_block_visualisation?: boolean;
     show_research_info?: boolean;
@@ -5055,6 +5341,16 @@ interface GateOverRailBuildTipTrigger extends CountBasedTipTrigger {
 }
 interface GeneratingPowerTipTrigger extends CountBasedTipTrigger {
     type: 'generating-power';
+}
+interface GeneratorPictureSet {
+    east?: GeneratorPictures;
+    north?: GeneratorPictures;
+    south?: GeneratorPictures;
+    west?: GeneratorPictures;
+}
+interface GeneratorPictures {
+    animation?: Animation;
+    frozen_patch?: Sprite;
 }
 interface GhostShimmerConfig {
     blend_mode: int32;
@@ -5144,29 +5440,82 @@ interface GlobalTintEffectProperties {
     zoom_factor: float;
     zoom_intensity: float;
 }
+/**
+ * Root style: `"glow"`
+ */
 interface GlowStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     image_set?: ElementImageSet;
     type: 'glow_style';
 }
+/**
+ * Root style: `"graph"`
+ */
 interface GraphStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     background_color?: Color;
+    /**
+     * Required on the root style.
+     */
     data_line_highlight_distance?: uint32;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     font?: string;
+    /**
+     * Required on the root style.
+     */
     graph_right_margin?: uint32;
+    /**
+     * Required on the root style.
+     */
     graph_top_margin?: uint32;
+    /**
+     * Required on the root style.
+     */
     grid_lines_color?: Color;
+    /**
+     * Required on the root style.
+     */
     guide_lines_color?: Color;
+    /**
+     * Required on the root style.
+     */
     horizontal_label_style?: LabelStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     horizontal_labels_margin?: uint32;
+    /**
+     * Required on the root style.
+     */
     line_colors?: Color[];
+    /**
+     * Required on the root style.
+     */
     minimal_horizontal_label_spacing?: uint32;
+    /**
+     * Required on the root style.
+     */
     minimal_vertical_label_spacing?: uint32;
+    /**
+     * Required on the root style.
+     */
     selection_dot_radius?: uint32;
     type: 'graph_style';
+    /**
+     * Required on the root style.
+     */
     vertical_label_style?: LabelStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     vertical_labels_margin?: uint32;
 }
 interface GroupAttackTipTrigger extends CountBasedTipTrigger {
@@ -5204,7 +5553,7 @@ interface HeatBuffer {
     /**
      * May contain up to 32 connections.
      */
-    connections?: HeatConnection[];
+    connections?: HeatConnectionDefinition[];
     default_temperature?: double;
     heat_glow?: Sprite4Way;
     heat_picture?: Sprite4Way;
@@ -5226,7 +5575,7 @@ interface HeatBuffer {
 /**
  * Defines the connections for {@link HeatEnergySource | prototype:HeatEnergySource} and {@link HeatBuffer | prototype:HeatBuffer}.
  */
-interface HeatConnection {
+interface HeatConnectionDefinition {
     /**
      * The "outward" direction of this heat connection. For a connection to succeed, the other heat connection must face the opposite direction (a south-facing connection needs a north-facing connection to succeed). A connection rotates with the entity.
      */
@@ -5240,7 +5589,7 @@ interface HeatEnergySource extends BaseEnergySource {
     /**
      * May contain up to 32 connections.
      */
-    connections?: HeatConnection[];
+    connections?: HeatConnectionDefinition[];
     default_temperature?: double;
     emissions_per_minute?: Record<AirbornePollutantID, double>;
     heat_glow?: Sprite4Way;
@@ -5262,10 +5611,19 @@ interface HeatEnergySource extends BaseEnergySource {
     type: 'heat';
 }
 type HorizontalAlign = 'left' | 'center' | 'right';
+/**
+ * Root style: `"horizontal_flow"`
+ */
 interface HorizontalFlowStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     horizontal_spacing?: int32;
     type: 'horizontal_flow_style';
 }
+/**
+ * Root style: `"horizontal_scrollbar"`
+ */
 interface HorizontalScrollBarStyleSpecification extends ScrollBarStyleSpecification {
     type: 'horizontal_scrollbar_style';
 }
@@ -5393,6 +5751,7 @@ interface IconSequencePositioning {
     shift?: Vector;
 }
 /**
+ * Root style: `"image"`
  * @example ```
 data.raw["gui-style"]["default"]["stretchy-sprite"] =
 {
@@ -5404,8 +5763,14 @@ data.raw["gui-style"]["default"]["stretchy-sprite"] =
 ```
  */
 interface ImageStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     graphical_set?: ElementImageSet;
     invert_colors_of_picture_when_hovered_or_toggled?: boolean;
+    /**
+     * Required on the root style.
+     */
     stretch_image_to_widget_size?: boolean;
     type: 'image_style';
 }
@@ -5466,7 +5831,7 @@ interface InterruptibleSound {
 }
 interface InventoryWithCustomStackSizeSpecification {
     /**
-     * Must be >= stack_size_min.
+     * Must be >= stack_size_min and <= 1000000000.
      */
     stack_size_max?: ItemCountType;
     /**
@@ -5484,7 +5849,7 @@ interface InventoryWithCustomStackSizeSpecification {
     with_bar?: boolean;
 }
 interface InvokeTileEffectTriggerEffectItem extends TriggerEffectItem {
-    tile_collision_mask?: CollisionMaskConnector;
+    tile_collision_mask?: TileCollisionMaskConnector;
     type: 'invoke-tile-trigger';
 }
 type ItemCountType = uint32;
@@ -5542,12 +5907,46 @@ interface ItemIngredientPrototype {
      */
     ignored_by_stats?: uint16;
     name: ItemID;
+    /**
+     * Amount of quality levels up or down this ingredient will be adjusted.
+     *
+     * This is the difference between the quality of the recipe and the quality of the ingredient. For a vanilla example, when legendary is selected for recipe quality, an ingredient with quality change `-1` would need to be epic quality, not legendary.
+     *
+     * If `quality_min` is equal to `quality_max`, this is silently set to `0` as it does not make sense to define a quality jump when ingredient quality is fixed to one value for all qualities of recipe.
+     */
+    quality_change?: int8;
+    /**
+     * Highest possible quality of ingredient that will be accepted. If not provided but `quality_min` is given, it will be set to the highest quality from a quality chain to which `quality_min` belongs. Must belong to the same quality chain as `quality_min` and be equal or better, meaning later in the chain when following {@link QualityPrototype::next | prototype:QualityPrototype::next}.
+     */
+    quality_max?: QualityID;
+    /**
+     * Lowest possible quality of ingredient that will be accepted. If not provided but `quality_max` is given, it will be set to the lowest quality from a quality chain to which `quality_max` belongs. When set, if the recipe would require ingredient from a different quality chain (due to quality of the recipe or quality roll), `quality_min` will be used for the quality instead.
+     */
+    quality_min?: QualityID;
+    /**
+     * Controls how much spoil percent of this ingredient should influence spoil percent of spoilable products.
+     *
+     * Must be in range `[0, 1]`.
+     */
+    spoil_weight?: float;
     type: 'item';
 }
 /**
  * An item product definition.
  */
-interface ItemProductPrototype {
+interface ItemProductPrototype extends ProductPrototypeBase {
+    /**
+     * Whether quality roll affects quality of products given. If set to `false`, result of a quality roll will be ignored and an item of quality based on quality of selected recipe will be given.
+     *
+     * Note: This may not work as expected outside of recipes (e.g. in mining drills).
+     */
+    affected_by_quality?: boolean;
+    /**
+     * When set to true, the item produced will be produced fresh (using percent_spoiled) even when ingredients were spoiled.
+     *
+     * Note: This may not work as expected outside of recipes (e.g. in mining drills).
+     */
+    always_fresh?: boolean;
     amount?: uint16;
     /**
      * Only loaded, and mandatory if `amount` is not defined.
@@ -5588,17 +5987,31 @@ interface ItemProductPrototype {
      */
     percent_spoiled?: float;
     /**
-     * Value between 0 and 1, `0` for 0% chance and `1` for 100% chance.
+     * Amount of quality levels up or down this product will be adjusted.
      *
-     * The effect of probability is no product, or a linear distribution on [min, max]. For a recipe with probability `p`, amount_min `min`, and amount_max `max`, the Expected Value of this product can be expressed as `p * (0.5 * (max + min))`. This is what will be shown in a recipe tooltip. The effect of `ignored_by_productivity` on the product is not shown.
+     * This is the difference between the quality of the recipe and the quality of the product. For a vanilla example, when epic is selected for recipe quality, a product with quality change `1` would be legendary quality, not epic.
      *
-     * When `amount_min` and `amount_max` are not provided, `amount` applies as min and max. The Expected Value simplifies to `p * amount`, providing `0` product, or `amount` product, on recipe completion.
+     * Note: This may not work as expected outside of recipes (e.g. in mining drills).
      */
-    probability?: double;
+    quality_change?: int8;
     /**
-     * When hovering over a recipe in the crafting menu the recipe tooltip will be shown. An additional item tooltip will be shown for every product, as a separate tooltip, if the item tooltip has a description and/or properties to show and if `show_details_in_recipe_tooltip` is `true`.
+     * Highest possible quality of item that will be given. If not provided but `quality_min` is given, it will be set to the highest quality from a quality chain to which `quality_min` belongs. Must belong to the same quality chain as `quality_min` and be equal or better, meaning later in the chain when following {@link QualityPrototype::next | prototype:QualityPrototype::next}.
+     *
+     * Note: If this is used outside of recipes (e.g. by mining drills), setting this to a custom quality chain will discard the quality roll.
      */
-    show_details_in_recipe_tooltip?: boolean;
+    quality_max?: QualityID;
+    /**
+     * Lowest possible quality of item that will be given. If not provided but `quality_max` is given, it will be set to the lowest quality from a quality chain to which `quality_max` belongs. When set, if the recipe would produce items from a different quality chain (due to quality of the recipe or quality roll), `quality_min` will be used for the quality instead.
+     *
+     * Note: If this is used outside of recipes (e.g. by mining drills), setting this to a custom quality chain will discard the quality roll.
+     */
+    quality_min?: QualityID;
+    /**
+     * When set to true, if the recipe successfully finishes crafting without spoiling, the result is produced fresh (non-spoiled).
+     *
+     * Note: This may not work as expected outside of recipes (e.g. in mining drills).
+     */
+    reset_freshness_on_craft?: boolean;
     type: 'item';
 }
 /**
@@ -5611,6 +6024,9 @@ type ItemPrototypeFlags = (/**
  * Whether the trash-unrequested feature skips this item.
  */
 'excluded-from-trash-unrequested' | /**
+ * Whether the rocket passenger feature skips this item when checking lift weight.
+ */
+'excluded-from-character-lift-weight' | /**
  * Always show the item in selection lists (item filter, logistic request etc.) even when locked recipe for that item is present.
  */
 'always-show' | /**
@@ -5637,7 +6053,7 @@ type ItemPrototypeFlags = (/**
 'spawnable' | 'spoil-result' | /**
  * Controls whether the spoil time ignores the spoil time modifier in the {@link DifficultySettings | runtime:DifficultySettings}.
  */
-'ignore-spoil-time-modifier')[];
+'ignore-spoil-time-modifier' | 'hide-health-bar-in-world' | 'hide-spoilage-bar-in-world')[];
 type ItemStackIndex = uint16;
 /**
  * The name of an {@link ItemSubGroup | prototype:ItemSubGroup}.
@@ -5666,26 +6082,52 @@ interface ItemToPlace {
     item: ItemID;
 }
 interface KillTipTrigger extends CountBasedTipTrigger {
+    /**
+     * If this is not set, any damage type will fulfill the trigger condition.
+     */
     damage_type?: DamageTypeID;
     entity?: EntityID;
     match_type_only?: boolean;
     type: 'kill';
 }
+/**
+ * Root style: `"label"`
+ */
 interface LabelStyleSpecification extends BaseStyleSpecification {
     clicked_font_color?: Color;
     disabled_font_color?: Color;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     font?: string;
+    /**
+     * Required on the root style.
+     */
     font_color?: Color;
     game_controller_hovered_font_color?: Color;
     hovered_font_color?: Color;
     parent_hovered_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     rich_text_highlight_error_color?: Color;
+    /**
+     * Required on the root style.
+     */
     rich_text_highlight_ok_color?: Color;
+    /**
+     * Required on the root style.
+     */
     rich_text_highlight_warning_color?: Color;
+    /**
+     * Required on the root style.
+     */
     rich_text_setting?: RichTextSetting;
+    /**
+     * Required on the root style.
+     */
     single_line?: boolean;
     type: 'label_style';
     underlined?: boolean;
@@ -5718,6 +6160,15 @@ type LayeredSound = {
 type LayeredSprite = {
     render_layer: RenderLayer;
 } | LayeredSprite[];
+/**
+ * Sprites for the 4 major directions of the entity. If this is loaded as a single LayeredSprite, it applies to all directions.
+ */
+type LayeredSprite4Way = {
+    east: LayeredSprite;
+    north: LayeredSprite;
+    south: LayeredSprite;
+    west: LayeredSprite;
+} | LayeredSprite;
 type LayeredSpriteVariations = LayeredSprite[];
 /**
  * Specifies a light source. This is loaded either as a single light source or as an array of light sources.
@@ -5946,7 +6397,13 @@ interface LightningShaderConfiguration {
 interface LimitChestTipTrigger extends CountBasedTipTrigger {
     type: 'limit-chest';
 }
+/**
+ * Root style: `"line"`
+ */
 interface LineStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     border?: BorderImageSet;
     type: 'line_style';
 }
@@ -5993,12 +6450,21 @@ interface LinkedBeltStructure {
 /**
  * The internal name of a game control (key binding).
  */
-type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'alternative-gui-move-up' | 'alternative-gui-move-down' | 'alternative-gui-move-left' | 'alternative-gui-move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'scroll-tooltip-up' | 'scroll-tooltip-down' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music' | /**
+type LinkedGameControl = 'move-up' | 'move-down' | 'move-left' | 'move-right' | 'alternative-gui-move-up' | 'alternative-gui-move-down' | 'alternative-gui-move-left' | 'alternative-gui-move-right' | 'open-character-gui' | 'open-gui' | 'confirm-gui' | 'toggle-free-cursor' | 'mine' | 'build' | 'build-ghost' | 'super-forced-build' | 'clear-cursor' | 'pipette' | 'rotate' | 'reverse-rotate' | 'flip-horizontal' | 'flip-vertical' | 'pick-items' | 'drop-cursor' | 'show-info' | 'hide-tall-entities' | 'shoot-enemy' | 'shoot-selected' | 'next-weapon' | 'toggle-driving' | 'zoom-in' | 'zoom-out' | 'use-item' | 'alternative-use-item' | 'toggle-console' | 'copy-entity-settings' | 'paste-entity-settings' | 'controller-gui-logistics-tab' | 'controller-gui-character-tab' | 'controller-gui-crafting-tab' | 'toggle-rail-layer' | 'select-for-blueprint' | 'select-for-cancel-deconstruct' | 'select-for-super-forced-deconstruct' | 'reverse-select' | 'alt-reverse-select' | 'deselect' | 'cycle-blueprint-forwards' | 'cycle-blueprint-backwards' | 'focus-search' | 'larger-terrain-building-area' | 'smaller-terrain-building-area' | 'remove-pole-cables' | 'build-with-obstacle-avoidance' | 'add-station' | 'add-temporary-station' | 'rename-all' | 'fast-wait-condition' | 'drag-map' | 'move-tag' | 'place-in-chat' | 'place-ping' | 'pin' | 'activate-tooltip' | 'next-surface' | 'previous-surface' | 'cycle-quality-up' | 'cycle-quality-down' | 'scroll-tooltip-up' | 'scroll-tooltip-down' | 'visualize-entity-fluid-segments' | 'craft' | 'craft-5' | 'craft-all' | 'cancel-craft' | 'cancel-craft-5' | 'cancel-craft-all' | 'pick-item' | 'stack-transfer' | 'inventory-transfer' | 'fast-entity-transfer' | 'cursor-split' | 'stack-split' | 'inventory-split' | 'fast-entity-split' | 'toggle-filter' | 'open-item' | 'copy-inventory-filter' | 'paste-inventory-filter' | 'show-quick-panel' | 'next-quick-panel-page' | 'previous-quick-panel-page' | 'next-quick-panel-tab' | 'previous-quick-panel-tab' | 'rotate-active-quick-bars' | 'next-active-quick-bar' | 'previous-active-quick-bar' | 'quick-bar-button-1' | 'quick-bar-button-2' | 'quick-bar-button-3' | 'quick-bar-button-4' | 'quick-bar-button-5' | 'quick-bar-button-6' | 'quick-bar-button-7' | 'quick-bar-button-8' | 'quick-bar-button-9' | 'quick-bar-button-10' | 'quick-bar-button-1-secondary' | 'quick-bar-button-2-secondary' | 'quick-bar-button-3-secondary' | 'quick-bar-button-4-secondary' | 'quick-bar-button-5-secondary' | 'quick-bar-button-6-secondary' | 'quick-bar-button-7-secondary' | 'quick-bar-button-8-secondary' | 'quick-bar-button-9-secondary' | 'quick-bar-button-10-secondary' | 'action-bar-select-page-1' | 'action-bar-select-page-2' | 'action-bar-select-page-3' | 'action-bar-select-page-4' | 'action-bar-select-page-5' | 'action-bar-select-page-6' | 'action-bar-select-page-7' | 'action-bar-select-page-8' | 'action-bar-select-page-9' | 'action-bar-select-page-10' | 'copy' | 'cut' | 'paste' | 'cycle-clipboard-forwards' | 'cycle-clipboard-backwards' | 'undo' | 'redo' | 'toggle-menu' | 'toggle-map' | 'close-menu' | 'open-technology-gui' | 'production-statistics' | 'logistic-networks' | 'toggle-blueprint-library' | 'open-trains-gui' | 'open-factoriopedia' | 'back' | 'forward' | 'pause-game' | 'confirm-message' | 'previous-mod' | 'connect-train' | 'disconnect-train' | 'submit-feedback' | 'editor-next-variation' | 'editor-previous-variation' | 'editor-clone-item' | 'editor-delete-item' | 'editor-toggle-pause' | 'editor-tick-once' | 'editor-speed-up' | 'editor-speed-down' | 'editor-reset-speed' | 'editor-set-clone-brush-source' | 'editor-set-clone-brush-destination' | 'editor-switch-to-surface' | 'editor-remove-scripting-object' | 'debug-toggle-atlas-gui' | 'debug-toggle-gui-visibility' | 'debug-toggle-debug-settings' | 'debug-toggle-basic' | 'debug-reset-zoom' | 'debug-reset-zoom-2x' | 'toggle-gui-debug' | 'toggle-gui-style-view' | 'toggle-gui-shadows' | 'toggle-gui-glows' | 'open-prototypes-gui' | 'open-prototype-explorer-gui' | 'increase-ui-scale' | 'decrease-ui-scale' | 'reset-ui-scale' | 'slash-editor' | 'toggle-entity' | 'next-player-in-replay' | 'move-blueprint-absolute-grid-up' | 'move-blueprint-absolute-grid-down' | 'move-blueprint-absolute-grid-left' | 'move-blueprint-absolute-grid-right' | 'move-blueprint-entities-up' | 'move-blueprint-entities-down' | 'move-blueprint-entities-left' | 'move-blueprint-entities-right' | 'toggle-blueprint-snap-to-grid' | 'play-next-track' | 'play-previous-track' | 'pause-resume-music' | /**
  * Indicates no linked game control.
  */
 '';
+/**
+ * Root style: `"list_box"`
+ */
 interface ListBoxStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     item_style?: ButtonStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     scroll_pane_style?: ScrollPaneStyleSpecification;
     type: 'list_box_style';
 }
@@ -6051,24 +6517,7 @@ localised_description = {"", {"item-name.iron-plate"}, ": ", tostring(60)}
  */
 type LocalisedString = string | LocalisedString[];
 type LogisticFilterIndex = uint16;
-/**
- * The items generated when an {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype} is killed.
- */
-interface LootItem {
-    /**
-     * Must be `> 0`.
-     */
-    count_max?: double;
-    count_min?: double;
-    /**
-     * The item to spawn.
-     */
-    item: ItemID;
-    /**
-     * `0` is 0% and `1` is 100%. Must be `> 0`.
-     */
-    probability?: double;
-}
+type LogisticMode = 'active-provider' | 'passive-provider' | 'requester' | 'storage' | 'buffer';
 interface LowPowerTipTrigger extends CountBasedTipTrigger {
     type: 'low-power';
 }
@@ -6089,6 +6538,12 @@ interface MainSound {
     match_progress_to_activity?: boolean;
     match_speed_to_activity?: boolean;
     match_volume_to_activity?: boolean;
+    /**
+     * The `sound` is played when the entity has one the specified direction.
+     *
+     * Unused when {@link WorkingSound::persistent | prototype:WorkingSound::persistent} is `true`.
+     */
+    play_for_directions?: defines.direction[];
     /**
      * Array of {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name}s, individual names cannot be empty.
      *
@@ -6126,24 +6581,6 @@ interface ManualWireDragTipTrigger extends CountBasedTipTrigger {
     target?: EntityID;
     type: 'manual-wire-drag';
     wire_type?: 'red' | 'green' | 'copper';
-}
-interface MapEditorConstants {
-    cliff_editor_remove_cliffs_color: Color;
-    clone_editor_brush_cursor_preview_tint: Color;
-    clone_editor_brush_destination_color: Color;
-    clone_editor_brush_source_color: Color;
-    clone_editor_brush_world_preview_tint: Color;
-    clone_editor_copy_destination_allowed_color: Color;
-    clone_editor_copy_destination_not_allowed_color: Color;
-    clone_editor_copy_source_color: Color;
-    decorative_editor_selection_preview_radius: uint8;
-    decorative_editor_selection_preview_tint: Color;
-    force_editor_select_area_color: Color;
-    script_editor_drag_area_color: Color;
-    script_editor_select_area_color: Color;
-    tile_editor_area_selection_color: Color;
-    tile_editor_selection_preview_radius: uint8;
-    tile_editor_selection_preview_tint: Color;
 }
 interface MapGenPreset {
     /**
@@ -6190,6 +6627,10 @@ interface MapGenPresetEnemyEvolutionSettings {
 interface MapGenPresetEnemyExpansionSettings {
     enabled?: boolean;
     /**
+     * Factor by which the evolution factor influences the size of the settler group
+     */
+    evolution_group_size_factor?: double;
+    /**
      * In ticks.
      */
     max_expansion_cooldown?: uint32;
@@ -6201,6 +6642,10 @@ interface MapGenPresetEnemyExpansionSettings {
      * Ticks to expand to a single position for a base is used. Cooldown is calculated as follows: `cooldown = lerp(max_expansion_cooldown, min_expansion_cooldown, -e^2 + 2 * e)` where `lerp` is the linear interpolation function, and e is the current evolution factor.
      */
     min_expansion_cooldown?: uint32;
+    /**
+     * Distance in chunks from the furthest base around to prevent expansions from being too close to existing bases.
+     */
+    min_expansion_distance?: uint32;
     settler_group_max_size?: uint32;
     /**
      * Size of the group that goes to build new base (the game interpolates between min size and max size based on evolution factor).
@@ -6424,6 +6869,13 @@ interface MaterialTextureParameters {
 ```
  */
 type MathExpression = string;
+interface MaxCargoBayUnloadingDistanceModifier extends SimpleModifier {
+    type: 'max-cargo-bay-unloading-distance';
+    /**
+     * If `false`, do not draw the small "constant" icon over the technology effect icon.
+     */
+    use_icon_overlay_constant?: boolean;
+}
 interface MaxFailedAttemptsPerTickPerConstructionQueueModifier extends SimpleModifier {
     type: 'max-failed-attempts-per-tick-per-construction-queue';
     /**
@@ -6507,12 +6959,18 @@ interface MinableProperties {
     transfer_entity_health_to_products?: boolean;
 }
 interface MineEntityTechnologyTrigger {
-    entity: EntityID;
+    /**
+     * Must contain at least 1 element. The trigger is considered fulfilled if at least one of these entities is mined.
+     */
+    entities: EntityID[];
     type: 'mine-entity';
 }
 interface MineItemByRobotTipTrigger extends CountBasedTipTrigger {
     type: 'mine-item-by-robot';
 }
+/**
+ * Root style: `"minimap"`
+ */
 interface MinimapStyleSpecification extends EmptyWidgetStyleSpecificationBase {
     type: 'minimap_style';
 }
@@ -6555,7 +7013,6 @@ interface MiningWithFluidModifier extends BoolModifier {
      */
     use_icon_overlay_constant?: boolean;
 }
-type Mirroring = 'horizontal' | 'vertical' | 'diagonal-pos' | 'diagonal-neg';
 /**
  * The user-set value of a startup {@link mod setting | https://wiki.factorio.com/Tutorial:Mod_settings}.
  */
@@ -6685,12 +7142,18 @@ UnlockQualityModifier | /**
  * Loaded when the `type` is `"unlock-space-platforms"`.
  */
 SpacePlatformsModifier | /**
+ * Loaded when the `type` is `"unlock-travel-to-space-platforms"`
+ */
+TravelToSpacePlatformsModifier | /**
  * Loaded when the `type` is `"unlock-circuit-network"`.
  */
 CircuitNetworkModifier | /**
  * Loaded when the `type` is `"cargo-landing-pad-count"`.
  */
 CargoLandingPadLimitModifier | /**
+ * Loaded when the `type` is `"max-cargo-bay-unloading-distance"`.
+ */
+MaxCargoBayUnloadingDistanceModifier | /**
  * Loaded when the `type` is `"change-recipe-productivity"`.
  */
 ChangeRecipeProductivityModifier | /**
@@ -6714,7 +7177,10 @@ BeaconDistributionModifier | /**
 CreateGhostOnEntityDeathModifier | /**
  * Loaded when the `type` is `"belt-stack-size-bonus"`.
  */
-BeltStackSizeBonusModifier;
+BeltStackSizeBonusModifier | /**
+ * Loaded when the `type` is `"unlock-logistic-network"`.
+ */
+UnlockLogisticNetworkModifier;
 /**
  * A dictionary of mod names to mod versions of all active mods. It can be used to adjust mod functionality based on the presence of other mods.
  * @example ```
@@ -6728,6 +7194,12 @@ end
 -- then this logs
 for name, version in pairs(mods) do
   log(name .. " version " .. version) -- => space-age version 2.0.7
+end
+```
+ * @example ```
+-- uses a features only available past a certain base mod version
+if helpers.compare_version(mods["base"], "2.0.56") >= 0 then
+  use_new_features()
 end
 ```
  */
@@ -6805,7 +7277,7 @@ interface NestedTriggerEffectItem extends TriggerEffectItem {
  *
  * - **Operator:** See the list below
  *
- * Identifiers are used to name functions and variables. The built-in functions and variables are documented in the {@link auxiliary docs | runtime:noise-expressions}. Mods can define their own noise expressions which can be used as variables and functions. The entry points for this are {@link NamedNoiseFunction | prototype:NamedNoiseFunction} and {@link NamedNoiseExpression | prototype:NamedNoiseExpression} as well as local functions and expressions.
+ * Identifiers are used to name functions and variables. The built-in functions and variables are documented in the {@link auxiliary docs | auxiliary:noise-expressions}. Mods can define their own noise expressions which can be used as variables and functions. The entry points for this are {@link NamedNoiseFunction | prototype:NamedNoiseFunction} and {@link NamedNoiseExpression | prototype:NamedNoiseExpression} as well as local functions and expressions.
  *
  * All functions accept both named and positional arguments. To differentiate between these function calls, positional arguments start/end with `(`/`)` and named arguments with `{`/`}`, e.g. `clamp(x, -1, 1)` and `clamp{min = -1, max = 1, value = x}` are the same function call. Because of this, positional arguments can't be mixed with named arguments. A function can't have more than 255 parameters.
  *
@@ -7179,6 +7651,18 @@ type PersistentWorldAmbientSoundsDefinitionCrossfade = Fade & {
 };
 interface PipeConnectionDefinition {
     /**
+     * Direction this connection should be facing when entity direction is north-east. When entity is rotated, effective direction will be computed based on this value.
+     *
+     * Only loaded if `connection_type` is `"normal"` or `"underground"`.
+     */
+    alt_direction?: defines.direction;
+    /**
+     * Relative position of the pipe connection when entity direction is north-east.
+     *
+     * Only loaded if `connection_type` is `"normal"` or `"underground"`.
+     */
+    alt_position?: MapPosition;
+    /**
      * Fluidboxes' pipe connections are only allowed to connect with each other if they share a connection category. For example a mod could have a "steam pipes" and "cryogenic pipes" category that should not connect with each other.
      *
      * In case of a normal connection, a pipe connection can be in multiple connection categories. This allows to create a mod where pipes of different categories would not connect to each other while still making it possible for crafting machines and other entities to connect to any of the specified pipes.
@@ -7210,6 +7694,10 @@ interface PipeConnectionDefinition {
      * Allowed direction of fluid flow at this connection. Pipeline entities (`pipe`, `pipe-to-ground`, and `storage-tank`) do not support this property.
      */
     flow_direction?: FluidFlowDirection;
+    /**
+     * If true, connection arrows and fluid icons will not be drawn for this connection when the entity is selected or in alt-mode.
+     */
+    hide_connection_info?: boolean;
     /**
      * Expected to be unique inside of a single entity. Used to uniquely identify where a linked connection should connect to.
      *
@@ -7390,6 +7878,170 @@ interface PlanetPrototypeMapGenSettings {
      */
     property_expression_names?: Record<string, string | boolean | double>;
     territory_settings?: TerritorySettings;
+}
+interface PlatformBackdrop {
+    /**
+     * Color of atmospheric light. Multiplied by 10 in shader.
+     */
+    atmosphere_color?: Color;
+    /**
+     * Color of dawn side of terminator light. Multiplied by 10 in shader.
+     */
+    atmosphere_ray_light_color_1?: Color;
+    /**
+     * Color of dusk side of terminator light. Multiplied by 10 in shader.
+     */
+    atmosphere_ray_light_color_2?: Color;
+    /**
+     * Width of the atmosphere layer as portion of the total radius.
+     */
+    atmosphere_thickness?: float;
+    /**
+     * Intensity of the flow map effect. Begins to degenerate at high values.
+     */
+    cloud_flow_intensity?: float;
+    /**
+     * How many seconds it takes the flow effect to loop.
+     */
+    cloud_flow_seconds?: float;
+    cloud_normal_intensity?: float;
+    /**
+     * Rotational speed of the clouds laterally across the planet relative to `rotation_seconds` of the planet. `-1.0` means it counteracts the rotation rate and makes clouds remain in place. `0.0` means it drifts along with planet surface.
+     */
+    cloud_panning_rate?: float;
+    /**
+     * How far below the atmosphere layer should the clouds be.
+     */
+    cloud_vertical_offset?: float;
+    /**
+     * Amount of cloud texture to be used based off of the alpha channel of the cloud texture.
+     */
+    cloudiness?: float;
+    emission_scalar?: float;
+    /**
+     * When true only the dark side will receive emission.
+     */
+    emission_scales_with_shadow?: boolean;
+    /**
+     * Scales the speed at which the planet appears in view when flown towards.
+     */
+    flight_approach_speed?: float;
+    /**
+     * Cloud mapped over the planet as the surface texture.
+     */
+    global_cloud?: EffectTexture;
+    /**
+     * Flow map distorting the global cloud.
+     */
+    global_cloud_flow?: EffectTexture;
+    global_cloud_normal?: EffectTexture;
+    /**
+     * Sprite or Animation to be referenced by `hero_clouds` definitions with `sprite_index` 1.
+     */
+    hero_cloud_texture_1?: Animation;
+    /**
+     * Sprite or Animation to be referenced by `hero_clouds` definitions with `sprite_index` 2.
+     */
+    hero_cloud_texture_2?: Animation;
+    /**
+     * Sprite or Animation to be referenced by `hero_clouds` definitions with `sprite_index` 3.
+     */
+    hero_cloud_texture_3?: Animation;
+    /**
+     * Individual Hero Cloud decals over the planet surface. The maximum number is four.
+     */
+    hero_clouds?: PlatformBackdropHeroCloud[];
+    /**
+     * When true the hero clouds will add their color to emission as well.
+     */
+    hero_clouds_are_emissive?: boolean;
+    /**
+     * Color of light. Multiplied by 10 in shader.
+     */
+    light_color?: Color;
+    light_direction?: Vector3D;
+    /**
+     * Harshness of the terminator. Functions like atmosphere thickness.
+     */
+    light_intensity_contrast?: float;
+    /**
+     * Perceived size of the light. Also affects size of the specular spot.
+     */
+    light_radius?: float;
+    /**
+     * How strongly the planet moves with camera. `{1.0, 1.0}` means it tracks the starfield. `{0.0, 0.0}` means it tracks the foreground tiles.
+     */
+    parallax_strength?: Vector;
+    /**
+     * Tilt and pitch of the planet axis.
+     */
+    planet_axis?: Vector;
+    /**
+     * How much tilt and pitch vary over time.
+     */
+    planet_axis_deviation_amplitude?: Vector;
+    /**
+     * Number of seconds it takes for tilt and pitch to complete one cycle of deviation.
+     */
+    planet_axis_deviation_seconds?: Vector;
+    /**
+     * Emissive light added to the surface. Can be disabled on lit side using the `emission_scales_with_shadow` property.
+     */
+    planet_emission?: EffectTexture;
+    /**
+     * Normal map of the surface deforming local sphere normal.
+     */
+    planet_normal?: EffectTexture;
+    /**
+     * Glossiness of the surface in red channel.
+     */
+    planet_reflectivity?: EffectTexture;
+    /**
+     * Wrapped around the surface of the sphere using equirectangular projection.
+     */
+    planet_surface?: EffectTexture;
+    position?: Vector;
+    radius?: float;
+    /**
+     * How many seconds it takes for the planet to do one revolution.
+     */
+    rotation_seconds?: float;
+    /**
+     * Color of specular light. Multiplied by 10 in shader.
+     */
+    specular_color?: Color;
+    specular_intensity?: float;
+    surface_normal_intensity?: float;
+    /**
+     * How far below the atmosphere layer should the surface be.
+     */
+    surface_vertical_offset?: float;
+}
+interface PlatformBackdropHeroCloud {
+    /**
+     * Random position offset of the cloud animation. Refreshed every loop.
+     */
+    position_deviation?: Vector;
+    /**
+     * With each planet revolution, the cloud smoothly travels along this path by approximating the provided points. If only single position is provided, it remains stationary at that point.
+     */
+    positions?: Vector[];
+    projection_style?: 'none' | 'front-only' | 'front-and-back' | 'front-and-back-inverted';
+    rotate_with_planet?: boolean;
+    rotation_deviation?: float;
+    rotation_speed?: float;
+    /**
+     * Cloud size as a proportion of the total planet size, meaning `1` spans whole planet.
+     */
+    size?: Vector;
+    /**
+     * 1, 2, 3 use cloud sprites 1, 2, 3 respectively. 0 will disable this cloud. Anything else is invalid.
+     */
+    sprite_index?: uint8;
+    /**
+     * Random frame offset of the cloud animation if the graphic is an animation.
+     */
+    starting_frame_offset?: uint16;
 }
 /**
  * Defines when controller vibrations should be played.
@@ -7894,7 +8546,29 @@ ItemProductPrototype | /**
  * Loaded when the `type` is `"fluid"`.
  */
 FluidProductPrototype;
+interface ProductPrototypeBase {
+    /**
+     * Value between 0 and 1. When a product has probability set, a probability roll is performed when trying to give product: if probability roll fails then product is not given. This value controls threshold of the independent probability roll, which means if there are multiple products to be given, they may use different roll value causing products to all be given, some of them given or none of them given at all.
+     */
+    independent_probability?: double;
+    /**
+     * A range of values where lower end is at at least at value of 0 and upper end is at most at value of 1. This range is used as part of shared probability test: When a set of products is attempted to be given, there is a single random generator roll performed that gives a value from range `[0, 1)`. This rolled value is compared to ranges of all products that are given at the same time. In order for the product to be given, the roll must test to be within this range, meaning `roll >= min && roll < max` must be true. If the test fails, then the product is not given.
+     *
+     * Note: for a product to be given, both independent_probability test and shared_probability tests must pass. That means probability values seen in gui are equal to `independent_probability * (shared_probability.max - shared_probability.min)`
+     *
+     * Note: ranges between different products are independent, that means they are allowed to overlap. This may be used to create set of products that are always given in pairs if ranges are equal or to make products that are given exclusively (one or the other) if the ranges do not overlap.
+     */
+    shared_probability?: SharedProbabilityDefinition;
+    /**
+     * When hovering over a recipe in the crafting menu the recipe tooltip will be shown. An additional item tooltip will be shown for every product, as a separate tooltip, if the item tooltip has a description and/or properties to show and if `show_details_in_recipe_tooltip` is `true`.
+     */
+    show_details_in_recipe_tooltip?: boolean;
+}
 interface ProductionHealthEffect {
+    /**
+     * Defaults to "physical" damage.
+     */
+    damage_type?: DamageTypeID;
     not_producing?: float;
     producing?: float;
 }
@@ -7924,22 +8598,50 @@ interface ProgrammableSpeakerNote {
      */
     sound?: Sound;
 }
+/**
+ * Root style: `"progressbar"`
+ */
 interface ProgressBarStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     bar?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     bar_background?: ElementImageSet;
     /**
      * The thickness of the bar, not the horizontal size.
+     *
+     * Required on the root style.
      */
     bar_width?: uint32;
+    /**
+     * Required on the root style.
+     */
     color?: Color;
+    /**
+     * Required on the root style.
+     */
     embed_text_in_bar?: boolean;
     filled_font_color?: Color;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     font?: string;
+    /**
+     * Required on the root style.
+     */
     font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     other_colors?: OtherColors[];
+    /**
+     * Required on the root style.
+     */
     side_text_padding?: int16;
     type: 'progressbar_style';
 }
@@ -7975,6 +8677,10 @@ interface ProjectileTriggerDelivery extends TriggerDeliveryItem {
      * Maximum deviation of the projectile from source orientation, in +/- (`x radians / 2`). Example: `3.14 radians -> +/- (180° / 2)`, meaning up to 90° deviation in either direction of rotation.
      */
     direction_deviation?: float;
+    /**
+     * If `true`, the projectile will inherit any positive speed component from the source entity's movement toward the target.
+     */
+    inherit_speed?: boolean;
     max_range?: double;
     min_range?: double;
     /**
@@ -8034,77 +8740,54 @@ interface PuddleTileEffectParameters {
     water_effect?: TileEffectDefinitionID;
     water_effect_parameters?: WaterTileEffectParameters;
 }
-/**
- * A mapping of arrays of {@link PumpConnectorGraphicsAnimations | prototype:PumpConnectorGraphicsAnimation} to all 4 directions of the pump connection (to a fluid wagon).
- * @example ```
-load_animations =
-{
-  west =
-  {
-    [1] =
-    {
-      standup_base =
-      {
-        filename = "__base__/graphics/entity/pump/connector/V-R-135-load-standup-base.png",
-        width = 110,
-        height = 126,
-        scale = 0.5,
-        line_length = 1,
-        frame_count = 20,
-        shift = util.by_pixel(-23.5, -13.5)
-      },
-      standup_shadow =
-      {
-        filename = "__base__/graphics/entity/pump/connector/V-R-1-load-standup-base-shadow.png",
-        width = 157,
-        height = 136,
-        scale = 0.5,
-        line_length = 1,
-        frame_count = 20,
-        shift = util.by_pixel(-8.75, 8.5)
-      },
-    },
-    [2] =
-    {
-      standup_base = { ... },
-      standup_shadow = { ... },
-      connector_shadow = { ... },
-    },
-    [3] = { ... },
-    [4] = { ... },
-    [5] = { ... },
-    [6] = { ... },
-  },
-  north = { ... },
-  east = { ... },
-  south = { ... },
+interface PumpWagonConnectionGraphics {
+    base?: BasePumpWagonConnectionAnimations;
+    /**
+     * Value between 0 and 1 (both exclusive). The base animation will play up until the connecting progress reaches the value. Needs to be less than `clamp_animation_starts_at_progress`. The arm (`part_1` and `part_2`) will rotate and extend in the time in between.
+     */
+    base_animation_finished_at_progress?: double;
+    /**
+     * Value between 0 and 1 (both exclusive). The clamp animation will play up starting when the connecting progress reaches the value. Needs to be larger than `base_animation_finished_at_progress`. The arm (`part_1` and `part_2`) will rotate and extend in the time in between.
+     */
+    clamp_animation_starts_at_progress?: double;
+    clamp_y_shift?: float;
+    height_diff_to_wagon?: float;
+    part1_to_2_shift?: Vector;
+    /**
+     * Adjusts where the sprites will be cropped
+     */
+    part2_crop_adjustment?: float;
+    /**
+     * Adjusts where the sprites will be cropped
+     */
+    part2_shadow_crop_adjustment?: float;
+    /**
+     * Rotating top part.
+     */
+    part_1?: RotatedSprite;
+    part_1_shadow?: RotatedSprite;
+    /**
+     * Rotating arm.
+     */
+    part_2?: RotatedSprite;
+    part_2_shadow?: RotatedSprite;
+    /**
+     * Projected render rest position of `suction_clamp` relative to the parent pump position.
+     */
+    resting_position_shift?: PumpWagonConnectionShift4Way;
+    shadow_shift?: Vector;
+    suction_clamp?: Animation;
+    suction_clamp_shadow?: Animation;
+    /**
+     * Relative projected render position of `part_1` to the parent pump position.
+     */
+    top_pivot_shift?: PumpWagonConnectionShift4Way;
 }
-```
- */
-interface PumpConnectorGraphics {
-    /**
-     * Size of the array must be 6 or more.
-     */
-    east: PumpConnectorGraphicsAnimation[];
-    /**
-     * Size of the array must be 6 or more.
-     */
-    north: PumpConnectorGraphicsAnimation[];
-    /**
-     * Size of the array must be 6 or more.
-     */
-    south: PumpConnectorGraphicsAnimation[];
-    /**
-     * Size of the array must be 6 or more.
-     */
-    west: PumpConnectorGraphicsAnimation[];
-}
-interface PumpConnectorGraphicsAnimation {
-    connector?: Animation;
-    connector_shadow?: Animation;
-    standup_base?: Animation;
-    standup_shadow?: Animation;
-    standup_top?: Animation;
+interface PumpWagonConnectionShift4Way {
+    east: Vector;
+    north: Vector;
+    south: Vector;
+    west: Vector;
 }
 /**
  * The push back effect used by the {@link discharge defense | https://wiki.factorio.com/Discharge_defense}.
@@ -8125,13 +8808,27 @@ interface PushBackTriggerEffectItem extends TriggerEffectItem {
 ```
  */
 type QualityID = string;
+/**
+ * Root style: `"radiobutton"`
+ */
 interface RadioButtonStyleSpecification extends StyleWithClickableGraphicalSetSpecification {
+    /**
+     * Required on the root style.
+     */
     disabled_font_color?: Color;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     font?: string;
+    /**
+     * Required on the root style.
+     */
     font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     text_padding?: uint32;
     type: 'radiobutton_style';
 }
@@ -8157,6 +8854,14 @@ interface RadiusVisualisationSpecification {
      * This distance is silently overwritten by prototypes with a custom distance: {@link AgriculturalTowerPrototype::radius | prototype:AgriculturalTowerPrototype::radius}, {@link AsteroidCollectorPrototype::collection_radius | prototype:AsteroidCollectorPrototype::collection_radius}, {@link BeaconPrototype::supply_area_distance | prototype:BeaconPrototype::supply_area_distance}, {@link ElectricPolePrototype::supply_area_distance | prototype:ElectricPolePrototype::supply_area_distance}, {@link MiningDrillPrototype::resource_searching_radius | prototype:MiningDrillPrototype::resource_searching_radius}.
      */
     distance?: double;
+    /**
+     * Each value must be >= 0.01.
+     *
+     * If value is not provided for a quality, then `1` will be used as a multiplier instead.
+     *
+     * This does not affect the visualisation of prototypes with a custom distance specification because their distance automatically scales based on quality: agricultural tower (no quality scaling), {@link asteroid collector | prototype:QualityPrototype::asteroid_collector_collection_radius_bonus}, {@link beacon | prototype:QualityPrototype::beacon_supply_area_distance_bonus}, cargo landing pad (no quality scaling), {@link electric pole | prototype:QualityPrototype::electric_pole_supply_area_distance_bonus}, and {@link mining drill | prototype:QualityPrototype::mining_drill_mining_radius_bonus}.
+     */
+    distance_quality_multiplier?: LuaTable<QualityID, double>;
     draw_in_cursor?: boolean;
     draw_on_selection?: boolean;
     /**
@@ -8168,7 +8873,7 @@ interface RadiusVisualisationSpecification {
     /**
      * The sprite to show.
      *
-     * This sprite is silently overwritten by prototypes with a custom radius picture: {@link AgriculturalTowerPrototype::radius_visualisation_picture | prototype:AgriculturalTowerPrototype::radius_visualisation_picture}, {@link AsteroidCollectorPrototype::radius_visualisation_picture | prototype:AsteroidCollectorPrototype::radius_visualisation_picture}, {@link BeaconPrototype::radius_visualisation_picture | prototype:BeaconPrototype::radius_visualisation_picture}, {@link ElectricPolePrototype::radius_visualisation_picture | prototype:ElectricPolePrototype::radius_visualisation_picture}, {@link MiningDrillPrototype::radius_visualisation_picture | prototype:MiningDrillPrototype::radius_visualisation_picture}.
+     * This sprite is silently overwritten by prototypes with a custom radius picture: {@link AgriculturalTowerPrototype::radius_visualisation_picture | prototype:AgriculturalTowerPrototype::radius_visualisation_picture}, {@link AsteroidCollectorPrototype::radius_visualisation_picture | prototype:AsteroidCollectorPrototype::radius_visualisation_picture}, {@link BeaconPrototype::radius_visualisation_picture | prototype:BeaconPrototype::radius_visualisation_picture}, {@link CargoLandingPadPrototype::radius_visualisation_picture | prototype:CargoLandingPadPrototype::radius_visualisation_picture}, {@link ElectricPolePrototype::radius_visualisation_picture | prototype:ElectricPolePrototype::radius_visualisation_picture}, {@link MiningDrillPrototype::radius_visualisation_picture | prototype:MiningDrillPrototype::radius_visualisation_picture}.
      */
     sprite?: Sprite;
 }
@@ -8484,6 +9189,21 @@ interface Resistance {
  */
 type ResourceCategoryID = string;
 type RichTextSetting = 'enabled' | 'disabled' | 'highlight';
+interface RobotDoorSpecification {
+    /**
+     * Drawn when a robot brings/takes items from this entity.
+     */
+    animation?: Animation;
+    /**
+     * Played when a robot brings/takes items from this entity. Only loaded if `animation` is defined.
+     */
+    animation_sound?: Sound;
+    /**
+     * The offset from the center of this entity where a robot visually brings/takes items.
+     */
+    location_offset?: Vector;
+    opened_duration?: uint8;
+}
 interface RollingStockRotatedSlopedGraphics {
     rotated: RotatedSprite;
     slope_angle_between_frames?: double;
@@ -8754,8 +9474,14 @@ interface ScrollBarStyleSpecification extends BaseStyleSpecification {
     background_graphical_set?: ElementImageSet;
     thumb_button_style?: ButtonStyleSpecification;
 }
+/**
+ * Root style: `"scroll_pane"`
+ */
 interface ScrollPaneStyleSpecification extends BaseStyleSpecification {
     always_draw_borders?: boolean;
+    /**
+     * Required on the root style.
+     */
     background_graphical_set?: ElementImageSet;
     dont_force_clipping_rect_for_contents?: boolean;
     extra_bottom_margin_when_activated?: int32;
@@ -8774,11 +9500,23 @@ interface ScrollPaneStyleSpecification extends BaseStyleSpecification {
     extra_right_padding_when_activated?: int32;
     extra_top_margin_when_activated?: int32;
     extra_top_padding_when_activated?: int32;
+    /**
+     * Required on the root style.
+     */
     graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     horizontal_scrollbar_style?: HorizontalScrollBarStyleSpecification;
     scrollbars_go_outside?: boolean;
     type: 'scroll_pane_style';
+    /**
+     * Required on the root style.
+     */
     vertical_flow_style?: VerticalFlowStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     vertical_scrollbar_style?: VerticalScrollBarStyleSpecification;
 }
 /**
@@ -8808,6 +9546,18 @@ interface SelectionModeData {
     entity_filter_mode?: 'whitelist' | 'blacklist';
     entity_filters?: EntityID[];
     entity_type_filters?: string[];
+    /**
+     * If this is `false`, using any of the mode flags `"blueprint"`, `"deconstruct"`, `"cancel-deconstruct"`, `"upgrade"`, `"cancel-upgrade"` or `"downgrade"` without also specifying another flag that selects entities will result in an error, because the selection tool cannot select any entities and this is likely undesired behavior.
+     *
+     * Setting this to `true` disables this error.
+     */
+    ignore_cannot_select_entities?: boolean;
+    /**
+     * If this is `false`, using any of the mode flags `"blueprint"` or `"deconstruct"` without also specifying any flag that selects tiles will result in an error, because the selection tool cannot select any tiles and this is likely undesired behavior.
+     *
+     * Setting this to `true` disables this error.
+     */
+    ignore_cannot_select_tiles?: boolean;
     mode: SelectionModeFlags;
     play_ended_sound_when_nothing_selected?: boolean;
     started_sound?: Sound;
@@ -8820,13 +9570,13 @@ interface SelectionModeData {
  * Some flags only exclude objects from the selection, meaning they need to be combined with another flag to select anything.
  */
 type SelectionModeFlags = (/**
- * Selects entities and tiles as if selecting them for a blueprint.
+ * Excludes entities and tiles that can't be selected for blueprinting.
  */
 'blueprint' | /**
- * Selects entities and tiles as if selecting them for deconstruction.
+ * Excludes entities and tiles that can't be selected for deconstruction.
  */
 'deconstruct' | /**
- * Selects entities and tiles as if selecting them for deconstruction cancellation.
+ * Excludes entities that can't be selected for deconstruction cancellation.
  */
 'cancel-deconstruct' | /**
  * Selects items on the ground.
@@ -8862,13 +9612,13 @@ type SelectionModeFlags = (/**
  * Excludes entities that are not from an enemy force from the selection.
  */
 'enemy' | /**
- * Selects entities as if selecting them for upgrading.
+ * Excludes entities that can't be selected for upgrading.
  */
 'upgrade' | /**
- * Selects entities as if selecting them for upgrade cancellation.
+ * Excludes entities that can't be selected for upgrade cancellation.
  */
 'cancel-upgrade' | /**
- * Selects entities as if selecting them for downgrading.
+ * Excludes entities that can't be selected for downgrading.
  */
 'downgrade' | /**
  * Selects entities that are an {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype}.
@@ -8892,13 +9642,13 @@ type SelectionModeFlags = (/**
  * Selects entities that are a {@link TileGhostPrototype | prototype:TileGhostPrototype}.
  */
 'tile-ghost') | (/**
- * Selects entities and tiles as if selecting them for a blueprint.
+ * Excludes entities and tiles that can't be selected for blueprinting.
  */
 'blueprint' | /**
- * Selects entities and tiles as if selecting them for deconstruction.
+ * Excludes entities and tiles that can't be selected for deconstruction.
  */
 'deconstruct' | /**
- * Selects entities and tiles as if selecting them for deconstruction cancellation.
+ * Excludes entities that can't be selected for deconstruction cancellation.
  */
 'cancel-deconstruct' | /**
  * Selects items on the ground.
@@ -8934,13 +9684,13 @@ type SelectionModeFlags = (/**
  * Excludes entities that are not from an enemy force from the selection.
  */
 'enemy' | /**
- * Selects entities as if selecting them for upgrading.
+ * Excludes entities that can't be selected for upgrading.
  */
 'upgrade' | /**
- * Selects entities as if selecting them for upgrade cancellation.
+ * Excludes entities that can't be selected for upgrade cancellation.
  */
 'cancel-upgrade' | /**
- * Selects entities as if selecting them for downgrading.
+ * Excludes entities that can't be selected for downgrading.
  */
 'downgrade' | /**
  * Selects entities that are an {@link EntityWithHealthPrototype | prototype:EntityWithHealthPrototype}.
@@ -9008,7 +9758,7 @@ interface SetTileTriggerEffectItem extends TriggerEffectItem {
     apply_on_space_platform?: boolean;
     apply_projection?: boolean;
     radius: float;
-    tile_collision_mask?: CollisionMaskConnector;
+    tile_collision_mask?: TileCollisionMaskConnector;
     tile_name: TileID;
     type: 'set-tile';
 }
@@ -9024,6 +9774,16 @@ interface Settings {
      * All startup mod settings, indexed by the name of the setting.
      */
     startup: Record<string, ModSetting>;
+}
+interface SharedProbabilityDefinition {
+    /**
+     * Upper end of the range of shared roll values that will allow product to be given. Must be >= `min` and <= `1`.
+     */
+    max: double;
+    /**
+     * Lower end of the range of shared roll values that will allow product to be given. Must be >= `0` and <= `max`.
+     */
+    min: double;
 }
 interface ShiftAnimationWaypoints {
     east: Vector[];
@@ -9047,6 +9807,10 @@ interface SignalIDConnectorBase {
      * Name of the signal.
      */
     name: VirtualSignalID | ItemID | FluidID | RecipeID | EntityID | SpaceLocationID | AsteroidChunkID | QualityID;
+    /**
+     * Defaults to `normal`.
+     */
+    quality?: QualityID;
     type: string;
 }
 /**
@@ -9097,11 +9861,11 @@ interface SimulationDefinition {
     /**
      * Only loaded if `init_file` is not defined.
      *
-     * This code is run as a (silent) console command inside the simulation when it is first initialized. Since this is run as a console command, the restrictions of console commands apply, e.g. `require` is not available, see {@link here | runtime:libraries}.
+     * This code is run as a (silent) console command inside the simulation when it is first initialized. Since this is run as a console command, the restrictions of console commands apply, e.g. `require` is not available, see {@link here | auxiliary:libraries}.
      */
     init?: string;
     /**
-     * This code is run as a (silent) console command inside the simulation when it is first initialized. Since this is run as a console command, the restrictions of console commands apply, e.g. `require` is not available, see {@link here | runtime:libraries}.
+     * This code is run as a (silent) console command inside the simulation when it is first initialized. Since this is run as a console command, the restrictions of console commands apply, e.g. `require` is not available, see {@link here | auxiliary:libraries}.
      */
     init_file?: FileName;
     /**
@@ -9136,11 +9900,11 @@ interface SimulationDefinition {
     /**
      * Only loaded if `update_file` is not defined.
      *
-     * This code is run as a (silent) console command inside the simulation every time the simulation is updated. Since this is run as a console command, the restrictions of console commands apply, e.g. `require` is not available, see {@link here | runtime:libraries}.
+     * This code is run as a (silent) console command inside the simulation every time the simulation is updated. Since this is run as a console command, the restrictions of console commands apply, e.g. `require` is not available, see {@link here | auxiliary:libraries}.
      */
     update?: string;
     /**
-     * This code is run as a (silent) console command inside the simulation every time the simulation is updated. Since this is run as a console command, the restrictions of console commands apply, e.g. `require` is not available, see {@link here | runtime:libraries}.
+     * This code is run as a (silent) console command inside the simulation every time the simulation is updated. Since this is run as a console command, the restrictions of console commands apply, e.g. `require` is not available, see {@link here | auxiliary:libraries}.
      */
     update_file?: FileName;
     /**
@@ -9234,14 +9998,41 @@ interface SingleGraphicProcessionLayer {
     shift_rotates_with_pod?: boolean;
     type: 'single-graphic';
 }
+/**
+ * Root style: `"slider"`
+ */
 interface SliderStyleSpecificationBase extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     button?: ButtonStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     draw_notches?: boolean;
+    /**
+     * Required on the root style.
+     */
     empty_bar?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     empty_bar_disabled?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     full_bar?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     full_bar_disabled?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     high_button?: ButtonStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     notch?: ElementImageSet;
     type: string;
 }
@@ -9381,6 +10172,10 @@ type Sound = {
 interface SoundAccent {
     frame?: uint16;
     /**
+     * The `sound` is played when the entity has one the specified direction.
+     */
+    play_for_directions?: defines.direction[];
+    /**
      * Play the `sound` for a working visualisation of a given {@link WorkingVisualisation::name | prototype:WorkingVisualisation::name}.
      *
      * The name cannot be empty.
@@ -9434,7 +10229,7 @@ interface SoundModifier {
     type: SoundModifierType;
     volume_multiplier: float;
 }
-type SoundModifierType = 'game' | 'main-menu' | 'tips-and-tricks' | 'driving' | 'elevation' | 'space-platform';
+type SoundModifierType = 'game' | 'main-menu' | 'tips-and-tricks' | 'driving' | 'elevation' | 'space-platform' | 'tall-entities-hidden';
 /**
  * This defines which slider in the sound settings affects the volume of this sound. Furthermore, some sound types are mixed differently than others, e.g. zoom level effects are applied.
  */
@@ -9544,14 +10339,40 @@ type SpawnPoint = {
     double,
     double
 ];
+/**
+ * Root style: `"speech_bubble"`
+ */
 interface SpeechBubbleStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     arrow_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     arrow_indent?: double;
+    /**
+     * Required on the root style.
+     */
     close_color?: Color;
+    /**
+     * Required on the root style.
+     */
     frame_style?: FrameStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     label_style?: LabelStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     pass_through_mouse?: boolean;
     type: 'speech_bubble_style';
+}
+interface SpentFluidSpecification {
+    amount?: double;
+    name: FluidID;
+    temperature?: float;
 }
 /**
  * Used by {@link SpiderVehiclePrototype | prototype:SpiderVehiclePrototype}.
@@ -9651,7 +10472,13 @@ interface SpiderTorsoGraphicsSet {
     base_animation?: RotatedAnimation;
     base_render_layer?: RenderLayer;
     render_layer?: RenderLayer;
+    /**
+     * If no sprite flags are defined, then this animation is loaded and treated as a shadow by default.
+     */
     shadow_animation?: RotatedAnimation;
+    /**
+     * If no sprite flags are defined, then this animation is loaded and treated as a shadow by default.
+     */
     shadow_base_animation?: RotatedAnimation;
     /**
      * Refer to {@link EntityPrototype::water_reflection | prototype:EntityPrototype::water_reflection}.
@@ -9913,6 +10740,48 @@ type Sprite4Way = {
     west?: Sprite;
 } | Sprite;
 /**
+ * A map of sprites for 8 directions of the entity.
+ */
+interface Sprite8Way {
+    /**
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
+     */
+    east?: Sprite;
+    /**
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
+     */
+    north?: Sprite;
+    /**
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
+     */
+    north_east?: Sprite;
+    /**
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
+     */
+    north_west?: Sprite;
+    /**
+     * Only loaded if `sheets` is not defined.
+     */
+    sheet?: SpriteNWaySheet;
+    sheets?: SpriteNWaySheet[];
+    /**
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
+     */
+    south?: Sprite;
+    /**
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
+     */
+    south_east?: Sprite;
+    /**
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
+     */
+    south_west?: Sprite;
+    /**
+     * Only loaded, and mandatory if both `sheets` and `sheet` are not defined.
+     */
+    west?: Sprite;
+}
+/**
  * An array containing the following values.
  * @example ```
 flags = { "linear-minification", "linear-magnification" }
@@ -9951,7 +10820,13 @@ type SpriteFlags = (/**
 'smoke' | /**
  * This flag will internally set these flags: `"group=decal"`
  */
-'decal' | 'low-object' | 'corpse-decay' | 'trilinear-filtering' | 'group=none' | 'group=terrain' | 'group=shadow' | 'group=smoke' | 'group=decal' | 'group=low-object' | 'group=gui' | 'group=icon' | 'group=icon-background' | 'group=effect-texture')[];
+'decal' | 'low-object' | 'corpse-decay' | 'trilinear-filtering' | /**
+ * This flag will internally set these flags: `"linear-minification"`, `"linear-magnification"`, `"group=procession-cover"`
+ */
+'procession-cover' | /**
+ * This flag will internally limit colors to only RG and set these flags: `"no-crop"`, `"not-compressed"`
+ */
+'normal-map' | 'group=none' | 'group=terrain' | 'group=shadow' | 'group=smoke' | 'group=decal' | 'group=low-object' | 'group=gui' | 'group=icon' | 'group=icon-background' | 'group=procession' | 'group=procession-cover' | 'group=effect-texture')[];
 /**
  * @example ```
 sheet =
@@ -9966,6 +10841,10 @@ sheet =
 ```
  */
 interface SpriteNWaySheet extends SpriteParameters {
+    /**
+     * Specifies for how many directions each frame is used. Silently forced to always be at least `1`.
+     */
+    frame_repeat?: uint32;
     /**
      * Specifies how many of the directions of the SpriteNWay are filled up with this sheet.
      */
@@ -10034,7 +10913,7 @@ interface SpriteParameters extends SpriteSource {
     usage?: SpriteUsageHint;
 }
 /**
- * This sets the "caching priority" of a sprite, so deciding priority of it being included in VRAM instead of streaming it and is therefore a purely technical value. See {@link here | https://forums.factorio.com/viewtopic.php?p=437380#p437380} and {@link here | https://www.factorio.com/blog/post/fff-264}. The possible values are listed below.
+ * This sets the caching priority of a sprite, influencing whether it is kept in VRAM or streamed from disk in VRAM-limited situations. See {@link here | https://forums.factorio.com/viewtopic.php?p=437380#p437380} and {@link here | https://www.factorio.com/blog/post/fff-264} for context.
  */
 type SpritePriority = 'extra-high-no-scale' | 'extra-high' | 'high' | 'medium' | 'low' | 'very-low' | 'no-atlas';
 interface SpriteSheet extends SpriteParameters {
@@ -10077,6 +10956,12 @@ interface SpriteSource {
      * If `true`, the sprite may be downsampled to half its size on load even when 'Sprite quality' graphics setting is set to 'High'. Whether downsampling happens depends on detected hardware and other graphics settings.
      */
     allow_forced_downscale?: boolean;
+    /**
+     * All textures have 4 channels by default. This property can be used for no-atlas textures to force their format to R, RG, RGB or RGBA with 8 bytes for each channel and save VRAM space. Compression setting is based on player config.
+     *
+     * We use BC4 compression for R, BC5 for RG, BC1 for RGB, and DXT5_BC3 for RGBA, see "{@link S3 Texture Compression | https://en.wikipedia.org/wiki/S3_Texture_Compression}" to read more about compression ratios.
+     */
+    color_channels?: 1 | 2 | 3 | 4;
     /**
      * The path to the sprite file to use.
      * This property is required, but marked as optional due to typescript inheritance limitations
@@ -10168,15 +11053,11 @@ interface StackTransferTipTrigger extends CountBasedTipTrigger {
 }
 interface StateSteeringSettings {
     /**
-     * Used only for special "to look good" purposes (like in trailer).
-     */
-    force_unit_fuzzy_goto_behavior: boolean;
-    /**
      * Not including the radius of the unit.
      */
-    radius: double;
-    separation_factor: double;
-    separation_force: double;
+    radius?: double;
+    separation_factor?: double;
+    separation_force?: double;
 }
 interface StatelessVisualisation {
     acceleration_x?: float;
@@ -10259,8 +11140,12 @@ interface StatusColors {
     working?: Color;
 }
 interface SteeringSettings {
-    default: StateSteeringSettings;
-    moving: StateSteeringSettings;
+    /**
+     * Used only for special "to look good" purposes (like in trailer).
+     */
+    force_unit_fuzzy_goto_behavior?: boolean;
+    move?: StateSteeringSettings;
+    stay?: StateSteeringSettings;
 }
 interface StorageTankPictures {
     flow_sprite?: Sprite;
@@ -10465,60 +11350,164 @@ interface SurfaceRenderParameters {
      */
     draw_sprite_clouds?: boolean;
     fog?: FogEffectProperties;
+    platform_backdrop?: PlatformBackdrop;
     shadow_opacity?: float;
     space_dust_background?: SpaceDustEffectProperties;
     space_dust_foreground?: SpaceDustEffectProperties;
     terrain_tint_effect?: GlobalTintEffectProperties;
 }
+/**
+ * Root style: `"switch"`
+ */
 interface SwitchStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     active_label?: LabelStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     button?: ButtonStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     default_background?: Sprite;
+    /**
+     * Required on the root style.
+     */
     disabled_background?: Sprite;
+    /**
+     * Required on the root style.
+     */
     hover_background?: Sprite;
+    /**
+     * Required on the root style.
+     */
     inactive_label?: LabelStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     left_button_position?: uint32;
+    /**
+     * Required on the root style.
+     */
     middle_button_position?: uint32;
+    /**
+     * Required on the root style.
+     */
     right_button_position?: uint32;
     type: 'switch_style';
 }
+/**
+ * Root style: `"tab"`
+ */
 interface TabStyleSpecification extends StyleWithClickableGraphicalSetSpecification {
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     badge_font?: string;
+    /**
+     * Required on the root style.
+     */
     badge_horizontal_spacing?: int16;
+    /**
+     * Required on the root style.
+     */
     default_badge_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     default_badge_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     default_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     disabled_badge_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     disabled_badge_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     disabled_font_color?: Color;
     draw_grayscale_picture?: boolean;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     font?: string;
+    /**
+     * Required on the root style.
+     */
     hover_badge_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     increase_height_when_selected?: boolean;
+    /**
+     * Required on the root style.
+     */
     left_edge_selected_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     override_graphics_on_edges?: boolean;
+    /**
+     * Required on the root style.
+     */
     press_badge_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     right_edge_selected_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     selected_badge_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     selected_badge_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     selected_font_color?: Color;
     type: 'tab_style';
 }
+/**
+ * Root style: `"tabbed_pane"`
+ */
 interface TabbedPaneStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     tab_container?: TableStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     tab_content_frame?: FrameStyleSpecification;
     type: 'tabbed_pane_style';
+    /**
+     * Required on the root style.
+     */
     vertical_spacing?: uint32;
 }
+/**
+ * Root style: `"table"`
+ */
 interface TableStyleSpecification extends BaseStyleSpecification {
     apply_row_graphical_set_per_column?: boolean;
     background_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     border?: BorderImageSet;
     bottom_cell_padding?: int16;
     /**
@@ -10534,6 +11523,9 @@ interface TableStyleSpecification extends BaseStyleSpecification {
     default_row_graphical_set?: ElementImageSet;
     even_row_graphical_set?: ElementImageSet;
     horizontal_line_color?: Color;
+    /**
+     * Required on the root style.
+     */
     horizontal_spacing?: int32 | SpacingItem[];
     hovered_graphical_set?: ElementImageSet;
     hovered_row_color?: Color;
@@ -10549,6 +11541,9 @@ interface TableStyleSpecification extends BaseStyleSpecification {
     top_cell_padding?: int16;
     type: 'table_style';
     vertical_line_color?: Color;
+    /**
+     * Required on the root style.
+     */
     vertical_spacing?: int32 | SpacingItem[];
     wide_as_column_count?: boolean;
 }
@@ -10562,46 +11557,149 @@ interface TableStyleSpecification extends BaseStyleSpecification {
 ```
  */
 type TechnologyID = string;
+/**
+ * Root style: `"technology_slot"`
+ */
 interface TechnologySlotStyleSpecification extends ButtonStyleSpecificationBase {
+    /**
+     * Required on the root style.
+     */
     clicked_ingredients_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     clicked_overlay?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     default_background_shadow?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     default_ingredients_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     disabled_ingredients_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     drag_handle_style?: EmptyWidgetStyleSpecification;
+    /**
+     * Required on the root style.
+     */
     highlighted_graphical_set?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     highlighted_ingredients_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     hovered_ingredients_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     hovered_level_band?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     hovered_level_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     hovered_level_range_band?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     hovered_level_range_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     ingredient_icon_overlap?: uint32;
+    /**
+     * Required on the root style.
+     */
     ingredient_icon_size?: uint32;
+    /**
+     * Required on the root style.
+     */
     ingredients_height?: uint32;
+    /**
+     * Required on the root style.
+     */
     ingredients_padding?: uint32;
+    /**
+     * Required on the root style.
+     */
     level_band?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     level_band_height?: uint32;
+    /**
+     * Required on the root style.
+     */
     level_band_width?: uint32;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     level_font?: string;
+    /**
+     * Required on the root style.
+     */
     level_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     level_offset_x?: int32;
+    /**
+     * Required on the root style.
+     */
     level_offset_y?: int32;
+    /**
+     * Required on the root style.
+     */
     level_range_band?: ElementImageSet;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     level_range_font?: string;
+    /**
+     * Required on the root style.
+     */
     level_range_font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     level_range_offset_x?: int32;
+    /**
+     * Required on the root style.
+     */
     level_range_offset_y?: int32;
+    /**
+     * Required on the root style.
+     */
     progress_bar?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     progress_bar_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     progress_bar_color?: Color;
+    /**
+     * Required on the root style.
+     */
     progress_bar_height?: uint32;
+    /**
+     * Required on the root style.
+     */
     progress_bar_shadow?: ElementImageSet;
     type: 'technology_slot_style';
 }
@@ -10673,7 +11771,7 @@ interface TechnologyUnit {
      */
     count_formula?: MathExpression;
     /**
-     * List of ingredients needed for one unit of research. The items must all be {@link ToolPrototypes | prototype:ToolPrototype}.
+     * List of ingredients needed for one unit of research.
      */
     ingredients: ResearchIngredient[];
     /**
@@ -10699,24 +11797,71 @@ interface TerritorySettings {
      */
     units?: EntityID[];
 }
+/**
+ * Root style: `"textbox"`
+ */
 interface TextBoxStyleSpecification extends BaseStyleSpecification {
+    /**
+     * Required on the root style.
+     */
     active_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     default_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     disabled_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     disabled_font_color?: Color;
     /**
      * Name of a {@link FontPrototype | prototype:FontPrototype}.
+     *
+     * Required on the root style.
      */
     font?: string;
+    /**
+     * Required on the root style.
+     */
     font_color?: Color;
+    /**
+     * Required on the root style.
+     */
     game_controller_hovered_background?: ElementImageSet;
+    /**
+     * Required on the root style.
+     */
     rich_text_highlight_error_color?: Color;
+    /**
+     * Required on the root style.
+     */
     rich_text_highlight_ok_color?: Color;
+    /**
+     * Required on the root style.
+     */
     rich_text_highlight_warning_color?: Color;
+    /**
+     * Required on the root style.
+     */
     rich_text_setting?: RichTextSetting;
+    /**
+     * Required on the root style.
+     */
     selected_rich_text_highlight_error_color?: Color;
+    /**
+     * Required on the root style.
+     */
     selected_rich_text_highlight_ok_color?: Color;
+    /**
+     * Required on the root style.
+     */
     selected_rich_text_highlight_warning_color?: Color;
+    /**
+     * Required on the root style.
+     */
     selection_background_color?: Color;
     type: 'textbox_style';
 }
@@ -10774,9 +11919,18 @@ interface TileBuildSound {
  */
 interface TileBuildabilityRule {
     area: SimpleBoundingBox;
-    colliding_tiles?: CollisionMaskConnector;
+    colliding_tiles?: TileCollisionMaskConnector;
     remove_on_collision?: boolean;
-    required_tiles?: CollisionMaskConnector;
+    required_tiles?: TileCollisionMaskConnector;
+}
+/**
+ * The base game provides common collision mask functions in a Lua file in the core {@link lualib | https://github.com/wube/factorio-data/blob/master/core/lualib/collision-mask-util.lua}.
+ */
+interface TileCollisionMaskConnector {
+    /**
+     * Every key in the dictionary is the name of one {@link layer | prototype:CollisionLayerPrototype} the object collides with. The value is meaningless and always `true`. An empty table means that no layers are set.
+     */
+    layers: Record<CollisionLayerID, true>;
 }
 /**
  * The name of an {@link TileEffectDefinition | prototype:TileEffectDefinition}.
@@ -11739,6 +12893,85 @@ interface TransportBeltConnectorFrame {
     frame_main_scanner_vertical_y_scale: float;
     frame_shadow: AnimationVariations;
 }
+interface TravelToSpacePlatformsModifier extends BoolModifier {
+    type: 'unlock-travel-to-space-platforms';
+    /**
+     * If `false`, do not draw the small "constant" icon over the technology effect icon.
+     */
+    use_icon_overlay_constant?: boolean;
+}
+/**
+ * {@link TreePrototype | prototype:TreePrototype}s develop over time. To introduce visual fidelity, the shape of the plant is shrunk and distorted using a warp texture, and it slowly retracts back into its grown state.
+ */
+interface TreeGrowth {
+    /**
+     * Encodes the initial UV offset at a given pixel, used to sample {@link TreeGrowth::trunk_warp | prototype:TreeGrowth::trunk_warp}.
+     *
+     * The offset is calculated like in the following pseudocode:
+     * ```
+     * vec2 growthWarpLinear = vec2((growthWarp.r - 0.5) * 2 * pow(time, 2.546872), 0);
+     * vec2 growthWarpQuadratic = (uv - vec2(0.3, 0.2)) * pow(growthWarp.g * pow(time, 4.06187), 2) * 1000;
+     * vec2 growthWarpUVOffset = clamp(growthWarpLinear + growthWarpQuadratic + uv, 0, 1);
+     * ```
+     */
+    growth_warp: Sprite;
+    /**
+     * Encodes the point in time (0-1) since the plant started growing, at which a given pixel of the *leaves* texture becomes visible.
+     *
+     * This is a grayscale texture where white is t=0 (beginning of growth) and black is t=1 (end of growth).
+     */
+    harvest_alpha: Sprite;
+    /**
+     * Encodes the UV offset at a given pixel, used to sample the leaves texture.
+     *
+     * The final UV is calculated like in the following pseudocode:
+     * ```
+     * vec2 harvestWarpLinear = (harvestWarp.rg - 0.5) * 2 * pow(time, 2.546872);
+     * vec2 harvestUV = clamp(trunkUV + harvestWarpLinear, 0, 1);
+     * ```
+     *
+     * See {@link TreeGrowth::trunk_warp | prototype:TreeGrowth::trunk_warp} for how `trunkUV` is calculated.
+     */
+    harvest_warp: Sprite;
+    /**
+     * Exponent for the easing function of the growth progress (progress ^ progressExponent) which is used by the growth animation.
+     */
+    progress_exponent: float;
+    /**
+     * Encodes the point in time (0-1) since the plant started growing, at which a given pixel of the *shadow* texture becomes visible.
+     *
+     * This is a grayscale texture where white is t=0 (beginning of growth) and black is t=1 (end of growth).
+     */
+    shadow_alpha: Sprite;
+    /**
+     * Encodes the UV offset at a given pixel, used to sample the shadow texture.
+     *
+     * The final UV is calculated like in the following pseudocode:
+     * ```
+     * vec2 shadowWarpLinear = (shadowWarp.rg - 0.5) * 2 * pow(time, 2.546872);
+     * vec2 shadowUV = clamp(uv + shadowWarpLinear, 0, 1);
+     * ```
+     */
+    shadow_warp: Sprite;
+    /**
+     * Encodes the point in time (0-1) since the plant started growing, at which a given pixel of the *trunk* texture becomes visible.
+     *
+     * This is a grayscale texture where white is t=0 (beginning of growth) and black is t=1 (end of growth).
+     */
+    trunk_alpha: Sprite;
+    /**
+     * Encodes the UV offset at a given pixel, used to sample the trunk texture, and {@link TreeGrowth::harvest_warp | prototype:TreeGrowth::harvest_warp}.
+     *
+     * The final UV is calculated like in the following pseudocode:
+     * ```
+     * vec2 trunkWarpLinear = (trunkWarp.rg - 0.5) * 2 * pow(time, 2.546872);
+     * vec2 trunkUV = clamp(growthWarpUVOffset + trunkWarpLinear + growthWarpQuadratic, 0, 1);
+     * ```
+     *
+     * See {@link TreeGrowth::growth_warp | prototype:TreeGrowth::growth_warp} for how `growthWarpQuadratic` and `growthWarpUVOffset` are calculated.
+     */
+    trunk_warp: Sprite;
+}
 /**
  * Tree has number of "dying" stages, which is deduced from frame count of `shadow` if shadow is defined, otherwise from frame count of `trunk`. Frame count of `leaves` has to be one less than deduced number stages, as last stage is always assumed to be leafless.
  */
@@ -11919,7 +13152,10 @@ DestroyDecorativesTriggerEffectItem | /**
 CameraEffectTriggerEffectItem | /**
  * Loaded when the `type` is `"activate-impact"`.
  */
-ActivateImpactTriggerEffectItem) | (/**
+ActivateImpactTriggerEffectItem | /**
+ * Loaded when the `type` is `"create-pollution"`.
+ */
+CreatePollutionTriggerEffectItem) | (/**
  * Loaded when the `type` is `"damage"`.
  */
 DamageEntityTriggerEffectItem | /**
@@ -11988,7 +13224,10 @@ DestroyDecorativesTriggerEffectItem | /**
 CameraEffectTriggerEffectItem | /**
  * Loaded when the `type` is `"activate-impact"`.
  */
-ActivateImpactTriggerEffectItem)[];
+ActivateImpactTriggerEffectItem | /**
+ * Loaded when the `type` is `"create-pollution"`.
+ */
+CreatePollutionTriggerEffectItem)[];
 /**
  * The abstract base of all {@link TriggerEffects | prototype:TriggerEffect}.
  */
@@ -12291,6 +13530,13 @@ type UnitSpawnDefinition = {
     EntityID,
     SpawnPoint[]
 ];
+interface UnlockLogisticNetworkModifier extends BoolModifier {
+    type: 'unlock-logistic-network';
+    /**
+     * If `false`, do not draw the small "constant" icon over the technology effect icon.
+     */
+    use_icon_overlay_constant?: boolean;
+}
 interface UnlockQualityModifier extends BaseModifier {
     quality: QualityID;
     type: 'unlock-quality';
@@ -12443,6 +13689,8 @@ interface VariableAmbientSoundLayer {
      * Number of samples must be the same across all variants.
      *
      * Samples cannot have variable volume and all samples must have the same default volume.
+     *
+     * Samples are required to have sampling frequency of 44.1kHz. This is checked at runtime.
      */
     variants: Sound[];
 }
@@ -12632,7 +13880,7 @@ type VariableAmbientSoundStateType = 'regular' | /**
 'stop';
 interface VariableAmbientSoundVariableSound {
     /**
-     * Number of audio signal samples (default sampling frequency is 44.1kHz) defining a time grid. Music samples are aligned with this grid when queued.
+     * Number of audio signal samples (sampling frequency is 44.1kHz) defining a time grid. Music samples are aligned with this grid when queued.
      */
     alignment_samples?: uint32;
     intermezzo?: Sound;
@@ -12708,10 +13956,19 @@ interface VehicleLogisticsModifier extends BoolModifier {
     use_icon_overlay_constant?: boolean;
 }
 type VerticalAlign = 'top' | 'center' | 'bottom';
+/**
+ * Root style: `"vertical_flow"`
+ */
 interface VerticalFlowStyleSpecification extends BaseStyleSpecification {
     type: 'vertical_flow_style';
+    /**
+     * Required on the root style.
+     */
     vertical_spacing?: int32;
 }
+/**
+ * Root style: `"vertical_scrollbar"`
+ */
 interface VerticalScrollBarStyleSpecification extends ScrollBarStyleSpecification {
     type: 'vertical_scrollbar_style';
 }
@@ -13062,7 +14319,7 @@ type WorldAmbientSoundDefinition = {
     sound?: Sound;
 } | Sound;
 /**
- * Format uses a dot as its decimal delimiter. Doubles are stored in the {@link double precision | http://en.wikipedia.org/wiki/Double-precision_floating-point_format} floating point format.
+ * Format uses a dot as its decimal delimiter. Doubles are stored in the {@link double precision | https://en.wikipedia.org/wiki/Double-precision_floating-point_format} floating point format.
  *
  * May not be {@link NaN | https://en.wikipedia.org/wiki/NaN}.
  * @example ```
@@ -13100,7 +14357,7 @@ type int32 = number;
  */
 type int8 = number;
 /**
- * A simple {@link Lua table | http://www.lua.org/pil/2.5.html}. An array is a table that uses continuous integer keys starting at `1`, while a dictionary can use numeric or string keys in any order or combination.
+ * A simple {@link Lua table | https://www.lua.org/pil/2.5.html}. An array is a table that uses continuous integer keys starting at `1`, while a dictionary can use numeric or string keys in any order or combination.
  *
  * Tables used by prototypes may be parsed via an internal class called "property tree". Errors that reference this class treat tables as 0-indexed. For example `Value must be a number in property tree at ROOT.technology.steel-plate-productivity.effects[0].change` refers to element 0 of the property tree array which in Lua is at index 1.
  */

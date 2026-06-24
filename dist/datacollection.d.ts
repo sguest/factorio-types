@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.0.77
+// Factorio version 2.1.7
 // API version 6
 
 declare namespace prototype {
@@ -240,6 +240,9 @@ interface dataCollection {
     };
     'editor-controller': {
         [key: string]: EditorControllerPrototype;
+    };
+    'electric-energy-interface-equipment': {
+        [key: string]: ElectricEnergyInterfaceEquipmentPrototype;
     };
     'electric-energy-interface': {
         [key: string]: ElectricEnergyInterfacePrototype;
