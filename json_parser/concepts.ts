@@ -79,18 +79,6 @@ function parseConcept(concept: Concept) {
         concept.type = parsed;
     }
 
-    // Add the extra layers 13-55 supported by CollisionMaskLayer but not present in the API spec
-    if(concept.name === 'CollisionMaskLayer') {
-        let cmlType = concept.type as UnionType;
-        for(let i = 13; i <= 55; i++) {
-            cmlType.options.push({
-                complex_type: 'literal',
-                value: `layer-${i}`,
-                description: '',
-            })
-        }
-    }
-
     // The variant groups setup for this type is very strange and feels wrong. Just omitting it for now.
     if(concept.name === 'LuaPostEntityDiedEventFilter') {
         (concept.type as TableType).variant_parameter_groups = undefined;
