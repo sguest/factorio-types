@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.7
+// Factorio version 2.1.8
 // API version 6
 
 declare namespace runtime {
@@ -3129,7 +3129,7 @@ interface EventData {
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding event, and different types of event filters can not be mixed.
  */
-type EventFilter = (LuaEntityClonedEventFilter | LuaEntityDamagedEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPlatformMinedEntityEventFilter | LuaPlayerBuiltEntityEventFilter | LuaPlayerMinedEntityEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaPostSegmentedUnitDiedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPreGhostUpgradedEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaPreRobotMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaScriptRaisedDestroyEventFilter | LuaScriptRaisedDestroySegmentedUnitEventFilter | LuaScriptRaisedReviveEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaSectorScannedEventFilter | LuaSegmentedUnitCreatedEventFilter | LuaSegmentedUnitDamagedEventFilter | LuaSegmentedUnitDiedEventFilter | LuaUpgradeCancelledEventFilter)[];
+type EventFilter = (LuaSegmentedUnitDiedEventFilter | LuaScriptRaisedTeleportedEventFilter | LuaPreRobotMinedEntityEventFilter | LuaScriptRaisedBuiltEventFilter | LuaPlatformMinedEntityEventFilter | LuaRobotBuiltEntityEventFilter | LuaPrePlayerMinedEntityEventFilter | LuaEntityDeconstructionCancelledEventFilter | LuaPreGhostUpgradedEventFilter | LuaPlatformBuiltEntityEventFilter | LuaPrePlatformMinedEntityEventFilter | LuaEntityClonedEventFilter | LuaPlayerRepairedEntityEventFilter | LuaPostEntityDiedEventFilter | LuaScriptRaisedDestroySegmentedUnitEventFilter | LuaSegmentedUnitDamagedEventFilter | LuaPreGhostDeconstructedEventFilter | LuaPlayerMinedEntityEventFilter | LuaSectorScannedEventFilter | LuaRobotMinedEntityEventFilter | LuaEntityMarkedForDeconstructionEventFilter | LuaPostSegmentedUnitDiedEventFilter | LuaScriptRaisedReviveEventFilter | LuaPlayerBuiltEntityEventFilter | LuaUpgradeCancelledEventFilter | LuaEntityDamagedEventFilter | LuaEntityDiedEventFilter | LuaEntityMarkedForUpgradeEventFilter | LuaSegmentedUnitCreatedEventFilter | LuaScriptRaisedDestroyEventFilter)[];
 interface ExplosionDefinition {
     name: LuaEntityPrototype;
     offset: Vector;
@@ -4700,6 +4700,10 @@ interface LogisticFilter {
      * The space location to import from.
      */
     import_from?: SpaceLocationID;
+    /**
+     * From which sources items should be requested for space platforms. Defaults to `"planet"`.
+     */
+    request_from?: RequestFromLocation;
 }
 type LogisticFilterIndex = uint16;
 interface LogisticGroup {
@@ -6840,7 +6844,7 @@ interface MapAndDifficultySettings {
 }
 interface MapDifficultySettings {
     /**
-     * A value in range [0.001, 1000].
+     * A value in range [0.001, 100000].
      */
     technology_price_multiplier: double;
     /**
@@ -7920,7 +7924,7 @@ type PropertyExpressionNames = Record<string, string>;
  *
  * Filters are always used as an array of filters of a specific type. Every filter can only be used with its corresponding prototype type, and different types of prototype filters can not be mixed.
  */
-type PrototypeFilter = (AchievementPrototypeFilter | AsteroidChunkPrototypeFilter | DecorativePrototypeFilter | EquipmentPrototypeFilter | FluidPrototypeFilter | ModSettingPrototypeFilter | RecipePrototypeFilter | SpaceLocationPrototypeFilter | TechnologyPrototypeFilter | TilePrototypeFilter | VirtualSignalPrototypeFilter | EntityPrototypeFilter | ItemPrototypeFilter)[];
+type PrototypeFilter = (ModSettingPrototypeFilter | SpaceLocationPrototypeFilter | DecorativePrototypeFilter | TilePrototypeFilter | AsteroidChunkPrototypeFilter | ItemPrototypeFilter | TechnologyPrototypeFilter | RecipePrototypeFilter | AchievementPrototypeFilter | VirtualSignalPrototypeFilter | EquipmentPrototypeFilter | FluidPrototypeFilter | EntityPrototypeFilter)[];
 type PrototypeFilterMode = 'none' | 'whitelist' | 'blacklist';
 interface PrototypeHistory {
     /**
@@ -8752,10 +8756,10 @@ interface SavedLogisticFilters {
     sections: SavedLogisticSection[];
 }
 interface SavedLogisticSection {
-    group: string;
-    filters: LogisticFilter[];
-    multiplier: float;
-    active: boolean;
+    group?: string;
+    filters?: LogisticFilter[];
+    multiplier?: float;
+    active?: boolean;
 }
 interface ScheduleInterrupt {
     /**

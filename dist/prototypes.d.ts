@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.7
+// Factorio version 2.1.8
 // API version 6
 
 declare namespace prototype {
@@ -3583,6 +3583,8 @@ interface EntityPrototype extends Prototype {
     surface_conditions?: SurfaceCondition[];
     /**
      * When this is true, this entity prototype will be translucent and unselectable when "Hide tall entities" mode is active.
+     *
+     * Rail signals are always treated as 'tall' when built attached to elevated rails.
      */
     tall?: boolean;
     tile_buildability_rules?: TileBuildabilityRule[];

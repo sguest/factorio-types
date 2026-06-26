@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.7
+// Factorio version 2.1.8
 // API version 6
 
 declare namespace prototype {
@@ -215,6 +215,9 @@ type Alignment = 'top-left' | 'middle-left' | /**
  * The same as `"middle-right"`
  */
 'right' | 'bottom-right';
+/**
+ * Triggered when using the "build ghost" hotkey to build something.
+ */
 interface AlternativeBuildTipTrigger extends CountBasedTipTrigger {
     type: 'alternative-build';
 }
@@ -1403,6 +1406,9 @@ VirtualSignalPrototype | /**
  * `'wall'`
  */
 WallPrototype;
+/**
+ * Triggered when a {@link space platform starter pack | prototype:SpacePlatformStarterPackPrototype} is used to create a space platform.
+ */
 interface ApplyStarterPackTipTrigger extends CountBasedTipTrigger {
     type: 'apply-starter-pack';
 }
@@ -3871,7 +3877,7 @@ interface DifficultySettings {
      */
     spoil_time_modifier?: double;
     /**
-     * Must be >= 0.001 and <= 1000.
+     * Must be >= 0.001 and <= 100000.
      */
     technology_price_multiplier?: double;
 }
@@ -4643,7 +4649,13 @@ interface EntityRendererSearchBoxLimits {
     top: uint8;
 }
 type EntityStatus = 'working' | 'normal' | 'ghost' | 'not-plugged-in-electric-network' | 'networks-connected' | 'networks-disconnected' | 'no-ammo' | 'waiting-for-target-to-be-built' | 'waiting-for-train' | 'no-power' | 'low-temperature' | 'charging' | 'discharging' | 'fully-charged' | 'no-fuel' | 'no-food' | 'out-of-logistic-network' | 'no-recipe' | 'no-ingredients' | 'no-input-fluid' | 'no-research-in-progress' | 'no-minable-resources' | 'low-input-fluid' | 'low-power' | 'not-connected-to-rail' | 'cant-divide-segments' | 'recharging-after-power-outage' | 'no-modules-to-transmit' | 'disabled-by-control-behavior' | 'opened-by-circuit-network' | 'closed-by-circuit-network' | 'disabled-by-script' | 'disabled' | 'turned-off-during-daytime' | 'fluid-ingredient-shortage' | 'item-ingredient-shortage' | 'full-output' | 'not-enough-space-in-output' | 'full-burnt-result-output' | 'marked-for-deconstruction' | 'missing-required-fluid' | 'missing-science-packs' | 'waiting-for-source-items' | 'waiting-for-space-in-destination' | 'preparing-rocket-for-launch' | 'waiting-to-launch-rocket' | 'waiting-for-space-in-platform-hub' | 'launching-rocket' | 'thrust-not-required' | 'not-enough-thrust' | 'on-the-way' | 'waiting-in-orbit' | 'waiting-for-rocket-to-arrive' | 'waiting-to-clear-drop-slots' | 'no-path' | 'broken' | 'none' | 'frozen' | 'paused' | 'not-connected-to-hub-or-pad' | 'too-far-from-pad-to-unload' | 'computing-navigation' | 'no-filter' | 'waiting-at-stop' | 'waiting-for-upgrade' | 'destination-stop-full' | 'pipeline-overextended' | 'no-spot-seedable-by-inputs' | 'waiting-for-plants-to-grow' | 'recipe-not-researched' | 'armed';
+/**
+ * Triggered when a player fast-transfers something to or from an entity, similar to the {@link on_player_fast_transferred | runtime:on_player_fast_transferred} event.
+ */
 interface EntityTransferTipTrigger extends CountBasedTipTrigger {
+    /**
+     * Whether the transfer should be into or out of the player.
+     */
     transfer?: 'in' | 'out';
     type: 'entity-transfer';
 }
@@ -6572,6 +6584,9 @@ interface MainSound {
      */
     volume_smoothing_window_size?: uint32;
 }
+/**
+ * Triggered when the player manually moves item with the cursor, *without* using shortcuts such as entity transfer or stack split.
+ */
 interface ManualTransferTipTrigger extends CountBasedTipTrigger {
     type: 'manual-transfer';
 }
@@ -9728,6 +9743,9 @@ interface SendSpidertronTipTrigger extends CountBasedTipTrigger {
     type: 'send-spidertron';
 }
 type SendToOrbitMode = 'not-sendable' | 'manual' | 'automated';
+/**
+ * Triggered when the triggers listed in `triggers` are triggered in order.
+ */
 interface SequenceTipTrigger {
     /**
      * List of triggers to fulfill.
@@ -12697,6 +12715,9 @@ KillTipTrigger;
 interface ToggleRailLayerTipTrigger extends CountBasedTipTrigger {
     type: 'toggle-rail-layer';
 }
+/**
+ * Triggered when the player turns "alt-mode" on or off.
+ */
 interface ToggleShowEntityInfoTipTrigger extends CountBasedTipTrigger {
     type: 'toggle-show-entity-info';
 }
@@ -13568,6 +13589,9 @@ interface UnlockSpaceLocationModifier extends BaseModifier {
      */
     use_icon_overlay_constant?: boolean;
 }
+/**
+ * Triggered when using E to confirm a GUI that allows to pick from a certain kind of prototype.
+ */
 interface UseConfirmTipTrigger extends CountBasedTipTrigger {
     type: 'use-confirm';
 }
@@ -14229,6 +14253,9 @@ interface WorkingVisualisation {
     frame_based_on_shift_animation_progress?: boolean;
     light?: LightDefinition;
     mining_drill_scorch_mark?: boolean;
+    /**
+     * Used by {@link MainSound::play_for_working_visualisations | prototype:MainSound::play_for_working_visualisations}, {@link SoundAccent::play_for_working_visualisation | prototype:SoundAccent::play_for_working_visualisation}, {@link FluidBox::enable_working_visualisations | prototype:FluidBox::enable_working_visualisations}, and {@link PipeConnectionDefinition::enable_working_visualisations | prototype:PipeConnectionDefinition::enable_working_visualisations}.
+     */
     name?: string;
     north_animation?: Animation;
     /**

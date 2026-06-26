@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.7
+// Factorio version 2.1.8
 // API version 6
 
 declare namespace runtime {
@@ -12427,12 +12427,12 @@ interface LuaGuiElement {
      * The GUI this element is a child of.
      */
     readonly gui: LuaGui;
-    hand_send_stacks_to_trash: boolean;
     handle_cursor_split: boolean;
     handle_cursor_transfer: boolean;
     handle_open_item: boolean;
     handle_open_mod_item: boolean;
     handle_send_stack_to_trash: boolean;
+    handle_send_stacks_to_trash: boolean;
     /**
      * Policy of the horizontal scroll bar.
      */
@@ -12922,12 +12922,12 @@ interface LuaGuiElementAddParamsInventory extends BaseLuaGuiElementAddParams {
      */
     'type': 'inventory';
     'empty_slot_info'?: EmptySlotInfo;
-    'hand_send_stacks_to_trash'?: boolean;
     'handle_cursor_split'?: boolean;
     'handle_cursor_transfer'?: boolean;
     'handle_open_item'?: boolean;
     'handle_open_mod_item'?: boolean;
     'handle_send_stack_to_trash'?: boolean;
+    'handle_send_stacks_to_trash'?: boolean;
     'slots_per_row'?: uint8;
 }
 /**
@@ -19105,9 +19105,11 @@ interface LuaSpacePlatform {
      */
     hidden: boolean;
     /**
-     * The hub on this platform. `nil` if the platform has not had the starter pack applied or hub was destroyed but the platform not yet deleted.
+     * The hub on this platform, if it exists. It does not exist if the platform has not had the starter pack applied.
      *
-     * If the hub is destroyed the platform will be deleted at the end of the tick but is otherwise valid to use until that point.
+     * If the hub {@link dies | runtime:LuaEntity::die} the platform will be deleted at the end of the tick but is otherwise valid to use until that point.
+     *
+     * If the hub is {@link destroyed | runtime:LuaEntity::destroy} the platform is not affected.
      */
     readonly hub?: LuaEntity;
     /**
