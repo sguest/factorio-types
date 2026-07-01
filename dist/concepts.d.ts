@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.8
+// Factorio version 2.1.9
 // API version 6
 
 declare namespace runtime {
@@ -2368,6 +2368,10 @@ interface DeciderCombinatorParameters {
      * List of outputs.
      */
     outputs: DeciderCombinatorOutput[];
+    /**
+     * List of else-outputs.
+     */
+    else_outputs: DeciderCombinatorOutput[];
 }
 interface Decorative {
     /**
@@ -2449,7 +2453,7 @@ interface DifficultySettings {
      */
     spoil_time_modifier: double;
     /**
-     * A value in range [0.001, 1000].
+     * A value in range [0.001, 100000].
      */
     technology_price_multiplier: double;
 }
@@ -4127,6 +4131,7 @@ interface ItemProduct {
     extra_count_fraction?: float;
     percent_spoiled?: float;
     always_fresh?: boolean;
+    reset_freshness_on_craft?: boolean;
     quality_min?: QualityID;
     quality_max?: QualityID;
     quality_change?: int8;
