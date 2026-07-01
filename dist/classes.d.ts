@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.8
+// Factorio version 2.1.9
 // API version 6
 
 declare namespace runtime {
@@ -5963,6 +5963,8 @@ interface LuaDamagePrototype extends LuaPrototypeBase {
  *
  * - `followSymlinks` :: {@link boolean | runtime:boolean}? : Follow symlinks when emitting locations (stack traces, etc) (default: true)
  *
+ * - `trace` :: {@link boolean | runtime:boolean}? : Trace DAP messages to a `dap-trace.log` (default: false)
+ *
  * - `tags` :: {@link Any | runtime:Any}? : Extra debug session tags, see also {@link tags | runtime:LuaDebugAdapter::tags}
  *
  * Metatable methods may be used to customize debug views:
@@ -6017,6 +6019,12 @@ interface LuaDeciderCombinatorControlBehavior extends LuaCombinatorControlBehavi
      */
     add_condition(this: void, condition: DeciderCombinatorCondition, index?: uint32): void;
     /**
+     * Adds a new else-output.
+     * @param output New else-output to insert.
+     * @param index Index to insert new else-output at. If not specified, appends to the end.
+     */
+    add_else_output(this: void, output: DeciderCombinatorOutput, index?: uint32): void;
+    /**
      * Adds a new output.
      * @param output New output to insert.
      * @param index Index to insert new output at. If not specified, appends to the end.
@@ -6028,6 +6036,11 @@ interface LuaDeciderCombinatorControlBehavior extends LuaCombinatorControlBehavi
      */
     get_condition(this: void, index: uint32): DeciderCombinatorCondition;
     /**
+     * Gets the else-output at `index`.
+     * @param index Index of else-output to get.
+     */
+    get_else_output(this: void, index: uint32): DeciderCombinatorOutput;
+    /**
      * Gets the output at `index`.
      * @param index Index of output to get.
      */
@@ -6037,6 +6050,11 @@ interface LuaDeciderCombinatorControlBehavior extends LuaCombinatorControlBehavi
      * @param index Index of condition to remove.
      */
     remove_condition(this: void, index: uint32): void;
+    /**
+     * Removes the else-output at `index`.
+     * @param index Index of else-output to remove.
+     */
+    remove_else_output(this: void, index: uint32): void;
     /**
      * Removes the output at `index`.
      * @param index Index of output to remove.
@@ -6048,6 +6066,12 @@ interface LuaDeciderCombinatorControlBehavior extends LuaCombinatorControlBehavi
      * @param condition Data to set selected condition to.
      */
     set_condition(this: void, index: uint32, condition: DeciderCombinatorCondition): void;
+    /**
+     * Sets the else-output at `index`.
+     * @param index Index of else-output to modify.
+     * @param output Data to set selected else-output to.
+     */
+    set_else_output(this: void, index: uint32, output: DeciderCombinatorOutput): void;
     /**
      * Sets the output at `index`.
      * @param index Index of output to modify.
@@ -13465,6 +13489,10 @@ interface LuaHelpers {
      */
     readonly game_version: string;
     /**
+     * The name of the active Instrument Mode mod, if any.
+     */
+    readonly instrument_mod?: string;
+    /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
@@ -16130,6 +16158,10 @@ interface LuaPlayer extends LuaControl {
      * The original location of the item in the cursor, marked with a hand. `nil` if the cursor stack is empty. When writing, the specified inventory slot must be empty and the cursor stack must not be empty.
      */
     hand_location?: ItemStackLocation;
+    /**
+     * Set to `true` to hide prototypes in Factoriopedia if they aren't unlocked yet.
+     */
+    hide_locked_prototypes_in_factoriopedia: boolean;
     /**
      * This player's index in {@link LuaGameScript::players | runtime:LuaGameScript::players} (unique ID). It is assigned when a player is created, and remains so (even when the player is not {@link connected | runtime:LuaPlayer::connected}) until the player is irreversibly {@link removed | runtime:on_player_removed}. Indexes of removed players can be reused.
      */
