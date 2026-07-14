@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.9
+// Factorio version 2.1.10
 // API version 6
 
 declare namespace runtime {
@@ -5582,7 +5582,7 @@ interface LuaControl {
      *
      * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory`, `item` or `nil`.
      */
-    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | LuaItemStack | defines.gui_type;
+    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | defines.gui_type;
     readonly opened_gui_type?: defines.gui_type;
     /**
      * Current item-picking state.
@@ -5963,17 +5963,23 @@ interface LuaDamagePrototype extends LuaPrototypeBase {
  *
  * - `followSymlinks` :: {@link boolean | runtime:boolean}? : Follow symlinks when emitting locations (stack traces, etc) (default: true)
  *
+ * - `hookDebugConsole` :: {@link boolean | runtime:boolean}? : Enable catching errors and breakpoints/stepping in code called from the Debug Console (Evaluate context="repl") (default: false)
+ *
  * - `trace` :: {@link boolean | runtime:boolean}? : Trace DAP messages to a `dap-trace.log` (default: false)
  *
  * - `tags` :: {@link Any | runtime:Any}? : Extra debug session tags, see also {@link tags | runtime:LuaDebugAdapter::tags}
  *
- * Metatable methods may be used to customize debug views:
+ * ---
  *
- * - `__tostring`(`self`) -> {@link string | runtime:string} : Called when the object appears as a value.
+ * For mod objects that appear in debug listing, the following optional metatable methods may be used to customize their display:
  *
- * - `__debugcounts`(`self`) -> `indexedVariables` :: {@link int32 | runtime:int32} , `namedVariables` :: {@link int32 | runtime:int32} : Called when the object appears in a parent object's listing, to estimate the size of this object's listing, and enabled paged listing for large indexed objects.
+ * - `__tostring`(`self`) -> {@link string | runtime:string} : Called when the object appears as a value, to format it for inline display.
  *
- * - `__debugchildren`(`self`, `filters` :: {@link DebugVariablesFilter | runtime:DebugVariablesFilter}) -> array({@link DebugVariable | runtime:DebugVariable}) : Called when the object itself is opened for a debug listing. If `__debugcounts` was implemented, the client may choose to fetch Indexed and Named children separately, and Indexed children in pages as-needed for display. See also {@link describe_field | runtime:LuaDebugAdapter::describe_field}.
+ * - `__debugcounts`(`self`) -> `indexedVariables` :: {@link int32 | runtime:int32} , `namedVariables` :: {@link int32 | runtime:int32} : Called when the object appears as a value, to estimate the size of this object's children, and enabled paged listing for large indexed objects. If either count is returned as 0, the client may skip listing that section entirely. If the indexed count is non-zero, the client may choose to request the values in pages. The Indexed count should indicate the highest index present, to properly range paged fetch windows, even if not all keys will be filled when fetched.
+ *
+ * - `__debugchildren`(`self`, `filters` :: {@link DebugVariablesFilter | runtime:DebugVariablesFilter}) -> array({@link DebugVariable | runtime:DebugVariable}) : Called when the object is expanded to list its children. If `__debugcounts` was implemented, the client may choose to fetch Indexed and Named children sections separately, and Indexed children in 0-based pages on-demand for display. If not all values in the requested page exist (such as a key `0`), they may be omitted from output entirely. See also {@link describe_field | runtime:LuaDebugAdapter::describe_field}.
+ *
+ * ---
  *
  * This class also provides debug session APIs, as the global object `debugadapter` in all stages.
  */
@@ -6439,10 +6445,12 @@ interface LuaEntity extends LuaControl {
     add_market_item(this: void, offer: Offer): void;
     /**
      * Upgrades this entity in place if it's marked to be upgraded.
+     * @param override_target The override upgrade target - used instead of the entities current upgrade target if given. Note, the entity must be fast-replaceable with the override target, or it won't be upgraded.
+     * @param buffer If provided - any items left over from the upgrade are put into this inventory.
      * @returns [0] - The first upgraded entity - `nil` if this entity is not marked for upgrade.
      * @returns [1] - When upgrading underground belts, the other underground belt end that was also upgraded - `nil` if this entity is not marked for upgrade.
      */
-    apply_upgrade(this: void): LuaMultiReturn<[
+    apply_upgrade(this: void, override_target?: EntityWithQualityID, buffer?: LuaInventory): LuaMultiReturn<[
         LuaEntity | null,
         LuaEntity | null
     ]>;
@@ -8184,6 +8192,10 @@ interface LuaEntity extends LuaControl {
      */
     readonly prototype: LuaEntityPrototype;
     /**
+     * If this space platform hub will provide its contents to other requesting platforms.
+     */
+    providing_to_other_platforms: boolean;
+    /**
      * The target entity for this item-request-proxy, if any.
      */
     readonly proxy_target?: LuaEntity;
@@ -8269,6 +8281,10 @@ interface LuaEntity extends LuaControl {
      * Useable only on entities that have requester slots.
      */
     request_from_buffers: boolean;
+    /**
+     * If this space platform hub will automatically make logistic requests for any missing construction materials.
+     */
+    request_missing_construction_materials: boolean;
     /**
      * The quality produced when this crafting machine finishes crafting. `nil` when crafting is not in progress.
      *
@@ -9854,6 +9870,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly shot_category?: LuaAmmoCategoryPrototype;
     readonly shots_per_flare?: uint32;
     readonly should_ground_target?: boolean;
+    readonly show_fluid_visualization_when_in_cursor: boolean;
     readonly shuffle_resources_to_mine?: boolean;
     readonly smoke?: LuaTrivialSmokePrototype;
     readonly smoke_count?: uint16;
@@ -12516,7 +12533,12 @@ interface LuaGuiElement {
     /**
      * The mouse button filters for this button or sprite-button.
      */
-    mouse_button_filter: MouseButtonFlags;
+    readonly mouse_button_filter: ActiveMouseButtonFlags;
+    /**
+     * The mouse button filters for this button or sprite-button.
+     * @customName mouse_button_filter
+     */
+    mouse_button_filter_write: MouseButtonFlags;
     /**
      * The name of this element. `""` if no name was set.
      * @example ```
@@ -13455,7 +13477,7 @@ interface LuaHelpers {
      * Note: lua event is not raised immediately as the UDP packet needs to be introduced into game state by means of input actions. Please keep incoming traffic as small as possible as in case of multiplayer game with many players, all this data will have to go through the multiplayer server and be distributed to all clients.
      *
      * Not available in settings and prototype stages.
-     * @param for_player If given, packets will only be read from this `player_index`. Providing `0` will only read from the server if present.
+     * @param for_player If given, packets will only be read from this `player_index`. Providing `0` will only read from the server if present. In the main chunk of the runtime stage receiving the packet will always be skipped if `for_player` is set and not `0`.
      */
     recv_udp(this: void, for_player?: uint32): void;
     /**
@@ -13469,7 +13491,7 @@ interface LuaHelpers {
      * This must be enabled per-instance with `--enable-lua-udp`.
      * @param port Destination port number (localhost only)
      * @param data The content to send.
-     * @param for_player If given, the packet will only be sent from this `player_index`. Providing `0` will only send from the server if present. `for_player` cannot be used in settings and prototype stages.
+     * @param for_player If given, the packet will only be sent from this `player_index`. Providing `0` will only send from the server if present. `for_player` cannot be used in settings and prototype stages. In the main chunk of the runtime stage sending the packet will always be skipped if `for_player` is set and not `0`.
      */
     send_udp(this: void, port: uint16, data: LocalisedString, for_player?: uint32): void;
     /**
@@ -13481,7 +13503,7 @@ interface LuaHelpers {
      * @param filename The name of the file. Providing a directory path (ex. `"save/here/example.txt"`) will create the necessary folder structure in `script-output`.
      * @param data The content to write to the file.
      * @param append If `true`, `data` will be appended to the end of the file. Defaults to `false`, which will overwrite any pre-existing file with the new `data`.
-     * @param for_player If given, the file will only be written for this `player_index`. Providing `0` will only write to the server's output if present. `for_player` cannot be used in settings and prototype stages.
+     * @param for_player If given, the file will only be written for this `player_index`. Providing `0` will only write to the server's output if present. `for_player` cannot be used in settings and prototype stages. In the main chunk of the runtime stage writing the file will always be skipped if `for_player` is set and not `0`.
      */
     write_file(this: void, filename: string, data: LocalisedString, append?: boolean, for_player?: uint32): void;
     /**
@@ -15523,6 +15545,80 @@ interface LuaPermissionGroups {
     readonly valid: boolean;
 }
 /**
+ * A pin owned by a player.
+ */
+interface LuaPin {
+    /**
+     * Destroys this pin.
+     */
+    destroy(this: void): void;
+    /**
+     * The center of this pin if it can be computed.
+     */
+    get_pin_center(this: void): MapPosition | null;
+    /**
+     * The alert positions if this pin is configured to show alert data.
+     */
+    alert_positions: MapPosition[];
+    /**
+     * The type of alert this pin is for (if configured to be about alerts).
+     */
+    alert_type?: defines.alert_type;
+    always_visible: boolean;
+    /**
+     * The custom chart tag - if this pin specificaly binds to a chart tag.
+     *
+     * The chart tag must be on the same force as the owning player.
+     */
+    chart_tag?: LuaCustomChartTag;
+    /**
+     * The index of this pin (unique to this player).
+     *
+     * Note that this index has no corelation to the position of the pin within {@link LuaPlayer::get_pins | runtime:LuaPlayer::get_pins}
+     */
+    readonly index: uint32;
+    /**
+     * The label for this pin - if any. This will be an empty string if there is no label set.
+     */
+    label: string;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * The player that this pin belongs to.
+     */
+    readonly owner: LuaPlayer;
+    /**
+     * The player that this pin is bound to.
+     */
+    player?: LuaPlayer;
+    /**
+     * The position if this pin specifically binds to a surface and position.
+     *
+     * If writing, and this pin was not bound to a specific surface and position, the default surface of nauvis is used.
+     */
+    position?: MapPosition;
+    /**
+     * The radius (in tiles) that is shown in the tooltip for this pin.
+     */
+    preview_distance: uint16;
+    /**
+     * The surface index if this pin specifically binds to a surface and position.
+     *
+     * If writing, and this pin was not bound to a specific surface and position, the default position of (0,0) is used.
+     */
+    surface_index?: uint32;
+    /**
+     * The targets of this pin - if any.
+     */
+    targets: LuaEntity[];
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
  * The runtime values of a planet
  */
 interface LuaPlanet {
@@ -15592,8 +15688,10 @@ interface LuaPlayer extends LuaControl {
      * @param table.always_visible Defaults to `true`.
      * @param table.entity The entity to pin.
      * @param table.player The player to pin.
-     * @param table.surface The surface to create the pin on.
-     * @param table.position Where to create the pin. Required when surface is defined.
+     * @param table.surface The surface to create the pin on. Required when resource is defined.
+     * @param table.resource The resource prototype to add an entire resource patch with.
+     * @param table.chart_tag The tag to pin.
+     * @param table.position Where to create the pin. Required when surface is defined or resource is defined.
      */
     add_pin(this: void, table: {
         label?: string;
@@ -15602,8 +15700,10 @@ interface LuaPlayer extends LuaControl {
         entity?: LuaEntity;
         player?: PlayerIdentification;
         surface?: SurfaceIdentification;
+        resource?: EntityID;
+        chart_tag?: LuaCustomChartTag;
         position?: MapPosition;
-    }): void;
+    }): LuaPin;
     /**
      * Adds the given recipe to the list of recipe notifications for this player.
      * @param recipe Recipe to add.
@@ -15682,6 +15782,10 @@ interface LuaPlayer extends LuaControl {
      * Clear any active flying texts for this player.
      */
     clear_local_flying_texts(this: void): void;
+    /**
+     * Removes all pins from this player.
+     */
+    clear_pins(this: void): void;
     /**
      * Clears the given recipe from the list of recipe notifications for this player.
      * @param recipe Recipe to clear.
@@ -15833,6 +15937,10 @@ interface LuaPlayer extends LuaControl {
      * @param index The index to get.
      */
     get_infinity_inventory_filter(this: void, index: uint32): InfinityInventoryFilter | null;
+    /**
+     * Gets all of the pins that this player has.
+     */
+    get_pins(this: void): LuaPin[];
     /**
      * Gets the quick bar filter for the given slot or `nil`.
      */
@@ -16299,6 +16407,10 @@ interface LuaPlayer extends LuaControl {
      * Set to any positive value to trigger the respawn state for this player.
      */
     ticks_to_respawn?: uint32;
+    /**
+     * Set to `false` to disallow leaving remote view using the toggle menu hotkey.
+     */
+    toggle_menu_leaves_remote_view: boolean;
     /**
      * The undo and redo stack for this player.
      */

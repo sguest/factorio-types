@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.9
+// Factorio version 2.1.10
 // API version 6
 
 declare namespace prototype {
@@ -5176,8 +5176,17 @@ interface ItemPrototype extends Prototype {
      * Used by Inserters with spoil priority. Item with higher spoil level is considered more spoiled than item with lower spoil level regardless of progress of spoiling.
      */
     spoil_level?: uint8;
+    /**
+     * Defines how many levels the item's quality will go up (positive integer) or down (negative integer) when spoiling.
+     */
     spoil_quality_change?: int8;
+    /**
+     * The maximum quality level that can be reached when {@link spoil_quality_change | prototype:ItemPrototype::spoil_quality_change} is used.
+     */
     spoil_quality_max?: QualityID;
+    /**
+     * The minimum quality level that can be reached when {@link spoil_quality_change | prototype:ItemPrototype::spoil_quality_change} is used.
+     */
     spoil_quality_min?: QualityID;
     spoil_result?: ItemID;
     spoil_ticks?: uint32;
