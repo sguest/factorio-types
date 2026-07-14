@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.9
+// Factorio version 2.1.10
 // API version 6
 
 declare namespace runtime {
@@ -43,6 +43,10 @@ interface AchievementPrototypeFilterType extends BaseAchievementPrototypeFilter 
      */
     'type': string | string[];
 }
+/**
+ * Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
+ */
+type ActiveMouseButtonFlags = Record<'left' | 'right' | 'middle' | 'button-4' | 'button-5' | 'button-6' | 'button-7' | 'button-8' | 'button-9', true>;
 interface AddRecordData {
     /**
      * One of station or rail must be given.
@@ -7261,12 +7265,10 @@ interface ModuleEffects {
     pollution?: ModuleEffectValue;
     quality?: ModuleEffectValue;
 }
-/**
- * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
- *
- * To write to this, use an array{@link [string | runtime:string}] of the mouse buttons that should be possible to use with on button. The flag `"left-and-right"` can also be set, which will set `"left"` and `"right"` to `true`.
+type MouseButtonFlags = ('left' | 'right' | /**
+ * Sets both `"left"` and `"right"` flags.
  */
-type MouseButtonFlags = Record<'left' | 'right' | 'middle' | 'button-4' | 'button-5' | 'button-6' | 'button-7' | 'button-8' | 'button-9', true>;
+'left-and-right' | 'middle' | 'button-4' | 'button-5' | 'button-6' | 'button-7' | 'button-8' | 'button-9')[];
 interface NeighbourConnectable {
     affected_by_direction: boolean;
     neighbour_search_distance: float;
