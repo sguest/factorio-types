@@ -68,6 +68,10 @@ function updatePackageInfo(apiData: ApiData) {
 
 function handlePrototypeFile(fileName: string) {
     const content = fs.readFileSync(fileName, 'utf-8');
+
+    console.log('Prototype content length', content.length);
+    console.log('File size', fs.statSync(fileName).size);
+
     const apiData = JSON.parse(content) as PrototypeData;
 
     writePrototypes(apiData);
