@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.10
+// Factorio version 2.1.11
 // API version 6
 
 declare namespace runtime {
@@ -16793,6 +16793,7 @@ interface LuaPrototypes {
     readonly max_force_distraction_distance: double;
     readonly max_gate_activation_distance: double;
     readonly max_inserter_reach_distance: double;
+    readonly max_logistics_connection_distance: float;
     readonly max_pipe_to_ground_distance: uint8;
     readonly max_underground_belt_distance: uint8;
     /**
