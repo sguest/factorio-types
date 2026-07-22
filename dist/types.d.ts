@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.11
+// Factorio version 2.1.12
 // API version 6
 
 declare namespace prototype {
@@ -3627,6 +3627,10 @@ type CursorBoxType = /**
  */
 'blueprint-snap-rectangle' | 'spidertron-remote-selected' | 'spidertron-remote-to-be-selected';
 /**
+ * The name of an {@link CustomEventPrototype | prototype:CustomEventPrototype}.
+ */
+type CustomEventID = string;
+/**
  * Allows to add extra description items to the tooltip.
  */
 interface CustomTooltipField {
@@ -4076,12 +4080,6 @@ type EffectTypeLimitation = (/**
 'quality')[];
 /**
  * Precision is ignored beyond four decimals - `0.56789` results in `0.5678` and means 56.78% etc. Values can range from `-1000.0000` to `1000.0000`.
- * @example ```
-{speed = 0.07}  -- 7% bonus
-```
- * @example ```
-{quality = 0.025}  -- 2.5% bonus
-```
  */
 type EffectValue = float;
 interface EffectValueRange {
@@ -9457,6 +9455,10 @@ interface RotatedSpriteFrame {
 }
 interface ScriptTriggerEffectItem extends TriggerEffectItem {
     /**
+     * Event to be raised. When set, that event will be raised instead of {@link on_script_trigger_effect | runtime:on_script_trigger_effect}.
+     */
+    custom_event?: CustomEventID;
+    /**
      * The effect ID that will be provided in {@link on_script_trigger_effect | runtime:on_script_trigger_effect}.
      */
     effect_id: string;
@@ -11892,6 +11894,10 @@ interface ThrowCapsuleAction {
     uses_stack?: boolean;
 }
 interface ThrusterGraphicsSet extends WorkingVisualisations {
+    /**
+     * If true the starting frame will be randomized upon placement.
+     */
+    animation_random_start_frame?: boolean;
     flame?: Sprite;
     flame_effect?: EffectTexture;
     flame_effect_height?: float;

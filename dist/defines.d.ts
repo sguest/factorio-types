@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.11
+// Factorio version 2.1.12
 // API version 6
 
 declare namespace defines {
@@ -2286,10 +2286,11 @@ enum segmented_unit_created_cause {
     script_created = 1
 }
 enum selection_mode {
-    alt_reverse_select = 3,
+    alt_reverse_select = 4,
     alt_select = 1,
-    reverse_select = 2,
-    select = 0
+    reverse_select = 3,
+    select = 0,
+    super_forced_select = 2
 }
 enum shooting {
     not_shooting = 0,

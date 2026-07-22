@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.11
+// Factorio version 2.1.12
 // API version 6
 
 declare namespace runtime {
@@ -2507,8 +2507,21 @@ interface EditorUtilityConstants {
     tile_editor_selection_preview_radius: uint8;
     decorative_editor_selection_preview_radius: uint8;
 }
+/**
+ * @example ```
+-- These are the effects of the vanilla Speed Module 3
+{speed = 0.5, consumption = 0.7, quality = -0.025}
+```
+ */
+interface Effect {
+    consumption?: EffectValue;
+    speed?: EffectValue;
+    productivity?: EffectValue;
+    pollution?: EffectValue;
+    quality?: EffectValue;
+}
 interface EffectReceiver {
-    base_effect: ModuleEffects;
+    base_effect: Effect;
     uses_module_effects: boolean;
     uses_beacon_effects: boolean;
     /**
@@ -2521,9 +2534,13 @@ interface EffectReceiver {
     pollution_limits: EffectValueRange;
     quality_limits: EffectValueRange;
 }
+/**
+ * Precision is ignored beyond four decimals - `0.56789` results in `0.5678` and means 56.78% etc. Values can range from `-1000.0000` to `1000.0000`.
+ */
+type EffectValue = float;
 interface EffectValueRange {
-    low: double;
-    high: double;
+    low: EffectValue;
+    high: EffectValue;
 }
 /**
  * An item thrown overboard on a space platform.
@@ -6861,6 +6878,40 @@ interface MapDifficultySettings {
      */
     spoil_time_modifier: double;
 }
+interface MapEditorSetting {
+    position?: MapPosition;
+    inventory_size: ItemStackIndex;
+    gun_inventory_size: ItemStackIndex;
+    /**
+     * Must be >= 0.34375.
+     */
+    movement_speed: double;
+    /**
+     * Must be >= 0.34375.
+     */
+    base_movement_speed: double;
+    item_pickup_distance: double;
+    loot_pickup_distance: double;
+    mining_speed: double;
+    enable_flash_light: boolean;
+    adjust_speed_based_off_zoom: boolean;
+    render_as_day: boolean;
+    instant_blueprint_building: boolean;
+    instant_deconstruction: boolean;
+    instant_upgrading: boolean;
+    instant_rail_planner: boolean;
+    show_status_icons: boolean;
+    show_hidden_entities: boolean;
+    show_entity_tags: boolean;
+    show_entity_health_bars: boolean;
+    show_additional_entity_info_gui: boolean;
+    generate_neighbor_chunks: boolean;
+    fill_built_entity_energy_buffers: boolean;
+    show_character_tab_in_controller_gui: boolean;
+    show_infinity_filters_in_controller_gui: boolean;
+    placed_corpses_never_expire: boolean;
+    ignore_tile_conditions: boolean;
+}
 /**
  * The data that can be extracted from a map exchange string, as a plain table.
  */
@@ -7248,23 +7299,6 @@ interface ModSettingPrototypeFilterType extends BaseModSettingPrototypeFilter {
  * Used by {@link TechnologyModifier | runtime:TechnologyModifier}.
  */
 type ModifierType = 'inserter-stack-size-bonus' | 'bulk-inserter-capacity-bonus' | 'laboratory-speed' | 'character-logistic-trash-slots' | 'maximum-following-robots-count' | 'worker-robot-speed' | 'worker-robot-storage' | 'turret-attack' | 'ammo-damage' | 'give-item' | 'gun-speed' | 'unlock-recipe' | 'character-crafting-speed' | 'character-mining-speed' | 'character-running-speed' | 'character-build-distance' | 'character-item-drop-distance' | 'character-reach-distance' | 'character-resource-reach-distance' | 'character-item-pickup-distance' | 'character-loot-pickup-distance' | 'character-inventory-slots-bonus' | 'deconstruction-time-to-live' | 'max-failed-attempts-per-tick-per-construction-queue' | 'max-successful-attempts-per-tick-per-construction-queue' | 'character-health-bonus' | 'mining-drill-productivity-bonus' | 'train-braking-force-bonus' | 'worker-robot-battery' | 'laboratory-productivity' | 'follower-robot-lifetime' | 'artillery-range' | 'nothing' | 'character-logistic-requests' | 'unlock-space-location' | 'unlock-quality' | 'unlock-space-platforms' | 'unlock-circuit-network' | 'cargo-landing-pad-count' | 'max-cargo-bay-unloading-distance' | 'change-recipe-productivity' | 'cliff-deconstruction-enabled' | 'mining-with-fluid' | 'rail-support-on-deep-oil-ocean' | 'rail-planner-allow-elevated-rails' | 'beacon-distribution' | 'create-ghost-on-entity-death' | 'belt-stack-size-bonus' | 'vehicle-logistics' | 'unlock-logistic-network' | 'unlock-travel-to-space-platforms';
-/**
- * The percentual increase of the attribute. A value of `0.6` means a 60% increase.
- */
-type ModuleEffectValue = float;
-/**
- * @example ```
--- These are the effects of the vanilla Speed Module 3
-{speed = 0.5, consumption = 0.7, quality = -0.025}
-```
- */
-interface ModuleEffects {
-    consumption?: ModuleEffectValue;
-    speed?: ModuleEffectValue;
-    productivity?: ModuleEffectValue;
-    pollution?: ModuleEffectValue;
-    quality?: ModuleEffectValue;
-}
 type MouseButtonFlags = ('left' | 'right' | /**
  * Sets both `"left"` and `"right"` flags.
  */
@@ -7325,6 +7359,48 @@ interface Offer {
 interface OldTileAndPosition {
     old_tile: LuaTilePrototype;
     position: TilePosition;
+}
+interface OnRecipeCraftedData {
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+    /**
+     * Entity that crafted recipe.
+     */
+    entity: LuaEntity;
+    /**
+     * Name of recipe that was crafted.
+     */
+    recipe: string;
+    /**
+     * Quality of the recipe crafted.
+     */
+    recipe_quality: string;
+    /**
+     * Quality effect used when giving products. Not provided if value is 0. May be different than value obtained from {@link LuaEntity::effects | runtime:LuaEntity::effects} when quality modules were changed between craft starting and products being given.
+     */
+    quality_effect?: EffectValue;
+    /**
+     * Random value in range [0, 1) that was used when selecting product quality. Only provided when quality_effect is provided.
+     */
+    quality_seed?: double;
+    /**
+     * Quality of products given. May be different than recipe quality if quality modules are present. Always provided even if quality_effect is zero because {@link LuaEntity::result_quality | runtime:LuaEntity::result_quality} may have been used. Only used by products without quality control.
+     */
+    product_quality: string;
+    /**
+     * If crafted as part of bonus products.
+     */
+    bonus: boolean;
+    /**
+     * Random value in range {@link 0, 1) used as part of shared roll when giving products. Related to [ProductPrototypeBase::shared_probability | prototype:ProductPrototypeBase::shared_probability}.
+     */
+    shared_roll: double;
 }
 interface OrientedCliffPrototypeSet {
     west_to_east: BoundingBox;

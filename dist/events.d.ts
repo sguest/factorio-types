@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.11
+// Factorio version 2.1.12
 // API version 6
 
 declare namespace runtime {
@@ -2246,6 +2246,7 @@ interface on_player_deconstructed_area {
      * The record that was used to select the area.
      */
     record?: LuaRecord;
+    selection_mode: defines.selection_mode;
     /**
      * The item stack used to select the area.
      */

@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.11
+// Factorio version 2.1.12
 // API version 6
 
 declare namespace runtime {
@@ -406,6 +406,10 @@ interface LuaBootstrap {
      * Converts LuaEventType into related value of defines.events. Value will be provided also if event was not given a constant inside of defines.events.
      */
     get_event_id(this: void, event: LuaEventType): defines.events;
+    /**
+     * Converts LuaEventType into corresponding event name. If event has no name, no value will be given.
+     */
+    get_event_name(this: void, event: LuaEventType): string | null;
     /**
      * Gets the mod event order as a string.
      */
@@ -7751,7 +7755,7 @@ interface LuaEntity extends LuaControl {
     /**
      * The effects being applied to this entity, if any. For beacons, this is the effect the beacon is broadcasting.
      */
-    readonly effects?: ModuleEffects;
+    readonly effects?: Effect;
     /**
      * The buffer size for the electric energy source. `nil` if the entity doesn't have an electric energy source.
      *
@@ -14265,7 +14269,7 @@ interface LuaItemPrototype extends LuaPrototypeBase {
     /**
      * Effects of this module at the specified quality.
      */
-    get_module_effects(this: void, quality?: QualityID): ModuleEffects | null;
+    get_module_effects(this: void, quality?: QualityID): Effect | null;
     /**
      * The color used when doing normal selection with this selection tool prototype.
      */
@@ -14418,7 +14422,7 @@ interface LuaItemPrototype extends LuaPrototypeBase {
     /**
      * Effects of this module.
      */
-    readonly module_effects?: ModuleEffects;
+    readonly module_effects?: Effect;
     readonly moved_to_hub_when_building: boolean;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -16254,6 +16258,14 @@ interface LuaPlayer extends LuaControl {
      */
     readonly drag_target?: DragTarget;
     /**
+     * The map editor settings if the map editor exists for this player.
+     *
+     * When reading this may return nil if the map editor does not yet exist for this player.
+     *
+     * When writing the full table of settings is always required.
+     */
+    editor_settings?: MapEditorSetting;
+    /**
      * The source entity used during entity settings copy-paste, if any.
      */
     entity_copy_source?: LuaEntity;
@@ -16921,6 +16933,13 @@ interface LuaPumpControlBehavior extends LuaGenericOnOffControlBehavior {
  * Prototype of a quality.
  */
 interface LuaQualityPrototype extends LuaPrototypeBase {
+    /**
+     * Performs quality roll
+     * @param quality_effect Strength of quality effect. Larger value makes it easier to roll better qualities.
+     * @param quality_seed Random value in [0, 1) used to select result quality.
+     * @param force Force which is doing the quality roll. Used to select unlocked qualities. If not provided, all qualities are considered unlocked.
+     */
+    roll_quality(this: void, quality_effect: EffectValue, quality_seed: double, force?: ForceID): LuaQualityPrototype;
     readonly accumulator_capacity_multiplier: double;
     readonly asteroid_collector_collection_radius_bonus: uint32;
     readonly beacon_module_slots_bonus: ItemStackIndex;
@@ -17289,7 +17308,7 @@ interface LuaRecipe {
     /**
      * The productivity bonus for this recipe.
      */
-    productivity_bonus: float;
+    productivity_bonus: EffectValue;
     /**
      * The results/products of this recipe.
      * @example ```
@@ -17440,6 +17459,10 @@ interface LuaRecipePrototype extends LuaPrototypeBase {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    /**
+     * Event raised when this recipe is crafted. Only available if {@link RecipePrototype::raise_on_crafted | prototype:RecipePrototype::raise_on_crafted} was set to true.
+     */
+    readonly on_crafted_event?: LuaEventType;
     /**
      * Used to determine how many extra items are put into an assembling machine before it's considered "full enough".
      */
@@ -20592,7 +20615,7 @@ interface LuaSurface {
     /**
      * Surface-wide effects applied to entities with effect receivers. `nil` if this surface is not using surface-wide effect source.
      */
-    global_effect?: ModuleEffects;
+    global_effect?: Effect;
     /**
      * Global electric network for this surface.
      */
