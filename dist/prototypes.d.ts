@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.11
+// Factorio version 2.1.12
 // API version 6
 
 declare namespace prototype {
@@ -7720,6 +7720,20 @@ interface RecipePrototype extends Prototype {
      */
     overload_multiplier?: uint32;
     preserve_products_in_machine_output?: boolean;
+    /**
+     * If set to true, an event with identifier of {@link LuaRecipePrototype::on_crafted_event | runtime:LuaRecipePrototype::on_crafted_event} will be raised when this recipe is crafted. Currently this is only raised when recipe is crafted by a crafting machine.
+     *
+     * Event raised will be given data as described by {@link OnRecipeCraftedData | runtime:OnRecipeCraftedData}.
+     * @example ```
+    -- in data stage:
+    data.raw.recipe["iron-plate"].raise_on_crafted = true
+    -- in control stage:
+    script.on_event(prototypes.recipe["iron-plate"].on_crafted_event, function(event)
+      game.print("Iron plate was crafted by ".. event.entity.name .. " at " .. event.entity.gps_tag)
+    end)
+    ```
+     */
+    raise_on_crafted?: boolean;
     requester_paste_multiplier?: uint32;
     /**
      * Whether enabling this recipe requires the ingredients be unlocked before the products are marked as unlocked.
