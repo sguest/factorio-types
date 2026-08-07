@@ -80,6 +80,6 @@ type bool = boolean;
  */
 type DataExtendMethod = (data: prototype.Data, ...otherData: any[]) => void;
 
-// The docs and json definition make reference to these types but have no information as to what they are
-type BlueprintCircuitConnection = any;
-type BlueprintControlBehavior = any;
+// used by UndoRedoEquipment but not declared anywhere
+// Can be removed if/when this is resolved https://forums.factorio.com/viewtopic.php?t=135506
+type PropertyTree = any;
