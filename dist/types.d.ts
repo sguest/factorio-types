@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.12
+// Factorio version 2.1.14
 // API version 6
 
 declare namespace prototype {
@@ -2226,6 +2226,10 @@ interface BurnerEnergySource extends BaseEnergySource {
      */
     fuel_categories?: FuelCategoryID[];
     fuel_inventory_size: ItemStackIndex;
+    /**
+     * When set, items consumed and produced by this burner will not appear in item production statistics.
+     */
+    hide_from_stats?: boolean;
     initial_fuel?: ItemID;
     initial_fuel_percent?: double;
     light_flicker?: LightFlickeringDefinition;
@@ -4015,6 +4019,10 @@ interface EffectReceiver {
      */
     speed_limits?: EffectValueRange;
     uses_beacon_effects?: boolean;
+    /**
+     * Controls whether {@link LuaEntity::local_effect | runtime:LuaEntity::local_effect} affects this receiver.
+     */
+    uses_local_effects?: boolean;
     uses_module_effects?: boolean;
     /**
      * Controls whether {@link LuaSurface::global_effect | runtime:LuaSurface::global_effect} affects this receiver.
@@ -4379,6 +4387,10 @@ interface EnemyEvolutionSettings {
     time_factor: double;
 }
 interface EnemyExpansionSettings {
+    /**
+     * Cooldown in ticks for dispatching units when building bases.
+     */
+    build_base_unit_dispatch_cooldown: uint32;
     building_coefficient: double;
     enabled: boolean;
     enemy_building_influence_radius: uint32;
@@ -4927,6 +4939,10 @@ interface FluidEnergySource extends BaseEnergySource {
      * The number of fluid units the energy source uses per tick. If used with `scale_fluid_usage`, this specifies the maximum. If this value is not set, `scale_energy_usage` is `false` and a fluid box filter is set, the game will attempt to calculate this value from the fluid box filter's fluid's `fuel_value` or `heat_capacity` and the entity's `energy_usage`. If `burns_fluid` is `false`, `maximum_temperature` will also be used. If the attempt of the game to calculate this value fails (`scale_energy_usage` is `false` and a fluid box filter is set), then `scale_energy_usage` will be forced to `true`, to prevent the energy source from being an infinite fluid sink. More context {@link on the forums | https://forums.factorio.com/90613}.
      */
     fluid_usage_per_tick?: FluidAmount;
+    /**
+     * When set, fluids consumed and produced by this energy source will not appear in fluid production statistics.
+     */
+    hide_from_stats?: boolean;
     light_flicker?: LightFlickeringDefinition;
     /**
      * `0` means unlimited maximum temperature. If this is non-zero while `scale_fluid_usage` is `false` and `fluid_usage_per_tick` is not specified, the game will use this value to calculate `fluid_usage_per_tick`. To do that, the filter on the `fluid_box` must be set.
@@ -6063,7 +6079,7 @@ type ItemPrototypeFlags = (/**
 'spawnable' | 'spoil-result' | /**
  * Controls whether the spoil time ignores the spoil time modifier in the {@link DifficultySettings | runtime:DifficultySettings}.
  */
-'ignore-spoil-time-modifier' | 'hide-health-bar-in-world' | 'hide-spoilage-bar-in-world')[];
+'ignore-spoil-time-modifier' | 'hide-health-bar-in-world' | 'hide-spoilage-bar-in-world' | 'no-item-on-ground-merging')[];
 type ItemStackIndex = uint16;
 /**
  * The name of an {@link ItemSubGroup | prototype:ItemSubGroup}.
@@ -6638,6 +6654,10 @@ interface MapGenPresetEnemyEvolutionSettings {
     time_factor?: double;
 }
 interface MapGenPresetEnemyExpansionSettings {
+    /**
+     * Cooldown in ticks for dispatching units when building bases.
+     */
+    build_base_unit_dispatch_cooldown?: uint32;
     enabled?: boolean;
     /**
      * Factor by which the evolution factor influences the size of the settler group

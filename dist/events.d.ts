@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.12
+// Factorio version 2.1.14
 // API version 6
 
 declare namespace runtime {
@@ -3033,6 +3033,47 @@ interface on_player_setup_blueprint {
      * Tick the event was generated.
      */
     tick: MapTick;
+}
+/**
+ * Called after a player super-forced-selects an area with a selection-tool item.
+ */
+interface on_player_super_forced_selected_area {
+    /**
+     * The area selected.
+     */
+    area: BoundingBox;
+    /**
+     * The entities selected.
+     */
+    entities: LuaEntity[];
+    /**
+     * The item used to select the area.
+     */
+    item: string;
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * The player doing the selection.
+     */
+    player_index: uint32;
+    /**
+     * The item quality used to select the area.
+     */
+    quality: string;
+    /**
+     * The surface selected.
+     */
+    surface: LuaSurface;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+    /**
+     * The tiles selected.
+     */
+    tiles: LuaTile[];
 }
 /**
  * Called when a player toggles alt mode, also known as "show entity info".

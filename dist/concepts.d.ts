@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.12
+// Factorio version 2.1.14
 // API version 6
 
 declare namespace runtime {
@@ -2528,6 +2528,10 @@ interface EffectReceiver {
      * Controls whether {@link LuaSurface::global_effect | runtime:LuaSurface::global_effect} affects this receiver.
      */
     uses_surface_effects: boolean;
+    /**
+     * Controls whether {@link LuaEntity::local_effect | runtime:LuaEntity::local_effect} affects this receiver.
+     */
+    uses_local_effects: boolean;
     consumption_limits: EffectValueRange;
     speed_limits: EffectValueRange;
     productivity_limits: EffectValueRange;
@@ -2683,6 +2687,10 @@ interface EnemyExpansionMapSettings {
      * The maximum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `60*3 600=216 000` ticks.
      */
     max_expansion_cooldown: uint32;
+    /**
+     * Cooldown in ticks for dispatching units when building bases. Defaults to `60*30=1 800` ticks.
+     */
+    build_base_unit_dispatch_cooldown: uint32;
 }
 interface EnemySpawnerAbsorption {
     absolute: double;
@@ -4447,7 +4455,7 @@ type ItemPrototypeFlag = /**
 'spawnable' | 'spoil-result' | /**
  * Controls whether the spoil time ignores the spoil time modifier in the {@link DifficultySettings | runtime:DifficultySettings}.
  */
-'ignore-spoil-time-modifier' | 'hide-health-bar-in-world' | 'hide-spoilage-bar-in-world';
+'ignore-spoil-time-modifier' | 'hide-health-bar-in-world' | 'hide-spoilage-bar-in-world' | 'no-item-on-ground-merging';
 /**
  * A set of flags. Active flags are in the dictionary as `true`, while inactive flags aren't present at all.
  *
@@ -11757,6 +11765,10 @@ interface UndoRedoActionRemovedEntity extends BaseUndoRedoAction {
      */
     'type': 'removed-entity';
     /**
+     * The equipment for the equipment grid if any.
+     */
+    'grid'?: UndoRedoEquipment[];
+    /**
      * The items that the entity will request when revived, if there are any. It's a mapping of prototype names to amounts. Not present for entities the game can't restore, like trees or rocks.
      */
     'insert_plan'?: BlueprintInsertPlan[];
@@ -11889,6 +11901,11 @@ interface UndoRedoActionWireRemoved extends BaseUndoRedoAction {
     'type': 'wire-removed';
     'a': BlueprintWireEnd;
     'b': BlueprintWireEnd;
+}
+interface UndoRedoEquipment {
+    id: EquipmentWithQualityID;
+    position: EquipmentPosition;
+    settings: PropertyTree;
 }
 interface UnitAISettings {
     /**
@@ -12221,6 +12238,13 @@ interface UtilityConstants {
     low_energy_robot_estimate_multiplier: double;
     asteroid_spawning_offset: SimpleBoundingBox;
     asteroid_fading_range: float;
+    /**
+     * Asteroid damage will be multiplied by this value when space platform speed is zero and will linearly increase until asteroid_spawning_with_random_orientation_max_speed is reached.
+     */
+    asteroid_min_damage_modifier: float;
+    /**
+     * In km per tick.
+     */
     asteroid_spawning_with_random_orientation_max_speed: double;
     asteroid_position_offset_to_speed_coefficient: double;
     asteroid_collector_navmesh_refresh_tick_interval: uint32;

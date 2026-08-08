@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.12
+// Factorio version 2.1.14
 // API version 6
 
 declare namespace runtime {
@@ -2748,6 +2748,24 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.on_player_super_forced_selected_area, handler: ((this: void, arg0: runtime.on_player_super_forced_selected_area) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.on_player_toggled_alt_mode, handler: ((this: void, arg0: runtime.on_player_toggled_alt_mode) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
@@ -4785,6 +4803,7 @@ interface LuaBurner {
  */
 interface LuaBurnerPrototype {
     readonly auto_refuel: boolean;
+    readonly burner_usage: LuaBurnerUsagePrototype;
     readonly burnt_inventory_size: uint32;
     readonly effectivity: double;
     /**
@@ -4796,6 +4815,7 @@ interface LuaBurnerPrototype {
      */
     readonly fuel_categories: Record<string, true>;
     readonly fuel_inventory_size: uint32;
+    readonly hide_from_stats: boolean;
     readonly initial_fuel?: LuaItemPrototype;
     readonly initial_fuel_percent: double;
     /**
@@ -5989,20 +6009,30 @@ interface LuaDamagePrototype extends LuaPrototypeBase {
  */
 interface LuaDebugAdapter {
     /**
+     * Pause execution as if a breakpoint was hit.
+     * @param mesg If specified, this value is displayed as if it was thrown as an error.
+     */
+    breakpoint(this: void, mesg?: Any): void;
+    /**
      * Prepare a default debug view entry for a field, to assist in preparing custom listings.
      * @param name The name of the field
      * @param value The value of the field
      */
     describe_field(this: void, name: string, value: Any): DebugVariable;
     /**
-     * Start recording profiler timings. If there is a previous recording session running, it will be stopped first.
+     * Print values to the debug console. This function also replaces the Lua builtin `print` during debug sessions.
+     * @param args Values to print
+     */
+    print(this: void, ...args: Any[]): void;
+    /**
+     * Start recording profiler timings. If there is a previous recording session running, it will be stopped first. This function is also available to the DAP client as the request `startProfile`, with the parameter in `argument`. A DAP event `profileRunning` will be emitted regardless of how it was called.
      * @param table.show_hook_events Include events to indicate time spent in hooks
      */
     start_profile(this: void, table: {
         show_hook_events?: boolean;
     }): void;
     /**
-     * Stop recording profiler timings and save to script_output.
+     * Stop recording profiler timings and save to script_output. This function is also available to the DAP client as the  request `stopProfile`. A DAP event `profileComplete` will be emitted with the path to the saved file, regardless of stop was called.
      */
     stop_profile(this: void): void;
     /**
@@ -8041,6 +8071,10 @@ interface LuaEntity extends LuaControl {
      * Whether this loader gets items from or puts item into a container.
      */
     loader_type: BeltConnectionType;
+    /**
+     * Additional effect applied to this entity with effect receiver. `nil` if this entity has no effect receiver.
+     */
+    local_effect?: Effect;
     readonly localised_description: LocalisedString;
     /**
      * Localised name of the entity.
@@ -8804,6 +8838,10 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The allowed module categories for this entity, if any.
      */
     readonly allowed_module_categories?: Record<string, true>;
+    /**
+     * When this entity is part of blueprint, will it allow flipping of the blueprint?
+     */
+    readonly allows_flipping: boolean;
     /**
      * Whether the lamp is always on (except when out of power or turned off by the circuit network).
      */
@@ -10739,6 +10777,7 @@ interface LuaFluidEnergySourcePrototype {
      */
     readonly fluid_box: LuaFluidBoxPrototype;
     readonly fluid_usage_per_tick: double;
+    readonly hide_from_stats: boolean;
     readonly maximum_temperature: double;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
@@ -11046,6 +11085,12 @@ interface LuaForce {
      * Gets the unlockable script state for the given ID.
      */
     get_script_visible(this: void, unlockable: UnlockableID): boolean | null;
+    /**
+     * Gets the built space platforms at the given space location for this force.
+     *
+     * Note, this does not include platforms that have not yet been built.
+     */
+    get_space_platforms(this: void, location: SpaceLocationID): LuaSpacePlatform[];
     get_spawn_position(this: void, surface: SurfaceIdentification): MapPosition;
     get_surface_hidden(this: void, surface: SurfaceIdentification): boolean;
     /**
@@ -16933,6 +16978,13 @@ interface LuaPumpControlBehavior extends LuaGenericOnOffControlBehavior {
  * Prototype of a quality.
  */
 interface LuaQualityPrototype extends LuaPrototypeBase {
+    /**
+     * Computes probabilities of rolling various qualities given a quality effect
+     * @param quality_effect Strength of quality effect. Larger value makes it easier to roll better qualities.
+     * @param force Force to select unlocked qualities. If not provided, all qualities are considered unlocked.
+     * @returns Roll chances per quality. Only positive values are listed. All values should sum to 1.
+     */
+    get_roll_chances(this: void, quality_effect: EffectValue, force?: ForceID): Record<string, double>;
     /**
      * Performs quality roll
      * @param quality_effect Strength of quality effect. Larger value makes it easier to roll better qualities.
