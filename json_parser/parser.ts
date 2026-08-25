@@ -36,10 +36,17 @@ for(let file of files)
     if(!fs.existsSync(fileName)) {
         // Save a local copy of the file so it's possible to re-run the parser without waiting for a download each time
         // Run with -clean or delete the local copy to get fresh data (like between versions)
-        http.get(`https://lua-api.factorio.com/latest/${file.name}`, (response) => {
-            response.on('end', () => file.handler(fileName));
-            response.pipe(fs.createWriteStream(fileName));
-        });
+        fetch(`https://lua-api.factorio.com/latest/${file.name}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text()
+            })
+            .then(text => {
+                fs.writeFileSync(fileName, text, 'utf-8');
+                file.handler(fileName);
+            })
     }
     else {
         file.handler(fileName);
