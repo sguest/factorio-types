@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.14
+// Factorio version 2.1.16
 // API version 6
 
 declare namespace prototype {
@@ -2727,18 +2727,6 @@ interface CircuitConnectorDefinition {
      */
     sprites?: CircuitConnectorSprites;
 }
-interface CircuitConnectorLayer {
-    east?: RenderLayer;
-    north?: RenderLayer;
-    south?: RenderLayer;
-    west?: RenderLayer;
-}
-interface CircuitConnectorSecondaryDrawOrder {
-    east?: int8;
-    north?: int8;
-    south?: int8;
-    west?: int8;
-}
 interface CircuitConnectorSprites {
     blue_led_light_offset?: Vector;
     /**
@@ -2755,6 +2743,8 @@ interface CircuitConnectorSprites {
     led_light: LightDefinition;
     led_red: Sprite;
     red_green_led_light_offset?: Vector;
+    render_layer?: RenderLayer;
+    secondary_draw_order?: int8;
     /**
      * Drawn when the entity is connected to a circuit network.
      */
@@ -3337,14 +3327,6 @@ interface CraftItemTipTrigger extends CountBasedTipTrigger {
 }
 interface CraftingMachineGraphicsSet extends WorkingVisualisations {
     animation_progress?: float;
-    /**
-     * Render layer(s) for all directions of the circuit connectors.
-     */
-    circuit_connector_layer?: RenderLayer | CircuitConnectorLayer;
-    /**
-     * Secondary draw order(s) for all directions of the circuit connectors.
-     */
-    circuit_connector_secondary_draw_order?: int8 | CircuitConnectorSecondaryDrawOrder;
     frozen_patch?: Sprite4Way;
     reset_animation_when_frozen?: boolean;
     /**
@@ -7012,14 +6994,6 @@ interface MinimapStyleSpecification extends EmptyWidgetStyleSpecificationBase {
  */
 interface MiningDrillGraphicsSet extends WorkingVisualisations {
     animation_progress?: float;
-    /**
-     * Render layer(s) for all directions of the circuit connectors.
-     */
-    circuit_connector_layer?: RenderLayer | CircuitConnectorLayer;
-    /**
-     * Secondary draw order(s) for all directions of the circuit connectors.
-     */
-    circuit_connector_secondary_draw_order?: int8 | CircuitConnectorSecondaryDrawOrder;
     drilling_vertical_movement_duration?: uint16;
     frozen_patch?: Sprite4Way;
     reset_animation_when_frozen?: boolean;
@@ -9043,7 +9017,6 @@ interface RailSignalLights {
 }
 interface RailSignalPictureSet {
     circuit_connector?: CircuitConnectorDefinition[];
-    circuit_connector_render_layer?: RenderLayer;
     lights: RailSignalLights;
     rail_piece?: RailSignalStaticSpriteLayer;
     selection_box_shift?: Vector[];
