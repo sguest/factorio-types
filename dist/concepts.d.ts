@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.14
+// Factorio version 2.1.16
 // API version 6
 
 declare namespace runtime {
@@ -3415,7 +3415,7 @@ interface FluidPrototypeFilterSubgroup extends BaseFluidPrototypeFilter {
      */
     'filter': 'subgroup';
     /**
-     * A {@link LuaGroup | runtime:LuaGroup} (subgroup) name
+     * A {@link LuaItemSubGroup | runtime:LuaItemSubGroup} name
      */
     'subgroup': string;
 }
@@ -4008,7 +4008,6 @@ interface InserterBlueprintControlBehavior {
     connect_to_logistic_network?: boolean;
     logistic_condition?: CircuitCondition;
 }
-type InventoryIndex = uint8;
 interface InventoryPosition {
     /**
      * The ID of the inventory to insert into.
@@ -4048,6 +4047,16 @@ type ItemFilter = {
      */
     comparator?: ComparatorString;
 } | string;
+/**
+ * An item group may be specified in one of two ways.
+ */
+type ItemGroupID = /**
+ * The item group prototype.
+ */
+LuaItemGroup | /**
+ * The prototype name.
+ */
+string;
 interface ItemHealthColorData {
     color: Color;
     threshold: float;
@@ -4120,7 +4129,7 @@ interface ItemLocationData {
  * @example ```
 -- What a custom recipe would look like that had a probability of 0.5 to return a
 -- minimum amount of 1 and a maximum amount of 5
-{{type="item", name="custom-item", probability=0.5, amount_min=1, amount_max=5}}
+{{type="item", name="custom-item", independent_probability=0.5, amount_min=1, amount_max=5}}
 ```
  */
 interface ItemProduct {
@@ -4395,7 +4404,7 @@ interface ItemPrototypeFilterSubgroup extends BaseItemPrototypeFilter {
      */
     'filter': 'subgroup';
     /**
-     * A {@link LuaGroup | runtime:LuaGroup} (subgroup) name
+     * A {@link LuaItemSubGroup | runtime:LuaItemSubGroup} name
      */
     'subgroup': string;
 }
@@ -4758,6 +4767,7 @@ interface LogisticSection {
      */
     active?: boolean;
 }
+type LogisticSectionIndex = uint8;
 interface LogisticSections {
     sections?: LogisticSection[];
     /**
@@ -7936,7 +7946,7 @@ interface ProcessionTimeline {
  * @example ```
 -- What a custom recipe would look like that had a probability of 0.5 to return a
 -- minimum amount of 1 and a maximum amount of 5
-{{type="item", name="custom-item", probability=0.5, amount_min=1, amount_max=5}}
+{{type="item", name="custom-item", independent_probability=0.5, amount_min=1, amount_max=5}}
 ```
  */
 type Product = /**
@@ -8412,7 +8422,7 @@ interface RecipePrototypeFilterSubgroup extends BaseRecipePrototypeFilter {
      */
     'filter': 'subgroup';
     /**
-     * A {@link LuaGroup | runtime:LuaGroup} (subgroup) name
+     * A {@link LuaItemSubGroup | runtime:LuaItemSubGroup} name
      */
     'subgroup': string;
 }
@@ -9437,7 +9447,7 @@ interface SimulationDefinition {
     mute_wind_sounds?: boolean;
     hide_factoriopedia_gradient?: boolean;
 }
-type SimulationWidgetType = 'signal-id' | 'signal-id-base' | 'signal-or-number' | 'simple-slot' | 'simple-item-slot' | 'recipe-slot' | 'quickbar-slot' | 'logistics-button' | 'logistics-button-space' | 'text-button-localised-substring' | 'text-button' | 'text-button-substring' | 'inventory-limit-slot-button' | 'train-schedule-action-button' | 'choose-button' | 'textfield' | 'item-group-tab' | 'drop-down' | 'check-box' | 'switch' | 'label';
+type SimulationWidgetType = 'signal-id' | 'signal-id-base' | 'signal-or-number' | 'simple-slot' | 'simple-item-slot' | 'simple-item-with-quality-slot' | 'recipe-slot' | 'quickbar-slot' | 'logistics-button' | 'logistics-button-space' | 'text-button-localised-substring' | 'text-button' | 'text-button-substring' | 'inventory-limit-slot-button' | 'train-schedule-action-button' | 'choose-button' | 'textfield' | 'item-group-tab' | 'drop-down' | 'check-box' | 'switch' | 'label';
 interface SingleFluidBoxBlueprintControlBehavior {
     output_networks?: CircuitNetworkSelection;
     /**

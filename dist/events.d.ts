@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.14
+// Factorio version 2.1.16
 // API version 6
 
 declare namespace runtime {
@@ -1621,6 +1621,20 @@ interface on_multiplayer_init {
      * Identifier of the event.
      */
     name: defines.events;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+}
+/**
+ * Called when value of {@link LuaSurface::daytime | runtime:LuaSurface::daytime} wraps around to be in `[0, 1)` range.
+ */
+interface on_next_day_started {
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    surface: LuaSurface;
     /**
      * Tick the event was generated.
      */

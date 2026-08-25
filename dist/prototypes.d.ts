@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.14
+// Factorio version 2.1.16
 // API version 6
 
 declare namespace prototype {
@@ -3427,6 +3427,7 @@ interface EntityPrototype extends Prototype {
     fast_replaceable_group?: string;
     flags?: EntityPrototypeFlags;
     friendly_map_color?: Color;
+    ghost_build_sound?: Sound;
     /**
      * This entity can freeze if heating_energy is larger than zero.
      */
@@ -5814,10 +5815,6 @@ interface LoaderPrototype extends TransportBeltConnectablePrototype {
      * First the four cardinal directions for `direction_out`, followed by the four directions for `direction_in`.
      */
     circuit_connector?: CircuitConnectorDefinition[];
-    /**
-     * Render layer for all directions of the circuit connectors.
-     */
-    circuit_connector_layer?: RenderLayer;
     /**
      * The maximum circuit wire distance for this entity.
      */
@@ -8400,7 +8397,7 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      */
     rocket_parts_required: uint32;
     /**
-     * Must be at least `rocket_parts_required`.
+     * All values down to 0 are allowed, however it is suggested to avoid values from 1 up to `rocket_parts_required - 1` to avoid second progress bar stopping before reaching 100%. When set to 0, second progress bar is hidden.
      */
     rocket_parts_storage_cap?: uint32;
     rocket_quick_relaunch_start_offset: double;

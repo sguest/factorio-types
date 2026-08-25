@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.14
+// Factorio version 2.1.16
 // API version 6
 
 declare namespace runtime {
@@ -1633,6 +1633,24 @@ interface LuaBootstrap {
     ```
      */
     on_event(this: void, event: defines.events.on_multiplayer_init, handler: ((this: void, arg0: runtime.on_multiplayer_init) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_next_day_started, handler: ((this: void, arg0: runtime.on_next_day_started) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event The event(s) or custom-input to invoke the handler on.
@@ -5161,13 +5179,13 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
      * Gets section on the selected index, if it exists.
      * @param section_index Index of the section.
      */
-    get_section(this: void, section_index: uint32): LuaLogisticSection | null;
+    get_section(this: void, section_index: LogisticSectionIndex): LuaLogisticSection | null;
     /**
      * Removes the given logistic section if possible. Removal may fail if the section index is out of range or the section is not {@link manual | runtime:LuaLogisticSection::is_manual}.
      * @param section_index Index of the section.
      * @returns Whether section was removed.
      */
-    remove_section(this: void, section_index: uint32): boolean;
+    remove_section(this: void, section_index: LogisticSectionIndex): boolean;
     /**
      * Turns this constant combinator on and off.
      */
@@ -5604,9 +5622,9 @@ interface LuaControl {
      *
      * This is the GUI that will asked to close (by firing the {@link on_gui_closed | runtime:on_gui_closed} event) when the `Esc` or `E` keys are pressed. If this attribute is non-nil, then writing `nil` or a new GUI to it will ask the existing GUI to close.
      *
-     * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory`, `item` or `nil`.
+     * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory`, `item`, `tile`, or `nil`.
      */
-    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | defines.gui_type;
+    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | LuaTile | defines.gui_type;
     readonly opened_gui_type?: defines.gui_type;
     /**
      * Current item-picking state.
@@ -8187,6 +8205,10 @@ interface LuaEntity extends LuaControl {
      * The pollution bonus of this entity.
      */
     readonly pollution_bonus: double;
+    /**
+     * The effects that will be applied to this entity once all upgrades are resolved. Can only be used when the entity has an effect receiver (AssemblingMachine, Furnace, Lab, MiningDrill, AgriculturalTower).
+     */
+    readonly potential_effects?: Effect;
     /**
      * The power production specific to the ElectricEnergyInterface entity type.
      */
@@ -12101,41 +12123,6 @@ interface LuaGenericOnOffControlBehavior extends LuaControlBehavior {
     logistic_condition?: CircuitConditionDefinition;
 }
 /**
- * Item group or subgroup.
- */
-interface LuaGroup {
-    /**
-     * The parent group.
-     */
-    readonly group: LuaGroup;
-    /**
-     * Localised name of the group.
-     */
-    readonly localised_name: LocalisedString;
-    readonly name: string;
-    /**
-     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
-     */
-    readonly object_name: string;
-    /**
-     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
-     */
-    readonly order: string;
-    /**
-     * The additional order value used in recipe ordering.
-     */
-    readonly order_in_recipe: string;
-    /**
-     * Subgroups of this group.
-     */
-    readonly subgroups: LuaGroup[];
-    readonly type: string;
-    /**
-     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
-     */
-    readonly valid: boolean;
-}
-/**
  * The root of the GUI. This type houses the root elements, `top`, `left`, `center`,  `goal`, and `screen`, to which other elements can be added to be displayed on screen.
  *
  * Every player can have a different GUI state.
@@ -14276,6 +14263,37 @@ interface LuaItemCommon {
     trees_and_rocks_only: boolean;
 }
 /**
+ * Item group.
+ */
+interface LuaItemGroup {
+    /**
+     * Localised name of the group.
+     */
+    readonly localised_name: LocalisedString;
+    readonly name: string;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
+     */
+    readonly order: string;
+    /**
+     * The additional order value used in recipe ordering.
+     */
+    readonly order_in_recipe: string;
+    /**
+     * Subgroups of this group.
+     */
+    readonly subgroups: LuaItemSubGroup[];
+    readonly type: string;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
+}
+/**
  * Prototype of an item. For example, an item prototype can be obtained from {@link LuaPrototypes::item | runtime:LuaPrototypes::item} by its name: `prototypes.item["iron-plate"]`.
  */
 interface LuaItemPrototype extends LuaPrototypeBase {
@@ -14452,8 +14470,8 @@ interface LuaItemPrototype extends LuaPrototypeBase {
     readonly ingredient_to_weight_coefficient: double;
     readonly initial_items?: ItemProduct[];
     readonly item_filters?: LuaItemPrototype[];
-    readonly item_group_filters?: LuaGroup[];
-    readonly item_subgroup_filters?: LuaGroup[];
+    readonly item_group_filters?: LuaItemGroup[];
+    readonly item_subgroup_filters?: LuaItemSubGroup[];
     readonly lab_ignores_spoil_percent: boolean;
     /**
      * The localised string used when the player attempts to put items into this item with inventory that aren't allowed.
@@ -14702,6 +14720,33 @@ interface LuaItemStack extends LuaItemCommon {
      * Is this valid for reading? Differs from the usual `valid` in that `valid` will be `true` even if the item stack is blank but the entity that holds it is still valid.
      */
     readonly valid_for_read: boolean;
+}
+/**
+ * Item subgroup.
+ */
+interface LuaItemSubGroup {
+    /**
+     * The parent group.
+     */
+    readonly group: LuaItemGroup;
+    /**
+     * Localised name of the subgroup.
+     */
+    readonly localised_name: LocalisedString;
+    readonly name: string;
+    /**
+     * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
+     */
+    readonly object_name: string;
+    /**
+     * The string used to alphabetically sort these prototypes. It is a simple string that has no additional semantic meaning.
+     */
+    readonly order: string;
+    readonly type: string;
+    /**
+     * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
+     */
+    readonly valid: boolean;
 }
 /**
  * Control behavior for lab.
@@ -15113,13 +15158,13 @@ interface LuaLogisticPoint {
      * Gets section on the selected index, if it exists
      * @param section_index Index of the section
      */
-    get_section(this: void, section_index: uint32): LuaLogisticSection;
+    get_section(this: void, section_index: LogisticSectionIndex): LuaLogisticSection;
     /**
      * Removes the given logistic section if possible. Removal may fail if the section index is out of range or the section is not {@link manual | runtime:LuaLogisticSection::is_manual}.
      * @param section_index Index of the section
      * @returns Whether section was removed.
      */
-    remove_section(this: void, section_index: uint32): boolean;
+    remove_section(this: void, section_index: LogisticSectionIndex): boolean;
     /**
      * Whether this logistic point is active, related to disabling logistics on player/spidertron.
      *
@@ -15276,13 +15321,13 @@ interface LuaLogisticSections {
      * Gets section on the selected index, if it exists.
      * @param section_index Index of the section.
      */
-    get_section(this: void, section_index: uint32): LuaLogisticSection | null;
+    get_section(this: void, section_index: LogisticSectionIndex): LuaLogisticSection | null;
     /**
      * Removes the given logistic section if possible. Removal may fail if the section index is out of range or the section is not {@link manual | runtime:LuaLogisticSection::is_manual}.
      * @param section_index Index of the section.
      * @returns Whether section was removed.
      */
-    remove_section(this: void, section_index: uint32): boolean;
+    remove_section(this: void, section_index: LogisticSectionIndex): boolean;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -16638,7 +16683,7 @@ interface LuaPrototypeBase {
     /**
      * Group of this prototype.
      */
-    readonly group: LuaGroup;
+    readonly group: LuaItemGroup;
     readonly hidden: boolean;
     readonly hidden_in_factoriopedia: boolean;
     readonly localised_description: LocalisedString;
@@ -16655,7 +16700,7 @@ interface LuaPrototypeBase {
     /**
      * Subgroup of this prototype.
      */
-    readonly subgroup: LuaGroup;
+    readonly subgroup: LuaItemSubGroup;
     /**
      * Type of this prototype.
      */
@@ -16832,11 +16877,11 @@ interface LuaPrototypes {
     /**
      * A dictionary containing every ItemGroup indexed by `name`.
      */
-    readonly item_group: Record<string, LuaGroup>;
+    readonly item_group: Record<string, LuaItemGroup>;
     /**
      * A dictionary containing every ItemSubgroup indexed by `name`.
      */
-    readonly item_subgroup: Record<string, LuaGroup>;
+    readonly item_subgroup: Record<string, LuaItemSubGroup>;
     /**
      * A dictionary containing every MapGenPreset indexed by `name`.
      *
@@ -17323,7 +17368,7 @@ interface LuaRecipe {
     /**
      * Group of this recipe.
      */
-    readonly group: LuaGroup;
+    readonly group: LuaItemGroup;
     /**
      * Is the recipe hidden? Hidden recipes don't show up in the crafting menu.
      */
@@ -17376,7 +17421,7 @@ interface LuaRecipe {
     /**
      * Subgroup of this recipe.
      */
-    readonly subgroup: LuaGroup;
+    readonly subgroup: LuaItemSubGroup;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -19067,18 +19112,14 @@ interface LuaSimulation {
      * @returns Position of the GUI slot on the screen, if successfully found.
      */
     get_slot_position(this: void, table: {
-        inventory_index: InventoryIndex;
+        inventory_index: defines.inventory;
         slot_index: ItemStackIndex;
         inventory?: 'character' | 'entity';
     }): MapPosition | null;
     /**
      * @returns Center of the GUI widget on the screen, if successfully found.
      */
-    get_widget_position(this: void, table: {
-        type: SimulationWidgetType;
-        data?: string;
-        data2?: string;
-    }): MapPosition | null;
+    get_widget_position(this: void, table: LuaSimulationGetWidgetPositionParams): MapPosition | null;
     /**
      * Send a left mouse button click event at its current position. This is equivalent to calling {@link LuaSimulation::mouse_down | runtime:LuaSimulation::mouse_down}, then {@link LuaSimulation::mouse_up | runtime:LuaSimulation::mouse_up}.
      */
@@ -19134,6 +19175,139 @@ interface LuaSimulation {
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
     readonly valid: boolean;
+}
+type LuaSimulationGetWidgetPositionParams = BaseLuaSimulationGetWidgetPositionParams | LuaSimulationGetWidgetPositionParamsCheckBox | LuaSimulationGetWidgetPositionParamsDropDown | LuaSimulationGetWidgetPositionParamsItemGroupTab | LuaSimulationGetWidgetPositionParamsLabel | LuaSimulationGetWidgetPositionParamsLogisticsButton | LuaSimulationGetWidgetPositionParamsLogisticsButtonSpace | LuaSimulationGetWidgetPositionParamsQuickbarSlot | LuaSimulationGetWidgetPositionParamsRecipeSlot | LuaSimulationGetWidgetPositionParamsSignalIdBase | LuaSimulationGetWidgetPositionParamsSimpleItemSlot | LuaSimulationGetWidgetPositionParamsSimpleItemWithQualitySlot | LuaSimulationGetWidgetPositionParamsSimpleSlot | LuaSimulationGetWidgetPositionParamsTextButton | LuaSimulationGetWidgetPositionParamsTextButtonLocalisedSubstring | LuaSimulationGetWidgetPositionParamsTextButtonSubstring | LuaSimulationGetWidgetPositionParamsTextfield;
+interface BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'check-box' | 'drop-down' | 'item-group-tab' | 'label' | 'logistics-button' | 'logistics-button-space' | 'quickbar-slot' | 'recipe-slot' | 'signal-id-base' | 'simple-item-slot' | 'simple-item-with-quality-slot' | 'simple-slot' | 'text-button' | 'text-button-localised-substring' | 'text-button-substring' | 'textfield';
+}
+/**
+ *
+ * Applies to variant case `check-box`
+ */
+interface LuaSimulationGetWidgetPositionParamsCheckBox extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'check-box';
+    'text': LocalisedString;
+}
+/**
+ *
+ * Applies to variant case `drop-down`
+ */
+interface LuaSimulationGetWidgetPositionParamsDropDown extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'drop-down';
+    'text'?: string;
+}
+/**
+ *
+ * Applies to variant case `item-group-tab`
+ */
+interface LuaSimulationGetWidgetPositionParamsItemGroupTab extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'item-group-tab';
+    'group': ItemGroupID;
+}
+/**
+ *
+ * Applies to variant case `label`
+ */
+interface LuaSimulationGetWidgetPositionParamsLabel extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'label';
+    'text'?: string;
+}
+/**
+ *
+ * Applies to variant case `logistics-button`
+ */
+interface LuaSimulationGetWidgetPositionParamsLogisticsButton extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'logistics-button';
+    'request_index': LogisticFilterIndex;
+}
+/**
+ *
+ * Applies to variant case `logistics-button-space`
+ */
+interface LuaSimulationGetWidgetPositionParamsLogisticsButtonSpace extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'logistics-button-space';
+    'request_index': LogisticFilterIndex;
+    'section_index': LogisticSectionIndex;
+}
+/**
+ *
+ * Applies to variant case `quickbar-slot`
+ */
+interface LuaSimulationGetWidgetPositionParamsQuickbarSlot extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'quickbar-slot';
+    'filter': ItemFilter;
+}
+/**
+ *
+ * Applies to variant case `recipe-slot`
+ */
+interface LuaSimulationGetWidgetPositionParamsRecipeSlot extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'recipe-slot';
+    'recipe': RecipeID;
+}
+/**
+ *
+ * Applies to variant case `signal-id-base`
+ */
+interface LuaSimulationGetWidgetPositionParamsSignalIdBase extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'signal-id-base';
+    'id': SignalIDBase;
+}
+/**
+ *
+ * Applies to variant case `simple-item-slot`
+ */
+interface LuaSimulationGetWidgetPositionParamsSimpleItemSlot extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'simple-item-slot';
+    'item': ItemID;
+}
+/**
+ *
+ * Applies to variant case `simple-item-with-quality-slot`
+ */
+interface LuaSimulationGetWidgetPositionParamsSimpleItemWithQualitySlot extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'simple-item-with-quality-slot';
+    'filter': ItemFilter;
+}
+/**
+ *
+ * Applies to variant case `simple-slot`
+ */
+interface LuaSimulationGetWidgetPositionParamsSimpleSlot extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'simple-slot';
+    'item': ItemID;
+}
+/**
+ *
+ * Applies to variant case `text-button`
+ */
+interface LuaSimulationGetWidgetPositionParamsTextButton extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'text-button';
+    'text': string;
+}
+/**
+ *
+ * Applies to variant case `text-button-localised-substring`
+ */
+interface LuaSimulationGetWidgetPositionParamsTextButtonLocalisedSubstring extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'text-button-localised-substring';
+    'text': LocalisedString;
+}
+/**
+ *
+ * Applies to variant case `text-button-substring`
+ */
+interface LuaSimulationGetWidgetPositionParamsTextButtonSubstring extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'text-button-substring';
+    'text': string;
+}
+/**
+ *
+ * Applies to variant case `textfield`
+ */
+interface LuaSimulationGetWidgetPositionParamsTextfield extends BaseLuaSimulationGetWidgetPositionParams {
+    'type': 'textfield';
+    'text': string;
 }
 /**
  * Control behavior for entities with a single fluid box (i.e. pipe, pipe-to-ground, storage-tank).
@@ -19299,6 +19473,10 @@ interface LuaSpacePlatform {
      * Repairs the given tile if it's damaged.
      */
     repair_tile(this: void, position: TilePosition, amount?: float): void;
+    /**
+     * The number of trips completed between space locations.
+     */
+    completed_trips: uint32;
     /**
      * The damaged tiles on this platform.
      */
