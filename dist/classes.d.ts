@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.16
+// Factorio version 2.1.17
 // API version 6
 
 declare namespace runtime {
@@ -19235,7 +19235,12 @@ interface LuaSimulationGetWidgetPositionParamsLogisticsButtonSpace extends BaseL
  */
 interface LuaSimulationGetWidgetPositionParamsQuickbarSlot extends BaseLuaSimulationGetWidgetPositionParams {
     'type': 'quickbar-slot';
-    'filter': ItemFilter;
+    /**
+     * Note: since quickbar slots are also of type ItemFilter, filter is used as a value: it must be equal {@link QuickBarSlot::filter | runtime:QuickBarSlot::filter}.
+     */
+    'filter'?: ItemFilter;
+    'page_index'?: uint8;
+    'slot_index'?: uint8;
 }
 /**
  *
