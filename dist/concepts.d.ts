@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.16
+// Factorio version 2.1.17
 // API version 6
 
 declare namespace runtime {
@@ -8671,6 +8671,9 @@ string | /**
  * 137
  */
 'elevated-rail-metal' | /**
+ * 138
+ */
+'elevated-rail-above-metal' | /**
  * 141
  */
 'elevated-lower-object' | /**
