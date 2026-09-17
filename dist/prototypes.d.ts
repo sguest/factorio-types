@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.17
+// Factorio version 2.1.19
 // API version 6
 
 declare namespace prototype {
@@ -955,7 +955,7 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
     fixed_recipe?: RecipeID;
     fluid_boxes_off_when_no_fluid_recipe?: boolean;
     /**
-     * The locale key of the title of the GUI that is shown when the player opens the assembling machine. May not be longer than 200 characters.
+     * The locale key of the title of the recipe selection GUI that is shown when the player opens the assembling machine. May not be longer than 200 characters.
      */
     gui_title_key?: string;
     /**
@@ -5157,10 +5157,22 @@ interface ItemPrototype extends Prototype {
     place_result?: EntityID;
     plant_result?: EntityID;
     /**
+     * Only loaded if `spoil_ticks` is larger than 0.
+     *
+     * If set, {@link QualityPrototype::spoil_ticks_multiplier | prototype:QualityPrototype::spoil_ticks_multiplier} will be applied to spoil_tick value.
+     */
+    quality_affects_spoil_ticks?: boolean;
+    /**
      * Randomly tints item instances on belts and in the world. 0 no tinting. 1 full tint.
      */
     random_tint_color?: Color;
     rocket_launch_products?: ItemProductPrototype[];
+    /**
+     * Used by labs. Not relevant for {@link tools | prototype:ToolPrototype} where {@link durability | prototype:ToolPrototype::durability} is used.
+     *
+     * Must be >= 0.01.
+     */
+    science_capacity?: double;
     /**
      * The way this item works when we try to send it to the orbit on its own.
      *
@@ -5178,19 +5190,31 @@ interface ItemPrototype extends Prototype {
      */
     spoil_level?: uint8;
     /**
+     * Only loaded if `spoil_ticks` is larger than 0.
+     *
      * Defines how many levels the item's quality will go up (positive integer) or down (negative integer) when spoiling.
      */
     spoil_quality_change?: int8;
     /**
+     * Only loaded if `spoil_ticks` is larger than 0.
+     *
      * The maximum quality level that can be reached when {@link spoil_quality_change | prototype:ItemPrototype::spoil_quality_change} is used.
      */
     spoil_quality_max?: QualityID;
     /**
+     * Only loaded if `spoil_ticks` is larger than 0.
+     *
      * The minimum quality level that can be reached when {@link spoil_quality_change | prototype:ItemPrototype::spoil_quality_change} is used.
      */
     spoil_quality_min?: QualityID;
+    /**
+     * Only loaded if `spoil_ticks` is larger than 0.
+     */
     spoil_result?: ItemID;
     spoil_ticks?: uint32;
+    /**
+     * Only loaded if `spoil_ticks` is larger than 0.
+     */
     spoil_to_trigger_result?: SpoilToTriggerResult;
     /**
      * Count of items of the same name that can be stored in one inventory slot. Must be 1 when the `"not-stackable"` flag is set.
@@ -7178,6 +7202,14 @@ interface QualityPrototype extends Prototype {
      */
     rolling_stock_max_speed_multiplier?: double;
     /**
+     * Must be >= 0.01.
+     *
+     * Affects how much research will lab be able to do using item of that quality.
+     *
+     * Only used for items that are not a {@link tool | prototype:ToolPrototype}.
+     */
+    science_capacity_multiplier?: double;
+    /**
      * Must be in range `[0, 1]`.
      *
      * Only affects labs with {@link LabPrototype::uses_quality_drain_modifier | prototype:LabPrototype::uses_quality_drain_modifier} set.
@@ -7185,12 +7217,14 @@ interface QualityPrototype extends Prototype {
     science_pack_drain_multiplier?: float;
     /**
      * Must be >= 0.01.
+     *
+     * Only affects items with {@link ItemPrototype::quality_affects_spoil_ticks | prototype:ItemPrototype::quality_affects_spoil_ticks} set.
      */
     spoil_ticks_multiplier?: float;
     /**
      * Must be >= 0.01.
      *
-     * Affects the durability of {@link tool items | prototype:ToolPrototype} like science packs, repair tools and armor.
+     * Affects the durability of {@link tool items | prototype:ToolPrototype} like repair tools and armor.
      */
     tool_durability_multiplier?: double;
 }
@@ -7508,7 +7542,7 @@ interface ReactorPrototype extends EntityWithOwnerPrototype {
     working_light_picture?: Animation;
 }
 /**
- * A recipe category. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#recipe-category}. See {@link RecipePrototype::category | prototype:RecipePrototype::category}. Recipe categories can be used to specify which {@link machine | prototype:CraftingMachinePrototype::crafting_categories} can craft which {@link recipes | prototype:RecipePrototype}.
+ * A recipe category. The built-in categories can be found {@link here | https://wiki.factorio.com/Data.raw#recipe-category}. See {@link RecipePrototype::categories | prototype:RecipePrototype::categories}. Recipe categories can be used to specify which {@link machine | prototype:CraftingMachinePrototype::crafting_categories} can craft which {@link recipes | prototype:RecipePrototype}.
  *
  * The recipe category with the name "crafting" cannot contain recipes with fluid ingredients or products.
  * @example ```
@@ -7720,7 +7754,7 @@ interface RecipePrototype extends Prototype {
     /**
      * If set to true, an event with identifier of {@link LuaRecipePrototype::on_crafted_event | runtime:LuaRecipePrototype::on_crafted_event} will be raised when this recipe is crafted. Currently this is only raised when recipe is crafted by a crafting machine.
      *
-     * Event raised will be given data as described by {@link OnRecipeCraftedData | runtime:OnRecipeCraftedData}.
+     * Event raised will be given data as described by {@link RecipeCraftedEvent | runtime:RecipeCraftedEvent}.
      * @example ```
     -- in data stage:
     data.raw.recipe["iron-plate"].raise_on_crafted = true
@@ -10454,7 +10488,7 @@ interface TransportBeltPrototype extends TransportBeltConnectablePrototype {
  */
 interface TreePrototype extends EntityWithHealthPrototype {
     /**
-     * Mandatory if `variations` is defined.
+     * Mandatory if `variations` is defined. Can't be empty.
      */
     colors?: Color[];
     darkness_of_burnt_tree?: float;
@@ -12111,6 +12145,7 @@ interface UtilitySprites extends PrototypeBase {
     show_worker_robots_in_map_view: Sprite;
     shuffle: Sprite;
     side_menu_achievements_icon: Sprite;
+    side_menu_alerts_config_icon: Sprite;
     side_menu_blueprint_library_icon: Sprite;
     side_menu_bonus_icon: Sprite;
     side_menu_factoriopedia_icon: Sprite;

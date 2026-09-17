@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.17
+// Factorio version 2.1.19
 // API version 6
 
 declare namespace runtime {
@@ -12636,6 +12636,10 @@ interface LuaGuiElement {
      */
     right_label_tooltip: LocalisedString;
     /**
+     * The number to be shown on the right side of this sprite-button, directly above the regular {@link LuaGuiElement::number | runtime:LuaGuiElement::number}, or `nil` to show nothing.
+     */
+    secondary_number?: double;
+    /**
      * Whether the contents of this text-box are selectable. Defaults to `true`.
      */
     selectable: boolean;
@@ -12648,7 +12652,7 @@ interface LuaGuiElement {
      */
     selected_tab_index?: uint32;
     /**
-     * Related to the number to be shown in the bottom right corner of this sprite-button. When set to `true`, numbers that are non-zero and smaller than one are shown as a percentage rather than the value. For example, `0.5` will be shown as `50%` instead.
+     * Related to the numbers to be shown in the bottom right corner of this sprite-button. When set to `true`, numbers that are non-zero and smaller than one are shown as a percentage rather than the value. For example, `0.5` will be shown as `50%` instead.
      */
     show_percent_for_small_numbers: boolean;
     /**
@@ -13201,6 +13205,10 @@ interface LuaGuiElementAddParamsSpriteButton extends BaseLuaGuiElementAddParams 
      * The name of the quality shown on the button.
      */
     'quality'?: string;
+    /**
+     * The secondary number shown on the button, above the regular number.
+     */
+    'secondary_number'?: double;
     /**
      * Formats small numbers as percentages. Defaults to `false`.
      */
@@ -13975,7 +13983,7 @@ interface LuaItemCommon {
     /**
      * Gets the tags for the given blueprint entity index in this blueprint item.
      */
-    get_blueprint_entity_tags(this: void, index: uint32): Tags;
+    get_blueprint_entity_tags(this: void, index: uint32): Tags | null;
     /**
      * A list of the tiles in this blueprint.
      */
@@ -14514,6 +14522,7 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      */
     readonly provides_flight?: boolean;
     readonly quality_affects_inventory_size?: boolean;
+    readonly quality_affects_spoil_ticks: boolean;
     readonly quality_quality_multiplier?: float;
     readonly radius_color?: Color;
     /**
@@ -14533,6 +14542,7 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      * The results of launching this item in a rocket.
      */
     readonly rocket_launch_products: Product[];
+    readonly science_capacity: double;
     /**
      * How this item interacts when being sent to orbit.
      */
@@ -17084,7 +17094,7 @@ interface LuaQualityPrototype extends LuaPrototypeBase {
     /**
      * The next higher level of the quality
      */
-    readonly next: LuaQualityPrototype;
+    readonly next?: LuaQualityPrototype;
     /**
      * The probability multiplier of getting the next level of quality.
      */
@@ -17093,7 +17103,7 @@ interface LuaQualityPrototype extends LuaPrototypeBase {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
-    readonly previous: LuaQualityPrototype;
+    readonly previous?: LuaQualityPrototype;
     /**
      * Probability of additional quality decrease happening after quality was decreased to reach this quality in the same crafting/mining operation.
      */
@@ -17104,6 +17114,7 @@ interface LuaQualityPrototype extends LuaPrototypeBase {
     readonly previous_probability: double;
     readonly range_multiplier: double;
     readonly rolling_stock_max_speed_multiplier: double;
+    readonly science_capacity_multiplier: double;
     readonly science_pack_drain_multiplier: float;
     readonly spoil_ticks_multiplier: float;
     readonly tool_durability_multiplier: double;
@@ -17717,7 +17728,7 @@ interface LuaRecord {
     /**
      * Gets the tags for the given blueprint entity index in this blueprint.
      */
-    get_blueprint_entity_tags(this: void, index: uint32): Tags;
+    get_blueprint_entity_tags(this: void, index: uint32): Tags | null;
     /**
      * A list of the tiles in this blueprint.
      */
@@ -18132,6 +18143,10 @@ interface LuaRenderObject {
      */
     readonly surface: LuaSurface;
     /**
+     * If this render object will be translucent when "Hide tall entities" mode is active.
+     */
+    tall: boolean;
+    /**
      * Where this object is drawn.
      *
      * Polygon vertices that are set to an entity will ignore this.
@@ -18220,6 +18235,7 @@ interface LuaRendering {
      * @param table.players The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @param table.light_mode Whether this object should be rendered as a sprite, light or both at once. Defaults to "occluder".
      */
@@ -18243,6 +18259,7 @@ interface LuaRendering {
         players?: PlayerIdentification[];
         visible?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
         light_mode?: ScriptSpriteLightMode;
     }): LuaRenderObject;
@@ -18259,6 +18276,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      */
     draw_arc(this: void, table: {
@@ -18276,6 +18294,7 @@ interface LuaRendering {
         visible?: boolean;
         draw_on_ground?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
     }): LuaRenderObject;
     /**
@@ -18290,6 +18309,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      */
     draw_circle(this: void, table: {
@@ -18306,6 +18326,7 @@ interface LuaRendering {
         visible?: boolean;
         draw_on_ground?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
     }): LuaRenderObject;
     /**
@@ -18325,6 +18346,7 @@ interface LuaRendering {
      * @param table.players The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      */
     draw_light(this: void, table: {
@@ -18343,6 +18365,7 @@ interface LuaRendering {
         players?: PlayerIdentification[];
         visible?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
     }): LuaRenderObject;
     /**
@@ -18358,6 +18381,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @example ```
     -- Draw a white and 2 pixel wide line from {0, 0} to {2, 2}.
@@ -18384,6 +18408,7 @@ interface LuaRendering {
         visible?: boolean;
         draw_on_ground?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
     }): LuaRenderObject;
     /**
@@ -18399,6 +18424,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      */
     draw_polygon(this: void, table: {
@@ -18416,6 +18442,7 @@ interface LuaRendering {
         visible?: boolean;
         draw_on_ground?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
     }): LuaRenderObject;
     /**
@@ -18429,6 +18456,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @example ```
     -- Draw a white and 1 pixel wide square outline with the corners {0, 0} and {2, 2}.
@@ -18449,6 +18477,7 @@ interface LuaRendering {
         visible?: boolean;
         draw_on_ground?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
     }): LuaRenderObject;
     /**
@@ -18467,6 +18496,7 @@ interface LuaRendering {
      * @param table.players The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @param table.light_mode Whether this object should be rendered as a sprite, light or both at once. Defaults to "occluder".
      * @example ```
@@ -18496,6 +18526,7 @@ interface LuaRendering {
         players?: PlayerIdentification[];
         visible?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
         light_mode?: ScriptSpriteLightMode;
     }): LuaRenderObject;
@@ -18516,6 +18547,7 @@ interface LuaRendering {
      * @param table.vertical_alignment Defaults to "top".
      * @param table.scale_with_zoom Defaults to false. If true, the text scales with player zoom, resulting in it always being the same size on screen, and the size compared to the game world changes.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
+     * @param table.tall Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @param table.use_rich_text If rich text rendering is enabled. Defaults to false.
      */
@@ -18537,6 +18569,7 @@ interface LuaRendering {
         vertical_alignment?: VerticalTextAlign;
         scale_with_zoom?: boolean;
         only_in_alt_mode?: boolean;
+        tall?: boolean;
         render_mode?: ScriptRenderMode;
         use_rich_text?: boolean;
     }): LuaRenderObject;
@@ -22867,6 +22900,16 @@ interface LuaTransportLine {
      * @param item If not specified, count all items.
      */
     get_item_count(this: void, item?: ItemFilter): uint32;
+    /**
+     * Gives position of the selected item on this transport line.
+     * @param index Index of the item. Allowed values are from 1 up to #len.
+     * @returns [0] - Linear position of the item along the transport line
+     * @returns [1] - Map position of the item
+     */
+    get_item_position(this: void, index: uint32): LuaMultiReturn<[
+        float,
+        MapPosition
+    ]>;
     /**
      * Get a map position related to a position on a transport line.
      * @param position Linear position along the transport line. Clamped to the transport line range.
