@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.17
+// Factorio version 2.1.19
 // API version 6
 
 declare namespace runtime {
@@ -1188,6 +1188,22 @@ interface BlueprintEntityWall extends BaseBlueprintEntity {
 interface BlueprintEquipment {
     equipment: EquipmentWithQualityID;
     position: EquipmentPosition;
+    /**
+     * Only used for equipment of type `"electric-energy-interface-equipment"`.
+     */
+    power_production?: double;
+    /**
+     * Only used for equipment of type `"electric-energy-interface-equipment"`.
+     */
+    power_usage?: double;
+    /**
+     * Only used for equipment of type `"electric-energy-interface-equipment"`.
+     */
+    buffer_size?: double;
+    /**
+     * Only used for equipment of type `"generator-equipment"` that has a burner energy source.
+     */
+    burner_fuel_inventory?: BlueprintInventoryWithFilters;
 }
 interface BlueprintInfinityInventorySettings {
     filters?: InfinityInventoryFilter[];
@@ -7378,48 +7394,6 @@ interface OldTileAndPosition {
     old_tile: LuaTilePrototype;
     position: TilePosition;
 }
-interface OnRecipeCraftedData {
-    /**
-     * Identifier of the event.
-     */
-    name: defines.events;
-    /**
-     * Tick the event was generated.
-     */
-    tick: MapTick;
-    /**
-     * Entity that crafted recipe.
-     */
-    entity: LuaEntity;
-    /**
-     * Name of recipe that was crafted.
-     */
-    recipe: string;
-    /**
-     * Quality of the recipe crafted.
-     */
-    recipe_quality: string;
-    /**
-     * Quality effect used when giving products. Not provided if value is 0. May be different than value obtained from {@link LuaEntity::effects | runtime:LuaEntity::effects} when quality modules were changed between craft starting and products being given.
-     */
-    quality_effect?: EffectValue;
-    /**
-     * Random value in range [0, 1) that was used when selecting product quality. Only provided when quality_effect is provided.
-     */
-    quality_seed?: double;
-    /**
-     * Quality of products given. May be different than recipe quality if quality modules are present. Always provided even if quality_effect is zero because {@link LuaEntity::result_quality | runtime:LuaEntity::result_quality} may have been used. Only used by products without quality control.
-     */
-    product_quality: string;
-    /**
-     * If crafted as part of bonus products.
-     */
-    bonus: boolean;
-    /**
-     * Random value in range {@link 0, 1) used as part of shared roll when giving products. Related to [ProductPrototypeBase::shared_probability | prototype:ProductPrototypeBase::shared_probability}.
-     */
-    shared_roll: double;
-}
 interface OrientedCliffPrototypeSet {
     west_to_east: BoundingBox;
     north_to_south: BoundingBox;
@@ -7868,10 +7842,6 @@ interface PollutionMapSettings {
      * Defaults to `10`.
      */
     pollution_restored_per_tree_damage: double;
-    /**
-     * Defaults to `20`.
-     */
-    max_pollution_to_restore_trees: double;
     /**
      * Defaults to `1`.
      */
@@ -11918,7 +11888,25 @@ interface UndoRedoActionWireRemoved extends BaseUndoRedoAction {
 interface UndoRedoEquipment {
     id: EquipmentWithQualityID;
     position: EquipmentPosition;
-    settings: PropertyTree;
+    settings: UndoRedoEquipmentSettings;
+}
+interface UndoRedoEquipmentSettings {
+    /**
+     * Only used for equipment of type `"electric-energy-interface-equipment"`.
+     */
+    power_production?: double;
+    /**
+     * Only used for equipment of type `"electric-energy-interface-equipment"`.
+     */
+    power_usage?: double;
+    /**
+     * Only used for equipment of type `"electric-energy-interface-equipment"`.
+     */
+    buffer_size?: double;
+    /**
+     * Only used for equipment of type `"generator-equipment"` that has a burner energy source.
+     */
+    burner_fuel_inventory?: BlueprintInventoryWithFilters;
 }
 interface UnitAISettings {
     /**

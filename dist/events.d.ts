@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.17
+// Factorio version 2.1.19
 // API version 6
 
 declare namespace runtime {
@@ -52,6 +52,51 @@ interface CustomInputEvent {
      * Information about the prototype that is selected when the custom input is used. Needs to be enabled on the custom input's prototype. `nil` if none is selected.
      */
     selected_prototype?: SelectedPrototypeData;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+}
+/**
+ * Called when a recipe with {@link RecipePrototype::raise_on_crafted | prototype:RecipePrototype::raise_on_crafted} is crafted.
+ */
+interface RecipeCraftedEvent {
+    /**
+     * If crafted as part of bonus products.
+     */
+    bonus: boolean;
+    /**
+     * Entity that crafted recipe.
+     */
+    entity: LuaEntity;
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * Quality of products given. May be different than recipe quality if quality modules are present. Always provided even if quality_effect is zero because {@link LuaEntity::result_quality | runtime:LuaEntity::result_quality} may have been used. Only used by products without quality control.
+     */
+    product_quality: string;
+    /**
+     * Quality effect used when giving products. Not provided if value is 0. May be different than value obtained from {@link LuaEntity::effects | runtime:LuaEntity::effects} when quality modules were changed between craft starting and products being given.
+     */
+    quality_effect?: EffectValue;
+    /**
+     * Random value in range [0, 1) that was used when selecting product quality. Only provided when quality_effect is provided.
+     */
+    quality_seed?: double;
+    /**
+     * Name of recipe that was crafted.
+     */
+    recipe: string;
+    /**
+     * Quality of the recipe crafted.
+     */
+    recipe_quality: string;
+    /**
+     * Random value in range {@link 0, 1) used as part of shared roll when giving products. Related to [ProductPrototypeBase::shared_probability | prototype:ProductPrototypeBase::shared_probability}.
+     */
+    shared_roll: double;
     /**
      * Tick the event was generated.
      */

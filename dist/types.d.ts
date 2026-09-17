@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.17
+// Factorio version 2.1.19
 // API version 6
 
 declare namespace prototype {
@@ -3948,23 +3948,23 @@ interface EditorUtilityConstants {
  */
 interface Effect {
     /**
-     * Multiplier to energy used during operation (not idle/drain use). The minimum possible sum is -80%.
+     * Multiplier to energy used during operation (not idle/drain use). The minimum possible sum defaults to -80% and can be changed through {@link EffectReceiver::consumption_limits | prototype:EffectReceiver::consumption_limits} on the machine.
      */
     consumption?: EffectValue;
     /**
-     * Multiplier to the pollution factor of an entity's pollution during use. The minimum possible sum is -80%.
+     * Multiplier to the pollution factor of an entity's pollution during use. The minimum possible sum defaults to -80% and can be changed through {@link EffectReceiver::pollution_limits | prototype:EffectReceiver::pollution_limits} on the machine.
      */
     pollution?: EffectValue;
     /**
-     * Multiplied against work completed, adds to the bonus results of operating. E.g. an extra crafted recipe or immediate research bonus. The minimum possible sum is 0%.
+     * Multiplied against work completed, adds to the bonus results of operating. E.g. an extra crafted recipe or immediate research bonus. The minimum possible sum defaults to -80% and can be changed through {@link EffectReceiver::productivity_limits | prototype:EffectReceiver::productivity_limits} on the machine.
      */
     productivity?: EffectValue;
     /**
-     * Adds a bonus chance to increase a product's quality. The minimum possible sum is 0%.
+     * Adds a bonus chance to increase a product's quality. The minimum possible sum defaults to 0% and can be changed through {@link EffectReceiver::quality_limits | prototype:EffectReceiver::quality_limits} on the machine. If negative values are allowed on the effect receiver, the product's quality can be {@link decreased | prototype:QualityPrototype::previous_probability}.
      */
     quality?: EffectValue;
     /**
-     * Modifier to crafting speed, research speed, etc. The minimum possible sum is -80%.
+     * Modifier to crafting speed, research speed, etc. The minimum possible sum defaults to -80% and can be changed through {@link EffectReceiver::speed_limits | prototype:EffectReceiver::speed_limits} on the machine.
      */
     speed?: EffectValue;
 }
@@ -8280,7 +8280,6 @@ interface PollutionSettings {
      * Anything bigger than this is visualized as this value.
      */
     expected_max_per_chunk: double;
-    max_pollution_to_restore_trees: double;
     min_pollution_to_damage_trees: double;
     /**
      * This much pollution units must be on the chunk to start diffusing.
@@ -14043,23 +14042,49 @@ interface WaterReflectionDefinition {
     rotate?: boolean;
 }
 interface WaterTileEffectParameters {
+    /**
+     * Affects animation scale for `"water"` `shader_variation`. Affects warp effect intensity for `"lava"` `shader_variation`. Affects depth contrast for `"wetland-water"` `shader_variation`. Affects thin film effect intensity for `"oil"` `shader_variation`.
+     */
     animation_scale: float | [
         float,
         float
     ];
+    /**
+     * Affects distortion speed for `"water"` `shader_variation`. Affects panning/warping speed for all other `shader_variation`s.
+     */
     animation_speed: float;
+    /**
+     * Affects dark threshold for `"water"` `shader_variation`. Affects brightness of the shoreline lava for `"lava"` `shader_variation`. Affects water depth for `"wetland-water"` `shader_variation`. Affects thin film effect noise scale for `"oil"` `shader_variation`.
+     */
     dark_threshold: float | [
         float,
         float
     ];
+    /**
+     * If they are set to a tuple, the properties `animation_scale`, `dark_threshold`, `reflection_threshold` and `specular_threshold` are linearly interpolated between each of their two values based on the current zoom level expressed as a ratio between `near_zoom` and `far_zoom`. E.g. if current zoom level is equal to `far_zoom`, the second tuple value is picked.
+     */
     far_zoom?: float;
+    /**
+     * Affects foam color for `"water"` `shader_variation`. Affects panning/warping vector for all other `shader_variation`s.
+     *
+     * Any alpha value set here is ignored and will always be `1` in the shader.
+     */
     foam_color: Color;
+    /**
+     * Multiplies the rgb values of `foam_color` before they are passed to the shader.
+     */
     foam_color_multiplier: float;
     /**
      * Value 0 makes water appear as water in water mask, but does not occlude lights, and doesn't overwrite lightmap alpha drawn to pixel previously (by background layer of tile transition, or underwater sprite). Light emitted by water-like-tile (for example lava) will blend additively with previously rendered light. Value 1 makes water occlude lights, but won't be recognized as water in water mask used for masking decals by water.
      */
     lightmap_alpha?: float;
+    /**
+     * If they are set to a tuple, the properties `animation_scale`, `dark_threshold`, `reflection_threshold` and `specular_threshold` are linearly interpolated between each of their two values based on the current zoom level expressed as a ratio between `near_zoom` and `far_zoom`. E.g. if current zoom level is equal to `near_zoom`, the first tuple value is picked.
+     */
     near_zoom?: float;
+    /**
+     * Affects reflection threshold for `"water"` `shader_variation`. Affects distortion scale for `"lava"` `shader_variation`. Affects distortion tiling for `"wetland-water"` `shader_variation`. Affects distortion map scale for `"oil"` `shader_variation`.
+     */
     reflection_threshold: float | [
         float,
         float
@@ -14067,7 +14092,15 @@ interface WaterTileEffectParameters {
     secondary_texture_variations_columns?: uint8;
     secondary_texture_variations_rows?: uint8;
     shader_variation?: EffectVariation;
+    /**
+     * Affects specular lightness for `"water"` `shader_variation`. Affects panning/warping vector for all other `shader_variation`s.
+     *
+     * Any alpha value set here is ignored and will always be `1` in the shader.
+     */
     specular_lightness: Color;
+    /**
+     * Affects specular threshold for `"water"` and `"wetland-water"` `shader_variation`s. Affects shoreline lava for `"lava"` `shader_variation`. Affects nothing for `"oil"` `shader_variation`.
+     */
     specular_threshold: float | [
         float,
         float
@@ -14078,6 +14111,9 @@ interface WaterTileEffectParameters {
      * Texture size must be 512x512. Shader variant `"water"` must have 1 texture, `"lava"` and `"wetland-water"` must have 2 textures and `"oil"` must have 4 textures.
      */
     textures: EffectTexture[];
+    /**
+     * Affects distortion speed for `"water"` `shader_variation`. Affects panning/warping speed for all other `shader_variation`s.
+     */
     tick_scale: float;
 }
 /**
