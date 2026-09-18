@@ -79,7 +79,3 @@ type bool = boolean;
  * ```
  */
 type DataExtendMethod = (data: prototype.Data, ...otherData: any[]) => void;
-
-// used by UndoRedoEquipment but not declared anywhere
-// Can be removed if/when this is resolved https://forums.factorio.com/viewtopic.php?t=135506
-type PropertyTree = any;
