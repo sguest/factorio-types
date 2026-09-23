@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.19
+// Factorio version 2.1.20
 // API version 6
 
 declare namespace prototype {
@@ -3782,7 +3782,7 @@ color_lookup = {{1, "identity"}}
 color_lookup = {{0.5, "__core__/graphics/color_luts/nightvision.png"}}
 ```
  * @example ```
-zoom_to_world_daytime_color_lookup =
+daytime_color_lookup =
 {
   {0.25, "identity"},
   {0.45, "__core__/graphics/color_luts/night.png"},
@@ -9787,6 +9787,16 @@ interface Settings {
      */
     startup: Record<string, ModSetting>;
 }
+/**
+ * @example ```
+-- What a recipe's results would look like for a probability of 0.3 to return iron and 0.7 to return copper
+-- but always exactly 1 item, never no item or both items
+{
+  {type = "item", name = "iron-plate", amount = 1, shared_probability = {min = 0, max = 0.3}},
+  {type = "item", name = "copper-plate", amount = 1, shared_probability = {min = 0.3, max = 1}},
+}
+```
+ */
 interface SharedProbabilityDefinition {
     /**
      * Upper end of the range of shared roll values that will allow product to be given. Must be >= `min` and <= `1`.

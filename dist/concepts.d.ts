@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.19
+// Factorio version 2.1.20
 // API version 6
 
 declare namespace runtime {
@@ -7100,7 +7100,7 @@ interface MapLocation {
     direction: defines.direction;
 }
 /**
- * Coordinates on a surface, for example of an entity. MapPositions may be specified either as a dictionary with `x`, `y` as keys, or simply as an array with two elements.
+ * Coordinates on a surface, for example of an entity. MapPositions may be specified either as a dictionary with `x`, `y` as keys, or simply as an array with two elements. When reading this is always a dictionary.
  *
  * The coordinates are saved as a fixed-size 32 bit integer, with 8 bits reserved for decimal precision, meaning the smallest value step is `1/2^8 = 0.00390625` tiles.
  * @example ```
@@ -7909,9 +7909,11 @@ interface ProcessionTimeline {
 ```
  * @example ```
 -- Products of the "advanced-oil-processing" recipe
-{{type="fluid", name="heavy-oil", amount=1},
-  {type="fluid", name="light-oil", amount=4.5},
-  {type="fluid", name="petroleum-gas", amount=5.5}}
+{
+  {type = "fluid", name = "heavy-oil", amount = 25},
+  {type = "fluid", name = "light-oil", amount = 45},
+  {type = "fluid", name = "petroleum-gas", amount = 55}
+}
 ```
  * @example ```
 -- What a custom recipe would look like that had a probability of 0.5 to return a
@@ -12101,8 +12103,6 @@ interface UtilityConstants {
     logistic_gui_selected_network_highlight_tint: Color;
     chart_search_highlight: Color;
     selected_chart_search_highlight: Color;
-    zoom_to_world_can_use_nightvision: boolean;
-    zoom_to_world_effect_strength: float;
     max_logistic_filter_count: LogisticFilterIndex;
     /**
      * Will be clamped to the range [1, 100].
@@ -12168,7 +12168,6 @@ interface UtilityConstants {
      */
     merge_bonus_gui_production_bonuses?: boolean;
     daytime_color_lookup: DaytimeColorLookupTable;
-    zoom_to_world_daytime_color_lookup: DaytimeColorLookupTable;
     frozen_color_lookup: ColorLookupTable;
     default_platform_surface_render_parameters: SurfaceRenderParameters;
     drop_item_radius: double;
