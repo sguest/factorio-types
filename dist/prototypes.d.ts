@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.19
+// Factorio version 2.1.20
 // API version 6
 
 declare namespace prototype {
@@ -5081,9 +5081,9 @@ interface ItemPrototype extends Prototype {
      */
     fuel_acceleration_multiplier_quality_bonus?: double;
     /**
-     * Must exist when a nonzero fuel_value is defined.
+     * Mandatory with at least one fuel category when a nonzero fuel_value is defined.
      */
-    fuel_category?: FuelCategoryID;
+    fuel_categories?: FuelCategoryID[];
     fuel_emissions_multiplier?: double;
     /**
      * Colors the glow of the burner energy source when this fuel is burned. Can also be used to color the glow of reactors burning the fuel, see {@link ReactorPrototype::use_fuel_glow_color | prototype:ReactorPrototype::use_fuel_glow_color}.
@@ -9186,6 +9186,8 @@ interface SpaceConnectionPrototype extends Prototype {
      * Cannot be 0.
      */
     length?: uint32;
+    origin?: MapPosition;
+    shape?: 'arc' | 'line';
     to: SpaceLocationID;
 }
 /**
@@ -9246,6 +9248,7 @@ interface SpaceLocationPrototype extends Prototype {
      * Angle in relation to the sun.
      */
     orientation: RealOrientation;
+    origin?: MapPosition;
     /**
      * The orientation where parked space platforms will be drawn.
      */
@@ -10023,6 +10026,8 @@ interface TechnologyPrototype extends Prototype {
     max_level?: uint32 | 'infinite';
     /**
      * If this name ends with `-<number>`, that number is ignored for localization purposes. E.g. if the name is `technology-3`, the game looks for the `technology-name.technology` localization. The technology tree will also show the number on the technology icon.
+     *
+     * The number is considered the level of the technology. There can't be technologies with noncontiguous levels, e.g. `technology-1` and `technology-3` without `technology-2` will cause a startup error.
      */
     name: string;
     /**
@@ -11271,9 +11276,6 @@ interface UtilityConstants extends PrototypeBase {
     water_collision_mask: TileCollisionMaskConnector;
     weapons_in_simulation_volume_modifier: float;
     zero_count_value_tint: Color;
-    zoom_to_world_can_use_nightvision: boolean;
-    zoom_to_world_daytime_color_lookup: DaytimeColorLookupTable;
-    zoom_to_world_effect_strength: float;
 }
 /**
  * Sounds used by the game that are not specific to certain prototypes.

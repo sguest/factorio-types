@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.19
+// Factorio version 2.1.20
 // API version 6
 
 declare namespace runtime {
@@ -8676,7 +8676,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * The crafting speed of this crafting-machine or character.
      */
-    get_crafting_speed(this: void, quality?: QualityID): double;
+    get_crafting_speed(this: void, quality?: QualityID): double | null;
     get_duration(this: void, quality?: QualityID): uint32 | null;
     get_energy_distribution_efficiency(this: void, quality?: QualityID): double | null;
     /**
@@ -8750,7 +8750,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * The pumping speed of this offshore pump or normal pump.
      */
-    get_pumping_speed(this: void, quality?: QualityID): double;
+    get_pumping_speed(this: void, quality?: QualityID): double | null;
     /**
      * The base researching speed of this lab prototype.
      */
@@ -8758,24 +8758,24 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * The supply area of this electric pole or beacon prototype.
      */
-    get_supply_area_distance(this: void, quality?: QualityID): double;
+    get_supply_area_distance(this: void, quality?: QualityID): double | null;
     /**
      * The maximum flow rate through this valve.
      */
-    get_valve_flow_rate(this: void, quality?: QualityID): double;
+    get_valve_flow_rate(this: void, quality?: QualityID): double | null;
     /**
      * Test whether this entity prototype has a certain flag set.
      * @param flag The flag to test.
      * @returns `true` if this prototype has the given flag set.
      */
     has_flag(this: void, flag: EntityPrototypeFlag): boolean;
-    readonly absorptions_per_second: Record<string, EnemySpawnerAbsorption>;
+    readonly absorptions_per_second?: Record<string, EnemySpawnerAbsorption>;
     /**
      * A table of pollutions amounts that has to be absorbed by the unit's spawner before the unit will leave the spawner and attack the source of the pollution, indexed by the name of each absorbed pollution type.
      */
     readonly absorptions_to_join_attack?: Record<string, float>;
     readonly acceleration?: double;
-    readonly acceleration_rate: double;
+    readonly acceleration_rate?: double;
     readonly accepted_seeds?: string[];
     readonly action?: TriggerItem[];
     readonly action_cooldown?: uint32;
@@ -8802,7 +8802,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly air_resistance?: double;
     readonly alarm_trigger?: TriggerEffectItem[];
-    readonly alert_after_time: uint32;
+    readonly alert_after_time?: uint32;
     /**
      * The alert icon scale of this entity prototype.
      */
@@ -8901,11 +8901,11 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The attack result of this entity, if any.
      */
     readonly attack_result?: TriggerItem[];
-    readonly attack_target_mask: TriggerTargetMask;
+    readonly attack_target_mask?: TriggerTargetMask;
     readonly attacking_speed?: double;
     readonly attractor_hit_effect?: TriggerItem[];
     readonly auto_connect_up_to_n_wires?: uint8;
-    readonly auto_setup_collision_box: boolean;
+    readonly auto_setup_collision_box?: boolean;
     readonly auto_sort_inventory?: boolean;
     /**
      * The amount of ammo that inserters automatically insert into this ammo turret, artillery turret or artillery wagon.
@@ -9011,7 +9011,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly color?: Color;
     readonly combat_robot_friction?: double;
     readonly connectable_box?: BoundingBox;
-    readonly connection_category: string[];
+    readonly connection_category?: string[];
     readonly connection_distance?: double;
     readonly connects_to_other_radars?: boolean;
     /**
@@ -9037,7 +9037,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The value in the dictionary is meaningless and exists just to allow for easy lookup.
      */
     readonly crafting_categories?: Record<string, true>;
-    readonly crafting_speed_quality_multiplier: LuaTable<QualityID, double>;
+    readonly crafting_speed_quality_multiplier?: LuaTable<QualityID, double>;
     /**
      * The crane energy usage of this agricultural tower prototype.
      */
@@ -9225,14 +9225,14 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The direct energy usage of this entity, if any.
      */
     readonly energy_usage?: double;
-    readonly energy_usage_quality_multiplier: LuaTable<QualityID, double>;
+    readonly energy_usage_quality_multiplier?: LuaTable<QualityID, double>;
     readonly energy_usage_quality_scaling?: float;
     /**
      * The engine starting speed for this rocket silo rocket prototype.
      */
     readonly engine_starting_speed?: double;
     readonly enraged_duration?: MapTick;
-    readonly enraged_speed: double;
+    readonly enraged_speed?: double;
     readonly enter_drop_mode_if_held_stack_spoiled?: boolean;
     readonly enter_vehicle_distance?: double;
     readonly erase_contents_when_mined?: boolean;
@@ -9386,7 +9386,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * The icon positioning for inventories of this entity, if defined.
      */
     readonly icons_positioning?: IconSequencePositioning[];
-    readonly ignore_target_mask: TriggerTargetMask;
+    readonly ignore_target_mask?: TriggerTargetMask;
     readonly immune_to_all_impacts?: boolean;
     readonly immune_to_cliff_impacts?: boolean;
     readonly immune_to_rock_impacts?: boolean;
@@ -9713,7 +9713,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      * Returns the inventory size if this entity is of normal quality. Use {@link LuaEntityPrototype::get_inventory_size | runtime:LuaEntityPrototype::get_inventory_size} for other qualities.
      */
     readonly module_inventory_size?: uint32;
-    readonly module_slots_quality_bonus: LuaTable<QualityID, ItemStackIndex>;
+    readonly module_slots_quality_bonus?: LuaTable<QualityID, ItemStackIndex>;
     /**
      * Whether this unit prototype can move while shooting.
      */
@@ -9861,7 +9861,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly revenge_attack_parameters?: AttackParameters;
     readonly reversing_power_modifier?: double;
-    readonly rewire_neighbours_when_destroying: boolean;
+    readonly rewire_neighbours_when_destroying?: boolean;
     /**
      * The rising speed for this rocket silo rocket prototype.
      */
@@ -9904,7 +9904,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * How much science pack durability is required to research one science point.
      */
-    readonly science_pack_drain_rate_percent: uint8;
+    readonly science_pack_drain_rate_percent?: uint8;
     readonly search_radius?: double;
     /**
      * The secondary bounding box used for collision checking, if any. This is only used in rails and rail remnants.
@@ -9940,9 +9940,9 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly smoke_count?: uint16;
     readonly smoke_sources?: SmokeSource[];
     readonly snap_to_spots_distance?: float;
-    readonly solar_panel_performance_at_day: double;
-    readonly solar_panel_performance_at_night: double;
-    readonly solar_panel_solar_coefficient_property: LuaSurfacePropertyPrototype;
+    readonly solar_panel_performance_at_day?: double;
+    readonly solar_panel_performance_at_night?: double;
+    readonly solar_panel_solar_coefficient_property?: LuaSurfacePropertyPrototype;
     readonly source_offset?: Vector;
     readonly source_variance?: Vector;
     readonly spawn_blocked_trigger?: TriggerItem[];
@@ -10068,7 +10068,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly torso_rotation_speed?: double;
     readonly track_coverage_during_drag_building?: boolean;
-    readonly track_particle_triggers: LuaTable<LuaTilePrototype, TriggerEffectItem[]>;
+    readonly track_particle_triggers?: LuaTable<LuaTilePrototype, TriggerEffectItem[]>;
     readonly transition_collision_mask?: CollisionMask;
     /**
      * If it is a tree, return the number of colors it supports.
@@ -10086,10 +10086,8 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly trigger_radius?: double;
     /**
      * The trigger target mask for this entity prototype type.
-     *
-     * The values in the dictionary are meaningless and exists just to allow the dictionary type for easy lookup.
      */
-    readonly trigger_target_mask: Record<string, boolean>;
+    readonly trigger_target_mask: Record<string, true>;
     readonly turn_radius?: double;
     readonly turn_smoothing?: double;
     readonly turn_speed?: float;
@@ -10131,7 +10129,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     /**
      * If this lab uses the quality drain modifier when consuming science packs.
      */
-    readonly uses_quality_drain_modifier: boolean;
+    readonly uses_quality_drain_modifier?: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -10912,7 +10910,7 @@ interface LuaForce {
      */
     add_custom_alert(this: void, entity: LuaEntity, icon: SignalID, message: LocalisedString, show_on_map: boolean): void;
     /**
-     * Add this technology to the back of the research queue if the queue is enabled. Otherwise, set this technology to be researched now.
+     * Add this technology to the back of the research queue.
      * @returns Whether the technology was successfully added.
      */
     add_research(this: void, technology: TechnologyID): boolean;
@@ -11498,7 +11496,7 @@ interface LuaForce {
     /**
      * The research queue of this force. The first technology in the array is the currently active one. Reading this attribute gives an array of {@link LuaTechnology | runtime:LuaTechnology}.
      *
-     * To write to this, the entire table must be written. Providing an empty table or `nil` will empty the research queue and cancel the current research.  Writing to this when the research queue is disabled will simply set the last research in the table as the current research.
+     * To write to this, the entire table must be written. Providing an empty table or `nil` will empty the research queue and cancel the current research.
      *
      * This only allows mods to queue research that this force is able to research in the first place. As an example, an already researched technology or one whose prerequisites are not fulfilled will not be queued, but dropped silently instead.
      */
@@ -12261,7 +12259,7 @@ interface LuaGuiElement {
      */
     get_item(this: void, index: uint32): LocalisedString;
     /**
-     * The mod that owns this Gui element or `nil` if it's owned by the scenario script.
+     * The mod that owns this GUI element or `nil` if it's owned by the scenario script.
      *
      * This has a not-super-expensive, but non-free cost to get.
      */
@@ -14451,9 +14449,9 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      */
     readonly fuel_acceleration_multiplier_quality_bonus: double;
     /**
-     * The fuel category, if any.
+     * Fuel categories. Only provided when not empty.
      */
-    readonly fuel_category?: string;
+    readonly fuel_categories?: string[];
     /**
      * The emissions multiplier if this is used as fuel.
      */
@@ -16495,10 +16493,6 @@ interface LuaPlayer extends LuaControl {
      * If `true`, circle and name of given player is rendered on the map/chart.
      */
     show_on_map: boolean;
-    /**
-     * If `true`, zoom-to-world noise effect will be disabled and environmental sounds will be based on zoom-to-world view instead of position of player's character.
-     */
-    spectator: boolean;
     /**
      * All SpiderVehicles currently selected by the player, if they are holding a spidertron remote.
      */
@@ -19381,6 +19375,8 @@ interface LuaSpaceConnectionPrototype extends LuaPrototypeBase {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    readonly origin: MapPosition;
+    readonly shape: 'arc' | 'line';
     readonly to: LuaSpaceLocationPrototype;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -19411,6 +19407,7 @@ interface LuaSpaceLocationPrototype extends LuaPrototypeBase {
      */
     readonly object_name: string;
     readonly orientation: RealOrientation;
+    readonly origin: MapPosition;
     readonly parked_platforms_orientation: RealOrientation;
     readonly parked_platforms_position: MapPosition;
     readonly player_effects?: TriggerItem[];
@@ -19763,7 +19760,7 @@ interface LuaStyle {
     font: string;
     font_color: Color;
     /**
-     * Gui of the {@link LuaGuiElement | runtime:LuaGuiElement} of this style.
+     * GUI of the {@link LuaGuiElement | runtime:LuaGuiElement} of this style.
      */
     readonly gui: LuaGui;
     /**
