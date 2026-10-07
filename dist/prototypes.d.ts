@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.20
+// Factorio version 2.1.21
 // API version 6
 
 declare namespace prototype {
@@ -83,6 +83,8 @@ interface AccumulatorPrototype extends EntityWithOwnerPrototype {
     draw_copper_wires?: boolean;
     /**
      * The capacity of the energy source buffer specifies the capacity of the accumulator.
+     *
+     * Any {@link usage_priority | prototype:ElectricEnergySource::usage_priority} set here will be ignored, accumulators always have the "managed-accumulator" usage priority.
      */
     energy_source: ElectricEnergySource;
 }
@@ -953,6 +955,11 @@ interface AssemblingMachinePrototype extends CraftingMachinePrototype {
      * The preset recipe of this machine. This machine does not show a recipe selection if this is set. The base game uses this for the {@link rocket silo | https://wiki.factorio.com/Rocket_silo}.
      */
     fixed_recipe?: RecipeID;
+    /**
+     * Whether the {@link fluid boxes | prototype:CraftingMachinePrototype::fluid_boxes} are disabled when this assembling machine has no recipe set.
+     *
+     * If a recipe is set, this property does not affect fluidbox behavior. Instead, whether fluidboxes are enabled depends on whether the recipe needs them, e.g. if a recipe without fluid ingredients is set, the input fluidboxes will be disabled.
+     */
     fluid_boxes_off_when_no_fluid_recipe?: boolean;
     /**
      * The locale key of the title of the recipe selection GUI that is shown when the player opens the assembling machine. May not be longer than 200 characters.
@@ -1303,7 +1310,7 @@ interface BoilerPrototype extends EntityWithOwnerPrototype {
     output_fluid_box: FluidBox;
     pictures?: BoilerPictureSet;
     /**
-     * Only loaded, and mandatory if `mode` is `"output-to-separate-pipe"`. This is the temperature that the input fluid must reach to be moved to the output fluid box.
+     * Only loaded, and mandatory if `mode` is `"output-to-separate-pipe"`. The boiler heats the input fluid to exactly this temperature and moves the fluid to the output fluid box.
      */
     target_temperature?: float;
 }
@@ -1519,6 +1526,7 @@ interface CargoLandingPadPrototype extends EntityWithOwnerPrototype {
      * The maximum circuit wire distance for this entity.
      */
     circuit_wire_max_distance?: double;
+    default_empty_slots_signal?: SignalIDConnector;
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
     graphics_set?: CargoBayConnectableGraphicsSet;
@@ -1980,6 +1988,7 @@ interface ContainerPrototype extends EntityWithOwnerPrototype {
      * The maximum circuit wire distance for this container.
      */
     circuit_wire_max_distance?: double;
+    default_empty_slots_signal?: SignalIDConnector;
     default_status?: EntityStatus;
     /**
      * Amount of directions this container should have. Allowed values are 1, 2 and 4.
@@ -2125,6 +2134,10 @@ interface CraftingMachinePrototype extends EntityWithOwnerPrototype {
      * Sets the {@link module categories | prototype:ModuleCategory} that are allowed to be inserted into this machine.
      */
     allowed_module_categories?: ModuleCategoryID[];
+    /**
+     * If true the starting frame will be randomized upon placement.
+     */
+    animation_random_start_frame?: boolean;
     /**
      * A list of {@link recipe categories | prototype:RecipeCategory} this crafting machine can use.
      * @example ```
@@ -4076,7 +4089,7 @@ interface FluidPrototype extends Prototype {
      */
     default_temperature: float;
     /**
-     * Whether the fluid should glow in pipe and storage tank windows.
+     * Whether the fluid should glow in pipe and storage tank windows. The glow is only drawn when the {@link expansion_shaders | prototype:FeatureFlags::expansion_shaders} feature flag is enabled.
      */
     draw_as_glow?: boolean;
     /**
@@ -4253,10 +4266,18 @@ interface FluidTurretPrototype extends TurretPrototype {
 interface FluidWagonPrototype extends RollingStockPrototype {
     /**
      * Horizontal (xy) offset of the central valve from the wagon position when it is oriented east/west.
+     *
+     * For all directions, the elliptical interpolation for the offset is performed based on both `base_valve_xy_offset_when_horizontal` and `base_valve_xy_offset_when_vertical` and the tangential and normal are calculated separately.
+     *
+     * The tangential component of the offset is interpolated from values `base_valve_xy_offset_when_horizontal.x` and `base_valve_xy_offset_when_vertical.y`. The normal component of the offset is interpolated from values `base_valve_xy_offset_when_vertical.x` and `base_valve_xy_offset_when_horizontal.y`.
+     *
+     * Interpolating the components with one value non-zero and the other zero would produce undesirable behaviour and is therefore not allowed.
      */
     base_valve_xy_offset_when_horizontal?: Vector;
     /**
      * Horizontal (xy) offset of the central valve from the wagon position when it is oriented north/south.
+     *
+     * See `base_valve_xy_offset_when_horizontal` for how this value is used in the offset calculation.
      */
     base_valve_xy_offset_when_vertical?: Vector;
     /**
@@ -4283,10 +4304,18 @@ interface FluidWagonPrototype extends RollingStockPrototype {
     tank_spacing?: float;
     /**
      * Projected offset between valves when the wagon is oriented east/west.
+     *
+     * For all directions, the elliptical interpolation for the offset is performed based on both `valve_to_valve_offset_when_horizontal` and `valve_to_valve_offset_when_vertical` and the tangential and normal are calculated separately.
+     *
+     * The tangential component of the offset is interpolated from values `valve_to_valve_offset_when_horizontal.x` and `valve_to_valve_offset_when_vertical.y`. The normal component of the offset is interpolated from values `valve_to_valve_offset_when_vertical.x` and `valve_to_valve_offset_when_horizontal.y`.
+     *
+     * Interpolating the components with one value non-zero and the other zero would produce undesirable behaviour and is therefore not allowed.
      */
     valve_to_valve_offset_when_horizontal?: Vector;
     /**
      * Projected offset between valves when the wagon is oriented north/south.
+     *
+     * See `valve_to_valve_offset_when_horizontal` for how this value is used in the offset calculation.
      */
     valve_to_valve_offset_when_vertical?: Vector;
 }
@@ -5596,6 +5625,8 @@ interface LampPrototype extends EntityWithOwnerPrototype {
     draw_copper_wires?: boolean;
     /**
      * The emissions set on the energy source are ignored so lamps cannot produce pollution.
+     *
+     * If this is an electric energy source, any {@link usage_priority | prototype:ElectricEnergySource::usage_priority} set here will be ignored, lamps always have the "lamp" usage priority.
      */
     energy_source: ElectricEnergySource | VoidEnergySource;
     /**
@@ -5773,6 +5804,7 @@ interface LinkedContainerPrototype extends EntityWithOwnerPrototype {
      * The maximum circuit wire distance for this linked container.
      */
     circuit_wire_max_distance?: double;
+    default_empty_slots_signal?: SignalIDConnector;
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
     /**
@@ -6411,11 +6443,15 @@ interface NightVisionEquipmentPrototype extends EquipmentPrototype {
     activate_sound?: Sound;
     color_lookup: DaytimeColorLookupTable;
     /**
-     * Must be >= 0 and <= 1.
+     * Must be >= 0 and <= 1. By default, this equipment turns on when `surface_darkness >= darkness_to_turn_on`.
      */
     darkness_to_turn_on?: float;
     deactivate_sound?: Sound;
     energy_input: Energy;
+    /**
+     * If `true`, this equipment turns on when `surface_darkness <= darkness_to_turn_on`.
+     */
+    sunglasses?: boolean;
 }
 /**
  * An {@link offshore pump | https://wiki.factorio.com/Offshore_pump}.
@@ -6924,18 +6960,26 @@ interface PrototypeBase {
  * A container that must be set to point at other entity and inventory index so it can forward all inventory interactions to the other entity.
  */
 interface ProxyContainerPrototype extends EntityWithOwnerPrototype {
-    circuit_connector?: CircuitConnectorDefinition;
+    /**
+     * If given, there must be exactly `direction_count` elements in the table.
+     */
+    circuit_connector?: CircuitConnectorDefinition[];
     /**
      * The maximum circuit wire distance for this entity.
      */
     circuit_wire_max_distance?: double;
+    default_empty_slots_signal?: SignalIDConnector;
+    /**
+     * Amount of directions this container should have. Allowed values are 1, 2 and 4.
+     */
+    direction_count?: uint8;
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
     /**
      * If the content of the inventory should be rendered in alt mode.
      */
     draw_inventory_content?: boolean;
-    picture?: Sprite;
+    picture?: Sprite4Way;
 }
 /**
  * The pump is used to transfer fluids between tanks, fluid wagons and pipes.
@@ -7633,9 +7677,9 @@ interface RecipePrototype extends Prototype {
      */
     always_show_made_in?: boolean;
     /**
-     * Whether the recipe should be included in the recycling recipes automatically generated by the quality mod.
+     * Whether the recipe should be included in the recycling recipes automatically generated by the recycler mod.
      *
-     * This property is not read by the game engine itself, but the quality mod's recycling.lua file. This means it is discarded by the game engine after loading finishes.
+     * This property is not read by the game engine itself, but the recycler mod's recycling.lua file. This means it is discarded by the game engine after loading finishes.
      */
     auto_recycle?: boolean;
     /**
@@ -7765,6 +7809,12 @@ interface RecipePrototype extends Prototype {
     ```
      */
     raise_on_crafted?: boolean;
+    /**
+     * If set, this recipe's recycling recipe is generated by the recycler mod based on the ingredients of the given recipe, instead of this recipe's own ingredients.
+     *
+     * This property is not read by the game engine itself, but the recycler mod's recycling.lua file. This means it is discarded by the game engine after loading finishes.
+     */
+    recycle_to_ingredients_of?: RecipeID;
     requester_paste_multiplier?: uint32;
     /**
      * Whether enabling this recipe requires the ingredients be unlocked before the products are marked as unlocked.
@@ -7798,6 +7848,8 @@ interface RecipePrototype extends Prototype {
     results?: ProductPrototype[];
     /**
      * When set to `true`, item ingredients will be sorted based on {@link ItemGroup::order_in_recipe | prototype:ItemGroup::order_in_recipe}.
+     *
+     * Otherwise, the item ingredients appear in the order that they are defined in the prototype.
      */
     sort_item_ingredients?: boolean;
     surface_conditions?: SurfaceCondition[];
@@ -8341,6 +8393,7 @@ interface RocketSiloPrototype extends AssemblingMachinePrototype {
      * Applied when switching into the {@link arms_advance | runtime:defines.rocket_silo_status.arms_advance} state.
      */
     clamps_on_trigger?: TriggerEffect;
+    default_launched_signal?: SignalIDConnector;
     door_back_frozen?: Sprite;
     door_back_open_offset: Vector;
     door_back_sprite?: Sprite;
@@ -9201,11 +9254,11 @@ interface SpaceLocationPrototype extends Prototype {
     asteroid_spawn_influence?: double;
     auto_save_on_first_trip?: boolean;
     /**
-     * Distance from the sun in map coordinates.
+     * Distance from the origin in map coordinates.
      */
     distance: double;
     /**
-     * If `false`, the orbital ring around the sun will not be drawn for this location.
+     * If `false`, the orbital ring around the origin will not be drawn for this location.
      */
     draw_orbit?: boolean;
     /**
@@ -9245,9 +9298,12 @@ interface SpaceLocationPrototype extends Prototype {
      */
     magnitude?: double;
     /**
-     * Angle in relation to the sun.
+     * Angle in relation to the origin.
      */
     orientation: RealOrientation;
+    /**
+     * The location that this space location orbits in the space map.
+     */
     origin?: MapPosition;
     /**
      * The orientation where parked space platforms will be drawn.
@@ -9275,7 +9331,7 @@ interface SpaceLocationPrototype extends Prototype {
      */
     starmap_icon?: FileName;
     /**
-     * Orientation of the starmap icon, defaults to pointing towards the sun.
+     * Orientation of the starmap icon, defaults to pointing towards the origin.
      */
     starmap_icon_orientation?: RealOrientation;
     /**
@@ -9301,6 +9357,7 @@ interface SpacePlatformHubPrototype extends EntityWithOwnerPrototype {
      */
     circuit_wire_max_distance?: double;
     default_damage_taken_signal?: SignalIDConnector;
+    default_empty_slots_signal?: SignalIDConnector;
     default_speed_signal?: SignalIDConnector;
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
@@ -10327,7 +10384,9 @@ interface TipsAndTricksItem extends PrototypeBase {
     player_input_method_filter?: PlayerInputMethodFilter;
     simulation?: SimulationDefinition;
     /**
-     * Condition for never showing the tip notification to the player.
+     * Condition for never showing the tip notification to the player. If the condition is fulfilled, the tip is considered completed and shown in the tips list.
+     *
+     * If the tip notification is already shown, then fulfilling the skip trigger removes the tip notification icon again.
      */
     skip_trigger?: TipTrigger;
     starting_status?: TipStatus;
@@ -10336,7 +10395,7 @@ interface TipsAndTricksItem extends PrototypeBase {
      */
     tag?: string;
     /**
-     * Condition for when the tip notification should be shown to the player.
+     * Condition for when the tip notification should be shown to the player. If the condition is fulfilled, the status of the tip is set to "suggested" or "dependencies-not-met".
      */
     trigger?: TipTrigger;
     /**
@@ -12153,6 +12212,8 @@ interface UtilitySprites extends PrototypeBase {
     side_menu_factoriopedia_icon: Sprite;
     side_menu_logistic_networks_icon: Sprite;
     side_menu_map_icon: Sprite;
+    side_menu_master_mute_muted_icon: Sprite;
+    side_menu_master_mute_unmuted_icon: Sprite;
     side_menu_menu_icon: Sprite;
     side_menu_players_icon: Sprite;
     side_menu_production_icon: Sprite;

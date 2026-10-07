@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.20
+// Factorio version 2.1.21
 // API version 6
 
 declare namespace runtime {
@@ -4770,12 +4770,16 @@ interface LuaBurner {
      * The currently burning item. Writing `nil` will void the currently burning item without producing a {@link LuaBurner::burnt_result | runtime:LuaBurner::burnt_result}.
      *
      * Writing to this automatically handles correcting {@link LuaBurner::remaining_burning_fuel | runtime:LuaBurner::remaining_burning_fuel}.
+     *
+     * When writing, any item with a {@link fuel value | runtime:LuaItemPrototype::fuel_value} is considered valid fuel; the fuel category does not have to match.
      */
     readonly currently_burning?: ItemIDAndQualityIDPair;
     /**
      * The currently burning item. Writing `nil` will void the currently burning item without producing a {@link LuaBurner::burnt_result | runtime:LuaBurner::burnt_result}.
      *
      * Writing to this automatically handles correcting {@link LuaBurner::remaining_burning_fuel | runtime:LuaBurner::remaining_burning_fuel}.
+     *
+     * When writing, any item with a {@link fuel value | runtime:LuaItemPrototype::fuel_value} is considered valid fuel; the fuel category does not have to match.
      * @customName currently_burning
      */
     currently_burning_write?: ItemWithQualityID;
@@ -4904,11 +4908,13 @@ interface LuaCargoHatch {
  * Control behavior for cargo landing pad.
  */
 interface LuaCargoLandingPadControlBehavior extends LuaControlBehavior {
+    empty_slots_signal?: SignalID;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
     read_contents: boolean;
+    read_empty_slots: boolean;
     set_requests: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
@@ -5211,6 +5217,7 @@ interface LuaConstantCombinatorControlBehavior extends LuaControlBehavior {
  * Control behavior for container entities.
  */
 interface LuaContainerControlBehavior extends LuaControlBehavior {
+    empty_slots_signal?: SignalID;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -5219,6 +5226,7 @@ interface LuaContainerControlBehavior extends LuaControlBehavior {
      * `true` if this container is sending its content to a circuit network.
      */
     read_contents: boolean;
+    read_empty_slots: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -7061,6 +7069,15 @@ interface LuaEntity extends LuaControl {
      */
     get_signals(this: void, wire_connector_id: defines.wire_connector_id, extra_wire_connector_id?: defines.wire_connector_id): Signal[] | null;
     /**
+     * Checks if signals on a circuit connector changed recently.
+     *
+     * Returns `true` if signals changed since last tick. If a tick of last check is provided, returns `true` if signals changed since the specified tick. May also return `true` spuriously in other situations when values seen on this connector may be different, caused by addition of wires, removal of wires, circuit network merges, circuit network splits, input network selection changes, etc.
+     *
+     * `nil` if entity has no circuit connector with provided identifier.
+     * @param tick_of_last_check Value of {@link LuaGameScript::tick | runtime:LuaGameScript::tick} of the previous check.
+     */
+    get_signals_changed(this: void, wire_connector_id: defines.wire_connector_id, tick_of_last_check?: MapTick): boolean | null;
+    /**
      * Gets legs of given SpiderVehicle.
      */
     get_spider_legs(this: void): LuaEntity[];
@@ -7951,7 +7968,9 @@ interface LuaEntity extends LuaControl {
      */
     health?: float;
     /**
-     * The entities connected to this entities heat buffer.
+     * The entities connected to this entity's heat energy source or this entity's heat buffer.
+     *
+     * The following entity types have a heat buffer: heat pipe, reactor and heat interface.
      */
     readonly heat_neighbours: LuaEntity[];
     /**
@@ -8511,7 +8530,9 @@ interface LuaEntity extends LuaControl {
      */
     tags?: Tags;
     /**
-     * The temperature of this entity's heat energy source. `nil` if this entity does not use a heat energy source.
+     * The temperature of this entity's heat energy source or this entity's heat buffer. `nil` if this entity does not use a heat energy source or does not have a heat buffer.
+     *
+     * The following entity types have a heat buffer: heat pipe, reactor and heat interface.
      */
     temperature?: double;
     /**
@@ -8939,9 +8960,9 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly braking_force?: double;
     readonly build_distance?: uint32;
     /**
-     * The log2 of {@link grid size | prototype:EntityPrototype::build_grid_size} of the building.
+     * The {@link grid size | prototype:EntityPrototype::build_grid_size} of the building.
      */
-    readonly building_grid_bit_shift: uint32;
+    readonly build_grid_size: uint32;
     /**
      * Whether this inserter is a bulk-type.
      */
@@ -9099,9 +9120,11 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly default_copy_color_from_train_stop?: boolean;
     readonly default_day_length_output_signal?: SignalID;
     readonly default_day_tick_output_signal?: SignalID;
+    readonly default_empty_slots_signal?: SignalID;
     readonly default_game_tick_output_signal?: SignalID;
     readonly default_green_output_signal?: SignalID;
     readonly default_green_signal?: SignalID;
+    readonly default_launched_signal?: SignalID;
     readonly default_orange_output_signal?: SignalID;
     readonly default_output_signal?: SignalID;
     readonly default_recipe_finished_signal?: SignalID;
@@ -10570,6 +10593,7 @@ interface LuaEquipmentPrototype extends LuaPrototypeBase {
     readonly solar_panel_performance_at_day?: double;
     readonly solar_panel_performance_at_night?: double;
     readonly solar_panel_solar_coefficient_property?: LuaSurfacePropertyPrototype;
+    readonly sunglasses?: boolean;
     /**
      * The result item when taking this equipment out of an equipment grid, if any.
      */
@@ -12028,6 +12052,10 @@ interface LuaGameScript {
      */
     readonly player?: LuaPlayer;
     /**
+     * True by default. Can be used to prevent the game engine from printing messages for player deaths and respawns.
+     */
+    player_death_notifications_enabled: boolean;
+    /**
      * Get a table of all the players that currently exist. This sparse table allows you to find players by indexing it with either their `name` or `index`. Iterating this table with `pairs()` will provide the `index`es as the keys. Iterating with `ipairs()` will not work at all.
      *
      * If only a single player is required, {@link LuaGameScript::get_player | runtime:LuaGameScript::get_player} should be used instead, as it avoids the unnecessary overhead of passing the whole table to Lua.
@@ -12037,6 +12065,10 @@ interface LuaGameScript {
      * Simulation-related functions, or `nil` if the current game is not a simulation.
      */
     readonly simulation: LuaSimulation;
+    /**
+     * True by default. Can be used to prevent the game engine from printing messages for space platform deaths.
+     */
+    space_platform_death_notifications_enabled: boolean;
     /**
      * Speed to update the map at. 1.0 is normal speed -- 60 UPS. Minimum value is 0.01.
      */
@@ -14027,8 +14059,9 @@ interface LuaItemCommon {
     /**
      * Set new entities to be a part of this blueprint.
      * @param entities The new blueprint entities.
+     * @param fix_positions If false, positions will be left unchanged unless invalid for the current snapping.
      */
-    set_blueprint_entities(this: void, entities: BlueprintEntity[]): void;
+    set_blueprint_entities(this: void, entities: BlueprintEntity[], fix_positions?: boolean): void;
     /**
      * Sets the given tag on the given blueprint entity index in this blueprint item.
      * @param index The entity index.
@@ -14955,6 +14988,7 @@ interface LuaLogisticContainerControlBehavior extends LuaControlBehavior {
      * Whether the circuit condition is in effect.
      */
     circuit_condition_enabled: boolean;
+    empty_slots_signal?: SignalID;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -14963,6 +14997,7 @@ interface LuaLogisticContainerControlBehavior extends LuaControlBehavior {
      * `true` if this logistic container is sending its content to a circuit network.
      */
     read_contents: boolean;
+    read_empty_slots: boolean;
     /**
      * `true` if this logistic container has its requests set by a circuit network.
      *
@@ -15668,7 +15703,7 @@ interface LuaPin {
     alert_type?: defines.alert_type;
     always_visible: boolean;
     /**
-     * The custom chart tag - if this pin specificaly binds to a chart tag.
+     * The custom chart tag - if this pin specifically binds to a chart tag.
      *
      * The chart tag must be on the same force as the owning player.
      */
@@ -15676,7 +15711,7 @@ interface LuaPin {
     /**
      * The index of this pin (unique to this player).
      *
-     * Note that this index has no corelation to the position of the pin within {@link LuaPlayer::get_pins | runtime:LuaPlayer::get_pins}
+     * Note that this index has no correlation to the position of the pin within {@link LuaPlayer::get_pins | runtime:LuaPlayer::get_pins}
      */
     readonly index: uint32;
     /**
@@ -15726,8 +15761,6 @@ interface LuaPin {
 interface LuaPlanet {
     /**
      * Associates the given surface with this planet. Surface must not already be associated with a planet and the planet must not already have an associated surface.
-     *
-     * Planet must not be using {@link entities_require_heating | runtime:LuaSpaceLocationPrototype::entities_require_heating}.
      * @param surface The surface to be associated.
      */
     associate_surface(this: void, surface: SurfaceIdentification): void;
@@ -16993,6 +17026,7 @@ interface LuaPrototypes {
  * Control behavior for proxy container.
  */
 interface LuaProxyContainerControlBehavior extends LuaControlBehavior {
+    empty_slots_signal?: SignalID;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -17001,6 +17035,7 @@ interface LuaProxyContainerControlBehavior extends LuaControlBehavior {
      * `true` if this proxy container is sending inventory contents to a circuit network
      */
     read_contents: boolean;
+    read_empty_slots: boolean;
     /**
      * Is this object valid? This Lua object holds a reference to an object within the game engine. It is possible that the game-engine object is removed whilst a mod still holds the corresponding Lua object. If that happens, the object becomes invalid, i.e. this attribute will be `false`. Mods are advised to check for object validity if any change to the game state might have occurred between the creation of the Lua object and its access.
      */
@@ -17755,8 +17790,9 @@ interface LuaRecord {
     /**
      * Set new entities to be a part of this blueprint.
      * @param entities The new blueprint entities.
+     * @param fix_positions If false, positions will be left unchanged unless invalid for the current snapping.
      */
-    set_blueprint_entities(this: void, entities: BlueprintEntity[]): void;
+    set_blueprint_entities(this: void, entities: BlueprintEntity[], fix_positions?: boolean): void;
     /**
      * Sets the given tag on the given blueprint entity index in this blueprint.
      * @param index The entity index.
@@ -18229,7 +18265,7 @@ interface LuaRendering {
      * @param table.players The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @param table.light_mode Whether this object should be rendered as a sprite, light or both at once. Defaults to "occluder".
      */
@@ -18270,7 +18306,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      */
     draw_arc(this: void, table: {
@@ -18303,7 +18339,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      */
     draw_circle(this: void, table: {
@@ -18340,7 +18376,7 @@ interface LuaRendering {
      * @param table.players The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      */
     draw_light(this: void, table: {
@@ -18375,7 +18411,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @example ```
     -- Draw a white and 2 pixel wide line from {0, 0} to {2, 2}.
@@ -18418,7 +18454,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      */
     draw_polygon(this: void, table: {
@@ -18450,7 +18486,7 @@ interface LuaRendering {
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.draw_on_ground If this should be drawn below sprites and entities. Defaults to false.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @example ```
     -- Draw a white and 1 pixel wide square outline with the corners {0, 0} and {2, 2}.
@@ -18490,7 +18526,7 @@ interface LuaRendering {
      * @param table.players The players that this object is rendered to. Passing `nil` or an empty table will render it to all players.
      * @param table.visible If this is rendered to anyone at all. Defaults to true.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @param table.light_mode Whether this object should be rendered as a sprite, light or both at once. Defaults to "occluder".
      * @example ```
@@ -18541,7 +18577,7 @@ interface LuaRendering {
      * @param table.vertical_alignment Defaults to "top".
      * @param table.scale_with_zoom Defaults to false. If true, the text scales with player zoom, resulting in it always being the same size on screen, and the size compared to the game world changes.
      * @param table.only_in_alt_mode If this should only be rendered in alt mode. Defaults to false.
-     * @param table.tall Defaults to false.
+     * @param table.tall If this will be translucent when "Hide tall entities" mode is active. Defaults to false.
      * @param table.render_mode Mode which this object should render in. Defaults to "game".
      * @param table.use_rich_text If rich text rendering is enabled. Defaults to false.
      */
@@ -18628,10 +18664,12 @@ interface LuaRoboportControlBehavior extends LuaControlBehavior {
  * Control behavior for rocket silos.
  */
 interface LuaRocketSiloControlBehavior extends LuaControlBehavior {
+    launched_signal?: SignalID;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    read_launched: boolean;
     /**
      * The items read mode for the rocket silo.
      */
@@ -19635,6 +19673,7 @@ interface LuaSpacePlatformHubControlBehavior extends LuaControlBehavior {
      * Signal to be transmitted with platform's damage taken value.
      */
     damage_taken_signal?: SignalID;
+    empty_slots_signal?: SignalID;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -19647,6 +19686,7 @@ interface LuaSpacePlatformHubControlBehavior extends LuaControlBehavior {
      * Whether damage taken by the space platform is sent to circuit network.
      */
     read_damage_taken: boolean;
+    read_empty_slots: boolean;
     /**
      * Whether current connection "from" end is sent to circuit network.
      */
@@ -22899,7 +22939,7 @@ interface LuaTransportLine {
     get_item_count(this: void, item?: ItemFilter): uint32;
     /**
      * Gives position of the selected item on this transport line.
-     * @param index Index of the item. Allowed values are from 1 up to #len.
+     * @param index Index of the item. Allowed values are from 1 up to {@link # (length) | runtime:LuaTransportLine::length_operator}.
      * @returns [0] - Linear position of the item along the transport line
      * @returns [1] - Map position of the item
      */

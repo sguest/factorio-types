@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.20
+// Factorio version 2.1.21
 // API version 6
 
 declare namespace prototype {
@@ -7205,7 +7205,7 @@ end
 ```
  * @example ```
 -- uses a features only available past a certain base mod version
-if helpers.compare_version(mods["base"], "2.0.56") >= 0 then
+if helpers.compare_versions(mods["base"], "2.0.56") >= 0 then
   use_new_features()
 end
 ```
@@ -7963,7 +7963,7 @@ interface PlatformBackdrop {
      */
     hero_clouds_are_emissive?: boolean;
     /**
-     * Color of light. Multiplied by 10 in shader.
+     * Color of light.
      */
     light_color?: Color;
     light_direction?: Vector3D;
@@ -8014,7 +8014,7 @@ interface PlatformBackdrop {
      */
     rotation_seconds?: float;
     /**
-     * Color of specular light. Multiplied by 10 in shader.
+     * Color of specular light.
      */
     specular_color?: Color;
     specular_intensity?: float;
@@ -13002,7 +13002,7 @@ interface TreeGrowth {
     trunk_warp: Sprite;
 }
 /**
- * Tree has number of "dying" stages, which is deduced from frame count of `shadow` if shadow is defined, otherwise from frame count of `trunk`. Frame count of `leaves` has to be one less than deduced number stages, as last stage is always assumed to be leafless.
+ * Tree has number of "dying" stages, which is deduced from frame count of `shadow` if shadow is defined, otherwise from frame count of `trunk`. Frame count of `leaves` has to be one less than the deduced number of stages, as last the stage is always assumed to be leafless.
  */
 interface TreeVariation {
     branch_generation: CreateParticleTriggerEffectItem;
