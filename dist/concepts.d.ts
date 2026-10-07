@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.20
+// Factorio version 2.1.21
 // API version 6
 
 declare namespace runtime {
@@ -1546,6 +1546,11 @@ interface CargoLandingPadBlueprintControlBehavior {
     /**
      * Defaults to `false`.
      */
+    read_empty_slots?: boolean;
+    empty_slots_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
     set_requests?: boolean;
 }
 interface CargoStationParameters {
@@ -2145,6 +2150,11 @@ interface ContainerBlueprintControlBehavior {
      * Defaults to `true`.
      */
     read_contents?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_empty_slots?: boolean;
+    empty_slots_signal?: SignalID;
 }
 interface CraftingQueueItem {
     /**
@@ -2591,7 +2601,7 @@ interface ElemID {
 /**
  * A {@link string | runtime:string} specifying a type for {@link choose elem buttons | runtime:LuaGuiElement::elem_type}. It's also used by {@link ElemID | runtime:ElemID} for {@link LuaGuiElement::elem_tooltip | runtime:LuaGuiElement::elem_tooltip}.
  */
-type ElemType = 'achievement' | 'decorative' | 'entity' | 'equipment' | 'fluid' | 'item' | 'item-group' | 'recipe' | 'signal' | 'technology' | 'tile' | 'asteroid-chunk' | 'space-location' | 'item-with-quality' | 'entity-with-quality' | 'recipe-with-quality' | 'equipment-with-quality';
+type ElemType = 'achievement' | 'decorative' | 'entity' | 'equipment' | 'fluid' | 'item' | 'item-group' | 'recipe' | 'signal' | 'technology' | 'tile' | 'asteroid-chunk' | 'space-location' | 'item-with-quality' | 'entity-with-quality' | 'recipe-with-quality' | 'equipment-with-quality' | 'ammo-category' | 'airborne-pollutant' | 'quality' | 'shortcut' | 'space-connection' | 'surface' | 'virtual-signal';
 interface EmptySlotInfo {
     /**
      * The icon to use.
@@ -4728,6 +4738,11 @@ interface LogisticContainerBlueprintControlBehavior {
      * Defaults to `true`.
      */
     read_contents?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_empty_slots?: boolean;
+    empty_slots_signal?: SignalID;
     /**
      * Defaults to `false`.
      */
@@ -8035,6 +8050,11 @@ interface ProxyContainerBlueprintControlBehavior {
      * Defaults to `true`.
      */
     read_contents?: boolean;
+    /**
+     * Defaults to `false`.
+     */
+    read_empty_slots?: boolean;
+    empty_slots_signal?: SignalID;
 }
 interface PumpBlueprintControlBehavior {
     input_networks?: CircuitNetworkSelection;
@@ -8184,7 +8204,7 @@ interface ReactorBlueprintControlBehavior {
      * Defaults to `false`.
      */
     read_temperature?: boolean;
-    temperature_signal: SignalID;
+    temperature_signal?: SignalID;
 }
 /**
  * The smooth orientation. It is a `float` in the range `[0, 1)` that covers a full circle, starting at the top and going clockwise.
@@ -8766,7 +8786,10 @@ interface ResearchTriggerCraftItem extends BaseResearchTrigger {
  */
 interface ResearchTriggerMineEntity extends BaseResearchTrigger {
     'type': 'mine-entity';
-    'entity': string;
+    /**
+     * The trigger is considered fulfilled if at least one of these entities is mined.
+     */
+    'entities': string[];
 }
 /**
  *
@@ -8814,6 +8837,11 @@ interface RocketSiloBlueprintControlBehavior {
      * Defaults to `logistic_inventory`.
      */
     read_items_mode?: defines.control_behavior.rocket_silo.read_mode;
+    /**
+     * Defaults to `false`.
+     */
+    read_launched?: boolean;
+    launched_signal?: SignalID;
 }
 interface RollingStockDrawData {
     position: MapPosition;
@@ -9217,14 +9245,14 @@ type SelectionModeFlags = Record</**
  * Selects entities that are `tile-ghost`s.
  */
 'tile-ghost', true>;
-type SelectorCombinatorParameterOperation = 'select' | 'count' | 'random' | 'quality-transfer' | 'rocket-capacity' | 'stack-size' | 'quality-filter' | 'time';
+type SelectorCombinatorParameterOperation = 'select' | 'count' | 'random' | 'quality-transfer' | 'rocket-capacity' | 'stack-size' | 'quality-filter' | 'time' | 'quality-select';
 interface BaseSelectorCombinatorParameters {
     /**
      * Defaults to `"select"`.
      */
     operation?: SelectorCombinatorParameterOperation;
 }
-type SelectorCombinatorParameters = BaseSelectorCombinatorParameters | SelectorCombinatorParametersCount | SelectorCombinatorParametersQualityFilter | SelectorCombinatorParametersQualityTransfer | SelectorCombinatorParametersRandom | SelectorCombinatorParametersSelect | SelectorCombinatorParametersTime;
+type SelectorCombinatorParameters = BaseSelectorCombinatorParameters | SelectorCombinatorParametersCount | SelectorCombinatorParametersQualityFilter | SelectorCombinatorParametersQualitySelect | SelectorCombinatorParametersQualityTransfer | SelectorCombinatorParametersRandom | SelectorCombinatorParametersSelect | SelectorCombinatorParametersTime;
 /**
  *
  * Applies to variant case `count`
@@ -9252,6 +9280,20 @@ interface SelectorCombinatorParametersQualityFilter extends BaseSelectorCombinat
      * The quality condition to use. Defaults to `null`.
      */
     'quality_filter'?: QualityCondition;
+}
+/**
+ *
+ * Applies to variant case `quality-select`
+ */
+interface SelectorCombinatorParametersQualitySelect extends BaseSelectorCombinatorParameters {
+    /**
+     * Defaults to `"select"`.
+     */
+    'operation'?: 'quality-select';
+    /**
+     * Defaults to `true`.
+     */
+    'select_highest_quality'?: boolean;
 }
 /**
  *
@@ -9293,6 +9335,10 @@ interface SelectorCombinatorParametersSelect extends BaseSelectorCombinatorParam
      * Defaults to `"select"`.
      */
     'operation'?: 'select';
+    /**
+     * Defaults to `"="`.
+     */
+    'index_comparator'?: ComparatorString;
     /**
      * The signal index to use if not using a specific `index_signal`. Defaults to `0`.
      */
@@ -9609,6 +9655,11 @@ interface SpacePlatformHubBlueprintControlBehavior {
     /**
      * Defaults to `false`.
      */
+    read_empty_slots?: boolean;
+    empty_slots_signal?: SignalID;
+    /**
+     * Defaults to `false`.
+     */
     set_requests?: boolean;
     /**
      * Defaults to `true`.
@@ -9828,6 +9879,7 @@ string;
  * The effect that is applied when a technology is researched.
  */
 interface BaseTechnologyModifier {
+    hidden: boolean;
     /**
      * Modifier type. Specifies which of the other fields will be available.
      */
