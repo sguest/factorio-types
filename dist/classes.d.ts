@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.21
+// Factorio version 2.1.22
 // API version 6
 
 declare namespace runtime {
@@ -1884,7 +1884,43 @@ interface LuaBootstrap {
     {{filter = "name", name = "fast-inserter"}})
     ```
      */
+    on_event(this: void, event: defines.events.on_player_cancel_selected_area, handler: ((this: void, arg0: runtime.on_player_cancel_selected_area) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
     on_event(this: void, event: defines.events.on_player_cancelled_crafting, handler: ((this: void, arg0: runtime.on_player_cancelled_crafting) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_player_change_selected_area, handler: ((this: void, arg0: runtime.on_player_change_selected_area) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event The event(s) or custom-input to invoke the handler on.
@@ -2749,6 +2785,24 @@ interface LuaBootstrap {
     ```
      */
     on_event(this: void, event: defines.events.on_player_setup_blueprint, handler: ((this: void, arg0: runtime.on_player_setup_blueprint) => any) | nil, filters?: EventFilter): void;
+    /**
+     * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
+     * @param event The event(s) or custom-input to invoke the handler on.
+     * @param handler The handler for this event. Passing `nil` will unregister it.
+     * @param filters The filters for this event. Can only be used when registering for individual events.
+     * @example ```
+    -- Register for the on_tick event to print the current tick to console each tick
+    script.on_event(defines.events.on_tick,
+    function(event) game.print(event.tick) end)
+    ```
+     * @example ```
+    -- Register for the on_built_entity event, limiting it to only be received when a `"fast-inserter"` is built
+    script.on_event(defines.events.on_built_entity,
+    function(event) game.print("Gotta go fast!") end,
+    {{filter = "name", name = "fast-inserter"}})
+    ```
+     */
+    on_event(this: void, event: defines.events.on_player_start_selected_area, handler: ((this: void, arg0: runtime.on_player_start_selected_area) => any) | nil, filters?: EventFilter): void;
     /**
      * Register a handler to run on the specified event(s). Each mod can only register once for every event, as any additional registration will overwrite the previous one. This holds true even if different filters are used for subsequent registrations.
      * @param event The event(s) or custom-input to invoke the handler on.
@@ -6847,7 +6901,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Get a fluidbox filter, such as the filter of a pump.
      */
-    get_fluid_filter(this: void, index: FluidStorageIndex): FluidFilter | null;
+    get_fluid_filter(this: void, index: FluidStorageIndex): LuaFluidPrototype | null;
     /**
      * Gets the maximum capacity of the given fluid storage's segment.
      */
@@ -6859,7 +6913,7 @@ interface LuaEntity extends LuaControl {
     /**
      * Gets the filter of the given fluid storage's segment. The filter is based on the filters set on the fluidboxes of the segment, so it can't be set directly on the segment.
      */
-    get_fluid_segment_filter(this: void, index: FluidStorageIndex): FluidFilter | null;
+    get_fluid_segment_filter(this: void, index: FluidStorageIndex): LuaFluidPrototype | null;
     /**
      * The fluid within the given storage's fluid segment.
      */
@@ -7365,7 +7419,7 @@ interface LuaEntity extends LuaControl {
      * Some entities cannot have their fluidbox filter set, notably fluid wagons and crafting machines.
      * @returns Whether the filter was set.
      */
-    set_fluid_filter(this: void, index: FluidStorageIndex, filter?: FluidFilter): boolean;
+    set_fluid_filter(this: void, index: FluidStorageIndex, filter?: FluidID): boolean;
     /**
      * Sets the fluid within the given storage's fluid segment.
      * @returns The amount of fluid set.
@@ -9693,7 +9747,19 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly max_underground_distance?: uint8;
     readonly maximum_corner_sliding_distance?: double;
     readonly maximum_damage_multiplier?: float;
+    /**
+     * The maximum fuel temperature that this thruster accepts, if specified. Fuel above this temperature will cause the thruster to stop working.
+     */
+    readonly maximum_fuel_temperature?: float;
+    /**
+     * The maximum input temperature that this prototype accepts, if specified. An input fluid above this temperature will cause the machine to stop working.
+     */
+    readonly maximum_input_temperature?: float;
     readonly maximum_lifetime?: uint32;
+    /**
+     * The maximum oxidizer temperature that this thruster accepts, if specified. Oxidizer above this temperature will cause the thruster to stop working.
+     */
+    readonly maximum_oxidizer_temperature?: float;
     readonly maximum_spread_count?: uint16;
     /**
      * The maximum fluid temperature of this generator prototype.
@@ -9718,6 +9784,18 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
      */
     readonly mineable_properties: MineableProperties;
     readonly minimal_arm_swing_segment_retraction?: uint32;
+    /**
+     * The minimum fuel temperature that this thruster accepts, if specified. Fuel below this temperature will cause the thruster to stop working.
+     */
+    readonly minimum_fuel_temperature?: float;
+    /**
+     * The minimum input temperature that this prototype accepts, if specified. An input fluid below this temperature will cause the machine to stop working.
+     */
+    readonly minimum_input_temperature?: float;
+    /**
+     * The minimum oxidizer temperature that this thruster accepts, if specified. Oxidizer below this temperature will cause the thruster to stop working.
+     */
+    readonly minimum_oxidizer_temperature?: float;
     /**
      * Minimum amount of this resource.
      */
@@ -10046,7 +10124,7 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly target_initial_position_only?: boolean;
     readonly target_position_deviation?: double;
     /**
-     * The target temperature of this boiler or fusion reactor prototype. If `nil` on a fusion reactor, the target temperature is the default temperature of the output fluid.
+     * The target temperature of this boiler or fusion reactor prototype. If `nil` on a fusion reactor, the target temperature is the default temperature of the output fluid. If specified on a boiler, an input fluid above this temperature will cause the boiler to stop working.
      */
     readonly target_temperature?: float;
     /**
@@ -10773,14 +10851,6 @@ interface LuaFluidBoxPrototype {
      */
     readonly index: uint32;
     /**
-     * The maximum temperature, if any is set.
-     */
-    readonly maximum_temperature?: double;
-    /**
-     * The minimum temperature, if any is set.
-     */
-    readonly minimum_temperature?: double;
-    /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
@@ -10822,7 +10892,15 @@ interface LuaFluidEnergySourcePrototype {
     readonly fluid_box: LuaFluidBoxPrototype;
     readonly fluid_usage_per_tick: double;
     readonly hide_from_stats: boolean;
-    readonly maximum_temperature: double;
+    /**
+     * The maximum input temperature that this energy source accepts, if specified. An input fluid above this temperature will cause the energy source to stop working.
+     */
+    readonly maximum_input_temperature?: float;
+    readonly maximum_temperature?: float;
+    /**
+     * The minimum input temperature that this energy source accepts, if specified. An input fluid below this temperature will cause the energy source to stop working.
+     */
+    readonly minimum_input_temperature?: float;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -13614,7 +13692,7 @@ interface LuaInserterControlBehavior extends LuaGenericOnOffControlBehavior {
      */
     circuit_set_filters: boolean;
     /**
-     * If the stack size of the inserter is set through the circuit network or not.
+     * If the hand stack size of the inserter is set through the circuit network or not.
      */
     circuit_set_stack_size: boolean;
     /**
@@ -15932,6 +16010,8 @@ interface LuaPlayer extends LuaControl {
     clear_recipe_notifications(this: void): void;
     /**
      * Clears the player's selection tool selection position.
+     *
+     * This method affects a player's input state and does not directly affect game state. The effects of calling this method will not be immediately observable, especially in multiplayer.
      */
     clear_selection(this: void): void;
     /**
@@ -16272,6 +16352,8 @@ interface LuaPlayer extends LuaControl {
     }): ItemWithQualityCount[] | null;
     /**
      * Starts selection with selection tool from the specified position. Does nothing if the player's cursor is not a selection tool.
+     *
+     * This method affects a player's input state and does not directly affect game state. The effects of calling this method will not be immediately observable, especially in multiplayer.
      * @param position The position to start selection from.
      * @param selection_mode The type of selection to start.
      */

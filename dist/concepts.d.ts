@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.21
+// Factorio version 2.1.22
 // API version 6
 
 declare namespace runtime {
@@ -1437,6 +1437,18 @@ type BoundingBox = {
     MapPosition,
     MapPosition
 ];
+interface BuildPreviewTintSet {
+    buildable: Color;
+    buildable_too_far: Color;
+    ignorable: Color;
+    not_buildable: Color;
+}
+interface BuildPreviewTints {
+    entity: BuildPreviewTintSet;
+    tile: BuildPreviewTintSet;
+    entity_chart: BuildPreviewTintSet;
+    tile_chart: BuildPreviewTintSet;
+}
 interface BaseCapsuleAction {
     type: 'throw' | 'equipment-remote' | 'use-on-self' | 'artillery-remote' | 'destroy-cliffs';
 }
@@ -3240,17 +3252,6 @@ interface FluidBoxNeighbourRecord {
     entity: LuaEntity;
     index: FluidStorageIndex;
 }
-interface FluidFilter {
-    fluid?: FluidID;
-    /**
-     * The minimum fluid temperature required.
-     */
-    minimum_temperature?: float;
-    /**
-     * The maximum fluid temperature allowed.
-     */
-    maximum_temperature?: float;
-}
 type FluidFlowDirection = 'input-output' | 'input' | 'output';
 /**
  * A fluid may be specified in one of three ways.
@@ -4019,7 +4020,7 @@ interface InserterBlueprintControlBehavior {
      */
     circuit_hand_read_mode?: defines.control_behavior.inserter.hand_read_mode;
     /**
-     * Defaults to `false`.
+     * Defaults to `false`. Whether the inserter hand size is controlled by the circuit network.
      */
     circuit_set_stack_size?: boolean;
     stack_control_input_signal?: SignalID;
@@ -12112,10 +12113,7 @@ interface UtilityConstants {
     bonus_gui_ordering: BonusUtilityConstants;
     map_editor: EditorUtilityConstants;
     entity_button_background_color: Color;
-    building_buildable_too_far_tint: Color;
-    building_buildable_tint: Color;
-    building_not_buildable_tint: Color;
-    building_ignorable_tint: Color;
+    build_preview_tints: BuildPreviewTints;
     building_no_tint: Color;
     /**
      * Tall entities will be tinted with this value when "Hide tall entities" mode is active.

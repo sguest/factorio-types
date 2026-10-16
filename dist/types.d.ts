@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.21
+// Factorio version 2.1.22
 // API version 6
 
 declare namespace prototype {
@@ -2199,6 +2199,65 @@ interface BuildEntityTipTrigger extends CountBasedTipTrigger {
     type: 'build-entity';
 }
 type BuildMode = 'normal' | 'forced' | 'superforced';
+interface BuildPreviewTintSet {
+    /**
+     * Mandatory in {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     *
+     * Defaults to the value from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints} when used in {@link BlueprintItemPrototype::build_preview_tints | prototype:BlueprintItemPrototype::build_preview_tints}.
+     */
+    buildable?: Color;
+    /**
+     * Used when the player is too far away to build manually.
+     *
+     * Defaults to the value from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints} when used in {@link BlueprintItemPrototype::build_preview_tints | prototype:BlueprintItemPrototype::build_preview_tints}.
+     */
+    buildable_too_far?: Color;
+    /**
+     * Mandatory in {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     *
+     * Defaults to the value from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints} when used in {@link BlueprintItemPrototype::build_preview_tints | prototype:BlueprintItemPrototype::build_preview_tints}.
+     */
+    ignorable?: Color;
+    /**
+     * Mandatory in {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     *
+     * Defaults to the value from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints} when used in {@link BlueprintItemPrototype::build_preview_tints | prototype:BlueprintItemPrototype::build_preview_tints}.
+     */
+    not_buildable?: Color;
+}
+/**
+ * Tints of the cursor building preview, based on whether the preview can be built.
+ */
+interface BuildPreviewTints {
+    /**
+     * Mandatory in {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     *
+     * When used in {@link BlueprintItemPrototype::build_preview_tints | prototype:BlueprintItemPrototype::build_preview_tints}, the properties that are not given default to the value from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     */
+    entity?: BuildPreviewTintSet;
+    /**
+     * Colors of blueprint entities when previewed in the map view.
+     *
+     * Mandatory in {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     *
+     * When used in {@link BlueprintItemPrototype::build_preview_tints | prototype:BlueprintItemPrototype::build_preview_tints}, the properties that are not given default to the value from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     */
+    entity_chart?: BuildPreviewTintSet;
+    /**
+     * Mandatory in {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     *
+     * When used in {@link BlueprintItemPrototype::build_preview_tints | prototype:BlueprintItemPrototype::build_preview_tints}, the properties that are not given default to the value from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     */
+    tile?: BuildPreviewTintSet;
+    /**
+     * Colors of blueprint tiles when previewed in the map view.
+     *
+     * Mandatory in {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     *
+     * When used in {@link BlueprintItemPrototype::build_preview_tints | prototype:BlueprintItemPrototype::build_preview_tints}, the properties that are not given default to the value from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     */
+    tile_chart?: BuildPreviewTintSet;
+}
 interface BulkInserterCapacityBonusModifier extends SimpleModifier {
     /**
      * If set to `false`, use the icon from {@link UtilitySprites | prototype:UtilitySprites} for this technology effect icon.
@@ -3968,6 +4027,12 @@ interface Effect {
      */
     speed?: EffectValue;
 }
+interface EffectArrayTexture {
+    /**
+     * The path to the sprite file to use.
+     */
+    filename: FileName;
+}
 interface EffectReceiver {
     base_effect?: Effect;
     /**
@@ -4640,7 +4705,7 @@ interface EntityRendererSearchBoxLimits {
      */
     top: uint8;
 }
-type EntityStatus = 'working' | 'normal' | 'ghost' | 'not-plugged-in-electric-network' | 'networks-connected' | 'networks-disconnected' | 'no-ammo' | 'waiting-for-target-to-be-built' | 'waiting-for-train' | 'no-power' | 'low-temperature' | 'charging' | 'discharging' | 'fully-charged' | 'no-fuel' | 'no-food' | 'out-of-logistic-network' | 'no-recipe' | 'no-ingredients' | 'no-input-fluid' | 'no-research-in-progress' | 'no-minable-resources' | 'low-input-fluid' | 'low-power' | 'not-connected-to-rail' | 'cant-divide-segments' | 'recharging-after-power-outage' | 'no-modules-to-transmit' | 'disabled-by-control-behavior' | 'opened-by-circuit-network' | 'closed-by-circuit-network' | 'disabled-by-script' | 'disabled' | 'turned-off-during-daytime' | 'fluid-ingredient-shortage' | 'item-ingredient-shortage' | 'full-output' | 'not-enough-space-in-output' | 'full-burnt-result-output' | 'marked-for-deconstruction' | 'missing-required-fluid' | 'missing-science-packs' | 'waiting-for-source-items' | 'waiting-for-space-in-destination' | 'preparing-rocket-for-launch' | 'waiting-to-launch-rocket' | 'waiting-for-space-in-platform-hub' | 'launching-rocket' | 'thrust-not-required' | 'not-enough-thrust' | 'on-the-way' | 'waiting-in-orbit' | 'waiting-for-rocket-to-arrive' | 'waiting-to-clear-drop-slots' | 'no-path' | 'broken' | 'none' | 'frozen' | 'paused' | 'not-connected-to-hub-or-pad' | 'too-far-from-pad-to-unload' | 'computing-navigation' | 'no-filter' | 'waiting-at-stop' | 'waiting-for-upgrade' | 'destination-stop-full' | 'pipeline-overextended' | 'no-spot-seedable-by-inputs' | 'waiting-for-plants-to-grow' | 'recipe-not-researched' | 'armed';
+type EntityStatus = 'working' | 'normal' | 'ghost' | 'not-plugged-in-electric-network' | 'networks-connected' | 'networks-disconnected' | 'no-ammo' | 'waiting-for-target-to-be-built' | 'waiting-for-train' | 'no-power' | 'low-temperature' | 'charging' | 'discharging' | 'fully-charged' | 'no-fuel' | 'no-food' | 'out-of-logistic-network' | 'no-recipe' | 'input-fluid-too-cold' | 'input-fluid-too-hot' | 'no-ingredients' | 'no-input-fluid' | 'no-research-in-progress' | 'no-minable-resources' | 'low-input-fluid' | 'low-power' | 'not-connected-to-rail' | 'cant-divide-segments' | 'recharging-after-power-outage' | 'no-modules-to-transmit' | 'disabled-by-control-behavior' | 'opened-by-circuit-network' | 'closed-by-circuit-network' | 'disabled-by-script' | 'disabled' | 'turned-off-during-daytime' | 'fluid-ingredient-shortage' | 'item-ingredient-shortage' | 'full-output' | 'not-enough-space-in-output' | 'full-burnt-result-output' | 'marked-for-deconstruction' | 'missing-required-fluid' | 'missing-science-packs' | 'waiting-for-source-items' | 'waiting-for-space-in-destination' | 'preparing-rocket-for-launch' | 'waiting-to-launch-rocket' | 'waiting-for-space-in-platform-hub' | 'launching-rocket' | 'thrust-not-required' | 'not-enough-thrust' | 'on-the-way' | 'waiting-in-orbit' | 'waiting-for-rocket-to-arrive' | 'waiting-to-clear-drop-slots' | 'no-path' | 'broken' | 'none' | 'frozen' | 'paused' | 'not-connected-to-hub-or-pad' | 'too-far-from-pad-to-unload' | 'computing-navigation' | 'no-filter' | 'waiting-at-stop' | 'waiting-for-upgrade' | 'destination-stop-full' | 'pipeline-overextended' | 'no-spot-seedable-by-inputs' | 'waiting-for-plants-to-grow' | 'recipe-not-researched' | 'armed';
 /**
  * Triggered when a player fast-transfers something to or from an entity, similar to the {@link on_player_fast_transferred | runtime:on_player_fast_transferred} event.
  */
@@ -4834,20 +4899,6 @@ interface FluidBox {
      */
     max_pipeline_extent?: uint32;
     /**
-     * The maximum temperature allowed into the fluidbox. Only applied if a `filter` is specified.
-     * @example ```
-    maximum_temperature = 1000.0
-    ```
-     */
-    maximum_temperature?: float;
-    /**
-     * The minimum temperature allowed into the fluidbox. Only applied if a `filter` is specified.
-     * @example ```
-    minimum_temperature = 100.0
-    ```
-     */
-    minimum_temperature?: float;
-    /**
      * Pipe picture variation used when owner machine is flipped. If no picture is loaded, pipe_picture is used instead.
      */
     mirrored_pipe_picture?: Sprite4Way;
@@ -4927,11 +4978,19 @@ interface FluidEnergySource extends BaseEnergySource {
     hide_from_stats?: boolean;
     light_flicker?: LightFlickeringDefinition;
     /**
-     * `0` means unlimited maximum temperature. If this is non-zero while `scale_fluid_usage` is `false` and `fluid_usage_per_tick` is not specified, the game will use this value to calculate `fluid_usage_per_tick`. To do that, the filter on the `fluid_box` must be set.
+     * If specified, an input fluid above this temperature will cause the fluid energy source to stop working.
+     */
+    maximum_input_temperature?: float;
+    /**
+     * If this is specified while `scale_fluid_usage` is `false` and `fluid_usage_per_tick` is not specified, the game will use this value to calculate `fluid_usage_per_tick`. To do that, the filter on the `fluid_box` must be set.
      *
      * Only loaded if `burns_fluid` is `false`.
      */
     maximum_temperature?: float;
+    /**
+     * If specified, an input fluid below this temperature will cause the fluid energy source to stop working.
+     */
+    minimum_input_temperature?: float;
     output_fluid_box?: FluidBox;
     /**
      * If set to `true`, the energy source will consume as much fluid as required to produce the desired power, otherwise it will consume as much as it is allowed to, wasting any excess.
@@ -14085,6 +14144,12 @@ interface WaterTileEffectParameters {
      */
     foam_color_multiplier: float;
     /**
+     * The image is split into 512x512 slices which are used as randomly chosen variations.
+     *
+     * Shader variant `"water"` must have 0 textures, `"lava"` and `"wetland-water"` must have 1 texture, and `"oil"` must have 2 textures.
+     */
+    image_textures?: EffectArrayTexture[];
+    /**
      * Value 0 makes water appear as water in water mask, but does not occlude lights, and doesn't overwrite lightmap alpha drawn to pixel previously (by background layer of tile transition, or underwater sprite). Light emitted by water-like-tile (for example lava) will blend additively with previously rendered light. Value 1 makes water occlude lights, but won't be recognized as water in water mask used for masking decals by water.
      */
     lightmap_alpha?: float;
@@ -14093,14 +14158,16 @@ interface WaterTileEffectParameters {
      */
     near_zoom?: float;
     /**
+     * Shader variants `"water"` and `"wetland-water"` must have 1 texture, and `"lava"` and `"oil"` must have 2 textures.
+     */
+    noise_textures?: EffectTexture[];
+    /**
      * Affects reflection threshold for `"water"` `shader_variation`. Affects distortion scale for `"lava"` `shader_variation`. Affects distortion tiling for `"wetland-water"` `shader_variation`. Affects distortion map scale for `"oil"` `shader_variation`.
      */
     reflection_threshold: float | [
         float,
         float
     ];
-    secondary_texture_variations_columns?: uint8;
-    secondary_texture_variations_rows?: uint8;
     shader_variation?: EffectVariation;
     /**
      * Affects specular lightness for `"water"` `shader_variation`. Affects panning/warping vector for all other `shader_variation`s.
@@ -14115,12 +14182,6 @@ interface WaterTileEffectParameters {
         float,
         float
     ];
-    texture_variations_columns?: uint8;
-    texture_variations_rows?: uint8;
-    /**
-     * Texture size must be 512x512. Shader variant `"water"` must have 1 texture, `"lava"` and `"wetland-water"` must have 2 textures and `"oil"` must have 4 textures.
-     */
-    textures: EffectTexture[];
     /**
      * Affects distortion speed for `"water"` `shader_variation`. Affects panning/warping speed for all other `shader_variation`s.
      */
