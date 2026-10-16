@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.21
+// Factorio version 2.1.22
 // API version 6
 
 declare namespace runtime {
@@ -1840,6 +1840,10 @@ interface on_player_alt_reverse_selected_area {
      */
     area: BoundingBox;
     /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
      * The entities selected.
      */
     entities: LuaEntity[];
@@ -1855,6 +1859,11 @@ interface on_player_alt_reverse_selected_area {
      * The player doing the selection.
      */
     player_index: uint32;
+    /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
+    selection_mode: defines.selection_mode;
     /**
      * The surface selected.
      */
@@ -1877,6 +1886,10 @@ interface on_player_alt_selected_area {
      */
     area: BoundingBox;
     /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
      * The entities selected.
      */
     entities: LuaEntity[];
@@ -1893,9 +1906,14 @@ interface on_player_alt_selected_area {
      */
     player_index: uint32;
     /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
+    /**
      * The item quality used to select the area.
      */
     quality: string;
+    selection_mode: defines.selection_mode;
     /**
      * The surface selected.
      */
@@ -2005,6 +2023,58 @@ interface on_player_built_tile {
     tiles: OldTileAndPosition[];
 }
 /**
+ * Called after a player cancels their attempt to select an area with a selection-tool item that has {@link SelectionToolPrototype::send_pre_selection_events | prototype:SelectionToolPrototype::send_pre_selection_events} set to `true`.
+ *
+ * Because a player's selection state exists solely on their local client and not in game state, this event and the other area preselection events are provided with "best effort", but are not guaranteed. In some situations, such as after loading an existing save or in a multiplayer game, preselection events may not be received in an order that makes sense for the current game state or may be dropped altogether.
+ */
+interface on_player_cancel_selected_area {
+    /**
+     * The area selected.
+     */
+    area: BoundingBox;
+    /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
+     * The entities selected.
+     */
+    entities: LuaEntity[];
+    /**
+     * The item used to select the area.
+     */
+    item: string;
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * The player doing the selection.
+     */
+    player_index: uint32;
+    /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
+    /**
+     * The item quality used to select the area.
+     */
+    quality: string;
+    selection_mode: defines.selection_mode;
+    /**
+     * The surface selected.
+     */
+    surface: LuaSurface;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+    /**
+     * The tiles selected.
+     */
+    tiles: LuaTile[];
+}
+/**
  * Called when a player cancels crafting.
  */
 interface on_player_cancelled_crafting {
@@ -2032,6 +2102,58 @@ interface on_player_cancelled_crafting {
      * Tick the event was generated.
      */
     tick: MapTick;
+}
+/**
+ * Called after a player changes the selection area or selection type with a selection-tool item that has {@link SelectionToolPrototype::send_pre_selection_events | prototype:SelectionToolPrototype::send_pre_selection_events} set to `true`.
+ *
+ * Because a player's selection state exists solely on their local client and not in game state, this event and the other area preselection events are provided with "best effort", but are not guaranteed. In some situations, such as after loading an existing save or in a multiplayer game, preselection events may not be received in an order that makes sense for the current game state or may be dropped altogether.
+ */
+interface on_player_change_selected_area {
+    /**
+     * The area selected.
+     */
+    area: BoundingBox;
+    /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
+     * The entities selected.
+     */
+    entities: LuaEntity[];
+    /**
+     * The item used to select the area.
+     */
+    item: string;
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * The player doing the selection.
+     */
+    player_index: uint32;
+    /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
+    /**
+     * The item quality used to select the area.
+     */
+    quality: string;
+    selection_mode: defines.selection_mode;
+    /**
+     * The surface selected.
+     */
+    surface: LuaSurface;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+    /**
+     * The tiles selected.
+     */
+    tiles: LuaTile[];
 }
 /**
  * Called after a player changes forces.
@@ -2286,6 +2408,10 @@ interface on_player_deconstructed_area {
      */
     area: BoundingBox;
     /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
      * The item used to select the area.
      */
     item: string;
@@ -2297,6 +2423,10 @@ interface on_player_deconstructed_area {
      * The player doing the selection.
      */
     player_index: uint32;
+    /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
     /**
      * The item quality used to select the area.
      */
@@ -2936,6 +3066,10 @@ interface on_player_reverse_selected_area {
      */
     area: BoundingBox;
     /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
      * The entities selected.
      */
     entities: LuaEntity[];
@@ -2951,6 +3085,11 @@ interface on_player_reverse_selected_area {
      * The player doing the selection.
      */
     player_index: uint32;
+    /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
+    selection_mode: defines.selection_mode;
     /**
      * The surface selected.
      */
@@ -2998,6 +3137,10 @@ interface on_player_selected_area {
      */
     area: BoundingBox;
     /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
      * The entities selected.
      */
     entities: LuaEntity[];
@@ -3014,9 +3157,14 @@ interface on_player_selected_area {
      */
     player_index: uint32;
     /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
+    /**
      * The item quality used to select the area.
      */
     quality: string;
+    selection_mode: defines.selection_mode;
     /**
      * The surface selected.
      */
@@ -3057,6 +3205,10 @@ interface on_player_setup_blueprint {
      */
     area: BoundingBox;
     /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
      * The item used to select the area.
      */
     item: string;
@@ -3072,6 +3224,10 @@ interface on_player_setup_blueprint {
      * The player doing the selection.
      */
     player_index: uint32;
+    /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
     /**
      * The item quality used to select the area.
      */
@@ -3094,13 +3250,19 @@ interface on_player_setup_blueprint {
     tick: MapTick;
 }
 /**
- * Called after a player super-forced-selects an area with a selection-tool item.
+ * Called after a player starts to select an area with a selection-tool item that has {@link SelectionToolPrototype::send_pre_selection_events | prototype:SelectionToolPrototype::send_pre_selection_events} set to `true`.
+ *
+ * Because a player's selection state exists solely on their local client and not in game state, this event and the other area preselection events are provided with "best effort", but are not guaranteed. In some situations, such as after loading an existing save or in a multiplayer game, preselection events may not be received in an order that makes sense for the current game state or may be dropped altogether.
  */
-interface on_player_super_forced_selected_area {
+interface on_player_start_selected_area {
     /**
      * The area selected.
      */
     area: BoundingBox;
+    /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
     /**
      * The entities selected.
      */
@@ -3118,9 +3280,64 @@ interface on_player_super_forced_selected_area {
      */
     player_index: uint32;
     /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
+    /**
      * The item quality used to select the area.
      */
     quality: string;
+    selection_mode: defines.selection_mode;
+    /**
+     * The surface selected.
+     */
+    surface: LuaSurface;
+    /**
+     * Tick the event was generated.
+     */
+    tick: MapTick;
+    /**
+     * The tiles selected.
+     */
+    tiles: LuaTile[];
+}
+/**
+ * Called after a player super-forced-selects an area with a selection-tool item.
+ */
+interface on_player_super_forced_selected_area {
+    /**
+     * The area selected.
+     */
+    area: BoundingBox;
+    /**
+     * The player cursor position.
+     */
+    cursor_position: MapPosition;
+    /**
+     * The entities selected.
+     */
+    entities: LuaEntity[];
+    /**
+     * The item used to select the area.
+     */
+    item: string;
+    /**
+     * Identifier of the event.
+     */
+    name: defines.events;
+    /**
+     * The player doing the selection.
+     */
+    player_index: uint32;
+    /**
+     * The position where the player started the selection.
+     */
+    position: MapPosition;
+    /**
+     * The item quality used to select the area.
+     */
+    quality: string;
+    selection_mode: defines.selection_mode;
     /**
      * The surface selected.
      */

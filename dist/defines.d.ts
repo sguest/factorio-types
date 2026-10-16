@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.21
+// Factorio version 2.1.22
 // API version 6
 
 declare namespace defines {
@@ -477,7 +477,7 @@ enum entity_status {
     /**
      * Used by land mines.
      */
-    armed = 71,
+    armed = 73,
     /**
      * Only used if set through {@link ContainerPrototype::default_status | prototype:ContainerPrototype::default_status}.
      */
@@ -485,7 +485,7 @@ enum entity_status {
     /**
      * Used by rail signals.
      */
-    cant_divide_segments = 63,
+    cant_divide_segments = 65,
     /**
      * Used by accumulators.
      */
@@ -494,15 +494,15 @@ enum entity_status {
     /**
      * Used by asteroid collectors.
      */
-    computing_navigation = 67,
+    computing_navigation = 69,
     /**
      * Used by trains.
      */
-    destination_stop_full = 52,
+    destination_stop_full = 54,
     /**
      * Used by constant combinators: Combinator is turned off via switch in GUI. Also used by inserters.
      */
-    disabled = 60,
+    disabled = 62,
     disabled_by_control_behavior = 8,
     disabled_by_script = 11,
     /**
@@ -512,16 +512,16 @@ enum entity_status {
     /**
      * Used by crafting machines.
      */
-    fluid_ingredient_shortage = 30,
+    fluid_ingredient_shortage = 32,
     frozen = 7,
     /**
      * Used by burner energy sources.
      */
-    full_burnt_result_output = 33,
+    full_burnt_result_output = 35,
     /**
      * Used by crafting machines, boilers, burner energy sources, and reactors: Reactor/burner has full burnt result inventory, boiler has full output fluidbox.
      */
-    full_output = 31,
+    full_output = 33,
     /**
      * Used by accumulators.
      */
@@ -533,33 +533,41 @@ enum entity_status {
     /**
      * Used by cargo bays.
      */
-    hatches_blocked_by_elevated_rail = 26,
+    hatches_blocked_by_elevated_rail = 28,
+    /**
+     * Used by entities that consume fluids or have a fluid energy source.
+     */
+    input_fluid_too_cold = 24,
+    /**
+     * Used by entities that consume fluids or have a fluid energy source.
+     */
+    input_fluid_too_hot = 25,
     /**
      * Used by crafting machines.
      */
-    item_ingredient_shortage = 34,
+    item_ingredient_shortage = 36,
     /**
      * Used by the rocket silo.
      */
-    launching_rocket = 43,
+    launching_rocket = 45,
     /**
      * Used by boilers and fluid turrets: Boiler still has some fluid but is about to run out.
      */
-    low_input_fluid = 29,
+    low_input_fluid = 31,
     low_power = 5,
     /**
      * Used by heat energy sources.
      */
-    low_temperature = 59,
+    low_temperature = 61,
     marked_for_deconstruction = 12,
     /**
      * Used by mining drills when the mining fluid is missing.
      */
-    missing_required_fluid = 35,
+    missing_required_fluid = 37,
     /**
      * Used by labs.
      */
-    missing_science_packs = 36,
+    missing_science_packs = 38,
     /**
      * Used by power switches.
      */
@@ -571,11 +579,11 @@ enum entity_status {
     /**
      * Used by ammo turrets.
      */
-    no_ammo = 58,
+    no_ammo = 60,
     /**
      * Used by filter inserters.
      */
-    no_filter = 64,
+    no_filter = 66,
     no_fuel = 6,
     /**
      * Used by furnaces.
@@ -588,15 +596,15 @@ enum entity_status {
     /**
      * Used by mining drills.
      */
-    no_minable_resources = 25,
+    no_minable_resources = 27,
     /**
      * Used by beacons.
      */
-    no_modules_to_transmit = 54,
+    no_modules_to_transmit = 56,
     /**
      * Used by trains and space platform hubs.
      */
-    no_path = 53,
+    no_path = 55,
     no_power = 4,
     /**
      * Used by assembling machines.
@@ -605,28 +613,28 @@ enum entity_status {
     /**
      * Used by labs.
      */
-    no_research_in_progress = 24,
+    no_research_in_progress = 26,
     /**
      * Used by agricultural towers.
      */
-    no_spot_seedable_by_inputs = 65,
+    no_spot_seedable_by_inputs = 67,
     normal = 1,
     /**
      * Used by cargo bays.
      */
-    not_connected_to_hub_or_pad = 27,
+    not_connected_to_hub_or_pad = 29,
     /**
      * Used by rail signals.
      */
-    not_connected_to_rail = 62,
+    not_connected_to_rail = 64,
     /**
      * Used by agricultural towers.
      */
-    not_enough_space_in_output = 32,
+    not_enough_space_in_output = 34,
     /**
      * Used by space platform hubs.
      */
-    not_enough_thrust = 51,
+    not_enough_thrust = 53,
     /**
      * Used by generators and solar panels.
      */
@@ -634,7 +642,7 @@ enum entity_status {
     /**
      * Used by space platform hubs.
      */
-    on_the_way = 45,
+    on_the_way = 47,
     opened_by_circuit_network = 9,
     /**
      * Used by logistic containers.
@@ -647,87 +655,87 @@ enum entity_status {
     /**
      * Used by pipes, pipes to ground, and storage tanks.
      */
-    pipeline_overextended = 68,
+    pipeline_overextended = 70,
     /**
      * Used by the rocket silo.
      */
-    preparing_rocket_for_launch = 40,
+    preparing_rocket_for_launch = 42,
     /**
      * Used by roboports.
      */
-    recharging_after_power_outage = 55,
+    recharging_after_power_outage = 57,
     /**
      * Used by assembling machines.
      */
-    recipe_is_parameter = 70,
+    recipe_is_parameter = 72,
     /**
      * Used by assembling machines.
      */
-    recipe_not_researched = 69,
+    recipe_not_researched = 71,
     /**
      * Used by thrusters.
      */
-    thrust_not_required = 44,
+    thrust_not_required = 46,
     /**
      * Used by some cargo bays.
      */
-    too_far_from_pad_to_unload = 28,
+    too_far_from_pad_to_unload = 30,
     /**
      * Used by lamps.
      */
-    turned_off_during_daytime = 61,
+    turned_off_during_daytime = 63,
     /**
      * Used by trains.
      */
-    waiting_at_stop = 47,
+    waiting_at_stop = 49,
     /**
      * Used by inserters when wait_for_full_hand is set.
      */
-    waiting_for_more_items = 38,
+    waiting_for_more_items = 40,
     /**
      * Used by agricultural towers.
      */
-    waiting_for_plants_to_grow = 66,
+    waiting_for_plants_to_grow = 68,
     /**
      * Used by space platform hubs.
      */
-    waiting_for_rockets_to_arrive = 49,
+    waiting_for_rockets_to_arrive = 51,
     /**
      * Used by inserters.
      */
-    waiting_for_source_items = 37,
+    waiting_for_source_items = 39,
     /**
      * Used by inserters, mining drills, and crafting machines using vector_to_place_result.
      */
-    waiting_for_space_in_destination = 39,
+    waiting_for_space_in_destination = 41,
     /**
      * Used by the rocket silo.
      */
-    waiting_for_space_in_platform_hub = 42,
+    waiting_for_space_in_platform_hub = 44,
     /**
      * Used by inserters targeting entity ghosts.
      */
-    waiting_for_target_to_be_built = 56,
+    waiting_for_target_to_be_built = 58,
     /**
      * Used by inserters targeting rails.
      */
-    waiting_for_train = 57,
+    waiting_for_train = 59,
     /**
      * Used by trains.
      */
-    waiting_for_upgrade = 48,
+    waiting_for_upgrade = 50,
     /**
      * Used by space platform hubs.
      */
-    waiting_in_orbit = 46,
+    waiting_in_orbit = 48,
     /**
      * Used by space platform hubs.
      */
-    waiting_to_clear_drop_slots = 50,
+    waiting_to_clear_drop_slots = 52,
     /**
      * Used by the rocket silo.
      */
-    waiting_to_launch_rocket = 41,
+    waiting_to_launch_rocket = 43,
     working = 0
 }
 enum entity_status_diode {
@@ -819,150 +827,153 @@ enum events {
     on_player_armor_inventory_changed = 77,
     on_player_banned = 78,
     on_player_built_tile = 79,
-    on_player_cancelled_crafting = 80,
-    on_player_changed_force = 81,
-    on_player_changed_position = 82,
-    on_player_changed_surface = 83,
-    on_player_cheat_mode_disabled = 84,
-    on_player_cheat_mode_enabled = 85,
-    on_player_clicked_gps_tag = 86,
-    on_player_color_changed = 87,
-    on_player_configured_blueprint = 88,
-    on_player_controller_changed = 89,
-    on_player_crafted_item = 90,
-    on_player_created = 91,
-    on_player_cursor_stack_changed = 92,
-    on_player_deconstructed_area = 93,
-    on_player_demoted = 94,
-    on_player_died = 95,
-    on_player_display_density_scale_changed = 96,
-    on_player_display_resolution_changed = 97,
-    on_player_display_scale_changed = 98,
-    on_player_driving_changed_state = 99,
-    on_player_dropped_item = 100,
-    on_player_dropped_item_into_entity = 101,
-    on_player_fast_transferred = 102,
-    on_player_flipped_entity = 103,
-    on_player_flushed_fluid = 104,
-    on_player_gun_inventory_changed = 105,
-    on_player_input_method_changed = 106,
-    on_player_joined_game = 107,
-    on_player_kicked = 108,
-    on_player_left_game = 109,
-    on_player_locale_changed = 110,
-    on_player_main_inventory_changed = 111,
-    on_player_mined_entity = 112,
-    on_player_mined_item = 113,
-    on_player_mined_tile = 114,
-    on_player_music_changed = 115,
-    on_player_muted = 116,
-    on_player_pipette = 117,
-    on_player_placed_equipment = 118,
-    on_player_promoted = 119,
-    on_player_removed = 120,
-    on_player_removed_equipment = 121,
-    on_player_repaired_entity = 122,
-    on_player_respawned = 123,
-    on_player_reverse_selected_area = 124,
-    on_player_rotated_entity = 125,
-    on_player_selected_area = 126,
-    on_player_set_quick_bar_slot = 127,
-    on_player_setup_blueprint = 128,
-    on_player_super_forced_selected_area = 129,
-    on_player_toggled_alt_mode = 130,
-    on_player_toggled_map_editor = 131,
-    on_player_trash_inventory_changed = 132,
-    on_player_unbanned = 133,
-    on_player_unmuted = 134,
-    on_player_used_capsule = 135,
-    on_player_used_spidertron_remote = 136,
-    on_post_entity_died = 137,
-    on_post_segmented_unit_died = 138,
-    on_pre_build = 139,
-    on_pre_chunk_deleted = 140,
-    on_pre_entity_settings_pasted = 141,
-    on_pre_ghost_deconstructed = 142,
-    on_pre_ghost_upgraded = 143,
-    on_pre_permission_group_deleted = 144,
-    on_pre_permission_string_imported = 145,
-    on_pre_player_crafted_item = 146,
-    on_pre_player_died = 147,
-    on_pre_player_left_game = 148,
-    on_pre_player_mined_item = 149,
-    on_pre_player_removed = 150,
-    on_pre_player_toggled_map_editor = 151,
-    on_pre_robot_exploded_cliff = 152,
-    on_pre_scenario_finished = 153,
-    on_pre_script_inventory_resized = 154,
-    on_pre_surface_cleared = 155,
-    on_pre_surface_deleted = 156,
-    on_redo_applied = 157,
-    on_research_cancelled = 158,
-    on_research_finished = 159,
-    on_research_moved = 160,
-    on_research_queued = 161,
-    on_research_reversed = 162,
-    on_research_started = 163,
-    on_resource_depleted = 164,
-    on_robot_built_entity = 165,
-    on_robot_built_tile = 166,
-    on_robot_exploded_cliff = 167,
-    on_robot_mined = 168,
-    on_robot_mined_entity = 169,
-    on_robot_mined_tile = 170,
-    on_robot_pre_mined = 171,
-    on_rocket_launch_ordered = 172,
-    on_rocket_launched = 173,
-    on_runtime_mod_setting_changed = 174,
-    on_script_inventory_resized = 175,
-    on_script_path_request_finished = 176,
-    on_script_trigger_effect = 177,
-    on_sector_scanned = 178,
-    on_segment_entity_created = 179,
-    on_segmented_unit_created = 180,
-    on_segmented_unit_damaged = 181,
-    on_segmented_unit_died = 182,
-    on_selected_entity_changed = 183,
-    on_singleplayer_init = 184,
-    on_space_platform_built_entity = 185,
-    on_space_platform_built_tile = 186,
-    on_space_platform_changed_state = 187,
-    on_space_platform_mined_entity = 188,
-    on_space_platform_mined_item = 189,
-    on_space_platform_mined_tile = 190,
-    on_space_platform_pre_mined = 191,
-    on_spider_command_completed = 192,
-    on_string_translated = 193,
-    on_surface_cleared = 194,
-    on_surface_created = 195,
-    on_surface_deleted = 196,
-    on_surface_imported = 197,
-    on_surface_renamed = 198,
-    on_technology_effects_reset = 199,
-    on_territory_created = 200,
-    on_territory_destroyed = 201,
-    on_tick = 202,
-    on_tower_mined_plant = 203,
-    on_tower_planted_seed = 204,
-    on_tower_pre_mined_plant = 205,
-    on_train_changed_state = 206,
-    on_train_created = 207,
-    on_train_schedule_changed = 208,
-    on_trigger_created_entity = 209,
-    on_trigger_fired_artillery = 210,
-    on_udp_packet_received = 211,
-    on_undo_applied = 212,
-    on_unit_added_to_group = 213,
-    on_unit_group_created = 214,
-    on_unit_group_finished_gathering = 215,
-    on_unit_removed_from_group = 216,
-    on_worker_robot_expired = 217,
-    script_raised_built = 218,
-    script_raised_destroy = 219,
-    script_raised_destroy_segmented_unit = 220,
-    script_raised_revive = 221,
-    script_raised_set_tiles = 222,
-    script_raised_teleported = 223
+    on_player_cancel_selected_area = 80,
+    on_player_cancelled_crafting = 81,
+    on_player_change_selected_area = 82,
+    on_player_changed_force = 83,
+    on_player_changed_position = 84,
+    on_player_changed_surface = 85,
+    on_player_cheat_mode_disabled = 86,
+    on_player_cheat_mode_enabled = 87,
+    on_player_clicked_gps_tag = 88,
+    on_player_color_changed = 89,
+    on_player_configured_blueprint = 90,
+    on_player_controller_changed = 91,
+    on_player_crafted_item = 92,
+    on_player_created = 93,
+    on_player_cursor_stack_changed = 94,
+    on_player_deconstructed_area = 95,
+    on_player_demoted = 96,
+    on_player_died = 97,
+    on_player_display_density_scale_changed = 98,
+    on_player_display_resolution_changed = 99,
+    on_player_display_scale_changed = 100,
+    on_player_driving_changed_state = 101,
+    on_player_dropped_item = 102,
+    on_player_dropped_item_into_entity = 103,
+    on_player_fast_transferred = 104,
+    on_player_flipped_entity = 105,
+    on_player_flushed_fluid = 106,
+    on_player_gun_inventory_changed = 107,
+    on_player_input_method_changed = 108,
+    on_player_joined_game = 109,
+    on_player_kicked = 110,
+    on_player_left_game = 111,
+    on_player_locale_changed = 112,
+    on_player_main_inventory_changed = 113,
+    on_player_mined_entity = 114,
+    on_player_mined_item = 115,
+    on_player_mined_tile = 116,
+    on_player_music_changed = 117,
+    on_player_muted = 118,
+    on_player_pipette = 119,
+    on_player_placed_equipment = 120,
+    on_player_promoted = 121,
+    on_player_removed = 122,
+    on_player_removed_equipment = 123,
+    on_player_repaired_entity = 124,
+    on_player_respawned = 125,
+    on_player_reverse_selected_area = 126,
+    on_player_rotated_entity = 127,
+    on_player_selected_area = 128,
+    on_player_set_quick_bar_slot = 129,
+    on_player_setup_blueprint = 130,
+    on_player_start_selected_area = 131,
+    on_player_super_forced_selected_area = 132,
+    on_player_toggled_alt_mode = 133,
+    on_player_toggled_map_editor = 134,
+    on_player_trash_inventory_changed = 135,
+    on_player_unbanned = 136,
+    on_player_unmuted = 137,
+    on_player_used_capsule = 138,
+    on_player_used_spidertron_remote = 139,
+    on_post_entity_died = 140,
+    on_post_segmented_unit_died = 141,
+    on_pre_build = 142,
+    on_pre_chunk_deleted = 143,
+    on_pre_entity_settings_pasted = 144,
+    on_pre_ghost_deconstructed = 145,
+    on_pre_ghost_upgraded = 146,
+    on_pre_permission_group_deleted = 147,
+    on_pre_permission_string_imported = 148,
+    on_pre_player_crafted_item = 149,
+    on_pre_player_died = 150,
+    on_pre_player_left_game = 151,
+    on_pre_player_mined_item = 152,
+    on_pre_player_removed = 153,
+    on_pre_player_toggled_map_editor = 154,
+    on_pre_robot_exploded_cliff = 155,
+    on_pre_scenario_finished = 156,
+    on_pre_script_inventory_resized = 157,
+    on_pre_surface_cleared = 158,
+    on_pre_surface_deleted = 159,
+    on_redo_applied = 160,
+    on_research_cancelled = 161,
+    on_research_finished = 162,
+    on_research_moved = 163,
+    on_research_queued = 164,
+    on_research_reversed = 165,
+    on_research_started = 166,
+    on_resource_depleted = 167,
+    on_robot_built_entity = 168,
+    on_robot_built_tile = 169,
+    on_robot_exploded_cliff = 170,
+    on_robot_mined = 171,
+    on_robot_mined_entity = 172,
+    on_robot_mined_tile = 173,
+    on_robot_pre_mined = 174,
+    on_rocket_launch_ordered = 175,
+    on_rocket_launched = 176,
+    on_runtime_mod_setting_changed = 177,
+    on_script_inventory_resized = 178,
+    on_script_path_request_finished = 179,
+    on_script_trigger_effect = 180,
+    on_sector_scanned = 181,
+    on_segment_entity_created = 182,
+    on_segmented_unit_created = 183,
+    on_segmented_unit_damaged = 184,
+    on_segmented_unit_died = 185,
+    on_selected_entity_changed = 186,
+    on_singleplayer_init = 187,
+    on_space_platform_built_entity = 188,
+    on_space_platform_built_tile = 189,
+    on_space_platform_changed_state = 190,
+    on_space_platform_mined_entity = 191,
+    on_space_platform_mined_item = 192,
+    on_space_platform_mined_tile = 193,
+    on_space_platform_pre_mined = 194,
+    on_spider_command_completed = 195,
+    on_string_translated = 196,
+    on_surface_cleared = 197,
+    on_surface_created = 198,
+    on_surface_deleted = 199,
+    on_surface_imported = 200,
+    on_surface_renamed = 201,
+    on_technology_effects_reset = 202,
+    on_territory_created = 203,
+    on_territory_destroyed = 204,
+    on_tick = 205,
+    on_tower_mined_plant = 206,
+    on_tower_planted_seed = 207,
+    on_tower_pre_mined_plant = 208,
+    on_train_changed_state = 209,
+    on_train_created = 210,
+    on_train_schedule_changed = 211,
+    on_trigger_created_entity = 212,
+    on_trigger_fired_artillery = 213,
+    on_udp_packet_received = 214,
+    on_undo_applied = 215,
+    on_unit_added_to_group = 216,
+    on_unit_group_created = 217,
+    on_unit_group_finished_gathering = 218,
+    on_unit_removed_from_group = 219,
+    on_worker_robot_expired = 220,
+    script_raised_built = 221,
+    script_raised_destroy = 222,
+    script_raised_destroy_segmented_unit = 223,
+    script_raised_revive = 224,
+    script_raised_set_tiles = 225,
+    script_raised_teleported = 226
 }
 enum flow_precision_index {
     fifty_hours = 5,
@@ -1033,37 +1044,37 @@ enum input_action {
     add_train_station = 9,
     adjust_blueprint_snapping = 10,
     admin_action = 11,
-    alt_reverse_select_area = 12,
-    alt_select_area = 13,
-    alt_select_blueprint_entities = 14,
-    alternative_copy = 15,
-    begin_mining = 16,
-    begin_mining_terrain = 17,
-    build = 18,
-    build_rail = 19,
-    build_terrain = 20,
-    cancel_craft = 21,
-    cancel_deconstruct = 22,
-    cancel_delete_space_platform = 23,
-    cancel_new_blueprint = 24,
-    cancel_research = 25,
-    cancel_upgrade = 26,
-    change_active_character_tab = 27,
-    change_active_item_group_for_crafting = 28,
-    change_active_item_group_for_filters = 29,
-    change_active_quick_bar = 30,
-    change_arithmetic_combinator_parameters = 31,
-    change_entity_label = 32,
-    change_heading_riding_state = 33,
-    change_item_label = 34,
-    change_logistic_point_group = 35,
-    change_multiplayer_config = 36,
-    change_picking_state = 37,
-    change_programmable_speaker_alert_parameters = 38,
-    change_programmable_speaker_circuit_parameters = 39,
-    change_programmable_speaker_parameters = 40,
-    change_research_condition = 41,
-    change_riding_state = 42,
+    alt_select_blueprint_entities = 12,
+    alternative_copy = 13,
+    begin_mining = 14,
+    begin_mining_terrain = 15,
+    build = 16,
+    build_rail = 17,
+    build_terrain = 18,
+    cancel_craft = 19,
+    cancel_deconstruct = 20,
+    cancel_delete_space_platform = 21,
+    cancel_new_blueprint = 22,
+    cancel_research = 23,
+    cancel_select_area = 24,
+    cancel_upgrade = 25,
+    change_active_character_tab = 26,
+    change_active_item_group_for_crafting = 27,
+    change_active_item_group_for_filters = 28,
+    change_active_quick_bar = 29,
+    change_arithmetic_combinator_parameters = 30,
+    change_entity_label = 31,
+    change_heading_riding_state = 32,
+    change_item_label = 33,
+    change_logistic_point_group = 34,
+    change_multiplayer_config = 35,
+    change_picking_state = 36,
+    change_programmable_speaker_alert_parameters = 37,
+    change_programmable_speaker_circuit_parameters = 38,
+    change_programmable_speaker_parameters = 39,
+    change_research_condition = 40,
+    change_riding_state = 41,
+    change_select_area = 42,
     change_selector_combinator_parameters = 43,
     change_shooting_state = 44,
     change_train_name = 45,
@@ -1208,116 +1219,115 @@ enum input_action {
     reorder_logistic_section = 184,
     request_missing_construction_materials = 185,
     reset_assembling_machine = 186,
-    reverse_select_area = 187,
-    rotate_entity = 188,
-    select_area = 189,
-    select_asteroid_chunk_slot = 190,
-    select_blueprint_entities = 191,
-    select_entity_filter_slot = 192,
-    select_entity_slot = 193,
-    select_item_filter = 194,
-    select_mapper_slot_from = 195,
-    select_mapper_slot_to = 196,
-    select_next_valid_gun = 197,
-    select_tile_slot = 198,
-    send_spidertron = 199,
-    send_stack_to_trash = 200,
-    send_stacks_to_trash = 201,
-    send_train_to_pin_target = 202,
-    set_behavior_mode = 203,
-    set_car_weapons_control = 204,
-    set_cheat_mode_quality = 205,
-    set_circuit_condition = 206,
-    set_circuit_mode_of_operation = 207,
-    set_combinator_description = 208,
-    set_control_behavior_input_networks = 209,
-    set_control_behavior_output_networks = 210,
-    set_copy_color_from_train_stop = 211,
-    set_deconstruction_item_tile_selection_mode = 212,
-    set_deconstruction_item_trees_and_rocks_only = 213,
-    set_entity_color = 214,
-    set_entity_energy_property = 215,
-    set_equipment_energy_property = 216,
-    set_filter = 217,
-    set_ghost_cursor = 218,
-    set_heat_interface_mode = 219,
-    set_heat_interface_temperature = 220,
-    set_infinity_container_filter_item = 221,
-    set_infinity_container_logistic_mode = 222,
-    set_infinity_container_remove_unfiltered_items = 223,
-    set_infinity_pipe_filter = 224,
-    set_inserter_max_stack_size = 225,
-    set_inventory_bar = 226,
-    set_lamp_always_on = 227,
-    set_linked_container_link_i_d = 228,
-    set_loader_belt_stack_size_override = 229,
-    set_logistic_filter_item = 230,
-    set_logistic_network_name = 231,
-    set_logistic_section_active = 232,
-    set_player_color = 233,
-    set_pump_fluid_filter = 234,
-    set_request_from_buffers = 235,
-    set_research_finished_stops_game = 236,
-    set_rocket_silo_send_to_orbit_automated_mode = 237,
-    set_schedule_record_allow_unloading = 238,
-    set_signal = 239,
-    set_splitter_priority = 240,
-    set_spoil_priority = 241,
-    set_train_stop_priority = 242,
-    set_train_stopped = 243,
-    set_trains_limit = 244,
-    set_turret_ignore_unlisted = 245,
-    set_use_inserter_filters = 246,
-    set_vehicle_automatic_targeting_parameters = 247,
-    setup_assembling_machine = 248,
-    setup_blueprint = 249,
-    setup_single_blueprint_record = 250,
-    spawn_item = 251,
-    spectator_change_surface = 252,
-    stack_split = 253,
-    stack_transfer = 254,
-    start_repair = 255,
-    start_research = 256,
+    rotate_entity = 187,
+    select_area = 188,
+    select_asteroid_chunk_slot = 189,
+    select_blueprint_entities = 190,
+    select_entity_filter_slot = 191,
+    select_entity_slot = 192,
+    select_item_filter = 193,
+    select_mapper_slot_from = 194,
+    select_mapper_slot_to = 195,
+    select_next_valid_gun = 196,
+    select_tile_slot = 197,
+    send_spidertron = 198,
+    send_stack_to_trash = 199,
+    send_stacks_to_trash = 200,
+    send_train_to_pin_target = 201,
+    set_behavior_mode = 202,
+    set_car_weapons_control = 203,
+    set_cheat_mode_quality = 204,
+    set_circuit_condition = 205,
+    set_circuit_mode_of_operation = 206,
+    set_combinator_description = 207,
+    set_control_behavior_input_networks = 208,
+    set_control_behavior_output_networks = 209,
+    set_copy_color_from_train_stop = 210,
+    set_deconstruction_item_tile_selection_mode = 211,
+    set_deconstruction_item_trees_and_rocks_only = 212,
+    set_entity_color = 213,
+    set_entity_energy_property = 214,
+    set_equipment_energy_property = 215,
+    set_filter = 216,
+    set_ghost_cursor = 217,
+    set_heat_interface_mode = 218,
+    set_heat_interface_temperature = 219,
+    set_infinity_container_filter_item = 220,
+    set_infinity_container_logistic_mode = 221,
+    set_infinity_container_remove_unfiltered_items = 222,
+    set_infinity_pipe_filter = 223,
+    set_inserter_max_stack_size = 224,
+    set_inventory_bar = 225,
+    set_lamp_always_on = 226,
+    set_linked_container_link_i_d = 227,
+    set_loader_belt_stack_size_override = 228,
+    set_logistic_filter_item = 229,
+    set_logistic_network_name = 230,
+    set_logistic_section_active = 231,
+    set_player_color = 232,
+    set_pump_fluid_filter = 233,
+    set_request_from_buffers = 234,
+    set_research_finished_stops_game = 235,
+    set_rocket_silo_send_to_orbit_automated_mode = 236,
+    set_schedule_record_allow_unloading = 237,
+    set_signal = 238,
+    set_splitter_priority = 239,
+    set_spoil_priority = 240,
+    set_train_stop_priority = 241,
+    set_train_stopped = 242,
+    set_trains_limit = 243,
+    set_turret_ignore_unlisted = 244,
+    set_use_inserter_filters = 245,
+    set_vehicle_automatic_targeting_parameters = 246,
+    setup_assembling_machine = 247,
+    setup_blueprint = 248,
+    setup_single_blueprint_record = 249,
+    spawn_item = 250,
+    spectator_change_surface = 251,
+    stack_split = 252,
+    stack_transfer = 253,
+    start_repair = 254,
+    start_research = 255,
+    start_select_area = 256,
     start_walking = 257,
     stop_drag_build = 258,
-    super_forced_select_area = 259,
-    swap_asteroid_chunk_slots = 260,
-    swap_entity_filter_slots = 261,
-    swap_entity_slots = 262,
-    swap_infinity_container_filter_items = 263,
-    swap_item_filters = 264,
-    swap_logistic_filter_items = 265,
-    swap_mappers = 266,
-    swap_tile_slots = 267,
-    switch_connect_to_logistic_network = 268,
-    switch_constant_combinator_state = 269,
-    switch_inserter_filter_mode_state = 270,
-    switch_loader_filter_mode = 271,
-    switch_mining_drill_filter_mode_state = 272,
-    switch_power_switch_state = 273,
-    take_equipment = 274,
-    toggle_artillery_auto_targeting = 275,
-    toggle_blueprint_snap_to_grid = 276,
-    toggle_deconstruction_item_entity_filter_mode = 277,
-    toggle_deconstruction_item_tile_filter_mode = 278,
-    toggle_driving = 279,
-    toggle_enable_vehicle_logistics_while_moving = 280,
-    toggle_entity_logistic_requests = 281,
-    toggle_equipment_movement_bonus = 282,
-    toggle_map_editor = 283,
-    toggle_personal_logistic_requests = 284,
-    toggle_personal_roboport = 285,
-    toggle_selected_entity = 286,
-    toggle_show_entity_info = 287,
-    toggle_tall_entity_visibility = 288,
-    trash_not_requested_items = 289,
-    undo = 290,
-    upgrade = 291,
-    upgrade_opened_blueprint_by_item = 292,
-    upgrade_opened_blueprint_by_record = 293,
-    use_item = 294,
-    wire_dragging = 295,
-    write_to_console = 296
+    swap_asteroid_chunk_slots = 259,
+    swap_entity_filter_slots = 260,
+    swap_entity_slots = 261,
+    swap_infinity_container_filter_items = 262,
+    swap_item_filters = 263,
+    swap_logistic_filter_items = 264,
+    swap_mappers = 265,
+    swap_tile_slots = 266,
+    switch_connect_to_logistic_network = 267,
+    switch_constant_combinator_state = 268,
+    switch_inserter_filter_mode_state = 269,
+    switch_loader_filter_mode = 270,
+    switch_mining_drill_filter_mode_state = 271,
+    switch_power_switch_state = 272,
+    take_equipment = 273,
+    toggle_artillery_auto_targeting = 274,
+    toggle_blueprint_snap_to_grid = 275,
+    toggle_deconstruction_item_entity_filter_mode = 276,
+    toggle_deconstruction_item_tile_filter_mode = 277,
+    toggle_driving = 278,
+    toggle_enable_vehicle_logistics_while_moving = 279,
+    toggle_entity_logistic_requests = 280,
+    toggle_equipment_movement_bonus = 281,
+    toggle_map_editor = 282,
+    toggle_personal_logistic_requests = 283,
+    toggle_personal_roboport = 284,
+    toggle_selected_entity = 285,
+    toggle_show_entity_info = 286,
+    toggle_tall_entity_visibility = 287,
+    trash_not_requested_items = 288,
+    undo = 289,
+    upgrade = 290,
+    upgrade_opened_blueprint_by_item = 291,
+    upgrade_opened_blueprint_by_record = 292,
+    use_item = 293,
+    wire_dragging = 294,
+    write_to_console = 295
 }
 enum input_method {
     game_controller = 1,

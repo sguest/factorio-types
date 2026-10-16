@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.21
+// Factorio version 2.1.22
 // API version 6
 
 declare namespace prototype {
@@ -1239,6 +1239,10 @@ interface BlueprintItemPrototype extends SelectionToolPrototype {
      */
     always_include_tiles?: boolean;
     /**
+     * Tints of the building preview when this blueprint is held in the cursor. Every property is optional here, any that are not given use the color from {@link UtilityConstants::build_preview_tints | prototype:UtilityConstants::build_preview_tints}.
+     */
+    build_preview_tints?: BuildPreviewTints;
+    /**
      * Whether the item will draw its label when held in the cursor in place of the item count.
      */
     draw_label_for_cursor_render?: boolean;
@@ -1295,6 +1299,14 @@ interface BoilerPrototype extends EntityWithOwnerPrototype {
      */
     fluid_box: FluidBox;
     /**
+     * If specified, an input fluid above this temperature will cause the boiler to stop working.
+     */
+    maximum_input_temperature?: float;
+    /**
+     * If specified, an input fluid below this temperature will cause the boiler to stop working.
+     */
+    minimum_input_temperature?: float;
+    /**
      * In the `"output-to-separate-pipe"` mode, fluid is transferred from the `fluid_box` to the `output_fluid_box` when enough energy is available to {@link heat | prototype:FluidPrototype::heat_capacity} the input fluid to the `target_temperature`. Setting a filter on the `output_fluid_box` means that instead of the heated input fluid getting moved to the output, it is converted to the filtered fluid in a ratio based on the heat capacity of the fluids: `output_fluid_amount = input_fluid_amount * (input_fluid_heat_capacity / output_fluid_heat_capacity)`
      *
      * In the `"heat-fluid-inside"` mode, fluid in the `fluid_box` is continuously heated from the input temperature up to its {@link FluidPrototype::max_temperature | prototype:FluidPrototype::max_temperature}.
@@ -1310,7 +1322,7 @@ interface BoilerPrototype extends EntityWithOwnerPrototype {
     output_fluid_box: FluidBox;
     pictures?: BoilerPictureSet;
     /**
-     * Only loaded, and mandatory if `mode` is `"output-to-separate-pipe"`. The boiler heats the input fluid to exactly this temperature and moves the fluid to the output fluid box.
+     * Only loaded, and mandatory if `mode` is `"output-to-separate-pipe"`. The boiler heats the input fluid to exactly this temperature and moves the fluid to the output fluid box. An input fluid above this temperature will cause the boiler to stop working.
      */
     target_temperature?: float;
 }
@@ -4511,6 +4523,14 @@ interface FusionGeneratorPrototype extends EntityWithOwnerPrototype {
      */
     max_fluid_usage: FluidAmount;
     /**
+     * If specified, an input fluid above this temperature will cause the fusion generator to stop working.
+     */
+    maximum_input_temperature?: float;
+    /**
+     * If specified, an input fluid below this temperature will cause the fusion generator to stop working.
+     */
+    minimum_input_temperature?: float;
+    /**
      * {@link filter | prototype:FluidBox::filter} is mandatory.
      */
     output_fluid_box: FluidBox;
@@ -4544,6 +4564,14 @@ interface FusionReactorPrototype extends EntityWithOwnerPrototype {
      * Must be positive.
      */
     max_fluid_usage: FluidAmount;
+    /**
+     * If specified, an input fluid above this temperature will cause the fusion reactor to stop working.
+     */
+    maximum_input_temperature?: float;
+    /**
+     * If specified, an input fluid below this temperature will cause the fusion reactor to stop working.
+     */
+    minimum_input_temperature?: float;
     neighbour_bonus?: float;
     /**
      * Defines connection points to neighbours used to compute neighbour bonus.
@@ -4658,11 +4686,19 @@ interface GeneratorPrototype extends EntityWithOwnerPrototype {
      */
     max_power_output?: Energy;
     /**
+     * If specified, an input fluid above this temperature will cause the generator to stop working.
+     */
+    maximum_input_temperature?: float;
+    /**
      * The maximum temperature to which the efficiency can increase. At this temperature the generator will run at 100% efficiency. Note: Higher temperature fluid can still be consumed.
      *
      * Used to calculate the `max_power_output` if it is not defined and `burns_fluid` is false. Then, the max power output is `(min(fluid_max_temp, maximum_temperature) - fluid_default_temp) × fluid_usage_per_tick × fluid_heat_capacity × effectivity`, the fluid is the filter specified on the `fluid_box`.
      */
     maximum_temperature: float;
+    /**
+     * If specified, an input fluid below this temperature will cause the generator to stop working.
+     */
+    minimum_input_temperature?: float;
     output_fluid_box?: FluidBox;
     /**
      * Affects animation speed and working sound.
@@ -6120,9 +6156,17 @@ interface MiningDrillPrototype extends EntityWithOwnerPrototype {
     graphics_set_flipped?: MiningDrillGraphicsSet;
     input_fluid_box?: FluidBox;
     /**
+     * Only loaded if `input_fluid_box` is defined. If specified, an input fluid above this temperature will cause the mining drill to stop working.
+     */
+    maximum_input_temperature?: float;
+    /**
      * When a save file from version 2.0.x or older is loaded and this property is `true`, entities facing east or west direction are migrated to flipped state.
      */
     migrate_horizontal_mirroring?: boolean;
+    /**
+     * Only loaded if `input_fluid_box` is defined. If specified, an input fluid below this temperature will cause the mining drill to stop working.
+     */
+    minimum_input_temperature?: float;
     /**
      * The speed of this drill.
      */
@@ -8795,6 +8839,10 @@ interface SelectionToolPrototype extends ItemWithLabelPrototype {
     mouse_cursor?: MouseCursorID;
     reverse_select?: SelectionModeData;
     select: SelectionModeData;
+    /**
+     * If true, the selection tool will send pre-selection events to mods {@link defines.events.on_player_start_select_area | runtime:defines.events.on_player_start_select_area}, {@link defines.events.on_player_change_select_area | runtime:defines.events.on_player_change_select_area}, and {@link defines.events.on_player_cancel_select_area | runtime:defines.events.on_player_cancel_select_area}. Off by default because it will incur a performance penalty in multiplayer. It should only be enabled if a mod specifically needs it.
+     */
+    send_pre_selection_events?: boolean;
     skip_fog_of_war?: boolean;
     super_forced_select?: SelectionModeData;
 }
@@ -10157,7 +10205,23 @@ interface ThrusterPrototype extends EntityWithOwnerPrototype {
      * `max_performance.fluid_volume` must not be smaller than `min_performance.fluid_volume`.
      */
     max_performance: ThrusterPerformancePoint;
+    /**
+     * If specified, fuel fluid above this temperature will cause the thruster to stop working.
+     */
+    maximum_fuel_temperature?: float;
+    /**
+     * If specified, oxidizer fluid above this temperature will cause the thruster to stop working.
+     */
+    maximum_oxidizer_temperature?: float;
     min_performance: ThrusterPerformancePoint;
+    /**
+     * If specified, fuel fluid below this temperature will cause the thruster to stop working.
+     */
+    minimum_fuel_temperature?: float;
+    /**
+     * If specified, oxidizer fluid below this temperature will cause the thruster to stop working.
+     */
+    minimum_oxidizer_temperature?: float;
     /**
      * If a {@link filter | prototype:FluidBox::filter} is set for this fluidbox it determines what the thruster considers the second fuel.
      */
@@ -11024,12 +11088,9 @@ interface UtilityConstants extends PrototypeBase {
      * The base game uses more entries here that are applied via the `ammo-category.lua` file.
      */
     bonus_gui_ordering: BonusUtilityConstants;
-    building_buildable_tint: Color;
-    building_buildable_too_far_tint: Color;
+    build_preview_tints: BuildPreviewTints;
     building_collision_mask: CollisionMaskConnector;
-    building_ignorable_tint: Color;
     building_no_tint: Color;
-    building_not_buildable_tint: Color;
     capsule_range_visualization_color: Color;
     /**
      * Layer within `ground-natural` {@link tile render layer | prototype:TileRenderLayer} group, before which terrain lightmap alpha channel is copied into water mask. Decals, which need to be masked by water should have their {@link DecorativePrototype::tile_layer | prototype:DecorativePrototype::tile_layer} set to only slightly larger value than `capture_water_mask_at_layer`, to avoid risk of undefined behavior caused by rendering tiles into layers between `capture_water_mask_at_layer` and decal's `tile_layer`.
