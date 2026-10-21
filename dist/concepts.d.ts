@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.22
+// Factorio version 2.1.23
 // API version 6
 
 declare namespace runtime {
@@ -4459,6 +4459,9 @@ type ItemPrototypeFlag = /**
  * Determines whether the logistics areas of roboports should be drawn when holding this item. Used by the deconstruction planner by default.
  */
 'draw-logistic-overlay' | /**
+ * Prevents the logistics areas of roboports from being drawn when holding this item.
+ */
+'disable-logistic-overlay' | /**
  * If this item is skipped by the trash-unrequested logic.
  */
 'excluded-from-trash-unrequested' | /**
