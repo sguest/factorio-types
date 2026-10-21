@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.22
+// Factorio version 2.1.23
 // API version 6
 
 declare namespace runtime {
@@ -3048,10 +3048,6 @@ interface on_player_respawned {
      */
     name: defines.events;
     player_index: uint32;
-    /**
-     * The player port used to respawn if one was used.
-     */
-    player_port?: LuaEntity;
     /**
      * Tick the event was generated.
      */

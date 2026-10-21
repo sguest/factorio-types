@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.22
+// Factorio version 2.1.23
 // API version 6
 
 declare namespace runtime {
@@ -11988,6 +11988,7 @@ interface LuaGameScript {
      * @param table.anti_alias Whether to render in double resolution and downscale the result (including GUI). Defaults to `false`.
      * @param table.hide_clouds If `true` cloud shadows on ground won't be rendered. Defaults to `false`.
      * @param table.hide_fog If `true` fog effect and foreground space dust effect won't be rendered. Defaults to `false`.
+     * @param table.hide_health_bars If `true` entity health bars won't be rendered. Defaults to `false`.
      * @param table.quality The `.jpg` render quality as a percentage (from 0% to 100% inclusive), if used. A lower value means a more compressed image. Defaults to `80`.
      * @param table.allow_in_replay Whether to save the screenshot even during replay playback. Defaults to `false`.
      * @param table.daytime Overrides the current surface daytime for the duration of screenshot rendering.
@@ -12008,6 +12009,7 @@ interface LuaGameScript {
         anti_alias?: boolean;
         hide_clouds?: boolean;
         hide_fog?: boolean;
+        hide_health_bars?: boolean;
         quality?: int32;
         allow_in_replay?: boolean;
         daytime?: double;

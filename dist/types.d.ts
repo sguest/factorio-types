@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.22
+// Factorio version 2.1.23
 // API version 6
 
 declare namespace prototype {
@@ -6085,9 +6085,12 @@ interface ItemProductPrototype extends ProductPrototypeBase {
  * An array containing the following values.
  */
 type ItemPrototypeFlags = (/**
- * Whether the logistics areas of roboports should be drawn when holding this item. Used for example by the {@link deconstruction planner | https://wiki.factorio.com/Deconstruction_planner}.
+ * Whether the logistics areas of roboports should be drawn when holding this item. Used for example by the {@link deconstruction planner | https://wiki.factorio.com/Deconstruction_planner}. The overlay will also be drawn in some instances without this flag enabled.
  */
 'draw-logistic-overlay' | /**
+ * The logistics areas of roboports are never drawn when holding this item. Can't be used together with `"draw-logistic-overlay"`.
+ */
+'disable-logistic-overlay' | /**
  * Whether the trash-unrequested feature skips this item.
  */
 'excluded-from-trash-unrequested' | /**
