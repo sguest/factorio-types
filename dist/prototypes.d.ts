@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.23
+// Factorio version 2.1.24
 // API version 6
 
 declare namespace prototype {
@@ -1299,7 +1299,7 @@ interface BoilerPrototype extends EntityWithOwnerPrototype {
      */
     fluid_box: FluidBox;
     /**
-     * If specified, an input fluid above this temperature will cause the boiler to stop working.
+     * If specified, an input fluid above this temperature will cause the boiler to stop working. This can be lower than the `target_temperature` for heating the fluid.
      */
     maximum_input_temperature?: float;
     /**
@@ -1555,6 +1555,11 @@ interface CargoLandingPadPrototype extends EntityWithOwnerPrototype {
     robot_door?: RobotDoorSpecification;
     trash_inventory_size?: ItemStackIndex;
 }
+/**
+ * Entity used to send cargo between the {@link cargo hatches | prototype:CargoHatchDefinition} of {@link cargo landing pads | prototype:CargoLandingPadPrototype}, {@link space platform hubs | prototype:SpacePlatformHubPrototype}, {@link cargo bays | prototype:CargoBayPrototype} and {@link rocket silos | prototype:RocketSiloPrototype}.
+ *
+ * The pod for sending cargo is determined by {@link CargoHatchDefinition::cargo_unit_entity_to_spawn | prototype:CargoHatchDefinition::cargo_unit_entity_to_spawn}. A cargo pod will only be sent to a destination if {@link receiving_cargo_units | prototype:CargoHatchDefinition::receiving_cargo_units} of the destination hatch contains the cargo pod.
+ */
 interface CargoPodPrototype extends EntityWithOwnerPrototype {
     /**
      * Has to be of type 'pod-catalogue'.
@@ -1565,6 +1570,9 @@ interface CargoPodPrototype extends EntityWithOwnerPrototype {
      */
     default_shadow_graphic?: ProcessionGraphic;
     impact_trigger?: Trigger;
+    /**
+     * The amount of item stacks that this cargo pod can transport.
+     */
     inventory_size: ItemStackIndex;
     procession_audio_catalogue?: ProcessionAudioCatalogue;
     procession_graphic_catalogue?: ProcessionGraphicCatalogue;
@@ -1575,6 +1583,9 @@ interface CargoPodPrototype extends EntityWithOwnerPrototype {
      */
     selection_priority?: uint8;
     shadow_slave_entity?: EntityID;
+    /**
+     * The entity that is created if this cargo pod lands on the ground instead of in a cargo hatch. The transported items will be transferred into the spawned entity.
+     */
     spawned_container: EntityID;
 }
 /**
@@ -4708,7 +4719,7 @@ interface GeneratorPrototype extends EntityWithOwnerPrototype {
     /**
      * Scales the generator's fluid usage to its maximum power output.
      *
-     * Setting this to true prevents the generator from overconsuming fluid, for example when higher than`maximum_temperature` fluid is fed to the generator.
+     * Setting this to `true` prevents the generator from overconsuming fluid, for example when higher than `maximum_temperature` fluid is fed to the generator.
      *
      * If scale_fluid_usage is false, the generator consumes the full `fluid_usage_per_tick` and any of the extra energy in the fluid (in the form of higher temperature) is wasted. The {@link steam engine | https://wiki.factorio.com/Steam_engine} exhibits this behavior when fed steam from {@link heat exchangers | https://wiki.factorio.com/Heat_exchanger}.
      */
@@ -8840,7 +8851,7 @@ interface SelectionToolPrototype extends ItemWithLabelPrototype {
     reverse_select?: SelectionModeData;
     select: SelectionModeData;
     /**
-     * If true, the selection tool will send pre-selection events to mods {@link defines.events.on_player_start_select_area | runtime:defines.events.on_player_start_select_area}, {@link defines.events.on_player_change_select_area | runtime:defines.events.on_player_change_select_area}, and {@link defines.events.on_player_cancel_select_area | runtime:defines.events.on_player_cancel_select_area}. Off by default because it will incur a performance penalty in multiplayer. It should only be enabled if a mod specifically needs it.
+     * If true, the selection tool will send pre-selection events to mods {@link defines.events.on_player_start_selected_area | runtime:defines.events.on_player_start_selected_area}, {@link defines.events.on_player_change_selected_area | runtime:defines.events.on_player_change_selected_area}, and {@link defines.events.on_player_cancel_selected_area | runtime:defines.events.on_player_cancel_selected_area}. Off by default because it will incur a performance penalty in multiplayer. It should only be enabled if a mod specifically needs it.
      */
     send_pre_selection_events?: boolean;
     skip_fog_of_war?: boolean;
