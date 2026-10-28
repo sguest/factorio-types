@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.23
+// Factorio version 2.1.24
 // API version 6
 
 declare namespace prototype {
@@ -2431,6 +2431,9 @@ interface CargoBayConnections {
 }
 interface CargoHatchDefinition {
     busy_timeout_ticks?: uint32;
+    /**
+     * The {@link cargo pod | prototype:CargoPodPrototype} that this cargo hatch spawns when sending cargo.
+     */
     cargo_unit_entity_to_spawn?: EntityID;
     /**
      * Cannot use `fade_ticks`.
@@ -2456,6 +2459,9 @@ interface CargoHatchDefinition {
      */
     opening_sound?: InterruptibleSound;
     pod_shadow_offset?: Vector;
+    /**
+     * The {@link cargo pods | prototype:CargoPodPrototype} that this cargo hatch can receive.
+     */
     receiving_cargo_units?: EntityID[];
     /**
      * y height relative to hatch position where the pod art gets clipped from sky to regular sorting layer.
@@ -4961,7 +4967,9 @@ interface FluidEnergySource extends BaseEnergySource {
      */
     destroy_non_fuel_fluid?: boolean;
     /**
-     * `1` means 100% effectivity. Must be greater than `0`. Multiplier of the energy output.
+     * `1` means 100% effectivity. Must be greater than `0`.
+     *
+     * How much energy the fluid energy source produces compared to how much energy it consumes. For example, an effectivity of 0.5
      */
     effectivity?: double;
     /**
@@ -4993,7 +5001,9 @@ interface FluidEnergySource extends BaseEnergySource {
     minimum_input_temperature?: float;
     output_fluid_box?: FluidBox;
     /**
-     * If set to `true`, the energy source will consume as much fluid as required to produce the desired power, otherwise it will consume as much as it is allowed to, wasting any excess.
+     * Scales the energy source's fluid usage to its maximum power output.
+     *
+     * If this is `false` the energy source will overconsume fluid. For example when higher than `maximum_temperature` fluid is fed to the energy source, it will consume the full `fluid_usage_per_tick` and any of the extra energy in the fluid (in the form of higher temperature) is wasted. Setting scale_fluid_usage to `true` prevents this behavior.
      */
     scale_fluid_usage?: boolean;
     smoke?: SmokeSource[];

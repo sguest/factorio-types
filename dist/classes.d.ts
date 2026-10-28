@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.23
+// Factorio version 2.1.24
 // API version 6
 
 declare namespace runtime {
@@ -385,6 +385,11 @@ interface LuaBoilerControlBehavior extends LuaGenericOnOffControlBehavior {
  * Entry point for registering event handlers. It is accessible through the global object named `script`.
  */
 interface LuaBootstrap {
+    /**
+     * Finishes the test when the game was started with `--test-scenario` or `--test-save`: the game exits after the current tick, with exit code 0 if the test passed and 1 if it failed. Does nothing otherwise.
+     * @param passed Whether the test passed. Defaults to `true`.
+     */
+    finish_test(this: void, passed?: boolean): void;
     /**
      * Generate a new, unique event ID that can be used to raise custom events with {@link LuaBootstrap::raise_event | runtime:LuaBootstrap::raise_event}.
      * @returns The newly generated event ID. This will be a new value that does not correspond to any named entry in defines.events.
@@ -4811,6 +4816,10 @@ interface LuaBootstrap {
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
     readonly object_name: string;
+    /**
+     * The string given with `--test-arg` when the game was started with `--test-scenario` or `--test-save`.
+     */
+    readonly test_arg?: string;
 }
 /**
  * A reference to the burner energy source owned by a specific {@link LuaEntity | runtime:LuaEntity} or {@link LuaEquipment | runtime:LuaEquipment}.
@@ -15762,7 +15771,7 @@ interface LuaPermissionGroups {
     readonly valid: boolean;
 }
 /**
- * A pin owned by a player.
+ * A map pin owned by a player.
  */
 interface LuaPin {
     /**
@@ -15774,28 +15783,28 @@ interface LuaPin {
      */
     get_pin_center(this: void): MapPosition | null;
     /**
-     * The alert positions if this pin is configured to show alert data.
+     * The alert positions, if this pin targets an alert.
      */
     alert_positions: MapPosition[];
     /**
-     * The type of alert this pin is for (if configured to be about alerts).
+     * The type of alert this pin is for, if this pin targets an alert.
      */
     alert_type?: defines.alert_type;
     always_visible: boolean;
     /**
-     * The custom chart tag - if this pin specifically binds to a chart tag.
+     * The custom chart tag, if this pin specifically targets a chart tag.
      *
-     * The chart tag must be on the same force as the owning player.
+     * The chart tag must be on the same force as the {@link owning player | runtime:LuaPin::owner}.
      */
     chart_tag?: LuaCustomChartTag;
     /**
-     * The index of this pin (unique to this player).
+     * The index of this pin. The index is unique to this player.
      *
-     * Note that this index has no correlation to the position of the pin within {@link LuaPlayer::get_pins | runtime:LuaPlayer::get_pins}
+     * Note that this index has no correlation to the position of the pin within {@link LuaPlayer::get_pins | runtime:LuaPlayer::get_pins}.
      */
     readonly index: uint32;
     /**
-     * The label for this pin - if any. This will be an empty string if there is no label set.
+     * The label for this pin, if any. This will be an empty string if there is no label set.
      */
     label: string;
     /**
@@ -15807,13 +15816,18 @@ interface LuaPin {
      */
     readonly owner: LuaPlayer;
     /**
-     * The player that this pin is bound to.
+     * The player that this pin targets, if any.
      */
-    player?: LuaPlayer;
+    readonly player?: LuaPlayer;
     /**
-     * The position if this pin specifically binds to a surface and position.
+     * The player that this pin targets, if any.
+     * @customName player
+     */
+    player_write?: PlayerIdentification;
+    /**
+     * The position if this pin specifically targets a surface and position.
      *
-     * If writing, and this pin was not bound to a specific surface and position, the default surface of nauvis is used.
+     * When writing, and this pin was not bound to a specific surface and position, the default surface of nauvis is used.
      */
     position?: MapPosition;
     /**
@@ -15821,13 +15835,13 @@ interface LuaPin {
      */
     preview_distance: uint16;
     /**
-     * The surface index if this pin specifically binds to a surface and position.
+     * The surface index if this pin specifically targets a surface and position.
      *
-     * If writing, and this pin was not bound to a specific surface and position, the default position of (0,0) is used.
+     * When writing, and this pin was not bound to a specific surface and position, the default position of `{0, 0}` is used.
      */
     surface_index?: uint32;
     /**
-     * The targets of this pin - if any.
+     * The entities that this pin targets, if any.
      */
     targets: LuaEntity[];
     /**

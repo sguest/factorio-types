@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.23
+// Factorio version 2.1.24
 // API version 6
 
 declare namespace runtime {
@@ -4059,6 +4059,8 @@ interface InventoryWithCustomStackSizeSpecification {
 type ItemCountType = uint32;
 /**
  * An item filter may be specified in two ways, either as a string which is an item prototype name or as a table.
+ *
+ * If this is specified as a string that is an item prototype name, then quality is set to `"normal"` and the comparator is set to `"="`, so only normal quality items will match the filter.
  */
 type ItemFilter = {
     /**
@@ -4066,11 +4068,11 @@ type ItemFilter = {
      */
     name?: ItemID;
     /**
-     * The quality.
+     * The quality. Defaults to empty, so any quality items will match the filter.
      */
     quality?: QualityID;
     /**
-     * The quality comparison type.
+     * The quality comparison type. Defaults to `"="`.
      */
     comparator?: ComparatorString;
 } | string;
