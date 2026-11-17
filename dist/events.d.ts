@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.24
+// Factorio version 2.1.25
 // API version 6
 
 declare namespace runtime {
@@ -1177,6 +1177,10 @@ interface on_gui_closed {
      */
     player_index: uint32;
     /**
+     * Blueprint record that was closed.
+     */
+    record?: LuaRecord;
+    /**
      * The surface index of the global electric network whose GUI was closed.
      */
     surface_index?: uint32;
@@ -1407,6 +1411,10 @@ interface on_gui_opened {
      * The player opening the GUI.
      */
     player_index: uint32;
+    /**
+     * Blueprint record that was opened.
+     */
+    record?: LuaRecord;
     /**
      * The surface index of the global electric network whose GUI was opened.
      */

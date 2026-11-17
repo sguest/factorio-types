@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.24
+// Factorio version 2.1.25
 // API version 6
 
 declare namespace prototype {
@@ -1243,6 +1243,10 @@ interface BlueprintItemPrototype extends SelectionToolPrototype {
      */
     build_preview_tints?: BuildPreviewTints;
     /**
+     * Whether the {@link collision indicators | prototype:UtilitySprites::buildability_collision} are drawn over entities that collide with the building preview when this blueprint is held in the cursor.
+     */
+    draw_collision_indicators?: boolean;
+    /**
      * Whether the item will draw its label when held in the cursor in place of the item count.
      */
     draw_label_for_cursor_render?: boolean;
@@ -2311,6 +2315,8 @@ interface CurvedRailBPrototype extends RailPrototype {
     collision_box?: BoundingBox;
 }
 /**
+ * Defines a custom event with an unique name. During runtime, mods can use the event name to {@link raise | runtime:LuaBootstrap::raise_event} and {@link subscribe to | runtime:LuaBootstrap::on_event} the custom event.
+ *
  * Custom events share the same namespace as custom inputs and built-in events for subscribing to and raising them.
  * @example ```
 {
@@ -2323,6 +2329,8 @@ interface CustomEventPrototype extends Prototype {
 }
 /**
  * Used for custom keyboard shortcuts/key bindings in mods. The key associated with the custom input can be changed in the options. This means that `key_sequence` is simply the default key binding.
+ *
+ * Custom inputs share the same namespace as custom events and built-in events for subscribing to and raising them.
  */
 interface CustomInputPrototype extends Prototype {
     /**
@@ -6629,16 +6637,18 @@ interface ParticleSourcePrototype extends EntityPrototype {
  * An entity to transport fluids over a distance and between machines.
  */
 interface PipePrototype extends EntityWithOwnerPrototype {
-    circuit_connector?: [
-        CircuitConnectorDefinition,
-        CircuitConnectorDefinition,
-        CircuitConnectorDefinition,
-        CircuitConnectorDefinition
-    ];
+    /**
+     * If given, there must be exactly 16 elements in the table.
+     */
+    circuit_connector?: CircuitConnectorDefinition[];
     circuit_wire_max_distance?: double;
     default_fluid_temperature_signal?: SignalIDConnector;
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
+    /**
+     * When this is `false`, pipe will never attempt drawing window.
+     */
+    draw_window?: boolean;
     /**
      * The area of the entity where fluid/gas inputs, and outputs.
      */
@@ -6648,6 +6658,10 @@ interface PipePrototype extends EntityWithOwnerPrototype {
      * All graphics for this pipe.
      */
     pictures?: PipePictures;
+    /**
+     * Whether a random graphics variation is chosen when placing the entity/creating it via script/creating it via map generation. If this is `false`, the entity will use the first variation instead of a random one.
+     */
+    random_variation_on_create?: boolean;
     /**
      * When this is true, fluid pipelines will be visualized when this entity is held in the cursor.
      */
@@ -7870,6 +7884,11 @@ interface RecipePrototype extends Prototype {
      * This property is not read by the game engine itself, but the recycler mod's recycling.lua file. This means it is discarded by the game engine after loading finishes.
      */
     recycle_to_ingredients_of?: RecipeID;
+    /**
+     * The multiplier used when this recipe is copied from an {@link assembling machine | prototype:AssemblingMachinePrototype} to a {@link requester chest | prototype:LogisticContainerPrototype} or {@link infinity chest | prototype:InfinityContainerPrototype}.
+     *
+     * For each item ingredient the `ingredient_amount * requester_paste_multiplier * machine_crafting_speed / energy_required` is set as a request for that item in the chest. The request is clamped to always be for at least `ingredient_amount` items.
+     */
     requester_paste_multiplier?: uint32;
     /**
      * Whether enabling this recipe requires the ingredients be unlocked before the products are marked as unlocked.
@@ -8912,7 +8931,7 @@ interface ShortcutPrototype extends Prototype {
     /**
      * If this is `"lua"`, {@link on_lua_shortcut | runtime:on_lua_shortcut} is raised when the shortcut is clicked.
      */
-    action: 'toggle-alt-mode' | 'undo' | 'redo' | 'paste' | 'import-string' | 'toggle-personal-roboport' | 'toggle-personal-logistic-requests' | 'toggle-equipment-movement-bonus' | 'spawn-item' | 'lua';
+    action: 'toggle-alt-mode' | 'undo' | 'redo' | 'paste' | 'import-string' | 'toggle-personal-roboport' | 'toggle-personal-logistic-requests' | 'toggle-equipment-movement-bonus' | 'toggle-tall-entity-visibility' | 'spawn-item' | 'lua';
     /**
      * Name of a custom input or vanilla control. This is **only** used to show the keybind in the tooltip of the shortcut.
      */
@@ -9641,6 +9660,16 @@ interface SplitterPrototype extends TransportBeltConnectablePrototype {
     default_output_right_condition?: CircuitConditionConnector;
     draw_circuit_wires?: boolean;
     draw_copper_wires?: boolean;
+    /**
+     * When set to true, right lane of left input belt is swapped with left lane of right input belt. This can be used to create a splitter which spreads both lanes of left input belt onto left lanes of both outputs, and both lanes of right input belt onto right lanes of both outputs.
+     */
+    exchange_input_lines?: boolean;
+    /**
+     * When set to true, right lane of left output belt is swapped with left lane of right output belt. This can be used to create a splitter which combines left lanes of both input lanes into left output belt and right lanes of both input lanes into right output belt.
+     *
+     * When this option is used, a {@link IconDrawSpecification::scale_for_many | prototype:IconDrawSpecification::scale_for_many} inside of {@link EntityPrototype::icon_draw_specification | prototype:EntityPrototype::icon_draw_specification} will need to be provided in case a filter is to be drawn as it will be rendered on respective sides of both output belts. Suggested value is `0.35`.
+     */
+    exchange_output_lines?: boolean;
     frozen_patch?: Sprite4Way;
     /**
      * The name of the {@link TransportBeltPrototype | prototype:TransportBeltPrototype} which is used for the sound of the underlying belt.
@@ -10881,6 +10910,9 @@ interface UndergroundBeltPrototype extends TransportBeltConnectablePrototype {
     max_distance_tint?: Color;
     max_distance_underground_remove_belts_sprite?: Sprite;
     structure?: UndergroundBeltStructure;
+    /**
+     * The underground connection may be defined as colliding with tiles in which case if any colliding tile is placed between underground ends the connection will not be established.
+     */
     underground_collision_mask?: CollisionMaskConnector;
     underground_remove_belts_sprite?: Sprite;
     underground_sprite?: Sprite;
