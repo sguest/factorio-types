@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.24
+// Factorio version 2.1.25
 // API version 6
 
 declare namespace runtime {
@@ -4591,8 +4591,10 @@ interface LuaBootstrap {
         message: string;
     }): void;
     /**
-     * Raise an event. Only events generated with {@link LuaBootstrap::generate_event_name | runtime:LuaBootstrap::generate_event_name} and the following can be raised:
-     * Events that can be raised manually:
+     * Manually raise an event. {@link Custom events | prototype:CustomEventPrototype} created in the prototype stage and events generated at runtime with {@link LuaBootstrap::generate_event_name | runtime:LuaBootstrap::generate_event_name} can be raised.
+     *
+     * Additionally, the following built-in events can be raised:
+     * Built-in events that can be raised manually:
      *
      * - {@link on_console_chat | runtime:on_console_chat}
      * - {@link on_player_crafted_item | runtime:on_player_crafted_item}
@@ -4605,7 +4607,7 @@ interface LuaBootstrap {
      * - {@link script_raised_teleported | runtime:script_raised_teleported}
      * - {@link script_raised_set_tiles | runtime:script_raised_set_tiles}
      * @param event ID or name of the event to raise.
-     * @param data Table with extra data that will be passed to the event handler. Any invalid LuaObjects will silently stop the event from being raised.
+     * @param data Table with extra data that will be passed to the event handler. Note that any arguments passed through the interface are a copy of the original, not a reference. Metatables are not retained, while references to LuaObjects stay intact. Functions cannot be passed through the interface. Any invalid LuaObjects will silently stop the event from being raised.
      * @example ```
     -- Raise the on_console_chat event with the desired message 'from' the first player
     local data = {player_index = 1, message = "Hello friends!"}
@@ -5695,7 +5697,7 @@ interface LuaControl {
      *
      * Write supports any of the types. Read will return the `entity`, `equipment`, `equipment-grid`, `player`, `element`, `inventory`, `item`, `tile`, or `nil`.
      */
-    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | LuaTile | defines.gui_type;
+    opened?: LuaEntity | LuaItemStack | LuaEquipment | LuaEquipmentGrid | LuaPlayer | LuaGuiElement | LuaInventory | LuaLogisticNetwork | LuaTile | LuaRecord | defines.gui_type;
     readonly opened_gui_type?: defines.gui_type;
     /**
      * Current item-picking state.
@@ -9322,6 +9324,8 @@ interface LuaEntityPrototype extends LuaPrototypeBase {
     readonly enter_drop_mode_if_held_stack_spoiled?: boolean;
     readonly enter_vehicle_distance?: double;
     readonly erase_contents_when_mined?: boolean;
+    readonly exchange_input_lines?: boolean;
+    readonly exchange_output_lines?: boolean;
     readonly expires?: boolean;
     /**
      * Whether this explosion has a beam.
@@ -12714,6 +12718,12 @@ interface LuaGuiElement {
      */
     readonly object_name: string;
     /**
+     * The opacity of the sprite shown in this widget, clamped to the range [0, 1].
+     *
+     * Setting this to `0.5` makes the sprite look like a ghost item or an unfulfilled recipe ingredient.
+     */
+    opacity: float;
+    /**
      * The direct parent of this element. `nil` if this is a top-level element.
      */
     readonly parent?: LuaGuiElement;
@@ -12855,6 +12865,17 @@ interface LuaGuiElement {
      * The zoom this camera or minimap is using. This value must be positive.
      */
     zoom: double;
+    /**
+     * The zoom limits of this camera. By default the camera can zoom in to 3x, the same as most player controllers.
+     *
+     * Reading this field creates a copy and only contains the limits previously set by a script. To change the zoom limits, set the entire field to the desired {@link ZoomLimits | runtime:ZoomLimits} table.
+     * @example ```
+    -- Lets the camera zoom in to 10x the standard zoom level.
+    camera.zoom_limits = { closest = { zoom = 10 } }
+    camera.zoom = 10
+    ```
+     */
+    zoom_limits: ZoomLimits;
     /**
      * The indexing operator. Gets children by name.
      */
@@ -13283,6 +13304,10 @@ interface LuaGuiElementAddParamsSprite extends BaseLuaGuiElementAddParams {
      */
     'type': 'sprite';
     /**
+     * Opacity of the sprite, clamped to the range [0, 1]. Defaults to `1`.
+     */
+    'opacity'?: float;
+    /**
      * Whether the widget should resize according to the sprite in it. Defaults to `true`.
      */
     'resize_to_sprite'?: boolean;
@@ -13320,6 +13345,10 @@ interface LuaGuiElementAddParamsSpriteButton extends BaseLuaGuiElementAddParams 
      * The number shown on the button.
      */
     'number'?: double;
+    /**
+     * Opacity of the sprite shown on the button, clamped to the range [0, 1]. Defaults to `1`.
+     */
+    'opacity'?: float;
     /**
      * The name of the quality shown on the button.
      */
@@ -14431,6 +14460,10 @@ interface LuaItemPrototype extends LuaPrototypeBase {
      */
     get_ammo_type(this: void, ammo_source_type?: 'default' | 'player' | 'turret' | 'vehicle'): AmmoType | null;
     get_cursor_box_type(this: void, selection_mode: defines.selection_mode): CursorBoxRenderType | null;
+    /**
+     * Whether the list of how many entities are selected should be shown.
+     */
+    get_draw_selection_counts(this: void, selection_mode: defines.selection_mode): boolean | null;
     /**
      * The durability of this tool item prototype.
      */
@@ -17712,7 +17745,7 @@ interface LuaRecipePrototype extends LuaPrototypeBase {
      */
     readonly products: Product[];
     /**
-     * The multiplier used when this recipe is copied from an assembling machine to a requester chest. For each item in the recipe the item count * this value is set in the requester chest.
+     * The multiplier used when this recipe is copied from an assembling machine to a requester chest or infinity chest. For each item ingredient in the recipe the `ingredient_amount * requester_paste_multiplier * machine_crafting_speed / energy_required` is set in the chest.
      */
     readonly request_paste_multiplier: uint32;
     /**
@@ -17984,6 +18017,7 @@ interface LuaRecord {
      * The current count of mappers in the upgrade item.
      */
     readonly mapper_count: uint32;
+    readonly name: string;
     /**
      * The class name of this object. Available even when `valid` is false. For LuaStruct objects it may also be suffixed with a dotted path to a member of the struct.
      */
@@ -17996,6 +18030,15 @@ interface LuaRecord {
      * The preview icons for this record.
      */
     preview_icons: BlueprintSignalIcon[];
+    readonly prototype: LuaItemPrototype;
+    /**
+     * Identifier of the record within its shelf.
+     */
+    readonly record_id: uint32;
+    /**
+     * Identifier of the shelf this record is in. May correspond to a player index or be a special value when in game blueprints.
+     */
+    readonly shelf_index: uint32;
     /**
      * The number of tile filters this deconstruction planner has.
      */
@@ -18116,11 +18159,15 @@ interface LuaRenderObject {
      */
     animation: string;
     /**
-     * Animation offset of this animation. Animation offset in frames.
+     * Current frame of this animation. All writes update `animation_offset` to show the desired frame.
+     */
+    animation_frame: double;
+    /**
+     * Animation offset of this animation, in frames. Relative to game tick 0. This means the current animation frame is `((tick * speed) + animation_offset) % frame_count` with speed defined as {@link LuaRenderObject::animation_speed | runtime:LuaRenderObject::animation_speed} multiplied by {@link AnimationPrototype::animation_speed | prototype:AnimationPrototype::animation_speed}.
      */
     animation_offset: double;
     /**
-     * Animation speed of this animation. Animation speed in frames per tick.
+     * Animation speed of this animation, in frames per tick. It is multiplied by {@link animation speed | prototype:AnimationPrototype::animation_speed} of the selected animation prototype. Changing speed will update `animation_offset`, so that the current `animation_frame` stays the same. Set it to 0 if you want to pause the animation.
      */
     animation_speed: double;
     /**
@@ -18263,6 +18310,14 @@ interface LuaRenderObject {
      */
     sprite: SpritePath;
     /**
+     * Height of this sprite or animation in tiles. If set, the sprite or animation is stretched to this height regardless of its original size. `nil` if `y_scale` is set. Writing requires a number greater than 0 and clears `y_scale`.
+     */
+    sprite_height?: double;
+    /**
+     * Width of this sprite or animation in tiles. If set, the sprite or animation is stretched to this width regardless of its original size. `nil` if `x_scale` is set. Writing requires a number greater than 0 and clears `x_scale`.
+     */
+    sprite_width?: double;
+    /**
      * Where this arc starts. Angle in radian.
      */
     start_angle: float;
@@ -18325,13 +18380,13 @@ interface LuaRenderObject {
      */
     width: float;
     /**
-     * Horizontal scale of this sprite or animation.
+     * Horizontal scale of this sprite or animation. Write operation requires a valid number and clears `sprite_width`.
      */
-    x_scale: double;
+    x_scale?: double;
     /**
-     * Vertical scale of this sprite or animation.
+     * Vertical scale of this sprite or animation. Write operation requires a valid number and clears `sprite_height`.
      */
-    y_scale: double;
+    y_scale?: double;
 }
 /**
  * Allows rendering of geometric shapes, text and sprites in the game world through the global object named `rendering`. Each render object is identified by an id that is universally unique for the lifetime of a whole game.
@@ -18348,11 +18403,14 @@ interface LuaRendering {
      * Create an animation.
      * @param table.animation Name of an {@link AnimationPrototype | prototype:AnimationPrototype}.
      * @param table.orientation The orientation of the animation. Default is 0.
-     * @param table.x_scale Horizontal scale of the animation. Default is 1.
-     * @param table.y_scale Vertical scale of the animation. Default is 1.
+     * @param table.x_scale Horizontal scale of the sprite. Default is 1. Mutually exclusive with `sprite_width`.
+     * @param table.y_scale Vertical scale of the sprite. Default is 1. Mutually exclusive with `sprite_height`.
+     * @param table.sprite_width Width of the sprite in tiles. If given, the animation is stretched to this width regardless of its original size. Mutually exclusive with `x_scale`.
+     * @param table.sprite_height Height of the sprite in tiles. If given, the animation is stretched to this height regardless of its original size. Mutually exclusive with `y_scale`.
      * @param table.render_layer Render layer of the animation. Defaults to `"arrow"`.
      * @param table.animation_speed How many frames the animation goes forward per tick. Default is 1.
-     * @param table.animation_offset Offset of the animation in frames. Default is 0.
+     * @param table.animation_offset Offset of the animation in frames relative to game tick 0. Default is 0.
+     * @param table.animation_frame Frame the animation starts at. Takes precedence over `animation_offset`.
      * @param table.orientation_target If given, the animation rotates so that it faces this target. Note that `orientation` is still applied to the animation.
      * @param table.use_target_orientation Only used if `orientation_target` is a LuaEntity.
      * @param table.oriented_offset Offsets the center of the animation if `orientation_target` is given. This offset will rotate together with the animation.
@@ -18372,10 +18430,13 @@ interface LuaRendering {
         orientation?: RealOrientation;
         x_scale?: double;
         y_scale?: double;
+        sprite_width?: double;
+        sprite_height?: double;
         tint?: Color;
         render_layer?: RenderLayer;
         animation_speed?: double;
         animation_offset?: double;
+        animation_frame?: double;
         orientation_target?: ScriptRenderTarget;
         use_target_orientation?: boolean;
         oriented_offset?: Vector;
@@ -18611,8 +18672,10 @@ interface LuaRendering {
     /**
      * Create a sprite.
      * @param table.orientation The orientation of the sprite. Default is 0.
-     * @param table.x_scale Horizontal scale of the sprite. Default is 1.
-     * @param table.y_scale Vertical scale of the sprite. Default is 1.
+     * @param table.x_scale Horizontal scale of the sprite. Default is 1. Mutually exclusive with `sprite_width`.
+     * @param table.y_scale Vertical scale of the sprite. Default is 1. Mutually exclusive with `sprite_height`.
+     * @param table.sprite_width Width of the sprite in tiles. If given, the sprite is stretched to this width regardless of its original size. Mutually exclusive with `x_scale`.
+     * @param table.sprite_height Height of the sprite in tiles. If given, the sprite is stretched to this height regardless of its original size. Mutually exclusive with `y_scale`.
      * @param table.render_layer Render layer of the sprite. Defaults to `"arrow"`.
      * @param table.orientation_target If given, the sprite rotates so that it faces this target. Note that `orientation` is still applied to the sprite.
      * @param table.use_target_orientation Only used if `orientation_target` is a LuaEntity.
@@ -18641,6 +18704,8 @@ interface LuaRendering {
         orientation?: RealOrientation;
         x_scale?: double;
         y_scale?: double;
+        sprite_width?: double;
+        sprite_height?: double;
         tint?: Color;
         render_layer?: RenderLayer;
         orientation_target?: ScriptRenderTarget;
@@ -19325,6 +19390,7 @@ interface LuaSimulation {
     camera_player_cursor_direction: defines.direction;
     camera_player_cursor_position?: MapPosition;
     camera_position?: MapPosition;
+    camera_show_alerts: boolean;
     camera_surface_index?: uint32;
     camera_zoom: double;
     gui_tooltip_interval: double;
@@ -23076,6 +23142,10 @@ interface LuaTransportLine {
      * @returns Number of items actually removed.
      */
     remove_item(this: void, items: ItemStackIdentification): uint32;
+    /**
+     * The index of this transport line in its owner.
+     */
+    readonly index: defines.transport_line;
     /**
      * The transport lines that this transport line is fed by or an empty table if none.
      */

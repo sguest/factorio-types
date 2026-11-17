@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/prototype-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.24
+// Factorio version 2.1.25
 // API version 6
 
 declare namespace prototype {
@@ -4193,7 +4193,11 @@ interface ElectricEnergySource extends BaseEnergySource {
      */
     buffer_capacity?: Energy;
     /**
-     * How much energy (per second) will be continuously removed from the energy buffer. In-game, this is shown in the tooltip as "Min. [Minimum] Consumption". Applied as a constant consumption-per-tick, even when the entity is not {@link active | runtime:LuaEntity::active}.
+     * How much energy (per second) will be continuously removed from the energy buffer. It is applied as a constant consumption-per-tick, even when the entity is not {@link active | runtime:LuaEntity::active}.
+     *
+     * If this is an output energy source then the drain will only affect this energy source's buffer, it will not result in energy being drawn from the network.
+     *
+     * If this is an input energy source then the drain is shown in the tooltip as "Min. [Minimum] Consumption".
      * @example ```
     drain = "1kW"
     ```
@@ -7811,7 +7815,7 @@ interface PipeConnectionDefinition {
         MapPosition
     ];
     /**
-     * An underground connection may be defined as colliding with tiles in which case if any tile is placed between underground ends the connection will not be established.
+     * An underground connection may be defined as colliding with tiles in which case if any colliding tile is placed between underground ends the connection will not be established.
      *
      * In order to connect, both ends must have the same collision mask specified.
      *
@@ -7830,41 +7834,41 @@ type PipeConnectionType = /**
  */
 'linked';
 interface PipePictures {
-    corner_down_left?: Sprite;
+    corner_down_left?: SpriteVariations;
     corner_down_left_disabled_visualization?: Sprite;
-    corner_down_left_frozen?: Sprite;
+    corner_down_left_frozen?: SpriteVariations;
     corner_down_left_visualization?: Sprite;
-    corner_down_right?: Sprite;
+    corner_down_right?: SpriteVariations;
     corner_down_right_disabled_visualization?: Sprite;
-    corner_down_right_frozen?: Sprite;
+    corner_down_right_frozen?: SpriteVariations;
     corner_down_right_visualization?: Sprite;
-    corner_up_left?: Sprite;
+    corner_up_left?: SpriteVariations;
     corner_up_left_disabled_visualization?: Sprite;
-    corner_up_left_frozen?: Sprite;
+    corner_up_left_frozen?: SpriteVariations;
     corner_up_left_visualization?: Sprite;
-    corner_up_right?: Sprite;
+    corner_up_right?: SpriteVariations;
     corner_up_right_disabled_visualization?: Sprite;
-    corner_up_right_frozen?: Sprite;
+    corner_up_right_frozen?: SpriteVariations;
     corner_up_right_visualization?: Sprite;
-    cross?: Sprite;
+    cross?: SpriteVariations;
     cross_disabled_visualization?: Sprite;
-    cross_frozen?: Sprite;
+    cross_frozen?: SpriteVariations;
     cross_visualization?: Sprite;
-    ending_down?: Sprite;
+    ending_down?: SpriteVariations;
     ending_down_disabled_visualization?: Sprite;
-    ending_down_frozen?: Sprite;
+    ending_down_frozen?: SpriteVariations;
     ending_down_visualization?: Sprite;
-    ending_left?: Sprite;
+    ending_left?: SpriteVariations;
     ending_left_disabled_visualization?: Sprite;
-    ending_left_frozen?: Sprite;
+    ending_left_frozen?: SpriteVariations;
     ending_left_visualization?: Sprite;
-    ending_right?: Sprite;
+    ending_right?: SpriteVariations;
     ending_right_disabled_visualization?: Sprite;
-    ending_right_frozen?: Sprite;
+    ending_right_frozen?: SpriteVariations;
     ending_right_visualization?: Sprite;
-    ending_up?: Sprite;
+    ending_up?: SpriteVariations;
     ending_up_disabled_visualization?: Sprite;
-    ending_up_frozen?: Sprite;
+    ending_up_frozen?: SpriteVariations;
     ending_up_visualization?: Sprite;
     fluid_background?: Sprite;
     /**
@@ -7884,41 +7888,41 @@ interface PipePictures {
      * Visualizes the flow of the fluid in the pipe. Drawn when `(fluid_temp - fluid_min_temp) / (fluid_max_temp - fluid_min_temp)` is larger than `1/3` and less than or equal to `2/3` and the fluid's temperature is below {@link FluidPrototype::gas_temperature | prototype:FluidPrototype::gas_temperature}.
      */
     middle_temperature_flow?: Sprite;
-    straight_horizontal?: Sprite;
+    straight_horizontal?: SpriteVariations;
     straight_horizontal_disabled_visualization?: Sprite;
-    straight_horizontal_frozen?: Sprite;
+    straight_horizontal_frozen?: SpriteVariations;
     straight_horizontal_visualization?: Sprite;
-    straight_horizontal_window?: Sprite;
+    straight_horizontal_window?: SpriteVariations;
     straight_horizontal_window_disabled_visualization?: Sprite;
-    straight_horizontal_window_frozen?: Sprite;
+    straight_horizontal_window_frozen?: SpriteVariations;
     straight_horizontal_window_visualization?: Sprite;
-    straight_vertical?: Sprite;
+    straight_vertical?: SpriteVariations;
     straight_vertical_disabled_visualization?: Sprite;
-    straight_vertical_frozen?: Sprite;
-    straight_vertical_single?: Sprite;
+    straight_vertical_frozen?: SpriteVariations;
+    straight_vertical_single?: SpriteVariations;
     straight_vertical_single_disabled_visualization?: Sprite;
-    straight_vertical_single_frozen?: Sprite;
+    straight_vertical_single_frozen?: SpriteVariations;
     straight_vertical_single_visualization?: Sprite;
     straight_vertical_visualization?: Sprite;
-    straight_vertical_window?: Sprite;
+    straight_vertical_window?: SpriteVariations;
     straight_vertical_window_disabled_visualization?: Sprite;
-    straight_vertical_window_frozen?: Sprite;
+    straight_vertical_window_frozen?: SpriteVariations;
     straight_vertical_window_visualization?: Sprite;
-    t_down?: Sprite;
+    t_down?: SpriteVariations;
     t_down_disabled_visualization?: Sprite;
-    t_down_frozen?: Sprite;
+    t_down_frozen?: SpriteVariations;
     t_down_visualization?: Sprite;
-    t_left?: Sprite;
+    t_left?: SpriteVariations;
     t_left_disabled_visualization?: Sprite;
-    t_left_frozen?: Sprite;
+    t_left_frozen?: SpriteVariations;
     t_left_visualization?: Sprite;
-    t_right?: Sprite;
+    t_right?: SpriteVariations;
     t_right_disabled_visualization?: Sprite;
-    t_right_frozen?: Sprite;
+    t_right_frozen?: SpriteVariations;
     t_right_visualization?: Sprite;
-    t_up?: Sprite;
+    t_up?: SpriteVariations;
     t_up_disabled_visualization?: Sprite;
-    t_up_frozen?: Sprite;
+    t_up_frozen?: SpriteVariations;
     t_up_visualization?: Sprite;
     vertical_window_background?: Sprite;
 }
@@ -9623,6 +9627,10 @@ interface SelectionModeData {
     chart_color?: Color;
     count_button_color?: Color;
     cursor_box_type: CursorBoxType;
+    /**
+     * Whether the list of how many entities are selected should be shown.
+     */
+    draw_selection_counts?: boolean;
     ended_sound?: Sound;
     entity_filter_mode?: 'whitelist' | 'blacklist';
     entity_filters?: EntityID[];
@@ -13074,7 +13082,7 @@ interface TreeGrowth {
     trunk_warp: Sprite;
 }
 /**
- * Tree has number of "dying" stages, which is deduced from frame count of `shadow` if shadow is defined, otherwise from frame count of `trunk`. Frame count of `leaves` has to be one less than the deduced number of stages, as last the stage is always assumed to be leafless.
+ * Tree has number of "dying" stages, which is deduced from frame count of `shadow` if shadow is defined, otherwise from frame count of `trunk`. The frame count of `leaves` has to be one less than the deduced number of stages, as the last stage is always assumed to be leafless.
  */
 interface TreeVariation {
     branch_generation: CreateParticleTriggerEffectItem;

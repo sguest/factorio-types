@@ -2,7 +2,7 @@
 // Factorio API reference https://lua-api.factorio.com/latest/index.html
 // Generated from JSON source https://lua-api.factorio.com/latest/runtime-api.json
 // Definition source https://github.com/sguest/factorio-types
-// Factorio version 2.1.24
+// Factorio version 2.1.25
 // API version 6
 
 declare namespace runtime {
@@ -18,7 +18,7 @@ interface BaseAchievementPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'allowed-without-fight' | 'type';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'allowed-without-fight' | 'type';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -309,7 +309,7 @@ interface AsteroidChunkPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'minable';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'minable';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2437,7 +2437,7 @@ interface BaseDecorativePrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'decal' | 'autoplace' | 'collision-mask';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'decal' | 'autoplace' | 'collision-mask';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -2714,11 +2714,11 @@ interface EnemyExpansionMapSettings {
      */
     settler_group_min_size: uint32;
     /**
-     * The maximum size of a biter group that goes to build a new base. This is multiplied by the evolution factor. Defaults to `20`.
+     * The maximum size of a biter group that goes to build a new base. This is multiplied by the evolution factor. Defaults to `10`.
      */
     settler_group_max_size: uint32;
     /**
-     * The minimum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `4*3 600=14 400` ticks.
+     * The minimum time between expansions in ticks. The actual cooldown is adjusted to the current evolution levels. Defaults to `10*3 600=36 000` ticks.
      */
     min_expansion_cooldown: uint32;
     /**
@@ -2788,7 +2788,7 @@ interface BaseEntityPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'flying-robot' | 'robot-with-logistics-interface' | 'rail' | 'ghost' | 'explosion' | 'vehicle' | 'crafting-machine' | 'rolling-stock' | 'turret' | 'transport-belt-connectable' | 'wall-connectable' | 'buildable' | 'placable-in-editor' | 'clonable' | 'selectable' | 'hidden' | 'entity-with-health' | 'building' | 'fast-replaceable' | 'uses-direction' | 'minable' | 'circuit-connectable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'name' | 'type' | 'collision-mask' | 'flag' | 'selection-priority' | 'emissions-per-second' | 'crafting-category';
+    filter: 'flying-robot' | 'robot-with-logistics-interface' | 'rail' | 'ghost' | 'explosion' | 'vehicle' | 'crafting-machine' | 'rolling-stock' | 'turret' | 'transport-belt-connectable' | 'wall-connectable' | 'buildable' | 'placable-in-editor' | 'clonable' | 'selectable' | 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'entity-with-health' | 'building' | 'fast-replaceable' | 'uses-direction' | 'minable' | 'circuit-connectable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'name' | 'type' | 'collision-mask' | 'flag' | 'selection-priority' | 'emissions-per-second' | 'crafting-category';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3123,7 +3123,7 @@ interface BaseEquipmentPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'item-to-place' | 'type';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'item-to-place' | 'type';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -3315,7 +3315,7 @@ interface BaseFluidPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'hidden' | 'name' | 'subgroup' | 'default-temperature' | 'max-temperature' | 'heat-capacity' | 'fuel-value' | 'emissions-multiplier' | 'gas-temperature';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'name' | 'subgroup' | 'default-temperature' | 'max-temperature' | 'heat-capacity' | 'fuel-value' | 'emissions-multiplier' | 'gas-temperature';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -5336,7 +5336,7 @@ interface LuaEntityMarkedForUpgradeEventFilterType extends BaseLuaEntityMarkedFo
     'type': string;
 }
 /**
- * Event name may be specified in one of four ways.
+ * An event name may be specified in one of four ways.
  */
 type LuaEventType = /**
  * Custom event prototype.
@@ -5348,7 +5348,7 @@ LuaCustomInputPrototype | /**
  * Event identifier.
  */
 defines.events | /**
- * Name of the event.
+ * Name of a built-in event, custom event prototype or custom input prototype.
  */
 string;
 /**
@@ -7297,7 +7297,7 @@ interface BaseModSettingPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'type' | 'mod' | 'setting-type';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'type' | 'mod' | 'setting-type';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -8258,7 +8258,7 @@ interface BaseRecipePrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'enabled' | 'hidden' | 'hidden-from-flow-stats' | 'hidden-from-player-crafting' | 'allow-as-intermediate' | 'allow-intermediates' | 'allow-decomposition' | 'always-show-made-in' | 'has-ingredients' | 'has-products' | 'has-ingredient-item' | 'has-ingredient-fluid' | 'has-product-item' | 'has-product-fluid' | 'subgroup' | 'category' | 'energy' | 'emissions-multiplier' | 'request-paste-multiplier' | 'overload-multiplier';
+    filter: 'enabled' | 'hidden' | 'hidden-from-flow-stats' | 'hidden-from-player-crafting' | 'hidden-in-factoriopedia' | 'is-parameter' | 'allow-as-intermediate' | 'allow-intermediates' | 'allow-decomposition' | 'always-show-made-in' | 'has-ingredients' | 'has-products' | 'has-ingredient-item' | 'has-ingredient-fluid' | 'has-product-item' | 'has-product-fluid' | 'subgroup' | 'category' | 'energy' | 'emissions-multiplier' | 'request-paste-multiplier' | 'overload-multiplier';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -8893,9 +8893,21 @@ interface ScheduleRecord {
      * When a train is allowed to reach rail target from any direction it will be `nil`. If rail has to be reached from specific direction, this value allows to choose the direction. This value corresponds to {@link LuaEntity::connected_rail_direction | runtime:LuaEntity::connected_rail_direction} of a TrainStop.
      */
     rail_direction?: defines.rail_direction;
+    /**
+     * When reading this will always be present but may be an empty array.
+     */
     wait_conditions?: WaitCondition[];
+    /**
+     * When reading this will always be present. Defaults to `false` when writing.
+     */
     temporary?: boolean;
+    /**
+     * When reading this will always be present. Defaults to `false` when writing.
+     */
     created_by_interrupt?: boolean;
+    /**
+     * When reading this will always be present. Defaults to `true` when writing.
+     */
     allows_unloading?: boolean;
 }
 interface ScheduleRecordPosition {
@@ -9611,7 +9623,7 @@ interface BaseSpaceLocationPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'fly-condition' | 'type' | 'solar-power-in-space';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'fly-condition' | 'type' | 'solar-power-in-space';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -10637,7 +10649,7 @@ interface BaseTechnologyPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'enabled' | 'hidden' | 'upgrade' | 'visible-when-disabled' | 'has-effects' | 'has-prerequisites' | 'research-unit-ingredient' | 'unlocks-recipe' | 'level' | 'max-level' | 'time';
+    filter: 'enabled' | 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'upgrade' | 'visible-when-disabled' | 'has-effects' | 'has-prerequisites' | 'research-unit-ingredient' | 'unlocks-recipe' | 'level' | 'max-level' | 'time';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -10803,7 +10815,7 @@ interface BaseTilePrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'minable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'collision-mask' | 'walking-speed-modifier' | 'vehicle-friction-modifier' | 'decorative-removal-probability' | 'absorptions-per-second';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'minable' | 'autoplace' | 'blueprintable' | 'item-to-place' | 'collision-mask' | 'walking-speed-modifier' | 'vehicle-friction-modifier' | 'decorative-removal-probability' | 'absorptions-per-second';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
@@ -12511,7 +12523,7 @@ interface VirtualSignalPrototypeFilter {
     /**
      * The condition to filter on.
      */
-    filter: 'special-signal';
+    filter: 'hidden' | 'hidden-in-factoriopedia' | 'is-parameter' | 'special-signal';
     /**
      * How to combine this with the previous filter. Defaults to `"or"`. When evaluating the filters, `"and"` has higher precedence than `"or"`.
      */
